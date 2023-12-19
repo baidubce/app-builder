@@ -10,9 +10,10 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 
 </div>
 
-## 版本信息
+## News
 
-* **v0.1.0**
+* **[官方组件列表](https://qasandbox.bcetest.baidu.com/ai_apaas/sdk)**
+* **v0.1.0版本发布**：[Release Notes](https://qasandbox.bcetest.baidu.com/ai_apaas/sdk)
   * 2023.12.19初始版本发布，基础云组件支持包括BES；AI能力引擎语音、视觉类10个能力，大模型相关RAG、文本生成能力19个。
 
 ## 教程与文档
@@ -143,8 +144,6 @@ with open(asr_path, "rb") as f:
 AppBuilder-SDK提供对组件的服务化能力。通过定义Agent，开发者可以快速启动Chainlit、Flask等服务化的Demo或API提供快速体验环境。
 
 ```python
-import os
-import sys
 import appbuilder
 
 # 空模版组件
@@ -154,7 +153,7 @@ playground = appbuilder.Playground(
 )
 
 # 使用AgentBase来服务化playground组件
-agent = appbuilder.AgentBase(component=component)
+agent = appbuilder.AgentBase(component=playground)
 
 # 启动chainlit demo，会自动在浏览器打开体验对话框页面
 agent.chainlit_demo(port=8091)
