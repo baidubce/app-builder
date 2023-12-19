@@ -55,19 +55,26 @@ class MRC(CompletionBaseComponent):
         .. code-block:: python
 
             import appbuilder
+            import os
+
+            # 设置环境变量
             os.environ["APPBUILDER_TOKEN"] = '...'
 
+            # 创建MRC对象
             mrc_component = appbuilder.MRC()
 
-            # 获取功能说明
-            instructions = mrc_component.get_instruction_set()
+            #初始化参数
+            msg = "残疾人怎么办相关证件"
+            msg = appbuilder.Message(msg)
+            context_list = appbuilder.Message(["如何办理残疾人通行证一、残疾人通行证办理条件：
+            1、持有中华人民共和国残疾人证，下肢残疾或者听力残疾；2、持有准驾车型为C1（听力残疾）、
+            C2（左下肢残疾、听力残疾", "3、本人拥有本市登记核发的非营运小型载客汽车，车辆须在检验有效期内，
+            并有有效交强险凭证，C5车辆加装操纵辅助装置后已办理变更手续。二、办理地点：北京市朝阳区左家庄北里35号：
+            北京市无障碍环境建设促进中心"])
 
-            # 输出功能说明
-            for key, value in instructions.items():
-                print(f"{key}: {value}")
-
-            # 模拟运行MRC组件，开启澄清和友好性提升功能
-            result = mrc_component.run(appbuilder.Message("什么是人工智能？"), clarify=True, friendly=True)
+            # 模拟运行MRC组件，开启拒答、澄清追问、重点强调、友好性提升和溯源能力五个功能
+            result = mrc_component.run(msg, context_list, reject=True,
+                                       clarify=True, highlight=True, friendly=True, cite=True)
 
             # 输出运行结果
             print(result)
