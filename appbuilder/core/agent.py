@@ -202,11 +202,14 @@ class AgentBase(BaseModel):
         Returns:
             None
         """
-        # serve agent chat interface
-        from flask import Flask, current_app, request, Response
-        from flask_restful import reqparse, Resource
-        from werkzeug.exceptions import BadRequest
-
+        # lazy import flask
+        try:
+            from flask import Flask, current_app, request, Response
+            from flask_restful import reqparse, Resource
+            from werkzeug.exceptions import BadRequest
+        except ImportError:
+            raise ImportError("Flask module is not installed. Please install it using 'pip install "
+                              "flask~=2.3.2 flask-restful==0.3.9'.")
         app = Flask(__name__)
 
         @app.errorhandler(BadRequest)
@@ -279,8 +282,13 @@ class AgentBase(BaseModel):
         Returns:
             None
         """
-        import chainlit as cl
-        import chainlit.cli
+        # lazy import chainlit
+        try:
+            import chainlit as cl
+            import chainlit.cli
+        except ImportError:
+            raise ImportError("chainlit module is not installed. Please install it using 'pip install "
+                              "chainlit~=0.7.700'.")
         import click
         from click.testing import CliRunner
         
