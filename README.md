@@ -164,7 +164,7 @@ agent.chainlit_demo(port=8091)
 当前面向开发者提供开放的数据结构，包括Message和Component，方便开发者融入个人已有的大模型应用程序。此部分仍在不断建设中。
 
 ### 消息(Message)
-- 构建大模型应用的统一数据结构，基于Pydantic构建，在不同的Component之间流动。Message几类的默认字段是content，类型是Any。
+- 构建大模型应用的统一数据结构，基于Pydantic构建，在不同的Component之间流动。Message基类的默认字段是content，类型是Any。
 ```python
 from appbuilder import Message
 input_dict = Message({"query": "红烧肉怎么做"})
