@@ -1,6 +1,0 @@
-os.environ["APPBUILDER_TOKEN"] = "Bearer bce-v3/ALTAK-tpJqnbAvTivWEAclPibrT/4ac0ef025903f00e9252a0c41b803b41372a4862"
-
-# 创建BES集群后获得集群id、用户名、密码
-cluster_id = "852815561871200256"
-username = "superuser"
-password = "apaasTest1"
