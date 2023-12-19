@@ -13,7 +13,7 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 ## News
 
 * **[官方组件列表](https://qasandbox.bcetest.baidu.com/ai_apaas/sdk)**
-* **v0.1.0版本发布**：[Release Notes](https://qasandbox.bcetest.baidu.com/ai_apaas/sdk)
+* **v0.1.0版本发布**：[Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.1.0)
   * 2023.12.19初始版本发布，基础云组件支持包括BES；AI能力引擎语音、视觉类10个能力，大模型相关RAG、文本生成能力19个。
 
 ## 教程与文档
