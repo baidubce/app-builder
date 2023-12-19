@@ -38,7 +38,7 @@ pip install --upgrade appbuilder-sdk
 
 ``` python
 # 设置环境中的TOKEN，以下示例略
-os.environ["APPBUILDER_TOKEN"] = "Bearer bce-YOURTOKEN"
+os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
 
 ### 典型示例
