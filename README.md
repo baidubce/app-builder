@@ -136,7 +136,7 @@ asr_path = './appbuilder/tests/asr_test.pcm'
 with open(asr_path, "rb") as f:
     inp = appbuilder.Message(content={"raw_audio": f.read()})
     asr_out = asr(inp)
-    print(out.content)
+    print(asr_out.content)
 ```
 
 ## 应用服务化
