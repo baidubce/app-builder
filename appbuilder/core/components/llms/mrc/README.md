@@ -17,7 +17,7 @@ os.environ["APPBUILDER_TOKEN"] = '...'
 # 创建MRC对象
 mrc_component = appbuilder.MRC()
 
-#初始化参数
+# 初始化参数
 msg = "残疾人怎么办相关证件"
 msg = appbuilder.Message(msg)
 context_list = appbuilder.Message(["""如何办理残疾人通行证一、残疾人通行证办理条件：
@@ -76,7 +76,7 @@ os.environ["APPBUILDER_TOKEN"] = '...'
 # 创建MRC对象
 mrc_component = appbuilder.MRC()
 
-#初始化参数
+# 初始化参数
 msg = "残疾人怎么办相关证件"
 msg = appbuilder.Message(msg)
 context_list = appbuilder.Message(["""如何办理残疾人通行证一、残疾人通行证办理条件：
