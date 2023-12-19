@@ -114,8 +114,12 @@ retriever = vector_index.as_retriever()
 
 input_msg = appbuilder.Message("appbuilder是什么？")
 result_list = retriever(query=input_msg, top_k=3)
+context_msg = appbuilder.Message([item["text"] for item in result_list])
+
 mrc = appbuilder.MRC()
-rag_result = mrc(input_msg, context_out_list=[item["text"] for item in result_list])
+rag_result = mrc(input_msg, context_msg)
+
+print(rag_result.content)
 
 ```
 
