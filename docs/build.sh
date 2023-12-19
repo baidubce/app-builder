@@ -51,7 +51,7 @@ cp index.rst.template source/index.rst
 # 替换 index.rst 文件中的占位符
 sed -i '' "s|{{components_rst}}|${components_rst}|g" source/index.rst
 
-# 删除旧的 index.rst.template 文件
-rm -rf build
-# 生成 html
-make html
+## 删除旧的 index.rst.template 文件
+#rm -rf build
+## 生成 html
+#make html

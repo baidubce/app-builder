@@ -7,6 +7,11 @@
 # http://www.sphinx-doc.org/en/master/config
 
 # -- Path setup --------------------------------------------------------------
+import subprocess
+
+
+def setup(app):
+    subprocess.call(['sh', './build.sh'])
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
