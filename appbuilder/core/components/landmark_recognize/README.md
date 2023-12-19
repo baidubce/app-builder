@@ -1,7 +1,8 @@
 # 地标识别（LandmarkRecognition）
 
 ## 简介
-地表识别组件（LandmarkRecognition）可以识别12万中外著名地标、热门景点，可返回地标名称。
+
+地标识别组件（LandmarkRecognition）可以识别12万中外著名地标、热门景点，可返回地标名称。
 
 ## 基本用法
 ```python
