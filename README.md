@@ -22,7 +22,7 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
   * [认证鉴权](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6)
   * [开通组件权限](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#2%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)
 * **API文档**
-  * [API Docs](https://appbuilder-sdk.readthedocs.io/zh-cn/latest/)
+  * [API Docs](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz)
 
 
 ## 快速安装
