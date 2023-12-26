@@ -1,0 +1,279 @@
+# GBI 问表
+
+## 简介
+GBI 问表，根据提供的表的 schema 信息，生成对应问题的 sql 语句。
+
+## 基本用法
+
+### 快速开启
+
+
+````
+import logging
+import os
+import appbuilder
+from appbuilder.core.message import Message
+from appbuilder.core.components.gbi.basic import GBISessionRecord
+
+#  设置环境变量
+os.environ["APPBUILDER_TOKEN"] = "***"
+
+SUPER_MARKET_SCHEMA = """
+```
+CREATE TABLE `超市营收明细表` (
+  `订单编号` varchar(32) DEFAULT NULL,
+  `订单日期` date DEFAULT NULL,
+  `邮寄方式` varchar(32) DEFAULT NULL,
+  `地区` varchar(32) DEFAULT NULL,
+  `省份` varchar(32) DEFAULT NULL,
+  `客户类型` varchar(32) DEFAULT NULL,
+  `客户名称` varchar(32) DEFAULT NULL,
+  `商品类别` varchar(32) DEFAULT NULL,
+  `制造商` varchar(32) DEFAULT NULL,
+  `商品名称` varchar(32) DEFAULT NULL,
+  `数量` int(11) DEFAULT NULL,
+  `销售额` int(11) DEFAULT NULL,
+  `利润` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+```
+"""
+
+table_schemas = [SUPER_MARKET_SCHEMA]
+query = "列出超市中的所有数据"
+msg = Message(query)
+session = list()
+gbi_nl2sql = appbuilder.GBINL2Sql(model_name="ERNIE-Bot 4.0", table_schemas=table_schemas)
+nl2sql_result_message = gbi_nl2sql(message=msg, session=session)
+print(f"sql: {nl2sql_result_message.content.sql}")
+print("-----------------")
+print(f"llm result: {nl2sql_result_message.content.llm_result}")
+````
+
+    sql: 
+    SELECT * FROM `超市营收明细表`;
+    -----------------
+    llm result: ```sql
+    SELECT * FROM `超市营收明细表`;
+    ```
+
+
+## 参数说明
+
+### 初始化参数
+- model_name:  支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder"
+- table_schemas: 表的 schema，例如:
+  
+```
+CREATE TABLE `超市营收明细表` (
+  `订单编号` varchar(32) DEFAULT NULL,
+  `订单日期` date DEFAULT NULL,
+  `邮寄方式` varchar(32) DEFAULT NULL,
+  `地区` varchar(32) DEFAULT NULL,
+  `省份` varchar(32) DEFAULT NULL,
+  `客户类型` varchar(32) DEFAULT NULL,
+  `客户名称` varchar(32) DEFAULT NULL,
+  `商品类别` varchar(32) DEFAULT NULL,
+  `制造商` varchar(32) DEFAULT NULL,
+  `商品名称` varchar(32) DEFAULT NULL,
+  `数量` int(11) DEFAULT NULL,
+  `销售额` int(11) DEFAULT NULL,
+  `利润` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+```
+
+- knowledge: 用于提供一些知识, 比如 {"毛利率": "毛收入-毛成本/毛成本"}
+- prompt_template: prompt 模版, 必须包含的格式如下:
+
+                  ***你的描述
+                  {schema}
+                  ***你的描述
+                  {column_instrument}
+                  ***你的描述
+                  {kg}
+                  ***你的描述
+                  当前时间：{date}
+                  ***你的描述
+                  {history_instrument}
+                  ***你的描述
+                  当前问题：{query}
+                  回答：
+
+### 调用参数
+- message: message.content 是 query
+- session: gbi session 的历史 列表, 参考 GBISessionRecord
+- column_constraint: 列选约束 参考 ColumnItem 具体定义
+
+#### GBISessionRecord 初始化参数
+- query: 用户的问题
+- answer: gbi_nl2sql 返回的结果 NL2SqlResult
+
+#### ColumnItem 初始化参数如下
+- ori_value: query 中的 词语, 比如: "北京去年收入",  分词后: "北京, 去年, 收入", ori_value 是分词中某一个，比如: ori_value = "北京"
+- column_name: 对应数据库中的列名称, city
+- column_value: 对应数据库中的列值, 北京市
+- table_name: 该列所属的表名称
+- is_like: 与 ori_value 的匹配是包含 还是 等于，包含: True; 等于: False
+
+### 返回值
+- NL2SqlResult 的 message
+
+#### NL2SqlResult 初始化参数如下
+- llm_result: 大模型返回的结果
+- sql: 从 llm_result 中抽取的 sql 语句
+
+## 高级用法
+### 设置 session
+
+
+```python
+session.append(GBISessionRecord(query=query, answer=nl2sql_result_message.content))
+```
+
+再次问表
+
+
+```python
+query2 = "查看商品类别是水果的所有数据"
+msg2 = Message(query2)
+nl2sql_result_message2 = gbi_nl2sql(message=msg2, session=session)
+print(f"sql: {nl2sql_result_message2.content.sql}")
+print("-----------------")
+print(f"llm result: {nl2sql_result_message2.content.llm_result}")
+```
+
+    sql: 
+    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '水果';
+    -----------------
+    llm result: ```sql
+    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '水果';
+    ```
+
+
+### 增加列选优化
+实际上数据中 "商品类别" 存储的是 "新鲜水果", 那么就可以通过列选的限制来优化 sql.
+
+
+```python
+from appbuilder.core.components.gbi.basic import ColumnItem
+
+query2 = "查看商品类别是水果的所有数据"
+msg2 = Message(query2)
+
+column_constraint = [ColumnItem(ori_value="水果", 
+                               column_name="商品类别", 
+                               column_value="新鲜水果", 
+                               table_name="超市营收明细表", 
+                               is_like=False)]
+nl2sql_result_message2 = gbi_nl2sql(message=msg2, session=session, column_constraint=column_constraint)
+print(f"sql: {nl2sql_result_message2.content.sql}")
+print("-----------------")
+print(f"llm result: {nl2sql_result_message2.content.llm_result}")
+```
+
+    sql: 
+    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '新鲜水果'
+    -----------------
+    llm result: ```sql
+    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '新鲜水果'
+    ```
+    
+    这个查询会返回`超市营收明细表`中所有商品类别为"新鲜水果"的数据。因为问题中没有涉及到其他特定的条件或聚合操作，所以这是一个简单的筛选查询。
+
+
+从上面我们看到，商品类别不在是 "水果" 而是 修订为 "新鲜水果"
+
+### 增加知识优化
+当计算某些特殊知识的时候，大模型是不知道的，所以需要告诉大模型具体的知识，比如:
+利润率的计算方式: 利润/销售额
+可以将该知识注入。具体示例如下:
+
+
+```python
+# 注入知识
+gbi_nl2sql.knowledge["利润率"] = "计算方式: 利润/销售额"
+```
+
+
+```python
+query3 = "列出商品类别是日用品的利润率"
+msg3 = Message(query3)
+
+nl2sql_result_message3 = gbi_nl2sql(message=msg3, session=session, column_constraint=list())
+print(f"sql: {nl2sql_result_message3.content.sql}")
+print("-----------------")
+print(f"llm result: {nl2sql_result_message3.content.llm_result}")
+```
+
+    sql: 
+    SELECT 商品类别, SUM(利润)/SUM(销售额) AS 利润率
+    FROM `超市营收明细表`
+    WHERE 商品类别 = '日用品'
+    GROUP BY 商品类别
+    -----------------
+    llm result: ```sql
+    SELECT 商品类别, SUM(利润)/SUM(销售额) AS 利润率
+    FROM `超市营收明细表`
+    WHERE 商品类别 = '日用品'
+    GROUP BY 商品类别
+    ```
+    
+    思考步骤：
+    
+    1. 首先，我们需要从`超市营收明细表`中选择数据。
+    2. 根据当前问题，我们关心的是商品类别为“日用品”的数据。
+    3. 利润率是利润除以销售额，所以我们需要对利润和销售额进行聚合。
+    4. 使用`SUM`函数来计算总的利润和销售额。
+    5. 使用`GROUP BY`语句按商品类别进行分组，以确保我们计算的是日用品的总利润和总销售额。
+    6. 最后，选择商品类别并计算利润率，即利润总和除以销售额总和。
+
+
+## 调整 prompt 模版
+有时候，我们希望定义自己的prompt, 但是必须遵循对应的 prompt 模版的格式。
+
+
+问表的 prompt template 必须包含:
+1. {schema} - 表的 schema 信息
+2. {instrument} - 列选限制的信息
+3. {kg} - 知识
+4. {date} - 时间
+5. {history_prompt} - 历史
+6. {query} - 当前问题
+
+参考下面的示例
+
+
+```python
+NL2SQL_PROMPT_TEMPLATE = """
+  MySql 表 Schema 如下:
+  {schema}
+  请根据用户当前问题，联系历史信息，仅编写1个sql，其中 sql 语句需要使用```sql ```这种 markdown 形式给出。
+  请参考列选信息：
+  {instrument}
+  请参考知识:
+  {kg}
+  当前时间：{date}
+  历史信息如下:
+  {history_prompt}
+  当前问题："{query}"
+  回答：
+"""
+```
+
+
+```python
+
+msg5 = Message("查看商品类别是水果的所有数据")
+gbi_nl2sql5 = appbuilder.GBINL2Sql(model_name="ERNIE-Bot 4.0", table_schemas=table_schemas, prompt_template=NL2SQL_PROMPT_TEMPLATE)
+nl2sql_result_message5 = gbi_nl2sql5(message=msg5, session=session)
+print(f"sql: {nl2sql_result_message5.content.sql}")
+print("-----------------")
+print(f"llm result: {nl2sql_result_message5.content.llm_result}")
+```
+
+    sql: 
+    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '水果';
+    -----------------
+    llm result: ```sql
+    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '水果';
+    ```
+
