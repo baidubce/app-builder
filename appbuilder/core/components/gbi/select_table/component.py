@@ -19,21 +19,26 @@ import json
 from typing import Dict, List, Optional
 from pydantic import BaseModel, Field
 
-from appbuilder.core.component import Component
+from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
-from appbuilder.core.components.gbi.basic import GBISessionRecord
+from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
 
+class SelectTableArgs(ComponentArguments):
+    """
+    选表的参数
+    """
+    query: str = Field(..., description="用户的 query 输入")
+    session: List[SessionRecord] = Field(default=list(), description="gbi session 的历史 列表")
 
-class GBISelectTable(Component):
+
+class SelectTable(Component):
     """
     gbi 选表
     """
 
     def __init__(self, model_name: str, table_descriptions: Dict[str, str],
-                 prompt_template: str = "",
-                 secret_key: Optional[str] = None,
-                 gateway: str = ""):
+                 prompt_template: str = ""):
         """
         创建 GBI 选表对象
         Args:
@@ -64,7 +69,7 @@ class GBISelectTable(Component):
             secret_key:
             gateway:
         """
-        super().__init__(secret_key=secret_key, gateway=gateway)
+        super().__init__(meta=SelectTableArgs)
         if model_name not in SUPPORTED_MODEL_NAME:
             raise ValueError(f"model_name 错误， 请使用 {SUPPORTED_MODEL_NAME} 中的大模型")
         self.model_name = model_name
@@ -73,32 +78,33 @@ class GBISelectTable(Component):
         self.prompt_template = prompt_template
 
     def run(self,
-            message: Message,
-            session: List[GBISessionRecord]) -> Message[List[str]]:
+            message: Message, timeout: int = 60,retry: int = 0) -> Message[List[str]]:
         """
         Args:
-            message: message.content 是用户的问题，也就是 query
-            session: GBISessionRecord 列表
+            message: message.content 字典包含 key:
+                1. query - 用户的问题输入
+                2. session - 对话历史， 可选
 
         Returns: 识别的表名的列表 ["table_name"]
         """
 
+        try:
+            inputs = self.meta(**message.content)
+        except ValidationError as e:
+            raise ValueError(e)
 
-        query = message.content
-        session = session
-
-        response = self._run_select_table(query=query, session=session,
+        response = self._run_select_table(query=inputs.query, session=inputs.session,
                                           prompt_template=self.prompt_template,
                                           table_descriptions=self.table_descriptions,
                                           model_name=self.model_name,
-                                          timeout=60,
-                                          retry=2)
+                                          timeout=timeout,
+                                          retry=retry)
 
         rsp_data = response.json()
 
         return Message(content=rsp_data)
 
-    def _run_select_table(self, query: str, session: List[GBISessionRecord],
+    def _run_select_table(self, query: str, session: List[SessionRecord],
                           prompt_template,
                           table_descriptions: Dict[str, str],
                           model_name: str,

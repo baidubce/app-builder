@@ -17,82 +17,36 @@
 r"""GBI nl2sql component.
 """
 
+from pydantic import BaseModel, Field
 from typing import Dict, List
 
 
-class NL2SqlResult(object):
+class NL2SqlResult(BaseModel):
     """
     gbi_nl2sql 返回的结果
     """
 
-    def __init__(self, llm_result: str, sql: str):
-        """
-        初始化
-        Args:
-            llm_result: 大模型返回的结果
-            sql: 从 llm_result 中抽取的 sql 语句
-        """
-        self.llm_result = llm_result
-        self.sql = sql
+    llm_result: str = Field(..., description="大模型返回的结果")
+    sql: str = Field(..., description="从大模型中抽取的 sql 语句")
 
-    def to_json(self) -> Dict:
-        """
-        转换成 字典
-        Returns:
-
-        """
-        return self.__dict__
-
-
-class GBISessionRecord(object):
+class SessionRecord(BaseModel):
     """
     gbi session record
     """
+    query: str = Field(..., description="用户的问题")
+    answer: NL2SqlResult = Field(..., description="nl2sql 返回的结果")
 
-    def __init__(self, query: str, answer: NL2SqlResult):
-        """
-        GBI Session 的记录
-        Args:
-            query: 用户的问题
-            answer: gbi_nl2sql 返回的结果
-        """
-        self.query = query
-        self.answer = answer
-
-    def to_json(self) -> Dict:
-        return {"query": self.query,
-                "answer": self.answer.to_json()}
-
-
-class ColumnItem(object):
+class ColumnItem(BaseModel):
     """
-    column item
+    列信息
     """
+    ori_value: str = Field(..., description="query 中的 词语, 比如: 北京去年收入,  "
+                                            "分词后: 北京, 去年, 收入, ori_value 是分词中某一个，比如: ori_value = 北京")
+    column_name: str = Field(..., description="对应数据库中的列名称, 比如: city")
+    column_value: str = Field(..., description="对应数据库中的列值, 比如: 北京市")
 
-    def __init__(self, ori_value: str, column_name: str, column_value: str, table_name: str,
-                 is_like: bool = False):
-        """
-        用于标识 query 中的词 应该对应到数据库中的某个列值以及列名，用于提升 sql 生成效果
-        Args:
-            ori_value: query 中的 词语, 比如: "北京去年收入",  分词后: "北京, 去年, 收入", ori_value 是分词中某一个，比如: ori_value = "北京"
-            column_name: 对应数据库中的列名称, city
-            column_value: 对应数据库中的列值, 北京市
-            table_name: 该列所属的表名称
-            is_like: 与 ori_value 的匹配是包含 还是 等于，包含: True; 等于: False
-        """
-        self.column_name = column_name
-        self.column_value = column_value
-        self.ori_value = ori_value
-        self.table_name = table_name
-        self.is_like = is_like
-
-    def to_json(self) -> Dict:
-        """
-        转换成 json
-        Returns:
-
-        """
-        return self.__dict__
+    table_name: str = Field(..., description="该列所在表的名字")
+    is_like: bool = Field(default=False, description="与 ori_value 的匹配是包含 还是 等于，包含: True; 等于: False")
 
 
 SUPPORTED_MODEL_NAME = {

@@ -67,8 +67,8 @@ from .core.components.translate.component import Translation
 from .core.components.embeddings import Embedding
 from .core.components.matching import Matching
 
-from .core.components.gbi.nl2sql.component import GBINL2Sql
-from .core.components.gbi.select_table.component import GBISelectTable
+from .core.components.gbi.nl2sql.component import NL2Sql
+from .core.components.gbi.select_table.component import SelectTable
 
 from appbuilder.core.message import Message
 from appbuilder.core.agent import AgentBase

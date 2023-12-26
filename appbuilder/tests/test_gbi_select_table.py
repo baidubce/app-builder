@@ -17,12 +17,12 @@ import unittest
 import os
 import appbuilder
 from appbuilder.core.message import Message
-from appbuilder.core.components.gbi.basic import GBISessionRecord
+from appbuilder.core.components.gbi.basic import SessionRecord
 
 
 SUPER_MARKET_SCHEMA = """
 ```
-CREATE TABLE `超市营收明细表` (
+CREATE TABLE `supper_market_info` (
   `订单编号` varchar(32) DEFAULT NULL,
   `订单日期` date DEFAULT NULL,
   `邮寄方式` varchar(32) DEFAULT NULL,
@@ -68,7 +68,6 @@ PROMPT_TEMPLATE = """
 回答:
 """
 
-
 class TestGBISelectTable(unittest.TestCase):
 
     def setUp(self):
@@ -78,32 +77,31 @@ class TestGBISelectTable(unittest.TestCase):
         model_name = "ERNIE-Bot 4.0"
 
         self.select_table_node = \
-            appbuilder.GBISelectTable(model_name=model_name,
-                                      table_descriptions={"超市营收明细表": "超市营收明细表，包含超市各种信息等",
+            appbuilder.SelectTable(model_name=model_name,
+                                   table_descriptions={"supper_market_info": "超市营收明细表，包含超市各种信息等",
                                                           "product_sales_info": "产品销售表"})
 
     def test_run_with_default_param(self):
         """测试 run 方法使用有效参数"""
         query = "列出超市中的所有数据"
-        msg = Message(query)
-        session = list()
-        result_message = self.select_table_node(message=msg, session=session)
+        msg = Message({"query": query})
+        result_message = self.select_table_node(message=msg)
         print(result_message.content)
         self.assertIsNotNone(result_message)
         self.assertEqual(len(result_message.content), 1)
-        self.assertEqual(result_message.content[0], "超市营收明细表")
+        self.assertEqual(result_message.content[0], "supper_market_info")
 
     def test_run_with_prompt_template(self):
         """测试 run 方法中 prompt template 模版"""
         query = "列出超市中的所有数据"
-        msg = Message(query)
-        session = list()
+        msg = Message({"query": query})
+        result_message = self.select_table_node(message=msg)
         self.select_table_node.prompt_template = PROMPT_TEMPLATE
-        result_message = self.select_table_node(message=msg, session=session)
+        result_message = self.select_table_node(msg)
 
         self.assertIsNotNone(result_message)
         self.assertEqual(len(result_message.content), 1)
-        self.assertEqual(result_message.content[0], "超市营收明细表")
+        self.assertEqual(result_message.content[0], "supper_market_info")
         self.select_table_node.prompt_template = ""
 
 

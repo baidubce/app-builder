@@ -1,12 +1,11 @@
 # GBI 选表
 
 ## 简介
-GBI 选表，根据提供的表的描述信息以及 query 选择对应的表.
+GBI 选表，根据提供的多个 MySql 表名 以及 表名对应的描述信息，通过 query 选择一个或多个最合适的表来回答该 query.
+一般的试用场景是，当有数据库有多个表的时候，但是实际只有1个表能回答该 query，那么，通过该能力将该表选择出来，用于后面的 问表 环节。
 
 ## 基本用法
-
-### 快速开启
-
+下面是根据提供的表的描述信息以及 query 选择对应的表的示例。
 
 
 ```python
@@ -14,28 +13,26 @@ import logging
 import os
 import appbuilder
 from appbuilder.core.message import Message
-from appbuilder.core.components.gbi.basic import GBISessionRecord
+from appbuilder.core.components.gbi.basic import SessionRecord
 
 #  设置环境变量
 os.environ["APPBUILDER_TOKEN"] = "***"
 
-# 表的描述信息
+# 表的描述信息, key: 表名; value: 是表的描述
 table_descriptions = {
-    "超市营收明细表": "超市营收明细表，包含超市各种信息等",
+    "supper_market_info": "超市营收明细表，包含超市各种信息等",
     "product_sales_info": "产品销售表"
 }
 
 
 # 生成问表对象
-select_table = appbuilder.GBISelectTable(model_name="ERNIE-Bot 4.0", table_descriptions=table_descriptions)
-query = "列出超市中的所有数据"
-msg = Message(query)
-session = list()
-select_table_result_message = select_table(message=msg, session=session)
+select_table = appbuilder.SelectTable(model_name="ERNIE-Bot 4.0", table_descriptions=table_descriptions)
+select_table_result_message = select_table(Message({"query": "列出超市中的所有数据"}))
+
 print(f"选的表是: {select_table_result_message.content}")
 ```
 
-      选的表是: ['超市营收明细表']
+    选的表是: ['supper_market_info']
 
 
 ## 参数说明
@@ -45,7 +42,7 @@ print(f"选的表是: {select_table_result_message.content}")
 
 ```
 {
-    "超市营收明细表": "超市营收明细表，包含超市各种信息等",
+    "supper_market_info": "超市营收明细表，包含超市各种信息等",
     "product_sales_info": "产品销售表"
 }
 ```
@@ -69,8 +66,9 @@ print(f"选的表是: {select_table_result_message.content}")
 ```
      
 ### 调用参数
-- message: message.content 是用户的问题，也就是 query
-- session: GBISessionRecord 列表
+- message: message.content 是用户的问题，包含的key: query, session
+  * query: 用户提出的问题
+  * session: GBISessionRecord 列表
 
 #### GBISessionRecord 初始化参数
 - query: 用户的问题
@@ -107,14 +105,14 @@ SELECT_TABLE_PROMPT_TEMPLATE = """
 
 
 ```python
-select_table4 = appbuilder.GBISelectTable(model_name="ERNIE-Bot 4.0", 
+select_table4 = appbuilder.SelectTable(model_name="ERNIE-Bot 4.0", 
                                           table_descriptions=table_descriptions,
                                           prompt_template=SELECT_TABLE_PROMPT_TEMPLATE)
-query4 = "列出超市中的所有数据"
-msg4 = Message(query4)
-select_table_result_message4 = select_table4(message=msg4, session=list())
+
+select_table_result_message4 = select_table4(Message({"query": "列出超市中的所有数据"}))
+
 print(f"选的表是: {select_table_result_message4.content}")
 ```
 
-    选的表是: ['超市营收明细表']
+    选的表是: ['supper_market_info']
 

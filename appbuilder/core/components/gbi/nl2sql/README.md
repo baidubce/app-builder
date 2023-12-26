@@ -1,26 +1,25 @@
 # GBI 问表
 
 ## 简介
-GBI 问表，根据提供的表的 schema 信息，生成对应问题的 sql 语句。
+GBI 问表，根据提供的 mysql 表的 schema 信息，生成对应问题的 sql 语句。
 
 ## 基本用法
+这里是一个示例，展示如何基于 mysql 表的 schema, 根据问题生成 sql 语句。
 
-### 快速开启
 
-
-````
+````python
 import logging
 import os
 import appbuilder
 from appbuilder.core.message import Message
-from appbuilder.core.components.gbi.basic import GBISessionRecord
+from appbuilder.core.components.gbi.basic import SessionRecord
 
 #  设置环境变量
 os.environ["APPBUILDER_TOKEN"] = "***"
 
 SUPER_MARKET_SCHEMA = """
 ```
-CREATE TABLE `超市营收明细表` (
+CREATE TABLE `supper_market_info` (
   `订单编号` varchar(32) DEFAULT NULL,
   `订单日期` date DEFAULT NULL,
   `邮寄方式` varchar(32) DEFAULT NULL,
@@ -39,21 +38,20 @@ CREATE TABLE `超市营收明细表` (
 """
 
 table_schemas = [SUPER_MARKET_SCHEMA]
+gbi_nl2sql = appbuilder.NL2Sql(model_name="ERNIE-Bot 4.0", table_schemas=table_schemas)
 query = "列出超市中的所有数据"
-msg = Message(query)
-session = list()
-gbi_nl2sql = appbuilder.GBINL2Sql(model_name="ERNIE-Bot 4.0", table_schemas=table_schemas)
-nl2sql_result_message = gbi_nl2sql(message=msg, session=session)
+nl2sql_result_message = gbi_nl2sql(Message({"query": query}))
+
 print(f"sql: {nl2sql_result_message.content.sql}")
 print("-----------------")
 print(f"llm result: {nl2sql_result_message.content.llm_result}")
 ````
 
     sql: 
-    SELECT * FROM `超市营收明细表`;
+    SELECT * FROM supper_market_info;
     -----------------
     llm result: ```sql
-    SELECT * FROM `超市营收明细表`;
+    SELECT * FROM supper_market_info;
     ```
 
 
@@ -64,7 +62,7 @@ print(f"llm result: {nl2sql_result_message.content.llm_result}")
 - table_schemas: 表的 schema，例如:
   
 ```
-CREATE TABLE `超市营收明细表` (
+CREATE TABLE `supper_market_info` (
   `订单编号` varchar(32) DEFAULT NULL,
   `订单日期` date DEFAULT NULL,
   `邮寄方式` varchar(32) DEFAULT NULL,
@@ -83,7 +81,6 @@ CREATE TABLE `超市营收明细表` (
 
 - knowledge: 用于提供一些知识, 比如 {"毛利率": "毛收入-毛成本/毛成本"}
 - prompt_template: prompt 模版, 必须包含的格式如下:
-
                   ***你的描述
                   {schema}
                   ***你的描述
@@ -99,9 +96,10 @@ CREATE TABLE `超市营收明细表` (
                   回答：
 
 ### 调用参数
-- message: message.content 是 query
-- session: gbi session 的历史 列表, 参考 GBISessionRecord
-- column_constraint: 列选约束 参考 ColumnItem 具体定义
+- message: message.content 是 字典，包含: query, session, column_constraint 三个key
+  * query: 用户的问题
+  * session: gbi session 的历史 列表, 参考 GBISessionRecord
+  * column_constraint: 列选约束 参考 ColumnItem 具体定义
 
 #### GBISessionRecord 初始化参数
 - query: 用户的问题
@@ -126,26 +124,26 @@ CREATE TABLE `超市营收明细表` (
 
 
 ```python
-session.append(GBISessionRecord(query=query, answer=nl2sql_result_message.content))
+session = list()
+session.append(SessionRecord(query=query, answer=nl2sql_result_message.content))
 ```
 
 再次问表
 
 
 ```python
-query2 = "查看商品类别是水果的所有数据"
-msg2 = Message(query2)
-nl2sql_result_message2 = gbi_nl2sql(message=msg2, session=session)
+nl2sql_result_message2 = gbi_nl2sql(Message({"query": "查看商品类别是水果的所有数据",
+                                             "session": session}))
 print(f"sql: {nl2sql_result_message2.content.sql}")
 print("-----------------")
 print(f"llm result: {nl2sql_result_message2.content.llm_result}")
 ```
 
     sql: 
-    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '水果';
+    SELECT * FROM supper_market_info WHERE 商品类别 = '水果';
     -----------------
     llm result: ```sql
-    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '水果';
+    SELECT * FROM supper_market_info WHERE 商品类别 = '水果';
     ```
 
 
@@ -156,28 +154,25 @@ print(f"llm result: {nl2sql_result_message2.content.llm_result}")
 ```python
 from appbuilder.core.components.gbi.basic import ColumnItem
 
-query2 = "查看商品类别是水果的所有数据"
-msg2 = Message(query2)
-
 column_constraint = [ColumnItem(ori_value="水果", 
                                column_name="商品类别", 
                                column_value="新鲜水果", 
                                table_name="超市营收明细表", 
                                is_like=False)]
-nl2sql_result_message2 = gbi_nl2sql(message=msg2, session=session, column_constraint=column_constraint)
+nl2sql_result_message2 = gbi_nl2sql(Message({"query": "查看商品类别是水果的所有数据",
+                                             "column_constraint": column_constraint}))
+
 print(f"sql: {nl2sql_result_message2.content.sql}")
 print("-----------------")
 print(f"llm result: {nl2sql_result_message2.content.llm_result}")
 ```
 
     sql: 
-    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '新鲜水果'
+    SELECT * FROM supper_market_info WHERE 商品类别='新鲜水果'
     -----------------
     llm result: ```sql
-    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '新鲜水果'
+    SELECT * FROM supper_market_info WHERE 商品类别='新鲜水果'
     ```
-    
-    这个查询会返回`超市营收明细表`中所有商品类别为"新鲜水果"的数据。因为问题中没有涉及到其他特定的条件或聚合操作，所以这是一个简单的筛选查询。
 
 
 从上面我们看到，商品类别不在是 "水果" 而是 修订为 "新鲜水果"
@@ -198,7 +193,7 @@ gbi_nl2sql.knowledge["利润率"] = "计算方式: 利润/销售额"
 query3 = "列出商品类别是日用品的利润率"
 msg3 = Message(query3)
 
-nl2sql_result_message3 = gbi_nl2sql(message=msg3, session=session, column_constraint=list())
+nl2sql_result_message3 = gbi_nl2sql(Message({"query": "列出商品类别是日用品的利润率"}))
 print(f"sql: {nl2sql_result_message3.content.sql}")
 print("-----------------")
 print(f"llm result: {nl2sql_result_message3.content.llm_result}")
@@ -206,25 +201,16 @@ print(f"llm result: {nl2sql_result_message3.content.llm_result}")
 
     sql: 
     SELECT 商品类别, SUM(利润)/SUM(销售额) AS 利润率
-    FROM `超市营收明细表`
+    FROM supper_market_info
     WHERE 商品类别 = '日用品'
     GROUP BY 商品类别
     -----------------
     llm result: ```sql
     SELECT 商品类别, SUM(利润)/SUM(销售额) AS 利润率
-    FROM `超市营收明细表`
+    FROM supper_market_info
     WHERE 商品类别 = '日用品'
     GROUP BY 商品类别
     ```
-    
-    思考步骤：
-    
-    1. 首先，我们需要从`超市营收明细表`中选择数据。
-    2. 根据当前问题，我们关心的是商品类别为“日用品”的数据。
-    3. 利润率是利润除以销售额，所以我们需要对利润和销售额进行聚合。
-    4. 使用`SUM`函数来计算总的利润和销售额。
-    5. 使用`GROUP BY`语句按商品类别进行分组，以确保我们计算的是日用品的总利润和总销售额。
-    6. 最后，选择商品类别并计算利润率，即利润总和除以销售额总和。
 
 
 ## 调整 prompt 模版
@@ -261,19 +247,18 @@ NL2SQL_PROMPT_TEMPLATE = """
 
 
 ```python
+gbi_nl2sql5 = appbuilder.NL2Sql(model_name="ERNIE-Bot 4.0", table_schemas=table_schemas, prompt_template=NL2SQL_PROMPT_TEMPLATE)
+nl2sql_result_message5 = gbi_nl2sql5(Message({"query": "查看商品类别是水果的所有数据"}))
 
-msg5 = Message("查看商品类别是水果的所有数据")
-gbi_nl2sql5 = appbuilder.GBINL2Sql(model_name="ERNIE-Bot 4.0", table_schemas=table_schemas, prompt_template=NL2SQL_PROMPT_TEMPLATE)
-nl2sql_result_message5 = gbi_nl2sql5(message=msg5, session=session)
 print(f"sql: {nl2sql_result_message5.content.sql}")
 print("-----------------")
 print(f"llm result: {nl2sql_result_message5.content.llm_result}")
 ```
 
     sql: 
-    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '水果';
+    SELECT * FROM supper_market_info WHERE 商品类别 = '水果'
     -----------------
     llm result: ```sql
-    SELECT * FROM `超市营收明细表` WHERE `商品类别` = '水果';
+    SELECT * FROM supper_market_info WHERE 商品类别 = '水果'
     ```
 

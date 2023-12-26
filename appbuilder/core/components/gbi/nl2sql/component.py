@@ -19,23 +19,32 @@ import json
 from typing import Dict, List, Optional
 from pydantic import BaseModel, Field
 
-from appbuilder.core.component import Component
+from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
-from appbuilder.core.components.gbi.basic import GBISessionRecord
+from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import ColumnItem
 from appbuilder.core.components.gbi.basic import NL2SqlResult
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
 
 
-class GBINL2Sql(Component):
+
+class NL2SqlArgs(ComponentArguments):
+    """
+    nl2sql 的参数
+    """
+    query: str = Field(..., description="用户的 query 输入")
+    session: List[SessionRecord] = Field(default=list(), description="gbi session 的历史 列表")
+    column_constraint: List[ColumnItem] = Field(default=list(), description="列选的限制条件")
+
+
+class NL2Sql(Component):
     """
     gib nl2sql
     """
+    meta = NL2SqlArgs
 
     def __init__(self, model_name: str, table_schemas: List[str], knowledge: Dict = None,
-                 prompt_template: str = "",
-                 secret_key: Optional[str] = None,
-                 gateway: str = ""):
+                 prompt_template: str = ""):
         """
         创建 gbi nl2sql 对象
         Args:
@@ -62,10 +71,8 @@ class GBINL2Sql(Component):
                   ***你的描述
                   当前问题：{query}
                   回答：
-            secret_key: 用户创建的 key
-            gateway: gateway 地址
         """
-        super().__init__(secret_key=secret_key, gateway=gateway)
+        super().__init__(meta=NL2SqlArgs)
 
         if model_name not in SUPPORTED_MODEL_NAME:
             raise ValueError(f"model_name 错误， 请使用 {SUPPORTED_MODEL_NAME} 中的大模型")
@@ -76,36 +83,37 @@ class GBINL2Sql(Component):
         self.prompt_template = prompt_template
 
     def run(self,
-            message: Message,
-            session: List[GBISessionRecord],
-            column_constraint: List[ColumnItem] = None) -> Message[NL2SqlResult]:
+            message: Message, timeout: float = 60, retry: int = 0) -> Message[NL2SqlResult]:
         """
         执行 nl2sql
         Args:
-            message: message.content 是 query
-            session: gbi session 的历史 列表
-            column_constraint: 列选约束 参考 ColumnItem 具体定义
+            message: message.content 是字典包含, key 如下:
+                1. query: 用户问题
+                2. session: gbi session 的历史 列表, 参考 SessionRecord
+                3. column_constraint: 列选约束 参考 ColumnItem 具体定义
         Returns:
             NL2SqlResult 的 message
         """
 
-        query = message.content
-        session = session
-        column_constraint = column_constraint or list()
 
-        response = self._run_nl2sql(query=query, session=session, table_schemas=self.table_schemas,
-                                    column_constraint=column_constraint, knowledge=self.knowledge,
+        try:
+            inputs = self.meta(**message.content)
+        except ValidationError as e:
+            raise ValueError(e)
+
+        response = self._run_nl2sql(query=inputs.query, session=inputs.session, table_schemas=self.table_schemas,
+                                    column_constraint=inputs.column_constraint, knowledge=self.knowledge,
                                     prompt_template=self.prompt_template,
                                     model_name=self.model_name,
-                                    timeout=60,
-                                    retry=2)
+                                    timeout=timeout,
+                                    retry=retry)
 
         rsp_data = response.json()
         nl2sql_result = NL2SqlResult(llm_result=rsp_data["llm_result"],
                                      sql=rsp_data["sql"])
         return Message(content=nl2sql_result)
 
-    def _run_nl2sql(self, query: str, session: List[GBISessionRecord], table_schemas: List[str], knowledge: Dict[str, str],
+    def _run_nl2sql(self, query: str, session: List[SessionRecord], table_schemas: List[str], knowledge: Dict[str, str],
                     prompt_template: str,
                     column_constraint: List[ColumnItem],
                     model_name: str,
@@ -135,8 +143,8 @@ class GBINL2Sql(Component):
 
         payload = {"query": query,
                    "table_schemas": table_schemas,
-                   "session": [session_record.to_json() for session_record in session],
-                   "column_constraint": [column_item.to_json() for column_item in column_constraint],
+                   "session": [session_record.dict() for session_record in session],
+                   "column_constraint": [column_item.dict() for column_item in column_constraint],
                    "model_name": model_name,
                    "knowledge": knowledge,
                    "prompt_template": prompt_template}
