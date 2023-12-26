@@ -17,9 +17,7 @@ import json
 import unittest
 import os
 
-from appbuilder.utils.logger_util import logger
-from appbuilder import Message, DocParser
-from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter
+import appbuilder
 
 
 class TestDocSplitter(unittest.TestCase):
@@ -35,19 +33,19 @@ class TestDocSplitter(unittest.TestCase):
         current_dir = os.path.dirname(__file__)
         file_name = "test.pdf"
         test_pdf_path = os.path.join(current_dir, file_name)
-        msg = Message(test_pdf_path)
-        parser = DocParser()
+        msg = appbuilder.Message(test_pdf_path)
+        parser = appbuilder.DocParser()
         xmind_output = parser(msg, return_raw=True)
 
         # 2. 按照参数进行文档分段
-        doc_splitter = DocSplitter(splitter_type="split_by_chunk",
+        doc_splitter = appbuilder.DocSplitter(splitter_type="split_by_chunk",
                                    separators=["。", "！", "？", ".", "!", "?", "……", "|\n"],
                                    max_segment_length=800,
                                    overlap=200,
                                    join_symbol="")
         doc_splitter_result = doc_splitter(xmind_output)
 
-        logger.info("paragraphs: {}".format(
+        appbuilder.logger.info("paragraphs: {}".format(
             json.dumps(doc_splitter_result.content, ensure_ascii=False))
         )
 
@@ -63,28 +61,28 @@ class TestDocSplitter(unittest.TestCase):
         # 1. 文档解析
         current_dir = os.path.dirname(__file__)
         test_pdf_path = os.path.join(current_dir, config["title"])
-        msg = Message(test_pdf_path)
-        parser = DocParser()
+        msg = appbuilder.Message(test_pdf_path)
+        parser = appbuilder.DocParser()
         xmind_output = parser(msg, return_raw=True)
 
         # 2. 按照文档标题层级分段
-        doc_splitter = DocSplitter(splitter_type="split_by_title")
+        doc_splitter = appbuilder.DocSplitter(splitter_type="split_by_title")
         result = doc_splitter(xmind_output)
 
-        logger.info("paragraphs: {}".format(
+        appbuilder.logger.info("paragraphs: {}".format(
             json.dumps(result.content["paragraphs"], ensure_ascii=False))
         )
 
         # 在这里进行断言，确保你的代码达到预期的效果
-        self.assertIsInstance(result, Message)
+        self.assertIsInstance(result, appbuilder.Message)
         self.assertTrue("paragraphs" in result.content)
 
     def test_run_chunk_splitter_with_invalid_input(self):
         # 模拟DocParser的输出结果
         invalid_result = "Invalid Result"
-        message = Message(content=invalid_result)
+        message = appbuilder.Message(content=invalid_result)
 
-        doc_splitter = DocSplitter(splitter_type="title_level")
+        doc_splitter = appbuilder.DocSplitter(splitter_type="title_level")
 
         # 运行 DocSplitter，确保它能处理无效输入
         with self.assertRaises(ValueError):

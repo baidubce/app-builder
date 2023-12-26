@@ -49,7 +49,7 @@ class ComponentArguments(BaseModel):
         return inputs
 
 
-class Component(HTTPClient):
+class Component:
     r"""Component基类, 其它实现的Component子类需要继承该基类，并至少实现run方法."""
 
     def __init__(self,
@@ -66,8 +66,9 @@ class Component(HTTPClient):
             返回：
                 无
         """
-        super().__init__(secret_key, gateway)
+
         self.meta = meta
+        self.http_client = HTTPClient(secret_key, gateway)
 
     def __call__(self, *inputs, **kwargs):
         r"""implement __call__ method"""
@@ -103,4 +104,3 @@ class Component(HTTPClient):
     def _debug(self, **data) -> None:
         r"""pass"""
         pass
-

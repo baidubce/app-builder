@@ -89,18 +89,18 @@ class Translation(Component):
         if not request.from_lang:
             request.from_lang = "auto"
         request_data = TranslateRequest.to_json(request)
-        if retry != self.retry.total:
-            self.retry.total = retry
-        headers = self.auth_header()
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        headers = self.http_client.auth_header()
         headers['content-type'] = 'application/json;charset=utf-8'
 
-        url = self.service_url("/v1/bce/aip/mt/texttrans/v1")
+        url = self.http_client.service_url("/v1/bce/aip/mt/texttrans/v1")
 
-        response = self.s.post(url, headers=headers, data=request_data, timeout=timeout)
+        response = self.http_client.session.post(url, headers=headers, data=request_data, timeout=timeout)
 
-        self.check_response_header(response)
+        self.http_client.check_response_header(response)
         data = response.json()
-        self.check_response_json(data)
+        self.http_client.check_response_json(data)
         if "error_code" in data and "error_msg" in data:
             raise AppBuilderServerException(service_err_code=data["error_code"], service_err_message=data["error_msg"])
 

@@ -83,17 +83,17 @@ class DishRecognition(Component):
         if not request.filter_threshold:
             request.filter_threshold = 0.95
         request_data = DishRecognitionRequest.to_dict(request)
-        if retry != self.retry.total:
-            self.retry.total = retry
-        headers = self.auth_header()
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        headers = self.http_client.auth_header()
         headers['content-type'] = 'application/x-www-form-urlencoded'
 
-        url = self.service_url("/v1/bce/aip/image-classify/v2/dish")
-        response = self.s.post(url, headers=headers, data=request_data, timeout=timeout)
+        url = self.http_client.service_url("/v1/bce/aip/image-classify/v2/dish")
+        response = self.http_client.session.post(url, headers=headers, data=request_data, timeout=timeout)
 
-        self.check_response_header(response)
+        self.http_client.check_response_header(response)
         data = response.json()
-        self.check_response_json(data)
+        self.http_client.check_response_json(data)
         if "error_code" in data and "error_msg" in data:
             raise AppBuilderServerException(service_err_code=data["error_code"], service_err_message=data["error_msg"])
-        return DishRecognitionResponse(data, request_id=self.response_request_id(response))
+        return DishRecognitionResponse(data, request_id=self.http_client.response_request_id(response))

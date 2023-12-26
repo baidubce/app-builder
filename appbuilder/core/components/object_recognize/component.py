@@ -77,17 +77,17 @@ class ObjectRecognition(Component):
             raise ValueError("one of image or url must be set")
 
         data = ObjectRecognitionRequest.to_dict(request)
-        if self.retry.total != retry:
-            self.retry.total = retry
-        headers = self.auth_header()
+        if self.http_client.retry.total != retry:
+            self.http_client.retry.total = retry
+        headers = self.http_client.auth_header()
         headers['content-type'] = 'application/x-www-form-urlencoded'
-        url = self.service_url("/v1/bce/aip/image-classify/v2/advanced_general")
-        response = self.s.post(url, headers=headers, data=data, timeout=timeout)
-        super().check_response_header(response)
+        url = self.http_client.service_url("/v1/bce/aip/image-classify/v2/advanced_general")
+        response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
+        self.http_client.check_response_json(data)
         self.__class__._check_service_error(data)
-        request_id = self.response_request_id(response)
+        request_id = self.http_client.response_request_id(response)
         object_response = ObjectRecognitionResponse.from_json(payload=json.dumps(data))
         object_response.request_id = request_id
         return object_response

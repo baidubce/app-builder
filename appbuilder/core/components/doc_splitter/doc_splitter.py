@@ -174,18 +174,17 @@ class ChunkSplitter(Component):
         if not isinstance(paser_res, ParseResult):
             raise ValueError("message.content type must be a ParseResult")
 
-        headers = {
-            "Authorization": self.secret_key if self.secret_key else os.getenv("APPBUILDER_TOKEN"),
-            "Content-Type": "application/json"
-        }
+        headers = self.http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+
         chunk_splitter_remote_params = {"xmind_res": paser_res.raw, "max_segment_length": self.max_segment_length,
                                         "overlap": self.overlap, "separators": self.separators,
                                         "join_symbol": self.join_symbol}
 
-        response = self.s.post(url=self.service_url(prefix=self.base_url, sub_path=""),
-                               headers=headers, json=chunk_splitter_remote_params, stream=False)
-        self.check_response_header(response)
-        self.check_response_json(response.json())
+        response = self.http_client.session.post(url=self.http_client.service_url(prefix=self.base_url, sub_path=""),
+                                                 headers=headers, json=chunk_splitter_remote_params, stream=False)
+        self.http_client.check_response_header(response)
+        self.http_client.check_response_json(response.json())
         doc_chunk_splitter_res = response.json()
 
         return Message(doc_chunk_splitter_res["result"])

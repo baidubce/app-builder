@@ -96,12 +96,12 @@ class ExtractTableFromDoc(Component):
             "single_table_size": self.table_max_size,
             "field_before_table_cnt": doc_node_num_before_table
         }
-        url = self.service_url(sub_path="", prefix=self.base_url)
+        url = self.http_client.service_url(sub_path="", prefix=self.base_url)
         # logger.info("request url: {}, headers: {}".format(url, headers))
-        resp = self.s.post(url=url, data=json.dumps(params), headers=self.auth_header())
+        resp = self.http_client.session.post(url=url, data=json.dumps(params), headers=self.http_client.auth_header())
 
-        self.check_response_header(resp)
+        self.http_client.check_response_header(resp)
         resp = resp.json()
-        self.check_response_json(resp)
+        self.http_client.check_response_json(resp)
         resp = self._post_process(resp)
         return Message(resp)

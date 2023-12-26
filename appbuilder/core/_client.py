@@ -18,10 +18,8 @@
 import os
 from typing import Optional
 
-
 import requests
 from requests.adapters import HTTPAdapter, Retry
-
 
 from appbuilder.core._exception import *
 from appbuilder.core.constants import GATEWAY_URL
@@ -29,6 +27,7 @@ from appbuilder.core.constants import GATEWAY_URL
 
 class HTTPClient:
     r"""HTTPClient类,实现与后端服务交互的公共方法"""
+
     def __init__(self,
                  secret_key: Optional[str] = None,
                  gateway: str = ""
@@ -53,9 +52,9 @@ class HTTPClient:
 
         if not self.gateway.startswith("http"):
             self.gateway = "https://" + self.gateway
-        self.s = requests.sessions.Session()
+        self.session = requests.sessions.Session()
         self.retry = Retry(total=0, backoff_factor=0.1)
-        self.s.mount(self.gateway, HTTPAdapter(max_retries=self.retry))
+        self.session.mount(self.gateway, HTTPAdapter(max_retries=self.retry))
 
     @staticmethod
     def check_response_header(response: requests.Response):
@@ -112,6 +111,3 @@ class HTTPClient:
     def response_request_id(response: requests.Response):
         r"""response_request_id is a helper method get unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
-
-
-

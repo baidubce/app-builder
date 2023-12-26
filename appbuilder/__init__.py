@@ -57,7 +57,7 @@ from .core.components.text_to_image.component import Text2Image
 from .core.components.landmark_recognize.component import LandmarkRecognition
 from .core.components.tts.component import TTS
 from .core.components.extract_table.component import ExtractTableFromDoc
-from .core.components.doc_parser.doc_parser import DocParser
+from .core.components.doc_parser.doc_parser import DocParser, ParserConfig
 from .core.components.doc_splitter.doc_splitter import DocSplitter
 from .core.components.retriever.bes_retriever import BESRetriever
 from .core.components.retriever.bes_retriever import BESVectorStoreIndex
@@ -114,6 +114,7 @@ __all__ = [
     'TTS',
     "ExtractTableFromDoc",
     "DocParser",
+    "ParserConfig",
     "DocSplitter",
     "BESRetriever",
     "BESVectorStoreIndex",

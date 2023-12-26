@@ -76,17 +76,17 @@ class LandmarkRecognition(Component):
         if not request.image and not request.url:
             raise ValueError("one of image or url must be set")
         data = LandmarkRecognitionRequest.to_dict(request)
-        if retry != self.retry.total:
-            self.retry.total = retry
-        headers = self.auth_header()
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        headers = self.http_client.auth_header()
         headers['content-type'] = 'application/x-www-form-urlencoded'
-        url = self.service_url("/v1/bce/aip/image-classify/v1/landmark")
-        response = self.s.post(url, data=data, timeout=timeout, headers=headers)
-        super().check_response_header(response)
+        url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/landmark")
+        response = self.http_client.session.post(url, data=data, timeout=timeout, headers=headers)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
+        self.http_client.check_response_json(data)
         self.__class__.__check_service_error(data)
-        return LandmarkRecognitionResponse(data, request_id=self.response_request_id(response))
+        return LandmarkRecognitionResponse(data, request_id=self.http_client.response_request_id(response))
 
     @staticmethod
     def __check_service_error(data: dict):
