@@ -14,7 +14,7 @@ from appbuilder import Message, ExtractTableFromDoc, DocParser
 
 
 # 设置环境变量
-os.environ["GATEWAY_URL"] = "..."
+os.environ["APPBUILDER_TOKEN"] = "..."
 
 
 # 测试文档解析器使用默认配置，xxx为待解析的文档路径。
