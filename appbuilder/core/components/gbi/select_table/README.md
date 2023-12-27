@@ -68,9 +68,9 @@ print(f"选的表是: {select_table_result_message.content}")
 ### 调用参数
 - message: message.content 是用户的问题，包含的key: query, session
   * query: 用户提出的问题
-  * session: GBISessionRecord 列表
+  * session: SessionRecord 列表
 
-#### GBISessionRecord 初始化参数
+#### SessionRecord 初始化参数
 - query: 用户的问题
 - answer: gbi_nl2sql 返回的结果 NL2SqlResult
   

@@ -17,12 +17,13 @@ r"""GBI nl2sql component.
 import uuid
 import json
 from typing import Dict, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
 from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
+
 
 class SelectTableArgs(ComponentArguments):
     """

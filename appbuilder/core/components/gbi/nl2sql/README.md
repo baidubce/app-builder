@@ -98,10 +98,10 @@ CREATE TABLE `supper_market_info` (
 ### 调用参数
 - message: message.content 是 字典，包含: query, session, column_constraint 三个key
   * query: 用户的问题
-  * session: gbi session 的历史 列表, 参考 GBISessionRecord
+  * session: gbi session 的历史 列表, 参考 SessionRecord
   * column_constraint: 列选约束 参考 ColumnItem 具体定义
 
-#### GBISessionRecord 初始化参数
+#### SessionRecord 初始化参数
 - query: 用户的问题
 - answer: gbi_nl2sql 返回的结果 NL2SqlResult
 
