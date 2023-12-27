@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import unittest
 import os
-from appbuilder.core.components.doc_parser.doc_parser import DocParser, ParserConfig
-from appbuilder.core.message import Message
+
+import appbuilder
 
 
 class TestDocParser(unittest.TestCase):
@@ -28,8 +27,8 @@ class TestDocParser(unittest.TestCase):
         cls.test_pdf_path = os.path.join(cls.current_dir, 'test.pdf')
 
     def test_set_config(self):
-        self.doc_parser = DocParser()
-        config = ParserConfig()
+        self.doc_parser = appbuilder.DocParser()
+        config = appbuilder.ParserConfig()
         config.convert_file_to_pdf = True
         config.return_para_node_tree = False
         config.convert_file_to_pdf = True
@@ -38,7 +37,7 @@ class TestDocParser(unittest.TestCase):
         self.assertEqual(self.doc_parser.config.convert_file_to_pdf, True)
 
     def test_make_parse_result(self):
-        self.doc_parser = DocParser()
+        self.doc_parser = appbuilder.DocParser()
         data = {'para_nodes': {}, 'catalog': {}, 'pdf_data': '', 'file_content': []}
         result = self.doc_parser.make_parse_result(data)
         self.assertEqual(result['para_node_tree'], {})
@@ -47,16 +46,16 @@ class TestDocParser(unittest.TestCase):
 
     def test_doc_parser_with_default_config(self):
         # 测试文档解析器使用默认配置
-        msg = Message(self.test_pdf_path)
-        parser = DocParser()
+        msg = appbuilder.Message(self.test_pdf_path)
+        parser = appbuilder.DocParser()
         result = parser(msg)
         # 断言解析结果的 para_node_tree 不为空（根据实际情况调整断言）
         self.assertIsNotNone(result.content.para_node_tree)
 
     def test_doc_parser_with_modified_config(self):
         # 测试文档解析器使用修改后的配置
-        msg = Message(self.test_pdf_path)
-        parser = DocParser()
+        msg = appbuilder.Message(self.test_pdf_path)
+        parser = appbuilder.DocParser()
         # 修改配置参数
         config = parser.config
         config.return_para_node_tree = False

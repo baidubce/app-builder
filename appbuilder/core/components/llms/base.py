@@ -286,13 +286,13 @@ class CompletionBaseComponent(Component):
                    retry: int = 0, ) -> CompletionResponse:
         r"""Send a byte array of an audio file to obtain the result of speech recognition."""
 
-        headers = self.auth_header()
+        headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
 
         completion_url = "/" + self.version + "/api/llm/" + self.name
 
         stream = True if request.response_mode == "streaming" else False
-        url = self.service_url(completion_url, self.base_url)
+        url = self.http_client.service_url(completion_url, self.base_url)
 
         logger.debug(
             "request url: {}, method: {}, json: {}, headers: {}".format(url,
@@ -300,7 +300,7 @@ class CompletionBaseComponent(Component):
                                                                         request.params,
                                                                         headers))
 
-        response = self.s.post(url, json=request.params, headers=headers, timeout=timeout, stream=stream)
+        response = self.http_client.session.post(url, json=request.params, headers=headers, timeout=timeout, stream=stream)
 
         logger.debug(
             "request url: {}, method: {}, json: {}, headers: {}, response: {}".format(url, "POST",

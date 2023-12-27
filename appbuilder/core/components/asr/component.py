@@ -81,20 +81,20 @@ class ASR(Component):
             obj:`ShortSpeechRecognitionResponse`: 接口返回的输出消息。
         """
         ContentType = "audio/" + request.format + ";rate=" + str(request.rate)
-        headers = self.auth_header()
+        headers = self.http_client.auth_header()
         headers['content-type'] = ContentType
         params = {
             'dev_pid': request.dev_pid,
             'cuid': request.cuid
         }
-        if retry != self.retry.total:
-            self.retry.total = retry
-        response = self.s.post(self.service_url("/v1/bce/aip_speech/asrpro"), params=params, headers=headers, data=request.speech, timeout=timeout)
-        super().check_response_header(response)
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        response = self.http_client.session.post(self.http_client.service_url("/v1/bce/aip_speech/asrpro"), params=params, headers=headers, data=request.speech, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
+        self.http_client.check_response_json(data)
         self.__class__._check_service_error(data)
-        request_id = self.response_request_id(response)
+        request_id = self.http_client.response_request_id(response)
         response = ShortSpeechRecognitionResponse.from_json(payload=json.dumps(data))
         response.request_id = request_id
         return response

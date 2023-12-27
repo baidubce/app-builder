@@ -93,16 +93,16 @@ class Text2Image(Component):
         返回:
             obj:`Text2ImageSubmitResponse`: 接口返回的输出消息。
         """
-        url = self.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
+        url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
         data = Text2ImageSubmitRequest.to_json(request)
-        headers = self.auth_header()
+        headers = self.http_client.auth_header()
         headers['content-type'] = 'application/json'
-        if retry != self.retry.total:
-            self.retry.total = retry
-        response = self.s.post(url, data=data, headers=headers, timeout=timeout)
-        super().check_response_header(response)
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        response = self.http_client.session.post(url, data=data, headers=headers, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
+        self.http_client.check_response_json(data)
         self.__class__.check_service_error(data)
         request_id = response.headers.get('X-Appbuilder-Request-Id')
         response = Text2ImageSubmitResponse.from_json(payload=json.dumps(data))
@@ -123,18 +123,18 @@ class Text2Image(Component):
         返回:
             obj:`Text2ImageQueryResponse`: 接口返回的输出消息。
         """
-        url = self.service_url("/v1/bce/aip/ernievilg/v1/getImgv2")
+        url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/getImgv2")
         data = {
             "task_id": request.task_id
         }
-        headers = self.auth_header()
+        headers = self.http_client.auth_header()
         headers['content-type'] = 'application/json'
-        if retry != self.retry.total:
-            self.retry.total = retry
-        response = self.s.post(url, json=data, headers=headers, timeout=timeout)
-        super().check_response_header(response)
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        response = self.http_client.session.post(url, json=data, headers=headers, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
+        self.http_client.check_response_json(data)
         self.__class__.check_service_error(data)
         request_id = response.headers.get('X-Appbuilder-Request-Id')
         response = Text2ImageQueryResponse.from_json(payload=json.dumps(data))
