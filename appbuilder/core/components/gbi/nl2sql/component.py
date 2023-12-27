@@ -14,8 +14,6 @@
 
 r"""GBI nl2sql component.
 """
-import uuid
-import json
 from typing import Dict, List, Optional
 from pydantic import BaseModel, Field, ValidationError
 
@@ -90,10 +88,11 @@ class NL2Sql(Component):
                 1. query: 用户问题
                 2. session: gbi session 的历史 列表, 参考 SessionRecord
                 3. column_constraint: 列选约束 参考 ColumnItem 具体定义
+            timeout: 超时时间
+            retry: 重试次数
         Returns:
             NL2SqlResult 的 message
         """
-
 
         try:
             inputs = self.meta(**message.content)
@@ -134,11 +133,11 @@ class NL2Sql(Component):
 
         """
 
-        headers = self.auth_header()
+        headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
 
-        if retry != self.retry.total:
-            self.retry.total = retry
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
 
         payload = {"query": query,
                    "table_schemas": table_schemas,
@@ -148,13 +147,13 @@ class NL2Sql(Component):
                    "knowledge": knowledge,
                    "prompt_template": prompt_template}
 
-        server_url = self.service_url(prefix="", sub_path=self.server_sub_path)
-        response = self.s.post(url=server_url, headers=headers,
-                               json=payload, timeout=timeout)
-        super().check_response_header(response)
+        server_url = self.http_client.service_url(prefix="", sub_path=self.server_sub_path)
+        response = self.http_client.session.post(url=server_url, headers=headers,
+                                                 json=payload, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
+        self.http_client.check_response_json(data)
 
-        request_id = self.response_request_id(response)
+        request_id = self.http_client.response_request_id(response)
         response.request_id = request_id
         return response
