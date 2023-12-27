@@ -18,7 +18,7 @@ import os
 import appbuilder
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import SessionRecord
-
+from appbuilder.core.components.gbi.basic import NL2SqlResult
 
 SUPER_MARKET_SCHEMA = """
 ```
@@ -68,6 +68,7 @@ PROMPT_TEMPLATE = """
 回答:
 """
 
+
 class TestGBISelectTable(unittest.TestCase):
 
     def setUp(self):
@@ -79,7 +80,7 @@ class TestGBISelectTable(unittest.TestCase):
         self.select_table_node = \
             appbuilder.SelectTable(model_name=model_name,
                                    table_descriptions={"supper_market_info": "超市营收明细表，包含超市各种信息等",
-                                                          "product_sales_info": "产品销售表"})
+                                                       "product_sales_info": "产品销售表"})
 
     def test_run_with_default_param(self):
         """测试 run 方法使用有效参数"""
@@ -95,7 +96,6 @@ class TestGBISelectTable(unittest.TestCase):
         """测试 run 方法中 prompt template 模版"""
         query = "列出超市中的所有数据"
         msg = Message({"query": query})
-        result_message = self.select_table_node(message=msg)
         self.select_table_node.prompt_template = PROMPT_TEMPLATE
         result_message = self.select_table_node(msg)
 
@@ -103,6 +103,26 @@ class TestGBISelectTable(unittest.TestCase):
         self.assertEqual(len(result_message.content), 1)
         self.assertEqual(result_message.content[0], "supper_market_info")
         self.select_table_node.prompt_template = ""
+
+    def test_run_with_session(self):
+        """测试 run 方法中 prompt template 模版"""
+
+        session = list()
+        session_record = SessionRecord(query="列出商品类别是水果的的利润率",
+                                       answer=NL2SqlResult(
+                                           llm_result="根据问题分析得到 sql 如下: \n "
+                                                      "```sql\nSELECT * FROM `超市营收明细` "
+                                                      "WHERE `商品类别` = '水果'\n```",
+                                           sql="SELECT * FROM `超市营收明细` WHERE `商品类别` = '水果'"))
+        session.append(session_record)
+
+        query = "列出超市中的所有数据"
+        msg = Message({"query": query, "session": session})
+        result_message = self.select_table_node(msg)
+
+        self.assertIsNotNone(result_message)
+        self.assertEqual(len(result_message.content), 1)
+        self.assertEqual(result_message.content[0], "supper_market_info")
 
 
 if __name__ == '__main__':

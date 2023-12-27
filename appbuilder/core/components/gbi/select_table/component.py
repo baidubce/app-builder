@@ -14,8 +14,6 @@
 
 r"""GBI nl2sql component.
 """
-import uuid
-import json
 from typing import Dict, List, Optional
 from pydantic import BaseModel, Field, ValidationError
 
@@ -67,8 +65,6 @@ class SelectTable(Component):
                             问题:{query}
                             回答:
                             ```
-            secret_key:
-            gateway:
         """
         super().__init__(meta=SelectTableArgs)
         if model_name not in SUPPORTED_MODEL_NAME:
@@ -79,12 +75,14 @@ class SelectTable(Component):
         self.prompt_template = prompt_template
 
     def run(self,
-            message: Message, timeout: int = 60,retry: int = 0) -> Message[List[str]]:
+            message: Message, timeout: int = 60, retry: int = 0) -> Message[List[str]]:
         """
         Args:
             message: message.content 字典包含 key:
                 1. query - 用户的问题输入
                 2. session - 对话历史， 可选
+            timeout: 超时时间
+            retry: 重试次数
 
         Returns: 识别的表名的列表 ["table_name"]
         """
@@ -122,26 +120,25 @@ class SelectTable(Component):
             obj:`ShortSpeechRecognitionResponse`: 接口返回的输出消息。
         """
 
-        headers = self.auth_header()
+        headers = self.http_client.auth_header()
         headers["Content_Type"] = "application/json"
 
-        if retry != self.retry.total:
-            self.retry.total = retry
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
 
         payload = {"query": query,
                    "table_descriptions": table_descriptions,
-                   "session": [session_record.to_json() for session_record in session],
+                   "session": [session_record.dict() for session_record in session],
                    "model_name": model_name,
                    "prompt_template": prompt_template}
 
-        server_url = self.service_url(sub_path=self.server_sub_path)
-        response = self.s.post(url=server_url, headers=headers,
-                               json=payload, timeout=timeout)
-        super().check_response_header(response)
+        server_url = self.http_client.service_url(sub_path=self.server_sub_path)
+        response = self.http_client.session.post(url=server_url, headers=headers,
+                                                 json=payload, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
+        self.http_client.check_response_json(data)
 
-        request_id = self.response_request_id(response)
+        request_id = self.http_client.response_request_id(response)
         response.request_id = request_id
         return response
-

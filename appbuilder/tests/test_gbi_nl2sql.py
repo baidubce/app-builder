@@ -145,10 +145,10 @@ class TestGBINL2Sql(unittest.TestCase):
         session = list()
         session_record = SessionRecord(query="列出商品类别是水果的的利润率",
                                        answer=NL2SqlResult(
-                                              llm_result="根据问题分析得到 sql 如下: \n "
-                                                         "```sql\nSELECT * FROM `超市营收明细` "
-                                                         "WHERE `商品类别` = '水果'\n```",
-                                              sql="SELECT * FROM `超市营收明细` WHERE `商品类别` = '水果'"))
+                                           llm_result="根据问题分析得到 sql 如下: \n "
+                                                      "```sql\nSELECT * FROM `超市营收明细` "
+                                                      "WHERE `商品类别` = '水果'\n```",
+                                           sql="SELECT * FROM `超市营收明细` WHERE `商品类别` = '水果'"))
         session.append(session_record)
 
         query = "列出所有的商品类别"
