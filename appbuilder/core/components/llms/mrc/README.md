@@ -15,7 +15,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 创建MRC对象
-mrc_component = appbuilder.MRC()
+mrc_component = appbuilder.MRC(model="eb-turbo-appbuilder")
 
 # 初始化参数
 msg = "残疾人怎么办相关证件"
@@ -74,7 +74,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 创建MRC对象
-mrc_component = appbuilder.MRC()
+mrc_component = appbuilder.MRC(model="eb-turbo-appbuilder")
 
 # 初始化参数
 msg = "残疾人怎么办相关证件"
