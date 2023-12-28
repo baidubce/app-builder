@@ -85,11 +85,12 @@ class LandmarkRecognition(Component):
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
-        self.__class__.__check_service_error(data)
-        return LandmarkRecognitionResponse(data, request_id=self.http_client.response_request_id(response))
+        request_id = self.http_client.response_request_id(response)
+        self.__class__.__check_service_error(request_id, data)
+        return LandmarkRecognitionResponse(data, request_id=request_id)
 
     @staticmethod
-    def __check_service_error(data: dict):
+    def __check_service_error(request_id: str, data: dict):
         r"""个性化服务response参数检查
 
             参数:
@@ -99,5 +100,8 @@ class LandmarkRecognition(Component):
         """
 
         if "error_code" in data or "error_msg" in data:
-            raise AppBuilderServerException(service_err_code=data.get("error_code"),
-                                            service_err_message=data.get("error_msg"))
+            raise AppBuilderServerException(
+                request_id=request_id,
+                service_err_code=data.get("error_code"),
+                service_err_message=data.get("error_msg")
+            )
