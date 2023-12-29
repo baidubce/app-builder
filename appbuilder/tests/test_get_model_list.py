@@ -17,9 +17,23 @@ class TestModels(unittest.TestCase):
         """
         self.model = Models()
 
+    def get_model_list(self):
+        """
+        get_model_list方法单测
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        """
+        response = appbuilder.get_model_list(apiTypefilter=["chat"])
+        self.assertIsNotNone(response)
+
     def test_list(self):
         """
-        _list方法单测
+        list方法单测
 
         Args:
             None
