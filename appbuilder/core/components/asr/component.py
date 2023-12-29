@@ -63,12 +63,12 @@ class ASR(Component):
         request.cuid = str(uuid.uuid4())
         request.dev_pid = "80001"
         request.speech = inp.raw_audio
-        response = self._recognize(request)
+        response = self._recognize(request, timeout, retry)
         out = ASROutMsg(result=list(response.result))
         return Message(content=dict(out))
 
     def _recognize(self, request: ShortSpeechRecognitionRequest, timeout: float = None,
-                    retry: int = 0) -> ShortSpeechRecognitionResponse:
+                   retry: int = 0) -> ShortSpeechRecognitionResponse:
         """
         使用给定的输入并返回语音识别的结果。
 
@@ -89,7 +89,8 @@ class ASR(Component):
         }
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
-        response = self.http_client.session.post(self.http_client.service_url("/v1/bce/aip_speech/asrpro"), params=params, headers=headers, data=request.speech, timeout=timeout)
+        response = self.http_client.session.post(self.http_client.service_url("/v1/bce/aip_speech/asrpro"),
+                                                 params=params, headers=headers, data=request.speech, timeout=timeout)
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
