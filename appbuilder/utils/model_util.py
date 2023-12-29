@@ -191,7 +191,7 @@ class Models:
         """
         self.http_client = HTTPClient(secret_key, gateway)
 
-    def list(self, request: GetModelListRequest, timeout: float = None,
+    def list(self, request: GetModelListRequest = None, timeout: float = None,
              retry: int = 0) -> GetModelListResponse:
         """
         返回用户的模型列表信息。
@@ -205,6 +205,8 @@ class Models:
             obj:`GetModelListResponse`: 模型列表返回体。
         """
         url = self.http_client.service_url("/v1/bce/wenxinworkshop/service/list")
+        if request is None:
+            request = GetModelListRequest()
         data = GetModelListRequest.to_json(request)
         headers = self.http_client.auth_header()
         headers['content-type'] = 'application/json'
