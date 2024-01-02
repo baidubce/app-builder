@@ -15,10 +15,11 @@ import appbuilder
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 初始化并使用 QueryRewrite 组件
-query_rewrite = appbuilder.QueryRewrite(model="ernie-bot-4")
+query_rewrite = appbuilder.QueryRewrite(model="eb-turbo-appbuilder")
 answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？', '您可以查询官网或人工咨询', '我需要准备哪些材料？', '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', '在哪里办']), rewrite_type="带机器人回复")
-```
 print(answer)
+```
+
 ## 参数说明
 
 ### 初始化参数
