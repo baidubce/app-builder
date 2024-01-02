@@ -93,14 +93,14 @@ class ASR(Component):
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
-        self.__class__._check_service_error(data)
         request_id = self.http_client.response_request_id(response)
+        self.__class__._check_service_error(request_id,data)
         response = ShortSpeechRecognitionResponse.from_json(payload=json.dumps(data))
         response.request_id = request_id
         return response
 
     @staticmethod
-    def _check_service_error(data: dict):
+    def _check_service_error(request_id: str, data: dict):
         r"""个性化服务response参数检查
 
             参数:
@@ -110,4 +110,8 @@ class ASR(Component):
         """
         if "err_no" in data and "err_msg" in data:
             if data["err_no"] != 0:
-                raise AppBuilderServerException(service_err_code=data["err_no"], service_err_message=data["err_msg"])
+                raise AppBuilderServerException(
+                    request_id=request_id,
+                    service_err_code=data["err_no"],
+                    service_err_message=data["err_msg"]
+                )

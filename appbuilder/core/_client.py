@@ -44,6 +44,8 @@ class HTTPClient:
         if not self.secret_key:
             raise ValueError("secret_key is empty, please pass a nonempty secret_key "
                              "or set a secret_key in environment variable")
+        if not self.secret_key.startswith("Bearer"):
+            self.secret_key = "Bearer {}".format(self.secret_key)
 
         if not gateway and not os.getenv("GATEWAY_URL"):
             self.gateway = GATEWAY_URL
@@ -101,13 +103,10 @@ class HTTPClient:
 
     def auth_header(self):
         r"""auth_header is a helper method return auth info"""
-
-        if self.secret_key.startswith("Bearer "):
-            return {"X-Appbuilder-Authorization": self.secret_key}
-        else:
-            return {"X-Appbuilder-Authorization": "Bearer {}".format(self.secret_key)}
+        return {"X-Appbuilder-Authorization": self.secret_key}
 
     @staticmethod
     def response_request_id(response: requests.Response):
         r"""response_request_id is a helper method get unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
+

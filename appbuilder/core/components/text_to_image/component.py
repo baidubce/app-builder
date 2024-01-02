@@ -103,8 +103,8 @@ class Text2Image(Component):
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
-        self.__class__.check_service_error(data)
-        request_id = response.headers.get('X-Appbuilder-Request-Id')
+        request_id = self.http_client.response_request_id(response)
+        self.__class__.check_service_error(request_id, data)
         response = Text2ImageSubmitResponse.from_json(payload=json.dumps(data))
         response.request_id = request_id
         return response
@@ -135,8 +135,8 @@ class Text2Image(Component):
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
-        self.__class__.check_service_error(data)
-        request_id = response.headers.get('X-Appbuilder-Request-Id')
+        request_id = self.http_client.response_request_id(response)
+        self.__class__.check_service_error(request_id, data)
         response = Text2ImageQueryResponse.from_json(payload=json.dumps(data))
         response.request_id = request_id
         return response
@@ -161,7 +161,7 @@ class Text2Image(Component):
         return img_urls
 
     @staticmethod
-    def check_service_error(data: dict):
+    def check_service_error(request_id: str, data: dict):
         r"""个性化服务response参数检查
 
             参数:
@@ -170,5 +170,8 @@ class Text2Image(Component):
                 无
         """
         if "error_code" in data or "error_msg" in data:
-            raise AppBuilderServerException(service_err_code=data.get("error_code"),
-                                            service_err_message=data.get("error_msg"))
+            raise AppBuilderServerException(
+                request_id=request_id,
+                service_err_code=data.get("error_code"),
+                service_err_message=data.get("error_msg")
+            )

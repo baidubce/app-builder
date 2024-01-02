@@ -100,9 +100,10 @@ class Translation(Component):
 
         self.http_client.check_response_header(response)
         data = response.json()
+        request_id = self.http_client.response_request_id(response)
         self.http_client.check_response_json(data)
         if "error_code" in data and "error_msg" in data:
-            raise AppBuilderServerException(service_err_code=data["error_code"], service_err_message=data["error_msg"])
+            raise AppBuilderServerException(request_id=request_id, service_err_code=data["error_code"], service_err_message=data["error_msg"])
 
         json_str = json.dumps(data)
         return TranslateResponse(TranslateResponse.from_json(json_str))

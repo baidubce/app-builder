@@ -133,9 +133,9 @@ class TestASRComponent(unittest.TestCase):
         """
         data = {'err_msg': 'Error', 'err_no': 1}
         with self.assertRaises(appbuilder.AppBuilderServerException):
-            self.asr._check_service_error(data)
+            self.asr._check_service_error("",data)
         data = {'err_msg': 'No Error', 'err_no': 0}
-        self.assertIsNone(self.asr._check_service_error(data))
+        self.assertIsNone(self.asr._check_service_error("", data))
 
 
 if __name__ == '__main__':

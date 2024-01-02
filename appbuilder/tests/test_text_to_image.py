@@ -101,7 +101,7 @@ class TestText2ImageComponent(unittest.TestCase):
         """
         data = {"error_code": "ERROR", "error_msg": "Error message"}
         with self.assertRaises(appbuilder.AppBuilderServerException):
-            self.text2Image.check_service_error(data)
+            self.text2Image.check_service_error("", data)
 
 
 if __name__ == '__main__':
