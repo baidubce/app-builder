@@ -27,8 +27,8 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
 
     参数:
         secret_key(str,可选): 用户鉴权token, 默认从环境变量中获取: os.getenv("APPBUILDER_TOKEN", "")。
-        apiTypefilter(List[str], 可选): 根据apiType过滤，["chat", "completions", "embeddings", "text2image"]，不填包括所有的。
-        is_available(bool, 可选): 返回可用模型列表, 默认返回所有模型。
+        api_type_filter(List[str], 可选): 根据apiType过滤，["chat", "completions", "embeddings", "text2image"]，不填包括所有的。
+        is_available(bool, 可选): 是否返回可用模型列表, 默认返回所有模型。
 
     返回:
         list: 模型列表。
