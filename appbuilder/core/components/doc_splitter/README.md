@@ -8,7 +8,7 @@
 
 基本用法
 ---
-参考tests目录下的[test_doc_splitter.py](../../../tests/test_doc_splitter.py)，可快速搭建自己的文档切分用例。
+参考tests目录下的[test_doc_splitter.py](https://github.com/baidubce/app-builder/blob/master/appbuilder/tests/test_doc_splitter.py)，可快速搭建自己的文档切分用例。
 
 以下是DocSplitter快速开始的一个示例。
 
@@ -94,7 +94,4 @@ print(res_paras.content)
 
 暂无
 
-## 更新记录和贡献
 
-- 初始版本发布。
-- 如您希望为会话小结组件贡献代码或反馈，请参考 [贡献指南](#)。
