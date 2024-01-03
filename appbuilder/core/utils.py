@@ -39,12 +39,12 @@ def get_model_list(secret_key: str = "", apiTypefilter: List[str] = [], is_avail
     models = []
     if is_available:
         for common_model in response.result.common:
-            if common_model.chargeStatus == "OPENED":
+            if common_model.chargeStatus in ["OPENED", "FREE"]:
                 mapped_name = map_model_name(common_model.name)
                 models.append(mapped_name)
 
         for custom_model in response.result.custom:
-            if custom_model.chargeStatus == "OPENED":
+            if custom_model.chargeStatus in ["OPENED", "FREE"]:
                 mapped_name = map_model_name(custom_model.name)
                 models.append(mapped_name)
         return models
