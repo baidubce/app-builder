@@ -86,14 +86,14 @@ class GeneralOCR(Component):
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
-        self.__class__._check_service_error(data)
         request_id = self.http_client.response_request_id(response)
+        self.__class__._check_service_error(request_id, data)
         ocr_response = GeneralOCRResponse.from_json(payload=json.dumps(data))
         ocr_response.request_id = request_id
         return ocr_response
 
     @staticmethod
-    def _check_service_error(data: dict):
+    def _check_service_error(request_id: str, data: dict):
         r"""个性化服务response参数检查
             参数:
                 request (dict) : 通用文字识别body返回
@@ -101,5 +101,8 @@ class GeneralOCR(Component):
                 无
         """
         if "error_code" in data or "error_msg" in data:
-            raise AppBuilderServerException(service_err_code=data.get("error_code"),
-                                            service_err_message=data.get("error_msg"))
+            raise AppBuilderServerException(
+                request_id=request_id,
+                service_err_code=data.get("error_code"),
+                service_err_message=data.get("error_msg")
+            )

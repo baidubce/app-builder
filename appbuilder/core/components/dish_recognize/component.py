@@ -90,10 +90,10 @@ class DishRecognition(Component):
 
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v2/dish")
         response = self.http_client.session.post(url, headers=headers, data=request_data, timeout=timeout)
-
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
+        request_id = self.http_client.response_request_id(response)
         if "error_code" in data and "error_msg" in data:
-            raise AppBuilderServerException(service_err_code=data["error_code"], service_err_message=data["error_msg"])
-        return DishRecognitionResponse(data, request_id=self.http_client.response_request_id(response))
+            raise AppBuilderServerException(request_id=request_id, service_err_code=data["error_code"], service_err_message=data["error_msg"])
+        return DishRecognitionResponse(data)

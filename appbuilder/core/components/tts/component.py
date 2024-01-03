@@ -153,18 +153,19 @@ class TTS(Component):
             response = self.http_client.session.post(url, json=TTSRequest.to_dict(request), timeout=timeout, headers=auth_header)
         self.http_client.check_response_header(response)
         content_type = response.headers.get("Content-Type", "application/json")
+        request_id = self.http_client.response_request_id(response)
         if content_type.find("application/json") != -1:
             data = response.json()
             self.http_client.check_response_json(data)
-            self.__class__.__check_service_error(data)
+            self.__class__.__check_service_error(request_id, data)
         return TTSResponse(
             binary=response.content,
-            request_id=self.http_client.response_request_id(response),
+            request_id=request_id,
             aue=request.aue
         )
 
     @staticmethod
-    def __check_service_error(data: dict):
+    def __check_service_error(request_id: str, data: dict):
         r"""个性化服务response检查
 
               参数:
@@ -175,6 +176,7 @@ class TTS(Component):
 
         if "err_no" in data or "err_msg" in data or 'sn' in data or 'idx' in data:
             raise AppBuilderServerException(
+                request_id=request_id,
                 service_err_code=data.get("err_no", 0),
                 service_err_message="{} . {} . {}]".
                 format(data.get("err_msg", ""),
