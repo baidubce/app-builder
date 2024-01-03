@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import itertools
 from typing import List
 
 from appbuilder.utils.model_util import GetModelListRequest, Models, map_model_name
@@ -20,7 +21,7 @@ def utils_get_user_agent():
     return 'appbuilder-sdk-python/{}'.format("__version__")
 
 
-def get_model_list(secret_key: str = "", apiTypefilter: List[str] = [], is_available: bool = False):
+def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_available: bool = False) -> list:
     """
     返回用户的模型列表。
 
@@ -30,30 +31,17 @@ def get_model_list(secret_key: str = "", apiTypefilter: List[str] = [], is_avail
         is_available(bool, 可选): 返回可用模型列表, 默认返回所有模型。
 
     返回:
-        List[str]: 模型列表。
+        list: 模型列表。
     """
     request = GetModelListRequest()
-    request.apiTypefilter = apiTypefilter
+    request.apiTypefilter = api_type_filter
     model = Models(secret_key=secret_key)
     response = model.list(request)
     models = []
-    if is_available:
-        for common_model in response.result.common:
-            if common_model.chargeStatus in ["OPENED", "FREE"]:
-                mapped_name = map_model_name(common_model.name)
-                models.append(mapped_name)
 
-        for custom_model in response.result.custom:
-            if custom_model.chargeStatus in ["OPENED", "FREE"]:
-                mapped_name = map_model_name(custom_model.name)
-                models.append(mapped_name)
-        return models
-    else:
-        for common_model in response.result.common:
-            mapped_name = map_model_name(common_model.name)
-            models.append(mapped_name)
-
-        for custom_model in response.result.custom:
-            mapped_name = map_model_name(custom_model.name)
-            models.append(mapped_name)
+    for model in itertools.chain(response.result.common, response.result.custom):
+        if is_available and model.chargeStatus not in ["OPENED", "FREE"]:
+            continue
+        mapped_name = map_model_name(model.name)
+        models.append(mapped_name)
     return models
