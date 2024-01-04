@@ -76,6 +76,9 @@ from appbuilder.core.context import UserSession
 
 from appbuilder.utils.logger_util import logger
 
+from appbuilder.core.utils import get_model_list
+
+
 from .core._exception import (
     BadRequestException,
     ForbiddenException,
