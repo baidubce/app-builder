@@ -43,7 +43,7 @@ class AgentBase(BaseModel):
 
             component = appbuilder.Playground(
                 prompt_template="{query}",
-                model="ernie-bot-4"
+                model="eb-4"
             )
             agent = appbuilder.AgentBase(component=component)
             message = appbuilder.Message({"query": "你好"})
@@ -59,7 +59,7 @@ class AgentBase(BaseModel):
 
             component = appbuilder.Playground(
                 prompt_template="{query}",
-                model="ernie-bot-4"
+                model="eb-4"
             )
             agent = appbuilder.AgentBase(component=component)
             agent.serve(debug=False, port=8091)
@@ -73,7 +73,7 @@ class AgentBase(BaseModel):
 
             component = appbuilder.Playground(
                 prompt_template="{query}",
-                model="ernie-bot-4"
+                model="eb-4"
             )
             agent = appbuilder.AgentBase(component=component)
             agent.chainlit_demo(port=8091)

@@ -39,7 +39,7 @@ class TagExtraction(CompletionBaseComponent):
             import appbuilder
             os.environ["APPBUILDER_TOKEN"] = '...'
 
-            tag_extraction = appbuilder.TagExtraction(model="ernie-bot-4")
+            tag_extraction = appbuilder.TagExtraction(model="eb-4")
             answer = tag_extraction(appbuilder.Message("从这段文本中抽取关键标签"))
 
     """

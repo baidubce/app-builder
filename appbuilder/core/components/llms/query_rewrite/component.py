@@ -70,7 +70,7 @@ class QueryRewrite(CompletionBaseComponent):
             import appbuilder
             os.environ["APPBUILDER_TOKEN"] = '...'
 
-            query_rewrite = appbuilder.QueryRewrite(model="ernie-bot-4")
+            query_rewrite = appbuilder.QueryRewrite(model="eb-4")
             answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？', 
                                                      '您可以查询官网或人工咨询', 
                                                      '我需要准备哪些材料？', 

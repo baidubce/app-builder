@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import itertools
 import json
 import uuid
 from enum import Enum
@@ -27,6 +28,7 @@ from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.utils.model_util import Models, model_name_mapping
 
 
 class CompletionRequest(object):
@@ -44,40 +46,6 @@ class CompletionRequest(object):
 class ModelArgsConfig(BaseModel):
     stream: bool = Field(default=False, description="是否流式响应。默认为 False。")
     temperature: confloat(gt=0.0, le=1.0) = Field(default=1e-10, description="模型的温度参数，范围从 0.0 到 1.0。")
-
-
-class ModelDefineConfig(BaseModel):
-    model: Optional[str] = Field(..., description="模型的名称")
-
-    @validator("model")
-    def check_and_convert_name(cls, v):
-        """检查并转换模型真实调用。
-        
-        Args:
-            cls (Any): 无用参数，仅在方法内部使用。
-            v (str): 需要验证和转换的真实调用URL。
-        
-        Returns:
-            str: 返回转换后的模型名称，如果输入的模型名称不在预定义映射表中则抛出ValueError异常。
-        
-        Raises:
-            ValueError: 如果输入的模型名称不在预定义映射表中，则抛出此异常。
-        
-        """
-        name_mapping = {
-            "ernie-bot": '{}/rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1'
-                         '/chat/completions'.format(GATEWAY_INNER_URL),
-            "ernie-bot-4": '{}/rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1'
-                           '/chat/completions_pro'.format(GATEWAY_INNER_URL),
-            "eb-turbo-appbuilder": '{}/rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1/'
-                                   'chat/ai_apaas'.format(GATEWAY_INNER_URL)
-        }
-
-        if v not in name_mapping:
-            allowed_names = ", ".join(name_mapping.keys())
-            raise ValueError(f"model name must be one of [{allowed_names}]")
-
-        return name_mapping[v]
 
 
 class CompletionResponse(object):
@@ -198,14 +166,10 @@ class CompletionBaseComponent(Component):
         """
         super().__init__(meta=meta, secret_key=secret_key, gateway=gateway)
 
-        model_config_inputs = ModelDefineConfig(**{"model": model})
-
         self.model_name = model
-        self.model_url = model_config_inputs.model
-
-        if not self.model_url and not self.model_name:
+        self.model_url = self.get_model_url()
+        if not self.model_name and not self.model_url:
             raise ValueError("model_name or model_url must be provided")
-
         self.version = self.version
 
     def gene_request(self, query, inputs, response_mode, message_id, model_config):
@@ -257,6 +221,33 @@ class CompletionBaseComponent(Component):
 
         return response.to_message()
 
+    def get_model_url(self) -> str:
+        """根据名称获取模型请求url"""
+        origin_name = self.model_name
+        for key, value in model_name_mapping.items():
+            if origin_name == value:
+                origin_name = key
+                break
+
+        client = self.http_client
+        response = Models(client.secret_key, client.gateway).list()
+        for model in itertools.chain(response.result.common, response.result.custom):
+            if model.name == origin_name:
+                return self._convert_cloudhub_url(model.url)
+
+        raise ValueError(f"Model[{self.model_name}] not available! "
+                         f"You can query available models through: appbuilder.get_model_list()")
+
+    def _convert_cloudhub_url(self, qianfan_url: str) -> str:
+        """将千帆url转换为AppBuilder url"""
+        qianfan_url_prefix = "rpc/2.0/ai_custom/v1/wenxinworkshop/chat"
+        cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1/chat"
+        index = str.find(qianfan_url, qianfan_url_prefix)
+        if index == -1:
+            raise ValueError(f"{qianfan_url} is not a valid qianfan url")
+        url_suffix = qianfan_url[index + len(qianfan_url_prefix):]
+        return "{}/{}{}".format(self.http_client.gateway, cloudhub_url_prefix, url_suffix)
+
     def get_compeliton_params(self, specific_inputs, model_config_inputs):
         """获取模型请求参数"""
         inputs = specific_inputs.extract_values_to_dict()
@@ -299,8 +290,8 @@ class CompletionBaseComponent(Component):
                                                                         "POST",
                                                                         request.params,
                                                                         headers))
-
-        response = self.http_client.session.post(url, json=request.params, headers=headers, timeout=timeout, stream=stream)
+        response = self.http_client.session.post(url, json=request.params, headers=headers, timeout=timeout,
+                                                 stream=stream)
 
         logger.debug(
             "request url: {}, method: {}, json: {}, headers: {}, response: {}".format(url, "POST",
