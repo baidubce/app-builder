@@ -39,8 +39,7 @@ class TestAgentBase(unittest.TestCase):
         )
         agent = appbuilder.AgentBase(component=component)
         message = appbuilder.Message({"query": "你好"})
-        session_id = agent._generate_session_id()
-        answer = agent.chat(message, session_id, stream=False)
+        answer = agent.chat(message, stream=False)
         self.assertIs(type(answer.content), str)
 
     def test_chat_with_valid_message_and_streaming(self):
@@ -51,8 +50,7 @@ class TestAgentBase(unittest.TestCase):
         )
         agent = appbuilder.AgentBase(component=component)
         message = appbuilder.Message({"query": "你好"})
-        session_id = agent._generate_session_id()
-        answer = agent.chat(message, session_id, stream=True)
+        answer = agent.chat(message, stream=True)
         for it in answer.content:
             self.assertIs(type(it), str)
 
