@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import itertools
 import json
 import uuid
 from enum import Enum
@@ -167,7 +168,7 @@ class CompletionBaseComponent(Component):
 
         self.model_name = model
         self.model_url = self.get_model_url()
-        if not self.model_url and not self.model_name:
+        if not self.model_name and not self.model_url:
             raise ValueError("model_name or model_url must be provided")
         self.version = self.version
 
@@ -221,19 +222,16 @@ class CompletionBaseComponent(Component):
         return response.to_message()
 
     def get_model_url(self) -> str:
-        """获取模型请求url"""
+        """根据名称获取模型请求url"""
         origin_name = self.model_name
         for key, value in model_name_mapping.items():
             if origin_name == value:
                 origin_name = key
                 break
-        client = self.http_client
-        model_list_resp = Models(client.secret_key, client.gateway).list()
 
-        for model in model_list_resp.result.common:
-            if model.name == origin_name:
-                return self._convert_cloudhub_url(model.url)
-        for model in model_list_resp.result.custom:
+        client = self.http_client
+        response = Models(client.secret_key, client.gateway).list()
+        for model in itertools.chain(response.result.common, response.result.custom):
             if model.name == origin_name:
                 return self._convert_cloudhub_url(model.url)
 
