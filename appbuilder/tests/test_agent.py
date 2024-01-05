@@ -21,7 +21,7 @@ class TestAgentBase(unittest.TestCase):
         """ 测试在component有效时运行 """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ernie-bot-4"
+            model="eb-4"
         )
         agent = appbuilder.AgentBase(component=component)
     
@@ -35,7 +35,7 @@ class TestAgentBase(unittest.TestCase):
         """ 测试在消息有效时处理 """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ernie-bot-4"
+            model="eb-4"
         )
         agent = appbuilder.AgentBase(component=component)
         message = appbuilder.Message({"query": "你好"})
@@ -47,7 +47,7 @@ class TestAgentBase(unittest.TestCase):
         """ 测试在消息有效时处理 """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ernie-bot-4"
+            model="eb-4"
         )
         agent = appbuilder.AgentBase(component=component)
         message = appbuilder.Message({"query": "你好"})

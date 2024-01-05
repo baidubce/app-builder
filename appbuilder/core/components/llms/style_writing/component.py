@@ -96,7 +96,7 @@ class StyleWriting(CompletionBaseComponent):
             import appbuilder
             os.environ["APPBUILDER_TOKEN"] = '...'
 
-            style_writing = appbuilder.StyleWriting(model="ernie-bot-4")
+            style_writing = appbuilder.StyleWriting(model="eb-4")
             answer = style_writing(appbuilder.Message("帮我写一篇关于人体工学椅的文案"), style_query="小红书", length=100)
 
     """
