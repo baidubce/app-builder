@@ -28,12 +28,19 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 
 
 ## 快速安装
-
-执行如下命令，快速安装Python语言的最新版本AppBuilder-SDK（要求Python >= 3.8)。
-
+* **环境准备**
+AppBuilder-SDK 目前仅提供Python语言的SDK，支持python >=3.8 版本
+* **PIP安装**
+如需在本地环境安装SDK，可执行如下命令，快速安装最新版本的AppBuilder-SDK，更多详情请查看AppBuilder-SDK 开源信息
 ```shell
 pip install --upgrade appbuilder-sdk
 ```
+* **Docker安装**
+如想在Docker镜像中使用SDK，可以安装如下镜像，更多详情请查看镜像安装文档
+```shell
+pip install --upgrade appbuilder-sdk
+```
+docker pull registry.baidubce.com/appbuilder-preview/appbuilder-sdk-devel:3.10-bullseye
 
 ## 快速使用
 
