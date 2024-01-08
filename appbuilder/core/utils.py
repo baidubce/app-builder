@@ -42,6 +42,5 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
     for model in itertools.chain(response.result.common, response.result.custom):
         if is_available and model.chargeStatus not in ["OPENED", "FREE"]:
             continue
-        mapped_name = map_model_name(model.name)
-        models.append(mapped_name)
+        models.append(model.name)
     return models
