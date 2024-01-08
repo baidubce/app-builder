@@ -71,8 +71,8 @@ from .core.components.gbi.nl2sql.component import NL2Sql
 from .core.components.gbi.select_table.component import SelectTable
 
 from appbuilder.core.message import Message
-from appbuilder.core.agent import AgentBase
-from appbuilder.core.context import UserSession
+from appbuilder.core.agent import AgentRuntime
+from appbuilder.core.user_session import UserSession
 
 from appbuilder.utils.logger_util import logger
 
