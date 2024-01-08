@@ -28,13 +28,13 @@ from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 
 
-class AgentBase(BaseModel):
+class AgentRuntime(BaseModel):
     """
-    AgentBase 是对组件调用的服务化封装，开发者不是必须要用 AgentBase 才能运行自己的组件服务。
-    但 AgentBase 可以快速帮助开发者服务化组件服务，并且提供API、对话框等部署方式。
+    AgentRuntime 是对组件调用的服务化封装，开发者不是必须要用 AgentRuntime 才能运行自己的组件服务。
+    但 AgentRuntime 可以快速帮助开发者服务化组件服务，并且提供API、对话框等部署方式。
     此外，结合 Component 和 Message 自带的运行和调试接口，可以方便开发者快速获得一个调试 Agent 的服务。
   
-    AgentBase 接受两个参数:
+    AgentRuntime 接受两个参数:
         component (Component): 可运行的 Component, 需要实现 run(message, stream, **args) 方法  
         user_session_config (sqlalchemy.engine.URL|str|None): Session 输出存储配置字符串。默认使用 sqlite:///user_session.db
             遵循 sqlalchemy 后端定义，参考文档：https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls
@@ -52,7 +52,7 @@ class AgentBase(BaseModel):
                 prompt_template="{query}",
                 model="eb-4"
             )
-            agent = appbuilder.AgentBase(component=component)
+            agent = appbuilder.AgentRuntime(component=component)
             message = appbuilder.Message({"query": "你好"})
             print(agent.chat(message, stream=False))
             
@@ -68,7 +68,7 @@ class AgentBase(BaseModel):
                 model="eb-4"
             )
             user_session_config = "sqlite:///foo.db"
-            agent = appbuilder.AgentBase(
+            agent = appbuilder.AgentRuntime(
                 component=component, user_session_config=user_session_config)
             agent.serve(debug=False, port=8091)
             
@@ -83,7 +83,7 @@ class AgentBase(BaseModel):
                 prompt_template="{query}",
                 model="eb-4"
             )
-            agent = appbuilder.AgentBase(component=component)
+            agent = appbuilder.AgentRuntime(component=component)
             agent.chainlit_demo(port=8091)
 
 
@@ -96,7 +96,7 @@ class AgentBase(BaseModel):
             import sys
             from appbuilder.core.component import Component
             from appbuilder import (
-                AgentBase, UserSession, Message, QueryRewrite, Playground,
+                AgentRuntime, UserSession, Message, QueryRewrite, Playground,
             )
 
             os.environ["APPBUILDER_TOKEN"] = '...'
@@ -104,33 +104,37 @@ class AgentBase(BaseModel):
             class PlaygroundWithHistory(Component):
                 def __init__(self):
                     super().__init__()
-                    self.query_rewrite = QueryRewrite(model="ernie-bot-4")
+                    self.query_rewrite = QueryRewrite(model="eb-turbo-appbuilder")
                     self.play = Playground(
                         prompt_template="{query}",
-                        model="ernie-bot-4"
+                        model="eb-4"
                     )
 
-                def run(self, message: Message, stream: bool):
+                def run(self, message: Message, stream: bool=False):
                     user_session = UserSession()
                     # 获取 Session 历史数据
                     history_queries = user_session.get_history("query", limit=1)
                     history_answers = user_session.get_history("answer", limit=1)
-                
+
                     if history_queries and history_answers:
                         history = []
                         for query, answer in zip(history_queries, history_answers):
                             history.extend([query.content, answer.content])
+                        logging.info(f"history: {history}")
                         message = self.query_rewrite(
                             Message(history + [message.content]), rewrite_type="带机器人回复")
+                    logging.info(f"message: {message}") 
                     answer = self.play.run(message, stream)
                     # 保存本轮数据
-                    user_session.set("query", message)
-                    user_session.set("answer", answer) 
+                    user_session.append({
+                        "query": message,
+                        "answer": answer,
+                    }) 
                     return answer
 
-            agent = AgentBase(component=PlaygroundWithHistory())
+            agent = AgentRuntime(component=PlaygroundWithHistory())
             agent.chainlit_demo(port=8091)
-
+            
     """
     component: Component
     user_session_config: Optional[Union[sqlalchemy.engine.URL, str]] = None
@@ -146,7 +150,7 @@ class AgentBase(BaseModel):
     @root_validator(pre=True)
     def init(cls, values: Dict) -> Dict:
         """
-        初始化 AgentBase，UserSession 会在这里被初始化
+        初始化 AgentRuntime，UserSession 会在这里被初始化
         
         Args:
             component (Component): 可运行的 Component
@@ -241,13 +245,13 @@ class AgentBase(BaseModel):
                                     }
                                 }
                                 yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
-                            self.user_session._post_set()
+                            self.user_session._post_append()
                     return Response(
                         gen_sse_resp(answer), 200, 
                         {'Content-Type': 'text/event-stream; charset=utf-8'},
                     )
                 else:
-                    self.user_session._post_set()
+                    self.user_session._post_append()
                     return {
                         "code": 0, "message": "",
                         "result": {
@@ -295,7 +299,7 @@ class AgentBase(BaseModel):
                 if token := part or "":
                     await msg.stream_token(token)
             await msg.update()
-            self.user_session._post_set()
+            self.user_session._post_append()
 
         # start chainlit service
         if os.getenv('APPBUILDER_RUN_CHAINLIT') == '1':
