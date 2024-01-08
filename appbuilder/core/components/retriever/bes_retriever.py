@@ -81,6 +81,9 @@ class BESVectorStoreIndex:
         创建一个bes的client
         """
         secret_key = os.getenv("APPBUILDER_TOKEN")
+        if not secret_key.startswith("Bearer"):
+            secret_key = "Bearer {}".format(secret_key)
+
         gateway = os.getenv("GATEWAY_URL") if os.getenv("GATEWAY_URL") else GATEWAY_URL
 
         connection_params = {
