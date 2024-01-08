@@ -32,7 +32,7 @@ print(out.content)
 ```python
 outs = embedding.batch(["hello", "world"])
 # 得到一个长度为 2 x 384的float 二维数组
-print(out.conetnt)
+print(out.content)
 ```
 
 ### 使用上游的Message作为输入
