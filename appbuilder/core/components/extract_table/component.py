@@ -97,7 +97,6 @@ class ExtractTableFromDoc(Component):
             "field_before_table_cnt": doc_node_num_before_table
         }
         url = self.http_client.service_url(sub_path="", prefix=self.base_url)
-        # logger.info("request url: {}, headers: {}".format(url, headers))
         resp = self.http_client.session.post(url=url, data=json.dumps(params), headers=self.http_client.auth_header())
 
         self.http_client.check_response_header(resp)
