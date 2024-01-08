@@ -40,7 +40,7 @@ Embedding-V1，是基于百度文心大模型技术的文本表示模型，在Em
 
    outs = embedding.batch(["hello", "world"])
    # 得到一个长度为 2 x 384的float 二维数组
-   print(out.conetnt)
+   print(out.content)
 
 使用上游的Message作为输入
 ^^^^^^^^^^^^^^^^^^^^^^^^^
