@@ -28,7 +28,7 @@ from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.utils.model_util import Models, model_name_mapping
+from appbuilder.core.utils import get_model_url
 from appbuilder.utils.sse_util import SSEClient
 
 
@@ -189,7 +189,7 @@ class CompletionBaseComponent(Component):
         super().__init__(meta=meta, secret_key=secret_key, gateway=gateway)
 
         self.model_name = model
-        self.model_url = self.get_model_url()
+        self.model_url = get_model_url(client=self.http_client, model_name=model)
         if not self.model_name and not self.model_url:
             raise ValueError("model_name or model_url must be provided")
         self.version = self.version
@@ -242,33 +242,6 @@ class CompletionBaseComponent(Component):
             raise AppBuilderServerException(service_err_code=response.error_no, service_err_message=response.error_msg)
 
         return response.to_message()
-
-    def get_model_url(self) -> str:
-        """根据名称获取模型请求url"""
-        origin_name = self.model_name
-        for key, value in model_name_mapping.items():
-            if origin_name == value:
-                origin_name = key
-                break
-
-        client = self.http_client
-        response = Models(client.secret_key, client.gateway).list()
-        for model in itertools.chain(response.result.common, response.result.custom):
-            if model.name == origin_name:
-                return self._convert_cloudhub_url(model.url)
-
-        raise ValueError(f"Model[{self.model_name}] not available! "
-                         f"You can query available models through: appbuilder.get_model_list()")
-
-    def _convert_cloudhub_url(self, qianfan_url: str) -> str:
-        """将千帆url转换为AppBuilder url"""
-        qianfan_url_prefix = "rpc/2.0/ai_custom/v1/wenxinworkshop/chat"
-        cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1/chat"
-        index = str.find(qianfan_url, qianfan_url_prefix)
-        if index == -1:
-            raise ValueError(f"{qianfan_url} is not a valid qianfan url")
-        url_suffix = qianfan_url[index + len(qianfan_url_prefix):]
-        return "{}/{}{}".format(self.http_client.gateway, cloudhub_url_prefix, url_suffix)
 
     def get_compeliton_params(self, specific_inputs, model_config_inputs):
         """获取模型请求参数"""
