@@ -52,7 +52,7 @@ class CompletionRequest(object):
 class ModelArgsConfig(BaseModel):
     stream: bool = Field(default=False, description="是否流式响应。默认为 False。")
     temperature: confloat(gt=0.0, le=1.0) = Field(default=1e-10, description="模型的温度参数，范围从 0.0 到 1.0。")
-    top_p: confloat(gt=0.0, le=1.0) = Field(default=1e-10, description="模型的采样范围，范围从 0.0 到 1.0。")
+    top_p: confloat(gt=0.0, le=1.0) = Field(default=1e-10, description="模型的top_p参数，范围从 0.0 到 1.0。")
 
 
 class CompletionResponse(object):

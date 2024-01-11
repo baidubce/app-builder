@@ -10,7 +10,7 @@ from pydantic import Field
 
 class RAGWithBaiduSearchArgs(ComponentArguments):
     """
-    百度search提示词配置
+    RAG with Baidusearch提示词配置
     """
     message: Message = Field(...,
                              variable_name="message",
@@ -43,7 +43,7 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
     meta: RAGWithBaiduSearchArgs
 
     def __init__(self, model=None):
-        """初始化MRC(阅读理解问答)模型。
+        """初始化RAG with BaiduSearch组件
 
         Args:
             model (str|None): 模型名称，用于指定要使用的千帆模型。
