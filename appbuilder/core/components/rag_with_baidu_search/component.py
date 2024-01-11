@@ -97,7 +97,7 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
 
         request = self.gene_request(message.content, inputs, response_mode, user_id, model_config)
 
-        response = self.completion(self.version, self.base_url, request, rag_baidu_search=True)
+        response = self.completion(self.version, self.base_url, request)
         if response.error_no != 0:
             raise AppBuilderServerException(service_err_code=response.error_no, service_err_message=response.error_msg)
 
