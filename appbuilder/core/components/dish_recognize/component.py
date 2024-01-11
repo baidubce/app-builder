@@ -33,12 +33,16 @@ class DishRecognition(Component):
             .. code-block:: python
 
                 import appbuilder
+
+                # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
                 os.environ["APPBUILDER_TOKEN"] = '...'
 
                 dish_recognition = appbuilder.DishRecognition()
 
                 with open("xxxx.jpg", "rb") as f:
                     resp = dish_recognition(appbuilder.Message({"raw_image": f.read()}))
+                    # 输出示例 {'result': [{'name': '剁椒鱼头', 'calorie': '127'}]}
+                    print(resp.content)
     """
 
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
