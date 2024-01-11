@@ -13,6 +13,8 @@ class TestRagBaiduSearch(unittest.TestCase):
         # 设置环境变量和初始化TestMRCComponent实例
         self.model_name = "eb-turbo-appbuilder"
         self.rag_with_baidu_search = appbuilder.RAGWithBaiduSearch(model=self.model_name)
+        os.environ["APPBUILDER_TOKEN"] = ("Bearer bce-v3/ALTAK-tpJqnbAvTivWEAclPibrT"
+                                          "/4ac0ef025903f00e9252a0c41b803b41372a4862")
 
     def test_rag_with_baidu_search(self):
         msg = "残疾人怎么办相关证件"
@@ -24,13 +26,13 @@ class TestRagBaiduSearch(unittest.TestCase):
                                             friendly=True, cite=True, temperature=0.5, stream=is_stream,
                                             instruction=instruction)
         self.assertIsNotNone(answer)
-        print(answer.extra)
         if not is_stream:
-            self.assertIsNotNone(answer)
+            self.assertIsNotNone(answer.content)
+            self.assertIsNotNone(answer.extra)
         else:
-            for a in answer.content:
-                self.assertIsNotNone(a)
-            self.assertIsNotNone(answer)
+            for content, extra in answer.content, answer.extra:
+                self.assertIsNotNone(content)
+                self.assertIsNotNone(extra)
 
     def test_rag_with_baidu_search_with_none_inst(self):
         msg = "残疾人怎么办相关证件"
@@ -41,10 +43,10 @@ class TestRagBaiduSearch(unittest.TestCase):
                                             friendly=True, cite=True, temperature=0.5, top_p=0.1, stream=is_stream,
                                             instruction=instruction)
         self.assertIsNotNone(answer)
-        print(answer.extra)
         if not is_stream:
-            self.assertIsNotNone(answer)
+            self.assertIsNotNone(answer.content)
+            self.assertIsNotNone(answer.extra)
         else:
-            for a in answer.content:
-                self.assertIsNotNone(a)
-            self.assertIsNotNone(answer)
+            for content, extra in answer.content, answer.extra:
+                self.assertIsNotNone(content)
+                self.assertIsNotNone(extra)

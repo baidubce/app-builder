@@ -8,7 +8,7 @@ from appbuilder.core.message import Message
 from pydantic import Field
 
 
-class BaiduSearchArgs(ComponentArguments):
+class RAGWithBaiduSearchArgs(ComponentArguments):
     """
     百度search提示词配置
     """
@@ -40,7 +40,7 @@ class BaiduSearchArgs(ComponentArguments):
 class RAGWithBaiduSearch(CompletionBaseComponent):
     name = "rag_with_baidu_search"
     version = "v1"
-    meta: BaiduSearchArgs
+    meta: RAGWithBaiduSearchArgs
 
     def __init__(self, model=None):
         """初始化MRC(阅读理解问答)模型。
@@ -52,7 +52,7 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
             None
 
         """
-        super().__init__(BaiduSearchArgs, model=model)
+        super().__init__(RAGWithBaiduSearch, model=model)
 
     @staticmethod
     def __get_instruction_set():
