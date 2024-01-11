@@ -36,10 +36,14 @@ class Translation(Component):
             .. code-block:: python
 
                 import appbuilder
+
+                # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
                 os.environ["APPBUILDER_TOKEN"] = '...'
 
                 translate = appbuilder.Translation()
                 resp = translate(appbuilder.Message("你好\n中国"), to_lang="en")
+                # 输出 {'from_lang':'zh', 'to_lang':'en', 'trans_result':[{'src':'你好','dst':'hello'},{'src':'中国','dst':'China'}]}
+                print(resp.content)
     """
 
     name = "translate"

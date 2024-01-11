@@ -35,7 +35,8 @@ class Text2Image(Component):
         import appbuilder
         text_to_image = appbuilder.Text2Image()
         os.environ["APPBUILDER_TOKEN"] = '...'
-        inp = appbuilder.Message(content={"prompt": "上海的经典风景"})
+        content_data = {"prompt": "上海的经典风景", "width": 1024, "height": 1024, "image_num": 1}
+        msg = appbuilder.Message(content_data)
         out = text_to_image.run(inp)
         # 打印生成结果
         print(out.content) # eg: {"img_urls": ["xxx"]}
@@ -80,7 +81,7 @@ class Text2Image(Component):
             return Message(content=dict(out))
 
     def submitText2ImageTask(self, request: Text2ImageSubmitRequest, timeout: float = None,
-                           retry: int = 0) -> Text2ImageSubmitResponse:
+                             retry: int = 0) -> Text2ImageSubmitResponse:
 
         """
         使用给定的输入并返回AI作画的任务信息。
@@ -110,7 +111,7 @@ class Text2Image(Component):
         return response
 
     def queryText2ImageData(self, request: Text2ImageQueryRequest, timeout: float = None,
-                          retry: int = 0) -> Text2ImageQueryResponse:
+                            retry: int = 0) -> Text2ImageQueryResponse:
 
         """
         使用给定的输入并返回AI作画的结果。

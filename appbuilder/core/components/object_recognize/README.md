@@ -7,18 +7,22 @@
 ```python
 import os
 import appbuilder
+import requests
 
-
-# 配置token环境变量
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
-# 打开需要识别的图像文件
-with open("./object_recognition_test.jepg", "rb") as f:
-    # 创建物体识别组件实例
-    object_recognition = appbuilder.ObjectRecognition()
-    # 执行识别操作并获取结果
-    out = object_recognition.run(appbuilder.Message(content={"raw_image": f.read()}))
-    print(out.content)
+# 从BOS读取样例图片
+image_url = "https://bj.bcebos.com/v1/appbuilder/object_recognize_test.png?"\
+    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-"\
+    "11T11%3A00%3A19Z%2F-1%2Fhost%2F2c31bf29205f61e58df661dc80af31a1dc"\
+    "1ba1de0a8f072bc5a87102bd32f9e3"
+raw_image = requests.get(image_url).content
+# 创建物体识别组件实例
+object_recognition = appbuilder.ObjectRecognition()
+# 执行识别操作并获取结果
+out = object_recognition.run(appbuilder.Message(content={"raw_image": raw_image}))
+print(out.content)
 ```
 
 ## 参数说明

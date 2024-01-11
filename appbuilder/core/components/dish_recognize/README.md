@@ -9,14 +9,23 @@
 
 ```python
 import os
+import requests
 import appbuilder
 
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 dish_recognition = appbuilder.DishRecognition()
 
-with open("xxxx.jpg", "rb") as f:
-    resp = dish_recognition(appbuilder.Message({"raw_image": f.read()}))
+image_url = "https://bj.bcebos.com/v1/appbuilder/dish_recognize_test.jpg?" \
+          "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T" \
+          "10%3A58%3A25Z%2F-1%2Fhost%2F7b8fc08b2be5adfaeaa4e3a0bb0d1a1281b10da" \
+          "3d6b798e116cce3e37feb3438"
+raw_image = requests.get(image_url).content
+
+resp = dish_recognition(appbuilder.Message({"raw_image": raw_image}))
+# 输出{'result': [{'name': '剁椒鱼头', 'calorie': '127'}]}
+print(resp.content)
 ```
 其中，`APPBUILDER_TOKEN`为您的API访问授权token。
 
