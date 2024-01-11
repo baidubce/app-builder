@@ -52,6 +52,7 @@ class CompletionRequest(object):
 class ModelArgsConfig(BaseModel):
     stream: bool = Field(default=False, description="是否流式响应。默认为 False。")
     temperature: confloat(gt=0.0, le=1.0) = Field(default=1e-10, description="模型的温度参数，范围从 0.0 到 1.0。")
+    top_p: confloat(gt=0.0, le=1.0) = Field(default=1e-10, description="模型的采样范围，范围从 0.0 到 1.0。")
 
 
 class CompletionResponse(object):
@@ -314,6 +315,7 @@ class CompletionBaseComponent(Component):
             self.model_config["model"]["name"] = self.model_name
 
         self.model_config["model"]["completion_params"]["temperature"] = model_config_inputs.temperature
+        self.model_config["model"]["completion_params"]["top_p"] = model_config_inputs.top_p
         return self.model_config
 
     def completion(self, version, base_url, request: CompletionRequest, timeout: float = None,

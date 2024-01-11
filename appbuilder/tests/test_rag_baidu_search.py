@@ -31,3 +31,20 @@ class TestRagBaiduSearch(unittest.TestCase):
             for a in answer.content:
                 self.assertIsNotNone(a)
             self.assertIsNotNone(answer)
+
+    def test_rag_with_baidu_search_with_none_inst(self):
+        msg = "残疾人怎么办相关证件"
+        msg = appbuilder.Message(msg)
+        is_stream = False
+        instruction = None
+        answer = self.rag_with_baidu_search(msg, reject=True, clarify=True, highlight=True,
+                                            friendly=True, cite=True, temperature=0.5, top_p=0.1, stream=is_stream,
+                                            instruction=instruction)
+        self.assertIsNotNone(answer)
+        print(answer.extra)
+        if not is_stream:
+            self.assertIsNotNone(answer)
+        else:
+            for a in answer.content:
+                self.assertIsNotNone(a)
+            self.assertIsNotNone(answer)

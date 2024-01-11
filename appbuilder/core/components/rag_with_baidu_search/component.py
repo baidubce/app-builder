@@ -72,7 +72,7 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
                 }
 
     def run(self, message, reject=False, clarify=False,
-            highlight=False, friendly=False, cite=False, stream=False, temperature=1e-10, instruction=None):
+            highlight=False, friendly=False, cite=False, stream=False, temperature=1e-10, top_p=1e-10, instruction=None):
         instruction_set = self.__get_instruction_set()
 
         inputs = {
@@ -81,9 +81,9 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
             "highlight": instruction_set["highlight"] if highlight else None,
             "friendly": instruction_set["friendly"] if friendly else None,
             "cite": instruction_set["cite"] if cite else None,
-            "__system__": instruction.content
+            "__system__": instruction.content if instruction else None
         }
-        model_config_inputs = ModelArgsConfig(**{"stream": stream, "temperature": temperature})
+        model_config_inputs = ModelArgsConfig(**{"stream": stream, "temperature": temperature, "top_p": top_p})
         model_config = self.get_model_config(model_config_inputs)
         response_mode = "streaming" if stream else "blocking"
         user_id = message.id
