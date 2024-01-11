@@ -12,7 +12,7 @@ import os
 import requests
 import appbuilder
 # 设置环境变量和初始化
-# 可前往千帆AppBuilder官网 https://console.bce.baidu.com/ai_apaas/sdk 创建密钥
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 asr = appbuilder.ASR()
