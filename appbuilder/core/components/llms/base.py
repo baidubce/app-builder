@@ -240,8 +240,8 @@ class CompletionBaseComponent(Component):
 
     def _convert_cloudhub_url(self, qianfan_url: str) -> str:
         """将千帆url转换为AppBuilder url"""
-        qianfan_url_prefix = "rpc/2.0/ai_custom/v1/wenxinworkshop/chat"
-        cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1/chat"
+        qianfan_url_prefix = "rpc/2.0/ai_custom/v1/wenxinworkshop"
+        cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1"
         index = str.find(qianfan_url, qianfan_url_prefix)
         if index == -1:
             raise ValueError(f"{qianfan_url} is not a valid qianfan url")
