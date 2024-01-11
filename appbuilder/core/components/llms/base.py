@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from itertools import tee
 import itertools
 import json
 import uuid
@@ -56,7 +57,7 @@ class CompletionResponse(object):
     result = None
     log_id = ""
 
-    def __init__(self, response, stream: bool = False):
+    def __init__(self, response, stream: bool = False, rag_baidu_search: bool = False):
         """初始化客户端状态。"""
         self.error_no = 0
         self.error_msg = ""
@@ -93,6 +94,77 @@ class CompletionResponse(object):
                     raise AppBuilderServerException(self.log_id, data["code"], data["message"])
 
                 self.result = data.get("answer", None)
+
+        if rag_baidu_search:
+            if stream:
+                # 流式数据处理
+                def stream_data():
+                    sse_client = SSEClient(response)
+                    eve, eve_copy = tee(sse_client.events())
+                    single_ref = next(eve_copy).data
+
+                    _references = []
+                    _data = json.loads(single_ref)
+                    _result_list = _data.get("result", [])
+                    for _res in _result_list:
+                        _reference = {
+                            "content": _res["content"],  # 引用内容
+                            "ref_num": _res["mock_id"],  # 引用序号
+                            "url": _res["id"],  # 引用url
+                            "title": _res["title"]  # 引用标题
+                        }
+                        _references.append(_reference)
+                    for event in eve:
+                        if not event:
+                            continue
+                        answer = self.parse_stream_data(event.data)
+                        if answer is not None:
+                            yield {
+                                "answer": answer,
+                                "extra": {
+                                    "references": _references
+                                }
+                            }
+                self.result = stream_data()
+            else:
+                # 非流式数据的处理
+                if response.status_code != 200:
+                    error_no = response.status_code
+                    result = response.text
+                    raise AppBuilderServerException(self.log_id, error_no, result)
+                else:
+                    references = []
+                    data = response.json()
+                    if "code" in data and "message" in data and "requestId" in data:
+                        raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+                    if "code" in data and "message" in data and "status" in data:
+                        raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+
+                    output = data.get("answer", None)
+                    trace_log_list = data.get("trace_log", [])
+
+                    if trace_log_list is None:
+                        self.result = {
+                            "answer": output,
+                            "references": references
+                        }
+                    for trace_log in trace_log_list:
+                        result_list = trace_log["result"]
+                        for res in result_list:
+                            reference = {
+                                "content": res["content"],  # 引用内容
+                                "ref_num": res["mock_id"],  # 引用序号
+                                "url": res["id"],  # 引用url
+                                "title": res["title"]  # 引用标题
+                            }
+                            references.append(reference)
+                    self.result = {
+                        "answer": output,
+                        "extra": {
+                            "references": references
+                        }
+                    }
+
 
     def parse_stream_data(self, parsed_str):
         """解析流式数据块并提取answer字段"""
@@ -132,6 +204,7 @@ class CompletionResponse(object):
         对模型输出的 Message 对象进行包装。
         当 Message 是流式数据时，数据被迭代完后，将重新更新 content 为 blocking 的字符串。
         """
+
         class IterableWrapper:
             def __init__(self, stream_content):
                 self._content = stream_content
@@ -208,9 +281,9 @@ class CompletionBaseComponent(Component):
         request = CompletionRequest(data, response_mode)
         return request
 
-    def gene_response(self, response, stream: bool = False):
+    def gene_response(self, response, stream: bool = False, rag_baidu_search: bool = False):
         """generate response"""
-        response = CompletionResponse(response, stream)
+        response = CompletionResponse(response, stream, rag_baidu_search)
         return response
 
     def run(self, *args, **kwargs):
@@ -296,7 +369,7 @@ class CompletionBaseComponent(Component):
         return self.model_config
 
     def completion(self, version, base_url, request: CompletionRequest, timeout: float = None,
-                   retry: int = 0, ) -> CompletionResponse:
+                   retry: int = 0, rag_baidu_search: bool = False) -> CompletionResponse:
         r"""Send a byte array of an audio file to obtain the result of speech recognition."""
 
         headers = self.http_client.auth_header()
@@ -306,7 +379,8 @@ class CompletionBaseComponent(Component):
 
         stream = True if request.response_mode == "streaming" else False
         url = self.http_client.service_url(completion_url, self.base_url)
-
+        url = ("https://apaas-api.test.baidu-int.com/rpc/2.0/cloud_hub/v1/ai_engine/copilot_engine/v1/api/llm"
+               "/rag_with_baidu_search")
         logger.debug(
             "request url: {}, method: {}, json: {}, headers: {}".format(url,
                                                                         "POST",
@@ -320,7 +394,7 @@ class CompletionBaseComponent(Component):
                                                                                       request.params,
                                                                                       headers,
                                                                                       response))
-        return self.gene_response(response, stream)
+        return self.gene_response(response, stream, rag_baidu_search)
 
     @staticmethod
     def check_service_error(data: dict):
