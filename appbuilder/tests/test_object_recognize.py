@@ -13,6 +13,7 @@
 # limitations under the License.
 import os
 import unittest
+import requests
 import appbuilder
 
 
@@ -40,10 +41,11 @@ class TestObjectRecognize(unittest.TestCase):
             None
 
         """
-        current_dir = os.path.dirname(__file__)
-        file_path = os.path.join(current_dir, 'object_recognize_test.jpeg')
-        with open(file_path, 'rb') as img_file:
-            raw_image = img_file.read()
+        image_url = "https://bj.bcebos.com/v1/appbuilder/object_recognize_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
+                    "11T11%3A00%3A19Z%2F-1%2Fhost%2F2c31bf29205f61e58df661dc80af31a1dc" \
+                    "1ba1de0a8f072bc5a87102bd32f9e3"
+        raw_image = requests.get(image_url).content
 
         # Create message with raw_image
         message = appbuilder.Message(content={"raw_image": raw_image})
@@ -83,10 +85,11 @@ class TestObjectRecognize(unittest.TestCase):
             None
 
         """
-        current_dir = os.path.dirname(__file__)
-        file_path = os.path.join(current_dir, 'object_recognize_test.jpeg')
-        with open(file_path, 'rb') as img_file:
-            raw_image = img_file.read()
+        image_url = "https://bj.bcebos.com/v1/appbuilder/object_recognize_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
+                    "11T11%3A00%3A19Z%2F-1%2Fhost%2F2c31bf29205f61e58df661dc80af31a1dc" \
+                    "1ba1de0a8f072bc5a87102bd32f9e3"
+        raw_image = requests.get(image_url).content
 
         # Create message with raw_image
         message = appbuilder.Message(content={"raw_image": raw_image})
