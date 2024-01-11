@@ -229,7 +229,7 @@ class CompletionBaseComponent(Component):
         request = CompletionRequest(data, response_mode)
         return request
 
-    def gene_response(self, response, stream: bool = False, rag_baidu_search: bool = False):
+    def gene_response(self, response, stream: bool = False):
         """generate response"""
         response = CompletionResponse(response, stream)
         return response
