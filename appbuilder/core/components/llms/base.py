@@ -36,6 +36,9 @@ class LLMMessage(Message):
     content: Optional[_T] = {}
     extra: Optional[Dict] = {}
 
+    def __str__(self):
+        return f"Message(name={self.name}, content={self.content}, mtype={self.mtype}, extra={self.extra})"
+
 
 class CompletionRequest(object):
     r"""ShortSpeechRecognitionRequest."""

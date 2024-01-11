@@ -71,8 +71,8 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
                         "其中方括号中的数字是搜索结果序号。引用标记只能出现在句尾标点符号前。"
                 }
 
-    def run(self, message, reject=False, clarify=False,
-            highlight=False, friendly=False, cite=False, stream=False, temperature=1e-10, top_p=1e-10, instruction=None):
+    def run(self, message, reject=False, clarify=False,highlight=False, friendly=False, cite=False, instruction=None,
+            stream=False, temperature=1e-10, top_p=1e-10):
         instruction_set = self.__get_instruction_set()
 
         inputs = {
