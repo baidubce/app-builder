@@ -15,6 +15,8 @@
 import os
 import unittest
 
+import requests
+
 import appbuilder
 from appbuilder.core.message import Message
 
@@ -31,11 +33,16 @@ class TestLandmarkRecognition(unittest.TestCase):
         Returns:
             None.
         """
-        self.landmark_recognition = appbuilder.LandmarkRecognition()
+        self.landmark_recognition =  appbuilder.LandmarkRecognition()
+        image_url = "https://bj.bcebos.com/v1/appbuilder/landmark_test.jpeg?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
+                    "11T10%3A59%3A56Z%2F-1%2Fhost%2Fc249a068c6f321b91" \
+                    "da0d0fd629b26ded58dcac2b6a3674f32378f5eb8df1ed0"
+        self.raw_image = requests.get(image_url).content
 
     def test_run_with_raw_image(self):
         """
-        使用原始图片进行但测
+        使用原始图片进行单测
 
         Args:
             None
@@ -44,15 +51,8 @@ class TestLandmarkRecognition(unittest.TestCase):
             None
 
         """
-
-        current_dir = os.path.dirname(__file__)
-        filex = os.path.join(current_dir, 'landmark_recognize_test.png')
-
-        with open(filex, 'rb') as img_file:
-            raw_image = img_file.read()
-
         # Create message with raw_image
-        message = Message(content={"raw_image": raw_image})
+        message = Message(content={"raw_image": self.raw_image})
 
         # Recognize landmark
         output = self.landmark_recognition.run(message)
@@ -89,15 +89,8 @@ class TestLandmarkRecognition(unittest.TestCase):
             None
 
         """
-
-        current_dir = os.path.dirname(__file__)
-        filex = os.path.join(current_dir, 'landmark_recognize_test.png')
-
-        with open(filex, 'rb') as img_file:
-            raw_image = img_file.read()
-
         # Create message with raw_image
-        message = Message(content={"raw_image": raw_image})
+        message = Message(content={"raw_image": self.raw_image})
 
         # Recognize landmark with timeout and retry parameters
         output = self.landmark_recognition.run(message, timeout=5.0, retry=3)
@@ -108,4 +101,3 @@ class TestLandmarkRecognition(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

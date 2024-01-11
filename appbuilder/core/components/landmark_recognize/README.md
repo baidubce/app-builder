@@ -7,18 +7,26 @@
 ## 基本用法
 ```python
 import os
+
+import requests
+
 import appbuilder
 
+#  请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
-# 使用with语句以读取文件方式打开文件，并获取文件字节流
-with open("xxxx.jpg", "rb") as f:
+# 从BOS存储读取样例文件
+image_url = "https://bj.bcebos.com/v1/appbuilder/landmark_test.jpeg?" \
+            "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
+            "11T10%3A59%3A56Z%2F-1%2Fhost%2Fc249a068c6f321b91" \
+            "da0d0fd629b26ded58dcac2b6a3674f32378f5eb8df1ed0"
+raw_image = requests.get(image_url).content
     # 输入参数为一张图片
-    inp = appbuilder.Message(content={"raw_image": f.read()})
-    # 进行地标识别
-    landmark_recognize = appbuilder.LandmarkRecognition()
-    out = landmark_recognize.run(inp)
-    # 打印识别结果
-    print(out.content) # for example: {"landmark": "狮身人面相"}
+inp = appbuilder.Message(content={"raw_image": raw_image})
+# 进行地标识别
+landmark_recognize = appbuilder.LandmarkRecognition()
+out = landmark_recognize.run(inp)
+# 打印识别结果
+print(out.content) # eg: {"landmark": "尼罗河"}
 
 ```
 ## 参数说明
