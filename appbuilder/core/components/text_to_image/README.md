@@ -11,6 +11,7 @@ AI作画-高级版（Text2Image）基于文心大模型，可以根据用户输�
 import os
 import appbuilder
 # 设置环境变量和初始化
+# 可前往千帆AppBuilder官网 https://console.bce.baidu.com/ai_apaas/sdk 创建密钥
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 text2Image = appbuilder.Text2Image()

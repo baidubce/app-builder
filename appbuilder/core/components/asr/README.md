@@ -9,19 +9,22 @@
 
 ```python
 import os
+import requests
 import appbuilder
 # 设置环境变量和初始化
+# 可前往千帆AppBuilder官网 https://console.bce.baidu.com/ai_apaas/sdk 创建密钥
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 asr = appbuilder.ASR()
 
-with open("./asr_test.pcm", "rb") as f:
-    audio_data = f.read()
+audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
+                   "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
+                   "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
+audio_data = requests.get(audio_file_url).content
 content_data = {"audio_format": "pcm", "raw_audio": audio_data, "rate": 16000}
 msg = appbuilder.Message(content_data)
-result = asr.run(msg)
-
-print(result)
+out = asr.run(msg)
+print(out.content)
 ```
 ## 参数说明
 ### 初始化参数

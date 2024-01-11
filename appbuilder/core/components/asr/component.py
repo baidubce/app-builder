@@ -35,11 +35,13 @@ class ASR(Component):
         import appbuilder
         asr = appbuilder.ASR()
         os.environ["APPBUILDER_TOKEN"] = '...'
+
         with open("xxxx.pcm", "rb") as f:
-            inp = appbuilder.Message(content={"raw_audio": f.read()})
-            out = asr.run(inp)
-            # 打印识别结果
-            print(out.content) # eg: {"result": ["北京科技馆。"]}
+            audio_data = f.read()
+        content_data = {"audio_format": "pcm", "raw_audio": audio_data, "rate": 16000}
+        msg = appbuilder.Message(content_data)
+        out = asr.run(msg)
+        print(out.content) # eg: {"result": ["北京科技馆。"]}
      """
     def run(self, message: Message, audio_format: str = "pcm", rate: int = 16000,
             timeout: float = None, retry: int = 0) -> Message:
