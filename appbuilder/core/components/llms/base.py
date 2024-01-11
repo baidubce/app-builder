@@ -29,6 +29,7 @@ from typing import Dict, List, Optional, Any
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.model_util import Models, model_name_mapping
+from appbuilder.utils.sse_util import SSEClient
 
 
 class CompletionRequest(object):
@@ -64,8 +65,11 @@ class CompletionResponse(object):
         if stream:
             # 流式数据处理
             def stream_data():
-                for chunk in response.iter_content(chunk_size=None):
-                    answer = self.parse_stream_data(chunk)
+                sse_client = SSEClient(response)
+                for event in sse_client.events():
+                    if not event:
+                        continue
+                    answer = self.parse_stream_data(event.data)
                     if answer is not None:
                         yield answer
 
@@ -90,18 +94,8 @@ class CompletionResponse(object):
 
                 self.result = data.get("answer", None)
 
-    def parse_stream_data(self, data_chunk):
+    def parse_stream_data(self, parsed_str):
         """解析流式数据块并提取answer字段"""
-
-        data_str = data_chunk.decode('utf-8')
-
-        if data_str.startswith("data: "):
-            parsed_str = data_str[6:]
-        else:
-            parsed_str = data_str
-
-        print("xxx: " + parsed_str)
-
         try:
             data = json.loads(parsed_str)
 
@@ -131,6 +125,34 @@ class CompletionResponse(object):
         message = Message()
         message.id = self.log_id
         message.content = self.result
+        return self.message_iterable_wrapper(message)
+
+    def message_iterable_wrapper(self, message):
+        """
+        对模型输出的 Message 对象进行包装。
+        当 Message 是流式数据时，数据被迭代完后，将重新更新 content 为 blocking 的字符串。
+        """
+        class IterableWrapper:
+            def __init__(self, stream_content):
+                self._content = stream_content
+                self._concat = ""
+
+            def __iter__(self):
+                return self
+
+            def __next__(self):
+                try:
+                    char = next(self._content)
+                    self._concat += char
+                    return char
+                except StopIteration:
+                    message.content = self._concat  # Update the original content
+                    raise
+
+        from collections.abc import Generator
+        if isinstance(message.content, Generator):
+            # Replace the original content with the custom iterable
+            message.content = IterableWrapper(message.content)
         return message
 
 
