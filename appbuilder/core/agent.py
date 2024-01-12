@@ -241,7 +241,10 @@ class AgentRuntime(BaseModel):
                                     "code": 0, "message": "",
                                     "result": {
                                         "session_id": session_id, 
-                                        "answer_message": json.loads(Message(it).json(exclude_none=True)),
+                                        "answer_message": {
+                                            "content": it,
+                                            "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
+                                        }
                                     }
                                 }
                                 yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
