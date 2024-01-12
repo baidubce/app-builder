@@ -35,7 +35,7 @@ checker = PythonVersionChecker()
 checker.current_version
 
 from .core import *
-
+from .core.components.rag_with_baidu_search import RAGWithBaiduSearch
 from .core.components.llms.mrc import MRC
 from .core.components.llms.oral_query_generation import OralQueryGeneration
 from .core.components.llms.qa_pair_mining import QAPairMining
@@ -126,7 +126,7 @@ __all__ = [
     "BESVectorStoreIndex",
     'DishRecognition',
     'Translation',
-
+    'RAGWithBaiduSearch'
     'Message',
 
     'Embedding',
