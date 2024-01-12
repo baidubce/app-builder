@@ -18,7 +18,7 @@ class TestRagBaiduSearch(unittest.TestCase):
         msg = "残疾人怎么办相关证件"
         msg = appbuilder.Message(msg)
         is_stream = False
-        instruction = "你是问答助手，在回答问题前需要加上“很高兴为您解答："
+        instruction = "你是问答助手，在回答问题前需要加上“很高兴为您解答：”"
         instruction = appbuilder.Message(instruction)
         answer = self.rag_with_baidu_search(msg, reject=True, clarify=True, highlight=True,
                                             friendly=True, cite=True, temperature=0.5, stream=is_stream,
@@ -28,7 +28,7 @@ class TestRagBaiduSearch(unittest.TestCase):
             self.assertIsNotNone(answer.content)
             self.assertIsNotNone(answer.extra)
         else:
-            for content, extra in answer.content, answer.extra:
+            for content, extra in zip(answer.content, answer.extra):
                 self.assertIsNotNone(content)
                 self.assertIsNotNone(extra)
 
@@ -45,6 +45,6 @@ class TestRagBaiduSearch(unittest.TestCase):
             self.assertIsNotNone(answer.content)
             self.assertIsNotNone(answer.extra)
         else:
-            for content, extra in answer.content, answer.extra:
+            for content, extra in zip(answer.content, answer.extra):
                 self.assertIsNotNone(content)
                 self.assertIsNotNone(extra)
