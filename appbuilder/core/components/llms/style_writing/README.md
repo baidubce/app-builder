@@ -22,6 +22,7 @@ length = 100
 
 msg = appbuilder.Message(query)
 answer = style_writing(msg, style, length)
+print(answer)
 ```
 
 ## 参数说明
