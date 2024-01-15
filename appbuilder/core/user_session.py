@@ -60,6 +60,7 @@ class UserSession(object):
     提供保存对话数据与获取历史数据的方法，**必须**在 AgentRuntime 启动的服务中使用。
     """
     _instance = None
+    _initialized = False
 
     def __new__(cls, *args, **kwargs):
         """
@@ -80,10 +81,14 @@ class UserSession(object):
         Returns:
             None
         """
+        if self._initialized:
+            return
+        self._initialized = True
         if user_session_config is None:
             user_session_config = "sqlite:///user_session.db"
         if not isinstance(user_session_config, (sqlalchemy.engine.URL, str)):
             raise ValueError("user_session_config must be sqlalchemy.URL or str")
+        logging.info(f"create user_session by {user_session_config}")
         engine = create_engine(user_session_config)
         _db.metadata.create_all(engine) # 创建表
         Session = sessionmaker(engine)

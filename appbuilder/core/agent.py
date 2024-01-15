@@ -180,17 +180,15 @@ class AgentRuntime(BaseModel):
         """
         return self.component.run(message=message, stream=stream, **args)
         
-    def serve(self, host='0.0.0.0', debug=True, port=8092):
+    def create_flask_app(self):
         """ 
-        将 component 服务化，提供 Flask http API 接口
+        创建 Flask 应用，主要用于 Gunicorn 这样的 WSGI 服务器来运行服务。
         
         Args:
-            host (str): 服务 host
-            debug (bool): 是否是 debug 模式
-            port (int): 服务 port
+            None
         
         Returns:
-            None
+            Flask
         """
         # lazy import flask
         try:
@@ -265,7 +263,21 @@ class AgentRuntime(BaseModel):
             except Exception as e:
                 logging.error(e, exc_info=True)
                 raise RuntimeError(e)
-            
+        return app
+
+    def serve(self, host='0.0.0.0', debug=True, port=8092):
+        """ 
+        将 component 服务化，提供 Flask http API 接口
+        
+        Args:
+            host (str): 服务 host
+            debug (bool): 是否是 debug 模式
+            port (int): 服务 port
+        
+        Returns:
+            None
+        """
+        app = self.create_flask_app()
         app.run(host=host, debug=debug, port=port)
         
     def chainlit_demo(self, host='0.0.0.0', port=8091):
