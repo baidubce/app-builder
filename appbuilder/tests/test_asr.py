@@ -1,6 +1,7 @@
 import unittest
-import os
 import uuid
+
+import requests
 
 import appbuilder
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse
@@ -17,6 +18,9 @@ class TestASRComponent(unittest.TestCase):
         Returns:
             None.
         """
+        self.audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
+                   "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
+                   "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
         self.asr = appbuilder.ASR()
 
     def test_run(self):
@@ -30,16 +34,12 @@ class TestASRComponent(unittest.TestCase):
             None
 
         """
-
-        current_dir = os.path.dirname(__file__)
-        asr_path = os.path.join(current_dir, 'asr_test.pcm')
-
-        with open(asr_path, "rb") as f:
-            inp = appbuilder.Message(content={"raw_audio": f.read()})
-            out = self.asr.run(inp)
-            self.assertIsNotNone(out)
-            self.assertIsInstance(out, appbuilder.Message)
-            self.assertIn('result', out.content)
+        raw_audio = requests.get(self.audio_file_url).content
+        inp = appbuilder.Message(content={"raw_audio": raw_audio})
+        out = self.asr.run(inp)
+        self.assertIsNotNone(out)
+        self.assertIsInstance(out, appbuilder.Message)
+        self.assertIn('result', out.content)
 
     def test_run_different_rate(self):
         """
@@ -52,18 +52,14 @@ class TestASRComponent(unittest.TestCase):
             None
 
         """
-
-        current_dir = os.path.dirname(__file__)
-        asr_path = os.path.join(current_dir, 'asr_test.pcm')
-
-        with open(asr_path, "rb") as f:
-            inp = appbuilder.Message(content={"raw_audio": f.read()})
-            try:
-                out = self.asr.run(inp, rate=8000)
-                self.assertIsNotNone(out)
-                self.assertIsInstance(out, appbuilder.Message)
-            except appbuilder.AppBuilderServerException as ex:
-                self.assertIsNotNone(ex, "请求捕获到异常")
+        raw_audio = requests.get(self.audio_file_url).content
+        inp = appbuilder.Message(content={"raw_audio": raw_audio})
+        try:
+            out = self.asr.run(inp, rate=8000)
+            self.assertIsNotNone(out)
+            self.assertIsInstance(out, appbuilder.Message)
+        except appbuilder.AppBuilderServerException as ex:
+            self.assertIsNotNone(ex, "请求捕获到异常")
 
     def test_run_invalid_audio(self):
         """
@@ -91,20 +87,16 @@ class TestASRComponent(unittest.TestCase):
             None
 
         """
-
-        current_dir = os.path.dirname(__file__)
-        asr_path = os.path.join(current_dir, 'asr_test.pcm')
-
-        with open(asr_path, "rb") as f:
-            request = ShortSpeechRecognitionRequest()
-            request.format = 'pcm'
-            request.rate = 16000
-            request.cuid = str(uuid.uuid4())
-            request.dev_pid = "80001"
-            request.speech = f.read()
-            response = self.asr._recognize(request)
-            self.assertIsNotNone(response)
-            self.assertIsInstance(response, ShortSpeechRecognitionResponse)
+        raw_audio = requests.get(self.audio_file_url).content
+        request = ShortSpeechRecognitionRequest()
+        request.format = 'pcm'
+        request.rate = 16000
+        request.cuid = str(uuid.uuid4())
+        request.dev_pid = "80001"
+        request.speech = raw_audio
+        response = self.asr._recognize(request)
+        self.assertIsNotNone(response)
+        self.assertIsInstance(response, ShortSpeechRecognitionResponse)
 
     def test_recognition_invalid_request(self):
         """
@@ -133,7 +125,7 @@ class TestASRComponent(unittest.TestCase):
         """
         data = {'err_msg': 'Error', 'err_no': 1}
         with self.assertRaises(appbuilder.AppBuilderServerException):
-            self.asr._check_service_error("",data)
+            self.asr._check_service_error("", data)
         data = {'err_msg': 'No Error', 'err_no': 0}
         self.assertIsNone(self.asr._check_service_error("", data))
 

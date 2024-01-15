@@ -22,13 +22,22 @@ from pydantic import BaseModel, Field, ValidationError, HttpUrl, validator
 from pydantic.types import confloat
 
 from appbuilder.core.component import Component
-from appbuilder.core.message import Message
+from appbuilder.core.message import Message, _T
 from appbuilder.utils.logger_util import logger
 from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.utils.model_util import Models, model_name_mapping
+from appbuilder.core.utils import get_model_url
+from appbuilder.utils.sse_util import SSEClient
+
+
+class LLMMessage(Message):
+    content: Optional[_T] = {}
+    extra: Optional[Dict] = {}
+
+    def __str__(self):
+        return f"Message(name={self.name}, content={self.content}, mtype={self.mtype}, extra={self.extra})"
 
 
 class CompletionRequest(object):
@@ -46,6 +55,7 @@ class CompletionRequest(object):
 class ModelArgsConfig(BaseModel):
     stream: bool = Field(default=False, description="是否流式响应。默认为 False。")
     temperature: confloat(gt=0.0, le=1.0) = Field(default=1e-10, description="模型的温度参数，范围从 0.0 到 1.0。")
+    top_p: confloat(gt=0.0, le=1.0) = Field(default=1e-10, description="模型的top_p参数，范围从 0.0 到 1.0。")
 
 
 class CompletionResponse(object):
@@ -54,6 +64,7 @@ class CompletionResponse(object):
     error_msg = ""
     result = None
     log_id = ""
+    extra = {}
 
     def __init__(self, response, stream: bool = False):
         """初始化客户端状态。"""
@@ -64,8 +75,11 @@ class CompletionResponse(object):
         if stream:
             # 流式数据处理
             def stream_data():
-                for chunk in response.iter_content(chunk_size=None):
-                    answer = self.parse_stream_data(chunk)
+                sse_client = SSEClient(response)
+                for event in sse_client.events():
+                    if not event:
+                        continue
+                    answer = self.parse_stream_data(event.data)
                     if answer is not None:
                         yield answer
 
@@ -89,19 +103,15 @@ class CompletionResponse(object):
                     raise AppBuilderServerException(self.log_id, data["code"], data["message"])
 
                 self.result = data.get("answer", None)
+                trace_log_list = data.get("trace_log", None)
+                if trace_log_list is not None:
+                    for trace_log in trace_log_list:
+                        key = trace_log["tool"]
+                        result_list = trace_log["result"]
+                        self.extra[key] = result_list
 
-    def parse_stream_data(self, data_chunk):
+    def parse_stream_data(self, parsed_str):
         """解析流式数据块并提取answer字段"""
-
-        data_str = data_chunk.decode('utf-8')
-
-        if data_str.startswith("data: "):
-            parsed_str = data_str[6:]
-        else:
-            parsed_str = data_str
-
-        print("xxx: " + parsed_str)
-
         try:
             data = json.loads(parsed_str)
 
@@ -111,7 +121,7 @@ class CompletionResponse(object):
             if "code" in data and "message" in data and "status" in data:
                 raise AppBuilderServerException(self.log_id, data["code"], data["message"])
 
-            return data.get("answer", "")
+            return data
         except json.JSONDecodeError:
             # 处理可能的解析错误
             print("error: " + parsed_str)
@@ -128,9 +138,46 @@ class CompletionResponse(object):
             Message: Message对象。
 
         """
-        message = Message()
+        message = LLMMessage()
         message.id = self.log_id
         message.content = self.result
+        message.extra = self.extra
+        return self.message_iterable_wrapper(message)
+
+    def message_iterable_wrapper(self, message):
+        """
+        对模型输出的 Message 对象进行包装。
+        当 Message 是流式数据时，数据被迭代完后，将重新更新 content 为 blocking 的字符串。
+        """
+
+        class IterableWrapper:
+            def __init__(self, stream_content):
+                self._content = stream_content
+                self._concat = ""
+                self._extra = {}
+
+            def __iter__(self):
+                return self
+
+            def __next__(self):
+                try:
+                    result_json = next(self._content)
+                    char = result_json.get("answer", "")
+                    result_list = result_json.get("result")
+                    key = result_json.get("tool")
+                    if result_list is not None:
+                        self._extra[key] = result_list
+                    self._concat += char
+                    return char
+                except StopIteration:
+                    message.content = self._concat  # Update the original content
+                    message.extra = self._extra  # Update the original extra
+                    raise
+
+        from collections.abc import Generator
+        if isinstance(message.content, Generator):
+            # Replace the original content with the custom iterable
+            message.content = IterableWrapper(message.content)
         return message
 
 
@@ -167,7 +214,7 @@ class CompletionBaseComponent(Component):
         super().__init__(meta=meta, secret_key=secret_key, gateway=gateway)
 
         self.model_name = model
-        self.model_url = self.get_model_url()
+        self.model_url = get_model_url(client=self.http_client, model_name=model)
         if not self.model_name and not self.model_url:
             raise ValueError("model_name or model_url must be provided")
         self.version = self.version
@@ -221,33 +268,6 @@ class CompletionBaseComponent(Component):
 
         return response.to_message()
 
-    def get_model_url(self) -> str:
-        """根据名称获取模型请求url"""
-        origin_name = self.model_name
-        for key, value in model_name_mapping.items():
-            if origin_name == value:
-                origin_name = key
-                break
-
-        client = self.http_client
-        response = Models(client.secret_key, client.gateway).list()
-        for model in itertools.chain(response.result.common, response.result.custom):
-            if model.name == origin_name:
-                return self._convert_cloudhub_url(model.url)
-
-        raise ValueError(f"Model[{self.model_name}] not available! "
-                         f"You can query available models through: appbuilder.get_model_list()")
-
-    def _convert_cloudhub_url(self, qianfan_url: str) -> str:
-        """将千帆url转换为AppBuilder url"""
-        qianfan_url_prefix = "rpc/2.0/ai_custom/v1/wenxinworkshop/chat"
-        cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1/chat"
-        index = str.find(qianfan_url, qianfan_url_prefix)
-        if index == -1:
-            raise ValueError(f"{qianfan_url} is not a valid qianfan url")
-        url_suffix = qianfan_url[index + len(qianfan_url_prefix):]
-        return "{}/{}{}".format(self.http_client.gateway, cloudhub_url_prefix, url_suffix)
-
     def get_compeliton_params(self, specific_inputs, model_config_inputs):
         """获取模型请求参数"""
         inputs = specific_inputs.extract_values_to_dict()
@@ -271,10 +291,11 @@ class CompletionBaseComponent(Component):
             self.model_config["model"]["name"] = self.model_name
 
         self.model_config["model"]["completion_params"]["temperature"] = model_config_inputs.temperature
+        self.model_config["model"]["completion_params"]["top_p"] = model_config_inputs.top_p
         return self.model_config
 
     def completion(self, version, base_url, request: CompletionRequest, timeout: float = None,
-                   retry: int = 0, ) -> CompletionResponse:
+                   retry: int = 0) -> CompletionResponse:
         r"""Send a byte array of an audio file to obtain the result of speech recognition."""
 
         headers = self.http_client.auth_header()
@@ -284,7 +305,6 @@ class CompletionBaseComponent(Component):
 
         stream = True if request.response_mode == "streaming" else False
         url = self.http_client.service_url(completion_url, self.base_url)
-
         logger.debug(
             "request url: {}, method: {}, json: {}, headers: {}".format(url,
                                                                         "POST",

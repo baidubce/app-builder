@@ -14,7 +14,7 @@
 import itertools
 from typing import List
 
-from appbuilder.utils.model_util import GetModelListRequest, Models, map_model_name
+from appbuilder.utils.model_util import GetModelListRequest, Models, model_name_mapping
 
 
 def utils_get_user_agent():
@@ -44,3 +44,31 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
             continue
         models.append(model.name)
     return models
+
+
+def get_model_url(client, model_name: str) -> str:
+    """根据名称获取模型请求url"""
+    origin_name = model_name
+    for key, value in model_name_mapping.items():
+        if origin_name == value:
+            origin_name = key
+            break
+
+    response = Models(client).list()
+    for model in itertools.chain(response.result.common, response.result.custom):
+        if model.name == origin_name:
+            return convert_cloudhub_url(client, model.url)
+
+    raise ValueError(f"Model[{model_name}] not available! "
+                     f"You can query available models through: appbuilder.get_model_list()")
+
+
+def convert_cloudhub_url(client, qianfan_url: str) -> str:
+    """将千帆url转换为AppBuilder url"""
+    qianfan_url_prefix = "rpc/2.0/ai_custom/v1/wenxinworkshop"
+    cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1"
+    index = str.find(qianfan_url, qianfan_url_prefix)
+    if index == -1:
+        raise ValueError(f"{qianfan_url} is not a valid qianfan url")
+    url_suffix = qianfan_url[index + len(qianfan_url_prefix):]
+    return "{}/{}{}".format(client.gateway, cloudhub_url_prefix, url_suffix)

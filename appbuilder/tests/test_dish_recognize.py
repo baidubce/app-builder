@@ -1,5 +1,6 @@
 import unittest
 import os
+import requests
 
 import appbuilder
 
@@ -29,14 +30,14 @@ class TestDishRecognitionComponent(unittest.TestCase):
             None
 
         """
-
-        current_dir = os.path.dirname(__file__)
-        file_path = os.path.join(current_dir, 'dish_recognize_test.jpg')
-
-        with open(file_path, "rb") as f:
-            message = appbuilder.Message({"raw_image": f.read()})
-            output_message = self.dish_recognition(message=message)
-            self.assertIsInstance(output_message, appbuilder.Message)
+        image_url = "https://bj.bcebos.com/v1/appbuilder/dish_recognize_test.jpg?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T" \
+                    "10%3A58%3A25Z%2F-1%2Fhost%2F7b8fc08b2be5adfaeaa4e3a0bb0d1a1281b10da" \
+                    "3d6b798e116cce3e37feb3438"
+        raw_image = requests.get(image_url).content
+        message = appbuilder.Message({"raw_image": raw_image})
+        output_message = self.dish_recognition(message=message)
+        self.assertIsInstance(output_message, appbuilder.Message)
 
     def test_run_with_invalid_image(self):
         """
@@ -69,8 +70,11 @@ class TestDishRecognitionComponent(unittest.TestCase):
             None
 
         """
-        url = "https://img1.baidu.com/it/u=858635807,3718531454&fm=253&fmt=auto&app=138&f=PNG?w=500&h=333"
-        message = appbuilder.Message({"url": url})
+        image_url = "https://bj.bcebos.com/v1/appbuilder/dish_recognize_test.jpg?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T" \
+                    "10%3A58%3A25Z%2F-1%2Fhost%2F7b8fc08b2be5adfaeaa4e3a0bb0d1a1281b10da" \
+                    "3d6b798e116cce3e37feb3438"
+        message = appbuilder.Message({"url": image_url})
         output_message = self.dish_recognition(message=message)
         self.assertIsInstance(output_message, appbuilder.Message)
 

@@ -192,18 +192,20 @@ class Models:
      """
 
     def __init__(self,
+                 client: HTTPClient = None,
                  secret_key: Optional[str] = None,
                  gateway: str = ""
                  ):
         r"""Models初始化方法.
 
             参数:
+                client(obj:`HTTPClient`): 客户端实例，用于发送请求。
                 secret_key(str,可选): 用户鉴权token, 默认从环境变量中获取: os.getenv("APPBUILDER_TOKEN", "").
                 gateway(str, 可选): 后端网关服务地址，默认从环境变量中获取: os.getenv("GATEWAY_URL", "")
             返回：
                 无
         """
-        self.http_client = HTTPClient(secret_key, gateway)
+        self.http_client = client or HTTPClient(secret_key, gateway)
 
     def list(self, request: GetModelListRequest = None, timeout: float = None,
              retry: int = 0) -> GetModelListResponse:

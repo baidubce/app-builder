@@ -35,7 +35,7 @@ checker = PythonVersionChecker()
 checker.current_version
 
 from .core import *
-
+from .core.components.rag_with_baidu_search import RAGWithBaiduSearch
 from .core.components.llms.mrc import MRC
 from .core.components.llms.oral_query_generation import OralQueryGeneration
 from .core.components.llms.qa_pair_mining import QAPairMining
@@ -71,8 +71,8 @@ from .core.components.gbi.nl2sql.component import NL2Sql
 from .core.components.gbi.select_table.component import SelectTable
 
 from appbuilder.core.message import Message
-from appbuilder.core.agent import AgentBase
-from appbuilder.core.context import UserSession
+from appbuilder.core.agent import AgentRuntime
+from appbuilder.core.user_session import UserSession
 
 from appbuilder.utils.logger_util import logger
 
@@ -126,7 +126,7 @@ __all__ = [
     "BESVectorStoreIndex",
     'DishRecognition',
     'Translation',
-
+    'RAGWithBaiduSearch'
     'Message',
 
     'Embedding',

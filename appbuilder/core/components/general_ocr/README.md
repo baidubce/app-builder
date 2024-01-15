@@ -8,16 +8,22 @@
 以下是一个简单的例子来演示如何开始使用GeneralOCR组件：
 
 ```python
+import os
 import appbuilder
+import requests
 
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
-
-with open("./general_ocr_test.png", "rb") as f:
-    general_ocr = appbuilder.GeneralOCR()
-    out = general_ocr.run(appbuilder.Message(content={"raw_image": f.read()}))
+# 从BOS读取样例图片
+image_url = "https://bj.bcebos.com/v1/appbuilder/general_ocr_test.png?"\
+    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-"\
+    "11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae"\
+    "857a27513734d765495f89ffa5f73"
+raw_image = requests.get(image_url).content
+general_ocr = appbuilder.GeneralOCR()
+out = general_ocr.run(appbuilder.Message(content={"raw_image": raw_image}))
 print(out.content)
 ```
-首先，我们导入appbuilder，然后使用`appbuilder.GeneralOCR()`实例化一个GeneralOCR对象。然后我们设置环境变量APPBUILDER_TOKEN。然后我们打开一个图片文件，并使用run方法进行文字识别，打印得到的识别结果。
 
 ##  参数说明
 

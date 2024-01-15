@@ -26,6 +26,32 @@ from appbuilder.utils.logger_util import logger
 
 class ExtractTableFromDoc(Component):
     """ 文档表格抽取
+    
+    Examples:
+
+        .. code-block:: python
+        
+            import os
+            import json
+
+            from appbuilder.utils.logger_util import logger
+            from appbuilder import Message, ExtractTableFromDoc, DocParser
+
+            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+            os.environ["APPBUILDER_TOKEN"] = "..."
+
+            # 测试文档解析器使用默认配置，xxx为待解析的文档路径。
+            msg = Message("xxx")
+            parser = DocParser()
+            # ExtractTableFromDoc输入为文档原始解析结果，此处需要带上原始结果，return_raw=True.
+            doc = parser(msg, return_raw=True).content.raw
+
+            # 抽取文档中的表格
+            parser = ExtractTableFromDoc()
+            result = parser.run(Message(doc))
+
+            logger.info("Tables: {}".format(
+                json.dumps(result.content, ensure_ascii=False)))
     """
     name: str = "extract_table_from_doc"
     #TODO: 隐藏base_url，@tangwei12统一修改
@@ -97,6 +123,7 @@ class ExtractTableFromDoc(Component):
             "field_before_table_cnt": doc_node_num_before_table
         }
         url = self.http_client.service_url(sub_path="", prefix=self.base_url)
+        # logger.info("request url: {}, headers: {}".format(url, headers))
         resp = self.http_client.session.post(url=url, data=json.dumps(params), headers=self.http_client.auth_header())
 
         self.http_client.check_response_header(resp)
