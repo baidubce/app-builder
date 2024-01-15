@@ -15,7 +15,7 @@ import appbuilder
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 初始化并使用 StyleRewrite 组件
-style_rewrite = appbuilder.StyleRewrite(model="ernie-bot-4")
+style_rewrite = appbuilder.StyleRewrite(model="eb-turbo-appbuilder")
 answer = style_rewrite(appbuilder.Message("文心大模型发布新版"), style="激励话术")
 ```
 
