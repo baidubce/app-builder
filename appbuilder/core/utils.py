@@ -15,6 +15,7 @@ import itertools
 from typing import List
 
 from appbuilder.core._client import HTTPClient
+from appbuilder.core._exception import TypeNotSupportedException, ModelNotSupportedException
 from appbuilder.utils.model_util import GetModelListRequest, Models, model_name_mapping
 
 
@@ -34,6 +35,9 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
     返回:
         list: 模型列表。
     """
+    api_type_set = {"chat", "completions", "embeddings", "text2image"}
+    if api_type_filter and not set(api_type_filter).issubset(api_type_set):
+        raise TypeNotSupportedException(f"api_type_filter only support {api_type_set}")
     request = GetModelListRequest()
     request.apiTypefilter = api_type_filter
     model = Models(secret_key=secret_key)
@@ -77,7 +81,7 @@ class ModelInfo:
         for model in self.model_list:
             if model.name == origin_name:
                 return convert_cloudhub_url(self.client, model.url)
-        raise ValueError(f"Model[{model_name}] not available! "
+        raise ModelNotSupportedException(f"Model[{model_name}] not available! "
                          f"You can query available models through: appbuilder.get_model_list()")
 
     def get_model_type(self, model_name: str) -> str:
@@ -90,5 +94,5 @@ class ModelInfo:
         for model in self.model_list:
             if model.name == origin_name:
                 return model.apiType
-        raise ValueError(f"Model[{model_name}] not available! "
+        raise ModelNotSupportedException(f"Model[{model_name}] not available! "
                          f"You can query available models through: appbuilder.get_model_list()")
