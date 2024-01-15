@@ -58,31 +58,37 @@ def convert_cloudhub_url(client: HTTPClient, qianfan_url: str) -> str:
     return "{}/{}{}".format(client.gateway, cloudhub_url_prefix, url_suffix)
 
 
-class ModelUtils:
-    """ 模型工具类 """
+class ModelInfo:
+    """ 模型信息类 """
 
-    def __init__(self, client: HTTPClient, model_name: str):
+    def __init__(self, client: HTTPClient):
         """根据模型名称获取并初始化模型信息"""
-        self.model_info = None
         self.client = client
-        self.model_name = model_name
-        for key, value in model_name_mapping.items():
-            if self.model_name == value:
-                self.model_name = key
-                break
         response = Models(client).list()
-        for model in itertools.chain(response.result.common, response.result.custom):
-            if model.name == self.model_name:
-                self.model_info = model
-                break
-        if not self.model_info:
-            raise ValueError(f"Model[{model_name}] not available! "
-                             f"You can query available models through: appbuilder.get_model_list()")
+        self.model_list = [*response.result.common, *response.result.custom]
 
-    def get_model_url(self) -> str:
+    def get_model_url(self, model_name: str) -> str:
         """获取模型在工作台网关的请求url"""
-        return convert_cloudhub_url(self.client, self.model_info.url)
+        origin_name = model_name
+        for key, value in model_name_mapping.items():
+            if origin_name == value:
+                origin_name = key
+                break
+        for model in self.model_list:
+            if model.name == origin_name:
+                return convert_cloudhub_url(self.client, model.url)
+        raise ValueError(f"Model[{model_name}] not available! "
+                         f"You can query available models through: appbuilder.get_model_list()")
 
-    def get_model_type(self) -> str:
+    def get_model_type(self, model_name: str) -> str:
         """获取模型类型"""
-        return self.model_info.apiType
+        origin_name = model_name
+        for key, value in model_name_mapping.items():
+            if origin_name == value:
+                origin_name = key
+                break
+        for model in self.model_list:
+            if model.name == origin_name:
+                return model.apiType
+        raise ValueError(f"Model[{model_name}] not available! "
+                         f"You can query available models through: appbuilder.get_model_list()")
