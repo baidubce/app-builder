@@ -65,6 +65,12 @@ class ModelNotSupportedException(BaseRPCException):
     pass
 
 
+class TypeNotSupportedException(BaseRPCException):
+    r"""TypeNotSupportedException represent type is not supported
+    """
+    pass
+
+
 class AppBuilderServerException(BaseRPCException):
     r"""AppBuilderServerException represent backend server failed response.
     """
