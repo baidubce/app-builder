@@ -153,9 +153,13 @@ class ChunkSplitter(Component):
 
         .. code-block:: python
 
+            import os
             from appbuilder.core.components.doc_parser.doc_parser import DocParser
-            from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter
+            from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter, ChunkSplitter
             from appbuilder.core.message import Message
+
+            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+            os.environ["APPBUILDER_TOKEN"] = "..."
 
             # 先解析
             msg = Message("./test.pdf")
@@ -174,18 +178,17 @@ class ChunkSplitter(Component):
         if not isinstance(paser_res, ParseResult):
             raise ValueError("message.content type must be a ParseResult")
 
-        headers = {
-            "Authorization": self.secret_key if self.secret_key else os.getenv("APPBUILDER_TOKEN"),
-            "Content-Type": "application/json"
-        }
+        headers = self.http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+
         chunk_splitter_remote_params = {"xmind_res": paser_res.raw, "max_segment_length": self.max_segment_length,
                                         "overlap": self.overlap, "separators": self.separators,
                                         "join_symbol": self.join_symbol}
 
-        response = self.s.post(url=self.service_url(prefix=self.base_url, sub_path=""),
-                               headers=headers, json=chunk_splitter_remote_params, stream=False)
-        self.check_response_header(response)
-        self.check_response_json(response.json())
+        response = self.http_client.session.post(url=self.http_client.service_url(prefix=self.base_url, sub_path=""),
+                                                 headers=headers, json=chunk_splitter_remote_params, stream=False)
+        self.http_client.check_response_header(response)
+        self.http_client.check_response_json(response.json())
         doc_chunk_splitter_res = response.json()
 
         return Message(doc_chunk_splitter_res["result"])
@@ -259,10 +262,13 @@ class TitleSplitter(Component):
         Examples:
 
         .. code-block:: python
-
+            import os
             from appbuilder.core.components.doc_parser.doc_parser import DocParser
-            from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter
+            from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter, TitleSplitter
             from appbuilder.core.message import Message
+
+            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+            os.environ["APPBUILDER_TOKEN"] = "..."
 
             # 先解析
             msg = Message("./test_title_splitter.docx")

@@ -117,13 +117,11 @@ class DocParser(Component):
             param["data"] = base64.b64encode(f.read()).decode()
             param["name"] = os.path.basename(file_path)
             payload = json.dumps({"file_list": [param]})
-            headers = {
-                "Authorization": self.secret_key,
-                "Content-Type": "application/json"
-            }
-            response = self.s.post(url=self.service_url(self.base_url), headers=headers, data=payload)
-            self.check_response_header(response)
-            self.check_response_json(response.json())
+            headers = self.http_client.auth_header()
+            headers["Content-Type"] = "application/json"
+            response = self.http_client.session.post(url=self.http_client.service_url(self.base_url), headers=headers, data=payload)
+            self.http_client.check_response_header(response)
+            self.http_client.check_response_json(response.json())
             response = response.json()
             if response["error_code"] != 0:
                 logger.error("doc parser service log_id {} err {}".format(response["log_id"], response["error_msg"]))

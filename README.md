@@ -11,18 +11,20 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 </div>
 
 ## News
-
-* **[官方组件列表](https://qasandbox.bcetest.baidu.com/ai_apaas/sdk)**
+* **[云端快速创建RAG、Agent、GBI等应用](https://console.bce.baidu.com/ai_apaas/app)**
+* **[官方组件列表](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#%E5%BC%80%E5%8F%91%E7%BB%84%E4%BB%B6)**
 * **v0.1.0版本发布**：[Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.1.0)
   * 2023.12.19初始版本发布，基础云组件支持包括BES；AI能力引擎语音、视觉类10个能力，大模型相关RAG、文本生成能力19个。
+* **v0.2.0版本发布** [Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.2.0)
+  * 2023.01.03发布，核心升级点GBI相关组件新增，v0.1.0遗留问题修复
 
 ## 教程与文档
 
 * **预备步骤**
   * [认证鉴权](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6)
-  * [组件总览](./docs/components.md)
+  * [开通组件权限](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#2%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)
 * **API文档**
-  * [API Docs](./docs/api_reference/)
+  * [API Docs](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz)
 
 
 ## 快速安装
@@ -52,7 +54,7 @@ import appbuilder
 
 # 空模版组件
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
-playground = appbuilder.Playground(prompt_template=template_str, model="ernie-bot-4")
+playground = appbuilder.Playground(prompt_template=template_str, model="eb-4")
 
 # 定义输入，调用空模版组件
 input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
@@ -149,11 +151,11 @@ import appbuilder
 # 空模版组件
 playground = appbuilder.Playground(
     prompt_template="{query}",
-    model="ernie-bot-4"
+    model="eb-4"
 )
 
-# 使用AgentBase来服务化playground组件
-agent = appbuilder.AgentBase(component=playground)
+# 使用 AgentRuntime 来服务化playground组件
+agent = appbuilder.AgentRuntime(component=playground)
 
 # 启动chainlit demo，会自动在浏览器打开体验对话框页面
 agent.chainlit_demo(port=8091)

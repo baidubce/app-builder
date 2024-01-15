@@ -12,13 +12,15 @@ import os
 import appbuilder
 
 # 设置环境变量
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 初始化并使用 QueryRewrite 组件
-query_rewrite = appbuilder.QueryRewrite(model="ernie-bot-4")
+query_rewrite = appbuilder.QueryRewrite(model="eb-turbo-appbuilder")
 answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？', '您可以查询官网或人工咨询', '我需要准备哪些材料？', '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', '在哪里办']), rewrite_type="带机器人回复")
-```
 print(answer)
+```
+
 ## 参数说明
 
 ### 初始化参数

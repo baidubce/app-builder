@@ -24,8 +24,8 @@ class MrcArgs(ComponentArguments):
     message: Message = Field(...,
                          variable_name="query",
                          description="输入用户query，例如'千帆平台都有哪些大模型？'")
-    context_out_list: list = Field(...,
-                                   variable_name="context_out_list",
+    context_list: list = Field(...,
+                                   variable_name="context_list",
                                    description="用户输入检索片段list，"
                                                "例如[content1, content2, content3,...]，也可以为空, 即[]")
     reject: bool = Field(...,

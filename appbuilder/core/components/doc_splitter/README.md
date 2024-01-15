@@ -8,7 +8,7 @@
 
 基本用法
 ---
-参考tests目录下的[test_doc_splitter.py](../../../tests/test_doc_splitter.py)，可快速搭建自己的文档切分用例。
+参考tests目录下的[test_doc_splitter.py](https://github.com/baidubce/app-builder/blob/master/appbuilder/tests/test_doc_splitter.py)，可快速搭建自己的文档切分用例。
 
 以下是DocSplitter快速开始的一个示例。
 
@@ -20,7 +20,7 @@ from appbuilder.core.components.doc_parser.doc_parser import DocParser
 from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter
 from appbuilder.core.message import Message
 
-
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 # 先解析
@@ -55,6 +55,7 @@ from appbuilder.core.components.doc_parser.doc_parser import DocParser
 from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter
 from appbuilder.core.message import Message
 
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 # 先解析
@@ -94,7 +95,4 @@ print(res_paras.content)
 
 暂无
 
-## 更新记录和贡献
 
-- 初始版本发布。
-- 如您希望为会话小结组件贡献代码或反馈，请参考 [贡献指南](#)。

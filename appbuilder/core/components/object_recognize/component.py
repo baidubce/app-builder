@@ -33,6 +33,7 @@ class ObjectRecognition(Component):
 
            import appbuilder
            object_recognition = appbuilder.ObjectRecognition()
+           # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
            os.environ["APPBUILDER_TOKEN"] = '...'
 
            with open("./object_recognition_test.jepg", "rb") as f:
@@ -77,23 +78,23 @@ class ObjectRecognition(Component):
             raise ValueError("one of image or url must be set")
 
         data = ObjectRecognitionRequest.to_dict(request)
-        if self.retry.total != retry:
-            self.retry.total = retry
-        headers = self.auth_header()
+        if self.http_client.retry.total != retry:
+            self.http_client.retry.total = retry
+        headers = self.http_client.auth_header()
         headers['content-type'] = 'application/x-www-form-urlencoded'
-        url = self.service_url("/v1/bce/aip/image-classify/v2/advanced_general")
-        response = self.s.post(url, headers=headers, data=data, timeout=timeout)
-        super().check_response_header(response)
+        url = self.http_client.service_url("/v1/bce/aip/image-classify/v2/advanced_general")
+        response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
-        self.__class__._check_service_error(data)
-        request_id = self.response_request_id(response)
+        self.http_client.check_response_json(data)
+        request_id = self.http_client.response_request_id(response)
+        self.__class__._check_service_error(request_id,data)
         object_response = ObjectRecognitionResponse.from_json(payload=json.dumps(data))
         object_response.request_id = request_id
         return object_response
 
     @staticmethod
-    def _check_service_error(data: dict):
+    def _check_service_error(request_id: str, data: dict):
         r"""个性化服务response参数检查
             参数:
                 request (dict) : 通用物体与场景识别body返回
@@ -101,5 +102,8 @@ class ObjectRecognition(Component):
                 无
         """
         if "error_code" in data or "error_msg" in data:
-            raise AppBuilderServerException(service_err_code=data.get("error_code"),
-                                            service_err_message=data.get("error_msg"))
+            raise AppBuilderServerException(
+                request_id=request_id,
+                service_err_code=data.get("error_code"),
+                service_err_message=data.get("error_msg")
+            )

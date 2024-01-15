@@ -11,9 +11,10 @@
 import os
 import appbuilder
 
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
-tag_extraction = appbuilder.TagExtraction(model="ernie-bot-4")
+tag_extraction = appbuilder.TagExtraction(model="eb-turbo-appbuilder")
 result = tag_extraction(appbuilder.Message("从这段文本中抽取关键标签"))
 ```
 
@@ -48,11 +49,4 @@ result = tag_extraction(appbuilder.Message("自定义模型抽取的标签"))
 
 在实际应用中，`TagExtraction` 可以用于新闻文章、社交媒体帖子或其他任何文本内容的关键标签提取，帮助内容创建者或营销分析师快速了解主要主题和趋势。
 
-## API文档
 
-更详细的API文档，请参考 [AppBuilder TagExtraction API Documentation](#).
-
-## 更新记录和贡献
-
-- v1.0: 初始版本，提供基本的标签抽取功能。
-如果您有兴趣贡献代码或提供反馈，请访问 [GitHub repository](#)。

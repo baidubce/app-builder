@@ -17,6 +17,16 @@ from appbuilder import Message
 embedding = appbuilder.Embedding()
 ```
 
+embedding的底座模型可以通过如下方式修改
+
+```python
+embedding = appbuilder.Embedding(model="embedding-v1")
+```
+
+当前支持的embedding底座模型暂时只包括：
+- embedding-v1
+
+
 ### 使用单条字符串测试
 
 请注意，您必须确保字符串的token长度小于384
@@ -32,7 +42,7 @@ print(out.content)
 ```python
 outs = embedding.batch(["hello", "world"])
 # 得到一个长度为 2 x 384的float 二维数组
-print(out.conetnt)
+print(out.content)
 ```
 
 ### 使用上游的Message作为输入
@@ -60,7 +70,7 @@ print(outs.content)
 
 ### 初始化参数说明
 
-无
+- model: 【可选】底座模型，当前仅可以为`embedding-v1`。默认为`embedding-v1`。
 
 ### 调用参数说明
 

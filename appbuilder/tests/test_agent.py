@@ -4,7 +4,7 @@ import os
 import appbuilder
 
 
-class TestAgentBase(unittest.TestCase):
+class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
         设置环境变量。
@@ -21,38 +21,36 @@ class TestAgentBase(unittest.TestCase):
         """ 测试在component有效时运行 """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ernie-bot-4"
+            model="eb-4"
         )
-        agent = appbuilder.AgentBase(component=component)
+        agent = appbuilder.AgentRuntime(component=component)
     
     def test_init_with_invalid_component(self):
         """ 测试在component非法时运行 """
         component = "invalid_component"
         with self.assertRaises(pydantic.error_wrappers.ValidationError):
-            agent = appbuilder.AgentBase(component=component)
+            agent = appbuilder.AgentRuntime(component=component)
 
     def test_chat_with_valid_message_and_blocking(self):
         """ 测试在消息有效时处理 """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ernie-bot-4"
+            model="eb-4"
         )
-        agent = appbuilder.AgentBase(component=component)
+        agent = appbuilder.AgentRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
-        session_id = agent._generate_session_id()
-        answer = agent.chat(message, session_id, stream=False)
+        answer = agent.chat(message, stream=False)
         self.assertIs(type(answer.content), str)
 
     def test_chat_with_valid_message_and_streaming(self):
         """ 测试在消息有效时处理 """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ernie-bot-4"
+            model="eb-4"
         )
-        agent = appbuilder.AgentBase(component=component)
+        agent = appbuilder.AgentRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
-        session_id = agent._generate_session_id()
-        answer = agent.chat(message, session_id, stream=True)
+        answer = agent.chat(message, stream=True)
         for it in answer.content:
             self.assertIs(type(it), str)
 

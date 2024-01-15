@@ -35,7 +35,8 @@ class Text2Image(Component):
         import appbuilder
         text_to_image = appbuilder.Text2Image()
         os.environ["APPBUILDER_TOKEN"] = '...'
-        inp = appbuilder.Message(content={"prompt": "上海的经典风景"})
+        content_data = {"prompt": "上海的经典风景", "width": 1024, "height": 1024, "image_num": 1}
+        msg = appbuilder.Message(content_data)
         out = text_to_image.run(inp)
         # 打印生成结果
         print(out.content) # eg: {"img_urls": ["xxx"]}
@@ -80,7 +81,7 @@ class Text2Image(Component):
             return Message(content=dict(out))
 
     def submitText2ImageTask(self, request: Text2ImageSubmitRequest, timeout: float = None,
-                           retry: int = 0) -> Text2ImageSubmitResponse:
+                             retry: int = 0) -> Text2ImageSubmitResponse:
 
         """
         使用给定的输入并返回AI作画的任务信息。
@@ -93,24 +94,24 @@ class Text2Image(Component):
         返回:
             obj:`Text2ImageSubmitResponse`: 接口返回的输出消息。
         """
-        url = self.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
+        url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
         data = Text2ImageSubmitRequest.to_json(request)
-        headers = self.auth_header()
+        headers = self.http_client.auth_header()
         headers['content-type'] = 'application/json'
-        if retry != self.retry.total:
-            self.retry.total = retry
-        response = self.s.post(url, data=data, headers=headers, timeout=timeout)
-        super().check_response_header(response)
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        response = self.http_client.session.post(url, data=data, headers=headers, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
-        self.__class__.check_service_error(data)
-        request_id = response.headers.get('X-Appbuilder-Request-Id')
+        self.http_client.check_response_json(data)
+        request_id = self.http_client.response_request_id(response)
+        self.__class__.check_service_error(request_id, data)
         response = Text2ImageSubmitResponse.from_json(payload=json.dumps(data))
         response.request_id = request_id
         return response
 
     def queryText2ImageData(self, request: Text2ImageQueryRequest, timeout: float = None,
-                          retry: int = 0) -> Text2ImageQueryResponse:
+                            retry: int = 0) -> Text2ImageQueryResponse:
 
         """
         使用给定的输入并返回AI作画的结果。
@@ -123,20 +124,20 @@ class Text2Image(Component):
         返回:
             obj:`Text2ImageQueryResponse`: 接口返回的输出消息。
         """
-        url = self.service_url("/v1/bce/aip/ernievilg/v1/getImgv2")
+        url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/getImgv2")
         data = {
             "task_id": request.task_id
         }
-        headers = self.auth_header()
+        headers = self.http_client.auth_header()
         headers['content-type'] = 'application/json'
-        if retry != self.retry.total:
-            self.retry.total = retry
-        response = self.s.post(url, json=data, headers=headers, timeout=timeout)
-        super().check_response_header(response)
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        response = self.http_client.session.post(url, json=data, headers=headers, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
-        self.__class__.check_service_error(data)
-        request_id = response.headers.get('X-Appbuilder-Request-Id')
+        self.http_client.check_response_json(data)
+        request_id = self.http_client.response_request_id(response)
+        self.__class__.check_service_error(request_id, data)
         response = Text2ImageQueryResponse.from_json(payload=json.dumps(data))
         response.request_id = request_id
         return response
@@ -161,7 +162,7 @@ class Text2Image(Component):
         return img_urls
 
     @staticmethod
-    def check_service_error(data: dict):
+    def check_service_error(request_id: str, data: dict):
         r"""个性化服务response参数检查
 
             参数:
@@ -170,5 +171,8 @@ class Text2Image(Component):
                 无
         """
         if "error_code" in data or "error_msg" in data:
-            raise AppBuilderServerException(service_err_code=data.get("error_code"),
-                                            service_err_message=data.get("error_msg"))
+            raise AppBuilderServerException(
+                request_id=request_id,
+                service_err_code=data.get("error_code"),
+                service_err_message=data.get("error_msg")
+            )

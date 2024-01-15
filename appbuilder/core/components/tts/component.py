@@ -134,37 +134,38 @@ class TTS(Component):
         if self.model == self.Baidu_TTS:
             request.tex = quote_plus(request.tex)
             request.validate_baidu_tts()
-            url = self.service_url("/v1/bce/aip_speech/tts_online")
+            url = self.http_client.service_url("/v1/bce/aip_speech/tts_online")
         elif self.model == self.PaddleSpeech_TTS:
             request.tp_project_id = "paddlespeech"
             request.tp_per_id = "100001"
             request.validate_paddle_speech_tts()
-            url = self.service_url("/v1/bce/paddle_speech/text2audio")
+            url = self.http_client.service_url("/v1/bce/paddle_speech/text2audio")
         else:
             raise ValueError("model '{}' is not supported".format(self.model))
-        if retry != self.retry.total:
-            self.retry.total = retry
-        auth_header = self.auth_header()
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        auth_header = self.http_client.auth_header()
         if self.model == self.Baidu_TTS:
-            response = self.s.post(url, data=TTSRequest.to_dict(request), timeout=timeout, headers=auth_header)
+            response = self.http_client.session.post(url, data=TTSRequest.to_dict(request), timeout=timeout, headers=auth_header)
         elif self.model == self.PaddleSpeech_TTS:
-            auth_header = self.auth_header()
+            auth_header = self.http_client.auth_header()
             auth_header['Content-type'] = "application/json"
-            response = self.s.post(url, json=TTSRequest.to_dict(request), timeout=timeout, headers=auth_header)
-        super().check_response_header(response)
+            response = self.http_client.session.post(url, json=TTSRequest.to_dict(request), timeout=timeout, headers=auth_header)
+        self.http_client.check_response_header(response)
         content_type = response.headers.get("Content-Type", "application/json")
+        request_id = self.http_client.response_request_id(response)
         if content_type.find("application/json") != -1:
             data = response.json()
-            super().check_response_json(data)
-            self.__class__.__check_service_error(data)
+            self.http_client.check_response_json(data)
+            self.__class__.__check_service_error(request_id, data)
         return TTSResponse(
             binary=response.content,
-            request_id=self.response_request_id(response),
+            request_id=request_id,
             aue=request.aue
         )
 
     @staticmethod
-    def __check_service_error(data: dict):
+    def __check_service_error(request_id: str, data: dict):
         r"""个性化服务response检查
 
               参数:
@@ -175,6 +176,7 @@ class TTS(Component):
 
         if "err_no" in data or "err_msg" in data or 'sn' in data or 'idx' in data:
             raise AppBuilderServerException(
+                request_id=request_id,
                 service_err_code=data.get("err_no", 0),
                 service_err_message="{} . {} . {}]".
                 format(data.get("err_msg", ""),

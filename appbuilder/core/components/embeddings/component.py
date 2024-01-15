@@ -22,7 +22,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings.base import EmbeddingBaseComponent
 from appbuilder.core.component import ComponentArguments
 
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 
 
 class EmbeddingArgs(ComponentArguments):
@@ -58,11 +58,17 @@ class Embedding(EmbeddingBaseComponent):
 
     meta = EmbeddingArgs
 
-    base_url: str = "/v1/bce/wenxinworkshop/ai_custom/v1/embeddings/"
+    base_urls = {
+        'embedding-v1' : "/v1/bce/wenxinworkshop/ai_custom/v1/embeddings/embedding-v1"
+    }
 
-    def __init__(self, type='embedding-v1'):
+    def __init__(self, model='embedding-v1'):
         """Embedding"""
-        self.base_url = self.base_url + type
+
+        if model in self.base_urls:
+            self.base_url = self.base_urls[model]
+        else:
+            raise ModelNotSupportedException(f"Model {model} is not yet supported, only support {self.base_urls.keys()}")
 
         super().__init__(self.meta)
 
@@ -71,7 +77,7 @@ class Embedding(EmbeddingBaseComponent):
         check_response_json for embedding
         """
 
-        self.check_response_json(data)
+        self.http_client.check_response_json(data)
         if "error_code" in data and "error_msg" in data:
             raise AppBuilderServerException(
                 service_err_code=data['error_code'],
@@ -82,16 +88,14 @@ class Embedding(EmbeddingBaseComponent):
         """
         request to gateway
         """
-
-        resp = self.s.post(
-            url=self.service_url(self.base_url),
-            headers={
-                "X-Appbuilder-Authorization": f"{self.secret_key}",
-                "Content-Type": "application/json",
-            },
+        headers = self.http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+        resp = self.http_client.session.post(
+            url=self.http_client.service_url(self.base_url),
+            headers=headers,
             json=payload,
         )
-        self.check_response_header(resp)
+        self.http_client.check_response_header(resp)
         self._check_response_json(resp.json())
 
         return resp.json()

@@ -35,7 +35,7 @@ checker = PythonVersionChecker()
 checker.current_version
 
 from .core import *
-
+from .core.components.rag_with_baidu_search import RAGWithBaiduSearch
 from .core.components.llms.mrc import MRC
 from .core.components.llms.oral_query_generation import OralQueryGeneration
 from .core.components.llms.qa_pair_mining import QAPairMining
@@ -57,7 +57,7 @@ from .core.components.text_to_image.component import Text2Image
 from .core.components.landmark_recognize.component import LandmarkRecognition
 from .core.components.tts.component import TTS
 from .core.components.extract_table.component import ExtractTableFromDoc
-from .core.components.doc_parser.doc_parser import DocParser
+from .core.components.doc_parser.doc_parser import DocParser, ParserConfig
 from .core.components.doc_splitter.doc_splitter import DocSplitter
 from .core.components.retriever.bes_retriever import BESRetriever
 from .core.components.retriever.bes_retriever import BESVectorStoreIndex
@@ -67,11 +67,17 @@ from .core.components.translate.component import Translation
 from .core.components.embeddings import Embedding
 from .core.components.matching import Matching
 
+from .core.components.gbi.nl2sql.component import NL2Sql
+from .core.components.gbi.select_table.component import SelectTable
+
 from appbuilder.core.message import Message
-from appbuilder.core.agent import AgentBase
-from appbuilder.core.context import UserSession
+from appbuilder.core.agent import AgentRuntime
+from appbuilder.core.user_session import UserSession
 
 from appbuilder.utils.logger_util import logger
+
+from appbuilder.core.utils import get_model_list
+
 
 from .core._exception import (
     BadRequestException,
@@ -114,12 +120,13 @@ __all__ = [
     'TTS',
     "ExtractTableFromDoc",
     "DocParser",
+    "ParserConfig",
     "DocSplitter",
     "BESRetriever",
     "BESVectorStoreIndex",
     'DishRecognition',
     'Translation',
-
+    'RAGWithBaiduSearch'
     'Message',
 
     'Embedding',

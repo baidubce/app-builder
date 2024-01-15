@@ -35,11 +35,13 @@ class ASR(Component):
         import appbuilder
         asr = appbuilder.ASR()
         os.environ["APPBUILDER_TOKEN"] = '...'
+
         with open("xxxx.pcm", "rb") as f:
-            inp = appbuilder.Message(content={"raw_audio": f.read()})
-            out = asr.run(inp)
-            # 打印识别结果
-            print(out.content) # eg: {"result": ["北京科技馆。"]}
+            audio_data = f.read()
+        content_data = {"audio_format": "pcm", "raw_audio": audio_data, "rate": 16000}
+        msg = appbuilder.Message(content_data)
+        out = asr.run(msg)
+        print(out.content) # eg: {"result": ["北京科技馆。"]}
      """
     def run(self, message: Message, audio_format: str = "pcm", rate: int = 16000,
             timeout: float = None, retry: int = 0) -> Message:
@@ -63,12 +65,12 @@ class ASR(Component):
         request.cuid = str(uuid.uuid4())
         request.dev_pid = "80001"
         request.speech = inp.raw_audio
-        response = self._recognize(request)
+        response = self._recognize(request, timeout, retry)
         out = ASROutMsg(result=list(response.result))
         return Message(content=dict(out))
 
     def _recognize(self, request: ShortSpeechRecognitionRequest, timeout: float = None,
-                    retry: int = 0) -> ShortSpeechRecognitionResponse:
+                   retry: int = 0) -> ShortSpeechRecognitionResponse:
         """
         使用给定的输入并返回语音识别的结果。
 
@@ -81,26 +83,27 @@ class ASR(Component):
             obj:`ShortSpeechRecognitionResponse`: 接口返回的输出消息。
         """
         ContentType = "audio/" + request.format + ";rate=" + str(request.rate)
-        headers = self.auth_header()
+        headers = self.http_client.auth_header()
         headers['content-type'] = ContentType
         params = {
             'dev_pid': request.dev_pid,
             'cuid': request.cuid
         }
-        if retry != self.retry.total:
-            self.retry.total = retry
-        response = self.s.post(self.service_url("/v1/bce/aip_speech/asrpro"), params=params, headers=headers, data=request.speech, timeout=timeout)
-        super().check_response_header(response)
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        response = self.http_client.session.post(self.http_client.service_url("/v1/bce/aip_speech/asrpro"),
+                                                 params=params, headers=headers, data=request.speech, timeout=timeout)
+        self.http_client.check_response_header(response)
         data = response.json()
-        super().check_response_json(data)
-        self.__class__._check_service_error(data)
-        request_id = self.response_request_id(response)
+        self.http_client.check_response_json(data)
+        request_id = self.http_client.response_request_id(response)
+        self.__class__._check_service_error(request_id,data)
         response = ShortSpeechRecognitionResponse.from_json(payload=json.dumps(data))
         response.request_id = request_id
         return response
 
     @staticmethod
-    def _check_service_error(data: dict):
+    def _check_service_error(request_id: str, data: dict):
         r"""个性化服务response参数检查
 
             参数:
@@ -110,4 +113,8 @@ class ASR(Component):
         """
         if "err_no" in data and "err_msg" in data:
             if data["err_no"] != 0:
-                raise AppBuilderServerException(service_err_code=data["err_no"], service_err_message=data["err_msg"])
+                raise AppBuilderServerException(
+                    request_id=request_id,
+                    service_err_code=data["err_no"],
+                    service_err_message=data["err_msg"]
+                )

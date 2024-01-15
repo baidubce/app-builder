@@ -42,6 +42,14 @@ class TestEmbedding(unittest.TestCase):
         embedding_1 = asyncio.run(self.embedding.arun("hello world!"))
         print(embedding_1.content)
 
+    def test_not_support_model(self):
+        try:
+            embedding = appbuilder.Embedding(model="foo")
+        except Exception as e:
+            from appbuilder.core._exception import ModelNotSupportedException
+            assert isinstance(e, ModelNotSupportedException)
+            msg = str(e)
+            assert "Model foo is not yet supported" in msg
 
 if __name__ == '__main__':
     unittest.main()
