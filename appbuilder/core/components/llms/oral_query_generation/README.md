@@ -9,7 +9,8 @@
 import os
 import appbuilder
 
-os.environ["APPBUILDER_TOKEN"] = '...'
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+os.environ["APPBUILDER_TOKEN"] = "..."
 
 text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
         '文档摘要：OPPO Reno5上的视频超级防抖，视频超级防抖3.0，多代视频防抖算法积累，这一代依旧超级防抖超级稳。 开启视频超级'
