@@ -28,7 +28,7 @@ from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.core.utils import get_model_url
+from appbuilder.core.utils import ModelUtils
 from appbuilder.utils.sse_util import SSEClient
 
 
@@ -187,6 +187,7 @@ class CompletionBaseComponent(Component):
     base_url: str = "/rpc/2.0/cloud_hub/v1/ai_engine/copilot_engine"
     model_name: str = ""
     model_url: str = ""
+    model_type: str = ""
 
     model_config: Dict[str, Any] = {
         "model": {
@@ -214,7 +215,9 @@ class CompletionBaseComponent(Component):
         super().__init__(meta=meta, secret_key=secret_key, gateway=gateway)
 
         self.model_name = model
-        self.model_url = get_model_url(client=self.http_client, model_name=model)
+        model_utils = ModelUtils(client=self.http_client, model_name=model)
+        self.model_url = model_utils.get_model_url()
+        self.model_type = model_utils.get_model_type()
         if not self.model_name and not self.model_url:
             raise ValueError("model_name or model_url must be provided")
         self.version = self.version
