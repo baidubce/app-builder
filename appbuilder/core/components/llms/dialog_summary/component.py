@@ -40,7 +40,7 @@ class DialogSummary(CompletionBaseComponent):
             import appbuilder
             os.environ["APPBUILDER_TOKEN"] = '...'
 
-            dialog_summary = appbuilder.DialogSummary(model="eb-4")
+            dialog_summary = appbuilder.DialogSummary(model="eb-turbo-appbuilder")
             text = "用户:喂我想查一下我的话费\n坐席:好的女士您话费余的话还有87.49元钱\n用户:好的知道了谢谢\n坐席:嗯不客气祝您生活愉快再见"
             answer = dialog_summary(appbuilder.Message(text))
 

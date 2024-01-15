@@ -14,8 +14,8 @@ import appbuilder
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import SessionRecord
 
-#  设置环境变量
-os.environ["APPBUILDER_TOKEN"] = "***"
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+os.environ["APPBUILDER_TOKEN"] = "..."
 
 SUPER_MARKET_SCHEMA = """
 ```
@@ -43,7 +43,6 @@ query = "列出超市中的所有数据"
 nl2sql_result_message = gbi_nl2sql(Message({"query": query}))
 
 print(f"sql: {nl2sql_result_message.content.sql}")
-print("-----------------")
 print(f"llm result: {nl2sql_result_message.content.llm_result}")
 ````
 
@@ -135,7 +134,6 @@ session.append(SessionRecord(query=query, answer=nl2sql_result_message.content))
 nl2sql_result_message2 = gbi_nl2sql(Message({"query": "查看商品类别是水果的所有数据",
                                              "session": session}))
 print(f"sql: {nl2sql_result_message2.content.sql}")
-print("-----------------")
 print(f"llm result: {nl2sql_result_message2.content.llm_result}")
 ```
 
@@ -163,7 +161,6 @@ nl2sql_result_message2 = gbi_nl2sql(Message({"query": "查看商品类别是水�
                                              "column_constraint": column_constraint}))
 
 print(f"sql: {nl2sql_result_message2.content.sql}")
-print("-----------------")
 print(f"llm result: {nl2sql_result_message2.content.llm_result}")
 ```
 
@@ -195,7 +192,6 @@ msg3 = Message(query3)
 
 nl2sql_result_message3 = gbi_nl2sql(Message({"query": "列出商品类别是日用品的利润率"}))
 print(f"sql: {nl2sql_result_message3.content.sql}")
-print("-----------------")
 print(f"llm result: {nl2sql_result_message3.content.llm_result}")
 ```
 
@@ -251,7 +247,6 @@ gbi_nl2sql5 = appbuilder.NL2Sql(model_name="ERNIE-Bot 4.0", table_schemas=table_
 nl2sql_result_message5 = gbi_nl2sql5(Message({"query": "查看商品类别是水果的所有数据"}))
 
 print(f"sql: {nl2sql_result_message5.content.sql}")
-print("-----------------")
 print(f"llm result: {nl2sql_result_message5.content.llm_result}")
 ```
 

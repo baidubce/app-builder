@@ -14,6 +14,7 @@
 import itertools
 from typing import List
 
+from appbuilder.core._client import HTTPClient
 from appbuilder.utils.model_util import GetModelListRequest, Models, model_name_mapping
 
 
@@ -46,24 +47,7 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
     return models
 
 
-def get_model_url(client, model_name: str) -> str:
-    """根据名称获取模型请求url"""
-    origin_name = model_name
-    for key, value in model_name_mapping.items():
-        if origin_name == value:
-            origin_name = key
-            break
-
-    response = Models(client).list()
-    for model in itertools.chain(response.result.common, response.result.custom):
-        if model.name == origin_name:
-            return convert_cloudhub_url(client, model.url)
-
-    raise ValueError(f"Model[{model_name}] not available! "
-                     f"You can query available models through: appbuilder.get_model_list()")
-
-
-def convert_cloudhub_url(client, qianfan_url: str) -> str:
+def convert_cloudhub_url(client: HTTPClient, qianfan_url: str) -> str:
     """将千帆url转换为AppBuilder url"""
     qianfan_url_prefix = "rpc/2.0/ai_custom/v1/wenxinworkshop"
     cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1"
@@ -72,3 +56,39 @@ def convert_cloudhub_url(client, qianfan_url: str) -> str:
         raise ValueError(f"{qianfan_url} is not a valid qianfan url")
     url_suffix = qianfan_url[index + len(qianfan_url_prefix):]
     return "{}/{}{}".format(client.gateway, cloudhub_url_prefix, url_suffix)
+
+
+class ModelInfo:
+    """ 模型信息类 """
+
+    def __init__(self, client: HTTPClient):
+        """根据模型名称获取并初始化模型信息"""
+        self.client = client
+        response = Models(client).list()
+        self.model_list = [*response.result.common, *response.result.custom]
+
+    def get_model_url(self, model_name: str) -> str:
+        """获取模型在工作台网关的请求url"""
+        origin_name = model_name
+        for key, value in model_name_mapping.items():
+            if origin_name == value:
+                origin_name = key
+                break
+        for model in self.model_list:
+            if model.name == origin_name:
+                return convert_cloudhub_url(self.client, model.url)
+        raise ValueError(f"Model[{model_name}] not available! "
+                         f"You can query available models through: appbuilder.get_model_list()")
+
+    def get_model_type(self, model_name: str) -> str:
+        """获取模型类型"""
+        origin_name = model_name
+        for key, value in model_name_mapping.items():
+            if origin_name == value:
+                origin_name = key
+                break
+        for model in self.model_list:
+            if model.name == origin_name:
+                return model.apiType
+        raise ValueError(f"Model[{model_name}] not available! "
+                         f"You can query available models through: appbuilder.get_model_list()")

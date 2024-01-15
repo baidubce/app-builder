@@ -34,6 +34,8 @@ class EmbeddingBaseComponent(Component):
     version: str
     meta: ComponentArguments
     base_url: str = ""
+    model_type: str = "embeddings"
+
 
     @abstractmethod
     def run(self, text: Union[Message[str], str]) -> Message[List[float]]:
