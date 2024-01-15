@@ -187,7 +187,7 @@ class CompletionBaseComponent(Component):
     base_url: str = "/rpc/2.0/cloud_hub/v1/ai_engine/copilot_engine"
     model_name: str = ""
     model_url: str = ""
-    model_type: str = ""
+    model_type: str = "chat"
     model_info: ModelInfo = None
     model_config: Dict[str, Any] = {
         "model": {
@@ -213,13 +213,21 @@ class CompletionBaseComponent(Component):
         
         """
         super().__init__(meta=meta, secret_key=secret_key, gateway=gateway)
+
         if not self.__class__.model_info:
             self.__class__.model_info = ModelInfo(client=self.http_client)
-        self.model_name = model
+
         self.model_url = self.model_info.get_model_url(model)
-        self.model_type = self.model_info.get_model_type(model)
+
+        self.model_name = model
         if not self.model_name and not self.model_url:
             raise ValueError("model_name or model_url must be provided")
+
+        m_type = self.model_info.get_model_type(model)
+
+        if m_type != self.model_type:
+            raise ModelNotSupportedException(f"Model {model} with type [{m_type}] not supported, only support {self.model_type} type")
+
         self.version = self.version
 
     def gene_request(self, query, inputs, response_mode, message_id, model_config):

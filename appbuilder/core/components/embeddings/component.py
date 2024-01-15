@@ -21,7 +21,6 @@ from typing import Union, List
 from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings.base import EmbeddingBaseComponent
 from appbuilder.core.component import ComponentArguments
-
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 
 
@@ -57,13 +56,17 @@ class Embedding(EmbeddingBaseComponent):
     version: str = "v1"
 
     meta = EmbeddingArgs
+    accepted_models = ["Embedding-V1"]
 
     base_urls = {
-        'embedding-v1' : "/v1/bce/wenxinworkshop/ai_custom/v1/embeddings/embedding-v1"
+        'Embedding-V1' : "/v1/bce/wenxinworkshop/ai_custom/v1/embeddings/embedding-v1"
     }
 
-    def __init__(self, model='embedding-v1'):
+    def __init__(self, model="Embedding-V1"):
         """Embedding"""
+
+        if model not in self.accepted_models:
+            raise ModelNotSupportedException(f"Model {model} not supported, only support {self.accepted_models}")
 
         if model in self.base_urls:
             self.base_url = self.base_urls[model]
