@@ -15,11 +15,12 @@ Playground 是一个灵活的组件，允许用户自定义prompt模板并执行
 import os
 import appbuilder
 
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 play = appbuilder.Playground(
     prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。",
-    model="eb-4"
+    model="eb-turbo-appbuilder"
 )
 play(appbuilder.Message({"name": "小明", "bot_name": "小红", "bot_type": "聊天机器人", "bot_function": "聊天", "bot_question": "你好吗？"}), stream=False)
 ```
