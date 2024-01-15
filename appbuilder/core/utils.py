@@ -47,7 +47,7 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
     return models
 
 
-def convert_cloudhub_url(client, qianfan_url: str) -> str:
+def convert_cloudhub_url(client: HTTPClient, qianfan_url: str) -> str:
     """将千帆url转换为AppBuilder url"""
     qianfan_url_prefix = "rpc/2.0/ai_custom/v1/wenxinworkshop"
     cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1"
@@ -61,7 +61,7 @@ def convert_cloudhub_url(client, qianfan_url: str) -> str:
 class ModelUtils:
     """ 模型工具类 """
 
-    def __init__(self, client, model_name):
+    def __init__(self, client: HTTPClient, model_name: str):
         """根据模型名称获取并初始化模型信息"""
         self.model_info = None
         self.client = client
