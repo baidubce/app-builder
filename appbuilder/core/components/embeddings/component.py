@@ -21,7 +21,6 @@ from typing import Union, List
 from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings.base import EmbeddingBaseComponent
 from appbuilder.core.component import ComponentArguments
-from appbuilder.core.utils import ModelInfo
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 
 
