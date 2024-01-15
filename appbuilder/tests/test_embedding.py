@@ -46,7 +46,8 @@ class TestEmbedding(unittest.TestCase):
         try:
             embedding = appbuilder.Embedding(model="foo")
         except Exception as e:
-            assert isinstance(e, ValueError)
+            from appbuilder.core._exception import ModelNotSupportedException
+            assert isinstance(e, ModelNotSupportedException)
             msg = str(e)
             assert "Model foo is not yet supported" in msg
 

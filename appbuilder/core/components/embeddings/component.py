@@ -22,7 +22,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings.base import EmbeddingBaseComponent
 from appbuilder.core.component import ComponentArguments
 
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 
 
 class EmbeddingArgs(ComponentArguments):
@@ -68,7 +68,7 @@ class Embedding(EmbeddingBaseComponent):
         if model in self.base_urls:
             self.base_url = self.base_urls[model]
         else:
-            raise ValueError(f"Model {model} is not yet supported, only support {self.base_urls.keys()}")
+            raise ModelNotSupportedException(f"Model {model} is not yet supported, only support {self.base_urls.keys()}")
 
         super().__init__(self.meta)
 
