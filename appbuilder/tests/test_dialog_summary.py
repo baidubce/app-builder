@@ -45,6 +45,17 @@ class TestDialogSummary(unittest.TestCase):
         summary = self.node(msg, stream=False, temperature=0.5)
         self.assertIsNotNone(summary)
 
+    def test_run_with_model_names(self):
+        """测试不同的 stream 和 temperature 参数值"""
+
+        chats = appbuilder.get_model_list(api_type_filter=["chat"])
+        self.assertTrue("EB-turbo-AppBuilder专用版" in chats)
+
+        appbuilder.DialogSummary(model="EB-turbo-AppBuilder专用版")
+
+        with self.assertRaises(Exception):
+            appbuilder.DialogSummary(model="EB-turbo-AppBuilder-None")
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -20,6 +20,7 @@ base
 from abc import abstractmethod
 from typing import List, Union
 
+from appbuilder.core.utils import ModelInfo
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
@@ -34,6 +35,9 @@ class EmbeddingBaseComponent(Component):
     version: str
     meta: ComponentArguments
     base_url: str = ""
+    model_type: str = "embeddings"
+    model_info: ModelInfo = None
+
 
     @abstractmethod
     def run(self, text: Union[Message[str], str]) -> Message[List[float]]:

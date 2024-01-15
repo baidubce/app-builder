@@ -49,7 +49,7 @@ class TestEmbedding(unittest.TestCase):
             from appbuilder.core._exception import ModelNotSupportedException
             assert isinstance(e, ModelNotSupportedException)
             msg = str(e)
-            assert "Model foo is not yet supported" in msg
+            assert "Model foo not supported" in msg
 
 if __name__ == '__main__':
     unittest.main()
