@@ -37,7 +37,7 @@ print(contexts_matched.content)
 
 #### 初始化参数说明
 
-- embedding：【必须】一个类型为Embedding的Component，用于初始化`Matching`的向量计算功能
+- embedding：【必须】一个类型为Embedding的Component，用于初始化`Matching`的向量计算功能。底座模型当前仅可以为`embedding-v1`。默认为`embedding-v1`。
 
 #### 调用参数说明
 

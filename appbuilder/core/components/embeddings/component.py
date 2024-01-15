@@ -22,7 +22,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings.base import EmbeddingBaseComponent
 from appbuilder.core.component import ComponentArguments
 
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 
 
 class EmbeddingArgs(ComponentArguments):
@@ -58,11 +58,17 @@ class Embedding(EmbeddingBaseComponent):
 
     meta = EmbeddingArgs
 
-    base_url: str = "/v1/bce/wenxinworkshop/ai_custom/v1/embeddings/"
+    base_urls = {
+        'embedding-v1' : "/v1/bce/wenxinworkshop/ai_custom/v1/embeddings/embedding-v1"
+    }
 
-    def __init__(self, type='embedding-v1'):
+    def __init__(self, model='embedding-v1'):
         """Embedding"""
-        self.base_url = self.base_url + type
+
+        if model in self.base_urls:
+            self.base_url = self.base_urls[model]
+        else:
+            raise ModelNotSupportedException(f"Model {model} is not yet supported, only support {self.base_urls.keys()}")
 
         super().__init__(self.meta)
 

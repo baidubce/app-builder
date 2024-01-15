@@ -59,6 +59,12 @@ class HTTPConnectionException(BaseRPCException):
     pass
 
 
+class ModelNotSupportedException(BaseRPCException):
+    r"""ModelNotSupportedException represent model is not supported
+    """
+    pass
+
+
 class AppBuilderServerException(BaseRPCException):
     r"""AppBuilderServerException represent backend server failed response.
     """
