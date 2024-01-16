@@ -30,7 +30,7 @@ from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.utils import ModelInfo
 from appbuilder.utils.sse_util import SSEClient
-
+from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 
 class LLMMessage(Message):
     content: Optional[_T] = {}
@@ -188,6 +188,7 @@ class CompletionBaseComponent(Component):
     model_name: str = ""
     model_url: str = ""
     model_type: str = "chat"
+    excluded_models: List[str] = ["Yi-34B-Chat", "ChatLaw"]
     model_info: ModelInfo = None
     model_config: Dict[str, Any] = {
         "model": {
@@ -213,6 +214,9 @@ class CompletionBaseComponent(Component):
         
         """
         super().__init__(meta=meta, secret_key=secret_key, gateway=gateway)
+
+        if model and model in self.excluded_models:
+            raise ModelNotSupportedException(f"Model {model} not supported")
 
         if not self.__class__.model_info:
             self.__class__.model_info = ModelInfo(client=self.http_client)
