@@ -192,7 +192,6 @@ class CompletionBaseComponent(Component):
     model_type: str = "chat"
     excluded_models: List[str] = ["Yi-34B-Chat", "ChatLaw"]
     model_info: ModelInfo = None
-
     model_config: Dict[str, Any] = {
         "model": {
             "provider": "baidu",
@@ -230,7 +229,7 @@ class CompletionBaseComponent(Component):
         if not self.model_name and not self.model_url:
             raise ValueError("model_name or model_url must be provided")
 
-         m_type = self.model_info.get_model_type(model)
+        m_type = self.model_info.get_model_type(model)
 
         if m_type != self.model_type:
             raise ModelNotSupportedException(f"Model {model} with type [{m_type}] not supported, only support {self.model_type} type")
