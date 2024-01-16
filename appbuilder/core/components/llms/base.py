@@ -28,9 +28,9 @@ from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.core.utils import ModelInfo
+from appbuilder.core.utils import get_model_url
 from appbuilder.utils.sse_util import SSEClient
-from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
+
 
 class LLMMessage(Message):
     content: Optional[_T] = {}
@@ -217,23 +217,10 @@ class CompletionBaseComponent(Component):
         """
         super().__init__(meta=meta, secret_key=secret_key, gateway=gateway)
 
-        if model and model in self.excluded_models:
-            raise ModelNotSupportedException(f"Model {model} not supported")
-
-        if not self.__class__.model_info:
-            self.__class__.model_info = ModelInfo(client=self.http_client)
-
-        self.model_url = self.model_info.get_model_url(model)
-
         self.model_name = model
+        self.model_url = get_model_url(client=self.http_client, model_name=model)
         if not self.model_name and not self.model_url:
             raise ValueError("model_name or model_url must be provided")
-
-        m_type = self.model_info.get_model_type(model)
-
-        if m_type != self.model_type:
-            raise ModelNotSupportedException(f"Model {model} with type [{m_type}] not supported, only support {self.model_type} type")
-
         self.version = self.version
 
     def gene_request(self, query, inputs, response_mode, message_id, model_config):
