@@ -28,9 +28,9 @@ from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.core.utils import ModelInfo
+from appbuilder.core.utils import get_model_url
 from appbuilder.utils.sse_util import SSEClient
-from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
+
 
 class LLMMessage(Message):
     content: Optional[_T] = {}
@@ -64,13 +64,14 @@ class CompletionResponse(object):
     error_msg = ""
     result = None
     log_id = ""
-    extra = {}
+    extra = None
 
     def __init__(self, response, stream: bool = False):
         """初始化客户端状态。"""
         self.error_no = 0
         self.error_msg = ""
         self.log_id = response.headers.get("X-Appbuilder-Request-Id", None)
+        self.extra = {}
 
         if stream:
             # 流式数据处理
@@ -167,11 +168,11 @@ class CompletionResponse(object):
                     key = result_json.get("tool")
                     if result_list is not None:
                         self._extra[key] = result_list
+                        message.extra = self._extra  # Update the original extra
                     self._concat += char
                     return char
                 except StopIteration:
                     message.content = self._concat  # Update the original content
-                    message.extra = self._extra  # Update the original extra
                     raise
 
         from collections.abc import Generator
@@ -187,9 +188,7 @@ class CompletionBaseComponent(Component):
     base_url: str = "/rpc/2.0/cloud_hub/v1/ai_engine/copilot_engine"
     model_name: str = ""
     model_url: str = ""
-    model_type: str = "chat"
-    excluded_models: List[str] = ["Yi-34B-Chat", "ChatLaw"]
-    model_info: ModelInfo = None
+
     model_config: Dict[str, Any] = {
         "model": {
             "provider": "baidu",
@@ -215,23 +214,10 @@ class CompletionBaseComponent(Component):
         """
         super().__init__(meta=meta, secret_key=secret_key, gateway=gateway)
 
-        if model and model in self.excluded_models:
-            raise ModelNotSupportedException(f"Model {model} not supported")
-
-        if not self.__class__.model_info:
-            self.__class__.model_info = ModelInfo(client=self.http_client)
-
-        self.model_url = self.model_info.get_model_url(model)
-
         self.model_name = model
+        self.model_url = get_model_url(client=self.http_client, model_name=model)
         if not self.model_name and not self.model_url:
             raise ValueError("model_name or model_url must be provided")
-
-        m_type = self.model_info.get_model_type(model)
-
-        if m_type != self.model_type:
-            raise ModelNotSupportedException(f"Model {model} with type [{m_type}] not supported, only support {self.model_type} type")
-
         self.version = self.version
 
     def gene_request(self, query, inputs, response_mode, message_id, model_config):

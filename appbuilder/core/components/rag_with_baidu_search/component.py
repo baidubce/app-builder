@@ -1,3 +1,16 @@
+# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import json
 import logging
 
@@ -71,7 +84,7 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
                         "其中方括号中的数字是搜索结果序号。引用标记只能出现在句尾标点符号前。"
                 }
 
-    def run(self, message, reject=False, clarify=False,highlight=False, friendly=False, cite=False, instruction=None,
+    def run(self, message, instruction=None, reject=False, clarify=False, highlight=False, friendly=False, cite=False, 
             stream=False, temperature=1e-10, top_p=1e-10):
         instruction_set = self.__get_instruction_set()
 
@@ -87,10 +100,6 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
         model_config = self.get_model_config(model_config_inputs)
         response_mode = "streaming" if stream else "blocking"
         user_id = message.id
-
-        # baidusearch限制query长度不能超过38
-        if len(message.content) > 38:
-            raise AppBuilderServerException(service_err_message="baidusearch限制query长度不能超过38")
 
         request = self.gene_request(message.content, inputs, response_mode, user_id, model_config)
 
