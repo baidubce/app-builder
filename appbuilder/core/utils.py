@@ -45,7 +45,8 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
     models = []
 
     for model in itertools.chain(response.result.common, response.result.custom):
-        if is_available and model.chargeStatus not in ["OPENED", "FREE"]:
+        if is_available and (model.chargeStatus not in ["OPENED", "FREE"] or
+                             not any(version.serviceStatus == "Done" for version in model.versionList)):
             continue
         models.append(model.name)
     return models
@@ -82,7 +83,7 @@ class ModelInfo:
             if model.name == origin_name:
                 return convert_cloudhub_url(self.client, model.url)
         raise ModelNotSupportedException(f"Model[{model_name}] not available! "
-                         f"You can query available models through: appbuilder.get_model_list()")
+                                         f"You can query available models through: appbuilder.get_model_list()")
 
     def get_model_type(self, model_name: str) -> str:
         """获取模型类型"""
@@ -95,4 +96,4 @@ class ModelInfo:
             if model.name == origin_name:
                 return model.apiType
         raise ModelNotSupportedException(f"Model[{model_name}] not available! "
-                         f"You can query available models through: appbuilder.get_model_list()")
+                                         f"You can query available models through: appbuilder.get_model_list()")
