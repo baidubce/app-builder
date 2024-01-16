@@ -32,6 +32,7 @@ from appbuilder.core.utils import ModelInfo
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 
+
 class LLMMessage(Message):
     content: Optional[_T] = {}
     extra: Optional[Dict] = {}
@@ -64,13 +65,14 @@ class CompletionResponse(object):
     error_msg = ""
     result = None
     log_id = ""
-    extra = {}
+    extra = None
 
     def __init__(self, response, stream: bool = False):
         """初始化客户端状态。"""
         self.error_no = 0
         self.error_msg = ""
         self.log_id = response.headers.get("X-Appbuilder-Request-Id", None)
+        self.extra = {}
 
         if stream:
             # 流式数据处理
@@ -167,11 +169,11 @@ class CompletionResponse(object):
                     key = result_json.get("tool")
                     if result_list is not None:
                         self._extra[key] = result_list
+                        message.extra = self._extra  # Update the original extra
                     self._concat += char
                     return char
                 except StopIteration:
                     message.content = self._concat  # Update the original content
-                    message.extra = self._extra  # Update the original extra
                     raise
 
         from collections.abc import Generator

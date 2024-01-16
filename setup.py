@@ -33,5 +33,8 @@ setup(
     packages=find_packages(),
     install_requires=requirements,
     python_requires='>=3.8',
+    extras_require={
+        'serve': ['chainlit~=0.7.700', 'flask~=2.3.2', 'flask-restful==0.3.9']
+    }
 )
 
