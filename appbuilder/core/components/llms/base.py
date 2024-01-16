@@ -64,13 +64,14 @@ class CompletionResponse(object):
     error_msg = ""
     result = None
     log_id = ""
-    extra = {}
+    extra = None
 
     def __init__(self, response, stream: bool = False):
         """初始化客户端状态。"""
         self.error_no = 0
         self.error_msg = ""
         self.log_id = response.headers.get("X-Appbuilder-Request-Id", None)
+        self.extra = {}
 
         if stream:
             # 流式数据处理
@@ -167,11 +168,11 @@ class CompletionResponse(object):
                     key = result_json.get("tool")
                     if result_list is not None:
                         self._extra[key] = result_list
+                        message.extra = self._extra  # Update the original extra
                     self._concat += char
                     return char
                 except StopIteration:
                     message.content = self._concat  # Update the original content
-                    message.extra = self._extra  # Update the original extra
                     raise
 
         from collections.abc import Generator
@@ -190,6 +191,7 @@ class CompletionBaseComponent(Component):
     model_type: str = "chat"
     excluded_models: List[str] = ["Yi-34B-Chat", "ChatLaw"]
     model_info: ModelInfo = None
+
     model_config: Dict[str, Any] = {
         "model": {
             "provider": "baidu",
