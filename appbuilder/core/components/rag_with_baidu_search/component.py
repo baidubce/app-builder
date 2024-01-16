@@ -101,6 +101,10 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
         response_mode = "streaming" if stream else "blocking"
         user_id = message.id
 
+        # baidusearch限制query长度不能超过38
+        if len(message.content) > 38:
+            raise AppBuilderServerException(service_err_message="baidusearch限制query长度不能超过38")
+
         request = self.gene_request(message.content, inputs, response_mode, user_id, model_config)
 
         response = self.completion(self.version, self.base_url, request)
