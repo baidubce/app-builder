@@ -120,3 +120,9 @@ extra={'search_baidu': [{'content': '一、如何办理残疾人证? (一)残疾
 9e91ef70653bb166afc3ab134e93669e&chksm=97d853bfa0afdaa9456aa28c549729085093f51138e9ae57399aaf99c1f7855ad63e2cc58b71
 &scene=27', 'mock_id': '2', 'title': '残疾人证怎么办理?流程来了,请转给需要的人!', 'type': 'web'}]})
 
+### 返回参数说明
+| content | id   | mock_id | title |
+|---------|------|---------|-------|
+| 网页内容摘要  | 网页链接 | 序号      | 标题    |
+
+
