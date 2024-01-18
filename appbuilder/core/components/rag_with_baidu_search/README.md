@@ -93,6 +93,19 @@ result = rag_with_baidusearch_component.run(msg, reject=True, clarify=True, high
 # 输出运行结果
 print(result)
 ```
+
+### 返回参数说明
+
+extra字段：
+
+| 字段      | 字段说明   |
+|---------|--------|
+| content | 网页内容摘要 |
+| id      | 网页链接   |
+| mock_id | 序号     |
+| title   | 标题     |
+
+
 ### 典型返回样例
 Message(name=msg, content=你好，根据搜索结果得到了**办理残疾人证**^[1]^和**申请智力、精神类残疾人证和未成年人申请残疾人
 证须知**^[2]^两个相关内容。 您的问题具体涉及到哪一个？请补充关键信息，作为完整的问题重新发问。, mtype=dict, 
@@ -120,9 +133,5 @@ extra={'search_baidu': [{'content': '一、如何办理残疾人证? (一)残疾
 9e91ef70653bb166afc3ab134e93669e&chksm=97d853bfa0afdaa9456aa28c549729085093f51138e9ae57399aaf99c1f7855ad63e2cc58b71
 &scene=27', 'mock_id': '2', 'title': '残疾人证怎么办理?流程来了,请转给需要的人!', 'type': 'web'}]})
 
-### 返回参数说明
-| content | id   | mock_id | title |
-|---------|------|---------|-------|
-| 网页内容摘要  | 网页链接 | 序号      | 标题    |
 
 
