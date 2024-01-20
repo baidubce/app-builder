@@ -206,7 +206,7 @@ class AgentRuntime(BaseModel):
             
         @app.errorhandler(RuntimeError)
         def handle_bad_request(e):
-            return {"code": 1000, "message": f'RuntimeError: {e}', "result": None}, 200
+            return {"code": 1000, "message": f'{e}', "result": None}, 200
 
         @app.route('/chat', methods=['POST'])
         def warp():
