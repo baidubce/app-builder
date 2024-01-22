@@ -110,28 +110,8 @@ class CompletionResponse(object):
                     for trace_log in trace_log_list:
                         key = trace_log["tool"]
                         result_list = trace_log["result"]
-                        if key == 'search_baidu':
-                            self.process_result_list(result_list)
+                        result_list = ResultProcessor.process(key, result_list)
                         self.extra[key] = result_list
-
-    @staticmethod
-    def process_result_list(result_list):
-        # 创建一个dict，用于替换字段名
-        field_replacements = {
-            'id': 'url',
-            'mock_id': 'ref_id'
-        }
-        # 创建一个set，用于指定需要删除的字段
-        fields_to_remove = {'type', 'doc_id'}
-
-        for item in result_list:
-            # 替换字段名
-            for old_field, new_field in field_replacements.items():
-                if old_field in item:
-                    item[new_field] = item.pop(old_field)
-            # 删除不需要的字段
-            for field in fields_to_remove:
-                item.pop(field, None)  # 使用pop的默认值参数，避免KeyError
 
     def parse_stream_data(self, parsed_str):
         """解析流式数据块并提取answer字段"""
@@ -189,8 +169,7 @@ class CompletionResponse(object):
                     result_list = result_json.get("result")
                     key = result_json.get("tool")
                     if result_list is not None:
-                        if key == 'search_baidu':
-                            CompletionResponse.process_result_list(result_list)
+                        result_list = ResultProcessor.process(key, result_list)
                         self._extra[key] = result_list
                         message.extra = self._extra  # Update the original extra
                     self._concat += char
@@ -204,6 +183,24 @@ class CompletionResponse(object):
             # Replace the original content with the custom iterable
             message.content = IterableWrapper(message.content)
         return message
+
+
+class ResultProcessor:
+    @staticmethod
+    def process(key, result_list):
+        if key == 'search_baidu':
+            rename_fields = {
+                'id': 'url',
+                'mock_id': 'ref_id',
+                'content': 'content',
+                'title': 'title',
+            }
+            renamed_list = []
+            for result in result_list:
+                renamed_list.append({rename_fields[k]: v for k, v in result.items() if k in rename_fields})
+            return renamed_list
+        else:
+            raise TypeError(...)
 
 
 class CompletionBaseComponent(Component):
@@ -255,7 +252,8 @@ class CompletionBaseComponent(Component):
         m_type = self.model_info.get_model_type(model)
 
         if m_type != self.model_type:
-            raise ModelNotSupportedException(f"Model {model} with type [{m_type}] not supported, only support {self.model_type} type")
+            raise ModelNotSupportedException(
+                f"Model {model} with type [{m_type}] not supported, only support {self.model_type} type")
 
         self.version = self.version
 
