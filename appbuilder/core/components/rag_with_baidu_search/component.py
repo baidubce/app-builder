@@ -45,9 +45,9 @@ class RAGWithBaiduSearchArgs(ComponentArguments):
                        variable_name="cite",
                        description="控制大模型溯源能力的开关，为true即为开启溯源功能，为false即为关闭溯源功能")
 
-    __system__: Message = Field(...,
-                                variable_name="instruction",
-                                description="系统人设")
+    instruction: Message = Field(...,
+                                 variable_name="instruction",
+                                 description="系统人设")
 
 
 class RAGWithBaiduSearch(CompletionBaseComponent):
@@ -94,7 +94,7 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
             "highlight": instruction_set["highlight"] if highlight else None,
             "friendly": instruction_set["friendly"] if friendly else None,
             "cite": instruction_set["cite"] if cite else None,
-            "__system__": instruction.content if instruction else None
+            "instruction": instruction.content if instruction else None
         }
         model_config_inputs = ModelArgsConfig(**{"stream": stream, "temperature": temperature, "top_p": top_p})
         model_config = self.get_model_config(model_config_inputs)
