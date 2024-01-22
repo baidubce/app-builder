@@ -110,6 +110,7 @@ class CompletionResponse(object):
                     for trace_log in trace_log_list:
                         key = trace_log["tool"]
                         result_list = trace_log["result"]
+                        result_list = ResultProcessor.process(key, result_list)
                         self.extra[key] = result_list
 
     def parse_stream_data(self, parsed_str):
@@ -168,6 +169,7 @@ class CompletionResponse(object):
                     result_list = result_json.get("result")
                     key = result_json.get("tool")
                     if result_list is not None:
+                        result_list = ResultProcessor.process(key, result_list)
                         self._extra[key] = result_list
                         message.extra = self._extra  # Update the original extra
                     self._concat += char
@@ -181,6 +183,26 @@ class CompletionResponse(object):
             # Replace the original content with the custom iterable
             message.content = IterableWrapper(message.content)
         return message
+
+
+class ResultProcessor:
+    @staticmethod
+    def process(key, result_list):
+        if key == 'search_baidu':
+            rename_fields = {
+                'id': 'url',
+                'mock_id': 'ref_id',
+                'content': 'content',
+                'title': 'title',
+            }
+            renamed_list = []
+            for result in result_list:
+                renamed_list.append({rename_fields[k]: v for k, v in result.items() if k in rename_fields})
+            return renamed_list
+        elif key == 'search_db':
+            return result_list
+        else:
+            raise TypeError(f"不支持的tools: {key}")
 
 
 class CompletionBaseComponent(Component):
@@ -232,7 +254,8 @@ class CompletionBaseComponent(Component):
         m_type = self.model_info.get_model_type(model)
 
         if m_type != self.model_type:
-            raise ModelNotSupportedException(f"Model {model} with type [{m_type}] not supported, only support {self.model_type} type")
+            raise ModelNotSupportedException(
+                f"Model {model} with type [{m_type}] not supported, only support {self.model_type} type")
 
         self.version = self.version
 
