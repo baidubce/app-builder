@@ -111,10 +111,27 @@ class CompletionResponse(object):
                         key = trace_log["tool"]
                         result_list = trace_log["result"]
                         if key == 'search_baidu':
-                            for item in result_list:
-                                if 'id' in item:
-                                    item['url'] = item.pop('id')  # 将'id'字段替换为'url'
+                            self.process_result_list(result_list)
                         self.extra[key] = result_list
+
+    @staticmethod
+    def process_result_list(result_list):
+        # 创建一个dict，用于替换字段名
+        field_replacements = {
+            'id': 'url',
+            'mock_id': 'ref_id'
+        }
+        # 创建一个set，用于指定需要删除的字段
+        fields_to_remove = {'type', 'doc_id'}
+
+        for item in result_list:
+            # 替换字段名
+            for old_field, new_field in field_replacements.items():
+                if old_field in item:
+                    item[new_field] = item.pop(old_field)
+            # 删除不需要的字段
+            for field in fields_to_remove:
+                item.pop(field, None)  # 使用pop的默认值参数，避免KeyError
 
     def parse_stream_data(self, parsed_str):
         """解析流式数据块并提取answer字段"""
@@ -173,9 +190,7 @@ class CompletionResponse(object):
                     key = result_json.get("tool")
                     if result_list is not None:
                         if key == 'search_baidu':
-                            for item in result_list:
-                                if 'id' in item:
-                                    item['url'] = item.pop('id')  # 将'id'字段替换为'url'
+                            CompletionResponse.process_result_list(result_list)
                         self._extra[key] = result_list
                         message.extra = self._extra  # Update the original extra
                     self._concat += char
