@@ -194,6 +194,8 @@ class ResultProcessor:
                 'mock_id': 'ref_id',
                 'content': 'content',
                 'title': 'title',
+                'icon': 'icon',
+                'site_name': 'site_name',
             }
             renamed_list = []
             for result in result_list:
