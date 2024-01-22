@@ -199,8 +199,10 @@ class ResultProcessor:
             for result in result_list:
                 renamed_list.append({rename_fields[k]: v for k, v in result.items() if k in rename_fields})
             return renamed_list
+        elif key == 'search_db':
+            return result_list
         else:
-            raise TypeError(...)
+            raise TypeError(f"不支持的tools: {key}")
 
 
 class CompletionBaseComponent(Component):
