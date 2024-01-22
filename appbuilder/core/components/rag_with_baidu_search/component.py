@@ -109,6 +109,10 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
         request = self.gene_request(message.content, inputs, response_mode, user_id, model_config)
 
         response = self.completion(self.version, self.base_url, request)
+        if stream is False:
+            for item in response.extra["search_baidu"]:
+                if 'id' in item:
+                    item['url'] = item.pop('id')  # 将'id'字段替换为'url'
         if response.error_no != 0:
             raise AppBuilderServerException(service_err_code=response.error_no, service_err_message=response.error_msg)
 

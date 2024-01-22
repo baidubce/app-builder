@@ -168,6 +168,9 @@ class CompletionResponse(object):
                     result_list = result_json.get("result")
                     key = result_json.get("tool")
                     if result_list is not None:
+                        for item in result_list:
+                            if 'id' in item:
+                                item['url'] = item.pop('id')  # 将'id'字段替换为'url'
                         self._extra[key] = result_list
                         message.extra = self._extra  # Update the original extra
                     self._concat += char
