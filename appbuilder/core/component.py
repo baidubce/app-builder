@@ -52,23 +52,41 @@ class ComponentArguments(BaseModel):
 class Component:
     r"""Component基类, 其它实现的Component子类需要继承该基类，并至少实现run方法."""
 
-    def __init__(self,
-                 meta: Optional[ComponentArguments] = ComponentArguments(),
-                 secret_key: Optional[str] = None,
-                 gateway: str = ""
-                 ):
+    def __init__(
+        self,
+        meta: Optional[ComponentArguments] = ComponentArguments(),
+        secret_key: Optional[str] = None,
+        gateway: str = "",
+        lazy_certification: bool = False,
+    ):
         r"""Component初始化方法.
 
             参数:
                 meta (obj: `ComponentArguments`, 可选) : component元信息.
                 secret_key(str,可选): 用户鉴权token, 默认从环境变量中获取: os.getenv("APPBUILDER_TOKEN", "").
                 gateway(str, 可选): 后端网关服务地址，默认从环境变量中获取: os.getenv("GATEWAY_URL", "")
+                lazy_certification (bool, 可选): 延迟认证，为True时在第一次运行时认证. Defaults to False.
             返回：
                 无
         """
-
         self.meta = meta
-        self.http_client = HTTPClient(secret_key, gateway)
+        self.secret_key = secret_key
+        self.gateway = gateway
+        self._http_client = None
+        self.lazy_certification = lazy_certification
+        if not self.lazy_certification:
+            self.set_secret_key_and_gateway(self.secret_key, self.gateway)
+
+    def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
+        self.secret_key = secret_key
+        self.gateway = gateway
+        self._http_client = HTTPClient(self.secret_key, self.gateway)
+
+    @property
+    def http_client(self):
+        if self._http_client is None:
+            self._http_client = HTTPClient(self.secret_key, self.gateway)
+        return self._http_client
 
     def __call__(self, *inputs, **kwargs):
         r"""implement __call__ method"""
