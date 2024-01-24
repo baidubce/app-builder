@@ -1,3 +1,16 @@
+# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import json
 import logging
 
@@ -6,6 +19,7 @@ from appbuilder.core.components.llms.base import CompletionBaseComponent, ModelA
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.message import Message
 from pydantic import Field
+from typing import Optional
 
 
 class RAGWithBaiduSearchArgs(ComponentArguments):
@@ -32,9 +46,9 @@ class RAGWithBaiduSearchArgs(ComponentArguments):
                        variable_name="cite",
                        description="控制大模型溯源能力的开关，为true即为开启溯源功能，为false即为关闭溯源功能")
 
-    __system__: Message = Field(...,
-                                variable_name="instruction",
-                                description="系统人设")
+    instruction: Message = Field(...,
+                                 variable_name="instruction",
+                                 description="系统人设")
 
 
 class RAGWithBaiduSearch(CompletionBaseComponent):
@@ -42,7 +56,18 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
     version = "v1"
     meta: RAGWithBaiduSearchArgs
 
-    def __init__(self, model=None):
+    def __init__(
+        self, 
+        model=None, 
+        secret_key: Optional[str] = None, 
+        gateway: str = "",
+        instruction: Optional[Message] = None, 
+        reject: Optional[bool] = False, 
+        clarify: Optional[bool] = False, 
+        highlight: Optional[bool] = False, 
+        friendly: Optional[bool] = False, 
+        cite: Optional[bool] = False, 
+    ):
         """初始化RAG with BaiduSearch组件
 
         Args:
@@ -52,7 +77,14 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
             None
 
         """
-        super().__init__(RAGWithBaiduSearch, model=model)
+        super().__init__(
+                RAGWithBaiduSearchArgs, model=model, secret_key=secret_key, gateway=gateway)
+        self.instruction = instruction
+        self.reject = reject
+        self.clarify = clarify
+        self.highlight = highlight
+        self.friendly = friendly
+        self.cite = cite
 
     @staticmethod
     def __get_instruction_set():
@@ -71,9 +103,50 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
                         "其中方括号中的数字是搜索结果序号。引用标记只能出现在句尾标点符号前。"
                 }
 
-    def run(self, message, reject=False, clarify=False,highlight=False, friendly=False, cite=False, instruction=None,
-            stream=False, temperature=1e-10, top_p=1e-10):
+    def _get_search_input(self, text):
+        """
+        获取检索query
+
+        BaiduSearch接口对query有长度要求，需要utf8编码不超过72字节
+        """
+        max_bytes = 72
+        encoded = text.encode('utf-8')
+        if len(encoded) <= max_bytes:
+            return text
+
+        while max_bytes > 0:
+            try:
+                return encoded[:max_bytes].decode('utf-8')
+            except UnicodeDecodeError:
+                max_bytes -= 1
+        return ""
+
+    def run(
+        self, 
+        message, 
+        instruction=None, 
+        reject=None,
+        clarify=None,
+        highlight=None,
+        friendly=None,
+        cite=None,
+        stream=False, 
+        temperature=1e-10, 
+        top_p=1e-10,
+    ):
         instruction_set = self.__get_instruction_set()
+
+        # query 长度限制不能超过 72
+        if len(message.content) > 72:
+            raise AppBuilderServerException(
+                    service_err_message="限制query长度不能超过72")
+        
+        instruction = instruction if instruction is not None else self.instruction
+        reject = reject if reject is not None else self.reject
+        clarify = clarify if clarify is not None else self.clarify
+        highlight = highlight if highlight is not None else self.highlight
+        friendly = friendly if friendly is not None else self.friendly
+        cite = cite if cite is not None else self.cite
 
         inputs = {
             "reject": instruction_set["reject"] if reject else None,
@@ -81,16 +154,13 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
             "highlight": instruction_set["highlight"] if highlight else None,
             "friendly": instruction_set["friendly"] if friendly else None,
             "cite": instruction_set["cite"] if cite else None,
-            "__system__": instruction.content if instruction else None
+            "instruction": instruction.content if instruction else None,
+            "search_input": self._get_search_input(message.content),
         }
         model_config_inputs = ModelArgsConfig(**{"stream": stream, "temperature": temperature, "top_p": top_p})
         model_config = self.get_model_config(model_config_inputs)
         response_mode = "streaming" if stream else "blocking"
         user_id = message.id
-
-        # baidusearch限制query长度不能超过38
-        if len(message.content) > 38:
-            raise AppBuilderServerException(service_err_message="baidusearch限制query长度不能超过38")
 
         request = self.gene_request(message.content, inputs, response_mode, user_id, model_config)
 

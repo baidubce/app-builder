@@ -10,6 +10,7 @@ RAG with BaiduSearch是基于生成式大模型的问答组件，使用百度搜
 ```python
 import appbuilder
 import os
+
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 # 设置环境变量
 os.environ["APPBUILDER_TOKEN"] = '...'
@@ -17,11 +18,8 @@ os.environ["APPBUILDER_TOKEN"] = '...'
 # 创建rag_with_baidusearch对象
 rag_with_baidusearch_component = appbuilder.RAGWithBaiduSearch(model="eb-turbo-appbuilder")
 
-# 初始化参数
-msg = "残疾人怎么办相关证件"
-msg = appbuilder.Message(msg)
-
-# 模拟运行rag_with_baidusearch基本组件
+# 运行rag_with_baidusearch基本组件
+msg = appbuilder.Message("残疾人怎么办相关证件")
 result = rag_with_baidusearch_component.run(msg)
 
 # 获取reference
@@ -38,8 +36,16 @@ print(result)
 
 ### 初始化参数
 - `model`: 模型名称，用于指定要使用的千帆模型。
+- `instruction (obj:Message, 可选)`: 可设定人设，如：你是问答助手，在回答问题前需要加上“很高兴为您解答：”
+- `reject (bool, 可选)`: 拒绝开关，如果为 True，则启用该能力。默认为 False。当输入的问题在搜索结果中没有找到答案时，开关开启时，模型会用特定话术("当前文档库找不到对应的答案，我可以尝试用我的常识来回答你。")做回复的开头，并后接自有知识做回复内容。
+- `clarify (bool, 可选)`: 澄清开关，如果为 True，则启用该能力。默认为 False。 当输入的问题比较模糊、或者主体指代不清晰，且context_list中包含有可以回答该模糊问题的多种潜在备选答案时，开启该开关，大模型会以特定的话术做澄清反问，引导用户继续补充问题发问。举例子，query:发电机的续航时间？ Answer: 根据搜索结果得到了xx和xx两种型号的发电机，您的问题具体涉及到哪一个？请补充关键信息，作为完整的问题重新发问。
+- `highlight (bool, 可选)`: 重点强调开关，如果为 True，则启用该能力。默认为 False。开启该功能时，回复结果中会高亮显示关键部分的内容。
+- `friendly (bool, 可选)`: 友好性提升开关，如果为 True，则启用该能力。默认为 False。开关开启时，部分回复的开头会加礼貌用语。且如果回答涉及到大段的信息，会倾向于以<总-分>或者<总-分-总>的形式做分点论述，使得答案的格式更规整，可读性更强。
+- `cite (bool, 可选)`: 溯源开关，如果为 True，则启用该能力。默认为 False。开关开启时，回复内容后会使用引用标记来标注回答内容参考的搜索结果序号，如^[1]^ (引用单个搜索结果）,^[1][2]^（引用多个搜索结果）。例如：按照当地公安机关出入境管理部门规定的其他材料办理^[2]^。
+
 
 ### 调用参数
+调用参数中的 instruction, reject, clarify, highlight, friendly 和 cite 会覆盖初始化时的参数。
 
 - `msg (obj:Message)`: 输入消息，包含用户提出的问题。这是一个必需的参数。
 - `instruction (obj:Message, 可选)`: 可设定人设，如：你是问答助手，在回答问题前需要加上“很高兴为您解答：”
@@ -51,7 +57,8 @@ print(result)
 - `stream (bool, 可选)`: 指定是否以流式形式返回响应。默认为 False。
 - `temperature (float, 可选)`: 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
 - `top_p (float, 可选)`: 模型配置的top_p参数，top_p值越高输出文本越多样，top_p值越低输出文本越稳定。取值范围为 0.0 到 1.0，默认值为 1e-10。
-- 
+
+
 ### 返回值
 - 返回一个 `Message` 对象，包含模型运行后的输出消息。
 
@@ -59,12 +66,12 @@ print(result)
 ## 高级用法
 该组件的高级用法包括定制化的输入处理、输出处理，以及更复杂的调用场景。用户可以根据具体需求扩展组件功能，实现个性化的问答系统。
 包括如下功能：
-1、拒答
-2、澄清反问
-3、重点强调
-4、友好度提升
-5、溯源
-6、人设
+1、人设
+2、拒答
+3、澄清反问
+4、重点强调
+5、友好度提升
+6、溯源
 
 
 ### 代码样例
@@ -76,47 +83,45 @@ import os
 # 设置环境变量
 os.environ["APPBUILDER_TOKEN"] = '...'
 
-# 创建rag_with_baidusearch对象
-rag_with_baidusearch_component = appbuilder.RAGWithBaiduSearch(model="eb-turbo-appbuilder")
+# 创建rag_with_baidusearch对象, 并初始化人设指令
+rag_with_baidusearch_component = appbuilder.RAGWithBaiduSearch(
+        model="eb-turbo-appbuilder", 
+        instruction=appbuilder.Message("你是问答助手，在回答问题前需要加上: 很高兴为您解答"))
 
-# 初始化参数
-msg = "残疾人怎么办相关证件"
-msg = appbuilder.Message(msg)
 
-# 模拟运行rag_with_baidusearch组件，开启拒答、澄清追问、重点强调、友好性提升、溯源能力、人设六个功能
-instruction = "你是问答助手，在回答问题前需要加上“很高兴为您解答："
-instruction = appbuilder.Message(instruction)
-result = rag_with_baidusearch_component.run(msg, reject=True, clarify=True, highlight=True,
-                                            friendly=True, cite=True, temperature=0.5, stream=False,
-                                            instruction=instruction)
+# 运行rag_with_baidusearch组件，开启拒答、澄清追问、重点强调、友好性提升、溯源能力功能
+msg = appbuilder.Message("残疾人怎么办相关证件")
+result = rag_with_baidusearch_component.run(
+        msg, reject=True, clarify=True, highlight=True,
+        friendly=True, cite=True, temperature=0.5, stream=False)
 
 # 输出运行结果
 print(result)
 ```
-### 典型返回样例
-Message(name=msg, content=你好，根据搜索结果得到了**办理残疾人证**^[1]^和**申请智力、精神类残疾人证和未成年人申请残疾人
-证须知**^[2]^两个相关内容。 您的问题具体涉及到哪一个？请补充关键信息，作为完整的问题重新发问。, mtype=dict, 
-extra={'search_baidu': [{'content': '一、如何办理残疾人证? (一)残疾人的定义 根据全国人大常委会关于1990年12月28日通过的
-《中华人民共和国残疾人保障法》第二条的规定:残疾人是指在心理、生理、人体结构上,某种组织、功能丧失或者不正常,
-全部或者部分丧失以正常方式从事某种活动能力的人。 残疾人包括视力残疾、听力残疾、言语残疾、肢体残疾、智力残疾、精神残疾、
-多重残疾和其他残疾的人。 (二)如何办理残疾人证 第二代残疾人证件号为20位数字,前18位为身份证号,后2位编号则为残疾类型+等级,
-具体如下:视力残疾为1,听力残疾为2,言语残疾为3,肢体残疾为4,智力残疾为5,精神残疾为6,多重残疾:存在2项或2项以上残疾,编号为7;
-结尾等级分为1,2,3,4级。例如:视力2级,则残疾证号为:X12,(X代表某人18位身份证号) 现场办理残疾人证需要提供四份材料:(1)申请人提出申请,
-在县残联办证窗口领取办理残疾证的申请表;(2)身份证或户口簿复印件;(3)相关的病历材料;(4)二寸近期彩照4张。 
-申请后县残联组织医疗鉴定机构(医院)进行鉴定,县残联办证窗口医疗鉴定机构进行残疾人现场评残鉴定的时间是每周二。
-县残联办证窗口位于县政务服务中心一楼(户籍大厅旁)。 残疾证补办需向县残联申请补发。 视力类残疾人证是红色证件,其余为绿色证件。 
-二、残疾人类别等级评定标准 一、视力残疾标准 (一)视力残疾的定义 视力残疾,是指由于各种原因导致双眼视力低下并且不能矫正或视野缩小,
-以致影响其日常生活和社会参与。 视力残疾包括盲及低视力。 (二)视力残疾的分级 类别 级别 最佳矫正视力 盲 一级 无光感～<0.02;
-或视野半径<5度 二级0.02～<0.05;或视野半径<10度 低视力 三级 0.05～<0.1 四级0.1～<0.3 〔注〕 
-1.盲或低视力均指双眼而言,若双眼视力不同,则以视力较好的一眼为准。如仅有单眼为盲或低视力,而另一眼的视力达到或优于0.3,则不属于视力残疾范畴。 
-2.最佳矫正视力是指以适当镜片矫正所能达到的最好视力,或针孔视力。 3.以注视点为中心,视野半径<10度者,不论其视力如何均属于盲。', 
-'doc_id': 'https://www.linquan.gov.cn/xxgk/detail/5af2e3f14daee31b7679c579.html', 
-'id': 'https://www.linquan.gov.cn/xxgk/detail/5af2e3f14daee31b7679c579.html', 'mock_id': '1', 
-'title': '解读如何办理残疾人证及残疾评定标准-临泉县人民政府', 'type': 'web'}, 
-{'content': '申请智力、精神类残疾人证和未成年人申请残疾人证须同时提供法定监护人的证明材料。有条件的地方可开展网上办理申请。', 
-'doc_id': 'https://mp.weixin.qq.com/s?__biz=MzIxOTQ2MTc4Mg==&mid=2247496262&idx=5&sn=
-9e91ef70653bb166afc3ab134e93669e&chksm=97d853bfa0afdaa9456aa28c549729085093f51138e9ae57399aaf99c1f7855ad63e2cc58b71
-&scene=27', 'id': 'https://mp.weixin.qq.com/s?__biz=MzIxOTQ2MTc4Mg==&mid=2247496262&idx=5&sn=
-9e91ef70653bb166afc3ab134e93669e&chksm=97d853bfa0afdaa9456aa28c549729085093f51138e9ae57399aaf99c1f7855ad63e2cc58b71
-&scene=27', 'mock_id': '2', 'title': '残疾人证怎么办理?流程来了,请转给需要的人!', 'type': 'web'}]})
 
+### 返回参数说明
+
+返回的message中extra字段包含了BaiduSearch结果，具体字段说明如下：
+
+| 字段      | 字段说明   |
+|---------|--------|
+| content | 网页内容摘要 |
+| url     | 网页链接   |
+| ref_id  | 序号     |
+| title   | 标题     |
+| icon    | 网站图标 |
+| site_name | 网站名 |
+
+
+### 典型返回样例
+```
+Message(name=msg, content=您好，请问您是想询问关于残疾人办理什么证件的问题吗？如果是，我可以为您提供一些信息。
+
+首先，如果您是首次申请办理残疾人证，需要携带身份证、户口簿和三张两寸近期免冠白底彩色照片到县残联办证窗口提出申请。如果您因身体原因无法亲自前往，可以联系村（社区）工作人员代办申请。
+
+其次，如果您是指残疾类型等级证明，您需要携带相关材料到指定医院或医生进行评级，并由医生签名盖章。
+
+最后，如果您是指残疾人享受低保或残疾人贫困证的一级肢体、视力、智力、精神、多重及60周岁以上的一级听力、语言的重度残疾人可以享受重度残疾人生活补助，那么您需要携带身份证、户口本和残疾证申请表到县、市、区级残联进行办理。
+
+希望这些信息对您有所帮助。如果您还有其他问题，欢迎随时提问。^[2]^, mtype=dict, extra={'search_baidu': [{'content': '(一)3张两寸近期免冠白底彩色照片。 (二)身份证、户口簿原件及复印件。 (三)申请智力、精神类残疾人证和未成年人申请残疾人证需同时提供法定监护人的身份证、户口本原件及复印件和监护人的证明材料。监护人证明材料为以下三项中任意一项: (1)能体现双方直系血缘亲属关系的户口簿。 (2)申请人所在村(社区)出具的说明双方关系的证明材料。 (3)其他能够证明其双方关系的合法证件。(法院判决书、结婚证、出生证明等) (四)经常居住地的有效居住证(户籍地不在本市申请人需提供此证件,本市户籍申请人无需提供此证件)。 (五)经常居住地残联要求的其他材料。 残疾证办理事项及流程', 'icon': 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=1505232404,3530227258&fm=195&app=88&f=JPEG?w=200&h=200', 'url': 'https://www.jingzhou.gov.cn/ztfwnew/shjz/cjrbl/index.shtml', 'ref_id': '1', 'site_name': '荆州市人民政府', 'title': '残疾人证办理服务'}, {'content': '{#}申请{@}. 首次申请办理残疾人证人员,需持申请人居民身份证,户口簿和3张两寸近期免冠白底彩照,到县残联办证窗口(县政务服务中心一楼1号窗口)提出办证申请,填写《中华人民共和国残疾人证申请表》.如因身体原因个人无法出行办证,可联系村(社区)工作人员代办申请.', 'icon': None, 'url': 'https://mp.weixin.qq.com/s?__biz=MzIxMzM5ODY5OQ==&mid=2247485042&idx=1&sn=26a4cad0122d24971d3f5ce598af3564&chksm=97b623b6a0c1aaa02f776c19f567e0b3fabdef3d9f5c957e1f260f286fe5356101fd1ac4e675&scene=27', 'ref_id': '2', 'site_name': '微信公众平台', 'title': '残疾人证如何办理?到哪里评定?你想知道的都在这里'}, {'content': '一、残疾人如何办残疾证 1、户口所在地的县、市、区级残联领取《残疾人证申请表》和《残疾评定表》; 2、身份证或户口本复印件一张; 3、两寸彩色相片2-6张(多带不碍事,各地标准不一); 4、残疾类型等级证明。残疾很明显的可以直接到残联进行评级(像肢体类)审核办理,不明显的必须到指定医院、指定医生进行评级签名并盖章。 一切手续完备,就到县、市、区级残联进行办理,快的话立等可取,慢的话7-15天也差不多了。 二、残疾证有什么用? 1、持有残疾证的残疾人可享受低保或持残疾人贫困证的一级肢体、视力、智力、精神、多重及60周岁以上的一级听力、语言的重度残疾人,可享受重度残疾人生活补助。 2、残疾人托(安)养方面,一级重度残疾人(不含听力、语言、视力残疾)或18至60周岁二级重度残疾人(不含听力、语言、视力残疾),集中托养:低保户、贫困户的对象补助每年补助现金按各地政策规定金额发放。', 'icon': 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=215799447,688541359&fm=195&app=88&f=JPEG?w=200&h=200', 'url': 'https://mip.66law.cn/laws/1060751.aspx', 'ref_id': '3', 'site_name': '华律网', 'title': '残疾人如何办残疾证-证件办理|华律办事直通车'}]})
+```
