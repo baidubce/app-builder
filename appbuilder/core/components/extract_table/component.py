@@ -124,7 +124,9 @@ class ExtractTableFromDoc(Component):
         }
         url = self.http_client.service_url(sub_path="", prefix=self.base_url)
         # logger.info("request url: {}, headers: {}".format(url, headers))
-        resp = self.http_client.session.post(url=url, data=json.dumps(params), headers=self.http_client.auth_header())
+        headers = self.http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+        resp = self.http_client.session.post(url=url, data=json.dumps(params), headers=headers)
 
         self.http_client.check_response_header(resp)
         resp = resp.json()
