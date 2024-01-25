@@ -135,30 +135,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 无
 
-### 使用示例
-
-#### 单条字符串
-
-```python
-import appbuilder
-from appbuilder import Message
-# 请先确保您设置了密钥
-embedding = appbuilder.Embedding()
-
-embedding("hello world!")
-```
-
-#### 多条字符串
-
-```python
-import appbuilder
-from appbuilder import Message
-# 请先确保您设置了密钥
-embedding = appbuilder.Embedding()
-
-embedding.batch(["hello", "world"])
-```
-
 ## 更新记录和贡献
 
 * embedding-v1 (2023-12)
