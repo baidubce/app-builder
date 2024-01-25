@@ -50,8 +50,8 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 |message |String  |是 |输入的请求翻译文本| Message("你好") |
 |from_lang|String|否 |翻译的源语言，默认为`auto`，表示自动检测语言。| zh    |
 |to_lang|Integer|否 |需要翻译的目标语言，默认为`en`，表示英语。| en  |
-|timeout|Integer|是 |HTTP超时时间| 10     |
-|retry|Integer|是 |HTTP重试次数| 3      |
+|timeout|Integer|否 |HTTP超时时间| 10     |
+|retry|Integer|否 |HTTP重试次数| 3      |
 
 ### 响应参数
 |参数名称 |参数类型 |描述 |示例值|
@@ -59,8 +59,8 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 |from_lang  |String  |翻译源语言| zh|
 |to_lang  |String  |翻译目标语言|en|
 |trans_result  |List[Object]  |返回结果|[{'src': '你好', 'dst': 'hello'}]|
-|trans_result.src  |String  |源文本|你好|
-|trans_result.dst  |String  |目标文本|hello|
+|trans_result[0].src  |String  |源文本|你好|
+|trans_result[0].dst  |String  |目标文本|hello|
 
 ### 响应示例
 ```json

@@ -51,16 +51,16 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 调用参数
 |参数名称 |参数类型 |是否必须 |描述 | 示例值    |
 |--------|--------|--------|----|--------|
-|message |String  |是 |待识别的图片字节流数据或url| Message(content={"raw_image": b"..."}) |
-|timeout|Integer|是 |HTTP超时时间| 10     |
-|retry|Integer|是 |HTTP重试次数| 3      |
+|message |String  |是 |待识别的图片字节流数据或url| Message(content={"raw_image": b"..."}) 或Message(content={"url": "..."}) |
+|timeout|Integer|否 |HTTP超时时间| 10     |
+|retry|Integer|否 |HTTP重试次数| 3      |
 
 ### 响应参数
 |参数名称 |参数类型 |描述 |示例值|
 |--------|--------|----|------|
 |result  |List[Object]  |返回结果|[{"name": "剁椒鱼头", "calorie": "127"}]|
-|result.name    |String  |菜品名称|剁椒鱼头|
-|result.calorie |String  |菜品卡路里含量|127|
+|result[0].name    |String  |菜品名称|剁椒鱼头|
+|result[0].calorie |String  |菜品卡路里含量|127|
 
 
 ### 响应示例
