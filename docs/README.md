@@ -8,6 +8,7 @@
 下面是模型列表获取功能的代码示例：
 
 ```python
+
 import os
 import appbuilder
 # 设置环境变量和初始化
@@ -38,9 +39,8 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 
 ### 返回示例
-```json
-['ERNIE-Bot 4.0','ERNIE-Bot-8K', 'ERNIE-Bot']
-```
+['ERNIE-Bot 4.0', 'ERNIE-Bot-8K', 'ERNIE-Bot', 'ERNIE-Bot-turbo']
+
 
 ## 高级用法
 
