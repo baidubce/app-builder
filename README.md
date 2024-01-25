@@ -18,7 +18,7 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 * **v0.2.0版本发布** [Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.2.0)
   * 2023.01.03发布，核心升级点GBI相关组件新增，v0.1.0遗留问题修复
 * **v0.3.0版本发布**
-  * 新增组件：新增了百度搜索rag组件（RAGwithBaiduSearch）和其他组件。
+  * 新增组件：新增了百度搜索rag组件（RAGwithBaiduSearch)。
   * AgentRuntime更新：1) AgentBase 更名为 AgentRuntime，并增强了数据管理能力。2) AgentRuntime添加了对LLMMessage.extra字段的支持，增加了create_flask_app用于WSGI服务器运行服务，修复了UserSession重复初始化的问题。
   * 模型列表获取：与千帆大模型平台模型名打通，可动态获取当前账号模型名，并在组件中使用
   * 可通过官方镜像开发和运行实例代码
