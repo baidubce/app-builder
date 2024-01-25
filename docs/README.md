@@ -39,7 +39,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 ### 返回示例
 ```json
-['ERNIE-Bot 4.0', 'ERNIE-Bot-8K', 'ERNIE-Bot', 'ERNIE-Bot-turbo']
+['ERNIE-Bot 4.0','ERNIE-Bot-8K', 'ERNIE-Bot']
 ```
 
 ## 高级用法
