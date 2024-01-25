@@ -1,15 +1,12 @@
 # 动物识别 (Animal Recognition) 
 
 ## 简介
-动物识别 (Animal Recognition) 可以该请求用于识别一张图片，即对于输入的一张图片（可正常解码，且长宽比较合适），输出动物识别结果。
+动物识别 (Animal Recognition) 可用于识别一张图片，即对于输入的一张图片（可正常解码，且长宽比较合适），输出动物识别结果。
 
 ### 功能介绍
 * 识别动物名称
 
   识别近八千种动物，接口返回动物名称、置信度信息，支持自定义返回结果数；
-* 获取百科信息
-
-  支持获取识别结果的百科信息，接口返回百科词条URL、图片和描述，可自定义返回词条数；
 
 ### 特色优势
 * 可识别近八千种动物，接口返回动物名称，并可获取识别结果对应的百科信息；
@@ -37,7 +34,7 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
             "12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad68" \
             "62cf937c03f8c5260d51c6ae"
 raw_image = requests.get(image_url).content
-# 创建物体识别组件实例
+# 创建动物识别组件实例
 animal_recognition = appbuilder.AnimalRecognition()
 # 执行识别操作并获取结果
 out = animal_recognition.run(appbuilder.Message(content={"raw_image": raw_image}))
@@ -57,12 +54,12 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 初始化参数
 无
 
-### 调用参数 （以表格形式展示）
-| 参数名称    | 参数类型    | 是否必须 | 描述                          | 示例值                                    |
-|---------|---------|------|-----------------------------|----------------------------------------|
-| message | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"raw_image": b"..."}) |
-| timeout | Integer | 是    | HTTP超时时间                    | 10                                     |
-| retry   | Integer | 是    | HTTP重试次数                    | 3                                      |
+### 调用参数
+| 参数名称    | 参数类型    | 是否必须 | 描述                          | 示例值                                            |
+|---------|---------|------|-----------------------------|------------------------------------------------|
+| message | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"raw_image": b"待识别的图片字节流数据"}) |
+| timeout | Integer | 否    | HTTP超时时间                    | 10                                             |
+| retry   | Integer | 否    | HTTP重试次数                    | 3                                              |
 
 ### 响应参数
 | 参数名称   | 参数类型    | 描述   | 示例值                                   |
@@ -100,6 +97,9 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 }
 ```
 
+### 错误码
+| 错误码 | 描述 |
+|-----|----|
 
 ## 高级用法
 

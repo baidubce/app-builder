@@ -1,7 +1,7 @@
 # 表格文字识别 (Table OCR) 
 
 ## 简介
-表格文字识别 (Table OCR) 可以支持识别图片/PDF格式文档中的表格内容，返回各表格的表头表尾内容、单元格文字内容及其行列位置信息，全面覆盖各类表格样式，包括常规有线表格、无线表格、含合并单元格表格。同时，支持多表格内容识别。
+表格文字识别 (Table OCR) 可支持识别图片/PDF格式文档中的表格内容，返回各表格的表头表尾内容、单元格文字内容及其行列位置信息，全面覆盖各类表格样式，包括常规有线表格、无线表格、含合并单元格表格。同时，支持多表格内容识别。
 ### 功能介绍
 * 简单表格文字识别
 
@@ -36,7 +36,7 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/table_ocr_test.png?" \
             "-01-24T12%3A37%3A09Z%2F-1%2Fhost%2Fab528a5a9120d328dc6d18c6" \
             "064079145ff4698856f477b820147768fc2187d3"
 raw_image = requests.get(image_url).content
-# 创建物体识别组件实例
+# 创建表格文字识别组件实例
 table_ocr = appbuilder.TableOCR()
 # 执行识别操作并获取结果
 out = table_ocr.run(appbuilder.Message(content={"raw_image": raw_image}))
@@ -57,11 +57,11 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 无
 
 ### 调用参数 （以表格形式展示）
-| 参数名称    | 参数类型    | 是否必须 | 描述                          | 示例值                                    |
-|---------|---------|------|-----------------------------|----------------------------------------|
-| message | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"raw_image": b"..."}) |
-| timeout | Integer | 是    | HTTP超时时间                    | 10                                     |
-| retry   | Integer | 是    | HTTP重试次数                    | 3                                      |
+| 参数名称    | 参数类型    | 是否必须 | 描述                          | 示例值                                            |
+|---------|---------|------|-----------------------------|------------------------------------------------|
+| message | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"raw_image": b"待识别的图片字节流数据"}) |
+| timeout | Integer | 否    | HTTP超时时间                    | 10                                             |
+| retry   | Integer | 否    | HTTP重试次数                    | 3                                              |
 
 ### 响应参数
 | 参数名称          | 参数类型    | 描述   | 示例值                                                           |
@@ -138,7 +138,9 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
   ]
 }
 ```
-
+### 错误码
+| 错误码 | 描述 |
+|-----|----|
 
 ## 高级用法
 

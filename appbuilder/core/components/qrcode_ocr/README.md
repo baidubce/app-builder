@@ -1,7 +1,7 @@
 # 二维码识别 (QRcode OCR) 
 
 ## 简介
-二维码识别 (QRcode OCR) 对图片中的二维码、条形码进行检测和识别，返回存储的文字信息及其位置信息。
+二维码识别 (QRcode OCR) 可对图片中的二维码、条形码进行检测和识别，返回存储的文字信息及其位置信息。
 
 
 ### 功能介绍
@@ -35,10 +35,10 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/qrcode_ocr_test.png?" \
             "01-24T12%3A45%3A13Z%2F-1%2Fhost%2Ffc43d07b41903aeeb5a023131ba6" \
             "e74ab057ce26d50e966dc31ff083e6a9c41b"
 raw_image = requests.get(image_url).content
-# 创建物体识别组件实例
+# 创建二维码识别组件实例
 qrcode_ocr = appbuilder.QRcodeOCR()
 # 执行识别操作并获取结果
-out = qrcode_ocr.run(appbuilder.Message(content={"raw_image": raw_image}))
+out = qrcode_ocr.run(appbuilder.Message(content={"raw_image": raw_image}), location="true")
 print(out.content)
 ```
 
@@ -56,12 +56,12 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 无
 
 ### 调用参数 （以表格形式展示）
-| 参数名称     | 参数类型    | 是否必须 | 描述                                                                      | 示例值                                    |
-|----------|---------|------|-------------------------------------------------------------------------|----------------------------------------|
-| message  | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数                                             | Message(content={"raw_image": b"..."}) |
-| location | String  | 是    | 是否输出二维码/条形码位置信息，false：默认值，不返回位置信息，true：返回图中二维码/条形码的位置信息，包括上边距、左边距、宽度、高度 | "false"                                |
-| timeout  | Integer | 是    | HTTP超时时间                                                                | 10                                     |
-| retry    | Integer | 是    | HTTP重试次数                                                                | 3                                      |
+| 参数名称     | 参数类型    | 是否必须 | 描述                                                                      | 示例值                                            |
+|----------|---------|------|-------------------------------------------------------------------------|------------------------------------------------|
+| message  | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数                                             | Message(content={"raw_image": b"待识别的图片字节流数据"}) |
+| location | String  | 否    | 是否输出二维码/条形码位置信息，false：不返回位置信息，true：默认值，返回图中二维码/条形码的位置信息，包括上边距、左边距、宽度、高度 | "false"                                        |
+| timeout  | Integer | 否    | HTTP超时时间                                                                | 10                                             |
+| retry    | Integer | 否    | HTTP重试次数                                                                | 3                                              |
 
 ### 响应参数
 | 参数名称         | 参数类型    | 描述   | 示例值                                                                                                               |
@@ -84,7 +84,9 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
   ]
 }
 ```
-
+### 错误码
+| 错误码 | 描述 |
+|-----|----|
 
 ## 高级用法
 
