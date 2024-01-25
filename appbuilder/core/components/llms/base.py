@@ -136,7 +136,7 @@ class CompletionResponse(object):
                 return data
             except json.JSONDecodeError:
                 # 处理解析错误
-                logging.error("failed to parse: " + parsed_str)
+                logging.error("failed to parse: " + raw_str)
                 raise AppBuilderServerException("unknown", "unknown", raw_str)
 
     def get_stream_data(self):
