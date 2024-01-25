@@ -37,6 +37,18 @@ contexts = appbuilder.Message(["世界", "你好"])
 ### 基于query和文本之间的相似度进行匹配排序
 
 ```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = '...'
+
+# 初始化所需要的组件
+embedding = appbuilder.Embedding()
+matching = appbuilder.Matching(embedding)
+
+# 定义query和文本列表
+query = appbuilder.Message("你好")
+contexts = appbuilder.Message(["世界", "你好"])
+
 contexts_matched = matching(query, contexts)
 print(contexts_matched.content)
 ```
@@ -78,25 +90,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 错误码
 
 无
-
-## 高级用法
-
-### 对query和文本计算相似度
-
-使用如下的示例代码，可以直接计算query和文本间的余弦相似度，用于判别不同的embedding模型之间的性能差异
-
-```python
-query_embedding = embedding(query)
-context_embedding = embedding.batch(contexts)
-
-semantics = matching.semantics(query_embedding, context_embedding)
-
-print(semantics.content)
-```
-
-```
-[0.1892052043984527, 0.9999999852985002]
-```
 
 ## 更新记录和贡献
 
