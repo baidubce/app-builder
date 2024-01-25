@@ -8,7 +8,6 @@
 下面是模型列表获取功能的代码示例：
 
 ```python
-
 import os
 import appbuilder
 # 设置环境变量和初始化
