@@ -1,8 +1,12 @@
 # 文档解析（DocParser）
 
 ## 简介
-文档解析组件（DocParser）可以用于文档内容解析，支持PDF、JPG、DOC、TXT、XLS、PPT等17种文档格式，可解析出文档内容、版式信息、位置坐标、表格结构等内容。
+文档解析组件（DocParser）可以用于文档内容解析，支持PDF、JPG、DOC、TXT、XLS、PPT等17种文档格式的内容解析。
 
+### 功能介绍
+文档解析组件（DocParser）支持从文档中解析出文档字符内容、版式信息、位置坐标、表格结构、阅读顺序、标题段落层级树等内容
+
+### 特色优势
 DocParser支持解析以下几种类型的文档：
 * 版式文档：「pdf」、「jpg」、「jpeg」、「png」、「bmp」、「tif」、「tiff」、「ofd」
 * 流式文档：「doc」、「docx」、「txt」、「xls」、「xlsx」、「wps」、「ppt」、「pptx」、「html」
@@ -15,9 +19,12 @@ DocParser支持解析以下几种类型的文档：
 * 构建文档阅读顺序
 * 支持以上类型文档转成pdf格式
 
-## 基本用法
+### 应用场景
+* 文档内容解析
+* 文档版式解析
+* 文档格式转化
 
-参考tests目录下的[test_doc_parser.py](../../../tests/test_doc_parser.py)，可快速搭建自己的解析用例，快速测试解析效果。
+## 基本用法
 
 以下是使用DocParser快速开始的一个示例：
 
@@ -26,7 +33,7 @@ from appbuilder.core.components.doc_parser.doc_parser import DocParser
 from appbuilder.core.message import Message
 import os
 
-# 设置环境变量
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 # 进行文档内容解析
@@ -37,8 +44,72 @@ parse_result = parser(msg)
 print(parse_result.content)
 ```
 
+## 参数说明
 
-## 详细说明
+### 鉴权说明
+使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+```python
+# 设置环境中的TOKEN，以下示例略
+os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
+```
+### 初始化参数
+无
+
+### 调用参数
+| 参数名称       |参数类型 |是否必须 | 描述          | 示例值  |
+|------------|--------|--------|-------------|------|
+| message    |String  |是 | 需要解析的文档的存储路径 | "./test.pdf" |
+| return_raw |bool|否 | 指定是否返回原始的解析结果结构，默认为 False。 | True |
+
+### 响应参数
+| 参数名称        |参数类型 | 描述   | 示例值                     |
+|-------------|--------|------|-------------------------|
+| parseResult |Message  | 解析结果 | ParseResult对象，包含文档解析的内容 |
+### 响应示例
+```python
+class ParseResult(BaseModel):
+    """
+    解析结果整体结构
+    """
+    para_node_tree: Optional[List[ParaNode]] = []  # 标题段落层级树，当ParserConfig.return_para_node_tree为True时有内容
+    page_contents: Optional[List[PageContent]] = []  # 页面的解析内容，详细内容参考base.py中的PageContent类
+    pdf_data: Optional[str] = "" # pdf格式数据, 当ParserConfig.convert_file_to_pdf为True时有内容
+    raw: Optional[Dict] = {} # 云端服务的原始解析结果
+```
+
+## 高级用法
+DocParser支持自定义文档解析的配置和对解析结果进行二次处理，以下是一个示例：
+
+```python
+from appbuilder.core.components.doc_parser.doc_parser import DocParser
+from appbuilder.core.message import Message
+import os
+
+# 设置环境变量
+os.environ["APPBUILDER_TOKEN"] = "..."
+
+# 先进行文档内容解析
+file_path = "./test.docx"  # 待解析的文件路径
+msg = Message(file_path)
+
+parser = DocParser()
+config = parser.config
+config.convert_file_to_pdf = True  # 指定将当前文件转换成pdf格式
+config.page_filter = [0, 2]  # 只解析第1页和第3页，注意：页码从0开始
+
+parse_result = parser(msg)
+file_content = parse_result.content
+pdf_data = file_content.pdf_data  # 获取原始文件转化成pdf之后的数据
+page_content = file_content.page_content[1]  # 获取第3页的解析结果
+page_table = page_content.tables[0]  # 第3页中第一个表格的解析结果（如有），表格的解析内容的结构详见上一章详细说明部分关于表格结果的说明
+cells = page_table.cells  # 表格的单元格信息
+cell_text = cells[0]  # 表格第一个单元格的文本内容
+matrix = page_table.cell_matrix  # 表格的单元格矩阵，用来描述单元格的空间位置信息
+...
+自定义处理表格内容
+...
+```
+### 高级用法参数详细说明
 
 在base.py中定义了DocParser配置和结果结构，下面做一些详细的说明和解释：
 ### DocParser配置
@@ -124,35 +195,6 @@ matrix = [
     ]
 ```
 
-## 高级用法
-DocParser支持自定义文档解析的配置和对解析结果进行二次处理，以下是一个示例：
 
-```python
-from appbuilder.core.components.doc_parser.doc_parser import DocParser
-from appbuilder.core.message import Message
-import os
-
-# 设置环境变量
-os.environ["APPBUILDER_TOKEN"] = "..."
-
-# 先进行文档内容解析
-file_path = "./test.docx"  # 待解析的文件路径
-msg = Message(file_path)
-
-parser = DocParser()
-config = parser.config
-config.convert_file_to_pdf = True  # 指定将当前文件转换成pdf格式
-config.page_filter = [0, 2]  # 只解析第1页和第3页，注意：页码从0开始
-
-parse_result = parser(msg)
-file_content = parse_result.content
-pdf_data = file_content.pdf_data  # 获取原始文件转化成pdf之后的数据
-page_content = file_content.page_content[1]  # 获取第3页的解析结果
-page_table = page_content.tables[0]  # 第3页中第一个表格的解析结果（如有），表格的解析内容的结构详见上一章详细说明部分关于表格结果的说明
-cells = page_table.cells  # 表格的单元格信息
-cell_text = cells[0]  # 表格第一个单元格的文本内容
-matrix = page_table.cell_matrix  # 表格的单元格矩阵，用来描述单元格的空间位置信息
-...
-自定义处理表格内容
-...
-```
+## 更新记录和贡献
+* 文档解析能力 (2023-12)
