@@ -119,20 +119,3 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             )
 
 
-if __name__ == "__main__":
-    import os
-    import requests
-    from appbuilder.core.message import Message
-
-    os.environ["GATEWAY_URL"] = "apaas-api.test.baidu-int.com"
-    os.environ[
-        "APPBUILDER_TOKEN"] = 'Bearer bce-v3/ALTAK-tpJqnbAvTivWEAclPibrT/4ac0ef025903f00e9252a0c41b803b41372a4862'
-    # 从BOS存储读取样例文件
-    image_url = "https://bj.bcebos.com/v1/appbuilder/palnt_recognize_test.jpg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-23T09%3A51%3A03Z%2F-1%2Fhost%2Faa2217067f78f0236c8262cdd89a4b4f4b2188d971ca547c53d01742af4a2cbe"
-    # 输入参数为一张图片
-    inp = Message(content={"url": image_url})
-    # 进行植物识别
-    plant_recognize = PlantRecognition()
-    out = plant_recognize.run(inp)
-    # 打印识别结果
-    print(out.content)  #

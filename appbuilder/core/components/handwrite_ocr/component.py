@@ -117,19 +117,3 @@ class HandwriteOCR(Component):
             )
 
 
-if __name__ == "__main__":
-    import os
-    from appbuilder.core.message import Message
-
-    os.environ["GATEWAY_URL"] = "apaas-api.test.baidu-int.com"
-    os.environ[
-        "APPBUILDER_TOKEN"] = 'Bearer bce-v3/ALTAK-tpJqnbAvTivWEAclPibrT/4ac0ef025903f00e9252a0c41b803b41372a4862'
-    # 从BOS存储读取样例文件
-    image_url = "https://bj.bcebos.com/v1/appbuilder/test_handwrite_ocr.jpg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-23T11%3A58%3A09Z%2F-1%2Fhost%2F677f93445fb65157bee11cd492ce213d5c56e7a41827e45ce7e32b083d195c8b"
-    # 输入参数为一张图片
-    inp = Message(content={"url": image_url})
-    # 进行植物识别
-    handwrite_ocr = HandwriteOCR()
-    out = handwrite_ocr.run(inp)
-    # 打印识别结果
-    print(out.content)  #
