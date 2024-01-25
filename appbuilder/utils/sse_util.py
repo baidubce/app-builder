@@ -87,6 +87,7 @@ class SSEClient:
                 field = data[0]
                 # Ignore unknown fields.
                 if field not in event.__dict__:
+                    event.raw += line
                     logging.info(f'Saw invalid field {field} while parsing Server Side Event')
                     continue
 
@@ -106,18 +107,29 @@ class SSEClient:
                 # are concatenated with each other.
                 if field == 'data':
                     event.__dict__[field] += value + '\n'
+                    event.raw += value + '\n'
                 else:
                     event.__dict__[field] = value
+                    event.raw += value
+
             # Events with no data are not dispatched.
             if not event.data:
-                continue
-            # If the data field ends with a newline, remove it.
-            if event.data.endswith('\n'):
-                event.data = event.data[0:-1]
+                if event.raw:
+                    # unknown error
+                    pass
+                else:
+                    continue
+            else:
+                # If the data field ends with a newline, remove it.
+                if event.data.endswith('\n'):
+                    event.data = event.data[0:-1]
             # Empty event names default to 'message'
             event.event = event.event or 'message'
             # Dispatch the event
-            logging.info(f'Dispatching {event}...')
+            if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+                logging.debug(f'Dispatching {event.debug_str}...')
+            else:
+                logging.info(f'Dispatching {event}...')
             yield event
 
     def close(self):
@@ -136,6 +148,7 @@ class Event(object):
         self.event = event
         self.data = data
         self.retry = retry
+        self.raw = ""
 
     def __str__(self):
         s = f'{self.event} event'
@@ -145,6 +158,23 @@ class Event(object):
             s += f', {len(self.data)} byte'
         else:
             s += ', no data'
+        if self.retry:
+            s += f', retry in {self.retry} ms'
+        return s
+
+    @property
+    def debug_str(self):
+        s = f'{self.event} event'
+        if self.id:
+            s += f' #{self.id}'
+        if self.data:
+            s += f', {len(self.data)} byte, DATA<<{self.data}>>'
+        else:
+            s += ', no data'
+        if self.raw:
+            s += f', RAW<<{self.raw}>>'
+        else:
+            s += ', no raw'
         if self.retry:
             s += f', retry in {self.retry} ms'
         return s
