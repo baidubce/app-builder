@@ -32,12 +32,17 @@ DocParser支持解析以下几种类型的文档：
 from appbuilder.core.components.doc_parser.doc_parser import DocParser
 from appbuilder.core.message import Message
 import os
+import requests
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 # 进行文档内容解析
+file_url = "https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/test.pdf?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-01-25T12%3A56%3A15Z/-1/host/b54178fea9be115eafa2a8589aeadfcfaeba20d726f434f871741d4a6cb0c70d"
+file_data = requests.get(file_url).content
 file_path = "./test.pdf"  # 待解析的文件路径
+with open(file_path, "wb") as f:
+    f.write(file_data)
 msg = Message(file_path)
 parser = DocParser()
 parse_result = parser(msg)
@@ -84,12 +89,17 @@ DocParser支持自定义文档解析的配置和对解析结果进行二次处�
 from appbuilder.core.components.doc_parser.doc_parser import DocParser
 from appbuilder.core.message import Message
 import os
+import requests
 
 # 设置环境变量
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 # 先进行文档内容解析
-file_path = "./test.docx"  # 待解析的文件路径
+file_url = "https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/test.pdf?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-01-25T12%3A56%3A15Z/-1/host/b54178fea9be115eafa2a8589aeadfcfaeba20d726f434f871741d4a6cb0c70d"
+file_data = requests.get(file_url).content
+file_path = "./test.pdf"  # 待解析的文件路径
+with open(file_path, "wb") as f:
+    f.write(file_data)
 msg = Message(file_path)
 
 parser = DocParser()
