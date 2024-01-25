@@ -22,7 +22,6 @@ import requests
 import appbuilder
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
-os.environ["GATEWAY_URL"] = "..."
 os.environ["APPBUILDER_TOKEN"] = "..."
 image_url = "https://bj.bcebos.com/v1/appbuilder/palnt_recognize_test.jpg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-23T09%3A51%3A03Z%2F-1%2Fhost%2Faa2217067f78f0236c8262cdd89a4b4f4b2188d971ca547c53d01742af4a2cbe"
 
@@ -47,7 +46,6 @@ print(out.content)
 ```python
 import os 
 
-os.environ["GATEWAY_URL"] = "..."
 os.environ["APPBUILDER_TOKEN"] = "..."
 ```
 
@@ -55,17 +53,24 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 
 无
 
-### 调用参数 （以表格形式展示）
-|参数名称 |参数类型 | 是否必须 | 描述                                                                    |示例值|
-|--------|--------|------|-----------------------------------------------------------------------|------|
-|message |String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数，例如：Message(content={"raw_image": b"..."}) |eg.示例值|
-|timeout|Integer| 否    | HTTP超时时间                                                              |10|
-|retry|Integer| 否    | HTTP重试次数                                                              |3|
+### 调用参数
+| 参数名称       | 参数类型   | 是否必须 | 描述                          |示例值|
+|------------|--------|------|-----------------------------|---|
+| message    | String | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 ||
+| +content   | Dict   | 是    | 消息内容                        ||
+| +raw_image | String | 否    | 原始图片字节流                     ||
+| +url       | String   | 否    | 图片下载链接地址                    ||
+|timeout|Integer| 否    | HTTP超时时间                    |10||
+|retry|Integer| 否    | HTTP重试次数                    |3||
 
 ### 响应参数
-|参数名称 | 参数类型  |描述 | 示例值                                              |
-|--------|-------|----|--------------------------------------------------|
-|plant_score_list  | list  |返回结果| [{'name': '榕树', 'score': 0.4230029582977295}...] |
+| 参数名称             | 参数类型     | 描述     | 示例值                                              |
+|------------------|----------|--------|--------------------------------------------------|
+| plant_score_list | List     | 植物识别列表 |  |
+| name             | String   | 植物名    |  |
+| score            | Interger | 植物识别打分 |  |
+
+
 ### 响应示例
 ```json
 {
@@ -101,3 +106,6 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 ## 高级用法
 目前该模块仅提供基础的植物识别。
 
+
+## 更新记录和贡献
+* 植物识别 (2024-01)

@@ -30,9 +30,8 @@ class LandmarkRecognition(Component):
     .. code-block:: python
 
         import appbuilder
-        landmark_recognize = appbuilder.LandmarkRecognition()
-
         os.environ["APPBUILDER_TOKEN"] = '...'
+        landmark_recognize = appbuilder.LandmarkRecognition()
         with open("xxxx.jpg", "rb") as f:
             inp = appbuilder.Message(content={"raw_image": f.read()})
             out = landmark_recognize.run(inp)

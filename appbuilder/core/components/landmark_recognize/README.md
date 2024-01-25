@@ -31,7 +31,7 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/landmark_test.jpeg?" \
             "11T10%3A59%3A56Z%2F-1%2Fhost%2Fc249a068c6f321b91" \
             "da0d0fd629b26ded58dcac2b6a3674f32378f5eb8df1ed0"
 raw_image = requests.get(image_url).content
-    # 输入参数为一张图片
+# 输入参数为一张图片
 inp = appbuilder.Message(content={"raw_image": raw_image})
 # 进行地标识别
 landmark_recognize = appbuilder.LandmarkRecognition()
@@ -55,12 +55,15 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 
 无
 
-### 调用参数 （以表格形式展示）
-|参数名称 |参数类型 | 是否必须 | 描述                                                                    |示例值|
-|--------|--------|------|-----------------------------------------------------------------------|------|
-|message |String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数，例如：Message(content={"raw_image": b"..."}) |eg.示例值|
-|timeout|Integer| 否    | HTTP超时时间                                                              |10|
-|retry|Integer| 否    | HTTP重试次数                                                              |3|
+### 调用参数 
+| 参数名称       | 参数类型   | 是否必须 | 描述                          |示例值|
+|------------|--------|------|-----------------------------|---|
+| message    | String | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 ||
+| +content   | Dict   | 是    | 消息内容                        ||
+| +raw_image | String | 否    | 原始图片字节流                     ||
+| +url       | String   | 否    | 图片下载链接地址                    ||
+|timeout|Integer| 否    | HTTP超时时间                    |10||
+|retry|Integer| 否    | HTTP重试次数                    |3||
 
 ### 响应参数
 | 参数名称     | 参数类型 | 描述   | 示例值    |
@@ -78,3 +81,5 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 ## 高级用法
 目前该模块仅提供基础的地标识别。
 
+## 更新记录和贡献
+* 地标识别 (2024-01)
