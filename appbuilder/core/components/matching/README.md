@@ -18,23 +18,7 @@
 
 ## 基本用法
 
-初始化
-
-```python
-import os
-import appbuilder
-os.environ["APPBUILDER_TOKEN"] = '...'
-
-# 初始化所需要的组件
-embedding = appbuilder.Embedding()
-matching = appbuilder.Matching(embedding)
-
-# 定义query和文本列表
-query = appbuilder.Message("你好")
-contexts = appbuilder.Message(["世界", "你好"])
-```
-
-### 基于query和文本之间的相似度进行匹配排序
+### 下面是基于query和文本之间的相似度进行匹配排序的代码示例
 
 ```python
 import os
