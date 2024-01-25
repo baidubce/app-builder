@@ -2,7 +2,7 @@
 
 ## 简介
 
-语义向量计算组件（Embedding）支持将文本转化为用数值表示的向量形式，用于文本检索、信息推荐、知识挖掘等场景。嵌入（Embedding）是一种在机器学习和自然语言处理中常用的技术，主要用于将大量高维数据（如单词、图像等）转换为更低维的向量表示。这些向量表示捕获了原始数据的关键特征和关系。
+向量计算组件（Embedding）支持将文本转化为用数值表示的向量形式，用于文本检索、信息推荐、知识挖掘等场景。嵌入（Embedding）是一种在机器学习和自然语言处理中常用的技术，主要用于将大量高维数据（如单词、图像等）转换为更低维的向量表示。这些向量表示捕获了原始数据的关键特征和关系。
 
 ### 功能介绍
 
@@ -12,7 +12,7 @@
 
 ### 特色优势
 
-Embedding-V1，是基于百度文心大模型技术的文本表示模型，在Embedding模块中，我们使用Embedding-V1作为默认模型
+Embedding-V1，是基于百度文心大模型技术的文本表示模型，在Embedding模块中，我们使用Embedding-V1作为默认模型。
 
 ### 应用场景
 
@@ -46,6 +46,11 @@ embedding = appbuilder.Embedding(model="embedding-v1")
 请注意，您必须确保字符串的token长度小于384
 
 ```python
+import appbuilder
+from appbuilder import Message
+# 请先确保您设置了密钥
+embedding = appbuilder.Embedding()
+
 out = embedding("hello world!")
 # 得到一个长度为384的float数组
 print(out.content)
@@ -54,6 +59,11 @@ print(out.content)
 ### 使用多条字符串测试
 
 ```python
+import appbuilder
+from appbuilder import Message
+# 请先确保您设置了密钥
+embedding = appbuilder.Embedding()
+
 outs = embedding.batch(["hello", "world"])
 # 得到一个长度为 2 x 384的float 二维数组
 print(out.content)
@@ -62,6 +72,11 @@ print(out.content)
 ### 使用上游的Message作为输入
 
 ```python
+import appbuilder
+from appbuilder import Message
+# 请先确保您设置了密钥
+embedding = appbuilder.Embedding()
+
 query = Message("你好，世界！")
 out = embedding(query)
 # 得到一个长度为384的float数组
@@ -71,6 +86,11 @@ print(out.content)
 ### 批量运行
 
 ```python
+import appbuilder
+from appbuilder import Message
+# 请先确保您设置了密钥
+embedding = appbuilder.Embedding()
+
 query = Message([
     "你好",
     "世界"
@@ -136,12 +156,22 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 #### 单条字符串
 
 ```python
+import appbuilder
+from appbuilder import Message
+# 请先确保您设置了密钥
+embedding = appbuilder.Embedding()
+
 embedding("hello world!")
 ```
 
 #### 多条字符串
 
 ```python
+import appbuilder
+from appbuilder import Message
+# 请先确保您设置了密钥
+embedding = appbuilder.Embedding()
+
 embedding.batch(["hello", "world"])
 ```
 
