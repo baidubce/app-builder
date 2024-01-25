@@ -43,22 +43,20 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
 
 ### 初始化参数
-|参数名称 |参数类型 |是否必须 |描述 |示例值|
-|--------|--------|--------|----|------|
-| model |str| 是 |模型名称，用于指定要使用的千帆模型。默认：None | |
+无
 
 ### 调用参数
 
 |参数名称 |参数类型 |是否必须 |描述 |示例值|
 |--------|--------|--------|----|------|
-| message |obj:`Message` |是 |输入消息，用于模型的主要输入内容。这是一个必需的参数。| |
-| stream |bool|否 |指定是否以流式形式返回响应。默认为 False。| |
+| message | String |是 |输入消息，用于模型的主要输入内容。这是一个必需的参数。| `Message("2017年，工商银行根据...")` |
+| stream |bool|否 |指定是否以流式形式返回响应。默认为 False。| False |
 | temperature |float|否 |模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。 | 1e-10 |
 
 ### 响应参数
 |参数名称 |参数类型 |描述 |示例值|
 |--------|--------|----|------|
-| Message |obj:`Message` |输出消息，包含模型运行后的输出内容。| |
+| result | String | 输出消息，包含模型运行后的输出内容。| 见响应示例 |
 
 ### 响应示例
 ```text
@@ -68,6 +66,10 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 问题：2018年3月末，工商银行总资产是多少？
 答案：264,937.81亿元。
 ```
+
+### 错误码
+|错误码|描述|
+|------|---|
 
 ## 高级用法
 
@@ -84,7 +86,7 @@ import os
 from appbuilder.utils.logger_util import logger
 from appbuilder import Message, DocParser, DocSplitter, QAPairMining
 
-# 准备一个文档
+# 准备一个文档，本地路径
 file_path = "xxx.pdf"
 
 # 设置环境变量
@@ -107,3 +109,6 @@ for doc_segment in split_result.content:
     logger.info("Output: {}".format(answer.content))
     break # debug，只跑1个段落
 ```
+
+## 更新记录和贡献
+* 问答对挖掘能力 (2023-12)
