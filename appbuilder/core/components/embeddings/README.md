@@ -53,7 +53,7 @@ outs = embedding.batch(["hello", "world"])
 print(out.content)
 ```
 
-### 使用上游的Message作为输入
+### 下面是使用上游的Message作为输入的代码示例
 
 ```python
 import appbuilder
@@ -67,7 +67,7 @@ out = embedding(query)
 print(out.content)
 ```
 
-### 批量运行
+### 下面是批量运行的代码示例
 
 ```python
 import appbuilder
