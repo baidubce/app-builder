@@ -54,7 +54,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 | 参数名称   | 参数类型    | 是否必须 | 描述                                                          | 示例值          |
 | ---------- | ----------- | -------- | ------------------------------------------------------------- | --------------- |
-| embedding  | Embedding   | 可选     | 一个类型为Embedding的Component，用于初始化`Matching`的向量计算功能。底座模型当前仅支持`embedding-v1`作为可选值。若不指定，默认值为`embedding-v1`。 | `appbuilder.Embedding()`  |
+| embedding  | Embedding   | 可选     | 一个类型为Embedding的Component，用于初始化 Matching 的向量计算功能。底座模型当前仅支持 embedding-v1 作为可选值。若不指定，默认值为 embedding-v1 。 |  appbuilder.Embedding()   |
 
 ### 调用参数
 
