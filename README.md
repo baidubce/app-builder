@@ -17,6 +17,11 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
   * 2023.12.19初始版本发布，基础云组件支持包括BES；AI能力引擎语音、视觉类10个能力，大模型相关RAG、文本生成能力19个。
 * **v0.2.0版本发布** [Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.2.0)
   * 2023.01.03发布，核心升级点GBI相关组件新增，v0.1.0遗留问题修复
+* **v0.3.0版本发布**
+  * 新增组件：新增了百度搜索rag组件（RAGwithBaiduSearch）和其他组件。
+  * AgentRuntime更新：1) AgentBase 更名为 AgentRuntime，并增强了数据管理能力。2) AgentRuntime添加了对LLMMessage.extra字段的支持，增加了create_flask_app用于WSGI服务器运行服务，修复了UserSession重复初始化的问题。
+  * 模型列表获取：与千帆大模型平台模型名打通，可动态获取当前账号模型名，并在组件中使用
+  * 可通过官方镜像开发和运行实例代码
 
 ## 教程与文档
 
@@ -34,6 +39,7 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 ```shell
 pip install --upgrade appbuilder-sdk
 ```
+如果在本地无法跑通appbuilder-sdk包，也可以使用我们的官方镜像来按照和运行，具体方案参考**二次开发**部分。
 
 ## 快速使用
 
@@ -163,6 +169,10 @@ agent.chainlit_demo(port=8091)
 
 ## 二次开发
 当前面向开发者提供开放的数据结构，包括Message和Component，方便开发者融入个人已有的大模型应用程序。此部分仍在不断建设中。
+二次开发可以采用官方提供的开发镜像，便于快速安装各种依赖库。
+``` shell
+docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.1.0
+```
 
 ### 消息(Message)
 - 构建大模型应用的统一数据结构，基于Pydantic构建，在不同的Component之间流动。Message基类的默认字段是content，类型是Any。
