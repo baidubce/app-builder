@@ -13,7 +13,10 @@
 4. 翻译请求可实现实时响应，服务稳定性高，在海外也可及时获取翻译结果，保障用户稳定的服务体验
 
 ### 应用场景
-可广泛应用于教育学习、手机厂商、跨境电商、智能硬件等不同产品形态中，满足多领域、多场景的翻译需求。
+1. 教育学习：在外语教学及学习场景中，通过实时句子翻译、单词释义、语音合成等功能，帮助师生沟通、外教课后点评，辅助阅读和写作，全面提升学习效率与质量
+2. 手机厂商：应用于手机系统中，实现手机系统取词翻译、对话文本翻译等服务。为手机应用开发者提供便捷的翻译功能
+3. 跨境电商：在商业全球化背景下，针对跨国商贸服务中产品名称、详情页等网站基本信息进行翻译，助力企业开拓国际市场
+4. 智能硬件：应用于翻译机、学习机、智能手表等硬件系统中，为用户提供文本翻译、词典及语音合成等能力，实现便捷准确的多语种互译功能
 
 ## 基本用法
 通过如下示例代码可以快速开始使用文本翻译组件：
@@ -29,10 +32,8 @@ resp = translate(appbuilder.Message("你好\n中国"), from_lang="zh", to_lang="
 # 输出{'from_lang': 'zh', 'to_lang': 'en', 'trans_result': [{'src': '你好', 'dst': 'hello'}, {'src': '中国', 'dst': 'China'}]}
 print(resp.content)
 ```
-其中，`APPBUILDER_TOKEN`为您的API访问授权token。
 
 ## 参数说明
-
 ### 鉴权配置
 使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
@@ -46,7 +47,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 调用参数说明
 |参数名称 |参数类型 |是否必须 |描述 | 示例值    |
 |--------|--------|--------|----|--------|
-|message |String  |是 |输入的请求翻译文本| Message("你好\n中国") |
+|message |String  |是 |输入的请求翻译文本| Message("你好") |
 |from_lang|String|否 |翻译的源语言，默认为`auto`，表示自动检测语言。| zh    |
 |to_lang|Integer|否 |需要翻译的目标语言，默认为`en`，表示英语。| en  |
 |timeout|Integer|是 |HTTP超时时间| 10     |
@@ -57,10 +58,11 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 |--------|--------|----|------|
 |from_lang  |String  |翻译源语言| zh|
 |to_lang  |String  |翻译目标语言|en|
-|trans_result  |Object  |返回结果|[{'src': '你好', 'dst': 'hello'}]|
+|trans_result  |List[Object]  |返回结果|[{'src': '你好', 'dst': 'hello'}]|
 |trans_result.src  |String  |源文本|你好|
 |trans_result.dst  |String  |目标文本|hello|
+
 ### 响应示例
 ```json
-{"result": ["北京科技馆。"]}
+{"from_lang": "zh", "to_lang": "en", "trans_result": [{"src": "你好", "dst": "hello"}]}
 ```

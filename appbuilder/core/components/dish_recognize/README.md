@@ -10,7 +10,8 @@
 识别精度高，响应速度快
 
 ### 应用场景
-菜品识别组件可适用于餐饮健康、智能结算等业务场景
+1. 餐饮健康：根据拍摄照片，识别图片中菜品名称，获取菜品参考卡路里含量和百科信息，可结合识别结果进一步提供饮食推荐、健康管理方案等相关功能，增强用户体验，广泛应用于餐饮娱乐类和健康管理类APP中
+2. 智能结算：根据拍摄照片，识别图片中菜品名称和位置，提高结算效率，减少人工录入成本，广泛应用于餐饮行业中
 
 ## 基本用法
 通过如下示例代码可以快速开始使用菜品识别组件：
@@ -35,10 +36,8 @@ resp = dish_recognition(appbuilder.Message({"raw_image": raw_image}))
 # 输出{'result': [{'name': '剁椒鱼头', 'calorie': '127'}]}
 print(resp.content)
 ```
-其中，`APPBUILDER_TOKEN`为您的API访问授权token。
 
 ## 参数说明
-
 ### 鉴权说明
 使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
@@ -47,7 +46,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
 
 ### 初始化参数
-
 无
 
 ### 调用参数
@@ -60,7 +58,11 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 响应参数
 |参数名称 |参数类型 |描述 |示例值|
 |--------|--------|----|------|
-|result  |String  |返回结果|[{"name": "剁椒鱼头", "calorie": "127"}]|
+|result  |List[Object]  |返回结果|[{"name": "剁椒鱼头", "calorie": "127"}]|
+|result.name    |String  |菜品名称|剁椒鱼头|
+|result.calorie |String  |菜品卡路里含量|127|
+
+
 ### 响应示例
 ```json
 {"result": [{"name": "剁椒鱼头", "calorie": "127"}]}
