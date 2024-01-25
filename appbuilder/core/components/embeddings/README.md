@@ -30,9 +30,10 @@ Embedding-V1，是基于百度文心大模型技术的文本表示模型，在Em
 请注意，您必须确保字符串的token长度小于384
 
 ```python
+import os
 import appbuilder
-from appbuilder import Message
-# 请先确保您设置了密钥
+os.environ["APPBUILDER_TOKEN"] = '...'
+
 embedding = appbuilder.Embedding()
 
 out = embedding("hello world!")
@@ -43,9 +44,10 @@ print(out.content)
 ### 下面是使用多条字符串测试的代码示例
 
 ```python
+import os
 import appbuilder
-from appbuilder import Message
-# 请先确保您设置了密钥
+os.environ["APPBUILDER_TOKEN"] = '...'
+
 embedding = appbuilder.Embedding()
 
 outs = embedding.batch(["hello", "world"])
@@ -56,9 +58,12 @@ print(out.content)
 ### 下面是使用上游的Message作为输入的代码示例
 
 ```python
+import os
 import appbuilder
+os.environ["APPBUILDER_TOKEN"] = '...'
+
 from appbuilder import Message
-# 请先确保您设置了密钥
+
 embedding = appbuilder.Embedding()
 
 query = Message("你好，世界！")
@@ -70,9 +75,12 @@ print(out.content)
 ### 下面是批量运行的代码示例
 
 ```python
+import os
 import appbuilder
+os.environ["APPBUILDER_TOKEN"] = '...'
+
 from appbuilder import Message
-# 请先确保您设置了密钥
+
 embedding = appbuilder.Embedding()
 
 query = Message([
