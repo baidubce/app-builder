@@ -15,7 +15,7 @@ import itertools
 import json
 import uuid
 from enum import Enum
-
+import logging
 import requests
 from appbuilder.core.constants import GATEWAY_URL, GATEWAY_INNER_URL
 from pydantic import BaseModel, Field, ValidationError, HttpUrl, validator
@@ -27,7 +27,6 @@ from appbuilder.utils.logger_util import logger
 from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
-from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.utils import ModelInfo
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
@@ -81,7 +80,7 @@ class CompletionResponse(object):
                 for event in sse_client.events():
                     if not event:
                         continue
-                    answer = self.parse_stream_data(event.data)
+                    answer = self.parse_stream_data(event)
                     if answer is not None:
                         yield answer
 
@@ -113,22 +112,32 @@ class CompletionResponse(object):
                         result_list = ResultProcessor.process(key, result_list)
                         self.extra[key] = result_list
 
-    def parse_stream_data(self, parsed_str):
+    def parse_stream_data(self, event):
         """解析流式数据块并提取answer字段"""
-        try:
-            data = json.loads(parsed_str)
-
-            if "code" in data and "message" in data and "requestId" in data:
-                raise AppBuilderServerException(self.log_id, data["code"], data["message"])
-
-            if "code" in data and "message" in data and "status" in data:
-                raise AppBuilderServerException(self.log_id, data["code"], data["message"])
-
-            return data
-        except json.JSONDecodeError:
-            # 处理可能的解析错误
-            print("error: " + parsed_str)
-            raise AppBuilderServerException("unknown", "unknown", parsed_str)
+        parsed_str = event.data
+        raw_str = event.raw
+        if parsed_str:
+            try:
+                data = json.loads(parsed_str)
+                if "code" in data and "message" in data and "requestId" in data:
+                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+                if "code" in data and "message" in data and "status" in data:
+                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+                return data
+            except json.JSONDecodeError:
+                # 处理可能的解析错误
+                logging.error("failed to parse: " + parsed_str)
+                raise AppBuilderServerException("unknown", "unknown", parsed_str)
+        else:
+            try:
+                data = json.loads(raw_str)
+                if "code" in data and "message" in data:
+                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+                return data
+            except json.JSONDecodeError:
+                # 处理解析错误
+                logging.error("failed to parse: " + raw_str)
+                raise AppBuilderServerException("unknown", "unknown", raw_str)
 
     def get_stream_data(self):
         """获取处理过的流式数据的迭代器"""
