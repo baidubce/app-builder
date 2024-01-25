@@ -50,7 +50,7 @@ class TestPlantRecognition(unittest.TestCase):
 
         """
         # Create message with raw_image
-        inp = Message(content={"url": self.image_url})
+        inp = Message(content={"url": self.image_url, "question": "图像内容是什么？"})
         msg = self.image_understand.run(inp)
         self.assertIsNotNone(msg.content)
 
@@ -66,7 +66,7 @@ class TestPlantRecognition(unittest.TestCase):
 
         """
         # Create message with raw_image
-        inp = Message(content={"raw_image": self.raw_image})
+        inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？"})
         msg = self.image_understand.run(inp)
         self.assertIsNotNone(msg.content)
 
