@@ -22,26 +22,10 @@ Embedding-V1，是基于百度文心大模型技术的文本表示模型，在Em
 
 ## 基本用法
 
-### 初始化
-
-```python
-import appbuilder
-from appbuilder import Message
-# 请先确保您设置了密钥
-embedding = appbuilder.Embedding()
-```
-
-embedding的底座模型可以通过如下方式修改
-
-```python
-embedding = appbuilder.Embedding(model="embedding-v1")
-```
-
 当前支持的embedding底座模型暂时只包括：
 - embedding-v1
 
-
-### 使用单条字符串测试
+### 下面是使用单条字符串测试的代码示例
 
 请注意，您必须确保字符串的token长度小于384
 
@@ -56,7 +40,7 @@ out = embedding("hello world!")
 print(out.content)
 ```
 
-### 使用多条字符串测试
+### 下面是使用多条字符串测试的代码示例
 
 ```python
 import appbuilder
