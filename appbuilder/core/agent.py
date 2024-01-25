@@ -273,19 +273,23 @@ class AgentRuntime(BaseModel):
                 if stream:
                     def gen_sse_resp(stream_message):
                         with app.app_context():
-                            for it in stream_message.content:
-                                d = {
-                                    "code": 0, "message": "",
-                                    "result": {
-                                        "session_id": session_id, 
-                                        "answer_message": {
-                                            "content": it,
-                                            "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
+                            try:
+                                for it in stream_message.content:
+                                    d = {
+                                        "code": 0, "message": "",
+                                        "result": {
+                                            "session_id": session_id, 
+                                            "answer_message": {
+                                                "content": it,
+                                                "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
+                                            }
                                         }
                                     }
-                                }
-                                yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
-                            self.user_session._post_append()
+                                    yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
+                                self.user_session._post_append()
+                            except Exception as e:
+                                err_resp = {"code": 1000, "message": str(e), "result": None}
+                                yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
                     return Response(
                         gen_sse_resp(answer), 200, 
                         {'Content-Type': 'text/event-stream; charset=utf-8'},
