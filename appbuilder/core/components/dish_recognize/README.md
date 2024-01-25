@@ -51,7 +51,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 调用参数
 |参数名称 |参数类型 |是否必须 |描述 | 示例值    |
 |--------|--------|--------|----|--------|
-|message |String  |是 |待识别的图片字节流数据或url| Message(content={"raw_image": b"..."}) 或Message(content={"url": "..."}) |
+|message |obj:`Message`  |是 |待识别的图片字节流数据或url| Message(content={"raw_image": b"..."}) 或Message(content={"url": "..."}) |
 |timeout|Integer|否 |HTTP超时时间| 10     |
 |retry|Integer|否 |HTTP重试次数| 3      |
 
@@ -67,3 +67,10 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```json
 {"result": [{"name": "剁椒鱼头", "calorie": "127"}]}
 ```
+
+### 错误码
+|错误码|描述|
+|------|---|
+
+## 更新记录和贡献
+* 菜品识别 (2024-01)
