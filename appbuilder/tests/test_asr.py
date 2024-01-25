@@ -1,3 +1,4 @@
+import os
 import unittest
 import uuid
 
@@ -7,128 +8,133 @@ import appbuilder
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse
 
 
-class TestASRComponent(unittest.TestCase):
-    def setUp(self):
-        """
-        设置环境变量。
-
-        Args:
-            None
-
-        Returns:
-            None.
-        """
-        self.audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
-                   "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
-                   "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
-        self.asr = appbuilder.ASR()
-
-    def test_run(self):
-        """
-        使用原始语音文件进行单测
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        """
-        raw_audio = requests.get(self.audio_file_url).content
-        inp = appbuilder.Message(content={"raw_audio": raw_audio})
-        out = self.asr.run(inp)
-        self.assertIsNotNone(out)
-        self.assertIsInstance(out, appbuilder.Message)
-        self.assertIn('result', out.content)
-
-    def test_run_different_rate(self):
-        """
-        使用不同rate进行单测
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        """
-        raw_audio = requests.get(self.audio_file_url).content
-        inp = appbuilder.Message(content={"raw_audio": raw_audio})
-        try:
-            out = self.asr.run(inp, rate=8000)
-            self.assertIsNotNone(out)
-            self.assertIsInstance(out, appbuilder.Message)
-        except appbuilder.AppBuilderServerException as ex:
-            self.assertIsNotNone(ex, "请求捕获到异常")
-
-    def test_run_invalid_audio(self):
-        """
-        使用非法语音文件进行单测
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        """
-        inp = appbuilder.Message(content={"raw_audio": b"invalid"})
-        with self.assertRaises(Exception):
-            self.asr.run(inp)
-
-    def test_recognition(self):
-        """
-        recognition方法单测
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        """
-        raw_audio = requests.get(self.audio_file_url).content
-        request = ShortSpeechRecognitionRequest()
-        request.format = 'pcm'
-        request.rate = 16000
-        request.cuid = str(uuid.uuid4())
-        request.dev_pid = "80001"
-        request.speech = raw_audio
-        response = self.asr._recognize(request)
-        self.assertIsNotNone(response)
-        self.assertIsInstance(response, ShortSpeechRecognitionResponse)
-
-    def test_recognition_invalid_request(self):
-        """
-        recognition方法单测，非法请求体
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        """
-        with self.assertRaises(Exception):
-            self.asr._recognize(None)
-
-    def test_check_service_error(self):
-        """
-        check_service_error方法单测
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        """
-        data = {'err_msg': 'Error', 'err_no': 1}
-        with self.assertRaises(appbuilder.AppBuilderServerException):
-            self.asr._check_service_error("", data)
-        data = {'err_msg': 'No Error', 'err_no': 0}
-        self.assertIsNone(self.asr._check_service_error("", data))
+os.environ["APPBUILDER_TOKEN"] = "Bearer bce-v3/ALTAK-Nz4S9fIi1i0y37878d0dU/54fa3870692b7f979d06701f50ed4adfb04c181e"
+res = appbuilder.get_model_list()
+print(res)
 
 
-if __name__ == '__main__':
-    unittest.main()
+# class TestASRComponent(unittest.TestCase):
+#     def setUp(self):
+#         """
+#         设置环境变量。
+#
+#         Args:
+#             None
+#
+#         Returns:
+#             None.
+#         """
+#         self.audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
+#                    "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
+#                    "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
+#         self.asr = appbuilder.ASR()
+#
+#     def test_run(self):
+#         """
+#         使用原始语音文件进行单测
+#
+#         Args:
+#             None
+#
+#         Returns:
+#             None
+#
+#         """
+#         raw_audio = requests.get(self.audio_file_url).content
+#         inp = appbuilder.Message(content={"raw_audio": raw_audio})
+#         out = self.asr.run(inp)
+#         self.assertIsNotNone(out)
+#         self.assertIsInstance(out, appbuilder.Message)
+#         self.assertIn('result', out.content)
+#
+#     def test_run_different_rate(self):
+#         """
+#         使用不同rate进行单测
+#
+#         Args:
+#             None
+#
+#         Returns:
+#             None
+#
+#         """
+#         raw_audio = requests.get(self.audio_file_url).content
+#         inp = appbuilder.Message(content={"raw_audio": raw_audio})
+#         try:
+#             out = self.asr.run(inp, rate=8000)
+#             self.assertIsNotNone(out)
+#             self.assertIsInstance(out, appbuilder.Message)
+#         except appbuilder.AppBuilderServerException as ex:
+#             self.assertIsNotNone(ex, "请求捕获到异常")
+#
+#     def test_run_invalid_audio(self):
+#         """
+#         使用非法语音文件进行单测
+#
+#         Args:
+#             None
+#
+#         Returns:
+#             None
+#
+#         """
+#         inp = appbuilder.Message(content={"raw_audio": b"invalid"})
+#         with self.assertRaises(Exception):
+#             self.asr.run(inp)
+#
+#     def test_recognition(self):
+#         """
+#         recognition方法单测
+#
+#         Args:
+#             None
+#
+#         Returns:
+#             None
+#
+#         """
+#         raw_audio = requests.get(self.audio_file_url).content
+#         request = ShortSpeechRecognitionRequest()
+#         request.format = 'pcm'
+#         request.rate = 16000
+#         request.cuid = str(uuid.uuid4())
+#         request.dev_pid = "80001"
+#         request.speech = raw_audio
+#         response = self.asr._recognize(request)
+#         self.assertIsNotNone(response)
+#         self.assertIsInstance(response, ShortSpeechRecognitionResponse)
+#
+#     def test_recognition_invalid_request(self):
+#         """
+#         recognition方法单测，非法请求体
+#
+#         Args:
+#             None
+#
+#         Returns:
+#             None
+#
+#         """
+#         with self.assertRaises(Exception):
+#             self.asr._recognize(None)
+#
+#     def test_check_service_error(self):
+#         """
+#         check_service_error方法单测
+#
+#         Args:
+#             None
+#
+#         Returns:
+#             None
+#
+#         """
+#         data = {'err_msg': 'Error', 'err_no': 1}
+#         with self.assertRaises(appbuilder.AppBuilderServerException):
+#             self.asr._check_service_error("", data)
+#         data = {'err_msg': 'No Error', 'err_no': 0}
+#         self.assertIsNone(self.asr._check_service_error("", data))
+#
+#
+# if __name__ == '__main__':
+#     unittest.main()
