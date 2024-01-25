@@ -37,7 +37,7 @@ mix_card_ocr = appbuilder.MixCardOCR()
 out = mix_card_ocr.run(inp)
 # 打印识别结果
 print(out.content) 
-# {'front': {'fields': [{'key': '出生', 'value': '19920225', 'position': {'left': 620, 'top': 218, 'width': 239, 'height': 30}}, {'key': '性别', 'value': '女', 'position': {'left': 616, 'top': 164, 'width': 25, 'height': 30}}, {'key': '民族', 'value': '汉', 'position': {'left': 766, 'top': 164, 'width': 29, 'height': 30}}, {'key': '姓名', 'value': '姚佳', 'position': {'left': 621, 'top': 102, 'width': 84, 'height': 35}}, {'key': '公民身份号码', 'value': '110103199202250229', 'position': {'left': 733, 'top': 417, 'width': 399, 'height': 36}}, {'key': '住址', 'value': '北京市海淀区仙秀园555号', 'position': {'left': 618, 'top': 277, 'width': 253, 'height': 67}}], 'position': {'left': 483, 'top': 42, 'width': 737, 'height': 464}}, 'back': {'fields': [{'key': '签发日期', 'value': '20150413', 'position': {'left': 789, 'top': 946, 'width': 139, 'height': 34}}, {'key': '签发机关', 'value': '北京市公安局海淀分局', 'position': {'left': 787, 'top': 883, 'width': 275, 'height': 35}}, {'key': '失效日期', 'value': '20350413', 'position': {'left': 946, 'top': 945, 'width': 144, 'height': 34}}], 'position': {'left': 473, 'top': 537, 'width': 749, 'height': 480}}, 'direction': 0}
+ 
 ```
 
 
@@ -48,7 +48,6 @@ print(out.content)
 ```python
 import os 
 
-os.environ["GATEWAY_URL"] = "..."
 os.environ["APPBUILDER_TOKEN"] = "..."
 ```
 
@@ -83,7 +82,117 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 
 ### 响应示例
 ```json
-{'contents': [{'text': '我们家住的小区里有很多银杏树。', 'position': {'left': 390, 'top': 46, 'width': 1801, 'height': 161}}, {'text': '它们笔直笔直的,就像一位正在站岗的', 'position': {'left': 131, 'top': 263, 'width': 2083, 'height': 170}}, {'text': '卫兵。它枝繁叶茂,长的非常好,它的叶子', 'position': {'left': 154, 'top': 483, 'width': 2023, 'height': 161}}, {'text': '有些小的像一把把小扇子,大的也像扇子。', 'position': {'left': 151, 'top': 699, 'width': 2167, 'height': 168}}, {'text': '但是中间有一个缺口,就像被淘汽的小', 'position': {'left': 148, 'top': 929, 'width': 2123, 'height': 177}}, {'text': '朋友用剪刀剪掉了一样。', 'position': {'left': 161, 'top': 1165, 'width': 1340, 'height': 217}}], 'direction': 0}
+{
+	"front": {
+		"fields": [{
+				"key": "出生",
+				"value": "19920225",
+				"position": {
+					"left": 620,
+					"top": 218,
+					"width": 239,
+					"height": 30
+				}
+			},
+			{
+				"key": "性别",
+				"value": "女",
+				"position": {
+					"left": 616,
+					"top": 164,
+					"width": 25,
+					"height": 30
+				}
+			},
+			{
+				"key": "民族",
+				"value": "汉",
+				"position": {
+					"left": 766,
+					"top": 164,
+					"width": 29,
+					"height": 30
+				}
+			},
+			{
+				"key": "姓名",
+				"value": "姚佳",
+				"position": {
+					"left": 621,
+					"top": 102,
+					"width": 84,
+					"height": 35
+				}
+			},
+			{
+				"key": "公民身份号码",
+				"value": "110103199202250229",
+				"position": {
+					"left": 733,
+					"top": 417,
+					"width": 399,
+					"height": 36
+				}
+			},
+			{
+				"key": "住址",
+				"value": "北京市海淀区仙秀园555号",
+				"position": {
+					"left": 618,
+					"top": 277,
+					"width": 253,
+					"height": 67
+				}
+			}
+		],
+		"position": {
+			"left": 483,
+			"top": 42,
+			"width": 737,
+			"height": 464
+		}
+	},
+	"back": {
+		"fields": [{
+				"key": "签发日期",
+				"value": "20150413",
+				"position": {
+					"left": 789,
+					"top": 946,
+					"width": 139,
+					"height": 34
+				}
+			},
+			{
+				"key": "签发机关",
+				"value": "北京市公安局海淀分局",
+				"position": {
+					"left": 787,
+					"top": 883,
+					"width": 275,
+					"height": 35
+				}
+			},
+			{
+				"key": "失效日期",
+				"value": "20350413",
+				"position": {
+					"left": 946,
+					"top": 945,
+					"width": 144,
+					"height": 34
+				}
+			}
+		],
+		"position": {
+			"left": 473,
+			"top": 537,
+			"width": 749,
+			"height": 480
+		}
+	},
+	"direction": 0
+}
 ```
 
 ### 错误码
@@ -91,5 +200,5 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 |------|---|
 
 ## 高级用法
-目前该模块仅提供基础的植物识别。
+目前该模块仅提供基础的身份证混贴识别。
 

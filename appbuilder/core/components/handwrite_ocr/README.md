@@ -37,7 +37,6 @@ handwrite_ocr = appbuilder.HandwriteOCR()
 out = handwrite_ocr.run(inp)
 # 打印识别结果
 print(out.content) 
-# {'contents': [{'text': '我们家住的小区里有很多银杏树。', 'position': {'left': 390, 'top': 46, 'width': 1801, 'height': 161}}, {'text': '它们笔直笔直的,就像一位正在站岗的', 'position': {'left': 131, 'top': 263, 'width': 2083, 'height': 170}}, {'text': '卫兵。它枝繁叶茂,长的非常好,它的叶子', 'position': {'left': 154, 'top': 483, 'width': 2023, 'height': 161}}, {'text': '有些小的像一把把小扇子,大的也像扇子。', 'position': {'left': 151, 'top': 699, 'width': 2167, 'height': 168}}, {'text': '但是中间有一个缺口,就像被淘汽的小', 'position': {'left': 148, 'top': 929, 'width': 2123, 'height': 177}}, {'text': '朋友用剪刀剪掉了一样。', 'position': {'left': 161, 'top': 1165, 'width': 1340, 'height': 217}}], 'direction': 0}
 
 ```
 
@@ -49,7 +48,6 @@ print(out.content)
 ```python
 import os 
 
-os.environ["GATEWAY_URL"] = "..."
 os.environ["APPBUILDER_TOKEN"] = "..."
 ```
 
@@ -72,7 +70,64 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 
 ### 响应示例
 ```json
-{'contents': [{'text': '我们家住的小区里有很多银杏树。', 'position': {'left': 390, 'top': 46, 'width': 1801, 'height': 161}}, {'text': '它们笔直笔直的,就像一位正在站岗的', 'position': {'left': 131, 'top': 263, 'width': 2083, 'height': 170}}, {'text': '卫兵。它枝繁叶茂,长的非常好,它的叶子', 'position': {'left': 154, 'top': 483, 'width': 2023, 'height': 161}}, {'text': '有些小的像一把把小扇子,大的也像扇子。', 'position': {'left': 151, 'top': 699, 'width': 2167, 'height': 168}}, {'text': '但是中间有一个缺口,就像被淘汽的小', 'position': {'left': 148, 'top': 929, 'width': 2123, 'height': 177}}, {'text': '朋友用剪刀剪掉了一样。', 'position': {'left': 161, 'top': 1165, 'width': 1340, 'height': 217}}], 'direction': 0}
+{
+	"contents": [{
+			"text": "我们家住的小区里有很多银杏树。",
+			"position": {
+				"left": 390,
+				"top": 46,
+				"width": 1801,
+				"height": 161
+			}
+		},
+		{
+			"text": "它们笔直笔直的,就像一位正在站岗的",
+			"position": {
+				"left": 131,
+				"top": 263,
+				"width": 2083,
+				"height": 170
+			}
+		},
+		{
+			"text": "卫兵。它枝繁叶茂,长的非常好,它的叶子",
+			"position": {
+				"left": 154,
+				"top": 483,
+				"width": 2023,
+				"height": 161
+			}
+		},
+		{
+			"text": "有些小的像一把把小扇子,大的也像扇子。",
+			"position": {
+				"left": 151,
+				"top": 699,
+				"width": 2167,
+				"height": 168
+			}
+		},
+		{
+			"text": "但是中间有一个缺口,就像被淘汽的小",
+			"position": {
+				"left": 148,
+				"top": 929,
+				"width": 2123,
+				"height": 177
+			}
+		},
+		{
+			"text": "朋友用剪刀剪掉了一样。",
+			"position": {
+				"left": 161,
+				"top": 1165,
+				"width": 1340,
+				"height": 217
+			}
+		}
+	],
+	"direction": 0
+}
 ```
 
 ### 错误码
@@ -80,5 +135,5 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 |------|---|
 
 ## 高级用法
-目前该模块仅提供基础的植物识别。
+目前该模块仅提供基础的手写体识别。
 

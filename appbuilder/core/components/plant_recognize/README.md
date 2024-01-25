@@ -36,7 +36,6 @@ plant_recognize = appbuilder.PlantRecognition()
 out = plant_recognize.run(inp)
 # 打印识别结果
 print(out.content)  
-# {'plant_score_list': [{'name': '榕树', 'score': 0.4230029582977295}, {'name': '榆树', 'score': 0.1273619383573532}, {'name': '美国榆', 'score': 0.1206519496}, {'name': '白蜡树', 'score': 0.11650644987821579}, {'name': '雨树', 'score': 0.045340824872255325}]}
 
 ```
 
@@ -69,7 +68,30 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 |plant_score_list  | list  |返回结果| [{'name': '榕树', 'score': 0.4230029582977295}...] |
 ### 响应示例
 ```json
-{'plant_score_list': [{'name': '榕树', 'score': 0.4230029582977295}, {'name': '榆树', 'score': 0.1273619383573532}, {'name': '美国榆', 'score': 0.1206519496}, {'name': '白蜡树', 'score': 0.11650644987821579}, {'name': '雨树', 'score': 0.045340824872255325}]}
+{
+  "plant_score_list": [
+    {
+      "name": "榕树",
+      "score": 0.4230029582977295
+    },
+    {
+      "name": "榆树",
+      "score": 0.1273619383573532
+    },
+    {
+      "name": "美国榆",
+      "score": 0.1206519496
+    },
+    {
+      "name": "白蜡树",
+      "score": 0.11650644987821579
+    },
+    {
+      "name": "雨树",
+      "score": 0.045340824872255325
+    }
+  ]
+}
 ```
 
 ### 错误码

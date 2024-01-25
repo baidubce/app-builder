@@ -35,7 +35,6 @@ image_understand = appbuilder.ImageUnderstand()
 out = image_understand.run(inp)
 # 打印识别结果
 print(out.content)
-# {'description': "用户上传的图像，经过前期模型分析存在以下信息：;;整个图像内容可以表述为：...，回答如下问题：图片里内容是什么?, 注意不要复述提供的资料内容"}
 ```
 
 
@@ -45,8 +44,6 @@ print(out.content)
 使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 import os 
-
-os.environ["GATEWAY_URL"] = "..."
 os.environ["APPBUILDER_TOKEN"] = "..."
 ```
 
@@ -68,7 +65,9 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 
 ### 响应示例
 ```json
-{'description': "用户上传的图像，经过前期模型分析存在以下信息：;;整个图像内容可以表述为：...，回答如下问题：图片里内容是什么?, 注意不要复述提供的资料内容"}
+{
+	"description": "用户上传的图像，经过前期模型分析存在以下信息：;;整个图像内容可以表述为：...，回答如下问题：图片里内容是什么?, 注意不要复述提供的资料内容"
+}
 ```
 
 ### 错误码
