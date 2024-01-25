@@ -32,6 +32,8 @@ Embedding-V1，是基于百度文心大模型技术的文本表示模型，在Em
 ```python
 import os
 import appbuilder
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 embedding = appbuilder.Embedding()
@@ -46,6 +48,8 @@ print(out.content)
 ```python
 import os
 import appbuilder
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 embedding = appbuilder.Embedding()
@@ -60,6 +64,8 @@ print(out.content)
 ```python
 import os
 import appbuilder
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 from appbuilder import Message
@@ -77,6 +83,8 @@ print(out.content)
 ```python
 import os
 import appbuilder
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 from appbuilder import Message
