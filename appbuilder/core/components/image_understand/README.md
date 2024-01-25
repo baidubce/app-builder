@@ -14,7 +14,7 @@
 
 ## 基本用法
 
-下面是手写体的代码示例：
+下面是图像内容理解的代码示例：
 ```python
 import os
 import appbuilder
