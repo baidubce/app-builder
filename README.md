@@ -57,7 +57,7 @@ AppBuilder提供获取千帆模型列表的函数，在运行具体组件之前�
 import appbuilder
 import os
 
-os.environ["APPBUILDER_TOKEN"] = "YOUR BEAR TOKEN"
+os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 models = appbuilder.get_model_list(api_type_filter=["chat"], is_available=True)
 print(", ".join(models))
 ```
