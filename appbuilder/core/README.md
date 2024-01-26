@@ -10,6 +10,13 @@ AgentRuntime 可以快速帮助开发者服务化组件服务，并且提供API�
 2. Session 数据管理: 提供 Session 数据的管理功能，允许跟踪和存储用户会话数据。
 3. 请求时鉴权: 支持在请求时进行认证，确保安全性。
 
+## 使用依赖
+AgentRuntime 服务化组件依赖 `appbuilder-sdk[serve]`，如果没有安装，可以执行下面的命令安装：
+
+```shell
+pip install appbuilder-sdk[serve]
+```
+
 ## 基本用法
 
 ### 快速开始
