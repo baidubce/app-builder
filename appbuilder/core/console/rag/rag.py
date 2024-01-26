@@ -1,23 +1,24 @@
 import json
 from appbuilder.core._client import HTTPClient
-from appbuilder.core.component import Component, Message
-from appbuilder.core.components.llms.base import ConsoleCompletionResponse
+from appbuilder.core.component import Message
+from appbuilder.core.console.base import ConsoleCompletionResponse
 
 
 class RAG:
     """
-    console RAG组件，基于知识库进行问答。
+    console RAG组件，利用console端RAG应用进行问答。
     Examples:
         .. code-block:: python
             import appbuilder
             import os
 
             os.environ["APPBUILDER_TOKEN"] = '...'
-
+            conversation_id = '...'
             app_id = '...' # 线上知识库ID
-            rag_app = appbuilder.RAG(app_id)
+            conversation_id = '...' # 会话ID，可选参数，不传默认新建会话
+            rag_app = appbuilder.console.RAG(app_id)
             query = "中国2023年的人均GDP是多少"
-            answer = rag_app.integrated(query)
+            answer = rag_app.integrated(appbuilder.Message(query), conversation_id)
             print(answer)
     """
     name = "rag"
@@ -35,7 +36,7 @@ class RAG:
             self._http_client = HTTPClient()
         return self._http_client
 
-    def integrated(self, query: Message, stream: bool = False, conversation_id: str = ""):
+    def integrated(self, query: Message, conversation_id: str = "", stream: bool = False):
         """
         RAG问答
         传参：
