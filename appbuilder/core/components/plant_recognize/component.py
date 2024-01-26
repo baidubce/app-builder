@@ -12,35 +12,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-r"""landmark recognize component."""
+r"""植物识别组件"""
 import base64
 
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.core.components.landmark_recognize.model import *
+from appbuilder.core.components.plant_recognize.model import *
 
 
-class LandmarkRecognition(Component):
+class PlantRecognition(Component):
     r"""
-    识别地标组件，即对于输入的一张图片（可正常解码，且长宽比适宜），输出图片中的地标识别结果
+    植物识别组件，即对于输入的一张图片（可正常解码，且长宽比适宜），输出图片中的植物识别结果
 
     Examples:
 
     .. code-block:: python
-
+        import os
+        import requests
         import appbuilder
-        os.environ["APPBUILDER_TOKEN"] = '...'
-        landmark_recognize = appbuilder.LandmarkRecognition()
-        with open("xxxx.jpg", "rb") as f:
-            inp = appbuilder.Message(content={"raw_image": f.read()})
-            out = landmark_recognize.run(inp)
-            # 打印识别结果
-            print(out.content) # eg: {"landmark": "狮身人面相"}
+
+        # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+        os.environ["GATEWAY_URL"] = "..."
+os.environ["APPBUILDER_TOKEN"] = "..."
+        image_url = "https://bj.bcebos.com/v1/appbuilder/palnt_recognize_test.jpg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-23T09%3A51%3A03Z%2F-1%2Fhost%2Faa2217067f78f0236c8262cdd89a4b4f4b2188d971ca547c53d01742af4a2cbe"
+
+        # 从BOS存储读取样例文件
+        raw_image = requests.get(image_url).content
+        inp = appbuilder.Message(content={"raw_image": raw_image})
+        # inp = Message(content={"url": image_url})
+
+        # 运行植物识别
+        plant_recognize = appbuilder.PlantRecognition()
+        out = plant_recognize.run(inp)
+        # 打印识别结果
+        print(out.content)
      """
 
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 输入图片并识别其中的地标
+        r""" 输入图片并识别其中的植物
 
              参数:
                 message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
@@ -49,44 +59,47 @@ class LandmarkRecognition(Component):
                 retry (int, 可选)： HTTP重试次数
 
               返回:
-                 message (obj: `Message`): 模型识别结果. 举例: Message(content={"landmark": b"狮身人面相"})
+                 message (obj: `Message`): 模型识别结果.
         """
-        inp = LandmarkRecognitionInMsg(**message.content)
-        request = LandmarkRecognitionRequest()
-        if inp.raw_image:
-            request.image = base64.b64encode(inp.raw_image)
+        inp = PlantRecognitionInMsg(**message.content)
+        request = PlantRecognitionRequest()
         if inp.url:
             request.url = inp.url
+        if inp.raw_image:
+            request.image = base64.b64encode(inp.raw_image)
+        request.top_num = 5
+        request.baike_num = 0
         response = self.__recognize(request, timeout, retry)
-        out = LandmarkRecognitionOutMsg(landmark=response.result.get("landmark", ""))
-        return Message(content=dict(out))
+        plant_score_list = []
+        [plant_score_list.append(PlantScore(name=plant.name, score=plant.score)) for plant in response.result]
+        out = PlantRecognitionOutMsg(plant_score_list=plant_score_list)
+        return Message(content=out.json())
 
-    def __recognize(self, request: LandmarkRecognitionRequest, timeout: float = None,
-                    retry: int = 0) -> LandmarkRecognitionResponse:
-        r"""调用底层接口进行地标识别
+    def __recognize(self, request: PlantRecognitionRequest, timeout: float = None, retry: int = 0) \
+            -> PlantRecognitionResponse:
+        r"""调用底层接口植物识别
 
             参数:
-                request (obj: `LandmarkRecognitionRequest`) : 地标识别输入参数
+                request (obj: `PlantRecognitionRequest`) : 植物识别输入参数
 
             返回：
-                response (obj: `LandmarkRecognitionResponse`): 地标识别返回结果
+                response (obj: `PlantRecognitionResponse`): 植物识别返回结果
         """
-
         if not request.image and not request.url:
             raise ValueError("one of image or url must be set")
-        data = LandmarkRecognitionRequest.to_dict(request)
+        data = PlantRecognitionRequest.to_dict(request)
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
         headers = self.http_client.auth_header()
         headers['content-type'] = 'application/x-www-form-urlencoded'
-        url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/landmark")
+        url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/plant")
         response = self.http_client.session.post(url, data=data, timeout=timeout, headers=headers)
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__.__check_service_error(request_id, data)
-        return LandmarkRecognitionResponse(data, request_id=request_id)
+        return PlantRecognitionResponse(data, request_id=request_id)
 
     @staticmethod
     def __check_service_error(request_id: str, data: dict):
@@ -104,3 +117,5 @@ class LandmarkRecognition(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+

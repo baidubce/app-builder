@@ -74,6 +74,12 @@ from .core.components.matching import Matching
 from .core.components.gbi.nl2sql.component import NL2Sql
 from .core.components.gbi.select_table.component import SelectTable
 
+from .core.components.plant_recognize.component import PlantRecognition
+from .core.components.handwrite_ocr.component import HandwriteOCR
+from .core.components.image_understand.component import ImageUnderstand
+from .core.components.mix_card_ocr.component import MixCardOCR
+
+
 from appbuilder.core.message import Message
 from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
@@ -130,7 +136,6 @@ __all__ = [
     "BESVectorStoreIndex",
     'DishRecognition',
     'Translation',
-    'RAGWithBaiduSearch'
     'Message',
     'AnimalRecognition',
     'DocEnhance',
@@ -140,4 +145,9 @@ __all__ = [
     'Embedding',
 
     'Matching',
+
+    "PlantRecognition",
+    "HandwriteOCR",
+    "ImageUnderstand",
+    "MixCardOCR",
 ]
