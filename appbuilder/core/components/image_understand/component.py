@@ -68,7 +68,7 @@ class ImageUnderstand(Component):
         request.question = inp.question
         response = self.__recognize(request, timeout, retry)
         out = ImageUnderstandOutMsg(description=response.result.description_to_llm)
-        return Message(content=out.dict())
+        return Message(content=dict(out))
 
     def __recognize(self, request: ImageUnderstandRequest, timeout: float = None,
                     retry: int = 0) -> ImageUnderstandResponse:

@@ -75,7 +75,7 @@ class TableOCR(Component):
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = TableOCROutMsg(**result_dict)
-        return Message(content=out.model_dump())
+        return Message(content=dict(out))
 
     def _recognize(self, request: TableOCRRequest, timeout: float = None,
                    retry: int = 0) -> TableOCRResponse:

@@ -65,7 +65,7 @@ class GeneralOCR(Component):
         result = self._recognize(request, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = GeneralOCROutMsg(**result_dict)
-        return Message(content=out.dict())
+        return Message(content=dict(out))
 
     def _recognize(self, request: GeneralOCRRequest, timeout: float = None,
                   retry: int = 0) -> GeneralOCRResponse:

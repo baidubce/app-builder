@@ -80,7 +80,7 @@ class MixCardOCR(Component):
                                            height=val.location.height)
                 ref.fields.append(MixCardField(key=key, value=val.words, position=position))
         out.direction = response.direction
-        return Message(content=out.dict())
+        return Message(content=dict(out))
 
     def _recognize(self, request: MixCardOCRRequest, timeout: float = None, retry: int = 0) -> MixCardOCRResponse:
         r"""调用底层身份证混贴识别

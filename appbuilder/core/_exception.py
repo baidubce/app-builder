@@ -83,3 +83,9 @@ class AppBuilderServerException(BaseRPCException):
         """
         super().__init__("request_id={}, code={}, message={}, service_err_code={}, service_err_message={} ".format(
             request_id, code, message, service_err_code, service_err_message))
+
+
+class InvalidRequestArgumentError(BaseRPCException):
+    r"""InvalidRequestArgumentError invalid request param
+    """
+    pass
