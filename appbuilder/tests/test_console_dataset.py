@@ -27,7 +27,7 @@ class TestDataset(unittest.TestCase):
 
     def test_dataset(self):
         # 创建知识库
-        dataset = appbuilder.Dataset.create_dataset("baidu-test")
+        dataset = appbuilder.console.Dataset.create_dataset("baidu-test")
         self.assertIsNotNone(dataset.dataset_id)
 
         # 上传文档

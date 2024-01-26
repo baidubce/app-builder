@@ -36,8 +36,7 @@ checker.current_version
 
 from .core import *
 from .core.components.rag_with_baidu_search import RAGWithBaiduSearch
-from .core.console.rag import RAG
-from .core.console.dataset import Dataset
+from .core import console
 from .core.components.llms.mrc import MRC
 from .core.components.llms.oral_query_generation import OralQueryGeneration
 from .core.components.llms.qa_pair_mining import QAPairMining
@@ -143,8 +142,6 @@ __all__ = [
     'DocEnhance',
     'QRcodeOCR',
     'TableOCR',
-    'Dataset',
-    'RAG',
 
     'Embedding',
 

@@ -22,7 +22,7 @@ class TestRag(unittest.TestCase):
         self.app_id = "84b3222e-a891-47ac-b17f-bba5d44e680f"
 
     def test_rag(self):
-        rag_app = appbuilder.RAG(self.app_id)
+        rag_app = appbuilder.console.RAG(self.app_id)
         query = "写一个200字作文，主题关于百度AI"
         answer = rag_app.integrated(appbuilder.Message(query))
         self.assertIsNotNone(answer.content)

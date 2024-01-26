@@ -22,7 +22,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 app_id = '...' # 线上RAG应用ID，可在console端查看
-rag_app = appbuilder.RAG(app_id)
+rag_app = appbuilder.console.RAG(app_id)
 query = "中国2023年的人均GDP是多少"
 result = rag_app.integrated(appbuilder.Message(query))
 # 输出运行结果

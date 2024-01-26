@@ -23,9 +23,9 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 
 # 初始化已有线上知识库, dataset_id 可在平台console中查看
 dataset_id = "..."
-dataset = appbuilder.Dataset(dataset_id)
+dataset = appbuilder.console.Dataset(dataset_id)
 # 或创建全新知识库
-dataset = appbuilder.Dataset.create_dataset("my_dataset")
+dataset = appbuilder.console.Dataset.create_dataset("my_dataset")
 
 # 上传文档到知识库
 file_paths = ["./test1.pdf"]
