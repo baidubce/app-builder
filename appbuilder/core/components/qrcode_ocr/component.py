@@ -1,0 +1,116 @@
+# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""qrcode ocr component."""
+
+import base64
+import json
+
+from appbuilder.core.component import Component
+from appbuilder.core.components.qrcode_ocr.model import *
+from appbuilder.core.message import Message
+from appbuilder.core._exception import AppBuilderServerException
+
+
+class QRcodeOCR(Component):
+    r"""
+       对图片中的二维码、条形码进行检测和识别，返回存储的文字信息及其位置信息。
+
+
+       Examples:
+
+       ... code-block:: python
+
+           import appbuilder
+           # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+           os.environ["APPBUILDER_TOKEN"] = '...'
+
+           qrcode_ocr = appbuilder.QRcodeOCR()
+           with open("./qrcode_ocr_test.png", "rb") as f:
+               out = self.component.run(appbuilder.Message(content={"raw_image": f.read(),"location": "true"}))
+           print(out.content)
+
+        """
+
+    def run(self, message: Message, location: str = "true", timeout: float = None, retry: int = 0) -> Message:
+        r""" 二维码识别
+
+                    参数: message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"...",
+                    "location": ""})或 Message(content={"url": "https://image/download/url"}). timeout (float,
+                    可选): HTTP超时时间 retry (int, 可选)： HTTP重试次数
+
+                    返回: message (obj: `Message`): 识别结果. 举例: Message(name=msg, content={'codes_result': [{'type':
+                     'QR_CODE', 'text': ['http://weixin.qq.com/r/cS7M1PHE5qyZrbW393tj'], 'location': {'top': 63,
+                     'left': 950, 'width': 220, 'height': 211}}, {'type': 'QR_CODE', 'text': [
+                     'http://weixin.qq.com/r/cS7M1PHE5qyZrbW393tj'], 'location': {'top': 76, 'left': 392,
+                     'width': 210, 'height': 202}}, {'type': 'QR_CODE', 'text': [
+                     'http://weixin.qq.com/r/cS7M1PHE5qyZrbW393tj'], 'location': {'top': 64, 'left': 100,
+                     'width': 229, 'height': 219}}, {'type': 'QR_CODE', 'text': [
+                     'http://weixin.qq.com/r/cS7M1PHE5qyZrbW393tj'], 'location': {'top': 70, 'left': 664,
+                     'width': 215, 'height': 208}}]}, mtype=dict)
+        """
+        inp = QRcodeInMsg(**message.content)
+        req = QRcodeRequest()
+        if inp.raw_image:
+            req.image = base64.b64encode(inp.raw_image)
+        if inp.url:
+            req.url = inp.url
+        req.location = location
+        result = self._recognize(req, timeout, retry)
+        result_dict = proto.Message.to_dict(result)
+        out = QRcodeOutMsg(**result_dict)
+        return Message(content=out.model_dump())
+
+    def _recognize(self, request: QRcodeRequest, timeout: float = None,
+                   retry: int = 0) -> QRcodeResponse:
+        r"""调用二维码识别底层能力
+                   参数:
+                       request (obj: `QRcodeRequest`) : 二维码识别输入参数
+                   返回：
+                       response (obj: `QRcodeResponse`): 二维码识别返回结果
+               """
+        if not request.image and not request.url:
+            raise ValueError("one of image or url must be set")
+
+        data = QRcodeRequest.to_dict(request)
+        if self.http_client.retry.total != retry:
+            self.http_client.retry.total = retry
+        headers = self.http_client.auth_header()
+        headers['content-type'] = 'application/x-www-form-urlencoded'
+        headers['Accept'] = 'application/json'
+        url = self.http_client.service_url("/v1/bce/aip/ocr/v1/qrcode")
+        response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
+        self.http_client.check_response_header(response)
+        data = response.json()
+        self.http_client.check_response_json(data)
+        request_id = self.http_client.response_request_id(response)
+        self.__class__._check_service_error(request_id, data)
+        res = QRcodeResponse.from_json(json.dumps(data))
+        res.request_id = request_id
+        return res
+
+    @staticmethod
+    def _check_service_error(request_id: str, data: dict):
+        r"""个性化服务response参数检查
+            参数:
+                request (dict) : 二维码识别body返回
+            返回：
+                无
+        """
+        if "error_code" in data or "error_msg" in data:
+            raise AppBuilderServerException(
+                request_id=request_id,
+                service_err_code=data.get("error_code"),
+                service_err_message=data.get("error_msg")
+            )

@@ -15,7 +15,7 @@ import itertools
 import json
 import uuid
 from enum import Enum
-
+import logging
 import requests
 from appbuilder.core.constants import GATEWAY_URL, GATEWAY_INNER_URL
 from pydantic import BaseModel, Field, ValidationError, HttpUrl, validator
@@ -27,7 +27,6 @@ from appbuilder.utils.logger_util import logger
 from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
-from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.utils import ModelInfo
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
@@ -81,7 +80,7 @@ class CompletionResponse(object):
                 for event in sse_client.events():
                     if not event:
                         continue
-                    answer = self.parse_stream_data(event.data)
+                    answer = self.parse_stream_data(event)
                     if answer is not None:
                         yield answer
 
@@ -113,22 +112,32 @@ class CompletionResponse(object):
                         result_list = ResultProcessor.process(key, result_list)
                         self.extra[key] = result_list
 
-    def parse_stream_data(self, parsed_str):
+    def parse_stream_data(self, event):
         """解析流式数据块并提取answer字段"""
-        try:
-            data = json.loads(parsed_str)
-
-            if "code" in data and "message" in data and "requestId" in data:
-                raise AppBuilderServerException(self.log_id, data["code"], data["message"])
-
-            if "code" in data and "message" in data and "status" in data:
-                raise AppBuilderServerException(self.log_id, data["code"], data["message"])
-
-            return data
-        except json.JSONDecodeError:
-            # 处理可能的解析错误
-            print("error: " + parsed_str)
-            raise AppBuilderServerException("unknown", "unknown", parsed_str)
+        parsed_str = event.data
+        raw_str = event.raw
+        if parsed_str:
+            try:
+                data = json.loads(parsed_str)
+                if "code" in data and "message" in data and "requestId" in data:
+                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+                if "code" in data and "message" in data and "status" in data:
+                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+                return data
+            except json.JSONDecodeError:
+                # 处理可能的解析错误
+                logging.error("failed to parse: " + parsed_str)
+                raise AppBuilderServerException("unknown", "unknown", parsed_str)
+        else:
+            try:
+                data = json.loads(raw_str)
+                if "code" in data and "message" in data:
+                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+                return data
+            except json.JSONDecodeError:
+                # 处理解析错误
+                logging.error("failed to parse: " + raw_str)
+                raise AppBuilderServerException("unknown", "unknown", raw_str)
 
     def get_stream_data(self):
         """获取处理过的流式数据的迭代器"""
@@ -212,7 +221,6 @@ class CompletionBaseComponent(Component):
     version: str
     base_url: str = "/rpc/2.0/cloud_hub/v1/ai_engine/copilot_engine"
     model_name: str = ""
-    model_url: str = ""
     model_type: str = "chat"
     excluded_models: List[str] = ["Yi-34B-Chat", "ChatLaw"]
     model_info: ModelInfo = None
@@ -229,37 +237,49 @@ class CompletionBaseComponent(Component):
         }
     }
 
-    def __init__(self, meta: ComponentArguments, model=None, secret_key: Optional[str] = None,
-                 gateway: str = ""):
+    def __init__(
+        self, 
+        meta: ComponentArguments, 
+        model: str = None, 
+        secret_key: Optional[str] = None,
+        gateway: str = "",
+        lazy_certification: bool = False,
+    ):
         """
         Args:
             meta (ComponentArguments): 组件参数信息
             model (str, optional): 模型名称. Defaults to None.
             secret_key (Optional[str], optional): 可选的密钥. Defaults to None.
             gateway (str, optional): 网关地址. Defaults to "".
+            lazy_certification (bool, optional): 延迟认证，为True时在第一次运行时认证. Defaults to False.
         
         """
-        super().__init__(meta=meta, secret_key=secret_key, gateway=gateway)
+        super(CompletionBaseComponent, self).__init__(
+                meta=meta, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
+        self.model_name = model
+        self.version = self.version
+        if not lazy_certification:
+            self._check_model_and_get_model_url(self.model_name, self.model_type)
 
+    def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
+        super(CompletionBaseComponent, self).set_secret_key_and_gateway(
+                secret_key=secret_key, gateway=gateway)
+        self.__class__.model_info = ModelInfo(client=self.http_client)
+
+    def _check_model_and_get_model_url(self, model, model_type):
         if model and model in self.excluded_models:
             raise ModelNotSupportedException(f"Model {model} not supported")
-
-        if not self.__class__.model_info:
-            self.__class__.model_info = ModelInfo(client=self.http_client)
-
-        self.model_url = self.model_info.get_model_url(model)
-
-        self.model_name = model
-        if not self.model_name and not self.model_url:
-            raise ValueError("model_name or model_url must be provided")
-
+        if not model:
+            raise ValueError("model_name must be provided")
+        if self.__class__.model_info is None:
+            self.set_secret_key_and_gateway()
         m_type = self.model_info.get_model_type(model)
-
-        if m_type != self.model_type:
+        if m_type != model_type:
             raise ModelNotSupportedException(
-                f"Model {model} with type [{m_type}] not supported, only support {self.model_type} type")
+                f"Model {model} with type [{m_type}] not supported, only support {model_type} type")
 
-        self.version = self.version
+        model_url = self.model_info.get_model_url(model)
+        return model_url
 
     def gene_request(self, query, inputs, response_mode, message_id, model_config):
         """"send request"""
@@ -326,11 +346,11 @@ class CompletionBaseComponent(Component):
 
     def get_model_config(self, model_config_inputs):
         """获取模型配置信息"""
-        if self.model_url:
-            self.model_config["model"]["url"] = self.model_url
+        self.model_config["model"]["name"] = self.model_name
 
-        if self.model_name:
-            self.model_config["model"]["name"] = self.model_name
+        model_url = self._check_model_and_get_model_url(self.model_name, self.model_type)
+        if model_url:
+            self.model_config["model"]["url"] = model_url
 
         self.model_config["model"]["completion_params"]["temperature"] = model_config_inputs.temperature
         self.model_config["model"]["completion_params"]["top_p"] = model_config_inputs.top_p

@@ -63,6 +63,10 @@ from .core.components.retriever.bes_retriever import BESRetriever
 from .core.components.retriever.bes_retriever import BESVectorStoreIndex
 from .core.components.dish_recognize.component import DishRecognition
 from .core.components.translate.component import Translation
+from .core.components.animal_recognize.component import AnimalRecognition
+from .core.components.doc_enhance.component import DocEnhance
+from .core.components.qrcode_ocr.component import QRcodeOCR
+from .core.components.table_ocr.component import TableOCR
 
 from .core.components.embeddings import Embedding
 from .core.components.matching import Matching
@@ -133,6 +137,10 @@ __all__ = [
     'DishRecognition',
     'Translation',
     'Message',
+    'AnimalRecognition',
+    'DocEnhance',
+    'QRcodeOCR',
+    'TableOCR',
 
     'Embedding',
 

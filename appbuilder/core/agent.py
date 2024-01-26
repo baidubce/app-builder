@@ -87,7 +87,7 @@ class AgentRuntime(BaseModel):
             agent.chainlit_demo(port=8091)
 
 
-    除去上述简单应用外，还支持 Session 数据管理，下面是一个例子：
+    ** Session 数据管理 **: 除去上述简单应用外，还支持 Session 数据管理，下面是一个例子
 
     Examples:
 
@@ -134,7 +134,32 @@ class AgentRuntime(BaseModel):
 
             agent = AgentRuntime(component=PlaygroundWithHistory())
             agent.chainlit_demo(port=8091)
+
+    ** 请求时认证 **: component在创建时可以不进行认证，由AgentRuntime服务化后带入AppbuilderToken
+
+    Examples:
+
+        .. code-block:: python
+
+            import appbuilder
             
+            component = appbuilder.Playground(
+                prompt_template="{query}",
+                model="eb-4",
+                lazy_certification=True, # 在创建时不进行认证
+            )
+            agent = appbuilder.AgentRuntime(component=component)
+            agent.serve(debug=False, port=8091)
+ 
+        .. code-block:: shell
+            curl --location 'http://0.0.0.0:8091/chat' \
+                --header 'Content-Type: application/json' \
+                --header 'X-Appbuilder-Token: ...' \
+                --data '{
+                    "message": "你是谁",
+                    "stream": false
+                }'
+
     """
     component: Component
     user_session_config: Optional[Union[sqlalchemy.engine.URL, str]] = None
@@ -202,7 +227,7 @@ class AgentRuntime(BaseModel):
 
         @app.errorhandler(BadRequest)
         def handle_bad_request(e):
-            return {"code": 400, "message": 'Bad request, Please check your data.', "result": None}, 400
+            return {"code": 400, "message": f'{e}', "result": None}, 400
             
         @app.errorhandler(RuntimeError)
         def handle_bad_request(e):
@@ -210,6 +235,20 @@ class AgentRuntime(BaseModel):
 
         @app.route('/chat', methods=['POST'])
         def warp():
+            # 根据component是否lazy_certification，分成两种情况：
+            # 1. lazy_certification为True，初始化时未被认证，每次请求都需要带入AppbuilderToken
+            # 2. lazy_certification为False，初始化时已经认证，请求时不需要带入AppbuilderToken，并且带入也无效
+            if self.component.lazy_certification:
+                if "X-Appbuilder-Token" not in request.headers:
+                    raise BadRequest("X-Appbuilder-Token is required in Headers")
+                try:
+                    app_builder_token = request.headers["X-Appbuilder-Token"]
+                    self.component.set_secret_key_and_gateway(secret_key=app_builder_token)
+                except appbuilder.core._exception.BaseRPCException as e:
+                    raise BadRequest("X-Appbuilder-Token invalid")
+            else:
+                pass
+
             data = request.get_json()
             if "message" not in data:
                 raise BadRequest("message is required")
@@ -234,19 +273,23 @@ class AgentRuntime(BaseModel):
                 if stream:
                     def gen_sse_resp(stream_message):
                         with app.app_context():
-                            for it in stream_message.content:
-                                d = {
-                                    "code": 0, "message": "",
-                                    "result": {
-                                        "session_id": session_id, 
-                                        "answer_message": {
-                                            "content": it,
-                                            "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
+                            try:
+                                for it in stream_message.content:
+                                    d = {
+                                        "code": 0, "message": "",
+                                        "result": {
+                                            "session_id": session_id, 
+                                            "answer_message": {
+                                                "content": it,
+                                                "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
+                                            }
                                         }
                                     }
-                                }
-                                yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
-                            self.user_session._post_append()
+                                    yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
+                                self.user_session._post_append()
+                            except Exception as e:
+                                err_resp = {"code": 1000, "message": str(e), "result": None}
+                                yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
                     return Response(
                         gen_sse_resp(answer), 200, 
                         {'Content-Type': 'text/event-stream; charset=utf-8'},

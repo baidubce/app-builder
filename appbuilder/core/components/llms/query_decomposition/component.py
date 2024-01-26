@@ -15,6 +15,7 @@
 """ query decomposition
 """
 from pydantic import Field
+from typing import Optional
 
 from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
@@ -53,17 +54,27 @@ class QueryDecomposition(CompletionBaseComponent):
     version = "v1"
     meta = QueryDecompositionMeta
 
-    def __init__(self, model=None):
+    def __init__(
+        self, 
+        model=None,
+        secret_key: Optional[str] = None, 
+        gateway: str = "",
+        lazy_certification: bool = False,
+    ):
         """初始化QueryDecompositionMeta任务。
         
         Args:
             model (str|None): 模型名称，用于指定要使用的千帆模型。
-
+            secret_key (str, 可选): 用户鉴权token, 默认从环境变量中获取: os.getenv("APPBUILDER_TOKEN", "").
+            gateway (str, 可选): 后端网关服务地址，默认从环境变量中获取: os.getenv("GATEWAY_URL", "")
+            lazy_certification (bool, 可选): 延迟认证，为True时在第一次运行时认证. Defaults to False.
+        
         Returns:
             None
         
         """
-        super().__init__(QueryDecompositionMeta, model=model)
+        super().__init__(
+                QueryDecompositionMeta, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
     def run(self, message, stream=False, temperature=1e-10):
         """

@@ -4,13 +4,13 @@
 短文本在线合成组件（TTS）提供高度拟人、流畅自然的语音合成服务，将文本朗读出来，基础音库性价比更高，精品音库听感更逼真。
 
 ### 功能介绍
-
+提供高度拟人、流畅自然的语音合成服务
 
 ### 特色优势
-
+将文本朗读出来，基础音库性价比更高，精品音库听感更逼真。
 
 ### 应用场景
-
+文本朗读
 
 
 ## 基本用法
@@ -21,7 +21,7 @@ import os
 import appbuilder
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
-os.environ["APPBUILDER_TOKEN"] = '...'
+os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 tts = appbuilder.TTS()
 cwd = os.getcwd()
 
@@ -91,3 +91,4 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 
 ## 更新记录和贡献
 * 短文本在线合成 (2024-01)
+
