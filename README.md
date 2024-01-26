@@ -60,11 +60,11 @@ import appbuilder
 
 # 空模版组件
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
-playground = appbuilder.Playground(prompt_template=template_str, model="eb-4")
+playground = appbuilder.Playground(prompt_template=template_str, model="eb-turbo-appbuilder")
 
 # 定义输入，调用空模版组件
 input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
-print(playground(input, stream=False, temperature=0.0))
+print(playground(input, stream=False, temperature=1e-10))
 
 ```
 
@@ -90,7 +90,8 @@ cluster_id = "your_bes_cluster_id"
 username = "your_bes_cluster_username"
 password = "your_bes_cluster_password"
 
-# 基于doc_parser和doc_splitter解析file_path文件为若干个段落
+# 基于doc_parser和doc_splitter解
+# 析file_path文件为若干个段落
 def parse_file(file_path, doc_parser, doc_splitter):
     input_msg = appbuilder.Message(str(file_path))
     doc_parser_result = doc_parser(input_msg, return_raw=True)
@@ -135,16 +136,18 @@ print(rag_result.content)
 #### AI能力引擎(AI Engine)
 ```python
 import appbuilder
+import requests
 
 # 语音识别组件
-asr = appbuilder.ASR()
-asr_path = './appbuilder/tests/asr_test.pcm'
+audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
+                   "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
+                   "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
+audio_data = requests.get(audio_file_url).content
 
-# 从文件读取pcm文件，调用asr组件识别结果
-with open(asr_path, "rb") as f:
-    inp = appbuilder.Message(content={"raw_audio": f.read()})
-    asr_out = asr(inp)
-    print(asr_out.content)
+asr = appbuilder.ASR()
+inp = appbuilder.Message(content={"raw_audio": audio_data})
+asr_out = asr(inp)
+print(asr_out.content)
 ```
 
 ## 应用服务化
@@ -157,7 +160,7 @@ import appbuilder
 # 空模版组件
 playground = appbuilder.Playground(
     prompt_template="{query}",
-    model="eb-4"
+    model="eb-turbo-appbuilder"
 )
 
 # 使用 AgentRuntime 来服务化playground组件
