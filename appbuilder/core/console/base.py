@@ -13,7 +13,11 @@
 # limitations under the License.
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.core.components.llms.base import CompletionResponse
+from appbuilder.core.components.llms.base import CompletionResponse, LLMMessage
+
+
+class ConsoleLLMMessage(LLMMessage):
+    conversation_id: str = ""
 
 
 class ConsoleCompletionResponse(CompletionResponse):
@@ -25,6 +29,7 @@ class ConsoleCompletionResponse(CompletionResponse):
     result = None
     log_id = ""
     extra = None
+    conversation_id = ""
 
     def __init__(self, response, stream: bool = False):
         """初始化客户端状态。"""
@@ -41,7 +46,7 @@ class ConsoleCompletionResponse(CompletionResponse):
                 for event in sse_client.events():
                     if not event:
                         continue
-                    answer = self.parse_stream_data(event.data)
+                    answer = self.parse_stream_data(event)
                     if answer is not None:
                         yield answer
 
@@ -65,7 +70,7 @@ class ConsoleCompletionResponse(CompletionResponse):
                     raise AppBuilderServerException(self.log_id, data["code"], data["message"])
 
                 self.result = data.get("result").get("answer", None)
-
+                self.conversation_id = data.get("result").get("conversation_id", "")
                 content = data.get("result").get("content", None)
                 if content:
                     for item in content:
@@ -99,6 +104,7 @@ class ConsoleCompletionResponse(CompletionResponse):
                     resp = next(self._content)
                     result_json = resp.get("result")
                     char = result_json.get("answer", "")
+                    conversation_id = result_json.get("conversation_id", "")
                     content = result_json.get("content", None)
                     if content:
                         for item in content:
@@ -112,6 +118,7 @@ class ConsoleCompletionResponse(CompletionResponse):
                                         else:
                                             self._extra[key] = [ref]
                     message.extra = self._extra  # Update the original extra
+                    message.conversation_id = conversation_id
                     self._concat += char
                     return char
                 except StopIteration:
@@ -123,3 +130,17 @@ class ConsoleCompletionResponse(CompletionResponse):
             # Replace the original content with the custom iterable
             message.content = IterableWrapper(message.content)
         return message
+
+    def to_message(self):
+        """将响应结果转换为Message对象。
+
+        Returns:
+            Message: Message对象。
+
+        """
+        message = ConsoleLLMMessage()
+        message.id = self.log_id
+        message.content = self.result
+        message.extra = self.extra
+        message.conversation_id = self.conversation_id
+        return self.message_iterable_wrapper(message)

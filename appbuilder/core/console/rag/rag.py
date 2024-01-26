@@ -20,6 +20,8 @@ class RAG:
             query = "中国2023年的人均GDP是多少"
             answer = rag_app.integrated(appbuilder.Message(query), conversation_id)
             print(answer)
+            conversation_id = answer.conversation_id # 获取会话ID，可用于下次会话
+            print(conversation_id)
     """
     name = "rag"
     integrated_url: str = "/v1/ai_engine/agi_platform/v2/instance/integrated"
