@@ -20,7 +20,7 @@ import json
 from appbuilder.core.component import Component
 from appbuilder.core.components.qrcode_ocr.model import *
 from appbuilder.core.message import Message
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 
 
 class QRcodeOCR(Component):
@@ -66,11 +66,13 @@ class QRcodeOCR(Component):
             req.image = base64.b64encode(inp.raw_image)
         if inp.url:
             req.url = inp.url
+        if not isinstance(location, str) or location not in ('true', 'false'):
+            raise InvalidRequestArgumentError("location must be a string with value 'true' or 'false'")
         req.location = location
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = QRcodeOutMsg(**result_dict)
-        return Message(content=out.model_dump())
+        return Message(content=dict(out))
 
     def _recognize(self, request: QRcodeRequest, timeout: float = None,
                    retry: int = 0) -> QRcodeResponse:

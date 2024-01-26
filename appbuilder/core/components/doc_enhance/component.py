@@ -22,6 +22,8 @@ from appbuilder.core.components.doc_enhance.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException
 
+enhance_type_set = [0, 1, 2, 3]
+
 
 class DocEnhance(Component):
     r"""
@@ -69,11 +71,13 @@ class DocEnhance(Component):
         if inp.url:
             req.url = inp.url
         req.scan_type = 3
+        if enhance_type not in enhance_type_set:
+            raise InvalidRequestArgumentError(f"enhance_type only support {enhance_type_set}")
         req.enhance_type = enhance_type
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = DocEnhanceOutMsg(**result_dict)
-        return Message(content=out.model_dump())
+        return Message(content=dict(out))
 
     def _recognize(self, request: DocEnhanceRequest, timeout: float = None,
                    retry: int = 0) -> DocEnhanceResponse:
