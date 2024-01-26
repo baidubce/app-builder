@@ -61,7 +61,7 @@ class Dataset:
         response = http_client.session.post(url=http_client.service_url(cls.create_url),
                                             headers=headers, data=payload)
         http_client.check_response_header(response)
-        http_client.check_response_json(response.json())
+        http_client.check_console_response(response)
         response = response.json()["result"]
         return Dataset(dataset_id=response["id"], dataset_name=response["name"])
 
@@ -94,7 +94,7 @@ class Dataset:
         response = self.http_client.session.post(url=self.http_client.service_url(self.add_file_url),
                                                  headers=headers, data=payload)
         self.http_client.check_response_header(response)
-        self.http_client.check_response_json(response.json())
+        self.http_client.check_console_response(response)
         res = AddFileResponse.model_validate(response.json()["result"])
         return res
 
@@ -112,7 +112,7 @@ class Dataset:
             response = self.http_client.session.post(url=self.http_client.service_url(self.upload_file_url),
                                                      files=files, headers=headers)
             self.http_client.check_response_header(response)
-            self.http_client.check_response_json(response.json())
+            self.http_client.check_console_response(response)
             res = response.json()["result"]
         return res
 
@@ -139,7 +139,7 @@ class Dataset:
         response = self.http_client.session.post(url=self.http_client.service_url(self.delete_file_url),
                                                  headers=headers, data=payload)
         self.http_client.check_response_header(response)
-        self.http_client.check_response_json(response.json())
+        self.http_client.check_console_response(response)
 
     def get_file_list(self, page: int, limit: int, keyword: str = "") -> FileListResponse:
         """
@@ -179,6 +179,6 @@ class Dataset:
         response = self.http_client.session.post(url=self.http_client.service_url(self.get_file_list_url),
                                                  headers=headers, data=payload)
         self.http_client.check_response_header(response)
-        self.http_client.check_response_json(response.json())
+        self.http_client.check_console_response(response)
         res = FileListResponse.model_validate(response.json()["result"])
         return res
