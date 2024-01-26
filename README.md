@@ -50,6 +50,33 @@ pip install --upgrade appbuilder-sdk
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
 
+## 模型列表
+
+AppBuilder提供获取千帆模型列表的函数，在运行具体组件之前，可以先获取当前账号下可以使用的模型列表，代码如下：
+``` python
+import appbuilder
+import os
+
+os.environ["APPBUILDER_TOKEN"] = "YOUR BEAR TOKEN"
+models = appbuilder.get_model_list(api_type_filter=["chat"], is_available=True)
+print(", ".join(models))
+```
+
+填写自己的Token，获取模型列表输出如下：
+``` shell
+ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder专用版, Qianfan-Chinese-Llama-2-7B, Yi-34B-Chat, Llama-2-7B-Chat, Llama-2-13B-Chat, Llama-2-70B-Chat, ChatGLM2-6B-32K, ChatLaw, BLOOMZ-7B, Qianfan-BLOOMZ-7B-compressed, AquilaChat-7B
+```
+
+为方便用户更容易使用模型，以下是一些模型的短名称
+| 千帆模型名                   | AppBuilder-SDK短名 |
+|----------------------------|------------------|
+| ERNIE-Bot 4.0              |       eb-4       |
+| ERNIE-Bot-8K               |       eb-8k      |
+| ERNIE-Bot                  |       eb         |
+| ERNIE-Bot-turbo            |       eb-turbo   |
+| EB-turbo-AppBuilder专用版   |       eb-turbo-appbuilder           |
+
+
 ### 典型示例
 
 AppBuilder包括基于大模型构建AI原生应用的各类范式，包括基于Prompt模版的文本生成、检索增强的生成、使用外部工具的文本生成等。
