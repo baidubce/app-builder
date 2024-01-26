@@ -246,7 +246,7 @@ user_session_config = "sqlite:///foo.db"
 agent = appbuilder.AgentRuntime(
     component=playground_with_history_component, 
     user_session_config=user_session_config)
-agent.serve( port=8091)
+agent.serve(port=8091)
 ```
 
 
