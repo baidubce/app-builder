@@ -17,11 +17,15 @@ class RAG:
             app_id = '...' # 线上知识库ID
             conversation_id = '...' # 会话ID，可选参数，不传默认新建会话
             rag_app = appbuilder.console.RAG(app_id)
-            query = "中国2023年的人均GDP是多少"
-            answer = rag_app.integrated(appbuilder.Message(query), conversation_id)
+            query = "中国的首都在哪里"
+            answer = rag_app.integrated(appbuilder.Message(query)) # 新建会话
             print(answer)
             conversation_id = answer.conversation_id # 获取会话ID，可用于下次会话
             print(conversation_id)
+            query = "它有哪些旅游景点"
+            answer = rag_app.integrated(appbuilder.Message(query), conversation_id) # 接上次会话
+            print(answer.content)
+            print(answer.extra)  # 获取结果来源
     """
     name = "rag"
     integrated_url: str = "/v1/ai_engine/agi_platform/v2/instance/integrated"

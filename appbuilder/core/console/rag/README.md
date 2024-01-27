@@ -24,14 +24,15 @@ os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...' # 线上RAG应用ID，可在console端查看
 conversation_id = '...' # 会话ID，可选参数，不传默认新建会话
 rag_app = appbuilder.console.RAG(app_id)
-query = "中国2023年的人均GDP是多少"
-answer = rag_app.integrated(appbuilder.Message(query), conversation_id)
-# 输出运行结果
-print(answer.content)
-# 获取reference
-print(answer.extra)
+query = "中国的首都在哪里"
+answer = rag_app.integrated(appbuilder.Message(query)) # 新建会话
+print(answer.content) # 获取结果内容
 conversation_id = answer.conversation_id # 获取会话ID，可用于下次会话
-print(conversation_id) 
+print(conversation_id)
+query = "它有哪些旅游景点"
+answer = rag_app.integrated(appbuilder.Message(query), conversation_id) # 接上次会话
+print(answer.content) # 获取结果内容
+print(answer.extra)  # 获取结果来源
 ```
 
 ## 参数说明
