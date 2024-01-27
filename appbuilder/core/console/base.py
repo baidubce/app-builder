@@ -63,6 +63,9 @@ class ConsoleCompletionResponse(CompletionResponse):
             else:
                 data = response.json()
 
+                if "code" in data and data.get("code") != 0:
+                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+
                 if "code" in data and "message" in data and "requestId" in data:
                     raise AppBuilderServerException(self.log_id, data["code"], data["message"])
 
