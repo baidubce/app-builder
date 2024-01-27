@@ -173,6 +173,8 @@ agent = appbuilder.AgentRuntime(component=component)
 agent.chainlit_demo(port=8091)
 ```
 
+![chainlit demo页面](agent_runtime_with_chainlit_demo.png)
+
 
 ### Session 数据管理
 AgentRuntime 提供 Session 数据的管理功能，允许跟踪和存储用户会话数据。一般只有在二次开发的组件需要使用该能力。
