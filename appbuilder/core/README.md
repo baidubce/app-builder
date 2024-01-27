@@ -173,6 +173,8 @@ agent = appbuilder.AgentRuntime(component=component)
 agent.chainlit_demo(port=8091)
 ```
 
+Chainlit Demo页面示意图如下所示，
+
 ![chainlit demo页面](agent_runtime_with_chainlit_demo.png)
 
 
