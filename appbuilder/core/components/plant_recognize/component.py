@@ -73,7 +73,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         plant_score_list = []
         [plant_score_list.append(PlantScore(name=plant.name, score=plant.score)) for plant in response.result]
         out = PlantRecognitionOutMsg(plant_score_list=plant_score_list)
-        return Message(content=out.json())
+        return Message(content=dict(out))
 
     def __recognize(self, request: PlantRecognitionRequest, timeout: float = None, retry: int = 0) \
             -> PlantRecognitionResponse:
