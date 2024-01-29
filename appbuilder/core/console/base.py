@@ -19,6 +19,9 @@ from appbuilder.core.components.llms.base import CompletionResponse, LLMMessage
 class ConsoleLLMMessage(LLMMessage):
     conversation_id: str = ""
 
+    def __str__(self):
+        return f"Message(name={self.name}, content={self.content}, mtype={self.mtype}, extra={self.extra}, conversation_id={self.conversation_id})"
+
 
 class ConsoleCompletionResponse(CompletionResponse):
     """

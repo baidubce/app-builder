@@ -19,12 +19,12 @@ import os
 class TestRag(unittest.TestCase):
 
     def setUp(self):
-        self.app_id = "84b3222e-a891-47ac-b17f-bba5d44e680f"
+        self.app_id = "..."
 
     def test_rag(self):
         rag_app = appbuilder.console.RAG(self.app_id)
         query = "写一个200字作文，主题关于百度AI"
-        answer = rag_app.integrated(appbuilder.Message(query))
+        answer = rag_app.run(appbuilder.Message(query))
         self.assertIsNotNone(answer.content)
 
 

@@ -21,6 +21,8 @@ class TestDataset(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-nCMpKZq0twmRxVR0ix4Bg/2ec658296587ca8cf7fb7d7800546f8e4a3c5421"
+        os.environ["GATEWAY_URL"] = "https://apaas-api.test.baidu-int.com"
         # 获取当前文件所在的目录路径
         cls.current_dir = os.path.dirname(__file__)
         cls.test_pdf_path = os.path.join(cls.current_dir, 'test.pdf')
@@ -32,20 +34,20 @@ class TestDataset(unittest.TestCase):
 
         # 上传文档
         file_paths = [self.test_pdf_path]
-        file_info = dataset.add_files(file_paths)
-        self.assertEqual(len(file_info.document_ids), 1)
+        document_infos = dataset.add_documents(file_paths)
+        self.assertEqual(len(document_infos.document_ids), 1)
 
         # 获取第一页的文档列表, 每页10条
-        file_list = dataset.get_file_list(1, 10)
+        file_list = dataset.get_documents(1, 10)
         self.assertEqual(file_list.total, 1)
 
         # 删除文档
-        file_ids = [file_info.document_ids[0]]
-        dataset.delete_files(file_ids)
+        file_ids = [document_infos.document_ids[0]]
+        dataset.delete_documents(file_ids)
 
         # 获取第一页的文档列表, 每页10条
-        file_list = dataset.get_file_list(1, 10)
-        self.assertEqual(file_list.total, 0)
+        document_list = dataset.get_documents(1, 10)
+        self.assertEqual(document_list.total, 0)
 
 
 if __name__ == '__main__':
