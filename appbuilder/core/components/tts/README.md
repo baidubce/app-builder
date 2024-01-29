@@ -69,7 +69,6 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 | audio_type | String  | 否    | 音频文件格式，默认是`mp3`, 如果使用`paddlespeech-tts`模型，参数只能设为`wav`                                                | 10 |
 | retry   | Integer | 否    | HTTP重试次数                                                |    |
 | timeout | Integer | 否    | HTTP超时时间                                                | 10 |
-| retry   | Integer | 否    | HTTP重试次数                                                | 3  |
 
 ### 响应参数
 | 参数名称     | 参数类型  | 描述  | 示例值 |
