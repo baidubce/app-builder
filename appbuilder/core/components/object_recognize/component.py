@@ -15,7 +15,7 @@
 import base64
 import json
 
-
+from appbuilder.core._client import HTTPClient
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException
@@ -42,6 +42,7 @@ class ObjectRecognition(Component):
 
         """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 通用物体识别
 

@@ -20,6 +20,7 @@ import json
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse, \
     ASRInMsg, ASROutMsg
 
@@ -43,6 +44,7 @@ class ASR(Component):
         out = asr.run(msg)
         print(out.content) # eg: {"result": ["北京科技馆。"]}
      """
+    @HTTPClient.check_param
     def run(self, message: Message, audio_format: str = "pcm", rate: int = 16000,
             timeout: float = None, retry: int = 0) -> Message:
         """

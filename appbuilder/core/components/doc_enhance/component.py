@@ -19,8 +19,9 @@ import json
 
 from appbuilder.core.component import Component
 from appbuilder.core.components.doc_enhance.model import *
+from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import *
 
 enhance_type_set = [0, 1, 2, 3]
 
@@ -45,7 +46,7 @@ class DocEnhance(Component):
            print(out.content)
 
         """
-
+    @HTTPClient.check_param
     def run(self, message: Message, enhance_type: int = 0, timeout: float = None, retry: int = 0) -> Message:
         r""" 文档矫正增强
 

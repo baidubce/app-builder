@@ -17,6 +17,7 @@ import base64
 
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.plant_recognize.model import *
 
@@ -49,6 +50,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         print(out.content)
      """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 输入图片并识别其中的植物
 

@@ -21,6 +21,7 @@ import json
 
 from appbuilder.core.message import Message
 from appbuilder.core.component import Component
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.translate.model import *
 
@@ -49,6 +50,7 @@ class Translation(Component):
     name = "translate"
     version = "v1"
 
+    @HTTPClient.check_param
     def run(self, message: Message, from_lang: str = "auto", to_lang: str = "en",
             timeout: float = None, retry: int = 0) -> Message:
         """

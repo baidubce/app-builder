@@ -17,6 +17,7 @@ import base64
 
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.landmark_recognize.model import *
 
@@ -39,6 +40,7 @@ class LandmarkRecognition(Component):
             print(out.content) # eg: {"landmark": "狮身人面相"}
      """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 输入图片并识别其中的地标
 
@@ -104,3 +106,5 @@ class LandmarkRecognition(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+
