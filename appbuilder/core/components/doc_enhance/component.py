@@ -20,7 +20,7 @@ import json
 from appbuilder.core.component import Component
 from appbuilder.core.components.doc_enhance.model import *
 from appbuilder.core.message import Message
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 
 enhance_type_set = [0, 1, 2, 3]
 
@@ -77,7 +77,7 @@ class DocEnhance(Component):
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = DocEnhanceOutMsg(**result_dict)
-        return Message(content=dict(out))
+        return Message(content=out.dict())
 
     def _recognize(self, request: DocEnhanceRequest, timeout: float = None,
                    retry: int = 0) -> DocEnhanceResponse:

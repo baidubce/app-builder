@@ -59,7 +59,7 @@ class LandmarkRecognition(Component):
             request.url = inp.url
         response = self.__recognize(request, timeout, retry)
         out = LandmarkRecognitionOutMsg(landmark=response.result.get("landmark", ""))
-        return Message(content=dict(out))
+        return Message(content=out.dict())
 
     def __recognize(self, request: LandmarkRecognitionRequest, timeout: float = None,
                     retry: int = 0) -> LandmarkRecognitionResponse:
