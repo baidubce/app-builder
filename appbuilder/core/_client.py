@@ -127,5 +127,9 @@ class HTTPClient:
             retry = kwargs.get("retry", 0)
             if retry < 0 or not isinstance(retry, int):
                 raise InvalidRequestArgumentError("retry must be int and bigger then zero")
+            timeout = kwargs.get("timeout", None)
+            if timeout and not (isinstance(timeout, float) or isinstance(timeout, tuple)):
+                raise InvalidRequestArgumentError("timeout must be float or tuple of float")
             return func(*args, **kwargs)
+
         return inner
