@@ -122,3 +122,4 @@ class Component:
     def _debug(self, **data) -> None:
         r"""pass"""
         pass
+

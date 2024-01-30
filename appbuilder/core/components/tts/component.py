@@ -17,6 +17,7 @@ from typing import Literal
 from urllib.parse import quote_plus
 
 from appbuilder.core.component import Component
+from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.tts.model import *
@@ -62,6 +63,7 @@ class TTS(Component):
         super().__init__(*args, **kwargs)
         self.model = ""
 
+    @HTTPClient.check_param
     def run(self,
             message: Message,
             model: Literal["baidu-tts", "paddlespeech-tts"] = "baidu-tts",

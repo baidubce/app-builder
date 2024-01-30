@@ -20,6 +20,7 @@ import json
 from appbuilder.core.component import Component
 from appbuilder.core.components.qrcode_ocr.model import *
 from appbuilder.core.message import Message
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 
 
@@ -43,6 +44,7 @@ class QRcodeOCR(Component):
 
         """
 
+    @HTTPClient.check_param
     def run(self, message: Message, location: str = "true", timeout: float = None, retry: int = 0) -> Message:
         r""" 二维码识别
 

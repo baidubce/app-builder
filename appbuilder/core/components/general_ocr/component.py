@@ -14,7 +14,8 @@ r"""general ocr component."""
 import base64
 import json
 
-import requests
+from appbuilder.core._client import HTTPClient
+
 
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.component import Component
@@ -44,6 +45,7 @@ class GeneralOCR(Component):
 
      """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 输入图片并识别其中的文字
 

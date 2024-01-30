@@ -20,6 +20,7 @@ import json
 from appbuilder.core.component import Component
 from appbuilder.core.components.table_ocr.model import *
 from appbuilder.core.message import Message
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 
 
@@ -43,6 +44,7 @@ class TableOCR(Component):
 
         """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 表格文字识别
 

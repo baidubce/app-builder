@@ -13,6 +13,7 @@
 r"""身份证混贴识别组件"""
 import base64
 
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.component import Component
 from appbuilder.core.components.mix_card_ocr.model import *
@@ -43,6 +44,7 @@ class MixCardOCR(Component):
         print(out.content)
      """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 输入图片并识别身份证信息
 
