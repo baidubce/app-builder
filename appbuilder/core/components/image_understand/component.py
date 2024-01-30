@@ -18,6 +18,7 @@ import time
 
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.image_understand.model import *
 
@@ -44,6 +45,7 @@ class ImageUnderstand(Component):
       print(out.content)
      """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 执行图像内容理解
 

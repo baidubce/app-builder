@@ -1,3 +1,4 @@
+
 # Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +22,7 @@ import base64
 
 from appbuilder.core.message import Message
 from appbuilder.core.component import Component
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.dish_recognize.model import *
 
@@ -45,6 +47,7 @@ class DishRecognition(Component):
                     print(resp.content)
     """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         """
         根据输入图片进行菜品识别。

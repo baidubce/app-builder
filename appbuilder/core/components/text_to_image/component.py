@@ -19,6 +19,7 @@ import json
 
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.text_to_image.model import Text2ImageSubmitRequest, Text2ImageQueryRequest, \
     Text2ImageQueryResponse, Text2ImageSubmitResponse, Text2ImageOutMessage, Text2ImageInMessage
@@ -42,6 +43,7 @@ class Text2Image(Component):
         print(out.content) # eg: {"img_urls": ["xxx"]}
     """
 
+    @HTTPClient.check_param
     def run(self, message: Message, width: int = 1024, height: int = 1024, image_num: int = 1,
             timeout: float = None, retry: int = 0):
         """
@@ -80,6 +82,7 @@ class Text2Image(Component):
             out = Text2ImageOutMessage(img_urls=img_urls)
             return Message(content=dict(out))
 
+    @HTTPClient.check_param
     def submitText2ImageTask(self, request: Text2ImageSubmitRequest, timeout: float = None,
                              retry: int = 0) -> Text2ImageSubmitResponse:
 

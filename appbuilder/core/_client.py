@@ -120,3 +120,16 @@ class HTTPClient:
     def response_request_id(response: requests.Response):
         r"""response_request_id is a helper method get unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
+
+    @staticmethod
+    def check_param(func):
+        def inner(*args, **kwargs):
+            retry = kwargs.get("retry", 0)
+            if retry < 0 or not isinstance(retry, int):
+                raise InvalidRequestArgumentError("retry must be int and bigger then zero")
+            timeout = kwargs.get("timeout", None)
+            if timeout and not (isinstance(timeout, float) or isinstance(timeout, tuple)):
+                raise InvalidRequestArgumentError("timeout must be float or tuple of float")
+            return func(*args, **kwargs)
+
+        return inner
