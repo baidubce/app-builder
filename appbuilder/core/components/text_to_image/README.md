@@ -48,7 +48,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 |width|Integer|是 |图片宽度，支持：512x512、640x360、360x640、1024x1024、1280x720、720x1280、2048x2048、2560x1440、1440x2560。| 1024   |
 |height|Integer|是 |图片高度，支持：512x512、640x360、360x640、1024x1024、1280x720、720x1280、2048x2048、2560x1440、1440x2560。| 1024   |
 |image_num|Integer|是 |生成图片数量，默认一张，支持生成 1-8 张。| 1      |
-|timeout|Integer|是 |HTTP超时时间| 10     |
+|timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 |retry|Integer|是 |HTTP重试次数| 3      |
 
 ### 响应参数

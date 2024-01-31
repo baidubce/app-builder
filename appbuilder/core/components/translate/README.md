@@ -62,7 +62,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 |message |obj:`Message`  |是 |输入的请求翻译文本| Message("你好") |
 |from_lang|String|否 |翻译的源语言，默认为`auto`，表示自动检测语言。| zh    |
 |to_lang|Integer|否 |需要翻译的目标语言，默认为`en`，表示英语。| en  |
-|timeout|Integer|否 |HTTP超时时间| 10     |
+|timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 |retry|Integer|否 |HTTP重试次数| 3      |
 
 ### 响应参数

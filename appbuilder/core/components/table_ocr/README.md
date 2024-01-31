@@ -60,7 +60,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 | 参数名称    | 参数类型    | 是否必须 | 描述                          | 示例值                                            |
 |---------|---------|------|-----------------------------|------------------------------------------------|
 | message | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"raw_image": b"待识别的图片字节流数据"}) |
-| timeout | Integer | 否    | HTTP超时时间                    | 10                                             |
+|timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 | retry   | Integer | 否    | HTTP重试次数                    | 3                                              |
 
 ### 响应参数

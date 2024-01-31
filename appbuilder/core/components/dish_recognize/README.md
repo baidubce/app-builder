@@ -52,7 +52,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 |参数名称 |参数类型 |是否必须 |描述 | 示例值    |
 |--------|--------|--------|----|--------|
 |message |obj:`Message`  |是 |待识别的图片字节流数据或url| Message(content={"raw_image": b"..."}) 或Message(content={"url": "..."}) |
-|timeout|Integer|否 |HTTP超时时间| 10     |
+|timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 |retry|Integer|否 |HTTP重试次数| 3      |
 
 ### 响应参数
