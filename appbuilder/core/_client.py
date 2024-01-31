@@ -101,6 +101,17 @@ class HTTPClient:
         if "code" in data and "message" in data and "requestId" in data:
             raise AppBuilderServerException(data["requestId"], data["code"], data["message"])
 
+    @staticmethod
+    def check_console_response(response: requests.Response):
+        r"""check_console_response is a helper method for console check backend server response.
+            :param: dict, body response data.
+            :rtype: str.
+        """
+        data = response.json()
+        if "code" in data and data.get("code") != 0:
+            requestId = __class__.response_request_id(response)
+            raise AppBuilderServerException(requestId, data["code"], data["message"])
+
     def auth_header(self):
         r"""auth_header is a helper method return auth info"""
         return {"X-Appbuilder-Authorization": self.secret_key}
@@ -110,3 +121,15 @@ class HTTPClient:
         r"""response_request_id is a helper method get unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
 
+    @staticmethod
+    def check_param(func):
+        def inner(*args, **kwargs):
+            retry = kwargs.get("retry", 0)
+            if retry < 0 or not isinstance(retry, int):
+                raise InvalidRequestArgumentError("retry must be int and bigger then zero")
+            timeout = kwargs.get("timeout", None)
+            if timeout and not (isinstance(timeout, float) or isinstance(timeout, tuple)):
+                raise InvalidRequestArgumentError("timeout must be float or tuple of float")
+            return func(*args, **kwargs)
+
+        return inner

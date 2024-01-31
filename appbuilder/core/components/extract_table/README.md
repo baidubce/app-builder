@@ -18,6 +18,7 @@
 ```python
 import os
 import json
+import requests
 
 from appbuilder.utils.logger_util import logger
 from appbuilder import Message, ExtractTableFromDoc, DocParser
@@ -27,8 +28,15 @@ from appbuilder import Message, ExtractTableFromDoc, DocParser
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 
-# 测试文档解析器使用默认配置，xxx为待解析的文档路径。
-msg = Message("xxx")
+# 进行文档内容解析
+file_url = "https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/test.pdf?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-01-25T12%3A56%3A15Z/-1/host/b54178fea9be115eafa2a8589aeadfcfaeba20d726f434f871741d4a6cb0c70d"
+file_data = requests.get(file_url).content
+file_path = "./test.pdf"  # 待解析的文件路径
+with open(file_path, "wb") as f:
+    f.write(file_data)
+
+msg = Message(file_path)
+
 parser = DocParser()
 # ExtractTableFromDoc输入为文档原始解析结果，此处需要带上原始结果，return_raw=True.
 doc = parser(msg, return_raw=True).content.raw

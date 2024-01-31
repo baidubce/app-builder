@@ -36,6 +36,7 @@ checker.current_version
 
 from .core import *
 from .core.components.rag_with_baidu_search import RAGWithBaiduSearch
+from .core import console
 from .core.components.llms.mrc import MRC
 from .core.components.llms.oral_query_generation import OralQueryGeneration
 from .core.components.llms.qa_pair_mining import QAPairMining
@@ -63,12 +64,22 @@ from .core.components.retriever.bes_retriever import BESRetriever
 from .core.components.retriever.bes_retriever import BESVectorStoreIndex
 from .core.components.dish_recognize.component import DishRecognition
 from .core.components.translate.component import Translation
+from .core.components.animal_recognize.component import AnimalRecognition
+from .core.components.doc_enhance.component import DocEnhance
+from .core.components.qrcode_ocr.component import QRcodeOCR
+from .core.components.table_ocr.component import TableOCR
 
 from .core.components.embeddings import Embedding
 from .core.components.matching import Matching
 
 from .core.components.gbi.nl2sql.component import NL2Sql
 from .core.components.gbi.select_table.component import SelectTable
+
+from .core.components.plant_recognize.component import PlantRecognition
+from .core.components.handwrite_ocr.component import HandwriteOCR
+from .core.components.image_understand.component import ImageUnderstand
+from .core.components.mix_card_ocr.component import MixCardOCR
+
 
 from appbuilder.core.message import Message
 from appbuilder.core.agent import AgentRuntime
@@ -126,10 +137,18 @@ __all__ = [
     "BESVectorStoreIndex",
     'DishRecognition',
     'Translation',
-    'RAGWithBaiduSearch'
     'Message',
+    'AnimalRecognition',
+    'DocEnhance',
+    'QRcodeOCR',
+    'TableOCR',
 
     'Embedding',
 
     'Matching',
+
+    "PlantRecognition",
+    "HandwriteOCR",
+    "ImageUnderstand",
+    "MixCardOCR",
 ]

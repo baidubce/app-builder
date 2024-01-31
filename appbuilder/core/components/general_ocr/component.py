@@ -14,7 +14,8 @@ r"""general ocr component."""
 import base64
 import json
 
-import requests
+from appbuilder.core._client import HTTPClient
+
 
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.component import Component
@@ -33,16 +34,18 @@ class GeneralOCR(Component):
     .. code-block:: python
 
         import appbuilder
-        general_ocr = appbuilder.GeneralOCR()
+
         # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
         os.environ["APPBUILDER_TOKEN"] = '...'
 
+        general_ocr = appbuilder.GeneralOCR()
         with open("./general_ocr_test.png", "rb") as f:
             out = general_ocr.run(appbuilder.Message(content={"raw_image": f.read()}))
         print(out.content)
 
      """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 输入图片并识别其中的文字
 

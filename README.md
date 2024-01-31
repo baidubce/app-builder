@@ -17,6 +17,11 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
   * 2023.12.19初始版本发布，基础云组件支持包括BES；AI能力引擎语音、视觉类10个能力，大模型相关RAG、文本生成能力19个。
 * **v0.2.0版本发布** [Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.2.0)
   * 2023.01.03发布，核心升级点GBI相关组件新增，v0.1.0遗留问题修复
+* **v0.3.0版本发布**
+  * 新增组件：新增了百度搜索rag组件（RAGwithBaiduSearch)。[Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/rag_with_baidusearch.ipynb)
+  * AgentRuntime更新：1) AgentBase 更名为 AgentRuntime，并增强了数据管理能力。2) AgentRuntime添加了对LLMMessage.extra字段的支持，增加了create_flask_app用于WSGI服务器运行服务，修复了UserSession重复初始化的问题。[Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/agent_runtime.ipynb)
+  * 模型列表获取：与千帆大模型平台模型名打通，可动态获取当前账号模型名，并在组件中使用[获取模型列表](https://github.com/baidubce/app-builder/blob/master/README.md#%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8)
+  * 可通过官方镜像开发和运行实例代码[二次开发](https://github.com/baidubce/app-builder/blob/master/README.md#%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91)
 
 ## 教程与文档
 
@@ -34,6 +39,7 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 ```shell
 pip install --upgrade appbuilder-sdk
 ```
+如果在本地无法跑通appbuilder-sdk包，也可以使用我们的官方镜像来按照和运行，具体方案参考**二次开发**部分。
 
 ## 快速使用
 
@@ -43,6 +49,33 @@ pip install --upgrade appbuilder-sdk
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
+
+## 模型列表
+
+AppBuilder提供获取千帆模型列表的函数，在运行具体组件之前，可以先获取当前账号下可以使用的模型列表，代码如下：
+``` python
+import appbuilder
+import os
+
+os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
+models = appbuilder.get_model_list(api_type_filter=["chat"], is_available=True)
+print(", ".join(models))
+```
+
+填写自己的Token，获取模型列表输出如下：
+``` shell
+ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder专用版, Qianfan-Chinese-Llama-2-7B, Yi-34B-Chat, Llama-2-7B-Chat, Llama-2-13B-Chat, Llama-2-70B-Chat, ChatGLM2-6B-32K, ChatLaw, BLOOMZ-7B, Qianfan-BLOOMZ-7B-compressed, AquilaChat-7B
+```
+
+为方便用户更容易使用模型，以下是一些模型的短名称
+| 千帆模型名                   | AppBuilder-SDK短名 |
+|----------------------------|------------------|
+| ERNIE-Bot 4.0              |       eb-4       |
+| ERNIE-Bot-8K               |       eb-8k      |
+| ERNIE-Bot                  |       eb         |
+| ERNIE-Bot-turbo            |       eb-turbo   |
+| EB-turbo-AppBuilder专用版   |       eb-turbo-appbuilder           |
+
 
 ### 典型示例
 
@@ -54,11 +87,11 @@ import appbuilder
 
 # 空模版组件
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
-playground = appbuilder.Playground(prompt_template=template_str, model="eb-4")
+playground = appbuilder.Playground(prompt_template=template_str, model="eb-turbo-appbuilder")
 
 # 定义输入，调用空模版组件
 input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
-print(playground(input, stream=False, temperature=0.0))
+print(playground(input, stream=False, temperature=1e-10))
 
 ```
 
@@ -84,7 +117,8 @@ cluster_id = "your_bes_cluster_id"
 username = "your_bes_cluster_username"
 password = "your_bes_cluster_password"
 
-# 基于doc_parser和doc_splitter解析file_path文件为若干个段落
+# 基于doc_parser和doc_splitter解
+# 析file_path文件为若干个段落
 def parse_file(file_path, doc_parser, doc_splitter):
     input_msg = appbuilder.Message(str(file_path))
     doc_parser_result = doc_parser(input_msg, return_raw=True)
@@ -129,16 +163,18 @@ print(rag_result.content)
 #### AI能力引擎(AI Engine)
 ```python
 import appbuilder
+import requests
 
 # 语音识别组件
-asr = appbuilder.ASR()
-asr_path = './appbuilder/tests/asr_test.pcm'
+audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
+                   "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
+                   "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
+audio_data = requests.get(audio_file_url).content
 
-# 从文件读取pcm文件，调用asr组件识别结果
-with open(asr_path, "rb") as f:
-    inp = appbuilder.Message(content={"raw_audio": f.read()})
-    asr_out = asr(inp)
-    print(asr_out.content)
+asr = appbuilder.ASR()
+inp = appbuilder.Message(content={"raw_audio": audio_data})
+asr_out = asr(inp)
+print(asr_out.content)
 ```
 
 ## 应用服务化
@@ -151,7 +187,7 @@ import appbuilder
 # 空模版组件
 playground = appbuilder.Playground(
     prompt_template="{query}",
-    model="eb-4"
+    model="eb-turbo-appbuilder"
 )
 
 # 使用 AgentRuntime 来服务化playground组件
@@ -163,6 +199,10 @@ agent.chainlit_demo(port=8091)
 
 ## 二次开发
 当前面向开发者提供开放的数据结构，包括Message和Component，方便开发者融入个人已有的大模型应用程序。此部分仍在不断建设中。
+二次开发可以采用官方提供的开发镜像，便于快速安装各种依赖库。
+``` shell
+docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.1.0
+```
 
 ### 消息(Message)
 - 构建大模型应用的统一数据结构，基于Pydantic构建，在不同的Component之间流动。Message基类的默认字段是content，类型是Any。

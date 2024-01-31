@@ -24,6 +24,7 @@ from typing import Dict, Any
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.component import Component, Message
 from appbuilder.utils.logger_util import logger
+from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.doc_parser.base import ParserConfig, ParseResult
 
 
@@ -98,6 +99,7 @@ class DocParser(Component):
         # parse_result = ParseResult.parse_obj(parse_result)
         return parse_result
 
+    @HTTPClient.check_param
     def run(self, input_message: Message, return_raw=False) -> Message:
         """
         对传入的文件进行解析

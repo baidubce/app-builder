@@ -17,6 +17,7 @@ import base64
 
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
+from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.landmark_recognize.model import *
 
@@ -30,9 +31,8 @@ class LandmarkRecognition(Component):
     .. code-block:: python
 
         import appbuilder
-        landmark_recognize = appbuilder.LandmarkRecognition()
-
         os.environ["APPBUILDER_TOKEN"] = '...'
+        landmark_recognize = appbuilder.LandmarkRecognition()
         with open("xxxx.jpg", "rb") as f:
             inp = appbuilder.Message(content={"raw_image": f.read()})
             out = landmark_recognize.run(inp)
@@ -40,6 +40,7 @@ class LandmarkRecognition(Component):
             print(out.content) # eg: {"landmark": "狮身人面相"}
      """
 
+    @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 输入图片并识别其中的地标
 
@@ -60,7 +61,7 @@ class LandmarkRecognition(Component):
             request.url = inp.url
         response = self.__recognize(request, timeout, retry)
         out = LandmarkRecognitionOutMsg(landmark=response.result.get("landmark", ""))
-        return Message(content=dict(out))
+        return Message(content=out.dict())
 
     def __recognize(self, request: LandmarkRecognitionRequest, timeout: float = None,
                     retry: int = 0) -> LandmarkRecognitionResponse:
@@ -105,3 +106,5 @@ class LandmarkRecognition(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+

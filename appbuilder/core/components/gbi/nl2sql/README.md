@@ -3,11 +3,22 @@
 ## 简介
 GBI 问表，根据提供的 mysql 表的 schema 信息，生成对应问题的 sql 语句。
 
+### 功能介绍
+GBI 问表，根据提供的 mysql 表的 schema 信息，生成对应问题的 sql 语句。
+
+### 特色优势
+直接生成 sql 语句，无需人工编写。
+
+### 应用场景
+1. 业务人员需要根据问题生成 sql 语句，但是不熟悉 sql 语法。
+2. 业务人员需要根据问题生成 sql 语句，但是不熟悉表的名称。
+
+
 ## 基本用法
 这里是一个示例，展示如何基于 mysql 表的 schema, 根据问题生成 sql 语句。
 
 
-````python
+```python
 import logging
 import os
 import appbuilder
@@ -18,7 +29,6 @@ from appbuilder.core.components.gbi.basic import SessionRecord
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 SUPER_MARKET_SCHEMA = """
-```
 CREATE TABLE `supper_market_info` (
   `订单编号` varchar(32) DEFAULT NULL,
   `订单日期` date DEFAULT NULL,
@@ -34,7 +44,6 @@ CREATE TABLE `supper_market_info` (
   `销售额` int(11) DEFAULT NULL,
   `利润` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-```
 """
 
 table_schemas = [SUPER_MARKET_SCHEMA]
@@ -44,14 +53,7 @@ nl2sql_result_message = gbi_nl2sql(Message({"query": query}))
 
 print(f"sql: {nl2sql_result_message.content.sql}")
 print(f"llm result: {nl2sql_result_message.content.llm_result}")
-````
-
-    sql: 
-    SELECT * FROM supper_market_info;
-    -----------------
-    llm result: ```sql
-    SELECT * FROM supper_market_info;
-    ```
+```
 
 
 ## 参数说明

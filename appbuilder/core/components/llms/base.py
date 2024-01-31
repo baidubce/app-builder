@@ -193,7 +193,6 @@ class CompletionResponse(object):
             message.content = IterableWrapper(message.content)
         return message
 
-
 class ResultProcessor:
     @staticmethod
     def process(key, result_list):

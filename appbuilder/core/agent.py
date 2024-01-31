@@ -224,6 +224,7 @@ class AgentRuntime(BaseModel):
             raise ImportError("Flask module is not installed. Please install it using 'pip install "
                               "flask~=2.3.2 flask-restful==0.3.9'.")
         app = Flask(__name__)
+        app.json.ensure_ascii = False
 
         @app.errorhandler(BadRequest)
         def handle_bad_request(e):
