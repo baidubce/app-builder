@@ -57,7 +57,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 |--------------|---------|------|-----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
 | message      | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数                                                                                                 | Message(content={"raw_image": b"待识别的图片字节流数据"}) |
 | enhance_type | Integer | 否    | 选择是否开启图像增强功能，如开启可选择增强效果，可选值如下：enhance_type =0：默认值，不开启增强功能，enhance_type = 1：去阴影，enhance_type = 2：增强并锐化，enhance_type = 3：黑白滤镜 | 0                                              |
-| timeout      | Integer | 否    | HTTP超时时间                                                                                                                    | 10                                             |
+|timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 | retry        | Integer | 否    | HTTP重试次数                                                                                                                    | 3                                              |
 
 ### 响应参数

@@ -65,7 +65,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 | +content   | Dict   | 是    | 消息内容                        ||
 | +raw_image | String | 否    | 原始图片字节流                     ||
 | +url       | String   | 否    | 图片下载链接地址                    ||
-|timeout|Integer| 否    | HTTP超时时间                    |10||
+|timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 |retry|Integer| 否    | HTTP重试次数                    |3||
 
 ### 响应参数

@@ -68,7 +68,8 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 | person   | Integer | 否    | 语音人物特征，默认是0(度小美),可选值: 1(度小宇) 、0(度小美)、 3(度逍遥-基础)、  4(度丫丫)、 5003(度逍遥-精品)、  5118(度小鹿) 、106(度博文)、 110(度小童)、 111(度小萌)、 103(度米朵)、 5(度小娇), 如果选择模型为paddlespeech-tts，参数自动失效                                                |    |
 | audio_type | String  | 否    | 音频文件格式，默认是`mp3`, 如果使用`paddlespeech-tts`模型，参数只能设为`wav`                                                | 10 |
 | retry   | Integer | 否    | HTTP重试次数                                                |    |
-| timeout | Integer | 否    | HTTP超时时间                                                | 10 |
+|timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
+
 
 ### 响应参数
 | 参数名称     | 参数类型  | 描述  | 示例值 |
