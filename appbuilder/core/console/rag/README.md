@@ -1,4 +1,4 @@
-# console端RAG操作工具(RAG)
+# console端RAG操作工具(RAG) （即将上线）
 
 ## 简介
 RAG是基于线上RAG应用的问答组件，可以使用该组件利用线上RAG应用进行问答。

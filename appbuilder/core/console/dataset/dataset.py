@@ -8,7 +8,7 @@ import os
 
 class Dataset:
     """
-    console知识库操作工具
+    console知识库操作工具，即将上线
     Examples:
         .. code-block:: python
         import appbuilder

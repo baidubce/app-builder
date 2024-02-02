@@ -6,7 +6,7 @@ from appbuilder.core.console.base import ConsoleCompletionResponse
 
 class RAG(Component):
     """
-    console RAG组件，利用console端RAG应用进行问答。
+    console RAG组件，利用console端RAG应用进行问答，即将上线
     Examples:
         .. code-block:: python
             import appbuilder
