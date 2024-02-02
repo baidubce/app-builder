@@ -44,10 +44,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
 
 ### 初始化参数
-- `app_id`: 线上RAG应用的ID，可在[console](https://console.bce.baidu.com/ai_apaas/app)上查看和获取，示例如图
-
-<img width="768" alt="image" src="./image/rag示例.png">
-
+- `app_id`: 线上RAG应用的ID
 
 
 ### 调用参数 （以表格形式展示）
