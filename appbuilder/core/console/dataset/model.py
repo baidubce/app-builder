@@ -2,11 +2,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-class FileInfo(BaseModel):
+class DocumentInfo(BaseModel):
     id: str
     name: str
-    created_from: str
-    created_by: str
     created_at: int
     indexing_status: str
     error: Optional[str] = None
@@ -17,14 +15,14 @@ class FileInfo(BaseModel):
     word_count: int
 
 
-class FileListResponse(BaseModel):
-    data: List[FileInfo]
+class DocumentListResponse(BaseModel):
+    data: List[DocumentInfo]
     has_more: bool
     limit: int
     total: int
     page: int
 
 
-class AddFileResponse(BaseModel):
+class AddDocumentsResponse(BaseModel):
     dataset_id: str
     document_ids: List[str]

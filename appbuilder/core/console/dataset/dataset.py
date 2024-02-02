@@ -1,13 +1,14 @@
 from typing import List, Dict
 from appbuilder.core._client import HTTPClient
-from appbuilder.core.console.dataset.model import FileListResponse, AddFileResponse
+from appbuilder.core.console.dataset.model import DocumentListResponse, AddDocumentsResponse
+from appbuilder.core.constants import MAX_DOCUMENTS_NUM, SUPPORTED_FILE_TYPE
 import json
 import os
 
 
 class Dataset:
     """
-    console知识库操作工具
+    console知识库操作工具，即将上线
     Examples:
         .. code-block:: python
         import appbuilder
@@ -19,13 +20,14 @@ class Dataset:
 
         # 上传文档
         file_paths = ["./test.pdf"]
-        file_info = dataset.add_files(file_paths)
+        document_infos = dataset.add_documents(file_paths)
 
         # 获取第一页的文档列表, 每页10条
-        file_list = dataset.get_file_list(1, 10)
+        document_list = dataset.get_documents(1, 10)
 
         # 删除文档
-        file_ids = [file_info.document_ids[0]]
+        document_ids = [document_infos.document_ids[0]]
+        dataset.delete_documents(document_ids)
 
     """
     create_url: str = "/v1/ai_engine/agi_platform/v2/datasets/create"
@@ -65,8 +67,8 @@ class Dataset:
         response = response.json()["result"]
         return Dataset(dataset_id=response["id"], dataset_name=response["name"])
 
-    def add_files(self, file_path_list: List[str], is_custom_process_rule: bool = False,
-                  custom_process_rule: Dict = None) -> AddFileResponse:
+    def add_documents(self, file_path_list: List[str], is_custom_process_rule: bool = False,
+                      custom_process_rule: Dict = None) -> AddDocumentsResponse:
         """
         向知识库中添加文档
         传参：
@@ -80,9 +82,19 @@ class Dataset:
         }
         返回：
         """
+        for file_path in file_path_list:
+            file_type = file_path.split(".")[-1].lower()
+            if file_type not in SUPPORTED_FILE_TYPE:
+                raise ValueError(f"Unsupported file type: {file_path}, only support file types: {SUPPORTED_FILE_TYPE}")
+
+        documents = self.get_documents(1, MAX_DOCUMENTS_NUM)
+        current_documents_num = len(documents.data)
+        if len(file_path_list) + current_documents_num > MAX_DOCUMENTS_NUM:
+            raise ValueError(f"单个数据集可上传数量上限为{MAX_DOCUMENTS_NUM}，目前最大还可上传{MAX_DOCUMENTS_NUM-current_documents_num}份文档")
+
         file_ids = []
         for file_path in file_path_list:
-            upload_res = self._upload_file(file_path)
+            upload_res = self._upload_document(file_path)
             file_ids.append(upload_res["id"])
         payload = {"dataset_id": self.dataset_id, "file_ids": file_ids,
                    "is_custom_process_rule": is_custom_process_rule}
@@ -95,10 +107,10 @@ class Dataset:
                                                  headers=headers, data=payload)
         self.http_client.check_response_header(response)
         self.http_client.check_console_response(response)
-        res = AddFileResponse.model_validate(response.json()["result"])
+        res = AddDocumentsResponse.parse_obj(response.json()["result"])
         return res
 
-    def _upload_file(self, file_path: str):
+    def _upload_document(self, file_path: str):
         """
         上传文档
         传参：
@@ -116,7 +128,7 @@ class Dataset:
             res = response.json()["result"]
         return res
 
-    def delete_files(self, document_ids: List[str]):
+    def delete_documents(self, document_ids: List[str]):
         """
         删除知识库中的文档
         参数：
@@ -124,9 +136,9 @@ class Dataset:
         返回:
         """
         for document_id in document_ids:
-            self._delete_file(document_id)
+            self._delete_document(document_id)
 
-    def _delete_file(self, document_id):
+    def _delete_document(self, document_id):
         """
         删除知识库中的文档
         参数：
@@ -141,7 +153,7 @@ class Dataset:
         self.http_client.check_response_header(response)
         self.http_client.check_console_response(response)
 
-    def get_file_list(self, page: int, limit: int, keyword: str = "") -> FileListResponse:
+    def get_documents(self, page: int, limit: int, keyword: str = "") -> DocumentListResponse:
         """
         获取知识库中的文档列表
         参数：
@@ -180,5 +192,5 @@ class Dataset:
                                                  headers=headers, data=payload)
         self.http_client.check_response_header(response)
         self.http_client.check_console_response(response)
-        res = FileListResponse.model_validate(response.json()["result"])
+        res = DocumentListResponse.parse_obj(response.json()["result"])
         return res

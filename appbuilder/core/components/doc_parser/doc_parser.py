@@ -66,8 +66,8 @@ class DocParser(Component):
         title_node_ids = [title["node_id"] for title in catalog] if catalog else []
         page_contents = []
         for content in response["file_content"]:
-            page_content = {"page_num": content["page_num"], "page_width": content["page_size"]["width"],
-                            "page_height": content["page_size"]["height"], "page_angle": content["page_angle"],
+            page_content = {"page_num": content["page_num"], "page_width": int(content["page_size"]["width"]),
+                            "page_height": int(content["page_size"]["height"]), "page_angle": int(content["page_angle"]),
                             "page_type": content["page_content"]["type"], "page_layouts": [], "page_titles": [],
                             "page_tables": []}
             for layout_item in content["page_content"]["layout"]:

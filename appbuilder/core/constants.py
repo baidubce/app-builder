@@ -15,3 +15,5 @@
 
 GATEWAY_URL = "https://appbuilder.baidu.com"
 GATEWAY_INNER_URL = "http://appbuilder.sdns.baidu.com"
+MAX_DOCUMENTS_NUM = 100
+SUPPORTED_FILE_TYPE = ["txt", "pdf", "doc", "docx"]
