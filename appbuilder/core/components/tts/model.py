@@ -90,6 +90,11 @@ class TTSRequest(proto.Message):
         number=12,
         optional=True,
     )
+    stream: bool = proto.Field(
+        proto.BOOL,
+        number=13,
+        optional=True,
+    )
 
     def __validate(self):
         """检查公共参数"""

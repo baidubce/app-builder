@@ -11,15 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import inspect
 import unittest
 import os
+
 import appbuilder
 
 
 class TestTTS(unittest.TestCase):
     def setUp(self):
         self.tts = appbuilder.TTS()
-        self.text_message = appbuilder.Message(content={"text": "欢迎使用语音合成"})
+        self.text_message = appbuilder.Message(content={"text": """随着科技的迅速发展"""})
 
     def test_model_validation(self):
         with self.assertRaises(ValueError):
@@ -45,6 +47,19 @@ class TestTTS(unittest.TestCase):
     def test_run_paddlespeech_tts(self):
         out = self.tts.run(self.text_message, model="paddlespeech-tts", audio_type="wav")
         self.assertTrue("audio_binary" in out.content and "audio_type" in out.content)
+
+    def test_run_paddlespeech_tts_stream(self):
+        out = self.tts.run(self.text_message, model="paddlespeech-tts", audio_type="pcm", stream=True)
+        for o in out:
+            self.assertIsNotNone(o)
+
+    def test_run_error_model_tts_stream(self):
+        with self.assertRaises(ValueError):
+            self.tts.run(self.text_message, model="baidu-tts", audio_type="pcm", stream=True)
+
+    def test_run_paddlespeech_validation_tts_stream(self):
+        with self.assertRaises(ValueError):
+            self.tts.run(self.text_message, model="paddlespeech-tts", audio_type="mp3", stream=True)
 
 
 if __name__ == "__main__":
