@@ -112,7 +112,7 @@ import pyaudio
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 tts = appbuilder.TTS()
 # 使用paddlespeech-tts模型，目前只支持返回WAV格式
-inp = appbuilder.Message(content={"""随着科技的迅速发展，教育领域也经历了巨大的变革。科技不仅改变了教学和学习的方式，还扩展了教育的可能性和边界。
+inp = appbuilder.Message(content={"text": """随着科技的迅速发展，教育领域也经历了巨大的变革。科技不仅改变了教学和学习的方式，还扩展了教育的可能性和边界。
         从在线课程到交互式学习工具，科技为学生和教师提供了前所未有的资源和机遇。科技使得个性化学习成为可能。通过智能学习系统和适应性学习技术，
         教育内容可以根据学生的学习速度和能力进行定制。"""})
 # 仅支持model为paddlespeech-tts，audio_type为pcm, stream为True

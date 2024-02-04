@@ -129,7 +129,7 @@ class TTS(Component):
 
     def __synthesis(self,
                     request: TTSRequest,
-                    stream=False,
+                    stream: bool = False,
                     timeout: float = None,
                     retry: int = 0
                     ) -> TTSResponse:
