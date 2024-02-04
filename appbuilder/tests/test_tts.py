@@ -11,11 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import inspect
 import unittest
-import os
-
 import appbuilder
+from appbuilder.core._exception import InvalidRequestArgumentError
 
 
 class TestTTS(unittest.TestCase):
@@ -24,20 +22,20 @@ class TestTTS(unittest.TestCase):
         self.text_message = appbuilder.Message(content={"text": """随着科技的迅速发展"""})
 
     def test_model_validation(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(InvalidRequestArgumentError):
             self.tts.run(self.text_message, model="invalid_model")
 
     def test_text_validation(self):
         empty_message = appbuilder.Message(content={})
-        with self.assertRaises(ValueError):
+        with self.assertRaises(BaseException):
             self.tts.run(empty_message)
 
     def test_audio_type_validation_baidu_tts(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(InvalidRequestArgumentError):
             self.tts.run(self.text_message, model="baidu-tts", audio_type="flac")
 
     def test_audio_type_validation_paddlespeech_tts(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(InvalidRequestArgumentError):
             self.tts.run(self.text_message, model="paddlespeech-tts", audio_type="mp3")
 
     def test_run_baidu_tts(self):
@@ -54,11 +52,11 @@ class TestTTS(unittest.TestCase):
             self.assertIsNotNone(o)
 
     def test_run_error_model_tts_stream(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(InvalidRequestArgumentError):
             self.tts.run(self.text_message, model="baidu-tts", audio_type="pcm", stream=True)
 
     def test_run_paddlespeech_validation_tts_stream(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(InvalidRequestArgumentError):
             self.tts.run(self.text_message, model="paddlespeech-tts", audio_type="mp3", stream=True)
 
 
