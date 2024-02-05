@@ -13,13 +13,15 @@
 # limitations under the License.
 
 r"""text to speech component."""
+import base64
+import traceback
+
 from typing import Literal
 from urllib.parse import quote_plus
-
 from appbuilder.core.component import Component
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.components.tts.model import *
 
 
@@ -29,7 +31,7 @@ class TTS(Component):
 
       Examples:
 
-      .. code-block:: python
+      ... code-block:: python
 
         import appbuilder
         os.environ["APPBUILDER_TOKEN"] = '...'
@@ -71,10 +73,10 @@ class TTS(Component):
             pitch: int = 5,
             volume: int = 5,
             person: int = 0,
-            audio_type: Literal["mp3", "wav"] = "mp3",
+            audio_type: Literal["mp3", "wav", "pcm"] = "mp3",
             timeout: float = None,
-            retry: int = 0
-            ) -> Message:
+            retry: int = 0,
+            stream: bool = False) -> Message:
         r"""执行文本转语音
 
             参数：
@@ -94,34 +96,43 @@ class TTS(Component):
                  message (obj: `Message`): 文本转语音结果. 举例: Message(content={"audio_binary": b"xxx", "audio_type": "mp3"})
         """
         if model != self.Baidu_TTS and model != self.PaddleSpeech_TTS:
-            raise ValueError("unsupported model {}".format(model))
+            raise InvalidRequestArgumentError("unsupported model {}".format(model))
         self.model = model
         inp = TTSInMsg(**message.content)
         if len(inp.text) == 0:
-            raise ValueError("text field is empty")
+            raise InvalidRequestArgumentError("text field is empty")
+        if model == self.Baidu_TTS and (stream or audio_type not in ["mp3", "wav"]):
+            raise InvalidRequestArgumentError("Baidu_TTS argument error")
+        elif model == self.PaddleSpeech_TTS:
+            if stream and audio_type != "pcm":
+                raise InvalidRequestArgumentError("Invalid audio type")
+            elif not stream and audio_type != "wav":
+                raise InvalidRequestArgumentError("Invalid audio type")
 
-        if model == self.Baidu_TTS and audio_type != "mp3" and audio_type != "wav":
-            raise ValueError("invalid audio type")
-        elif model == self.PaddleSpeech_TTS and audio_type != "wav":
-            raise ValueError("invalid audio type")
         request = TTSRequest()
         request.tex = inp.text
         request.spd = speed
         request.pit = pitch
         request.vol = volume
         request.per = person
+        request.stream = stream
         if audio_type == "mp3":
             request.aue = 3
-        elif audio_type == "wav":
+        elif audio_type == "wav" or audio_type == "pcm":
             request.aue = 6
-        response = self.__synthesis(request, timeout, retry)
-        out = TTSOutMsg(audio_binary=response.binary, audio_type=audio_type)
-        return Message(content=dict(out))
+        if stream and self.model == self.PaddleSpeech_TTS:
+            return Message(content=self.__synthesis(request=request, stream=True, retry=retry))
+        else:
+            response = self.__synthesis(request=request, timeout=timeout, retry=retry)
+            out = TTSOutMsg(audio_binary=response.binary, audio_type=audio_type)
+            return Message(content=dict(out))
 
     def __synthesis(self,
                     request: TTSRequest,
+                    stream: bool = False,
                     timeout: float = None,
-                    retry: int = 0) -> TTSResponse:
+                    retry: int = 0
+                    ) -> TTSResponse:
         r"""调用底层接口进行语音合成
 
             参数:
@@ -148,11 +159,18 @@ class TTS(Component):
             self.http_client.retry.total = retry
         auth_header = self.http_client.auth_header()
         if self.model == self.Baidu_TTS:
-            response = self.http_client.session.post(url, data=TTSRequest.to_dict(request), timeout=timeout, headers=auth_header)
+            response = self.http_client.session.post(url, data=TTSRequest.to_dict(request), timeout=timeout,
+                                                     headers=auth_header)
         elif self.model == self.PaddleSpeech_TTS:
             auth_header = self.http_client.auth_header()
             auth_header['Content-type'] = "application/json"
-            response = self.http_client.session.post(url, json=TTSRequest.to_dict(request), timeout=timeout, headers=auth_header)
+            if not stream:
+                response = self.http_client.session.post(url, json=TTSRequest.to_dict(request),
+                                                         timeout=timeout, headers=auth_header)
+            if stream:
+                response = self.http_client.session.post(url, json=TTSRequest.to_dict(request), timeout=(10, 200),
+                                                         headers=auth_header, stream=True)
+
         self.http_client.check_response_header(response)
         content_type = response.headers.get("Content-Type", "application/json")
         request_id = self.http_client.response_request_id(response)
@@ -160,11 +178,14 @@ class TTS(Component):
             data = response.json()
             self.http_client.check_response_json(data)
             self.__class__.__check_service_error(request_id, data)
-        return TTSResponse(
-            binary=response.content,
-            request_id=request_id,
-            aue=request.aue
-        )
+        if not stream:
+            return TTSResponse(
+                binary=response.content,
+                request_id=request_id,
+                aue=request.aue
+            )
+        else:
+            return _iterate_chunk(request_id, response)
 
     @staticmethod
     def __check_service_error(request_id: str, data: dict):
@@ -185,3 +206,17 @@ class TTS(Component):
                        data.get("sn", ""),
                        data.get("idx", ""))
             )
+
+
+def _iterate_chunk(request_id, response):
+    try:
+        for line in response.iter_lines():
+            chunk = line.decode('utf-8')
+            if chunk.startswith('data:'):
+                chunk = chunk.replace('data: ', '')
+                yield base64.b64decode(chunk)
+    except Exception as e:
+        raise AppBuilderServerException(request_id=request_id, message=traceback.format_exc())
+    finally:
+        response.close()
+
