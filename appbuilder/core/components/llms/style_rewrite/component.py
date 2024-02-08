@@ -107,7 +107,7 @@ class StyleRewrite(CompletionBaseComponent):
         super().__init__(
                 StyleRewriteArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
-    def run(self, message, style="营销话术", stream=False, temperature=1e-10):
+    def run(self, message, style="营销话术", stream=False, temperature=1e-10, top_p=0.0):
         """
         使用给定的输入运行模型并返回结果。
         
@@ -116,8 +116,10 @@ class StyleRewrite(CompletionBaseComponent):
             style (str, optional): 想要转换的文本风格，目前有营销、客服、直播、激励及教学五种话术可选. 默认是"营销话术".
             stream (bool, optional): 指定是否以流式形式返回响应。默认为 False。
             temperature(float, optional): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
+            top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
+
         Returns:
             obj:`Message`: 模型运行后的输出消息。
         
         """
-        return super().run(message=message, style=style, stream=stream, temperature=temperature)
+        return super().run(message=message, style=style, stream=stream, temperature=temperature, top_p=top_p)

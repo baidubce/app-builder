@@ -107,7 +107,7 @@ class QueryRewrite(CompletionBaseComponent):
         super().__init__(
                 QueryRewriteArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
-    def run(self, message, rewrite_type="带机器人回复", stream=False, temperature=1e-10):
+    def run(self, message, rewrite_type="带机器人回复", stream=False, temperature=1e-10, top_p=0):
         """
         使用给定的输入运行模型并返回结果。输入列表长度不超过10，字符总长度不超过5000.
         
@@ -117,6 +117,8 @@ class QueryRewrite(CompletionBaseComponent):
                                          '仅用户查询'(改写时参考user查询历史)。 默认是"带机器人回复。
             stream (bool, optional): 指定是否以流式形式返回响应。默认为 False。
             temperature(float, optional): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
+            top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
+
         返回:
             obj:`Message`: 模型运行后的输出消息。
         
@@ -138,4 +140,4 @@ class QueryRewrite(CompletionBaseComponent):
             converted_input = ''.join([f"User1: {message.content[i]}\n" for i in range(0, len(message.content), 2)])
         message.content = converted_input
 
-        return super().run(message=message, rewrite_type=rewrite_type, stream=stream, temperature=temperature)
+        return super().run(message=message, rewrite_type=rewrite_type, stream=stream, temperature=temperature, top_p=top_p)
