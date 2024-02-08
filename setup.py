@@ -27,7 +27,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='appbuilder-sdk',
-    version='0.3.0',
+    version='0.3.1',
     author='dongdaxiang',
     author_email='dongdaxiang@baidu.com',
     packages=find_packages(),
