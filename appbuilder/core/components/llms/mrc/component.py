@@ -123,7 +123,8 @@ class MRC(CompletionBaseComponent):
                         "其中方括号中的数字是搜索结果序号。引用标记只能出现在句尾标点符号前。"}
 
     def run(self, message, context_list, reject=False, clarify=False,
-            highlight=False, friendly=False, cite=False, stream=False, temperature=1e-10):
+            highlight=False, friendly=False, cite=False, stream=False, temperature=1e-10, top_p=0):
+
         """
         运行阅读理解问答模型并返回结果。
 
@@ -137,6 +138,7 @@ class MRC(CompletionBaseComponent):
             cite (bool, 可选): 溯源开关，如果为 True，则启用溯源能力。默认为 False。
             stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
             temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
+            top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
 
         返回:
             obj:`Message`: 模型运行后的输出消息。
@@ -152,7 +154,7 @@ class MRC(CompletionBaseComponent):
             "friendly": instruction_set["friendly"] if friendly else None,
             "cite": instruction_set["cite"] if cite else None,
         }
-        model_config_inputs = ModelArgsConfig(**{"stream": stream, "temperature": temperature})
+        model_config_inputs = ModelArgsConfig(**{"stream": stream, "temperature": temperature, "top_p": top_p})
         model_config = self.get_model_config(model_config_inputs)
         query = inputs["query"]
         response_mode = "streaming" if stream else "blocking"

@@ -58,7 +58,7 @@ class TestPlayground(unittest.TestCase):
             "bot_question": "你好吗？"
         })
 
-        answer = self.play.run(message=msg, stream=True, temperature=0.5)
+        answer = self.play.run(message=msg, stream=True, temperature=0.5, top_p=0.2)
 
         for ans in answer.content:
             self.assertIsNotNone(ans)
