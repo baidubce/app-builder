@@ -84,7 +84,7 @@ class Nl2pandasComponent(CompletionBaseComponent):
         super().__init__(
                 Nl2pandasArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
-    def run(self, message, table_info=None, stream=False, temperature=1e-10):
+    def run(self, message, table_info=None, stream=False, temperature=1e-10, top_p=0):
         """
         使用给定的输入运行模型并返回结果。
 
@@ -93,8 +93,9 @@ class Nl2pandasComponent(CompletionBaseComponent):
             table_info (obj:`Message`): 表格信息，是表格列名以及对应列名的举例和释义。无默认值，这是一个必需的参数。
             stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
             temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
+            top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
 
         返回:
             obj:`Message`: 模型运行后的输出消息。
         """
-        return super().run(message=message, table_info=table_info, stream=stream, temperature=temperature)
+        return super().run(message=message, table_info=table_info, stream=stream, temperature=temperature, top_p=top_p)
