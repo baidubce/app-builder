@@ -123,7 +123,6 @@ class Excel2Figure(Component):
             }
 
         server_url = self.http_client.service_url(prefix="", sub_path=self.server_sub_path)
-        print(server_url)
         response = self.http_client.session.post(
                 url=server_url, headers=headers, json=payload)
         self.http_client.check_response_header(response)
