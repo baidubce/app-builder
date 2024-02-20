@@ -72,7 +72,8 @@ class Matching(MatchingBaseComponent):
     def run(
         self,
         query: Union[Message[str], str],
-        contexts: Union[Message[List[str]], List[str]]
+        contexts: Union[Message[List[str]], List[str]],
+        return_score: bool=False,
     ) -> Message[List[str]]:
         """
         Args:
@@ -89,7 +90,11 @@ class Matching(MatchingBaseComponent):
 
         combined = list(zip(sematic.content, contexts.content))
         sorted_combined = sorted(combined, reverse=True)
-        return Message([item[1] for item in sorted_combined])
+
+        if return_score:
+            return Message([(item[0], item[1]) for item in sorted_combined])
+        else:
+            return Message([item[1] for item in sorted_combined])
 
     def _cosine_similarity(self, X, Y):
         """
