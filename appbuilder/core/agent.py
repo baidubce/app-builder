@@ -275,18 +275,34 @@ class AgentRuntime(BaseModel):
                     def gen_sse_resp(stream_message):
                         with app.app_context():
                             try:
-                                for it in stream_message.content:
+                                iterator = iter(stream_message.content)
+                                prev_item = next(iterator)
+                                for item in iterator:
                                     d = {
                                         "code": 0, "message": "",
                                         "result": {
-                                            "session_id": session_id, 
+                                            "session_id": session_id,
+                                            "is_completion": False,
                                             "answer_message": {
-                                                "content": it,
+                                                "content": prev_item,
                                                 "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
                                             }
                                         }
                                     }
                                     yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
+                                    prev_item = item
+                                d = {
+                                    "code": 0, "message": "",
+                                    "result": {
+                                        "session_id": session_id,
+                                        "is_completion": True,
+                                        "answer_message": {
+                                            "content": prev_item,
+                                            "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
+                                        }
+                                    }
+                                }
+                                yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
                                 self.user_session._post_append()
                             except Exception as e:
                                 err_resp = {"code": 1000, "message": str(e), "result": None}
