@@ -40,6 +40,24 @@ class TestMatching(unittest.TestCase):
             ['你好', '世界']
         )
 
+    def test_return_score(self):
+        embedding = appbuilder.Embedding()
+        matching = appbuilder.Matching(embedding)
+
+        query = appbuilder.Message("你好")
+        contexts = appbuilder.Message(["世界", "你好"])
+
+        contexts_matched = matching(query, contexts, return_score=True)
+
+        scores = [i[0] for i in contexts_matched.content]
+        contexts = [i[1] for i in contexts_matched.content]
+
+        self.assertListEqual(
+            contexts,
+            ['你好', '世界']
+        )
+        self.assertGreater(scores[0], scores[1])
+
     def test_semantics(self):
         embedding = appbuilder.Embedding()
         matching = appbuilder.Matching(embedding)
