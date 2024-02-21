@@ -269,6 +269,7 @@ class AgentRuntime(BaseModel):
             request_id = str(uuid.uuid4())
 
             init_context(session_id=session_id, request_id=request_id)
+            logging.info(f"[request_id={request_id}, session_id={session_id}] message={message}, stream={stream}, data={data}")
             try:
                 answer = self.chat(message, stream, **data)
                 if stream:
@@ -276,52 +277,52 @@ class AgentRuntime(BaseModel):
                         with app.app_context():
                             try:
                                 iterator = iter(stream_message.content)
-                                prev_item = next(iterator)
-                                for item in iterator:
-                                    d = {
-                                        "code": 0, "message": "",
-                                        "result": {
-                                            "session_id": session_id,
-                                            "is_completion": False,
-                                            "answer_message": {
-                                                "content": prev_item,
-                                                "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
-                                            }
-                                        }
-                                    }
-                                    yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
-                                    prev_item = item
-                                d = {
-                                    "code": 0, "message": "",
-                                    "result": {
-                                        "session_id": session_id,
-                                        "is_completion": True,
-                                        "answer_message": {
-                                            "content": prev_item,
-                                            "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
-                                        }
-                                    }
+                                prev_result = {
+                                    "content": next(iterator),
+                                    "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
                                 }
-                                yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
+                                for sub_content in iterator:
+                                    logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
+                                    yield "data: " + json.dumps({
+                                            "code": 0, "message": "", 
+                                            "result": {
+                                                "session_id": session_id, 
+                                                "is_completion": False, 
+                                                "answer_message": prev_result
+                                            }
+                                        }, ensure_ascii=False) + "\n\n"
+                                    prev_result = {
+                                        "content": sub_content,
+                                        "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
+                                    }
+                                logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
+                                yield "data: " + json.dumps({
+                                        "code": 0, "message": "", 
+                                        "result": {
+                                            "session_id": session_id, 
+                                            "is_completion": True, 
+                                            "answer_message": prev_result
+                                        }
+                                    }, ensure_ascii=False) + "\n\n"
                                 self.user_session._post_append()
                             except Exception as e:
                                 err_resp = {"code": 1000, "message": str(e), "result": None}
+                                logging.error(f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
                                 yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
                     return Response(
                         gen_sse_resp(answer), 200, 
                         {'Content-Type': 'text/event-stream; charset=utf-8'},
                     )
                 else:
+                    blocking_result = json.loads(answer.json(exclude_none=True))
+                    logging.info(f"[request_id={request_id}, session_id={session_id}] blocking_result={blocking_result}")
                     self.user_session._post_append()
                     return {
-                        "code": 0, "message": "",
-                        "result": {
-                            "session_id": session_id,
-                            "answer_message": json.loads(answer.json(exclude_none=True)),
-                        }
+                        "code": 0, "message": "", 
+                        "result": {"session_id": session_id, "answer_message": blocking_result}
                     }
             except Exception as e:
-                logging.error(e, exc_info=True)
+                logging.error(f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
                 raise RuntimeError(e)
         return app
 
