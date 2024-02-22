@@ -30,11 +30,11 @@ class Dataset:
         dataset.delete_documents(document_ids)
 
     """
-    create_url: str = "/v1/ai_engine/agi_platform/v2/datasets/create"
-    add_file_url: str = "/v1/ai_engine/agi_platform/v2/datasets/documents"
-    get_file_list_url: str = "/v1/ai_engine/agi_platform/v2/datasets/documents/list_page"
-    delete_file_url: str = "/v1/ai_engine/agi_platform/v2/datasets/document/delete"
-    upload_file_url: str = "/v1/ai_engine/agi_platform/v2/datasets/files/upload"
+    create_url: str = "/v1/ai_engine/agi_platform/v1/datasets/create"
+    add_file_url: str = "/v1/ai_engine/agi_platform/v1/datasets/documents"
+    get_file_list_url: str = "/v1/ai_engine/agi_platform/v1/datasets/documents/list_page"
+    delete_file_url: str = "/v1/ai_engine/agi_platform/v1/datasets/document/delete"
+    upload_file_url: str = "/v1/ai_engine/agi_platform/v1/datasets/files/upload"
 
     def __init__(self, dataset_id: str = "", dataset_name: str = ""):
         self.dataset_id = dataset_id
@@ -68,7 +68,7 @@ class Dataset:
         return Dataset(dataset_id=response["id"], dataset_name=response["name"])
 
     def add_documents(self, file_path_list: List[str], is_custom_process_rule: bool = False,
-                      custom_process_rule: Dict = None) -> AddDocumentsResponse:
+                      custom_process_rule: Dict = None, is_enhanced: bool = False) -> AddDocumentsResponse:
         """
         向知识库中添加文档
         传参：
@@ -78,8 +78,9 @@ class Dataset:
         {
         "separators": ["。", "，"],    # 文本切分符，支持这几种[ , , "？", , "!", "?", "……"]
         "target_length": 300,         # 文本切片片段长度，取值范围[300, 800]
-        "overlap_rate": 0.3           # 文本片段重叠率，取值范围[0, 1]
+        "overlap_rate": 0.3           # 文本片段重叠率，取值范围[0, 0.3]
         }
+        is_enhanced: 是否开启知识增强, 默认为False
         返回：
         """
         for file_path in file_path_list:
@@ -97,7 +98,7 @@ class Dataset:
             upload_res = self._upload_document(file_path)
             file_ids.append(upload_res["id"])
         payload = {"dataset_id": self.dataset_id, "file_ids": file_ids,
-                   "is_custom_process_rule": is_custom_process_rule}
+                   "is_custom_process_rule": is_custom_process_rule, "is_enhanced": is_enhanced}
         if is_custom_process_rule and custom_process_rule:
             payload["custom_process_rule"] = custom_process_rule
         payload = json.dumps(payload)
