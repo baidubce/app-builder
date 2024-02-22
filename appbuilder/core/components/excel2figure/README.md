@@ -62,7 +62,7 @@ print(result)
 ### 调用参数
 | 参数名称 | 参数类型 | 是否必须 |描述 | 示例值 |
 |--------|--------|---|----|------------------------------------------|
-| msg | Message | 是 | 输入消息，包含用户提出的问题 query 和一个公网可访问的 excel 文件链接 excel_file_url。| Message({"query": "2020年各个月份的利润分别是多少？使用条形图绘制出来", "excel_file_url": "https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/[测试]超市收入明细表格.xlsx?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-02-21T09%3A51%3A14Z/-1/host/1802a9c9142ef328d61e7673db7c1f05842b2af93d18a02ac7ef7aa6f64db54e"}) |
+| msg | Message | 是 | 输入消息，包含用户提出的问题 query 和一个公网可访问的 excel 文件链接 excel_file_url。| Message({"query": "2020年各个月份的利润分别是多少？使用条形图绘制出来", "excel_file_url": "https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/%5B%E6%B5%8B%E8%AF%95%5D%E8%B6%85%E5%B8%82%E6%94%B6%E5%85%A5%E6%98%8E%E7%BB%86%E8%A1%A8%E6%A0%BC.xlsx?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-02-21T09%3A51%3A14Z/-1/host/1802a9c9142ef328d61e7673db7c1f05842b2af93d18a02ac7ef7aa6f64db54e"}) |
 
 ### 响应参数
 | 参数名称 | 参数类型 | 描述 | 示例值 |
