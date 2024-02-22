@@ -13,6 +13,7 @@
 # limitations under the License.
 
 """Component模块包括组件基类，用户自定义组件需要继承Component类，并至少实现run方法"""
+import json
 
 from enum import Enum
 
@@ -74,6 +75,8 @@ class Component:
         self.gateway = gateway
         self._http_client = None
         self.lazy_certification = lazy_certification
+        self.manifests = []
+        self.manifest_str_list = []
         if not self.lazy_certification:
             self.set_secret_key_and_gateway(self.secret_key, self.gateway)
 
@@ -123,3 +126,13 @@ class Component:
         r"""pass"""
         pass
 
+    def tool_desc(self) -> List[str]:
+        return [json.dumps(manifest, ensure_ascii=False) for manifest in self.manifests]
+
+    def tool_name(self) -> List[str]:
+        return [manifest["name"] for manifest in self.manifests]
+
+    def tool_eval(self, **kwargs):
+        if len(self.manifests) > 0:
+            raise NotImplementedError
+        
