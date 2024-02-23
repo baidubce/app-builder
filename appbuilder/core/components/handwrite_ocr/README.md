@@ -73,9 +73,9 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 | +text     | String   | 文本字符串 | |
 | +Position | Dict     | 文本位置信息 | |
 | ++left    | Interger | 表示定位位置的长方形左上顶点的水平坐标 | |
-| ++right   | Interger |  表示定位位置的长方形左上顶点的垂直坐标| |
+| ++top      | Interger |  表示定位位置的长方形左上顶点的垂直坐标| |
 | ++width   | Interger | 表示定位位置的长方形的宽度 | |
-| ++height   | Interger | 表示定位位置的长方形的高度 | |
+| ++height  | Interger | 表示定位位置的长方形的高度 | |
 | direction | Interger | 图像旋转角度 | 图像旋转角度，0（正向），- 1（逆时针90度），- 2（逆时针180度），- 3（逆时针270度）|
 
 ### 响应示例
