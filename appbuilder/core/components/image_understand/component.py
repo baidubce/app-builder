@@ -66,7 +66,7 @@ class ImageUnderstand(Component):
         if inp.question == "":
             raise ValueError("question is empty")
         if len(inp.question) > 100:
-            raise ValueError("question length biggger then 100")
+            raise ValueError("question length bigger than 100")
         request.question = inp.question
         response = self.__recognize(request, timeout, retry)
         out = ImageUnderstandOutMsg(description=response.result.description_to_llm)
