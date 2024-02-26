@@ -77,13 +77,13 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 | ++key      | str    | 字段名                 |                                                    |
 | ++value    | str    | 字段值                 |                                                    |
 | ++position | object | 字段坐标,结构同下position           |                                                    |
-| +position | object | 身份证正面坐标             |                                                    |
-| ++left | int | 表示定位位置的长方形左上顶点的水平坐标 |                                                    |
-| ++right | int | 表示定位位置的长方形左上顶点的垂直坐标 |                                                    |
-| ++width | int | 表示定位位置的长方形的宽度       |                                                    |
-| ++height | int | 表示定位位置的长方形的高度       |                                                    |
-| back      | object | 身份证反面信息，结构同front    |                                            |
-| direction | int    | 图像旋转角度              | 图像旋转角度，0（正向），- 1（逆时针90度），- 2（逆时针180度），- 3（逆时针270度） |
+| +position  | object | 身份证正面坐标             |                                                    |
+| ++left     | int | 表示定位位置的长方形左上顶点的水平坐标 |                                                    |
+| ++top        | int | 表示定位位置的长方形左上顶点的垂直坐标 |                                                    |
+| ++width    | int | 表示定位位置的长方形的宽度       |                                                    |
+| ++height   | int | 表示定位位置的长方形的高度       |                                                    |
+| back       | object | 身份证反面信息，结构同front    |                                            |
+| direction  | int    | 图像旋转角度              | 图像旋转角度，0（正向），- 1（逆时针90度），- 2（逆时针180度），- 3（逆时针270度） |
 
 ### 响应示例
 ```json
