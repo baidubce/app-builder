@@ -32,16 +32,16 @@ class Excel2FigureArgs(ComponentArguments):
     """
     excel2figure 的参数
     """
-    query: str = Field(..., description="用户的 query 输入")
+    query: str = Field(..., description="用户的 query 输入", max_length=400)
     excel_file_url: AnyUrl = Field(..., description="用户的 excel 文件地址，需要是一个可被公网下载的 URL 地址")
 
 
 class Excel2Figure(Component):
     meta = Excel2FigureArgs
 
-    def __init__(self, model_name: str):
+    def __init__(self, model: str):
         super().__init__(meta=Excel2FigureArgs)
-        self.model_name = model_name
+        self.model = model
         self.model_info = ModelInfo(client=self.http_client)
         self.server_sub_path = "/v1/ai_engine/copilot_engine/v1/api/agent/excel2figure"
 
@@ -62,16 +62,16 @@ class Excel2Figure(Component):
             raise ValueError(e)
 
         result_msg = self._run_excel2figure(
-                query=inputs.query, excel_file_url=inputs.excel_file_url, model_name=self.model_name)
+                query=inputs.query, excel_file_url=inputs.excel_file_url, model=self.model)
         return result_msg
 
-    def _run_excel2figure(self, query: str, excel_file_url: str, model_name: str):
+    def _run_excel2figure(self, query: str, excel_file_url: str, model: str):
         """
         运行
         Args:
             query: query
             excel_file_url: 用户的 excel 文件地址
-            model_name: 模型名字
+            model: 模型名字
 
         Returns:
             message
@@ -104,7 +104,7 @@ class Excel2Figure(Component):
             file_contents.append("")
             file_content = "\n".join(file_contents)
 
-            model_url = self.model_info.get_model_url(model_name)
+            model_url = self.model_info.get_model_url(model)
             payload = {
                 "query": query,
                 "response_mode": "blocking",
