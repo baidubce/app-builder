@@ -33,20 +33,22 @@ class ComponentArguments(BaseModel):
         r"""extract ComponentArguments fields to dict"""
 
         inputs = {}
-        for field_name, field in self.__fields__.items():
-            value = getattr(self, field_name)
+        for name, info in self.model_fields.items():
+            value = getattr(self, name)
             # 获取 display_name 元数据
-            variable_name = field.field_info.extra.get('variable_name')
-            if variable_name:
-                # 使用 Enum 成员的实际值
-                if isinstance(value, Message):
-                    inputs[variable_name] = str(value.content)
-                elif isinstance(value, Enum):
-                    inputs[variable_name] = str(value.value)
-                else:
-                    inputs[variable_name] = str(value)
+            if not info.json_schema_extra:
+                continue
+            variable_name = info.json_schema_extra.get('variable_name')
+            if not variable_name:
+                inputs[name] = value
+                continue
+            # 使用 Enum 成员的实际值
+            if isinstance(value, Message):
+                inputs[variable_name] = str(value.content)
+            elif isinstance(value, Enum):
+                inputs[variable_name] = str(value.value)
             else:
-                inputs[field_name] = value
+                inputs[variable_name] = str(value)
         return inputs
 
 

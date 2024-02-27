@@ -75,7 +75,7 @@ class Translation(Component):
         result_dict = proto.Message.to_dict(result)
 
         out = TranslateOutMsg(**result_dict["result"])
-        return Message(content=out.dict())
+        return Message(content=out.model_dump())
 
     def _translate(self, request: TranslateRequest, timeout: float = None,
                    retry: int = 0) -> TranslateResponse:

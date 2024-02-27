@@ -80,7 +80,7 @@ class Text2Image(Component):
                     time.sleep(0.2)
             img_urls = self.extract_img_urls(text2ImageQueryResponse)
             out = Text2ImageOutMessage(img_urls=img_urls)
-            return Message(content=dict(out))
+            return Message(content=out.model_dump())
 
     @HTTPClient.check_param
     def submitText2ImageTask(self, request: Text2ImageSubmitRequest, timeout: float = None,

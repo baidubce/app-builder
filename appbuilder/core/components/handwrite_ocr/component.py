@@ -74,7 +74,7 @@ class HandwriteOCR(Component):
                         height=w.location.height
                     )))
             for w in response.words_result]
-        return Message(content=out.dict())
+        return Message(content=out.model_dump())
 
     def _recognize(self, request: HandwriteOCRRequest, timeout: float = None, retry: int = 0) -> HandwriteOCRResponse:
         r"""调用底层接口进行通用文字识别

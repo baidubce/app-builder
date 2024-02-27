@@ -71,7 +71,7 @@ class DishRecognition(Component):
         result = self._recognize(req, timeout=timeout, retry=retry)
         result_dict = proto.Message.to_dict(result)
         out = DishRecognitionOutMsg(**result_dict)
-        return Message(content=out.dict())
+        return Message(content=out.model_dump())
 
     def _recognize(self, request: DishRecognitionRequest, timeout: float = None,
                    retry: int = 0) -> DishRecognitionResponse:

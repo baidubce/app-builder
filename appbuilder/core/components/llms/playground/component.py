@@ -23,8 +23,10 @@ from appbuilder.core.message import Message
 class PlaygroundArgs(ComponentArguments):
     """空模板参数配置"""
     message: Message = Field(...,
-                             variable_name="query",
-                             description="输入消息，用于模型的主要输入内容")
+                             json_schema_extra={
+                                 "variable_name": "query",
+                                 "description": "输入消息，用于模型的主要输入内容"}
+                             )
 
 
 class Playground(CompletionBaseComponent):

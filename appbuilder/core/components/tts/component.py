@@ -125,7 +125,7 @@ class TTS(Component):
         else:
             response = self.__synthesis(request=request, timeout=timeout, retry=retry)
             out = TTSOutMsg(audio_binary=response.binary, audio_type=audio_type)
-            return Message(content=dict(out))
+            return Message(content=out.model_dump())
 
     def __synthesis(self,
                     request: TTSRequest,

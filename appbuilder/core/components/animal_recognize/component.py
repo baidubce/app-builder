@@ -68,7 +68,7 @@ class AnimalRecognition(Component):
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = AnimalRecognitionOutMsg(**result_dict)
-        return Message(content=out.dict())
+        return Message(content=out.model_dump())
 
     def _recognize(self, request: AnimalRecognitionRequest, timeout: float = None,
                    retry: int = 0) -> AnimalRecognitionResponse:
