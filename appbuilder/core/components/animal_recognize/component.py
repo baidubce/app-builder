@@ -73,6 +73,7 @@ class AnimalRecognition(Component):
     def _recognize(self, request: AnimalRecognitionRequest, timeout: float = None,
                    retry: int = 0) -> AnimalRecognitionResponse:
         r"""调用底层接口进行动物识别
+
                    参数:
                        request (obj: `AnimalRecognitionRequest`) : 动物识别输入参数
                    返回：
