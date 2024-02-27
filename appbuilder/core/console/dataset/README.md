@@ -75,11 +75,12 @@ Dataset(dataset_id=2dae2091-99dc-47dd-8600-ff7c4b3ed93d, dataset_name=my_dataset
 ```
 
 ### 添加文档调用参数
-| 参数名称         | 参数类型     | 是否必须 | 描述                                          | 示例值 |
-|--------------|----------|------|---------------------------------------------|-----|
-| file_paths     | List[String] | 是    | 文档路径列表                                      | ["./path1", "./path2"] |
-| is_custom_process_rule     | bool     | 否    | 是否使用自定义文档处理策略                               | True|
-| custom_process_rule     | Dict     | 否    | 自定义文档处理策略，在is_custom_process_rule为True时需要设置 | {"separators":["。", "，"], "target_length": 300, "overlap_rate": 0.3} |
+| 参数名称         | 参数类型     | 是否必须 | 描述                                          | 示例值                                                                  |
+|--------------|----------|------|---------------------------------------------|----------------------------------------------------------------------|
+| file_paths     | List[String] | 是    | 文档路径列表                                      | ["./path1", "./path2"]                                               |
+| is_custom_process_rule | bool     | 否    | 是否使用自定义文档处理策略                               | True                                                                 |
+| custom_process_rule   | Dict     | 否    | 自定义文档处理策略，在is_custom_process_rule为True时需要设置 | {"separators":["。", "，"], "target_length": 300, "overlap_rate": 0.3} |
+| is_enhanced           |   bool    | 否    | 是否开启知识增强                                    | False                                                                |
 
 ### 添加文档响应参数
 | 参数名称   | 参数类型            | 描述       | 示例值                                                                                                                      |
