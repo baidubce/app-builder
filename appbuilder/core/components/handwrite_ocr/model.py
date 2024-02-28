@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""手写体OCR数据类"""
+"""手写文字识别数据类"""
 import proto
 from typing import List
 from pydantic import BaseModel
 
 
 class HandwriteOCRRequest(proto.Message):
-    """ 手写体ocr识别请求体
+    """ 手写文字识别组件请求参数
     属性:
         image (str):
             可选。图像内容的base64编码。
@@ -125,7 +125,7 @@ class HandwriteLocation(proto.Message):
 
 
 class HandwriteWordResult(proto.Message):
-    """ 手写体识别结果列表.
+    """ 手写文字识别结果列表
 
         属性:
             words (str): 识别出的文本
@@ -165,7 +165,7 @@ class HandwriteProbability(proto.Message):
 
 
 class HandwriteOCRResponse(proto.Message):
-    """手写体ocr识别结果
+    """手写文字识别结果
 
         属性:
             request_id(str): 请求ID
