@@ -75,8 +75,6 @@ class Component:
         self.gateway = gateway
         self._http_client = None
         self.lazy_certification = lazy_certification
-        self.manifests = []
-        self.manifest_str_list = []
         if not self.lazy_certification:
             self.set_secret_key_and_gateway(self.secret_key, self.gateway)
 
