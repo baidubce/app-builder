@@ -53,6 +53,8 @@ class ComponentArguments(BaseModel):
 class Component:
     r"""Component基类, 其它实现的Component子类需要继承该基类，并至少实现run方法."""
 
+    manifests = []
+
     def __init__(
         self,
         meta: Optional[ComponentArguments] = ComponentArguments(),
