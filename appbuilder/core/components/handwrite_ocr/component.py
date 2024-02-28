@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-r"""手写体识别组件"""
+r"""手写文字识别组件"""
 import base64
 
 from appbuilder.core._exception import AppBuilderServerException
@@ -20,7 +20,7 @@ from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 
 class HandwriteOCR(Component):
-    r""" 手写体识别识别
+    r""" 手写文字识别组件
     Examples:
 
     .. code-block:: python
@@ -74,7 +74,7 @@ class HandwriteOCR(Component):
                         height=w.location.height
                     )))
             for w in response.words_result]
-        return Message(content=out.dict())
+        return Message(content=dict(out))
 
     def _recognize(self, request: HandwriteOCRRequest, timeout: float = None, retry: int = 0) -> HandwriteOCRResponse:
         r"""调用底层接口进行通用文字识别
