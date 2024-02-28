@@ -80,7 +80,7 @@ class Dataset:
         "target_length": 300,         # 文本切片片段长度，取值范围[300, 800]
         "overlap_rate": 0.3           # 文本片段重叠率，取值范围[0, 0.3]
         }
-        is_enhanced: 是否开启知识增强, 默认为False
+        is_enhanced: 是否开启知识增强, 默认为False，在检索问答时通过知识点来索引到对应的切片，大模型根据切片内容生成答案，开启知识增强会调用大模型抽取更加丰富的知识点，增加切片的召回率
         返回：
         """
         for file_path in file_path_list:
