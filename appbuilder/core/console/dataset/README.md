@@ -1,4 +1,4 @@
-# 知识库组件（Dataset）（即将上线）
+# 知识库组件（Dataset）
 
 ## 简介
 知识库组件（Dataset）是对线上知识库操作的组件，可以通过SDK实现创建知识库、添加知识文档、查询知识库文档、删除知识文档等操作，可在平台console中查看结果。
@@ -58,7 +58,9 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
 
 ### 初始化参数
-- `dataset_id`: 线上已有知识库id
+- `dataset_id`: 线上已有知识库id，可在[console](https://console.bce.baidu.com/ai_apaas/dataset)上查看和获取，示例如图
+
+<img width="768" alt="image" src="./image/dataset示例.png">
 
 
 ### 创建知识库调用参数
