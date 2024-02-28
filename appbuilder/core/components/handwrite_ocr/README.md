@@ -1,7 +1,7 @@
-# 手写体OCR识别 （HandwriteOCR）
+# 手写文字识别 （HandwriteOCR）
 
 ## 简介
-手写体OCR识别 （HandwriteOCR），图片中的手写中文、手写数字进行检测和识别，针对不规则的手写字体进行专项优化，识别准确率可达90%以上。
+手写文字识别 （HandwriteOCR），图片中的手写中文、手写数字进行检测和识别，针对不规则的手写字体进行专项优化，识别准确率可达90%以上。
 
 
 ### 功能介绍
@@ -17,7 +17,7 @@
 
 ## 基本用法
 
-下面是手写体的代码示例：
+下面是手写文字识别的代码示例：
 ```python
 import os
 import requests
@@ -32,7 +32,7 @@ raw_image = requests.get(image_url).content
 inp = appbuilder.Message(content={"raw_image": raw_image})
 # inp = Message(content={"url": image_url})
 
-# 运行手写体识别
+# 运行手写文字识别
 handwrite_ocr = appbuilder.HandwriteOCR()
 out = handwrite_ocr.run(inp)
 # 打印识别结果
@@ -149,4 +149,5 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 
 
 ## 更新记录和贡献
-* 手写体OCR识别 (2024-01)
+* 手写文字识别 (2024-01)
+* 手写文字识别 (2024-02)
