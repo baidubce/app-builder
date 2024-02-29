@@ -43,6 +43,25 @@ class Text2Image(Component):
         print(out.content) # eg: {"img_urls": ["xxx"]}
     """
 
+    manifests = [
+        {
+            "name": "text_to_image",
+            "description": "文生图工具，当用户的问题需要进行场景、人物、海报等内容的绘制时，使用画图工具。该工具偏向于图片创作，如果Query的需求是生成图表（柱状图、折线图、雷达图等），必须使用代码解释器。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "根据用户的需求构思图片，生成一个画图用的query。特别注意，这个字段只能由中文字符组成，不能含有任何英语描述。 "
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
+
     @HTTPClient.check_param
     def run(self, message: Message, width: int = 1024, height: int = 1024, image_num: int = 1,
             timeout: float = None, retry: int = 0):
@@ -163,6 +182,32 @@ class Text2Image(Component):
                             img_urls.append(final_image.img_url)
 
         return img_urls
+
+    def tool_eval(
+        self,
+        streaming: bool,
+        origin_query: str,
+        **kwargs,
+    ):
+        """
+        tool eval
+        """
+        query = kwargs.get("query", "")
+        if not query:
+            query = origin_query
+        try:
+            result = self.run(Message({"prompt": query}))
+            result = {
+                'event': 'image',
+                'type': 'image',
+                'text': result.content['img_urls'][0],
+            }
+        except Exception as e:
+            result = f'绘图时发生错误：{e}'
+        if streaming:
+            yield result
+        else:
+            return result
 
     @staticmethod
     def check_service_error(request_id: str, data: dict):
