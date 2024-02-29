@@ -20,6 +20,7 @@ from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.plant_recognize.model import *
+from typing import Generator, Union
 
 
 class PlantRecognition(Component):
@@ -49,6 +50,39 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         # 打印识别结果
         print(out.content)
      """
+    name = "plant_rec"
+    version = "v1"
+    manifests = [
+        {
+            "name": "plant_rec",
+            "description": "用于识别图片中植物类别",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "img_path": {
+                        "type": "string",
+                        "description": "待识别图片本地路径"
+                    },
+                    "img_url": {
+                        "type": "string",
+                        "description": "待识别图片的url"
+                    }
+                },
+                "anyOf": [
+                    {
+                        "required": [
+                            "img_path"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "img_url"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -102,6 +136,58 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         request_id = self.http_client.response_request_id(response)
         self.__class__.__check_service_error(request_id, data)
         return PlantRecognitionResponse(data, request_id=request_id)
+
+    def tool_eval(self, name: str, streaming: bool,
+                  origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:
+        r"""用于工具的执行，通过调用底层接口进行植物识别
+            参数:
+                name (str): 工具名
+                streaming (bool): 是否流式返回
+                origin_query (str): 用户原始query
+                **kwargs: 工具调用的额外关键字参数
+
+            返回：
+                Union[Generator[str, None, None], str]: 植物识别结果，包括识别出的植物类别和相应的置信度信息
+        """
+        img_path = kwargs.get("img_path", "")
+        img_url = kwargs.get("img_url", "")
+        rec_res = self._recognize_w_post_process(img_path, img_url)
+        if streaming:
+            yield rec_res
+        else:
+            return rec_res
+
+    def _recognize_w_post_process(self, img_path, img_url):
+        r"""调底层接口对图片或图片url进行植物识别，并返回类别及其置信度
+            参数:
+               img_path (str): 图片路径
+               img_url (str): 图片url
+            返回：
+               str: 植物识别结果，包括识别出的动物类别和相应的置信度信息
+         """
+        if not img_path and not img_url:
+            return "Image path and image url cannot be all empty"
+        req = PlantRecognitionRequest()
+        if img_path:
+            try:
+                with open(img_path, 'rb') as f:
+                    img_data = base64.b64encode(f.read())
+                req.image = img_data
+            except Exception as ex:
+                return "Reading image file failed: {}".format(str(ex))
+        if img_url:
+            req.url = img_url
+        req.top_num = 6
+        req.baike_num = 0
+        try:
+            result = self.__recognize(req)
+        except Exception as ex:
+            return "API call failed: {}".format(str(ex))
+        result_dict = proto.Message.to_dict(result)
+        rec_res = "模型识别结果为：\n"
+        for rec_info in result_dict['result']:
+            rec_res += "类别: {} 置信度: {}\n".format(rec_info['name'], rec_info['score'])
+        return rec_res
 
     @staticmethod
     def __check_service_error(request_id: str, data: dict):
