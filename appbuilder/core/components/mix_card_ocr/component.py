@@ -12,9 +12,9 @@
 
 r"""身份证混贴识别组件"""
 import base64
-
+import json
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
 from appbuilder.core.components.mix_card_ocr.model import *
 from appbuilder.core.message import Message
@@ -43,6 +43,28 @@ class MixCardOCR(Component):
         # 打印识别结果
         print(out.content)
      """
+
+    name = "idcard_ocr"
+    version = "v1"
+    manifests = [
+        {
+            "name": "idcard_ocr",
+            "description": "当身份证正反面在同一张图片上，需要识别图片中身份证正反面所有字段时，使用该工具",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "待识别文件的文件名"
+                    }
+                },
+                "required": ["file_names"]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -124,3 +146,43 @@ class MixCardOCR(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        result = {}
+        file_names = kwargs.get("file_names", None)
+        if not file_names:
+            file_names = kwargs.get("files")
+        file_urls = kwargs.get("file_urls", {})
+        for file_name in file_names:
+            file_url = file_urls.get(file_name, None)
+            if file_url is None:
+                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+
+            request = MixCardOCRRequest()
+            request.url = file_url
+            request.detect_risk = "false"
+            request.detect_quality = "false"
+            request.detect_photo = "false"
+            request.detect_card = "false"
+            response = self._recognize(request)
+            out = MixCardOCROutMsg()
+            for res in response.words_result:
+                card_type = res.card_info.card_type
+                if card_type != "idcard_back" and card_type != "idcard_front":
+                    continue
+                ref = out.front
+                if card_type == "idcard_back":
+                    ref = out.back
+                loc = res.card_info.card_location
+                ref.position = MixCardPosition(left=loc.left, top=loc.top, width=loc.width, height=loc.height)
+                for key, val in res.card_result.items():
+                    position = MixCardPosition(left=val.location.left, top=val.location.top, width=val.location.width,
+                                               height=val.location.height)
+                    ref.fields.append(MixCardField(key=key, value=val.words, position=position))
+            out.direction = response.direction
+            result[file_name] = out.dict()
+
+        if streaming:
+            yield json.dumps(result)
+        else:
+            return json.dumps(result)

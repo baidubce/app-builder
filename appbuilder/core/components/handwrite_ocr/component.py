@@ -12,8 +12,8 @@
 
 r"""手写文字识别组件"""
 import base64
-
-from appbuilder.core._exception import AppBuilderServerException
+import json
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
 from appbuilder.core.components.handwrite_ocr.model import *
 from appbuilder.core.message import Message
@@ -38,6 +38,28 @@ class HandwriteOCR(Component):
         # 打印识别结果
         print(out.content)
      """
+
+    name = "handwriting_ocr"
+    version = "v1"
+    manifests = [
+        {
+            "name": "handwriting_ocr",
+            "description": "需要对图片中手写体文字进行识别时，使用该工具",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "待识别文件的文件名"
+                    }
+                },
+                "required": ["file_names"]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -76,6 +98,16 @@ class HandwriteOCR(Component):
             for w in response.words_result]
         return Message(content=out.model_dump())
 
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        result = {}
+        file_names = kwargs.get("file_names", None)
+        if not file_names:
+            file_names = kwargs.get("files")
+        file_urls = kwargs.get("file_urls", {})
+        for file_name in file_names:
+            file_url = file_urls.get(file_name, None)
+            if file_url is None:
+                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
 
     def _recognize(self, request: HandwriteOCRRequest, timeout: float = None, retry: int = 0) -> HandwriteOCRResponse:
         r"""调用底层接口进行通用文字识别
@@ -118,4 +150,28 @@ class HandwriteOCR(Component):
                 service_err_message=data.get("error_msg")
             )
 
+            req = HandwriteOCRRequest()
+            req.url = file_url
+            req.recognize_granularity = "big"
+            req.probability = "false"
+            req.detect_direction = "true"
+            req.detect_alteration = "true"
+            response = self._recognize(req)
+            out = HandwriteOCROutMsg()
+            out.direction = response.direction
+            [out.contents.append(
+                Content(text=w.words,
+                        position=Position(
+                            left=w.location.left,
+                            top=w.location.top,
+                            width=w.location.width,
+                            height=w.location.height
+                        )))
+                for w in response.words_result]
+            result[file_name] = out.dict()
+
+        if streaming:
+            yield json.dumps(result)
+        else:
+            return json.dumps(result)
 
