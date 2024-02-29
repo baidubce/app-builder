@@ -54,7 +54,7 @@ class AnimalRecognition(Component):
                 "properties": {
                     "img_path": {
                         "type": "string",
-                        "description": "待识别图片本地路径"
+                        "description": "待识别图片路径"
                     },
                     "img_url": {
                         "type": "string",
@@ -145,13 +145,14 @@ class AnimalRecognition(Component):
         """
         img_path = kwargs.get("img_path", "")
         img_url = kwargs.get("img_url", "")
-        rec_res = self._recognize_w_post_process(img_path, img_url)
+        file_urls = kwargs.get("file_urls", {})
+        rec_res = self._recognize_w_post_process(img_path, img_url, file_urls)
         if streaming:
             yield rec_res
         else:
             return rec_res
 
-    def _recognize_w_post_process(self, img_path, img_url) -> str:
+    def _recognize_w_post_process(self, img_path, img_url, file_urls) -> str:
         r"""调底层接口对图片或图片url进行动物识别，并返回类别及其置信度
                    参数:
                        img_path (str): 图片路径
@@ -162,13 +163,8 @@ class AnimalRecognition(Component):
         if not img_path and not img_url:
             return "Image path and image url cannot be all empty"
         req = AnimalRecognitionRequest()
-        if img_path:
-            try:
-                with open(img_path, 'rb') as f:
-                    img_data = base64.b64encode(f.read())
-                req.image = img_data
-            except Exception as ex:
-                return "Reading image file failed: {}".format(str(ex))
+        if img_path in file_urls:
+            req.url = file_urls[img_path]
         if img_url:
             req.url = img_url
         req.top_num = 6
