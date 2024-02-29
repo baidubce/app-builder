@@ -21,7 +21,7 @@ from appbuilder.core.component import Component
 from appbuilder.core.components.table_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 
 
 class TableOCR(Component):
@@ -43,6 +43,28 @@ class TableOCR(Component):
            print(out.content)
 
         """
+
+    name = "table_ocr"
+    version = "v1"
+    manifests = [
+        {
+            "name": "table_ocr",
+            "description": "需要识别图片/PDF格式文档中的表格内容，使用该工具",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "待识别文件的文件名"
+                    }
+                },
+                "required": ["file_names"]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -120,3 +142,23 @@ class TableOCR(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        result = {}
+        file_names = kwargs.get("file_names", None)
+        if not file_names:
+            file_names = kwargs.get("files")
+        file_urls = kwargs.get("file_urls", {})
+        for file_name in file_names:
+            file_url = file_urls.get(file_name, None)
+            if file_url is None:
+                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+            req = TableOCRRequest()
+            req.url = file_url
+            req.cell_contents = "false"
+            resp = self._recognize(req)
+            result[file_name] = proto.Message.to_dict(resp)
+        if streaming:
+            yield json.dumps(result)
+        else:
+            return json.dumps(result)

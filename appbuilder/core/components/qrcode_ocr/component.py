@@ -44,6 +44,32 @@ class QRcodeOCR(Component):
 
         """
 
+    name = "qrcode_ocr"
+    version = "v1"
+    manifests = [
+        {
+            "name": "qrcode_ocr",
+            "description": "需要对图片中的二维码、条形码进行检测和识别，返回存储的文字信息及其位置信息，使用该工具",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "待识别文件的文件名"
+                    },
+                    "location": {
+                        "type": "string",
+                        "description": "是否输出二维码/条形码位置信息"
+                    }
+                },
+                "required": ["file_names"]
+            }
+        }
+    ]
+
     @HTTPClient.check_param
     def run(self, message: Message, location: str = "true", timeout: float = None, retry: int = 0) -> Message:
         r""" 二维码识别
@@ -118,3 +144,27 @@ class QRcodeOCR(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        result = {}
+        file_names = kwargs.get("file_names", None)
+        location = kwargs.get("locations", "true")
+        if not file_names:
+            file_names = kwargs.get("files")
+
+        file_urls = kwargs.get("file_urls", {})
+        for file_name in file_names:
+            file_url = file_urls.get(file_name, None)
+            if file_url is None:
+                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+            req = QRcodeRequest()
+            req.url = file_url
+            if not isinstance(location, str) or location not in ("true", "false"):
+                raise InvalidRequestArgumentError("location must be a string with value 'true' or 'false'")
+            req.location = location
+            resp = self._recognize(req)
+            result[file_name] = proto.Message.to_dict(resp)
+        if streaming:
+            yield json.dumps(result)
+        else:
+            return json.dumps(result)

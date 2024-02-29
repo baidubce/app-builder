@@ -141,15 +141,15 @@ __all__ = [
     'Message',
     'AnimalRecognition',
     'DocEnhance',
-    'QRcodeOCR',
-    'TableOCR',
+    QRcodeOCR,
+    TableOCR,
 
     'Embedding',
 
     'Matching',
 
     "PlantRecognition",
-    "HandwriteOCR",
+    HandwriteOCR,
     "ImageUnderstand",
-    "MixCardOCR",
+    MixCardOCR,
 ]
