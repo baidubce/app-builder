@@ -56,7 +56,7 @@ class ImageUnderstand(Component):
                 "properties": {
                     "img_path": {
                         "type": "string",
-                        "description": "待识别图片本地路径"
+                        "description": "待识别图片路径"
                     },
                     "img_url": {
                         "type": "string",
@@ -165,18 +165,20 @@ class ImageUnderstand(Component):
         """
         img_path = kwargs.get("img_path", "")
         img_url = kwargs.get("img_url", "")
-        rec_res = self._recognize_w_post_process(img_path, img_url)
+        file_urls = kwargs.get("file_urls", {})
+        rec_res = self._recognize_w_post_process(img_path, img_url, file_urls)
         if streaming:
             yield rec_res
         else:
             return rec_res
 
-    def _recognize_w_post_process(self, img_path, img_url, question="图片内容有哪些") -> str:
+    def _recognize_w_post_process(self, img_path, img_url, file_urls, question="图片内容有哪些") -> str:
         r"""
             参数:
                 img_path (str): 图片路径
                 img_url (bool): 图片url
                 question (str): 询问有关图片内容的问题
+                file_urls (dict): 文件名与对应文件url的映射
 
             返回：
                 str: 图片内容理解结果
@@ -185,13 +187,8 @@ class ImageUnderstand(Component):
             return "Question cannot be empty"
         req = ImageUnderstandRequest()
         req.question = question
-        if img_path:
-            try:
-                with open(img_path, 'rb') as f:
-                    img_data = base64.b64encode(f.read())
-                req.image = img_data
-            except Exception as ex:
-                return "Reading image file failed: {}".format(str(ex))
+        if img_path in file_urls:
+            req.url = file_urls[img_path]
         if img_url:
             req.url = img_url
         try:
