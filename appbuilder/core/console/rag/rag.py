@@ -28,7 +28,7 @@ class RAG(Component):
             print(answer.extra)  # 获取结果来源
     """
     name = "rag"
-    integrated_url: str = "/v1/ai_engine/agi_platform/v2/instance/integrated"
+    integrated_url: str = "/v1/ai_engine/agi_platform/v1/instance/integrated"
     # debug_url: str = "/debug"
 
     def __init__(self, app_id: str = ""):

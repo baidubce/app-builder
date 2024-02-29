@@ -1,4 +1,4 @@
-# Excel2Figure
+# Excel转图表（Excel2Figure）
 
 ## 简介
 Excel转图表（Excel2Figure）组件通过理解对表格信息的提问，生成对应语义的图表。
@@ -60,14 +60,17 @@ print(result)
 - `model`: 模型名称，用于指定要使用的千帆模型。
 
 ### 调用参数
-| 参数名称 | 参数类型 | 是否必须 |描述 | 示例值 |
+| 参数名称 | 参数类型 | 是否必须 | 描述 | 示例值 |
 |--------|--------|---|----|------------------------------------------|
-| msg | Message | 是 | 输入消息，包含用户提出的问题 query 和一个公网可访问的 excel 文件链接 excel_file_url。| Message({"query": "2020年各个月份的利润分别是多少？使用条形图绘制出来", "excel_file_url": "https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/%5B%E6%B5%8B%E8%AF%95%5D%E8%B6%85%E5%B8%82%E6%94%B6%E5%85%A5%E6%98%8E%E7%BB%86%E8%A1%A8%E6%A0%BC.xlsx?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-02-21T09%3A51%3A14Z/-1/host/1802a9c9142ef328d61e7673db7c1f05842b2af93d18a02ac7ef7aa6f64db54e"}) |
+| msg | Message | 是 | 输入消息，包含用户提出的问题 query 和一个公网可访问的 excel 文件链接 excel_file_url。| - |
+| +query | String | 是 | 用户提出的问题，长度小于 400 | "2020年各个月份的利润分别是多少？使用条形图绘制出来" |
+| +excel_file_url | String | 是 | 公网可访问的 excel 文件链接 | "https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/%5B%E6%B5%8B%E8%AF%95%5D%E8%B6%85%E5%B8%82%E6%94%B6%E5%85%A5%E6%98%8E%E7%BB%86%E8%A1%A8%E6%A0%BC.xlsx?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-02-21T09%3A51%3A14Z/-1/host/1802a9c9142ef328d61e7673db7c1f05842b2af93d18a02ac7ef7aa6f64db54e" |
 
 ### 响应参数
 | 参数名称 | 参数类型 | 描述 | 示例值 |
 |--------|--------|----|------|
-| result | Message | 返回结果。如果图表绘制成功，则会返回一个可下载的图片链接，有效期为24小时；如果绘制失败，则会返回空字符串。 | Message(name=msg, content="https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/%5B%E6%B5%8B%E8%AF%95%5D2020%E5%B9%B4%E5%90%84%E4%B8%AA%E6%9C%88%E4%BB%BD%E5%88%A9%E6%B6%A6%E6%9D%A1%E5%BD%A2%E5%9B%BE.png?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-02-21T10%3A00%3A16Z/-1/host/b68f35825ad99075caf8bd009e4871ee9eb7b718e550968fdf12695b1502bc78", mtype=str)|
+| result | Message | 返回结果。| - |
+| +content | String | 如果图表绘制成功，则会返回一个可下载的图片链接，有效期为24小时；如果绘制失败，则会返回空字符串。 | "https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/%5B%E6%B5%8B%E8%AF%95%5D2020%E5%B9%B4%E5%90%84%E4%B8%AA%E6%9C%88%E4%BB%BD%E5%88%A9%E6%B6%A6%E6%9D%A1%E5%BD%A2%E5%9B%BE.png?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-02-21T10%3A00%3A16Z/-1/host/b68f35825ad99075caf8bd009e4871ee9eb7b718e550968fdf12695b1502bc78" |
 
 ### 响应示例
 ```shell
@@ -75,7 +78,9 @@ Message(name=msg, content="https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuil
 ```
 
 ### 错误码
-无
+| 错误码 | 描述 |
+|--------|--------|
+| pydantic.error_wrappers.ValidationError | 输入参数校验错误 |
 
 ## 更新记录和贡献
 * Excel转图表 (2024-02)
