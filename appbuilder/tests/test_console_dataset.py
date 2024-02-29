@@ -21,8 +21,6 @@ class TestDataset(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-nCMpKZq0twmRxVR0ix4Bg/2ec658296587ca8cf7fb7d7800546f8e4a3c5421"
-        os.environ["GATEWAY_URL"] = "https://apaas-api.test.baidu-int.com"
         # 获取当前文件所在的目录路径
         cls.current_dir = os.path.dirname(__file__)
         cls.test_pdf_path = os.path.join(cls.current_dir, 'test.pdf')
