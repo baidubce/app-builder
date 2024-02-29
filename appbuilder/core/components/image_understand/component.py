@@ -178,6 +178,7 @@ class ImageUnderstand(Component):
                 img_path (str): 图片路径
                 img_url (bool): 图片url
                 question (str): 询问有关图片内容的问题
+                file_urls (dict): 文件名与对应文件url的映射
 
             返回：
                 str: 图片内容理解结果

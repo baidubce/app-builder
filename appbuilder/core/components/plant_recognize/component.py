@@ -163,6 +163,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             参数:
                img_path (str): 图片路径
                img_url (str): 图片url
+               file_urls (dict): 文件名与对应文件url的映射
             返回：
                str: 植物识别结果，包括识别出的动物类别和相应的置信度信息
          """
