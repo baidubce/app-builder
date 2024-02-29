@@ -21,6 +21,7 @@ from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.image_understand.model import *
+from typing import Generator, Union
 
 
 class ImageUnderstand(Component):
@@ -44,6 +45,39 @@ class ImageUnderstand(Component):
       # 打印识别结果
       print(out.content)
      """
+    name = "image_understanding"
+    version = "v1"
+    manifests = [
+        {
+            "name": "image_understanding",
+            "description": "可对输入图片进行理解，可输出图片描述、OCR 及图像识别结果",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "img_path": {
+                        "type": "string",
+                        "description": "待识别图片本地路径"
+                    },
+                    "img_url": {
+                        "type": "string",
+                        "description": "待识别图片的url"
+                    }
+                },
+                "anyOf": [
+                    {
+                        "required": [
+                            "img_path"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "img_url"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -116,6 +150,57 @@ class ImageUnderstand(Component):
             if response.result.ret_code == 1:
                 # 避免触发限流（>1QPS），等待1.1秒
                 time.sleep(1.1)
+
+    def tool_eval(self, name: str, streaming: bool,
+                  origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:
+        r"""用于工具的执行，调用底层接口进行图像内容理解
+            参数:
+                name (str): 工具名
+                streaming (bool): 是否流式返回
+                origin_query (str): 用户原始query
+                **kwargs: 工具调用的额外关键字参数
+
+            返回：
+                Union[Generator[str, None, None], str]: 图片内容理解结果
+        """
+        img_path = kwargs.get("img_path", "")
+        img_url = kwargs.get("img_url", "")
+        rec_res = self._recognize_w_post_process(img_path, img_url)
+        if streaming:
+            yield rec_res
+        else:
+            return rec_res
+
+    def _recognize_w_post_process(self, img_path, img_url, question="图片内容有哪些") -> str:
+        r"""
+            参数:
+                img_path (str): 图片路径
+                img_url (bool): 图片url
+                question (str): 询问有关图片内容的问题
+
+            返回：
+                str: 图片内容理解结果
+        """
+        if question == "":
+            return "Question cannot be empty"
+        req = ImageUnderstandRequest()
+        req.question = question
+        if img_path:
+            try:
+                with open(img_path, 'rb') as f:
+                    img_data = base64.b64encode(f.read())
+                req.image = img_data
+            except Exception as ex:
+                return "Reading image file failed: {}".format(str(ex))
+        if img_url:
+            req.url = img_url
+        try:
+            response = self.__recognize(req)
+        except Exception as ex:
+            return "API call failed: {}".format(str(ex))
+        description_to_llm = response.result.description_to_llm
+        description_processed = description_to_llm.rsplit("。", 2)[0]
+        return description_processed
 
     @staticmethod
     def __check_service_error(request_id: str, data: dict):
