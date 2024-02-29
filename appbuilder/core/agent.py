@@ -17,7 +17,7 @@ import logging
 import uuid
 import json
 import inspect
-from pydantic import BaseModel, root_validator, Extra
+from pydantic import BaseModel, model_validator, Extra
 from typing import Optional, Dict, List, Any, Union
 import sqlalchemy
 
@@ -172,21 +172,19 @@ class AgentRuntime(BaseModel):
         extra = Extra.forbid # 不能传入类定义中未声明的字段
         arbitrary_types_allowed = True # 此设置允许在模型中使用自定义类型的字段
 
-    @root_validator(pre=True)
+    @classmethod
+    @model_validator(mode='before')
     def init(cls, values: Dict) -> Dict:
         """
         初始化 AgentRuntime，UserSession 会在这里被初始化
         
         Args:
-            component (Component): 可运行的 Component
-            user_session_config (sqlalchemy.engine.URL|str|None): Session 输出存储配置字符串。默认使用 sqlite:///user_session.db
-                遵循 sqlalchemy 后端定义，参考文档：https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls
-        
+            values (Dict): 初始化参数
         Returns:
             None
         """
         # 初始化 UserSession
-        values.update(**{
+        values.update({
             "user_session": UserSession(values.get("user_session_config"))
         })
         return values

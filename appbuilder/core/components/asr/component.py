@@ -69,7 +69,7 @@ class ASR(Component):
         request.speech = inp.raw_audio
         response = self._recognize(request, timeout, retry)
         out = ASROutMsg(result=list(response.result))
-        return Message(content=dict(out))
+        return Message(content=out.model_dump())
 
     def _recognize(self, request: ShortSpeechRecognitionRequest, timeout: float = None,
                    retry: int = 0) -> ShortSpeechRecognitionResponse:

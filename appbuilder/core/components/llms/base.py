@@ -310,8 +310,8 @@ class CompletionBaseComponent(Component):
             obj:`Message`: Output message after running model.
         """
 
-        specific_params = {k: v for k, v in kwargs.items() if k in self.meta.__fields__}
-        model_config_params = {k: v for k, v in kwargs.items() if k in ModelArgsConfig.__fields__}
+        specific_params = {k: v for k, v in kwargs.items() if k in self.meta.model_fields}
+        model_config_params = {k: v for k, v in kwargs.items() if k in ModelArgsConfig.model_fields}
 
         try:
             specific_inputs = self.meta(**specific_params)

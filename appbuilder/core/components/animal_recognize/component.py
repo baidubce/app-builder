@@ -68,11 +68,12 @@ class AnimalRecognition(Component):
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = AnimalRecognitionOutMsg(**result_dict)
-        return Message(content=out.dict())
+        return Message(content=out.model_dump())
 
     def _recognize(self, request: AnimalRecognitionRequest, timeout: float = None,
                    retry: int = 0) -> AnimalRecognitionResponse:
         r"""调用底层接口进行动物识别
+
                    参数:
                        request (obj: `AnimalRecognitionRequest`) : 动物识别输入参数
                    返回：

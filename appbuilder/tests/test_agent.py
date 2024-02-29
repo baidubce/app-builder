@@ -15,7 +15,6 @@ class TestAgentRuntime(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        pass
 
     def test_init_with_valid_component(self):
         """ 测试在component有效时运行 """
@@ -28,7 +27,7 @@ class TestAgentRuntime(unittest.TestCase):
     def test_init_with_invalid_component(self):
         """ 测试在component非法时运行 """
         component = "invalid_component"
-        with self.assertRaises(pydantic.error_wrappers.ValidationError):
+        with self.assertRaises(pydantic.ValidationError):
             agent = appbuilder.AgentRuntime(component=component)
 
     def test_chat_with_valid_message_and_blocking(self):
