@@ -55,6 +55,8 @@ class ComponentArguments(BaseModel):
 class Component:
     r"""Component基类, 其它实现的Component子类需要继承该基类，并至少实现run方法."""
 
+    manifests = []
+
     def __init__(
         self,
         meta: Optional[ComponentArguments] = ComponentArguments(),
@@ -77,8 +79,6 @@ class Component:
         self.gateway = gateway
         self._http_client = None
         self.lazy_certification = lazy_certification
-        self.manifests = []
-        self.manifest_str_list = []
         if not self.lazy_certification:
             self.set_secret_key_and_gateway(self.secret_key, self.gateway)
 
