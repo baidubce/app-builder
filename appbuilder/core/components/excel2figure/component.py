@@ -38,6 +38,24 @@ class Excel2FigureArgs(ComponentArguments):
 
 class Excel2Figure(Component):
     meta = Excel2FigureArgs
+    manifests = [
+        {
+            "name": "excel_to_figure",
+            "description": "Excel转图表工具，当用户需要根据Excel图表的数据进行数据分析并绘制图表（柱状图、折线图、雷达图等），使用该工具。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "需要根据Excel图表的数据进行数据分析并绘制图表的请求描述。"
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
 
     def __init__(self, model: str):
         super().__init__(meta=Excel2FigureArgs)
@@ -65,7 +83,7 @@ class Excel2Figure(Component):
                 query=inputs.query, excel_file_url=inputs.excel_file_url, model=self.model)
         return result_msg
 
-    def _run_excel2figure(self, query: str, excel_file_url: str, model: str):
+    def _run_excel2figure(self, query: str, excel_file_url: str, model: str, excel_file_name: str = None):
         """
         运行
         Args:
@@ -82,7 +100,10 @@ class Excel2Figure(Component):
         with tempfile.TemporaryDirectory() as tmpdir:
             # download excel file
             try:
-                file_name = str(uuid.uuid4()) + ".xlsx"
+                if excel_file_name:
+                    file_name = excel_file_name
+                else:
+                    file_name = str(uuid.uuid4()) + ".xlsx"
                 local_filename = os.path.join(tmpdir, file_name)
                 with requests.get(excel_file_url, stream=True) as r:
                     r.raise_for_status()
@@ -136,3 +157,41 @@ class Excel2Figure(Component):
             logging.warning(
                     f"failed to generate figure for query={query}, excel_file_url={excel_file_url}")
         return Message(figure_url)
+
+    def tool_eval(
+        self,
+        streaming: bool,
+        origin_query: str,
+		file_urls: dict,
+        **kwargs,
+    ):
+        """
+        tool eval
+        """
+        query = kwargs.get("query", "")
+        if not query:
+            query = origin_query
+        try:
+            if len(file_urls) != 1:
+                raise ValueError(f"仅支持file_urls有且仅有一个文件，len(file_urls)={len(file_urls)}") 
+            excel_file_name, excel_file_url = list(file_urls.items())[0]
+            result_msg = self._run_excel2figure(
+            	query=query, 
+				excel_file_url=excel_file_url, 
+				model=self.model,
+				excel_file_name=excel_file_name)
+            
+            if not result_msg.content:
+                raise RuntimeError(f"未能成功绘制图表，请调整query后重试")
+
+            result = {
+                'event': 'excel_to_figure',
+                'type': 'files',
+                'text': [result_msg.content],
+            }
+        except Exception as e:
+            result = f'绘制图表时发生错误：{e}'
+        if streaming:
+            yield result
+        else:
+            return result
