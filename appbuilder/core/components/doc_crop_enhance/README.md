@@ -1,7 +1,7 @@
-# 文档矫正增强 (DocEnhance) 
+# 文档矫正增强 (DocCropEnhance) 
 
 ## 简介
-文档矫正增强 (DocEnhance) 可对图片中的文件、卡证、票据等内容进行四角点检测定位，提取主体内容并对其进行矫正，同时可选图片增强效果进一步提升图片清晰度，达到主体检测矫正并增强的目的，提升图片整体质量
+文档矫正增强 (DocCropEnhance) 可对图片中的文件、卡证、票据等内容进行四角点检测定位，提取主体内容并对其进行矫正，同时可选图片增强效果进一步提升图片清晰度，达到主体检测矫正并增强的目的，提升图片整体质量
 ### 功能介绍
 * 文档矫正增强
 
@@ -33,9 +33,9 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/doc_enhance_test.png?" \
             "be8abf28df78010f865e45dfcd6dc3951"
 raw_image = requests.get(image_url).content
 # 创建文档矫正增强组件实例
-doc_enhance = appbuilder.DocEnhance()
+doc_crop_enhance = appbuilder.DocCropEnhance()
 # 执行操作并获取结果
-out = doc_enhance.run(appbuilder.Message(content={"raw_image": raw_image}),enhance_type=3)
+out = doc_crop_enhance.run(appbuilder.Message(content={"raw_image": raw_image}),enhance_type=3)
 print(out.content)
 ```
 

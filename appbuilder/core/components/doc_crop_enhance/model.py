@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""doc_enhance model."""
+"""doc_crop_enhance model."""
 import proto
 
 from typing import List, Dict
 from pydantic import BaseModel
 
 
-class DocEnhanceRequest(proto.Message):
+class DocCropEnhanceRequest(proto.Message):
     r"""文档矫正增强请求体参数.
             属性:
                 image (str):
@@ -58,7 +58,7 @@ class DocEnhanceRequest(proto.Message):
     )
 
 
-class DocEnhanceResponse(proto.Message):
+class DocCropEnhanceResponse(proto.Message):
     """文档矫正增强识别响应消息。
 
         属性:
@@ -105,7 +105,7 @@ class DocLocation(proto.Message):
     )
 
 
-class DocEnhanceInMsg(BaseModel):
+class DocCropEnhanceInMsg(BaseModel):
     """ 文档矫正增强识别输入消息
 
         属性:
@@ -122,7 +122,7 @@ class DocEnhanceInMsg(BaseModel):
     url: str = ""
 
 
-class DocEnhanceOutMsg(BaseModel):
+class DocCropEnhanceOutMsg(BaseModel):
     """ 文档矫正增强识别响应体
 
         属性:

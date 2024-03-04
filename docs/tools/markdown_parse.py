@@ -19,7 +19,7 @@ sdk_code_dict = {
     "animal_recognize": "animal_recognize",
     "asr": "asr",
     "dish_recognize": "dish_recognize",
-    "doc_enhance": "doc_enhance",
+    "doc_crop_enhance": "doc_crop_enhance",
     "doc_parser": "doc_parser",
     "doc_splitter": "doc_splitter",
     "embeddings": "embeddings",
