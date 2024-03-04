@@ -172,8 +172,8 @@ class AgentRuntime(BaseModel):
         extra = Extra.forbid # 不能传入类定义中未声明的字段
         arbitrary_types_allowed = True # 此设置允许在模型中使用自定义类型的字段
 
-    @classmethod
     @model_validator(mode='before')
+    @classmethod
     def init(cls, values: Dict) -> Dict:
         """
         初始化 AgentRuntime，UserSession 会在这里被初始化
@@ -277,7 +277,8 @@ class AgentRuntime(BaseModel):
                                 iterator = iter(stream_message.content)
                                 prev_result = {
                                     "content": next(iterator),
-                                    "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
+                                    "extra": stream_message.extra if hasattr(stream_message, "extra") else {},
+                                    "token_usage": stream_message.token_usage if hasattr(stream_message, "token_usage") else {},
                                 }
                                 for sub_content in iterator:
                                     logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
@@ -291,7 +292,8 @@ class AgentRuntime(BaseModel):
                                         }, ensure_ascii=False) + "\n\n"
                                     prev_result = {
                                         "content": sub_content,
-                                        "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
+                                        "extra": stream_message.extra if hasattr(stream_message, "extra") else {},
+                                        "token_usage": stream_message.token_usage if hasattr(stream_message, "token_usage") else {},
                                     }
                                 logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
                                 yield "data: " + json.dumps({
@@ -384,3 +386,4 @@ class AgentRuntime(BaseModel):
             runner = CliRunner()
             runner.invoke(
                 chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
+

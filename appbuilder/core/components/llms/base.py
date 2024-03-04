@@ -35,9 +35,11 @@ from appbuilder.core._exception import AppBuilderServerException, ModelNotSuppor
 class LLMMessage(Message):
     content: Optional[_T] = {}
     extra: Optional[Dict] = {}
+    token_usage: Optional[Dict] = {}
 
     def __str__(self):
-        return f"Message(name={self.name}, content={self.content}, mtype={self.mtype}, extra={self.extra})"
+        return f"Message(name={self.name}, content={self.content}, " \
+               f"mtype={self.mtype}, extra={self.extra}, token_usage={self.token_usage})"
 
 
 class CompletionRequest(object):
@@ -65,6 +67,7 @@ class CompletionResponse(object):
     result = None
     log_id = ""
     extra = None
+    token_usage = {}
 
     def __init__(self, response, stream: bool = False):
         """初始化客户端状态。"""
@@ -72,6 +75,7 @@ class CompletionResponse(object):
         self.error_msg = ""
         self.log_id = response.headers.get("X-Appbuilder-Request-Id", None)
         self.extra = {}
+        self.token_usage = {}
 
         if stream:
             # 流式数据处理
@@ -111,6 +115,7 @@ class CompletionResponse(object):
                         result_list = trace_log["result"]
                         result_list = ResultProcessor.process(key, result_list)
                         self.extra[key] = result_list
+                self.token_usage = data.get("usage", {})
 
     def parse_stream_data(self, event):
         """解析流式数据块并提取answer字段"""
@@ -154,6 +159,7 @@ class CompletionResponse(object):
         message.id = self.log_id
         message.content = self.result
         message.extra = self.extra
+        message.token_usage = self.token_usage
         return self.message_iterable_wrapper(message)
 
     def message_iterable_wrapper(self, message):
@@ -166,7 +172,7 @@ class CompletionResponse(object):
             def __init__(self, stream_content):
                 self._content = stream_content
                 self._concat = ""
-                self._extra = {}
+                self._token_usage = {}
 
             def __iter__(self):
                 return self
@@ -179,8 +185,12 @@ class CompletionResponse(object):
                     key = result_json.get("tool")
                     if result_list is not None:
                         result_list = ResultProcessor.process(key, result_list)
-                        self._extra[key] = result_list
-                        message.extra = self._extra  # Update the original extra
+                        message.extra = {key: result_list}  # Update the original extra
+                    else:
+                        message.extra = {}
+                    if "usage" in result_json:
+                        self._token_usage = result_json.get("usage")
+                        message.token_usage = self._token_usage
                     self._concat += char
                     return char
                 except StopIteration:
@@ -390,3 +400,4 @@ class CompletionBaseComponent(Component):
         if "err_no" in data and "err_msg" in data:
             if data["err_no"] != 0:
                 raise AppBuilderServerException(service_err_code=data["err_no"], service_err_message=data["err_msg"])
+
