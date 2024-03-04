@@ -203,7 +203,7 @@ class AgentRuntime(BaseModel):
         """
         return self.component.run(message=message, stream=stream, **args)
         
-    def create_flask_app(self):
+    def create_flask_app(self, url_rule="/chat"):
         """ 
         创建 Flask 应用，主要用于 Gunicorn 这样的 WSGI 服务器来运行服务。
         
@@ -232,7 +232,6 @@ class AgentRuntime(BaseModel):
         def handle_bad_request(e):
             return {"code": 1000, "message": f'{e}', "result": None}, 200
 
-        @app.route('/chat', methods=['POST'])
         def warp():
             # 根据component是否lazy_certification，分成两种情况：
             # 1. lazy_certification为True，初始化时未被认证，每次请求都需要带入AppbuilderToken
@@ -324,9 +323,11 @@ class AgentRuntime(BaseModel):
             except Exception as e:
                 logging.error(f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
                 raise RuntimeError(e)
+
+        app.add_url_rule(url_rule, 'chat', warp, methods=['POST'])
         return app
 
-    def serve(self, host='0.0.0.0', debug=True, port=8092):
+    def serve(self, host='0.0.0.0', debug=True, port=8092, url_rule="/chat"):
         """ 
         将 component 服务化，提供 Flask http API 接口
         
@@ -338,7 +339,7 @@ class AgentRuntime(BaseModel):
         Returns:
             None
         """
-        app = self.create_flask_app()
+        app = self.create_flask_app(url_rule=url_rule)
         app.run(host=host, debug=debug, port=port)
         
     def chainlit_demo(self, host='0.0.0.0', port=8091):
