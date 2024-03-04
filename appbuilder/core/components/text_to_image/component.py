@@ -27,7 +27,7 @@ from appbuilder.core.components.text_to_image.model import Text2ImageSubmitReque
 
 class Text2Image(Component):
     r"""
-    AI作画组件，即对于输入的文本，输出生成的图片url。
+    文生图组件，即对于输入的文本，输出生成的图片url。
 
     Examples:
 
@@ -106,7 +106,7 @@ class Text2Image(Component):
                              retry: int = 0) -> Text2ImageSubmitResponse:
 
         """
-        使用给定的输入并返回AI作画的任务信息。
+        使用给定的输入并返回文生图的任务信息。
 
         参数:
             request (obj:`Text2ImageSubmitRequest`): 输入请求，这是一个必需的参数。
@@ -136,7 +136,7 @@ class Text2Image(Component):
                             retry: int = 0) -> Text2ImageQueryResponse:
 
         """
-        使用给定的输入并返回AI作画的结果。
+        使用给定的输入并返回文生图的结果。
 
         参数:
             request (obj:`Text2ImageQueryRequest`): 输入请求，这是一个必需的参数。
@@ -214,7 +214,7 @@ class Text2Image(Component):
         r"""个性化服务response参数检查
 
             参数:
-                request (dict) : AI作画生成结果body返回
+                request (dict) : 文生图生成结果body返回
             返回：
                 无
         """
