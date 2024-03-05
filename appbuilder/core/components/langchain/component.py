@@ -18,21 +18,19 @@ import base64
 from appbuilder.core.component import Component
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core.message import Message
-from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException
 
-from typing import Dict, List, Optional, Any
+from typing import Optional
 from langchain_community.tools import BaseTool
 from copy import deepcopy
 
 class LangChainToolWrapper(Component):
     def __init__(
             self,
+            langchain_tool: None,
             meta: Optional[ComponentArguments] = ComponentArguments(),
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = False,
-            langchain_tool: BaseTool() = None,
     ):
         self.langchain_tool = langchain_tool
         tmp_meta = self._parse_langchain_schema()
