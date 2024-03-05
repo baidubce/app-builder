@@ -116,70 +116,18 @@ print(similar_q(input))
 #### 检索增强问答(Chat RAG)
 ```python
 import appbuilder
-from pathlib import Path
+import os
 
-cluster_id = "your_bes_cluster_id"
-username = "your_bes_cluster_username"
-password = "your_bes_cluster_password"
+# 此处APPBUILDER_TOKEN为限制QPS的试用账号，请在测试您自己的应用时替换为自己的账号Token
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-V3xPTLgugTepGXYzJJAPQ/1c6eb19cb7df08b1e26b8fb7c2113ce555b3d62c"
 
-# 基于doc_parser和doc_splitter解
-# 析file_path文件为若干个段落
-def parse_file(file_path, doc_parser, doc_splitter):
-    input_msg = appbuilder.Message(str(file_path))
-    doc_parser_result = doc_parser(input_msg, return_raw=True)
-    doc_splitter_result = doc_splitter(doc_parser_result)
-    return [f"{file_path.name}+{para['text'][:384]}" 
-            for para in doc_splitter_result.content["paragraphs"]]
-
-# 文档切分的分块大小，每个分块最大340个字符
-chunk_size = 340
-# 声明文档解析和文档切分组件
-doc_parser = appbuilder.DocParser()
-doc_splitter = appbuilder.DocSplitter(splitter_type="split_by_chunk", max_segment_length=chunk_size)       
-
-file_dir = "./files"
-# 批量解析，形成段落切片列表
-paragraphs = [para_text for file in Path(file_dir).iterdir() if file.is_file()
-            for para_text in parse_file(file, doc_parser, doc_splitter)]
-
-# 默认使用erniebot-embedding-v1
-embedding = appbuilder.Embedding()
-
-# 将段落切片列表入库到BESVectorStoreIndex，这里面用到的Baidu Elastic Search服务
-segments = appbuilder.Message(resume_paragraphs)
-vector_index = appbuilder.BESVectorStoreIndex.from_segments(
-    segments=segments, cluster_id=cluster_id, user_name=username, 
-    password=password, embedding=embedding)
-
-# 在线检索部分
-retriever = vector_index.as_retriever()
-
-input_msg = appbuilder.Message("appbuilder是什么？")
-result_list = retriever(query=input_msg, top_k=3)
-context_msg = appbuilder.Message([item["text"] for item in result_list])
-
-mrc = appbuilder.MRC()
-rag_result = mrc(input_msg, context_msg)
-
-print(rag_result.content)
-
-```
-
-#### AI能力引擎(AI Engine)
-```python
-import appbuilder
-import requests
-
-# 语音识别组件
-audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
-                   "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
-                   "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
-audio_data = requests.get(audio_file_url).content
-
-asr = appbuilder.ASR()
-inp = appbuilder.Message(content={"raw_audio": audio_data})
-asr_out = asr(inp)
-print(asr_out.content)
+# 此处填写线上RAG应用ID，可在【AppBuilder网页端-我的应用界面】查看
+# 网页链接 https://console.bce.baidu.com/ai_apaas/app
+app_id = "18c7893e-b9ff-473b-8b36-98bc2d07e72b"
+rag_app = appbuilder.console.RAG(app_id)
+query = "中国的首都在哪里"
+answer = rag_app.run(appbuilder.Message(query)) # 新建对话
+print(answer.content)
 ```
 
 ## 应用服务化

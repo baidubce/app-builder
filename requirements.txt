@@ -6,3 +6,4 @@ SQLAlchemy~=1.4.50
 urllib3<2.0.0
 tenacity
 pandas
+chainlit
