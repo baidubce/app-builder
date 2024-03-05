@@ -22,7 +22,7 @@ import tempfile
 import requests
 import logging
 import pandas as pd
-
+from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
 from appbuilder.core.utils import ModelInfo
@@ -38,6 +38,9 @@ class Excel2FigureArgs(ComponentArguments):
 
 class Excel2Figure(Component):
     meta = Excel2FigureArgs
+    model_type: str = "chat"
+    excluded_models: List[str] = ["Yi-34B-Chat", "ChatLaw"]
+    model_info: ModelInfo = None
     manifests = [
         {
             "name": "excel_to_figure",
@@ -57,11 +60,39 @@ class Excel2Figure(Component):
         }
     ]
 
-    def __init__(self, model: str):
-        super().__init__(meta=Excel2FigureArgs)
+    def __init__(
+        self, 
+        model: str,
+        secret_key: Optional[str] = None,
+        gateway: str = "",
+        lazy_certification: bool = False,
+    ):
+        super().__init__(
+            meta=Excel2FigureArgs, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
         self.model = model
-        self.model_info = ModelInfo(client=self.http_client)
+        if not lazy_certification:
+            self._check_model_and_get_model_url(self.model, self.model_type)
         self.server_sub_path = "/v1/ai_engine/copilot_engine/v1/api/agent/excel2figure"
+
+    def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
+        super(Excel2Figure, self).set_secret_key_and_gateway(
+                secret_key=secret_key, gateway=gateway)
+        self.__class__.model_info = ModelInfo(client=self.http_client)
+
+    def _check_model_and_get_model_url(self, model, model_type):
+        if model and model in self.excluded_models:
+            raise ModelNotSupportedException(f"Model {model} not supported")
+        if not model:
+            raise ValueError("model must be provided")
+        if self.__class__.model_info is None:
+            self.set_secret_key_and_gateway()
+        m_type = self.model_info.get_model_type(model)
+        if m_type != model_type:
+            raise ModelNotSupportedException(
+                f"Model {model} with type [{m_type}] not supported, only support {model_type} type")
+
+        model_url = self.model_info.get_model_url(model)
+        return model_url
 
     def run(self, message: Message) -> Message:
         """
@@ -125,14 +156,14 @@ class Excel2Figure(Component):
             file_contents.append("")
             file_content = "\n".join(file_contents)
 
-            model_url = self.model_info.get_model_url(model)
+            model_url = self._check_model_and_get_model_url(self.model, self.model_type)
             payload = {
                 "query": query,
                 "response_mode": "blocking",
                 "user": str(uuid.uuid4()),
                 "inputs": {
                     "code_interpreter.files": [{
-                        "url": excel_file_url,
+                        "url": str(excel_file_url),
                         "name": file_name,
                     }],
                     "code_interpreter.doc_content": file_content,
