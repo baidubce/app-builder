@@ -119,11 +119,11 @@ import appbuilder
 import os
 
 # 此处APPBUILDER_TOKEN为限制QPS的试用账号，请在测试您自己的应用时替换为自己的账号Token
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-V3xPTLgugTepGXYzJJAPQ/1c6eb19cb7df08b1e26b8fb7c2113ce555b3d62c"
+os.environ["APPBUILDER_TOKEN"] = ""
 
 # 此处填写线上RAG应用ID，可在【AppBuilder网页端-我的应用界面】查看
 # 网页链接 https://console.bce.baidu.com/ai_apaas/app
-app_id = "18c7893e-b9ff-473b-8b36-98bc2d07e72b"
+app_id = ""
 rag_app = appbuilder.console.RAG(app_id)
 query = "中国的首都在哪里"
 answer = rag_app.run(appbuilder.Message(query)) # 新建对话
