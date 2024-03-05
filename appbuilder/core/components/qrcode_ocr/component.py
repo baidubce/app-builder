@@ -165,6 +165,6 @@ class QRcodeOCR(Component):
             resp = self._recognize(req)
             result[file_name] = proto.Message.to_dict(resp)
         if streaming:
-            yield json.dumps(result)
+            yield json.dumps(result, ensure_ascii=False)
         else:
-            return json.dumps(result)
+            return json.dumps(result, ensure_ascii=False)
