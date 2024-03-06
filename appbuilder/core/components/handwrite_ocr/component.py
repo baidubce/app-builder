@@ -99,6 +99,7 @@ class HandwriteOCR(Component):
         return Message(content=out.model_dump())
 
     def tool_eval(self, name: str, streaming: bool, **kwargs):
+
         result = {}
         file_names = kwargs.get("file_names", None)
         if not file_names:
