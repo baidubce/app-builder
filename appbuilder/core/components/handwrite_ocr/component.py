@@ -99,6 +99,7 @@ class HandwriteOCR(Component):
         return Message(content=out.model_dump())
 
     def tool_eval(self, name: str, streaming: bool, **kwargs):
+
         result = {}
         file_names = kwargs.get("file_names", None)
         if not file_names:
@@ -108,6 +109,24 @@ class HandwriteOCR(Component):
             file_url = file_urls.get(file_name, None)
             if file_url is None:
                 raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+            req = HandwriteOCRRequest()
+            req.url = file_url
+            req.recognize_granularity = "big"
+            req.probability = "false"
+            req.detect_direction = "true"
+            req.detect_alteration = "true"
+            response = self._recognize(req)
+            out = HandwriteOCROutMsg()
+            out.direction = response.direction
+            [out.contents.append(
+                Content(text=w.words))
+                for w in response.words_result]
+            result[file_name] = out.dict()
+
+        if streaming:
+            yield json.dumps(result, ensure_ascii=False)
+        else:
+            return json.dumps(result, ensure_ascii=False)
 
     def _recognize(self, request: HandwriteOCRRequest, timeout: float = None, retry: int = 0) -> HandwriteOCRResponse:
         r"""调用底层接口进行通用文字识别
@@ -149,29 +168,4 @@ class HandwriteOCR(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
-
-            req = HandwriteOCRRequest()
-            req.url = file_url
-            req.recognize_granularity = "big"
-            req.probability = "false"
-            req.detect_direction = "true"
-            req.detect_alteration = "true"
-            response = self._recognize(req)
-            out = HandwriteOCROutMsg()
-            out.direction = response.direction
-            [out.contents.append(
-                Content(text=w.words,
-                        position=Position(
-                            left=w.location.left,
-                            top=w.location.top,
-                            width=w.location.width,
-                            height=w.location.height
-                        )))
-                for w in response.words_result]
-            result[file_name] = out.dict()
-
-        if streaming:
-            yield json.dumps(result)
-        else:
-            return json.dumps(result)
 

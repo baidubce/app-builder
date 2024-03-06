@@ -14,7 +14,7 @@
 
 """手写文字识别数据类"""
 import proto
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -218,7 +218,6 @@ class HandwriteOCRInMsg(BaseModel):
     url: str = ""  # 图片可下载链接
 
 
-
 class Position(BaseModel):
     """位置信息
 
@@ -243,7 +242,7 @@ class Content(BaseModel):
             position(Position): 文字内容的位置信息
     """
     text: str
-    position: Position
+    position: Optional[Position] = None
 
 
 class HandwriteOCROutMsg(BaseModel):

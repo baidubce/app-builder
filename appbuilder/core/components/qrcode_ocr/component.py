@@ -148,7 +148,7 @@ class QRcodeOCR(Component):
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         result = {}
         file_names = kwargs.get("file_names", None)
-        location = kwargs.get("locations", "true")
+        location = kwargs.get("locations", "false")
         if not file_names:
             file_names = kwargs.get("files")
 
@@ -163,8 +163,8 @@ class QRcodeOCR(Component):
                 raise InvalidRequestArgumentError("location must be a string with value 'true' or 'false'")
             req.location = location
             resp = self._recognize(req)
-            result[file_name] = proto.Message.to_dict(resp)
+            result[file_name] = proto.Message.to_dict(resp)["codes_result"]
         if streaming:
-            yield json.dumps(result)
+            yield json.dumps(result, ensure_ascii=False)
         else:
-            return json.dumps(result)
+            return json.dumps(result, ensure_ascii=False)
