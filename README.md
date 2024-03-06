@@ -134,6 +134,13 @@ print(answer.content)
 
 AppBuilder-SDK提供对组件的服务化能力。通过定义Agent，开发者可以快速启动Chainlit、Flask等服务化的Demo或API提供快速体验环境。
 
+在需要部署服务的环境中，开发者需要首先手动安装 Chainlit 库
+
+```shell
+pip install chainlit
+```
+而后，使用AppBuilder的Agent服务化功能，即可快速部署服务
+
 ```python
 import appbuilder
 
