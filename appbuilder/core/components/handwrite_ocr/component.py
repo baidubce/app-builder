@@ -118,13 +118,7 @@ class HandwriteOCR(Component):
             out = HandwriteOCROutMsg()
             out.direction = response.direction
             [out.contents.append(
-                Content(text=w.words,
-                        position=Position(
-                            left=w.location.left,
-                            top=w.location.top,
-                            width=w.location.width,
-                            height=w.location.height
-                        )))
+                Content(text=w.words))
                 for w in response.words_result]
             result[file_name] = out.dict()
 

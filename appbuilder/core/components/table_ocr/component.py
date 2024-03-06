@@ -143,6 +143,36 @@ class TableOCR(Component):
                 service_err_message=data.get("error_msg")
             )
 
+    def get_table_markdown(self, tables_result):
+        """
+        根据识别到的表格等结果转化成markdown
+        :param tables_result:
+        :return:
+        """
+        markdowns = []
+        for table in tables_result:
+            cells = table["body"]
+            max_row = max(cell['row_end'] for cell in cells)
+            max_col = max(cell['col_end'] for cell in cells)
+            # 初始化表格数组
+            table_arr = [[''] * max_col for _ in range(max_row)]
+            # 填充表格数据
+            for cell in cells:
+                row = cell['row_start']
+                col = cell['col_start']
+                table_arr[row][col] = cell['words']
+
+            markdown_table = ""
+            for row in table_arr:
+                markdown_table += "| " + " | ".join(row) + " |\n"
+            # 生成分隔行
+            separator = "| " + " | ".join(['---'] * max_col) + " |\n"
+            # 插入分隔行在表头下方
+            header, body = markdown_table.split('\n', 1)
+            markdown_table = header + '\n' + separator + body
+            markdowns.append(markdown_table)
+        return markdowns
+
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         result = {}
         file_names = kwargs.get("file_names", None)
@@ -157,7 +187,9 @@ class TableOCR(Component):
             req.url = file_url
             req.cell_contents = "false"
             resp = self._recognize(req)
-            result[file_name] = proto.Message.to_dict(resp)
+            tables_result = proto.Message.to_dict(resp)["tables_result"]
+            markdowns = self.get_table_markdown(tables_result)
+            result[file_name] = markdowns
         if streaming:
             yield json.dumps(result, ensure_ascii=False)
         else:

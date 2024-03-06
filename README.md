@@ -146,7 +146,7 @@ paragraphs = [para_text for file in Path(file_dir).iterdir() if file.is_file()
 embedding = appbuilder.Embedding()
 
 # 将段落切片列表入库到BESVectorStoreIndex，这里面用到的Baidu Elastic Search服务
-segments = appbuilder.Message(resume_paragraphs)
+segments = appbuilder.Message(paragraphs)
 vector_index = appbuilder.BESVectorStoreIndex.from_segments(
     segments=segments, cluster_id=cluster_id, user_name=username, 
     password=password, embedding=embedding)

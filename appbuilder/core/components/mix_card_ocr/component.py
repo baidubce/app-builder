@@ -173,12 +173,8 @@ class MixCardOCR(Component):
                 ref = out.front
                 if card_type == "idcard_back":
                     ref = out.back
-                loc = res.card_info.card_location
-                ref.position = MixCardPosition(left=loc.left, top=loc.top, width=loc.width, height=loc.height)
                 for key, val in res.card_result.items():
-                    position = MixCardPosition(left=val.location.left, top=val.location.top, width=val.location.width,
-                                               height=val.location.height)
-                    ref.fields.append(MixCardField(key=key, value=val.words, position=position))
+                    ref.fields.append(MixCardField(key=key, value=val.words, position=None))
             out.direction = response.direction
             result[file_name] = out.dict()
 
