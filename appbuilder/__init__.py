@@ -81,6 +81,7 @@ from .core.components.handwrite_ocr.component import HandwriteOCR
 from .core.components.image_understand.component import ImageUnderstand
 from .core.components.mix_card_ocr.component import MixCardOCR
 
+from .core.components.langchain.component import LangChainToolWrapper
 
 from appbuilder.core.message import Message
 from appbuilder.core.agent import AgentRuntime
@@ -141,15 +142,16 @@ __all__ = [
     'Message',
     'AnimalRecognition',
     'DocCropEnhance',
-    QRcodeOCR,
-    TableOCR,
+    "QRcodeOCR",
+    "TableOCR",
 
     'Embedding',
 
     'Matching',
 
     "PlantRecognition",
-    HandwriteOCR,
+    "HandwriteOCR",
     "ImageUnderstand",
-    MixCardOCR,
+    "MixCardOCR",
+    "LangChainToolWrapper",
 ]
