@@ -279,8 +279,8 @@ class AgentRuntime(BaseModel):
                                 iterator = iter(stream_message.content)
                                 prev_result = {
                                     "content": next(iterator),
-                                    "extra": stream_message.extra if hasattr(stream_message, "extra") else {},
-                                    "token_usage": stream_message.token_usage if hasattr(stream_message, "token_usage") else {},
+                                    "extra": getattr(stream_message, "extra", None),
+                                    "token_usage": getattr(stream_message, "token_usage", {}),
                                 }
                                 for sub_content in iterator:
                                     logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
@@ -294,8 +294,8 @@ class AgentRuntime(BaseModel):
                                         }, ensure_ascii=False) + "\n\n"
                                     prev_result = {
                                         "content": sub_content,
-                                        "extra": stream_message.extra if hasattr(stream_message, "extra") else {},
-                                        "token_usage": stream_message.token_usage if hasattr(stream_message, "token_usage") else {},
+                                        "extra": getattr(stream_message, "extra", None),
+                                        "token_usage": getattr(stream_message, "token_usage", {}),
                                     }
                                 logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
                                 yield "data: " + json.dumps({
