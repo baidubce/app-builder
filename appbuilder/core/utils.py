@@ -13,7 +13,7 @@
 # limitations under the License.
 import itertools
 from typing import List
-
+from urllib.parse import urlparse
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import TypeNotSupportedException, ModelNotSupportedException
 from appbuilder.utils.model_util import GetModelListRequest, Models, model_name_mapping
@@ -61,6 +61,16 @@ def convert_cloudhub_url(client: HTTPClient, qianfan_url: str) -> str:
         raise ValueError(f"{qianfan_url} is not a valid qianfan url")
     url_suffix = qianfan_url[index + len(qianfan_url_prefix):]
     return "{}/{}{}".format(client.gateway, cloudhub_url_prefix, url_suffix)
+
+
+def is_url(string):
+    """
+    判断字符串是否是URL
+    :param string:
+    :return:
+    """
+    result = urlparse(string)
+    return all([result.scheme, result.netloc])
 
 
 class ModelInfo:
