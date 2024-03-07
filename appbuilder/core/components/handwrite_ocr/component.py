@@ -18,6 +18,7 @@ from appbuilder.core.component import Component
 from appbuilder.core.components.handwrite_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
+from appbuilder.core import utils
 
 class HandwriteOCR(Component):
     r""" 手写文字识别组件
@@ -106,7 +107,10 @@ class HandwriteOCR(Component):
             file_names = kwargs.get("files")
         file_urls = kwargs.get("file_urls", {})
         for file_name in file_names:
-            file_url = file_urls.get(file_name, None)
+            if utils.is_url(file_name):
+                file_url = file_name
+            else:
+                file_url = file_urls.get(file_name, None)
             if file_url is None:
                 raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
             req = HandwriteOCRRequest()

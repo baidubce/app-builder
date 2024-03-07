@@ -17,6 +17,7 @@
 import base64
 import json
 
+from appbuilder.core import utils
 from appbuilder.core.component import Component
 from appbuilder.core.components.qrcode_ocr.model import *
 from appbuilder.core.message import Message
@@ -154,7 +155,10 @@ class QRcodeOCR(Component):
 
         file_urls = kwargs.get("file_urls", {})
         for file_name in file_names:
-            file_url = file_urls.get(file_name, None)
+            if utils.is_url(file_name):
+                file_url = file_name
+            else:
+                file_url = file_urls.get(file_name, None)
             if file_url is None:
                 raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
             req = QRcodeRequest()
