@@ -228,9 +228,12 @@ class AgentRuntime(BaseModel):
         def handle_bad_request(e):
             return {"code": 400, "message": f'{e}', "result": None}, 400
             
-        @app.errorhandler(RuntimeError)
+        @app.errorhandler(Exception)
         def handle_bad_request(e):
-            return {"code": 1000, "message": f'{e}', "result": None}, 200
+            if hasattr(e, "code"):
+                return {"code": e.code, "message": str(e), "result": None}, 200
+            else:
+                return {"code": 500, "message": "Internal Server Error", "result": None}, 200
 
         def warp():
             # 根据component是否lazy_certification，分成两种情况：
@@ -305,7 +308,8 @@ class AgentRuntime(BaseModel):
                                     }, ensure_ascii=False) + "\n\n"
                                 self.user_session._post_append()
                             except Exception as e:
-                                err_resp = {"code": 1000, "message": str(e), "result": None}
+                                code = 500 if not hasattr(e, "code") else e.code
+                                err_resp = {"code": code, "message": str(e), "result": None}
                                 logging.error(f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
                                 yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
                     return Response(
@@ -322,7 +326,7 @@ class AgentRuntime(BaseModel):
                     }
             except Exception as e:
                 logging.error(f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
-                raise RuntimeError(e)
+                raise e
 
         app.add_url_rule(url_rule, 'chat', warp, methods=['POST'])
         return app
