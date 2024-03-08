@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import sys
+import copy
 import os 
 import logging
 import uuid
@@ -276,34 +277,29 @@ class AgentRuntime(BaseModel):
                     def gen_sse_resp(stream_message):
                         with app.app_context():
                             try:
-                                iterator = iter(stream_message.content)
-                                prev_result = {
-                                    "content": next(iterator),
-                                    "extra": getattr(stream_message, "extra", None),
-                                    "token_usage": getattr(stream_message, "token_usage", {}),
-                                }
-                                for sub_content in iterator:
+                                content_iterator = iter(stream_message.content)
+                                prev_content = next(content_iterator)
+                                prev_result = copy.deepcopy(stream_message)
+                                prev_result.content = prev_content
+                                for sub_content in content_iterator:
                                     logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
                                     yield "data: " + json.dumps({
                                             "code": 0, "message": "", 
                                             "result": {
                                                 "session_id": session_id, 
                                                 "is_completion": False, 
-                                                "answer_message": prev_result
+                                                "answer_message": json.loads(prev_result.json(exclude_none=True))
                                             }
                                         }, ensure_ascii=False) + "\n\n"
-                                    prev_result = {
-                                        "content": sub_content,
-                                        "extra": getattr(stream_message, "extra", None),
-                                        "token_usage": getattr(stream_message, "token_usage", {}),
-                                    }
+                                    prev_result = copy.deepcopy(stream_message)
+                                    prev_result.content = sub_content
                                 logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
                                 yield "data: " + json.dumps({
                                         "code": 0, "message": "", 
                                         "result": {
                                             "session_id": session_id, 
                                             "is_completion": True, 
-                                            "answer_message": prev_result
+                                            "answer_message": json.loads(prev_result.json(exclude_none=True))
                                         }
                                     }, ensure_ascii=False) + "\n\n"
                                 self.user_session._post_append()
@@ -317,7 +313,7 @@ class AgentRuntime(BaseModel):
                         {'Content-Type': 'text/event-stream; charset=utf-8'},
                     )
                 else:
-                    blocking_result = json.loads(answer.json(exclude_none=True))
+                    blocking_result = json.loads(copy.deepcopy(answer).json(exclude_none=True))
                     logging.info(f"[request_id={request_id}, session_id={session_id}] blocking_result={blocking_result}")
                     self.user_session._post_append()
                     return {

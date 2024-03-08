@@ -17,6 +17,8 @@ import uuid
 from enum import Enum
 import logging
 import requests
+import copy
+import collections.abc
 from appbuilder.core.constants import GATEWAY_URL, GATEWAY_INNER_URL
 from pydantic import BaseModel, Field, ValidationError, HttpUrl, validator
 from pydantic.types import confloat
@@ -40,6 +42,16 @@ class LLMMessage(Message):
     def __str__(self):
         return f"Message(name={self.name}, content={self.content}, " \
                f"mtype={self.mtype}, extra={self.extra}, token_usage={self.token_usage})"
+    
+    def __deepcopy__(self, memo):
+        new_instance = self.__class__()
+        memo[id(self)] = new_instance
+        for k, v in self.__dict__.items():
+            if k == "content" and isinstance(v, collections.abc.Iterator):
+                pass
+            else:
+                setattr(new_instance, k, copy.deepcopy(v, memo))
+        return new_instance
 
 
 class CompletionRequest(object):
