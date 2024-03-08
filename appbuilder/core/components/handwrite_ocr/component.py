@@ -120,12 +120,7 @@ class HandwriteOCR(Component):
             req.detect_direction = "true"
             req.detect_alteration = "true"
             response = self._recognize(req)
-            out = HandwriteOCROutMsg()
-            out.direction = response.direction
-            [out.contents.append(
-                Content(text=w.words))
-                for w in response.words_result]
-            result[file_name] = out.dict()
+            result[file_name] = [w.words for w in response.words_result]
 
         if streaming:
             yield json.dumps(result, ensure_ascii=False)
