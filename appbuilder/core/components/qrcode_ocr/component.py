@@ -167,7 +167,7 @@ class QRcodeOCR(Component):
                 raise InvalidRequestArgumentError("location must be a string with value 'true' or 'false'")
             req.location = location
             resp = self._recognize(req)
-            result[file_name] = [item["text"] for item in proto.Message.to_dict(resp)["codes_result"]]
+            result[file_name] = [item["text"] for item in proto.Message.to_dict(resp).get("codes_result", [])]
         if streaming:
             yield json.dumps(result, ensure_ascii=False)
         else:
