@@ -13,6 +13,8 @@
 r"""身份证混贴识别组件"""
 import base64
 import json
+
+from appbuilder.core import utils
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
@@ -154,7 +156,10 @@ class MixCardOCR(Component):
             file_names = kwargs.get("files")
         file_urls = kwargs.get("file_urls", {})
         for file_name in file_names:
-            file_url = file_urls.get(file_name, None)
+            if utils.is_url(file_name):
+                file_url = file_name
+            else:
+                file_url = file_urls.get(file_name, None)
             if file_url is None:
                 raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
 

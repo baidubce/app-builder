@@ -27,6 +27,8 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
   * 大模型组件新增：Excel2Figure(基于Excel信息画图表)
   * AI能力引擎组件新增&更新：植物识别、动物识别、表格文字识别V2、手写文字识别、二维码识别、身份证混贴识别、文档矫正识别、图像内容理解、流式TTS
   * AgentRuntime：新增[Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/agent_runtime.ipynb)
+* **v0.4.1版本发布**
+  * 支持以下功能进行FunctionCall调用：动植物识别、表格文字识别、条形码及二维码识别、身份证混贴识别、手写文字识别、text2image、excel2figure
 
 ## 教程与文档
 
