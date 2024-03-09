@@ -194,7 +194,18 @@ class TableOCR(Component):
             tables_result = proto.Message.to_dict(resp)["tables_result"]
             markdowns = self.get_table_markdown(tables_result)
             result[file_name] = markdowns
+
+        result = json.dumps(result, ensure_ascii=False)
         if streaming:
-            yield json.dumps(result, ensure_ascii=False)
+            yield {
+                "type": "text",
+                "text": result,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": "user",
+            }
         else:
-            return json.dumps(result, ensure_ascii=False)
+            return result

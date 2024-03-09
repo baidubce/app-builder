@@ -168,7 +168,18 @@ class QRcodeOCR(Component):
             req.location = location
             resp = self._recognize(req)
             result[file_name] = [item["text"] for item in proto.Message.to_dict(resp).get("codes_result", [])]
+
+        result = json.dumps(result, ensure_ascii=False)
         if streaming:
-            yield json.dumps(result, ensure_ascii=False)
+            yield {
+                "type": "text",
+                "text": result,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": "user",
+            }
         else:
-            return json.dumps(result, ensure_ascii=False)
+            return result
