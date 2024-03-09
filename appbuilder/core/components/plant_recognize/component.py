@@ -167,8 +167,6 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             返回：
                str: 植物识别结果，包括识别出的动物类别和相应的置信度信息
          """
-        if not img_path and not img_url:
-            return "Image path and image url cannot be all empty"
         req = PlantRecognitionRequest()
         if img_path in file_urls:
             req.url = file_urls[img_path]
@@ -176,10 +174,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             req.url = img_url
         req.top_num = 6
         req.baike_num = 0
-        try:
-            result = self.__recognize(req)
-        except Exception as ex:
-            return "API call failed: {}".format(str(ex))
+        result = self.__recognize(req)
         result_dict = proto.Message.to_dict(result)
         rec_res = "模型识别结果为：\n"
         for rec_info in result_dict['result']:

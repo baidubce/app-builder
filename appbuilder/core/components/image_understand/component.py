@@ -183,18 +183,13 @@ class ImageUnderstand(Component):
             返回：
                 str: 图片内容理解结果
         """
-        if question == "":
-            return "Question cannot be empty"
         req = ImageUnderstandRequest()
         req.question = question
         if img_path in file_urls:
             req.url = file_urls[img_path]
         if img_url:
             req.url = img_url
-        try:
-            response = self.__recognize(req)
-        except Exception as ex:
-            return "API call failed: {}".format(str(ex))
+        response = self.__recognize(req)
         description_to_llm = response.result.description_to_llm
         description_processed = description_to_llm.rsplit("。", 2)[0]
         return description_processed
