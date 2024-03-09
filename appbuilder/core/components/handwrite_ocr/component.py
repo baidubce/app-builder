@@ -122,10 +122,20 @@ class HandwriteOCR(Component):
             response = self._recognize(req)
             result[file_name] = [w.words for w in response.words_result]
 
+        result = json.dumps(result, ensure_ascii=False)
         if streaming:
-            yield json.dumps(result, ensure_ascii=False)
+            yield {
+                "type": "text",
+                "text": result,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": "user",
+            }
         else:
-            return json.dumps(result, ensure_ascii=False)
+            return result
 
     def _recognize(self, request: HandwriteOCRRequest, timeout: float = None, retry: int = 0) -> HandwriteOCRResponse:
         r"""调用底层接口进行通用文字识别
