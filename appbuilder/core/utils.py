@@ -81,8 +81,6 @@ class ModelInfo:
         self.client = client
         response = Models(client).list()
         self.model_list = [*response.result.common, *response.result.custom]
-        for m in self.model_list:
-            print("support model name: {}".format(m.name))
 
     def get_model_url(self, model_name: str) -> str:
         """获取模型在工作台网关的请求url"""
