@@ -21,16 +21,105 @@ from appbuilder.core._client import HTTPClient
 
 r"""模型名称到简称的映射.
 """
-model_name_mapping = {
-    "ERNIE-Bot 4.0": "eb-4",
-    "ERNIE-Bot-8K": "eb-8k",
-    "ERNIE-Bot": "eb",
-    "ERNIE-Bot-turbo": "eb-turbo",
-    "EB-turbo-AppBuilder专用版": "ERNIE Speed-AppBuilder",
-    "ERNIE Speed-AppBuilder": "ERNIE Speed-AppBuilder",
-    "ernie_speed_appbuilder": "ERNIE Speed-AppBuilder",
-}
+# Note(chengmo): 模型名称到简称的映射，是一个1:n的映射关系，之前的假设是模型与简称一一对应
+# 实际上，模型名称和简称之间存在多对一的关系，因此这里不能仅使用一个字典来存储名称映射信息
+model_name_mapping = [
+    ("ERNIE-Bot 4.0", "eb-4"),
+    ("ERNIE-Bot-8K", "eb-8k"),
+    ("ERNIE-Bot", "eb"),
+    ("ERNIE-Bot-turbo", "eb-turbo"),
+    ("EB-turbo-AppBuilder专用版", "eb-turbo-appbuilder"),
+    ("EB-turbo-AppBuilder专用版", "ernie_speed_appbuilder"),
+    ("EB-turbo-AppBuilder专用版", "ERNIE Speed-AppBuilder"),
+]
 
+class RemoteModel(object):
+    r"""远程模型类，用于封装远程模型的名称信息.
+         参数:
+            name(str):
+                模型名称。
+            short_name(str):
+                模型简称, 可能存在多个
+         """
+    def __init__(self, remote_name: str):
+        self.remote_name = remote_name
+        self.short_names = []
+    
+    def register_short_name(self, short_name: str):
+        r"""注册模型简称.
+         参数:
+            short_name(str):
+                模型简称。
+         """
+        if short_name not in self.short_names:
+            self.short_names.append(short_name)
+
+    def get_remote_name_by_short_name(self, short_name: str) -> Optional[str]:
+        r"""根据模型简称获取模型名称.
+         参数:
+            short_name(str):
+                模型简称。
+         """
+        if short_name == "eb-turbo-appbuilder":
+            print("deprecate warning: model [eb-turbo-appbuilder] is deprecated, please use [ERNIE Speed-AppBuilder]")
+
+        if short_name in self.short_names:
+            return self.remote_name
+        return None
+
+class RemoteModelCollector():
+    r"""远程模型收集器，用于收集远程模型信息. 是一个全局单例
+    有两个核心功能：
+    1、注册远程模型名和本地short_name
+    2、根据short_name获取远程模型名
+    """
+    _instance = None
+    _initialized = False
+
+    def __init__(self):
+        if self._initialized:
+            return
+        self._initialized = True
+        self.remote_models = {}
+
+    def __new__(cls, *args, **kwargs):
+        """
+        单例模式
+        """
+        if cls._instance is None:
+            cls._instance = object.__new__(cls)
+        return cls._instance
+    
+    def register_remote_model_name(self, remote_name: str, short_name: str):
+        r"""注册远程模型名和本地short_name.
+         参数:
+            remote_name(str):
+                远程模型名称。
+            short_name(str):
+                模型简称。
+         """
+        if remote_name not in self.remote_models:
+            self.remote_models[remote_name] = RemoteModel(remote_name)
+        
+        self.remote_models[remote_name].register_short_name(short_name)
+    
+    def get_remote_name_by_short_name(self, short_name: str) -> Optional[str]:
+        r"""根据short_name获取远程模型名.
+         参数:
+            short_name(str):
+                模型简称。
+         """
+        for remote_model in self.remote_models.values():
+            remote_name = remote_model.get_remote_name_by_short_name(short_name)
+            if remote_name is not None:
+                return remote_name
+        
+        return None
+
+
+remote_model_collector = RemoteModelCollector()
+for remote_name, short_name in model_name_mapping:
+    remote_model_collector.register_remote_model_name(remote_name, short_name)
 
 class GetModelListRequest(proto.Message):
     r"""获取模型列表请求体
@@ -255,14 +344,3 @@ class Models:
                     request_id=request_id,
                     service_err_code=data["error_code"],
                     service_err_message=data["error_msg"])
-
-
-def map_model_name(model_name: str) -> str:
-    r"""模型名称映射函数
-
-        参数:
-            model_name (str) : 模型名称
-        返回：
-            str: 映射后的模型名称
-    """
-    return model_name_mapping.get(model_name, model_name)
