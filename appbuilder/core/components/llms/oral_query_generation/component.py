@@ -54,7 +54,7 @@ class OralQueryGeneration(CompletionBaseComponent):
                     '防抖 开启路径：打开「相机 > 视频 > 点击屏幕上方的“超级防抖”标识」 后置视频同时支持超级防抖和超级防抖Pro功能，开启超级'
                     '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
                     '，实时视频分享您的生活。')
-            oral_query_generation = appbuilder.OralQueryGeneration(model='eb-turbo-appbuilder')
+            oral_query_generation = appbuilder.OralQueryGeneration(model='ERNIE Speed-AppBuilder')
             answer = oral_query_generation(appbuilder.Message(text))
             print(answer.content)
     """
