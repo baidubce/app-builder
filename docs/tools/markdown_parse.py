@@ -49,12 +49,26 @@ sdk_code_dict = {
     "object_recognize": "object_recognize",
     "plant_recognize": "plant_recognize",
     "qrcode_ocr": "qrcode_ocr",
-    "rag_with_baidu_search": "rag_with_baidu_search",
+    "rag_with_baidu_search": "web_search",
     "retriever": "retriever",
     "table_ocr": "table_ocr",
-    "text_to_image": "text_to_image",
+    "text_to_image": "image",
     "translate": "translate",
-    "tts": "tts_base"
+    "tts": "tts",
+    "tts_high": "tts_high",
+    "tts_audio": "tts_audio",
+    "code_interpreter": "code_interpreter",
+    "web_pilot": "web_pilot",
+    "wolfram_alpha": "wolfram_alpha",
+    "arxiv": "arxiv",
+    "product_query": "product_query",
+    "flight_query": "flight_query",
+    "query_express_package": "query_express_package",
+    "bing_image_search": "bing_image_search",
+    "news_get": "news_get",
+    "weather_query": "weather_query",
+    "video_get": "video_get"
+
 }
 
 # 循环中的数据
@@ -174,7 +188,7 @@ def parse_file(file_path):
                     sdk_detail_sql = f"insert into sdk_detail(sdk_code, introduce, interface_doc, deploy_package, title) values('{sdk_code}','{introduce}','{interface_doc}',null,'{parsed_content.get('title')}') on conflict(sdk_code) do update set introduce='{introduce}',interface_doc='{interface_doc}',title='{parsed_content.get('title')}';"
                     sdk_detail_sqls.append(sdk_detail_sql)
                     remark = parsed_content.get('remark').replace('\n', '')
-                    sdk_component_sql = f"update sdk_component set name = '{parsed_content.get('name')}',remark='{remark}' where sdk_code = '{sdk_code}';"
+                    sdk_component_sql = f"update sdk_tool set name = '{parsed_content.get('name')}',remark='{remark}' where sdk_code = '{sdk_code}';"
                     sdk_component_sqls.append(sdk_component_sql)
                     for key, value in parsed_content.get('基本用法').items():
                         code = value.replace('\n', r'\n').replace('\'', '\'\'')
