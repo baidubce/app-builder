@@ -203,7 +203,7 @@ class Text2Image(Component):
                 'text': result.content['img_urls'][0],
             }
         except Exception as e:
-            result = f'绘图时发生错误：{e}'
+            raise AppBuilderServerException(f'绘图时发生错误：{e}')
         if streaming:
             yield result
         else:
