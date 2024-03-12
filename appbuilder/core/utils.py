@@ -86,9 +86,11 @@ class ModelInfo:
 
     def get_model_url(self, model_name: str) -> str:
         """获取模型在工作台网关的请求url"""
-        origin_name = model_name
+        short_name = model_name
         remote_model_name_collector = RemoteModelCollector()
-        origin_name = remote_model_name_collector.get_remote_name_by_short_name(origin_name)
+        origin_name = remote_model_name_collector.get_remote_name_by_short_name(short_name)
+        if not origin_name:
+            origin_name = short_name
         for model in self.model_list:
             if model.name == origin_name:
                 return convert_cloudhub_url(self.client, model.url)
@@ -97,9 +99,11 @@ class ModelInfo:
 
     def get_model_type(self, model_name: str) -> str:
         """获取模型类型"""
-        origin_name = model_name
+        short_name = model_name
         remote_model_name_collector = RemoteModelCollector()
-        origin_name = remote_model_name_collector.get_remote_name_by_short_name(origin_name)
+        origin_name = remote_model_name_collector.get_remote_name_by_short_name(short_name)
+        if not origin_name:
+            origin_name = short_name
         for model in self.model_list:
             if model.name == origin_name:
                 return model.apiType
