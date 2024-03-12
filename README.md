@@ -81,6 +81,7 @@ ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder专�
 | ERNIE-Bot-8K               |       eb-8k      |
 | ERNIE-Bot                  |       eb         |
 | ERNIE-Bot-turbo            |       eb-turbo   |
+| EB-turbo-AppBuilder专用版   |       ernie_speed_appbuilder           |
 | ERNIE Speed-AppBuilder   |       ernie_speed_appbuilder           |
 
 
