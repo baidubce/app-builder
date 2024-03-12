@@ -326,7 +326,7 @@ class Models:
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__._check_service_error(request_id, data)
-        response = GetModelListResponse.from_json(payload=json.dumps(data))
+        response = GetModelListResponse.from_json(payload=json.dumps(data),  ignore_unknown_fields=True)
         response.request_id = request_id
         return response
 
