@@ -22,7 +22,9 @@ from appbuilder.utils.model_util import GetModelListRequest, Models, RemoteModel
 def utils_get_user_agent():
     return 'appbuilder-sdk-python/{}'.format("__version__")
 
-
+# Todo(chengmo): 此处返回的模型名称为原始名称，并非推荐使用的short name
+# 应当返回一个详细的列表，告知用户原始名 + 对应的short名
+# 同时考虑是否返回每个模型可用的余额
 def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_available: bool = False) -> list:
     """
     返回用户的模型列表。
