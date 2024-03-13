@@ -29,7 +29,7 @@ from appbuilder.utils.logger_util import logger
 from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
-from appbuilder.core.utils import ModelInfo
+from appbuilder.core.utils import ModelInfo, ttl_lru_cache
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 
@@ -282,11 +282,13 @@ class CompletionBaseComponent(Component):
         if not lazy_certification:
             self._check_model_and_get_model_url(self.model_name, self.model_type)
 
+    @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
         super(CompletionBaseComponent, self).set_secret_key_and_gateway(
                 secret_key=secret_key, gateway=gateway)
         self.__class__.model_info = ModelInfo(client=self.http_client)
 
+    @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def _check_model_and_get_model_url(self, model, model_type):
         if model and model in self.excluded_models:
             raise ModelNotSupportedException(f"Model {model} not supported")

@@ -247,7 +247,11 @@ class AgentRuntime(BaseModel):
                     app_builder_token = request.headers["X-Appbuilder-Token"]
                     self.component.set_secret_key_and_gateway(secret_key=app_builder_token)
                 except appbuilder.core._exception.BaseRPCException as e:
+                    logging.error(f"failed to verify. err={e}", exc_info=True)
                     raise BadRequest("X-Appbuilder-Token invalid")
+                except Exception as e:
+                    logging.error(f"failed to verify. err={e}", exc_info=True)
+                    raise e
             else:
                 pass
 
