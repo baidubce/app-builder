@@ -1,23 +1,19 @@
-# RAG With BaiduSearch
+# 百度搜索
 
 ## 简介
-RAG with BaiduSearch是基于生成式大模型的问答组件，使用百度搜索引擎检索候选文本进行检索增强，通过与百度搜索引擎集成，
-该组件可以更好地理解问题并提供更准确的答案。
+百度搜索（BaiduSearch），通过百度搜索引擎搜索相关内容。
 
 ### 功能介绍
-RAG with BaiduSearch利用生成式大模型技术，并结合百度搜索引擎的检索能力，实现了强大的问答功能。该组件能够根据用户提出的问题，从互联网上获取候选文本，通过模型理解并生成准确的答案。
+百度搜索是最大的中文搜索引擎，帮助用户在海量信息中找到最需要的内容。
 
 ### 特色优势
-整合百度搜索引擎：通过与百度搜索引擎的集成，能够实现更全面、准确的信息检索，为用户提供更具参考价值的答案。
-生成式大模型支持：利用生成式大模型技术，能够处理复杂的自然语言问题，并生成高质量的答案，提供更智能的问答服务。
-实时检索和分析：支持对实时的互联网文本数据进行检索和分析，保证了信息的及时性和准确性。
+百度搜索凭借先进的中文搜索技术、个性化推荐、全面的信息覆盖、即时的搜索结果和强大的安全防护，为用户提供快速、准确、安全的搜索体验，满足多样化的信息需求。
 
-### 适用场景
-智能客服：可用于构建智能客服系统，帮助用户快速获取相关信息和解决问题。
-知识库问答：可用于构建企业内部或公共领域的问答系统，提供高效的知识检索和问答服务。
+### 应用场景
+通用搜索领域
 
 ## 基本用法
-以下是一个简单的例子来演示如何开始使用RAG With BaiduSearch组件：
+以下是一个简单的例子来演示如何开始使用百度搜索组件：
 
 ```python
 import appbuilder
@@ -28,7 +24,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 创建rag_with_baidusearch对象
-rag_with_baidusearch_component = appbuilder.RAGWithBaiduSearch(model="eb-turbo-appbuilder")
+rag_with_baidusearch_component = appbuilder.RAGWithBaiduSearch(model="ERNIE Speed-AppBuilder")
 
 # 运行rag_with_baidusearch基本组件
 msg = appbuilder.Message("残疾人怎么办相关证件")
@@ -43,7 +39,7 @@ print(result)
 
 ## 参数说明
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 import os 
 
@@ -101,7 +97,7 @@ os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 创建rag_with_baidusearch对象, 并初始化人设指令
 rag_with_baidusearch_component = appbuilder.RAGWithBaiduSearch(
-        model="eb-turbo-appbuilder", 
+        model="ERNIE Speed-AppBuilder", 
         instruction=appbuilder.Message("你是问答助手，在回答问题前需要加上: 很高兴为您解答"))
 
 

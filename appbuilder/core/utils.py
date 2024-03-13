@@ -16,13 +16,15 @@ from typing import List
 from urllib.parse import urlparse
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import TypeNotSupportedException, ModelNotSupportedException
-from appbuilder.utils.model_util import GetModelListRequest, Models, model_name_mapping
+from appbuilder.utils.model_util import GetModelListRequest, Models, RemoteModelCollector
 
 
 def utils_get_user_agent():
     return 'appbuilder-sdk-python/{}'.format("__version__")
 
-
+# Todo(chengmo): 此处返回的模型名称为原始名称，并非推荐使用的short name
+# 应当返回一个详细的列表，告知用户原始名 + 对应的short名
+# 同时考虑是否返回每个模型可用的余额
 def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_available: bool = False) -> list:
     """
     返回用户的模型列表。
@@ -84,11 +86,11 @@ class ModelInfo:
 
     def get_model_url(self, model_name: str) -> str:
         """获取模型在工作台网关的请求url"""
-        origin_name = model_name
-        for key, value in model_name_mapping.items():
-            if origin_name == value:
-                origin_name = key
-                break
+        short_name = model_name
+        remote_model_name_collector = RemoteModelCollector()
+        origin_name = remote_model_name_collector.get_remote_name_by_short_name(short_name)
+        if not origin_name:
+            origin_name = short_name
         for model in self.model_list:
             if model.name == origin_name:
                 return convert_cloudhub_url(self.client, model.url)
@@ -97,11 +99,11 @@ class ModelInfo:
 
     def get_model_type(self, model_name: str) -> str:
         """获取模型类型"""
-        origin_name = model_name
-        for key, value in model_name_mapping.items():
-            if origin_name == value:
-                origin_name = key
-                break
+        short_name = model_name
+        remote_model_name_collector = RemoteModelCollector()
+        origin_name = remote_model_name_collector.get_remote_name_by_short_name(short_name)
+        if not origin_name:
+            origin_name = short_name
         for model in self.model_list:
             if model.name == origin_name:
                 return model.apiType

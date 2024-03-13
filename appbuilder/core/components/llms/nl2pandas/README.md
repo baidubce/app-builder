@@ -30,14 +30,14 @@ query = "海淀区有哪些学校"
 query = appbuilder.Message(query)
 
 #定义并运行Nl2pandas实例，得到结果
-nl2pandas = appbuilder.Nl2pandasComponent(model="eb-turbo-appbuilder")
+nl2pandas = appbuilder.Nl2pandasComponent(model="ERNIE Speed-AppBuilder")
 answer = nl2pandas(query, table_info = table_info)
 ```
 
 ## 参数说明
 
 ### 鉴权配置
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"

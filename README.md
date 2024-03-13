@@ -81,7 +81,8 @@ ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder专�
 | ERNIE-Bot-8K               |       eb-8k      |
 | ERNIE-Bot                  |       eb         |
 | ERNIE-Bot-turbo            |       eb-turbo   |
-| EB-turbo-AppBuilder专用版   |       eb-turbo-appbuilder           |
+| EB-turbo-AppBuilder专用版   |       ernie_speed_appbuilder           |
+| ERNIE Speed-AppBuilder   |       ernie_speed_appbuilder           |
 
 
 ### 典型示例
@@ -94,7 +95,7 @@ import appbuilder
 
 # 空模版组件
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
-playground = appbuilder.Playground(prompt_template=template_str, model="eb-turbo-appbuilder")
+playground = appbuilder.Playground(prompt_template=template_str, model="ERNIE Speed-AppBuilder")
 
 # 定义输入，调用空模版组件
 input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
@@ -107,7 +108,7 @@ print(playground(input, stream=False, temperature=1e-10))
 import appbuilder
 
 # 相似问生成组件
-similar_q = appbuilder.SimilarQuestion(model="eb-turbo-appbuilder")
+similar_q = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
 
 # 定义输入，调用相似问生成
 input = appbuilder.Message("我想吃冰淇淋，哪里的冰淇淋比较好吃？")
@@ -149,7 +150,7 @@ import appbuilder
 # 空模版组件
 playground = appbuilder.Playground(
     prompt_template="{query}",
-    model="eb-turbo-appbuilder"
+    model="ERNIE Speed-AppBuilder"
 )
 
 # 使用 AgentRuntime 来服务化playground组件
@@ -196,7 +197,7 @@ class SimilarQuestion(CompletionBaseComponent):
 
             os.environ["APPBUILDER_TOKEN"] = "..."
 
-            qa_mining = appbuilder.SimilarQuestion(model="eb-turbo-appbuilder")
+            qa_mining = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
 
             msg = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
             msg = appbuilder.Message(msg)

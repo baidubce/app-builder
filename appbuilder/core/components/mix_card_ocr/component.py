@@ -183,7 +183,17 @@ class MixCardOCR(Component):
             out.direction = response.direction
             result[file_name] = out.dict()
 
+        result = json.dumps(result, ensure_ascii=False)
         if streaming:
-            yield json.dumps(result, ensure_ascii=False)
+            yield {
+                "type": "text",
+                "text": result,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": "user",
+            }
         else:
-            return json.dumps(result, ensure_ascii=False)
+            return result

@@ -1,13 +1,13 @@
 # GBI 选表
 
 ## 简介
-GBI 选表，根据提供的多个 MySql 表名 以及 表名对应的描述信息，通过 query 选择一个或多个最合适的表来回答该 query.
-一般的试用场景是，当有数据库有多个表的时候，但是实际只有1个表能回答该 query，那么，通过该能力将该表选择出来，用于后面的 问表 环节。
+GBI 选表：根据提供的多个 MySql 表名 以及 表名对应的描述信息，通过 query 选择一个或多个最合适的表来回答该 query。
+一般的适用场景是，当有数据库有多个表的时候，但是实际只有1个表能回答该 query，那么，通过该能力将该表选择出来，用于后面的 问表 环节。
 
 
 ### 功能介绍
-GBI 选表，根据提供的多个 MySql 表名 以及 表名对应的描述信息，通过 query 选择一个或多个最合适的表来回答该 query.
-一般的试用场景是，当有数据库有多个表的时候，但是实际只有1个表能回答该 query，那么，通过该能力将该表选择出来，用于后面的 问表 环节。
+GBI 选表，根据提供的多个 MySql 表名 以及 表名对应的描述信息，通过 query 选择一个或多个最合适的表来回答该 query。
+一般的适用场景是，当有数据库有多个表的时候，但是实际只有1个表能回答该 query，那么，通过该能力将该表选择出来，用于后面的 问表 环节。
 
 ### 特色优势
 可直接通过上传Excel进行数据问答
@@ -51,7 +51,7 @@ print(f"选的表是: {select_table_result_message.content}")
 
 ## 参数说明
 ### 初始化参数
-- model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder
+- model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, ERNIE Speed-AppBuilder
 - table_descriptions: 表的描述是个字典，key: 是表的名字, value: 是表的描述，例如:
 
 ```

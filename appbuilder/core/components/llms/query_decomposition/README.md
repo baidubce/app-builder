@@ -21,7 +21,7 @@ import appbuilder
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
 
-query_decomposition = appbuilder.QueryDecomposition(model="eb-turbo-appbuilder")
+query_decomposition = appbuilder.QueryDecomposition(model="ERNIE Speed-AppBuilder")
 
 msg = "吸塑包装盒在工业化生产和物流运输中分别有什么重要性？"
 msg = appbuilder.Message(msg)
@@ -33,7 +33,7 @@ print("Answer: \n{}".format(answer.content))
 ## 参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
@@ -42,7 +42,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 初始化参数
 |参数名称 |参数类型 |是否必须 |描述 |示例值|
 |--------|--------|--------|----|------|
-|model |str  |是 |模型名称，用于指定要使用的千帆模型|eb-turbo-appbuilder|
+|model |str  |是 |模型名称，用于指定要使用的千帆模型|ERNIE Speed-AppBuilder|
 
 ### 调用参数
 |参数名称 |参数类型 |是否必须 |描述 |示例值|

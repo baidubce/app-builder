@@ -24,7 +24,7 @@ import appbuilder
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 初始化并使用 QueryRewrite 组件
-query_rewrite = appbuilder.QueryRewrite(model="eb-turbo-appbuilder")
+query_rewrite = appbuilder.QueryRewrite(model="ERNIE Speed-AppBuilder")
 answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？', '您可以查询官网或人工咨询', '我需要准备哪些材料？', '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', '在哪里办']), rewrite_type="带机器人回复")
 print(answer)
 ```
@@ -32,7 +32,7 @@ print(answer)
 ## 参数说明
 
 ### 鉴权配置
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
