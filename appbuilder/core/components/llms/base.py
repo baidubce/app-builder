@@ -17,6 +17,8 @@ import uuid
 from enum import Enum
 import logging
 import requests
+import copy
+import collections.abc
 from appbuilder.core.constants import GATEWAY_URL, GATEWAY_INNER_URL
 from pydantic import BaseModel, Field, ValidationError, HttpUrl, validator
 from pydantic.types import confloat
@@ -27,7 +29,7 @@ from appbuilder.utils.logger_util import logger
 from typing import Dict, List, Optional, Any
 
 from appbuilder.core.component import ComponentArguments
-from appbuilder.core.utils import ModelInfo
+from appbuilder.core.utils import ModelInfo, ttl_lru_cache
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 
@@ -40,6 +42,16 @@ class LLMMessage(Message):
     def __str__(self):
         return f"Message(name={self.name}, content={self.content}, " \
                f"mtype={self.mtype}, extra={self.extra}, token_usage={self.token_usage})"
+    
+    def __deepcopy__(self, memo):
+        new_instance = self.__class__()
+        memo[id(self)] = new_instance
+        for k, v in self.__dict__.items():
+            if k == "content" and isinstance(v, collections.abc.Iterator):
+                pass
+            else:
+                setattr(new_instance, k, copy.deepcopy(v, memo))
+        return new_instance
 
 
 class CompletionRequest(object):
@@ -270,11 +282,13 @@ class CompletionBaseComponent(Component):
         if not lazy_certification:
             self._check_model_and_get_model_url(self.model_name, self.model_type)
 
+    @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
         super(CompletionBaseComponent, self).set_secret_key_and_gateway(
                 secret_key=secret_key, gateway=gateway)
         self.__class__.model_info = ModelInfo(client=self.http_client)
 
+    @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def _check_model_and_get_model_url(self, model, model_type):
         if model and model in self.excluded_models:
             raise ModelNotSupportedException(f"Model {model} not supported")

@@ -25,7 +25,7 @@ import pandas as pd
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
-from appbuilder.core.utils import ModelInfo
+from appbuilder.core.utils import ModelInfo, ttl_lru_cache
 
 
 class Excel2FigureArgs(ComponentArguments):
@@ -74,11 +74,13 @@ class Excel2Figure(Component):
             self._check_model_and_get_model_url(self.model, self.model_type)
         self.server_sub_path = "/v1/ai_engine/copilot_engine/v1/api/agent/excel2figure"
 
+    @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
         super(Excel2Figure, self).set_secret_key_and_gateway(
                 secret_key=secret_key, gateway=gateway)
         self.__class__.model_info = ModelInfo(client=self.http_client)
 
+    @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def _check_model_and_get_model_url(self, model, model_type):
         if model and model in self.excluded_models:
             raise ModelNotSupportedException(f"Model {model} not supported")
@@ -221,8 +223,8 @@ class Excel2Figure(Component):
                 'text': [result_msg.content],
             }
         except Exception as e:
-            result = f'绘制图表时发生错误：{e}'
-            logging.error(result, exc_info=True)
+            raise RuntimeError(f'绘制图表时发生错误：{e}')
+            
         if streaming:
             yield result
         else:

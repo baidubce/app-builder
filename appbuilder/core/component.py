@@ -19,7 +19,7 @@ from enum import Enum
 
 from pydantic import BaseModel
 from typing import Dict, List, Optional, Any
-
+from appbuilder.core.utils import ttl_lru_cache
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
 
@@ -81,7 +81,8 @@ class Component:
         self.lazy_certification = lazy_certification
         if not self.lazy_certification:
             self.set_secret_key_and_gateway(self.secret_key, self.gateway)
-
+ 
+    @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
         self.secret_key = secret_key
         self.gateway = gateway
