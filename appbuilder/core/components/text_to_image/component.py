@@ -96,7 +96,7 @@ class Text2Image(Component):
                     task_progress = text2ImageQueryResponse.data.task_progress
                     if task_progress == 1:
                         break
-                    time.sleep(0.2)
+                    time.sleep(1)
             img_urls = self.extract_img_urls(text2ImageQueryResponse)
             out = Text2ImageOutMessage(img_urls=img_urls)
             return Message(content=out.model_dump())
