@@ -83,7 +83,7 @@ class Component:
             self.set_secret_key_and_gateway(self.secret_key, self.gateway)
  
     @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
-    def appbuilder/core/component.py(self, secret_key: Optional[str] = None, gateway: str = ""):
+    def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
         self.secret_key = secret_key
         self.gateway = gateway
         self._http_client = HTTPClient(self.secret_key, self.gateway)
