@@ -223,8 +223,8 @@ class Excel2Figure(Component):
                 'text': [result_msg.content],
             }
         except Exception as e:
-            result = f'绘制图表时发生错误：{e}'
-            logging.error(result, exc_info=True)
+            raise RuntimeError(f'绘制图表时发生错误：{e}')
+            
         if streaming:
             yield result
         else:
