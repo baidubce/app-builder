@@ -90,3 +90,9 @@ class InvalidRequestArgumentError(BaseRPCException):
     r"""InvalidRequestArgumentError invalid request param
     """
     pass
+
+
+class RiskInputException(BaseRPCException):
+    r"""RiskInputException
+    """
+    pass

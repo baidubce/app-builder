@@ -20,7 +20,7 @@ import json
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, RiskInputException
 from appbuilder.core.components.text_to_image.model import Text2ImageSubmitRequest, Text2ImageQueryRequest, \
     Text2ImageQueryResponse, Text2ImageSubmitResponse, Text2ImageOutMessage, Text2ImageInMessage
 
@@ -96,7 +96,7 @@ class Text2Image(Component):
                     task_progress = text2ImageQueryResponse.data.task_progress
                     if task_progress == 1:
                         break
-                    time.sleep(0.2)
+                    time.sleep(1)
             img_urls = self.extract_img_urls(text2ImageQueryResponse)
             out = Text2ImageOutMessage(img_urls=img_urls)
             return Message(content=out.model_dump())
@@ -197,13 +197,17 @@ class Text2Image(Component):
             query = origin_query
         try:
             result = self.run(Message({"prompt": query}))
-            result = {
-                'event': 'image',
-                'type': 'image',
-                'text': result.content['img_urls'][0],
-            }
         except Exception as e:
-            raise AppBuilderServerException(f'绘图时发生错误：{e}')
+            raise AppBuilderServerException(f'绘图服务发生错误：{e}')
+
+        if len(result.content['img_urls']) == 0:
+            raise RiskInputException(f'query：{query} 中可能存在敏感词')
+
+        result = {
+            'event': 'image',
+            'type': 'image',
+            'text': result.content['img_urls'][0],
+        }
         if streaming:
             yield result
         else:
