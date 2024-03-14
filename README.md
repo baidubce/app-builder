@@ -11,9 +11,8 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 
 </div>
 <div align="center">
-<h1>千帆AppBuilder-SDK交流群</h1>
-
-![wechat group](docs/image/wechat_group.png)
+<h1>AppBuilder-SDK微信交流群</h1>
+<img src='docs/image/wechat_group.png' alt='wechat' width='200' >
 
 </div>
 
