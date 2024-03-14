@@ -8,6 +8,13 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 ![Supported Python versions](https://img.shields.io/badge/python-3.8+-orange.svg)
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
 
+
+</div>
+<div align="center">
+<h1>千帆AppBuilder-SDK交流群</h1>
+
+![wechat group](docs/image/wechat_group.png)
+
 </div>
 
 ## News
