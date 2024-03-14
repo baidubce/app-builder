@@ -2,12 +2,11 @@
 
 <h1>AppBuilder-SDK</h1>
 
-AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括基础云资源、AI能力引擎、千帆大模型以及相关能力组件，提升AI原生应用开发效率。
-
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
 ![Supported Python versions](https://img.shields.io/badge/python-3.8+-orange.svg)
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
 
+AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括基础云资源、AI能力引擎、千帆大模型以及相关能力组件，提升AI原生应用开发效率。
 
 </div>
 <div align="center">
