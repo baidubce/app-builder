@@ -182,7 +182,8 @@ class TTS(Component):
             return TTSResponse(
                 binary=response.content,
                 request_id=request_id,
-                aue=request.aue
+                aue=request.aue,
+                ignore_unknown_fields=True
             )
         else:
             return _iterate_chunk(request_id, response)

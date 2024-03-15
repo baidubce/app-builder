@@ -88,7 +88,7 @@ class LandmarkRecognition(Component):
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__.__check_service_error(request_id, data)
-        return LandmarkRecognitionResponse(data, request_id=request_id)
+        return LandmarkRecognitionResponse(data, request_id=request_id, ignore_unknown_fields=True)
 
     @staticmethod
     def __check_service_error(request_id: str, data: dict):

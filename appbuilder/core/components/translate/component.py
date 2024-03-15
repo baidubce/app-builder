@@ -112,4 +112,4 @@ class Translation(Component):
             raise AppBuilderServerException(request_id=request_id, service_err_code=data["error_code"], service_err_message=data["error_msg"])
 
         json_str = json.dumps(data)
-        return TranslateResponse(TranslateResponse.from_json(json_str))
+        return TranslateResponse(TranslateResponse.from_json(json_str),ignore_unknown_fields=True)

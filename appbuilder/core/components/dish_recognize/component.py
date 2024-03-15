@@ -103,4 +103,4 @@ class DishRecognition(Component):
         request_id = self.http_client.response_request_id(response)
         if "error_code" in data and "error_msg" in data:
             raise AppBuilderServerException(request_id=request_id, service_err_code=data["error_code"], service_err_message=data["error_msg"])
-        return DishRecognitionResponse(data)
+        return DishRecognitionResponse(data, ignore_unknown_fields=True)

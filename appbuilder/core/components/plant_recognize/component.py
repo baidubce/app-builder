@@ -135,7 +135,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__.__check_service_error(request_id, data)
-        return PlantRecognitionResponse(data, request_id=request_id)
+        return PlantRecognitionResponse(data, request_id=request_id, ignore_unknown_fields=True)
 
     def tool_eval(self, name: str, streaming: bool,
                   origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:

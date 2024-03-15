@@ -128,7 +128,7 @@ class MixCardOCR(Component):
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__._check_service_error(request_id, data)
-        response = MixCardOCRResponse(data)
+        response = MixCardOCRResponse(data, ignore_unknown_fields=True)
         response.request_id = request_id
         return response
 

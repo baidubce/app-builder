@@ -92,7 +92,7 @@ class GeneralOCR(Component):
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__._check_service_error(request_id, data)
-        ocr_response = GeneralOCRResponse.from_json(payload=json.dumps(data))
+        ocr_response = GeneralOCRResponse.from_json(payload=json.dumps(data),ignore_unknown_fields=True)
         ocr_response.request_id = request_id
         return ocr_response
 

@@ -130,7 +130,7 @@ class ImageUnderstand(Component):
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__.__check_service_error(request_id, data)
-        task = ImageUnderstandTask(data, request_id=request_id)
+        task = ImageUnderstandTask(data, request_id=request_id,ignore_unknown_fields=True)
         task_id = task.result.get("task_id", "")
         if task_id == "":
             raise AppBuilderServerException(request_id=request_id, service_err_message="empty task_id")
@@ -143,13 +143,13 @@ class ImageUnderstand(Component):
             request_id = self.http_client.response_request_id(response)
             self.__class__.__check_service_error(request_id, data)
             # 处理成功
-            response = ImageUnderstandResponse(data)
+            response = ImageUnderstandResponse(data, ignore_unknown_fields=True)
             if response.result.ret_code == 0:
-                return ImageUnderstandResponse(data)
+                return response
             # 还在处理中
             if response.result.ret_code == 1:
                 # 避免触发限流（>1QPS），等待1.1秒
-                time.sleep(1.1)
+                time.sleep(10)
 
     def tool_eval(self, name: str, streaming: bool,
                   origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:
