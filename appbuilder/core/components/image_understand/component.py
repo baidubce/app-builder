@@ -149,7 +149,7 @@ class ImageUnderstand(Component):
             # 还在处理中
             if response.result.ret_code == 1:
                 # 避免触发限流（>1QPS），等待1.1秒
-                time.sleep(10)
+                time.sleep(1.5)
 
     def tool_eval(self, name: str, streaming: bool,
                   origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:
