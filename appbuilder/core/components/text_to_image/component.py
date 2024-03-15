@@ -128,7 +128,7 @@ class Text2Image(Component):
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__.check_service_error(request_id, data)
-        response = Text2ImageSubmitResponse.from_json(payload=json.dumps(data))
+        response = Text2ImageSubmitResponse.from_json(payload=json.dumps(data), ignore_unknown_fields=True)
         response.request_id = request_id
         return response
 
@@ -160,7 +160,7 @@ class Text2Image(Component):
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__.check_service_error(request_id, data)
-        response = Text2ImageQueryResponse.from_json(payload=json.dumps(data),ignore_unknown_fields=True)
+        response = Text2ImageQueryResponse.from_json(payload=json.dumps(data), ignore_unknown_fields=True)
         response.request_id = request_id
         return response
 
