@@ -13,6 +13,7 @@
 r"""general ocr component."""
 import base64
 import json
+import os.path
 
 from appbuilder.core import utils
 from appbuilder.core._client import HTTPClient
@@ -55,17 +56,26 @@ class GeneralOCR(Component):
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "url": {
+                    "img_url": {
                         "type": "string",
                         "description": "待识别图片的url,根据该url能够获取图片"
                     },
-                    "file_name": {
+                    "img_name": {
                         "type": "string",
                         "description": "待识别图片的文件名,用于生成图片url"
-                    }
+                    },
                 },
-                "required": [
-                    "url"
+                "anyOf": [
+                    {
+                        "required": [
+                            "img_url"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "img_name"
+                        ]
+                    }
                 ]
             }
         }
@@ -141,17 +151,17 @@ class GeneralOCR(Component):
         """
         general_ocr for function call
         """
-        url_key = kwargs.get("url", None)
-        file_urls = kwargs.get("file_urls", {})
-        if not url_key:
-            url_key = kwargs.get("file_name", None)
-        if utils.is_url(url_key):
-            url = url_key
-        else:
-            url = file_urls.get(url_key, None)
-        if not url:
-            raise InvalidRequestArgumentError(f"file {url_key} url does not exist")
-        req = GeneralOCRRequest(url=url)
+        img_url = kwargs.get("img_url", None)
+        if not img_url:
+            file_urls = kwargs.get("file_urls", {})
+            img_path = kwargs.get("img_name", None)
+            if not img_path:
+                raise InvalidRequestArgumentError("file name is not set")
+            img_name = os.path.basename(img_path)
+            img_url = file_urls.get(img_name, None)
+            if not img_url:
+                raise InvalidRequestArgumentError(f"file {img_name} url does not exist")
+        req = GeneralOCRRequest(url=img_url)
         result = proto.Message.to_dict(self._recognize(req))
         results = {
             "识别结果": " \n".join(item["words"] for item in result["words_result"])

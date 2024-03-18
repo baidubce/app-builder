@@ -138,7 +138,7 @@ class TestObjectRecognize(unittest.TestCase):
                     "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
                     "11T11%3A00%3A19Z%2F-1%2Fhost%2F2c31bf29205f61e58df661dc80af31a1dc" \
                     "1ba1de0a8f072bc5a87102bd32f9e3"
-        result = self.object_recognition.tool_eval(name="object_recognition", streaming=True, url=image_url)
+        result = self.object_recognition.tool_eval(name="object_recognition", streaming=True, img_url=image_url)
         res = [item for item in result]
         self.assertNotEqual(len(res), 0)
 

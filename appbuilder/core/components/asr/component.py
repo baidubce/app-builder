@@ -14,6 +14,7 @@
 
 r"""ASR component.
 """
+import os
 import uuid
 import json
 
@@ -58,7 +59,7 @@ class ASR(Component):
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "url": {
+                    "file_url": {
                         "type": "string",
                         "description": "输入语音文件的url,根据url获取到语音文件"
                     },
@@ -67,8 +68,17 @@ class ASR(Component):
                         "description": "待识别语音文件名,用于生成获取语音的url"
                     }
                 },
-                "required": [
-                    "url"
+                "anyOf": [
+                    {
+                        "required": [
+                            "file_url"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "file_name"
+                        ]
+                    }
                 ]
             }
         }
@@ -155,20 +165,20 @@ class ASR(Component):
         """
         asr for function call
         """
-        url_key = kwargs.get("url", None)
-        file_urls = kwargs.get("file_urls", {})
-        if not url_key:
-            url_key = kwargs.get("file_name", None)
-        if utils.is_url(url_key):
-            url = url_key
-        else:
-            url = file_urls.get(url_key, None)
-        if not url:
-            raise InvalidRequestArgumentError(f"file {url_key} url does not exist")
+        file_url = kwargs.get("file_url", None)
+        if not file_url:
+            file_urls = kwargs.get("file_urls", {})
+            file_path = kwargs.get("file_name", None)
+            if not file_path:
+                raise InvalidRequestArgumentError("file name is not set")
+            file_name = os.path.basename(file_path)
+            file_url = file_urls.get(file_name, None)
+            if not file_url:
+                raise InvalidRequestArgumentError(f"file {file_url} url does not exist")
         req = ShortSpeechRecognitionRequest()
         req.cuid = str(uuid.uuid4())
         req.dev_pid = "80001"
-        req.speech = requests.get(url).content
+        req.speech = requests.get(file_url).content
         req.format = "pcm"
         req.rate = 16000
         result = proto.Message.to_dict(self._recognize(req))

@@ -138,7 +138,7 @@ class TestGeneralOCR(unittest.TestCase):
                     "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
                     "11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae" \
                     "857a27513734d765495f89ffa5f73"
-        result = self.general_ocr.tool_eval(name="general_ocr", streaming=True, url=image_url)
+        result = self.general_ocr.tool_eval(name="general_ocr", streaming=True, img_url=image_url)
         res = [item for item in result]
         self.assertNotEqual(len(res), 0)
 

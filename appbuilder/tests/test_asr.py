@@ -132,7 +132,7 @@ class TestASRComponent(unittest.TestCase):
 
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
-        result = self.asr.tool_eval(name="asr", streaming=True, url=self.audio_file_url)
+        result = self.asr.tool_eval(name="asr", streaming=True, file_url=self.audio_file_url)
         res = [item for item in result]
         self.assertNotEqual(len(res), 0)
 

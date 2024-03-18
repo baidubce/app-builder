@@ -22,7 +22,7 @@ class TestTranslationComponent(unittest.TestCase):
 
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
-        result = self.translation.tool_eval(name="translation", streaming=True, q="你好", to_lang="en")
+        result = self.translation.tool_eval(name="translation", streaming=True, q="你好\n中国", to_lang="en")
         res = [item for item in result]
         self.assertNotEqual(len(res), 0)
 
