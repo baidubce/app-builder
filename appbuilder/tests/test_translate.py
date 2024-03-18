@@ -1,5 +1,6 @@
 import unittest
 import appbuilder
+from appbuilder.core._exception import InvalidRequestArgumentError
 
 
 class TestTranslationComponent(unittest.TestCase):
@@ -18,6 +19,18 @@ class TestTranslationComponent(unittest.TestCase):
         msg = appbuilder.Message(content="")
         with self.assertRaises(ValueError):
             _ = self.translation(msg)
+
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        result = self.translation.tool_eval(name="translation", streaming=True, q="你好", to_lang="en")
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(InvalidRequestArgumentError):
+            result = self.translation.tool_eval(name="translation", streaming=True, to_lang="en")
+            next(result)
 
 
 if __name__ == '__main__':

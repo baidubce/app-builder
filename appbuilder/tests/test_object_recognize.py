@@ -15,6 +15,7 @@ import os
 import unittest
 import requests
 import appbuilder
+from appbuilder.core._exception import InvalidRequestArgumentError
 
 
 class TestObjectRecognize(unittest.TestCase):
@@ -130,6 +131,22 @@ class TestObjectRecognize(unittest.TestCase):
         message = appbuilder.Message({})
         with self.assertRaises(ValueError):
             self.object_recognition.run(message=message)
+
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        image_url = "https://bj.bcebos.com/v1/appbuilder/object_recognize_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
+                    "11T11%3A00%3A19Z%2F-1%2Fhost%2F2c31bf29205f61e58df661dc80af31a1dc" \
+                    "1ba1de0a8f072bc5a87102bd32f9e3"
+        result = self.object_recognition.tool_eval(name="object_recognition", streaming=True, url=image_url)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(InvalidRequestArgumentError):
+            result = self.object_recognition.tool_eval(name="object_recognition", streaming=True)
+            next(result)
 
 
 if __name__ == '__main__':

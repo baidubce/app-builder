@@ -15,6 +15,7 @@ import os
 import unittest
 import requests
 import appbuilder
+from appbuilder.core._exception import InvalidRequestArgumentError
 
 
 class TestGeneralOCR(unittest.TestCase):
@@ -130,6 +131,22 @@ class TestGeneralOCR(unittest.TestCase):
         message = appbuilder.Message({})
         with self.assertRaises(ValueError):
             self.general_ocr.run(message=message)
+
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        image_url = "https://bj.bcebos.com/v1/appbuilder/general_ocr_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
+                    "11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae" \
+                    "857a27513734d765495f89ffa5f73"
+        result = self.general_ocr.tool_eval(name="general_ocr", streaming=True, url=image_url)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(InvalidRequestArgumentError):
+            result = self.general_ocr.tool_eval(name="general_ocr", streaming=True)
+            next(result)
 
 
 if __name__ == '__main__':

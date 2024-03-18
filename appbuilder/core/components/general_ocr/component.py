@@ -14,10 +14,11 @@ r"""general ocr component."""
 import base64
 import json
 
+from appbuilder.core import utils
 from appbuilder.core._client import HTTPClient
 
 
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
 from appbuilder.core.components.general_ocr.model import *
 from appbuilder.core.message import Message
@@ -44,6 +45,31 @@ class GeneralOCR(Component):
         print(out.content)
 
      """
+    name = "general_ocr"
+    version = "v1"
+
+    manifests = [
+        {
+            "name": "general_ocr",
+            "description": "提供更高精度的通用文字识别能力，能够识别图片中的文字",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "待识别图片的url,根据该url能够获取图片"
+                    },
+                    "file_name": {
+                        "type": "string",
+                        "description": "待识别图片的文件名,用于生成图片url"
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -110,3 +136,37 @@ class GeneralOCR(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        """
+        general_ocr for function call
+        """
+        url_key = kwargs.get("url", None)
+        file_urls = kwargs.get("file_urls", {})
+        if not url_key:
+            url_key = kwargs.get("file_name", None)
+        if utils.is_url(url_key):
+            url = url_key
+        else:
+            url = file_urls.get(url_key, None)
+        if not url:
+            raise InvalidRequestArgumentError(f"file {url_key} url does not exist")
+        req = GeneralOCRRequest(url=url)
+        result = proto.Message.to_dict(self._recognize(req))
+        results = {
+            "识别结果": " \n".join(item["words"] for item in result["words_result"])
+        }
+        res = json.dumps(results, ensure_ascii=False, indent=4)
+        if streaming:
+            yield {
+                "type": "text",
+                "text": res,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": 'user',
+            }
+        else:
+            return res

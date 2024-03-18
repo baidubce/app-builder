@@ -4,6 +4,7 @@ import uuid
 import requests
 
 import appbuilder
+from appbuilder.core._exception import InvalidRequestArgumentError
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse
 
 
@@ -128,6 +129,18 @@ class TestASRComponent(unittest.TestCase):
             self.asr._check_service_error("", data)
         data = {'err_msg': 'No Error', 'err_no': 0}
         self.assertIsNone(self.asr._check_service_error("", data))
+
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        result = self.asr.tool_eval(name="asr", streaming=True, url=self.audio_file_url)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(InvalidRequestArgumentError):
+            result = self.asr.tool_eval(name="asr", streaming=True)
+            next(result)
 
 
 if __name__ == '__main__':
