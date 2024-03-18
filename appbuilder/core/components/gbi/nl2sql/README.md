@@ -80,7 +80,7 @@ CREATE TABLE `supper_market_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ```
 
-- knowledge: 用于提供一些知识, 比如 {"毛利率": "毛收入-毛成本/毛成本"}
+- knowledge: 用于提供一些知识, 比如 {"毛利率": "(销售收入 - 销售成本) / 销售收入"}
 - prompt_template: prompt 模版, 必须包含的格式如下:
                   ***你的描述
                   {schema}
