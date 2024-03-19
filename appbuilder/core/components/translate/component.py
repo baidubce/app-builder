@@ -63,8 +63,9 @@ class Translation(Component):
                     },
                     "to_lang": {
                         "type": "string",
-                        "description": "翻译的目标语言类型，'en'表示将原文本翻译成英文, 'zh'表示将原文本翻译成中文，默认为'en'",
-                        "enum": ["en", "zh"]
+                        "description": "翻译的目标语言类型，'en'表示翻译成英语, 'zh'表示翻译成中文，'jp'表示翻译成日语，"
+                                       "'kor'表示翻译成韩语，'fra'表示翻译成法语，'de'表示翻译成德语，默认为'en'",
+                        "enum": ["en", "zh", "jp", "kor", "fra", "de"]
                     }
                 },
                 "required": [
