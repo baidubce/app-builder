@@ -66,6 +66,11 @@ class ASR(Component):
                     "file_name": {
                         "type": "string",
                         "description": "待识别语音文件名,用于生成获取语音的url"
+                    },
+                    "file_type": {
+                        "type": "string",
+                        "description": "语音文件类型,支持pcm/wav/amr/m4a",
+                        "enum": ["pcm", "wav", "amr", "m4a"]
                     }
                 },
                 "anyOf": [
@@ -139,7 +144,7 @@ class ASR(Component):
         data = response.json()
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
-        self.__class__._check_service_error(request_id,data)
+        self.__class__._check_service_error(request_id, data)
         response = ShortSpeechRecognitionResponse.from_json(payload=json.dumps(data))
         response.request_id = request_id
         return response
@@ -175,11 +180,14 @@ class ASR(Component):
             file_url = file_urls.get(file_name, None)
             if not file_url:
                 raise InvalidRequestArgumentError(f"file {file_url} url does not exist")
+        file_type = kwargs.get("file_type", "wav")
+        if file_type not in ["pcm", "wav", "amr", "m4a"]:
+            file_type = "wav"
         req = ShortSpeechRecognitionRequest()
+        req.speech = requests.get(file_url).content
+        req.format = file_type
         req.cuid = str(uuid.uuid4())
         req.dev_pid = "80001"
-        req.speech = requests.get(file_url).content
-        req.format = "pcm"
         req.rate = 16000
         result = proto.Message.to_dict(self._recognize(req))
         results = {
