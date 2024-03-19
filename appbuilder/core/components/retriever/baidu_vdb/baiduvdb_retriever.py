@@ -136,11 +136,13 @@ class BaiduVDBVectorStoreIndex:
         from pymochow.auth.bce_credentials import AppBuilderCredentials
 
         gateway = os.getenv("GATEWAY_URL") if os.getenv("GATEWAY_URL") else GATEWAY_URL
-        
+        appbuilder_token = os.getenv("APPBUILDER_TOKEN")
+        uri_prefix=self.vdb_uri_prefix + instance_id.encode('utf-8')
+
         config = Configuration(
             credentials=AppBuilderCredentials(account, api_key, appbuilder_token),
             endpoint=gateway,
-            uri_perfix=self.vdb_uri_prefix,
+            uri_prefix=uri_prefix,
             connection_timeout_in_mills=DEFAULT_TIMEOUT_IN_MILLS,
         )
         self.vdb_client = pymochow.MochowClient(config)
@@ -195,7 +197,10 @@ class BaiduVDBVectorStoreIndex:
         fields.append(Field(FIELD_TEXT, FieldType.STRING))
         fields.append(
             Field(
-                FIELD_VECTOR, FieldType.FLOAT_VECTOR, dimension=table_params.dimension
+                FIELD_VECTOR, 
+                FieldType.FLOAT_VECTOR, 
+                dimension=table_params.dimension,
+                not_null=True,
             )
         )
 
