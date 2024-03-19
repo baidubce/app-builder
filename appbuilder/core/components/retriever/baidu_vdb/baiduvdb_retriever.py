@@ -58,6 +58,7 @@ NOT_SUPPORT_METRIC_TYPE_ERROR = (
     "Unsupported metric type: `{}`, supported metric types are {}"
 )
 
+
 def _try_import() -> None:
     try:
         import pymochow
@@ -65,6 +66,7 @@ def _try_import() -> None:
         raise ImportError(
             "`pymochow` package not found, please run `pip install pymochow`"
         )
+
 
 class TableParams:
     """Baidu VectorDB table params.
@@ -102,6 +104,7 @@ class TableParams:
         self.drop_exists = drop_exists
         self.vector_params = vector_params
 
+
 class BaiduVDBVectorStoreIndex:
     """
     Baidu VDB向量存储检索工具
@@ -110,19 +113,43 @@ class BaiduVDBVectorStoreIndex:
 
     def __init__(
         self,
-        instance_id,
+        instance_id: str,
         api_key: str,
         account: str = DEFAULT_ACCOUNT,
         database_name: str = DEFAULT_DATABASE_NAME,
         table_params: TableParams = TableParams(dimension=384),
         embedding=None,
     ):
+        if not isinstance(instance_id, str):
+            raise TypeError(
+                "Parameter `instance_id` must be a string, but got {}".format(
+                    type(instance_id)))
+        if not isinstance(api_key, str):
+            raise TypeError(
+                "Parameter `api_key` must be a string, but got {}".format(
+                    type(api_key)))
+        if not isinstance(account, str):
+            raise TypeError(
+                "Parameter `account` must be a string, but got {}".format(
+                    type(account)))
+        if not isinstance(database_name, str):
+            raise TypeError(
+                "Parameter `database_name` must be a string, but got {}".format(
+                    type(database_name)))
+        if not isinstance(table_params, TableParams):
+            raise TypeError(
+                "Parameter `table_params` must be a TableParams, but got {}".format(
+                    type(table_params)))
+        if embedding is not None and not isinstance(embedding, Embedding):
+            raise TypeError(
+                "Parameter `embedding` must be a Embedding, but got {}".format(
+                    type(embedding)))
 
         if embedding is None:
             embedding = Embedding()
 
         self.embedding = embedding
-        
+
         self._init_client(instance_id, account, api_key)
         self._create_database_if_not_exists(database_name)
         self._create_table(table_params)
@@ -135,12 +162,14 @@ class BaiduVDBVectorStoreIndex:
         from pymochow.configuration import Configuration
         from pymochow.auth.bce_credentials import AppBuilderCredentials
 
-        gateway = os.getenv("GATEWAY_URL") if os.getenv("GATEWAY_URL") else GATEWAY_URL
+        gateway = os.getenv("GATEWAY_URL") if os.getenv(
+            "GATEWAY_URL") else GATEWAY_URL
         appbuilder_token = os.getenv("APPBUILDER_TOKEN")
-        uri_prefix=self.vdb_uri_prefix + instance_id.encode('utf-8')
-        
+        uri_prefix = self.vdb_uri_prefix + instance_id.encode('utf-8')
+
         config = Configuration(
-            credentials=AppBuilderCredentials(account, api_key, appbuilder_token),
+            credentials=AppBuilderCredentials(
+                account, api_key, appbuilder_token),
             endpoint=gateway,
             uri_prefix=uri_prefix,
             connection_timeout_in_mills=DEFAULT_TIMEOUT_IN_MILLS,
@@ -197,8 +226,8 @@ class BaiduVDBVectorStoreIndex:
         fields.append(Field(FIELD_TEXT, FieldType.STRING))
         fields.append(
             Field(
-                FIELD_VECTOR, 
-                FieldType.FLOAT_VECTOR, 
+                FIELD_VECTOR,
+                FieldType.FLOAT_VECTOR,
                 dimension=table_params.dimension,
                 not_null=True,
             )
@@ -225,7 +254,7 @@ class BaiduVDBVectorStoreIndex:
         )
         # need wait 10s to wait proxy sync meta
         time.sleep(10)
-    
+
     @staticmethod
     def _get_index_params(index_type: Any, table_params: TableParams) -> None:
         from pymochow.model.enum import IndexType
@@ -252,7 +281,8 @@ class BaiduVDBVectorStoreIndex:
         try:
             return IndexType(index_type_value)
         except ValueError:
-            support_index_types = [d.value for d in IndexType.__members__.values()]
+            support_index_types = [
+                d.value for d in IndexType.__members__.values()]
             raise ValueError(
                 NOT_SUPPORT_INDEX_TYPE_ERROR.format(
                     index_type_value, support_index_types
@@ -267,7 +297,8 @@ class BaiduVDBVectorStoreIndex:
         try:
             return MetricType(metric_type_value.upper())
         except ValueError:
-            support_metric_types = [d.value for d in MetricType.__members__.values()]
+            support_metric_types = [
+                d.value for d in MetricType.__members__.values()]
             raise ValueError(
                 NOT_SUPPORT_METRIC_TYPE_ERROR.format(
                     metric_type_value, support_metric_types
@@ -301,14 +332,16 @@ class BaiduVDBVectorStoreIndex:
         segment_vectors = segment_vectors.content
         vector_dims = len(segment_vectors[0])
         segments = segments.content
-        
+        if len(segment) == 0:
+            raise ValueError("add_segments函数 参数segment 内容为空")
+
         rows = []
         for segment, vector in zip(segments, segment_vectors):
             row = Row(text=segment, vector=vector, metadata=metadata)
             rows.append(row)
         if len(rows) >= DEFAULT_BATCH_SIZE:
-                self.collection.upsert(rows=rows)
-                rows = []
+            self.collection.upsert(rows=rows)
+            rows = []
 
         if len(rows) > 0:
             self.table.upsert(rows=rows)
@@ -327,7 +360,7 @@ class BaiduVDBVectorStoreIndex:
         _try_import()
         dimension = kwargs.get("dimension", 384)
         table_params = TableParams(
-            dimension=dimension, 
+            dimension=dimension,
             table_name=table_name,
             drop_exists=drop_exists,
         )
@@ -357,7 +390,7 @@ class BaiduVDBRetriever(Component):
                     self.api_key,
             )
             vector_index.add_segments(segments)
-            
+
             query = appbuilder.Message("文心一言")
             time.sleep(5)
             retriever = vector_index.as_retriever()
@@ -365,7 +398,8 @@ class BaiduVDBRetriever(Component):
 
     """
     name: str = "BaiduVectorDBRetriever"
-    tool_desc: Dict[str, Any] = {"description": "a retriever based on Baidu VectorDB"}
+    tool_desc: Dict[str, Any] = {
+        "description": "a retriever based on Baidu VectorDB"}
 
     def __init__(self, embedding, table):
         super().__init__()
@@ -385,13 +419,28 @@ class BaiduVDBRetriever(Component):
         from pymochow.model.table import AnnSearch, HNSWSearchParams
         from pymochow.model.enum import ReadConsistency
 
+        if not isinstance(query, Message):
+            raise TypeError("Parameter `query` must be a Message, but got {}"
+                            .format(type(query)))
+        if not isinstance(top_k, int):
+            raise TypeError("Parameter `top_k` must be a int, but got {}"
+                            .format(type(top_k)))
+        if top_k <= 0:
+            raise ValueError("Parameter `top_k` must be a positive integer, but got {}"
+                             .format(top_k))
+
+        content = query.content
+        if len(content) == 0:
+            raise ValueError("Parameter `query` content is empty")
+
         query_embedding = self.embedding(query)
         anns = AnnSearch(
             vector_field=FIELD_VECTOR,
             vector_floats=query_embedding.content,
             params=HNSWSearchParams(ef=10, limit=top_k),
         )
-        res = self.table.search(anns=anns, read_consistency=ReadConsistency.STRONG)
+        res = self.table.search(
+            anns=anns, read_consistency=ReadConsistency.STRONG)
         rows = res.rows
         docs = []
         if rows is None or len(rows) == 0:
