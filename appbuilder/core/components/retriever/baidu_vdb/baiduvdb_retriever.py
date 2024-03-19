@@ -136,7 +136,8 @@ class BaiduVDBVectorStoreIndex:
         from pymochow.auth.bce_credentials import AppBuilderCredentials
 
         gateway = os.getenv("GATEWAY_URL") if os.getenv("GATEWAY_URL") else GATEWAY_URL
-        
+        appbuilder_token = os.getenv("APPBUILDER_TOKEN")
+
         config = Configuration(
             credentials=AppBuilderCredentials(account, api_key, appbuilder_token),
             endpoint=gateway,
