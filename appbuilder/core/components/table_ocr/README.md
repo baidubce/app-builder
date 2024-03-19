@@ -22,6 +22,11 @@
 ## 基本用法
 
 下面是表格文字识别的代码示例：
+
+示例图片为
+
+![示例图片](./image/table_ocr_test.png)
+
 ```python
 import os
 import appbuilder

@@ -21,6 +21,10 @@
 ## 基本用法
 
 下面是二维码识别的代码示例：
+
+示例图片为：
+![示例图片](./image/qrcode_ocr_test.png)
+
 ```python
 import os
 import appbuilder
@@ -40,6 +44,7 @@ qrcode_ocr = appbuilder.QRcodeOCR()
 # 执行识别操作并获取结果
 out = qrcode_ocr.run(appbuilder.Message(content={"raw_image": raw_image}), location="true")
 print(out.content)
+# {'codes_result': [{'type': 'QR_CODE', 'text': ['ocr文字识别'], 'location': {'top': 506, 'left': 1302, 'width': 1972, 'height': 1961}}]}
 ```
 
 
