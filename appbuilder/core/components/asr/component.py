@@ -14,12 +14,17 @@
 
 r"""ASR component.
 """
+import os
 import uuid
 import json
 
+import proto
+import requests
+
+from appbuilder.core import utils
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse, \
     ASRInMsg, ASROutMsg
@@ -44,6 +49,41 @@ class ASR(Component):
         out = asr.run(msg)
         print(out.content) # eg: {"result": ["北京科技馆。"]}
      """
+    name = "asr"
+    version = "v1"
+
+    manifests = [
+        {
+            "name": "asr",
+            "description": "对于输入的语音文件进行识别，输出语音识别结果。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_url": {
+                        "type": "string",
+                        "description": "输入语音文件的url,根据url获取到语音文件"
+                    },
+                    "file_name": {
+                        "type": "string",
+                        "description": "待识别语音文件名,用于生成获取语音的url"
+                    }
+                },
+                "anyOf": [
+                    {
+                        "required": [
+                            "file_url"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "file_name"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+
     @HTTPClient.check_param
     def run(self, message: Message, audio_format: str = "pcm", rate: int = 16000,
             timeout: float = None, retry: int = 0) -> Message:
@@ -120,3 +160,42 @@ class ASR(Component):
                     service_err_code=data["err_no"],
                     service_err_message=data["err_msg"]
                 )
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        """
+        asr for function call
+        """
+        file_url = kwargs.get("file_url", None)
+        if not file_url:
+            file_urls = kwargs.get("file_urls", {})
+            file_path = kwargs.get("file_name", None)
+            if not file_path:
+                raise InvalidRequestArgumentError("file name is not set")
+            file_name = os.path.basename(file_path)
+            file_url = file_urls.get(file_name, None)
+            if not file_url:
+                raise InvalidRequestArgumentError(f"file {file_url} url does not exist")
+        req = ShortSpeechRecognitionRequest()
+        req.cuid = str(uuid.uuid4())
+        req.dev_pid = "80001"
+        req.speech = requests.get(file_url).content
+        req.format = "pcm"
+        req.rate = 16000
+        result = proto.Message.to_dict(self._recognize(req))
+        results = {
+            "识别结果": " \n".join(item for item in result["result"])
+        }
+        res = json.dumps(results, ensure_ascii=False, indent=4)
+        if streaming:
+            yield {
+                "type": "text",
+                "text": res,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": 'user',
+            }
+        else:
+            return res

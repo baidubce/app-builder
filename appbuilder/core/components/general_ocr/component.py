@@ -13,11 +13,13 @@
 r"""general ocr component."""
 import base64
 import json
+import os.path
 
+from appbuilder.core import utils
 from appbuilder.core._client import HTTPClient
 
 
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
 from appbuilder.core.components.general_ocr.model import *
 from appbuilder.core.message import Message
@@ -44,6 +46,40 @@ class GeneralOCR(Component):
         print(out.content)
 
      """
+    name = "general_ocr"
+    version = "v1"
+
+    manifests = [
+        {
+            "name": "general_ocr",
+            "description": "提供更高精度的通用文字识别能力，能够识别图片中的文字",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "img_url": {
+                        "type": "string",
+                        "description": "待识别图片的url,根据该url能够获取图片"
+                    },
+                    "img_name": {
+                        "type": "string",
+                        "description": "待识别图片的文件名,用于生成图片url"
+                    },
+                },
+                "anyOf": [
+                    {
+                        "required": [
+                            "img_url"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "img_name"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -110,3 +146,37 @@ class GeneralOCR(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        """
+        general_ocr for function call
+        """
+        img_url = kwargs.get("img_url", None)
+        if not img_url:
+            file_urls = kwargs.get("file_urls", {})
+            img_path = kwargs.get("img_name", None)
+            if not img_path:
+                raise InvalidRequestArgumentError("file name is not set")
+            img_name = os.path.basename(img_path)
+            img_url = file_urls.get(img_name, None)
+            if not img_url:
+                raise InvalidRequestArgumentError(f"file {img_name} url does not exist")
+        req = GeneralOCRRequest(url=img_url)
+        result = proto.Message.to_dict(self._recognize(req))
+        results = {
+            "识别结果": " \n".join(item["words"] for item in result["words_result"])
+        }
+        res = json.dumps(results, ensure_ascii=False, indent=4)
+        if streaming:
+            yield {
+                "type": "text",
+                "text": res,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": 'user',
+            }
+        else:
+            return res

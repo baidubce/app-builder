@@ -22,7 +22,7 @@ import json
 from appbuilder.core.message import Message
 from appbuilder.core.component import Component
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.components.translate.model import *
 
 
@@ -49,6 +49,30 @@ class Translation(Component):
 
     name = "translate"
     version = "v1"
+
+    manifests = [
+        {
+            "name": "translation",
+            "description": "文本翻译通用版工具，会根据指定的目标语言对文本进行翻译，并返回翻译后的文本。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "q": {
+                        "type": "string",
+                        "description": "需要翻译的源文本，文本翻译工具会将该文本翻译成对应的目标语言"
+                    },
+                    "to_lang": {
+                        "type": "string",
+                        "description": "翻译的目标语言类型，'en'表示将原文本翻译成英文, 'zh'表示将原文本翻译成中文，默认为'en'",
+                        "enum": ["en", "zh"]
+                    }
+                },
+                "required": [
+                    "q"
+                ]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, from_lang: str = "auto", to_lang: str = "en",
@@ -113,3 +137,35 @@ class Translation(Component):
 
         json_str = json.dumps(data)
         return TranslateResponse(TranslateResponse.from_json(json_str))
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        """
+        translate for function call
+        """
+        req = TranslateRequest()
+        text = kwargs.get("q", None)
+        if not text:
+            raise InvalidRequestArgumentError("param `q` must be set")
+        req.q = text
+        to_lang = kwargs.get("to_lang", "en")
+        req.to_lang = to_lang
+        results = proto.Message.to_dict(self._translate(req))["result"]
+        trans_result = results["trans_result"]
+        res = {
+            "原文本": "\n ".join(item["src"] for item in trans_result),
+            "翻译结果": "\n ".join(item["dst"] for item in trans_result)
+        }
+        res = json.dumps(res, ensure_ascii=False, indent=4)
+        if streaming:
+            yield {
+                "type": "text",
+                "text": res,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": 'user',
+            }
+        else:
+            return res
