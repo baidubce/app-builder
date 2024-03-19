@@ -63,6 +63,10 @@ from .core.components.doc_parser.doc_parser import DocParser, ParserConfig
 from .core.components.doc_splitter.doc_splitter import DocSplitter
 from .core.components.retriever.bes.bes_retriever import BESRetriever
 from .core.components.retriever.bes.bes_retriever import BESVectorStoreIndex
+from .core.components.retriever.baidu_vdb.baiduvdb_retriever import BaiduVDBVectorStoreIndex
+from .core.components.retriever.baidu_vdb.baiduvdb_retriever import BaiduVDBRetriever
+from .core.components.retriever.baidu_vdb.baiduvdb_retriever import TableParams
+
 from .core.components.dish_recognize.component import DishRecognition
 from .core.components.translate.component import Translation
 from .core.components.animal_recognize.component import AnimalRecognition
@@ -134,6 +138,10 @@ __all__ = [
     "DocSplitter",
     "BESRetriever",
     "BESVectorStoreIndex",
+    "BaiduVDBVectorStoreIndex",
+    "BaiduVDBRetriever",
+    "TableParams",
+
     'DishRecognition',
     'Translation',
     'Message',
