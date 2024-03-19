@@ -166,6 +166,8 @@ class AnimalRecognition(Component):
         if img_path in file_urls:
             req.url = file_urls[img_path]
         if img_url:
+            if img_url in file_urls:
+                img_url = file_urls['img_url']
             req.url = img_url
         req.top_num = 6
         req.baike_num = 0
