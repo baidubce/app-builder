@@ -30,7 +30,6 @@ import appbuilder
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
-embedding = appbuilder.Embedding()
 segments = appbuilder.Message(["文心一言大模型", "百度在线科技有限公司"])
 # 初始化构建索引
 vector_index = appbuilder.BaiduVDBVectorStoreIndex.from_params(
@@ -56,13 +55,26 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
 
 ### 初始化参数说明：
-
-- segments （Message[List[str]]，必填）：需要入库的文本段落
+`BaiduVDBVectorStoreIndex()` 实例化参数说明：
 - instance_id（str，必填）：百度向量数据库的实例id，创建实例时获取
 - api_key    （str，必填）：连接向量数据库所需的密码，创建实例时获取
 - account    （str，非必填）：连接向量数据库所需的用户名，默认root
-- embedding  （obj，非必填）：用于将文本转为向量的模型，默认为Embedding
+- database_name （str，非必填） ：向量数据库的名称，默认为AppBuilderDatabase
+- table_params （TableParams，非必填） ：VectorDB table参数，参考链接[VectorDB table params](https://cloud.baidu.com/doc/VDB/s/mlrsob0p6)
+- embedding   （Embedding，非必填） ：appbuilder.Embedding类型，若有构造好的Embedding，可以增量插入，否则默认新建embedding
+
+-------
+
+`BaiduVDBVectorStoreIndex().from_params()` 构造函数参数说明：
+- instance_id（str，必填）：百度向量数据库的实例id，创建实例时获取
+- api_key    （str，必填）：连接向量数据库所需的密码，创建实例时获取
+- account    （str，非必填）：连接向量数据库所需的用户名，默认root
+- database_name （str，非必填） ：向量数据库的名称，默认为AppBuilderDatabase
+- table_name  （str，非必填） ：向量数据库的表名，默认为AppBuilderTable
 - drop_exists (bool, 非必填) ：是否清空数据库历史记录，默认为False
+
+-------
+
 
 ### 调用参数：
 | 参数名称    | 参数类型   |是否必须 | 描述               | 示例值           |

@@ -357,6 +357,23 @@ class BaiduVDBVectorStoreIndex:
         drop_exists: bool = False,
         **kwargs,
     ):
+        """
+        从参数中实例化类。
+        
+        Args:
+            cls: 类对象，即当前函数所属的类。
+            instance_id: str，实例ID。
+            api_key: str，API密钥。
+            account: str，账户名，默认为root。
+            database_name: str，数据库名，默认为AppBuilderDatabase。
+            table_name: str，表名，默认为AppBuilderTable。
+            drop_exists: bool，是否删除已存在的表，默认为False。
+            **kwargs: 其他参数，可选的维度参数dimension默认为384。
+        
+        Returns:
+            类实例，包含实例ID、账户名、API密钥、数据库名、表参数等属性。
+        
+        """
         _try_import()
         dimension = kwargs.get("dimension", 384)
         table_params = TableParams(
