@@ -19,6 +19,10 @@
 
 以下是有关如何开始使用BaiduVDBRetriever的代码示例：
 
+补充说明：
+- `you_vdb_instance_id` 为VectorDB 实例ID，请替换为您的实例ID，在VectorDB控制台界面上可以查看
+- `your_api_key` 为您在VectorDB上申请的账户密钥，请替换为您自己的root账户密钥，在VectorDB控制台界面上可以查看
+
 ```python
 import os
 import appbuilder

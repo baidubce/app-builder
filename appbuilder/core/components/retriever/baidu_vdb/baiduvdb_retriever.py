@@ -197,7 +197,10 @@ class BaiduVDBVectorStoreIndex:
         fields.append(Field(FIELD_TEXT, FieldType.STRING))
         fields.append(
             Field(
-                FIELD_VECTOR, FieldType.FLOAT_VECTOR, dimension=table_params.dimension
+                FIELD_VECTOR, 
+                FieldType.FLOAT_VECTOR, 
+                dimension=table_params.dimension,
+                not_null=True,
             )
         )
 
