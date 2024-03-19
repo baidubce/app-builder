@@ -332,7 +332,7 @@ class BaiduVDBVectorStoreIndex:
         segment_vectors = segment_vectors.content
         vector_dims = len(segment_vectors[0])
         segments = segments.content
-        if len(segment) == 0:
+        if len(segments) == 0:
             raise ValueError("add_segments函数 参数segment 内容为空")
 
         rows = []
