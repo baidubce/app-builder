@@ -188,6 +188,8 @@ class ImageUnderstand(Component):
         if img_path in file_urls:
             req.url = file_urls[img_path]
         if img_url:
+            if img_url in file_urls:
+                img_url = file_urls['img_url']
             req.url = img_url
         response = self.__recognize(req)
         description_to_llm = response.result.description_to_llm
