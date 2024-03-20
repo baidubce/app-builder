@@ -2,7 +2,7 @@
 
 ## 简介
 
-AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上通过AgentBuilder框架构建并发布的智能体应用。
+AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上通过AgentBuilder构建并发布的智能体应用。
 
 ### 功能介绍
 

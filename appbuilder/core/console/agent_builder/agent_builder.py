@@ -25,7 +25,8 @@ from appbuilder.utils.sse_util import SSEClient
 
 class AgentBuilder(Component):
     r"""
-        AgentBuilder组件支持调用Console端已发布智能体应用的会话能力，具体包括创建会话、上传文档、运行对话等
+       AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上通过AgentBuilder
+       构建并发布的智能体应用，具体包括创建会话、上传文档、运行对话等。
         Examples:
         ... code-block:: python
             import appbuilder
@@ -74,7 +75,7 @@ class AgentBuilder(Component):
         return resp.result.conversation_id
 
     def upload_local_file(self, conversation_id, local_file_path: str) -> str:
-        r"""上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话
+        r"""上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
                 参数:
                     conversation_id (str: 必须) : 会话ID
                     local_file_path (str: 必须) : 本地文件路径
