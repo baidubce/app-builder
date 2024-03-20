@@ -1,4 +1,4 @@
-# 相似问生成组件（SimilarQuestion）
+# 相似问生成（SimilarQuestion）
 
 ## 简介
 相似问生成组件（SimilarQuestion）可以用于基于输入的问题，挖掘出与该问题相关的类似问题。广泛用于客服、问答等场景。

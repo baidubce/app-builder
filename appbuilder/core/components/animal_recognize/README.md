@@ -1,7 +1,7 @@
-# 动物识别 (Animal Recognition) 
+# 动物识别 (AnimalRecognition) 
 
 ## 简介
-动物识别 (Animal Recognition) 支持对于输入的一张图片（可正常解码），输出动物识别结果。
+动物识别 (AnimalRecognition) 支持对于输入的一张图片（可正常解码），输出动物识别结果。
 
 ### 功能介绍
 * 识别动物名称

@@ -1,7 +1,7 @@
-# 向量检索（Baidu VDB Retriever）
+# 向量检索-VDB（Baidu VDB Retriever）
 
 ## 简介
-向量检索组件（Baidu VDB Retriever）基于一款百度向量数据库的内容检索组件，支持根据文本的向量的相似度进行内容检索。
+向量检索-VDB组件（Baidu VDB Retriever）基于一款百度向量数据库的内容检索组件，支持根据文本的向量的相似度进行内容检索。
 
 ### 功能介绍
 向量检索组件（Baidu VDB Retriever）用于在将文本内容输入到百度向量数据库，根据文本的向量相似度进行高效的内容检索。
