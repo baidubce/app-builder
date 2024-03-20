@@ -95,16 +95,6 @@ class CodeDetail(BaseModel):
     files: list[str] = []
 
 
-class ImageDetail(BaseModel):
-    """content_type=image，详情内容
-            属性:
-                text(str): 文本详情
-                url(str):资源下载地址
-    """
-    text: str = ""
-    url: str = ""
-
-
 class RAGDetail(BaseModel):
     """content_type=image，详情内容
             属性:

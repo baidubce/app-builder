@@ -79,6 +79,9 @@ class AgentBuilder(Component):
                 返回：
                     response (str: ): 唯一文件ID
             """
+
+        if len(conversation_id) == 0:
+            raise ValueError("conversation_id is empty")
         multipart_form_data = {
             'file': (os.path.basename(local_file_path), open(local_file_path, 'rb')),
             'app_id': (None, self.app_id),
@@ -109,6 +112,10 @@ class AgentBuilder(Component):
                     stream (bool, 可选): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
                 返回: message (obj: `Message`): 对话结果.
         """
+
+        if len(conversation_id) == 0:
+            raise ValueError("conversation_id is empty")
+
         req = HTTPRequest(
             app_id=self.app_id,
             conversation_id=conversation_id,
@@ -120,7 +127,7 @@ class AgentBuilder(Component):
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
         url = self.http_client.service_url("/v1/ai_engine/agi_platform/v1/instance/integrated", '/api')
-        response = self.http_client.session.post(url, headers=headers, json=req.dict(), timeout=None, stream=True)
+        response = self.http_client.session.post(url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)
         request_id = self.http_client.response_request_id(response)
         if stream:
