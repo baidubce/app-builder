@@ -472,8 +472,8 @@ class BaiduVDBRetriever(Component):
                              .format(type(content)))
         if len(content) == 0:
             raise ValueError("Parameter `query` content is empty")
-        if len(content) > 1000:
-            raise ValueError("Parameter `query` content is too long, max length per batch size is 1000")
+        if len(content) > 512:
+            raise ValueError("Parameter `query` content is too long, max length per batch size is 512")
 
         query_embedding = self.embedding(query)
         anns = AnnSearch(
