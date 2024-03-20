@@ -1,10 +1,10 @@
-# 向量检索-BES（Baidu ElasticSearch Retriever）
+# 向量检索-BES（BaiduElasticSearchRetriever）
 
 ## 简介
-向量检索-BES组件（Baidu ElasticSearch Retriever）基于一款Baidu ElasticSearch的内容检索组件，支持根据文本的向量的相似度进行内容检索。
+向量检索-BES组件（BaiduElasticSearchRetriever）基于一款Baidu ElasticSearch的内容检索组件，支持根据文本的向量的相似度进行内容检索。
 
 ### 功能介绍
-向量检索-BES组件（Baidu ElasticSearch Retriever）用于在将文本内容输入到Baidu ElasticSearch，根据文本的向量相似度进行高效的内容检索。
+向量检索-BES组件（BaiduElasticSearchRetriever）用于在将文本内容输入到Baidu ElasticSearch，根据文本的向量相似度进行高效的内容检索。
 
 ### 特色优势
 - 高效准确：基于Baidu ElasticSearch的强大能力，提供高效且准确的内容检索功能。
@@ -13,7 +13,7 @@
 各种内容检索场景
 
 ## 准备工作
-在使用Baidu ElasticSearch Retriever进行内容检索之前，需要到Baidu ElasticSearch官网创建相应的集群，详情见[教程](https://cloud.baidu.com/doc/BES/s/gke3ocf89)。
+在使用BaiduElasticSearchRetriever进行内容检索之前，需要到Baidu ElasticSearch官网创建相应的集群，详情见[教程](https://cloud.baidu.com/doc/BES/s/gke3ocf89)。
 
 注：创建集群时请选择7.10.2版本的ES，否则可能无法使用本组件。
 
