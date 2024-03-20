@@ -24,6 +24,9 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from typing import Generator, Union
 
+TOP_NUM = 1
+BAIKE_NUM = 0
+
 
 class AnimalRecognition(Component):
     r"""
@@ -169,8 +172,8 @@ class AnimalRecognition(Component):
             if img_url in file_urls:
                 img_url = file_urls['img_url']
             req.url = img_url
-        req.top_num = 1
-        req.baike_num = 0
+        req.top_num = TOP_NUM
+        req.baike_num = BAIKE_NUM
         result = self._recognize(req)
         result_dict = proto.Message.to_dict(result)
         rec_res = "模型识别结果为：\n"
