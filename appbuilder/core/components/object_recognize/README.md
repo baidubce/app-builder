@@ -16,6 +16,12 @@
 
 ## 基本用法
 
+示例图片为：
+
+![示例图片](./image/object_recognize_test.png)
+
+
+
 ```python
 import os
 import appbuilder
@@ -35,6 +41,7 @@ object_recognition = appbuilder.ObjectRecognition()
 # 执行识别操作并获取结果
 out = object_recognition.run(appbuilder.Message(content={"raw_image": raw_image}))
 print(out.content)
+# {'result': [{'keyword': '苹果', 'score': 0.961247, 'root': '植物-蔷薇科'}, {'keyword': '姬娜果', 'score': 0.740838, 'root': '植物-其它'}, {'keyword': '梨子', 'score': 0.392218, 'root': '商品-水果'}, {'keyword': '车厘子', 'score': 0.193986, 'root': '植物-其它'}, {'keyword': '石榴', 'score': 0.000239, 'root': '植物-千屈菜科'}]}
 ```
 
 ## 参数说明
