@@ -183,6 +183,7 @@ class ASR(Component):
                 raise InvalidRequestArgumentError(f"file {file_url} url does not exist")
 
         _, file_type = os.path.splitext(os.path.basename(urlparse(file_url).path))
+        file_type = file_type.strip('.')
 
         req = ShortSpeechRecognitionRequest()
         req.speech = requests.get(file_url).content
