@@ -169,7 +169,7 @@ class AnimalRecognition(Component):
             if img_url in file_urls:
                 img_url = file_urls['img_url']
             req.url = img_url
-        req.top_num = 6
+        req.top_num = 1
         req.baike_num = 0
         result = self._recognize(req)
         result_dict = proto.Message.to_dict(result)
