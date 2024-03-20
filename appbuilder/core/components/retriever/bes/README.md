@@ -1,7 +1,7 @@
-# 向量检索（Baidu ElasticSearch Retriever）
+# 向量检索-BES（Baidu ElasticSearch Retriever）
 
 ## 简介
-向量检索组件（Baidu ElasticSearch Retriever）基于一款Baidu ElasticSearch的内容检索组件，支持根据文本的向量的相似度进行内容检索。
+向量检索-BES组件（Baidu ElasticSearch Retriever）基于一款Baidu ElasticSearch的内容检索组件，支持根据文本的向量的相似度进行内容检索。
 
 ### 功能介绍
 向量检索组件（Baidu ElasticSearch Retriever）用于在将文本内容输入到Baidu ElasticSearch，根据文本的向量相似度进行高效的内容检索。
