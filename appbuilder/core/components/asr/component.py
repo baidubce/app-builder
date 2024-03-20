@@ -181,8 +181,12 @@ class ASR(Component):
             if not file_url:
                 raise InvalidRequestArgumentError(f"file {file_url} url does not exist")
         file_type = kwargs.get("file_type", "wav")
-        if file_type not in ["pcm", "wav", "amr", "m4a"]:
-            file_type = "wav"
+
+        for _type in ["pcm", "wav", "amr", "m4a"]:
+            # 大模型生成音频类型兜底
+            if _type in file_url:
+                file_type = _type
+
         req = ShortSpeechRecognitionRequest()
         req.speech = requests.get(file_url).content
         req.format = file_type
