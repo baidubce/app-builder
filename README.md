@@ -36,7 +36,7 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 * **2024.03.20 v0.5.0版本发布** [ReleaseNote](https://www.baidu.com/)
   * AgentBuilder ConsoleSDK发布 [Agent调用CookBook](https://www.baidu.com/)
   * AI能力引擎组件新增：向量检索-VDB
-  * 支持以下功能进行FunctionCall调用：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
+  * 支持以下功能进行FunctionCall调用并新增[CookBook](https://github.com/baidubce/app-builder/blob/master/cookbooks/general_ocr.ipynb)：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
 ## 教程与文档
 
 * **预备步骤**
