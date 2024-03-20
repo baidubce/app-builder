@@ -168,7 +168,16 @@ class ImageUnderstand(Component):
         file_urls = kwargs.get("file_urls", {})
         rec_res = self._recognize_w_post_process(img_path, img_url, file_urls)
         if streaming:
-            yield rec_res
+            yield {
+                "type": "text",
+                "text": rec_res,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": 'user',
+            }
         else:
             return rec_res
 
