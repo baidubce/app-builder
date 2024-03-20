@@ -19,7 +19,7 @@
 我们选取一张可爱的大熊猫照片，使用动物识别组件进行识别。
 
 
-![大熊猫](./animal_recognize_test.png)
+![大熊猫](./image/animal_recognize_test.png)
 
 
 

@@ -18,7 +18,7 @@
 
 示例图片为：
 
-![菜品识别示例图片](./dish_recognize_test.jpg)
+![菜品识别示例图片](./image/dish_recognize_test.jpg)
 
 ```python
 import os

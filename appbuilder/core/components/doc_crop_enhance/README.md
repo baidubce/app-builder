@@ -21,7 +21,7 @@
 
 示例图片为
 
-![示例图片](./doc_enhance_test.png)
+![示例图片](./image/doc_enhance_test.png)
 
 ```python
 import os
