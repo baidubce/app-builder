@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ import json
 import os
 
 from appbuilder.core.component import Message, Component
-from appbuilder.core.console.agent_builder.model import *
-from appbuilder.core._exception import *
+from appbuilder.core.console.agent_builder import data_class
+from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
 
 
@@ -49,8 +49,10 @@ class AgentBuilder(Component):
                     response (obj: `AgentBuilder`): 智能体实例
         """
         super().__init__(**kwargs)
-        if len(app_id) == 0:
-            raise ValueError("app_id is empty")
+        if (not isinstance(app_id, str)) or len(app_id) == 0:
+            raise ValueError("app_id must be a str, and length is bigger then zero,"
+                             "please go to official website which is 'https://cloud.baidu.com/product/AppBuilder'"
+                             " to get a valid app_id after your application is published.")
         self.app_id = app_id
 
     def create_conversation(self) -> str:
@@ -68,7 +70,7 @@ class AgentBuilder(Component):
         request_id = self.http_client.response_request_id(response)
         data = response.json()
         self._check_console_response(request_id, data)
-        resp = CreateConversationResponse(**data)
+        resp = data_class.CreateConversationResponse(**data)
         return resp.result.conversation_id
 
     def upload_local_file(self, conversation_id, local_file_path: str) -> str:
@@ -95,7 +97,7 @@ class AgentBuilder(Component):
         request_id = self.http_client.response_request_id(response)
         data = response.json()
         self._check_console_response(request_id, data)
-        resp = FileUploadResponse(**data)
+        resp = data_class.FileUploadResponse(**data)
         return resp.result.id
 
     def run(self, conversation_id: str,
@@ -116,7 +118,7 @@ class AgentBuilder(Component):
         if len(conversation_id) == 0:
             raise ValueError("conversation_id is empty")
 
-        req = HTTPRequest(
+        req = data_class.HTTPRequest(
             app_id=self.app_id,
             conversation_id=conversation_id,
             query=query,
@@ -136,12 +138,12 @@ class AgentBuilder(Component):
         else:
             data = response.json()
             self._check_console_response(request_id, data)
-            resp = HTTPResponse(**data)
-            out = AgentBuilderAnswer()
+            resp = data_class.HTTPResponse(**data)
+            out = data_class.AgentBuilderAnswer()
             _transform(resp, out)
             return Message(content=out)
 
-    def _iterate_events(self, request_id, events) -> AgentBuilderAnswer:
+    def _iterate_events(self, request_id, events) -> data_class.AgentBuilderAnswer:
         for event in events:
             try:
                 data = event.data
@@ -151,8 +153,8 @@ class AgentBuilder(Component):
                 self._check_console_response(request_id, data)
             except json.JSONDecodeError as e:
                 raise AppBuilderServerException(request_id=request_id, message="json decoder failed {}".format(str(e)))
-            inp = HTTPResponse(**data)
-            out = AgentBuilderAnswer()
+            inp = data_class.HTTPResponse(**data)
+            out = data_class.AgentBuilderAnswer()
             _transform(inp, out)
             yield out
 
@@ -167,11 +169,11 @@ class AgentBuilder(Component):
             )
 
 
-def _transform(inp: HTTPResponse, out: AgentBuilderAnswer):
+def _transform(inp: data_class.HTTPResponse, out: data_class.AgentBuilderAnswer):
     out.code = inp.code
     out.message = inp.message
     out.answer = inp.result.answer
     for ev in inp.result.content:
-        out.events.append(Event(code=ev.event_code, message=ev.event_message,
-                                status=ev.event_status, event_type=ev.event_type,
-                                content_type=ev.content_type, detail=ev.outputs))
+        out.events.append(data_class.Event(code=ev.event_code, message=ev.event_message,
+                                           status=ev.event_status, event_type=ev.event_type,
+                                           content_type=ev.content_type, detail=ev.outputs))

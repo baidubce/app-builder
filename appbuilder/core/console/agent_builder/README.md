@@ -2,7 +2,7 @@
 
 ## 简介
 
-AgentBuilder组件支持调用Console端已发布智能体应用的会话能力
+AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上通过AgentBuilder框架构建并发布的智能体应用。
 
 ### 功能介绍
 
@@ -98,7 +98,7 @@ Message(name=msg, content=北京市的面积是16410.54平方公里^[2]^。, mty
 ```python
 
 import appbuilder
-from appbuilder.core.console.agent_builder.model import *
+from appbuilder.core.console.agent_builder import data_class 
 import os
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
@@ -127,28 +127,28 @@ for content in message.content:
         detail = event.detail
         # 根据content类型对事件详情进行解析
         if content_type == "code":
-            code_detail = CodeDetail(**detail)
+            code_detail = data_class.CodeDetail(**detail)
             print(code_detail.code)
         elif content_type == "text":
-            text_detail = TextDetail(**detail)
+            text_detail = data_class.TextDetail(**detail)
             print(text_detail.text)
         elif content_type == "image":
-            image_detail = ImageDetail(**detail)
+            image_detail = data_class.ImageDetail(**detail)
             print(image_detail.url)
         elif content_type == "rag":
-            rag_detail = RAGDetail(**detail)
+            rag_detail = data_class.RAGDetail(**detail)
             print(rag_detail.references)
         elif content_type == "function_call":
-            function_call_detail = FunctionCallDetail(**detail)
+            function_call_detail = data_class.FunctionCallDetail(**detail)
             print(function_call_detail.video)
         elif content_type == "audio":
-            audio_detail = AudioDetail(**detail)
+            audio_detail = data_class.AudioDetail(**detail)
             print(audio_detail)
         elif content_type == "video":
-            video_detail = VideoDetail(**detail)
+            video_detail = data_class.VideoDetail(**detail)
             print(video_detail)
         elif content_type == "status":
-            StatusDetail(**detail)
+            data_class.StatusDetail(**detail)
     else:
         print(detail)
 print(answer)
