@@ -54,7 +54,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 |参数名称 |参数类型 |是否必须 |描述 | 示例值    |
 |--------|--------|--------|----|--------|
 |message |String  |是 |输入的消息，用于模型的主要输入内容。这是一个必需的参数| Message(content={"raw_audio": b"..."}) |
-|audio_format|String|是 |定义语言文件的格式，包括"pcm"、"wav"、"amr"、"m4a"，默认值为"pcm"| pcm    |
+|audio_format|String|是 |定义语言文件的格式，包括"pcm"、"wav"、"amr"，默认值为"pcm"| pcm    |
 |rate|Integer|是 |定义录音采样率，固定值16000| 16000  |
 |timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 |retry|Integer|是 |HTTP重试次数| 3      |
