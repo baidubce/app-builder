@@ -103,7 +103,7 @@ class AgentBuilder(Component):
 
     def run(self, conversation_id: str,
             query: str,
-            file_ids: list[str] = [],
+            file_ids: list = [],
             stream: bool = False,
             ) -> Message:
 
