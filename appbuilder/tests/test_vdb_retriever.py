@@ -34,6 +34,26 @@ class TestBaiduVDBRetrieverParameter(unittest.TestCase):
             retriever.run(query)
             self.assertIn("Parameter `query` content is empty", str(context.exception))
     
+    def test_run_paramter_query_type(self):
+        query = appbuilder.Message(content=12345)
+
+        retriever = appbuilder.BaiduVDBRetriever(
+            embedding="abcde",
+            table="abcde")
+        
+        with self.assertRaises(ValueError) as context:
+            retriever.run(query)
+            self.assertIn("Parameter `query` content is not a string", str(context.exception))
+
+    def test_run_parameter_query_length(self):
+        query = appbuilder.Message(content="a" * 1025)
+        retriever = appbuilder.BaiduVDBRetriever(
+            embedding="abcde",
+            table="abcde")
+        with self.assertRaises(ValueError) as context:
+            retriever.run(query)
+            self.assertIn("Parameter `query` content is too long", str(context.exception))
+
     def test_run_parameter_topk_positive(self):
         query = appbuilder.Message()
         retriever = appbuilder.BaiduVDBRetriever(

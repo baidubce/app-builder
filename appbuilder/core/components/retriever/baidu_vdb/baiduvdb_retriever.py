@@ -359,7 +359,7 @@ class BaiduVDBVectorStoreIndex:
     ):
         """
         从参数中实例化类。
-        
+
         Args:
             cls: 类对象，即当前函数所属的类。
             instance_id: str，实例ID。
@@ -369,13 +369,33 @@ class BaiduVDBVectorStoreIndex:
             table_name: str，表名，默认为AppBuilderTable。
             drop_exists: bool，是否删除已存在的表，默认为False。
             **kwargs: 其他参数，可选的维度参数dimension默认为384。
-        
+
         Returns:
             类实例，包含实例ID、账户名、API密钥、数据库名、表参数等属性。
-        
+
         """
         _try_import()
         dimension = kwargs.get("dimension", 384)
+
+        if not isinstance(instance_id, str):
+            raise TypeError("instance_id must be a string. but got {}".format(
+                type(instance_id)))
+        if not isinstance(api_key, str):
+            raise TypeError("api_key must be a string. but got {}".format(
+                type(api_key)))
+        if not isinstance(account, str):
+            raise TypeError("account must be a string. but got {}".format(
+                type(account)))
+        if not isinstance(database_name, str):
+            raise TypeError("database_name must be a string. but got {}".format(
+                type(database_name)))
+        if not isinstance(table_name, str):
+            raise TypeError("table_name must be a string. but got {}".format(
+                type(table_name)))
+        if not isinstance(drop_exists, bool):
+            raise TypeError("drop_exists must be a boolean. but got {}".format(
+                type(drop_exists)))
+
         table_params = TableParams(
             dimension=dimension,
             table_name=table_name,
@@ -447,8 +467,13 @@ class BaiduVDBRetriever(Component):
                              .format(top_k))
 
         content = query.content
+        if not isinstance(content, str):
+            raise ValueError("Parameter `query` content is not a string, got: {}"
+                             .format(type(content)))
         if len(content) == 0:
             raise ValueError("Parameter `query` content is empty")
+        if len(content) > 1000:
+            raise ValueError("Parameter `query` content is too long, max length per batch size is 1000")
 
         query_embedding = self.embedding(query)
         anns = AnnSearch(
