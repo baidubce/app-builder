@@ -63,9 +63,15 @@ class Translation(Component):
                     },
                     "to_lang": {
                         "type": "string",
-                        "description": "翻译的目标语言类型，'en'表示翻译成英语, 'zh'表示翻译成中文，'jp'表示翻译成日语，"
-                                       "'kor'表示翻译成韩语，'fra'表示翻译成法语，'de'表示翻译成德语，默认为'en'",
-                        "enum": ["en", "zh", "jp", "kor", "fra", "de"]
+                        "description": "翻译的目标语言类型，'en'表示翻译成英语, 'zh'表示翻译成中文，'yue'表示翻译成粤语，'wyw'表示翻译成文言文，"
+                                       "'jp'表示翻译成日语，'kor'表示翻译成韩语，'fra'表示翻译成法语，'spa'表示翻译成西班牙语，'th'表示翻译成泰语,"
+                                       "'ara'表示翻译成阿拉伯语，'ru'表示翻译成俄语，'pt'表示翻译成葡萄牙语，'de'表示翻译成德语，'it'表示翻译成意大利语，"
+                                       "'el'表示翻译成希腊语，'nl'表示翻译成荷兰语,'pl'表示翻译成波兰语,'bul'表示翻译成保加利亚语，'est'表示翻译成爱沙尼亚语，"
+                                       "'dan'表示翻译成丹麦语, 'fin'表示翻译成芬兰语，'cs'表示翻译成捷克语，'rom'表示翻译成罗马尼亚语，'slo'表示翻译成斯洛文尼亚语，"
+                                       "'swe'表示翻译成瑞典语，'hu'表示翻译成匈牙利语，'cht'表示翻译成繁体中文，'vie'表示翻译成越南语，默认为'en'",
+                        "enum": ["en", "zh", "yue", "wyw", "jp", "kor", "fra", "spa", "th", "ara", "ru", "pt", "de",
+                                 "it", "el", "nl", "pl", "bul", "est", "dan", "fin", "cs", "rom", "slo", "swe", "hu",
+                                 "cht", "vie"]
                     }
                 },
                 "required": [
@@ -134,7 +140,8 @@ class Translation(Component):
         request_id = self.http_client.response_request_id(response)
         self.http_client.check_response_json(data)
         if "error_code" in data and "error_msg" in data:
-            raise AppBuilderServerException(request_id=request_id, service_err_code=data["error_code"], service_err_message=data["error_msg"])
+            raise AppBuilderServerException(request_id=request_id, service_err_code=data["error_code"],
+                                            service_err_message=data["error_msg"])
 
         json_str = json.dumps(data)
         return TranslateResponse(TranslateResponse.from_json(json_str))
