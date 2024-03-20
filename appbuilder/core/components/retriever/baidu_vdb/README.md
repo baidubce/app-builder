@@ -82,7 +82,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 | 参数名称    | 参数类型   |是否必须 | 描述               | 示例值           |
 |---------|--------|--------|------------------|---------------|
-| message | String |是 | 需要检索的内容, 类型为Message，content类型为str, 长度要求(0,1000)          | "中国2023人均GDP" |
+| message | String |是 | 需要检索的内容, 类型为Message，content类型为str, 长度要求(0,512)          | "中国2023人均GDP" |
 | top_k   | int    |否 | 返回相似度最高的top_k个内容,top_k的数值范围(1,embedding索引数量] | 1             |
 
 
