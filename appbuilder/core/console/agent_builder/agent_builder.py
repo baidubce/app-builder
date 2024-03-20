@@ -125,7 +125,6 @@ class AgentBuilder(Component):
         request_id = self.http_client.response_request_id(response)
         if stream:
             client = SSEClient(response)
-
             return Message(content=self._iterate_events(request_id, client.events()))
         else:
             data = response.json()

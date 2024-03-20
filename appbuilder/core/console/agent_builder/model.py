@@ -56,6 +56,7 @@ class Result(BaseModel):
     is_completion: Union[bool, None] = ""
     content: list[OriginalEvent] = []
 
+
 class HTTPResponse(BaseModel):
     """会话请求参数
         属性:
@@ -118,11 +119,34 @@ class FunctionCallDetail(BaseModel):
     """content_type=function_call，详情内容
              属性:
                  text(str): 文本详情
-                 references(list[dict]): 引用详情
      """
     text: Union[str, dict] = ""
     image: str = ""
     audio: str = ""
+    video: str = ""
+
+
+class ImageDetail(BaseModel):
+    """content_type=function_call，详情内容
+            属性:
+                image(str): 图片下载地址
+    """
+    image: str = ""
+
+
+class AudioDetail(BaseModel):
+    """content_type=audio，详情内容
+            属性:
+                image(str): 音频下载地址
+    """
+    audio: str = ""
+
+
+class VideoDetail(BaseModel):
+    """content_type=video，详情内容
+            属性:
+                vidoe(str): 视频下载地址
+    """
     video: str = ""
 
 

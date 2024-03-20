@@ -66,20 +66,20 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 ### 非流式返回
 
-| 参数名称           | 参数类型               | 描述               | 示例值                                                              |
-|----------------|--------------------|------------------|------------------------------------------------------------------|
-| content        | AgentBuilderAnswer | 对话返回结果           |                                                                  |
-| +code          | Int                | 错误码,0代码成功，非0表示失败 | 0                                                                |
-| +message       | String             | 错误具体消息           |                                                                  |
-| +answer        | String             | 智能体返回的回答         |                                                                  |
-| +events        | List[Event]        | 事件列表             |                                                                  |
-| +events[0]     | Event              | 具体事件内容           |                                                                  |
-| ++code         | String             | 错误码              |                                                                  |
-| ++message      | String             | 错误具体消息           |                                                                  |
-| ++status       | String             | 事件状态             | 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成）           |
-| ++event_type   | String             | 事件类型             |                                                                  |
-| ++content_type | String             | 内容类型             | 可选值包括：code text, image, status,image, function_call, rag, audio等 |
-| ++detail       | Dict               | 事件输出详情           | 代码解释器、文生图、工具组件等的详细输出内容                                           |
+| 参数名称           | 参数类型               | 描述               | 示例值                                                                    |
+|----------------|--------------------|------------------|------------------------------------------------------------------------|
+| content        | AgentBuilderAnswer | 对话返回结果           |                                                                        |
+| +code          | Int                | 错误码,0代码成功，非0表示失败 | 0                                                                      |
+| +message       | String             | 错误具体消息           |                                                                        |
+| +answer        | String             | 智能体返回的回答         |                                                                        |
+| +events        | List[Event]        | 事件列表             |                                                                        |
+| +events[0]     | Event              | 具体事件内容           |                                                                        |
+| ++code         | String             | 错误码              |                                                                        |
+| ++message      | String             | 错误具体消息           |                                                                        |
+| ++status       | String             | 事件状态             | 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成）                 |
+| ++event_type   | String             | 事件类型             |                                                                        |
+| ++content_type | String             | 内容类型             | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
+| ++detail       | Dict               | 事件输出详情           | 代码解释器、文生图、工具组件等的详细输出内容                                                 |
 
 ### 流式返回
 
@@ -141,6 +141,12 @@ for content in message.content:
         elif content_type == "function_call":
             function_call_detail = FunctionCallDetail(**detail)
             print(function_call_detail.video)
+        elif content_type == "audio":
+            audio_detail = AudioDetail(**detail)
+            print(audio_detail)
+        elif content_type == "video":
+            video_detail = VideoDetail(**detail)
+            print(video_detail)
         elif content_type == "status":
             StatusDetail(**detail)
     else:
