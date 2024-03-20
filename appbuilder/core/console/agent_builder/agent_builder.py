@@ -181,6 +181,6 @@ def _transform(inp: data_class.HTTPResponse, out: data_class.AgentBuilderAnswer)
             status = ev.get("event_status", ""),
             event_type = ev.get("event_type", ""),
             content_type = ev.get("content_type", ""),
-            detail = ev.get("detail", {})
+            detail = ev.get("outputs", {})
         )
         out.events.append(event)
