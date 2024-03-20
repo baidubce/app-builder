@@ -67,7 +67,8 @@ sdk_code_dict = {
     "bing_image_search": "bing_image_search",
     "news_get": "news_get",
     "weather_query": "weather_query",
-    "video_get": "video_get"
+    "video_get": "video_get",
+    "baidu_vdb": "baidu_vdb"
 
 }
 
