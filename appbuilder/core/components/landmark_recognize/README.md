@@ -16,6 +16,9 @@
 ## 基本用法
 
 下面是地标识别的代码示例：
+
+示例图片为：![示例图片](./image/landmark_test.jpeg)
+
 ```python
 import os
 

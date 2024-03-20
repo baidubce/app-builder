@@ -17,6 +17,8 @@
 
 以下是一个简单的例子来演示如何开始使用GeneralOCR组件：
 
+示例图片为![示例图片](./image/general_ocr_test.png)
+
 ```python
 import os
 import appbuilder
@@ -101,9 +103,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
     ]
 }
 ```
-### 错误码
-| 错误码 | 描述 |
-|-----|----|
 
 ## 高级用法
 

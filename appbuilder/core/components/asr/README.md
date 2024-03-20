@@ -34,6 +34,8 @@ content_data = {"audio_format": "pcm", "raw_audio": audio_data, "rate": 16000}
 msg = appbuilder.Message(content_data)
 out = asr.run(msg)
 print(out.content)
+
+# {'result': ['北京科技馆。']}
 ```
 ## 参数说明
 

@@ -18,6 +18,11 @@
 ## 基本用法
 
 下面是文档矫正增强代码示例：
+
+示例图片为
+
+![示例图片](./image/doc_enhance_test.png)
+
 ```python
 import os
 import appbuilder
@@ -37,6 +42,7 @@ doc_crop_enhance = appbuilder.DocCropEnhance()
 # 执行操作并获取结果
 out = doc_crop_enhance.run(appbuilder.Message(content={"raw_image": raw_image}),enhance_type=3)
 print(out.content)
+# {"image_processed": "...", 'points': [{'y': 1371, 'x': 0}, {'x': 0, 'y': 0}, {'x': 997, 'y': 0}, {'x': 994, 'y': 1371}]}
 ```
 
 
@@ -78,9 +84,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
   ]
 }
 ```
-### 错误码
-| 错误码 | 描述 |
-|-----|----|
 
 ## 高级用法
 

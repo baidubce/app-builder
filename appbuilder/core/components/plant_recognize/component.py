@@ -22,6 +22,9 @@ from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.plant_recognize.model import *
 from typing import Generator, Union
 
+TOP_NUM = 1
+BAIKE_NUM = 0
+
 
 class PlantRecognition(Component):
     r"""
@@ -174,8 +177,8 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             if img_url in file_urls:
                 img_url = file_urls['img_url']
             req.url = img_url
-        req.top_num = 6
-        req.baike_num = 0
+        req.top_num = TOP_NUM
+        req.baike_num = BAIKE_NUM
         result = self.__recognize(req)
         result_dict = proto.Message.to_dict(result)
         rec_res = "模型识别结果为：\n"
