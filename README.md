@@ -33,8 +33,8 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
   * AgentRuntime：新增[Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/agent_runtime.ipynb)
 * **2024.03.13 v0.4.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.4.1)
   * 支持以下功能进行FunctionCall调用：动植物识别、表格文字识别、条形码及二维码识别、身份证混贴识别、手写文字识别、text2image、excel2figure
-* **2024.03.20 v0.5.0版本发布** [ReleaseNote](https://www.baidu.com/)
-  * AgentBuilder ConsoleSDK发布 [Agent调用CookBook](https://www.baidu.com/)
+* **2024.03.20 v0.5.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.0)
+  * AgentBuilder ConsoleSDK发布 [Agent调用CookBook](https://github.com/baidubce/app-builder/blob/0.5.0/cookbooks/agent_builder.ipynb)
   * AI能力引擎组件新增：向量检索-VDB
   * 支持以下功能进行FunctionCall调用并新增[CookBook](https://github.com/baidubce/app-builder/blob/master/cookbooks/general_ocr.ipynb)：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
 ## 教程与文档
