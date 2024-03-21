@@ -28,7 +28,7 @@ class HTTPRequest(BaseModel):
     query: str = ""
     response_mode: str
     conversation_id: str
-    file_ids: list[str] = []
+    file_ids: list = []
     app_id: str
 
 
@@ -47,7 +47,7 @@ class OriginalEvent(BaseModel):
     event_code: int = ""
     event_message: str = ""
     node_name: str = ""
-    dependency_nodes: list[str] = []
+    dependency_nodes: list = []
     event_type: str = ""
     event_id: str = ""
     event_status: str = ""
@@ -68,7 +68,7 @@ class Result(BaseModel):
     conversation_id: str = ""
     message_id: str = ""
     is_completion: Union[bool, None] = ""
-    content: list[OriginalEvent] = []
+    content: list = []
 
 
 class HTTPResponse(BaseModel):
@@ -106,7 +106,7 @@ class CodeDetail(BaseModel):
      """
     text: str = ""
     code: str = ""
-    files: list[str] = []
+    files: list = []
 
 
 class RAGDetail(BaseModel):
@@ -116,7 +116,7 @@ class RAGDetail(BaseModel):
                 references(list[dict]): 引用详情
     """
     text: str = ""
-    references: list[dict] = []
+    references: list = []
 
 
 class FunctionCallDetail(BaseModel):
@@ -187,7 +187,7 @@ class AgentBuilderAnswer(BaseModel):
     code: int = 0
     message: str = ""
     answer: str = ""
-    events: list[Event] = []
+    events: list = []
 
 
 class FileUploadResult(BaseModel):

@@ -103,7 +103,7 @@ class AgentBuilder(Component):
 
     def run(self, conversation_id: str,
             query: str,
-            file_ids: list[str] = [],
+            file_ids: list = [],
             stream: bool = False,
             ) -> Message:
 
@@ -175,6 +175,12 @@ def _transform(inp: data_class.HTTPResponse, out: data_class.AgentBuilderAnswer)
     out.message = inp.message
     out.answer = inp.result.answer
     for ev in inp.result.content:
-        out.events.append(data_class.Event(code=ev.event_code, message=ev.event_message,
-                                           status=ev.event_status, event_type=ev.event_type,
-                                           content_type=ev.content_type, detail=ev.outputs))
+        event = data_class.Event(
+            code = ev.get("event_code", 0),
+            message = ev.get("event_message", ""),
+            status = ev.get("event_status", ""),
+            event_type = ev.get("event_type", ""),
+            content_type = ev.get("content_type", ""),
+            detail = ev.get("outputs", {})
+        )
+        out.events.append(event)
