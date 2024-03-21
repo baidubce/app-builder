@@ -55,7 +55,7 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 ```shell
 pip install --upgrade appbuilder-sdk
 ```
-如果在本地无法跑通appbuilder-sdk包，也可以使用我们的官方镜像来按照和运行，具体方案参考**二次开发**部分。
+如果在本地无法跑通appbuilder-sdk包，也可以使用我们的官方镜像来安装和运行，具体方案参考**二次开发**部分。
 
 ## 快速使用
 
