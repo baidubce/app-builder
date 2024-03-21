@@ -37,6 +37,8 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
   * AgentBuilder ConsoleSDK发布 [Agent调用CookBook](https://github.com/baidubce/app-builder/blob/0.5.0/cookbooks/agent_builder.ipynb)
   * AI能力引擎组件新增：向量检索-VDB
   * 支持以下功能进行FunctionCall调用并新增[CookBook](https://github.com/baidubce/app-builder/blob/master/cookbooks/general_ocr.ipynb)：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
+* **2024.03.21 v0.5.1版本发布**
+  * 问题修复：修复了在Python 3.8 及以下环境无法使用AgentBuilder ConsoleSDK的问题。同时，在即将发布的0.6.0版本中，将不再提供对Python 3.8及以下环境的支持，请升级Python版本到3.9
 ## 教程与文档
 
 * **预备步骤**
