@@ -175,7 +175,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             req.url = file_urls[img_path]
         if img_url:
             if img_url in file_urls:
-                img_url = file_urls['img_url']
+                img_url = file_urls[img_url]
             req.url = img_url
         req.top_num = TOP_NUM
         req.baike_num = BAIKE_NUM
