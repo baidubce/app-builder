@@ -125,7 +125,7 @@ class StyleWriting(CompletionBaseComponent):
                         "enum": ["通用", "B站", "小红书"]
                     },
                     "length": {
-                        "type": "int",
+                        "type": "integer",
                         "description": "用于定义输出内容的长度。有效的选项包括 100（短）、300（中）、600（长），默认值为 100。",
                         "enum": [100, 300, 600]
                     }
