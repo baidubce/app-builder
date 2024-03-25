@@ -15,10 +15,7 @@ AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud
 ### 应用场景
 
 快速、高效集成云端已发布智能体应用能力
-
 ## 基本用法
-
-以下是使用SDK进行问答的示例代码
 
 ```python
 import appbuilder
@@ -33,7 +30,7 @@ agent = appbuilder.AgentBuilder(app_id)
 # 创建会话
 conversation_id = agent.create_conversation()
 # 运行对话
-out = agent.run("北京天气怎么样", conversation_id)
+out = agent.run("北京今天天气怎么样", conversation_id)
 # 打印会话结果 
 print(out.content.answer)
 ```
@@ -51,9 +48,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 ### 初始化参数
 
-- `app_id`: 线上AgentBuilder应用ID，可在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)我的应用中查看应用ID，示例如图
-
-<img width="768" alt="image" src="./image/agentbuilder.png">
+- `app_id`: 线上AgentBuilder应用ID
 
 ### 调用参数
 
@@ -110,10 +105,10 @@ agent = appbuilder.AgentBuilder(app_id)
 # 创建会话
 conversation_id = agent.create_conversation()
 
-# 上传一个介绍介绍北京旅游景点的文档
+# 上传一个介绍某汽车产品的说明文档
 file_id = agent.upload_local_file(conversation_id, "/path/to/pdf/file")
-# 开始对话，引用上传的文档
-message = agent.run(conversation_id, "北京天气怎么样", file_ids=[file_id, ], stream=True)
+# 引用上传的文档，开始对话
+message = agent.run(conversation_id, "汽车性能参数怎么样", file_ids=[file_id, ], stream=True)
 
 
 answer = ""
