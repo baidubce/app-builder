@@ -30,29 +30,21 @@ logger.propagate = False
 current_path = os.path.dirname(os.path.abspath(__file__))
 
 """
-将Unittest Case分为以下六类
+将Unittest Case分为以下几类
 1、SKIP_UNITTEST
 2、CPU_PARALLEL_RUN_UNITTEST
-3、GPU_PARALLEL_RUN_UNITTEST
-4、CPU_SERIAL_RUN_UNITTEST
-5、GPU_SERIAL_RUN_UNITTEST
-6、UNKNOWN_UNITTEST
+3、CPU_SERIAL_RUN_UNITTEST
+4、UNKNOWN_UNITTEST
 """
 
 # 需要跳过的单测用例
 SKIP_UNITTEST = []
 
-# 涉及C++执行，但可以CPU并行的单测用例
+# 可以CPU并行的单测用例
 CPU_PARALLEL_RUN_UNITTEST = []
 
-# 涉及C++执行，但可以GPU并行的单测用例
-GPU_PARALLEL_RUN_UNITTEST = []
-
-# 需要C++执行，在CPU上仅能串行执行的单测用例
+# CPU上仅能串行执行的单测用例
 CPU_SERIAL_RUN_UNITTEST = []
-
-# 需要C++执行，在GPU上仅能串行执行的单测用例
-GPU_SERIAL_RUN_UNITTEST = []
 
 # 分类未知，故在CPU上串行执行的单测用例
 UNKNOWN_UNITTEST = []
@@ -70,9 +62,7 @@ def choose_test_case(file):
     """
     skip_case_str = '@unittest.skip('
     cpu_parallel_str = '@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL"'
-    gpu_parallel_str = '@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "GPU_PARALLEL"'
     cpu_serial_str = '@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL"'
-    gpu_serial_str = '@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "GPU_SERIAL"'
 
     with open(file, 'r') as f:
         all_line = f.readlines()
@@ -85,16 +75,8 @@ def choose_test_case(file):
             CPU_PARALLEL_RUN_UNITTEST.append(file.split("/")[-1])
             return
 
-        if list(set([line.strip().find(gpu_parallel_str) for line in all_line])) != [-1]:
-            GPU_PARALLEL_RUN_UNITTEST.append(file.split("/")[-1])
-            return
-
         if list(set([line.strip().find(cpu_serial_str) for line in all_line])) != [-1]:
             CPU_SERIAL_RUN_UNITTEST.append(file.split("/")[-1])
-            return
-
-        if list(set([line.strip().find(gpu_serial_str) for line in all_line])) != [-1]:
-            GPU_SERIAL_RUN_UNITTEST.append(file.split("/")[-1])
             return
 
         UNKNOWN_UNITTEST.append(file.split("/")[-1])
@@ -129,18 +111,8 @@ def get_all_unittest_file():
         logger.info("--> {}. {}".format(idx+1, case))
 
     logger.info(
-        "\n涉及C++执行，但可以GPU并行的单测用例：{}个".format(len(GPU_PARALLEL_RUN_UNITTEST)))
-    for idx, case in enumerate(GPU_PARALLEL_RUN_UNITTEST):
-        logger.info("--> {}. {}".format(idx+1, case))
-
-    logger.info(
         "\n需要C++执行，在CPU上仅能串行执行的单测用例：{}个".format(len(CPU_SERIAL_RUN_UNITTEST)))
     for idx, case in enumerate(CPU_SERIAL_RUN_UNITTEST):
-        logger.info("--> {}. {}".format(idx+1, case))
-
-    logger.info(
-        "\n需要C++执行，在GPU上仅能串行执行的单测用例：{}个".format(len(GPU_SERIAL_RUN_UNITTEST)))
-    for idx, case in enumerate(GPU_SERIAL_RUN_UNITTEST):
         logger.info("--> {}. {}".format(idx+1, case))
 
     logger.info("\n运行模式未知，串行执行的单测用例：{}个".format(len(UNKNOWN_UNITTEST)))
@@ -266,13 +238,6 @@ def run_cpu_parallel_unittest():
 
     return success_cases, failed_cases, end_time - begin_time
 
-
-def run_gpu_parallel_unittest():
-    pass
-
-
-def run_gpu_serial_unittest():
-    pass
 
 
 def run_cpu_serial_unittest():
