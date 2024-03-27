@@ -20,6 +20,7 @@ import json
 
 import proto
 import requests
+from urllib.parse import urlparse
 
 from appbuilder.core import utils
 from appbuilder.core.component import Component
@@ -180,9 +181,10 @@ class ASR(Component):
             file_url = file_urls.get(file_name, None)
             if not file_url:
                 raise InvalidRequestArgumentError(f"file {file_url} url does not exist")
-        file_type = kwargs.get("file_type", "wav")
-        if file_type not in ["pcm", "wav", "amr", "m4a"]:
-            file_type = "wav"
+
+        _, file_type = os.path.splitext(os.path.basename(urlparse(file_url).path))
+        file_type = file_type.strip('.')
+
         req = ShortSpeechRecognitionRequest()
         req.speech = requests.get(file_url).content
         req.format = file_type

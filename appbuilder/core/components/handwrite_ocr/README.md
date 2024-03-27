@@ -18,6 +18,9 @@
 ## 基本用法
 
 下面是手写文字识别的代码示例：
+
+示例图片为 ![示例图片](./image/test_handwrite_ocr.jpg)
+
 ```python
 import os
 import requests
@@ -140,9 +143,6 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 }
 ```
 
-### 错误码
-|错误码|描述|
-|------|---|
 
 ## 高级用法
 目前该模块仅提供基础的手写体识别。

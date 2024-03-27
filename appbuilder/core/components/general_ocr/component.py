@@ -100,6 +100,8 @@ class GeneralOCR(Component):
             request.image = base64.b64encode(inp.raw_image)
         if inp.url:
             request.url = inp.url
+        request.detect_direction = "true"
+        request.language_type = "auto_detect"
         result = self._recognize(request, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = GeneralOCROutMsg(**result_dict)
@@ -162,6 +164,8 @@ class GeneralOCR(Component):
             if not img_url:
                 raise InvalidRequestArgumentError(f"file {img_name} url does not exist")
         req = GeneralOCRRequest(url=img_url)
+        req.detect_direction = "true"
+        req.language_type = "auto_detect"
         result = proto.Message.to_dict(self._recognize(req))
         results = {
             "识别结果": " \n".join(item["words"] for item in result["words_result"])

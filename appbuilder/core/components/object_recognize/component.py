@@ -167,7 +167,7 @@ class ObjectRecognition(Component):
             if item["score"] < score_threshold and len(results) > 0:
                 continue
             res = {
-                "物品名称": item["keyword"],
+                "物体或场景名称": item["keyword"],
                 "置信度": item["score"],
                 "所属类别": item["root"],
             }
