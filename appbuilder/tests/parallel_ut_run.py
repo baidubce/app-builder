@@ -21,6 +21,7 @@ import copy
 import time
 from collections import deque
 import logging
+import coverage
 
 logger = logging.getLogger("root")
 logger.setLevel(logging.INFO)
@@ -36,6 +37,9 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 3、CPU_SERIAL_RUN_UNITTEST
 4、UNKNOWN_UNITTEST
 """
+
+# Coverage 运行命令
+COVERAGE_CMD = ["coverage", "run", "--pylib", "--source=appbuilder.core,appbuilder.utils", "--parallel-mode"]
 
 # 需要跳过的单测用例
 SKIP_UNITTEST = []
@@ -143,7 +147,7 @@ def pull_last_n_log(ut_context, file_name, line_count=80):
 def run_sync_unittest(test_file):
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
-    cmd = [sys.executable, "-u", test_file]
+    cmd = COVERAGE_CMD + [test_file]
     log = open("{}/ut_logs/{}_run.log".format(current_path, test_file), "w")
     begin_time = time.time()
     proc = subprocess.Popen(
@@ -154,7 +158,7 @@ def run_sync_unittest(test_file):
 def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
-    cmd = [sys.executable, "-u", test_file]
+    cmd = COVERAGE_CMD + [test_file]
     log_file = "{}/ut_logs/{}_run.log".format(current_path, test_file)
     log = open(log_file, "w")
     begin_time = time.time()
@@ -338,7 +342,7 @@ def create_unittest_report():
     else:
         logger.info("\nCI 运行成功！")
 
-    shutil.rmtree("./ut_logs")
+    # shutil.rmtree("./ut_logs")
 
 
 if __name__ == '__main__':

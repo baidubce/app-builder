@@ -40,3 +40,7 @@ class Message(BaseModel, Generic[_T], extra=Extra.allow):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(name={self.name!r}, content={self.content!r}, mtype={self.mtype!r})"
+
+    def _test_line_cov(self):
+        print("This is a test line for coverage")
+        return self

@@ -44,5 +44,13 @@ pip install -U dist/*.whl
 
 # 5、执行parallel_ut_run.py，运行python单元测试
 python3 appbuilder/tests/parallel_ut_run.py
+# 若单测失败，则退出
+if [ $? -ne 0 ]; then exit 1; fi
 
+# 6、基于coverage 测试结果计算全量单测覆盖率
+coverage combine
+coverage xml -o coverage.xml 
+coverage html -d coverage_html
 
+# 7、计算增量代码的单测覆盖率
+diff-cover coverage.xml --compare-branch=origin/master   --html-report coverage_diff.html
