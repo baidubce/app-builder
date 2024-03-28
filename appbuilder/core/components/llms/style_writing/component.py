@@ -201,18 +201,8 @@ class StyleWriting(CompletionBaseComponent):
         top_p = model_configs.get("top_p", 0.0)
         message = super().run(message=msg, style_query=style, length=length, stream=False,
                               temperature=temperature, top_p=top_p)
-        result = {"生成结果": message.content}
-        res = json.dumps(result, ensure_ascii=False, indent=4)
+        
         if streaming:
-            yield {
-                "type": "text",
-                "text": res,
-                "visible_scope": 'llm',
-            }
-            yield {
-                "type": "text",
-                "text": "",
-                "visible_scope": 'user',
-            }
+            yield str(message.content)
         else:
-            return res
+            return str(message.content)
