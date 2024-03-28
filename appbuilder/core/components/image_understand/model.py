@@ -125,6 +125,10 @@ class ImageUnderstandOCR(proto.Message):
         ImageUnderstandLocation,
         number=2
     )
+    prob = proto.Field(
+        proto.FLOAT,
+        number=3
+    )
 
 
 class ImageUnderstandResult(proto.Message):
