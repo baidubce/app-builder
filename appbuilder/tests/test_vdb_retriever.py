@@ -19,7 +19,7 @@ import unittest
 from typing import List, Tuple
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestBaiduVDBRetrieverParameter(unittest.TestCase):
     def setUp(self) -> None:
         os.environ["APPBUILDER_TOKEN"] = "bce-v3/ABCDE"

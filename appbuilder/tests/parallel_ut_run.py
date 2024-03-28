@@ -144,7 +144,7 @@ def run_sync_unittest(test_file):
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
     cmd = [sys.executable, "-u", test_file]
-    log = open("{}/{}_run.log".format(current_path, test_file), "w")
+    log = open("{}/ut_logs/{}_run.log".format(current_path, test_file), "w")
     begin_time = time.time()
     proc = subprocess.Popen(
         cmd, env=current_env, cwd=current_path, stdout=log, stderr=log)
@@ -155,7 +155,7 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
     cmd = [sys.executable, "-u", test_file]
-    log_file = "{}/{}_run.log".format(current_path, test_file)
+    log_file = "{}/ut_logs/{}_run.log".format(current_path, test_file)
     log = open(log_file, "w")
     begin_time = time.time()
     proc = subprocess.Popen(
@@ -165,7 +165,7 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
     ret = proc.poll()
 
     end_time = time.time()
-    with open("{}_res".format(test_file), "w+") as f:
+    with open("ut_logs/{}_res".format(test_file), "w+") as f:
         f.write(str({"name": test_file, "time": end_time -
                 begin_time, "status": ret, "log_file": log_file}))
     logger.info("[{}] Test Case : {}/{} 耗时: {:.2f} s --> {}".format("OK" if ret == 0 else "ERROR",
@@ -173,7 +173,7 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
     return
 
 
-def parallel_execute_unittest(test_cases, parallel_num=6):
+def parallel_execute_unittest(test_cases, parallel_num=4):
     case_num = len(test_cases)
     success_cases = []
     failed_cases = []
@@ -188,7 +188,7 @@ def parallel_execute_unittest(test_cases, parallel_num=6):
     total_case_time = 0
 
     for case in test_cases:
-        with open("{}_res".format(case), 'r') as f:
+        with open("ut_logs/{}_res".format(case), 'r') as f:
             line = f.readlines()[0]
             message = eval(line.split("\n")[0])
 
@@ -311,6 +311,10 @@ def run_unknown_unittest():
 
 
 def create_unittest_report():
+    # 创建日志目录
+    if not os.path.exists("./ut_logs"):
+        os.mkdir("./ut_logs")
+
     get_all_unittest_file()
     total_success_cases = []
     total_failed_cases = []
@@ -324,8 +328,6 @@ def create_unittest_report():
         total_failed_cases += failed_cases
         total_ut_time += suite_time
 
-    shutil.rmtree("./jobs")
-
     logger.info("============== Summary Report =============")
     logger.info("\nCI运行结束，总耗时：{}".format(total_ut_time))
     if len(total_failed_cases) != 0:
@@ -335,6 +337,8 @@ def create_unittest_report():
         exit(1)
     else:
         logger.info("\nCI 运行成功！")
+
+    shutil.rmtree("./ut_logs")
 
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@ import appbuilder
 
 import numpy as np
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestEmbedding(unittest.TestCase):
     def setUp(self):
         self.embedding = appbuilder.Embedding()

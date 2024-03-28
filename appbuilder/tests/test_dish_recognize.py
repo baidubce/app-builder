@@ -4,7 +4,7 @@ import requests
 
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDishRecognitionComponent(unittest.TestCase):
     def setUp(self):
         """

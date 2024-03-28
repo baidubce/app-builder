@@ -37,7 +37,12 @@ python3 -m pip install wheel
 python3 setup.py bdist_wheel
 pip install -U dist/*.whl
 
-# 4、执行parallel_ut_run.py，运行python单元测试
-#python3 appbuilder/tests/parallel_ut_run.py
+# 4、单测环境的涉密准备
+# 4.1、首先是各个单测所需的token、appid、secret等信息，会保存在仅在百度内网可以下载的环境中
+
+
+
+# 5、执行parallel_ut_run.py，运行python单元测试
+python3 appbuilder/tests/parallel_ut_run.py
 
 

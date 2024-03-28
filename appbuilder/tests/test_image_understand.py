@@ -18,8 +18,8 @@ import requests
 import appbuilder
 from appbuilder.core.message import Message
 
-
-class TestImageUnderstand(unittest.TestCase):
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+class TestPlantRecognition(unittest.TestCase):
 
     def setUp(self):
         """
