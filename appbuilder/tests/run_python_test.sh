@@ -56,7 +56,6 @@ coverage html -d coverage_html
 # 规则是：从python lib的安装目录，替换为git clone的目录，举例：
 # 替换前 /Users/chengmo/Library/Python/3.9/lib/python/site-packages/
 # 替换后 /Users/chengmo/workspace/baidu_code/app-builder/
-
 # 首先获取appbuilder-sdk的python lib的安装目录
 python_lib=$(python3 -m pip show appbuilder-sdk | grep Location | awk '{print $2}')
 # 再获取git clone的目录
