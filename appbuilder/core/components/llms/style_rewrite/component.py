@@ -164,18 +164,8 @@ class StyleRewrite(CompletionBaseComponent):
         temperature = model_configs.get("temperature", 1e-10)
         top_p = model_configs.get("top_p", 0.0)
         message = super().run(message=msg, style=style, stream=False, temperature=temperature, top_p=top_p)
-        result = {"转写结果": message.content}
-        res = json.dumps(result, ensure_ascii=False, indent=4)
+        
         if streaming:
-            yield {
-                "type": "text",
-                "text": res,
-                "visible_scope": 'llm',
-            }
-            yield {
-                "type": "text",
-                "text": "",
-                "visible_scope": 'user',
-            }
+            yield str(message.content)
         else:
-            return res
+            return str(message.content)
