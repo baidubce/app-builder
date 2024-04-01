@@ -18,6 +18,7 @@
 """
 import uuid
 import os
+import sys
 import logging.config
 from threading import current_thread
 
@@ -117,6 +118,47 @@ def _setup_logging():
     if log_level not in ["debug", "info", "warning", "error"]:
         raise ValueError("expected APPBUILDER_LOGLEVEL in [debug, info, warning, error], but got %s" % log_level)
     return LoggerWithLoggerId(logging.getLogger('appbuilder'), {'logid': ''}, log_level.upper())
+
+
+
+def get_logger(name, level=logging.INFO, fmt=None):
+    """
+    Get logger from logging with given name, level and format without
+    setting logging basicConfig.
+
+    Args:
+        name (str): The logger name.
+        level (logging.LEVEL): The base level of the logger
+        fmt (str): Format of logger output
+
+    Returns:
+        logging.Logger: logging logger with given settings
+
+    Examples:
+        .. code-block:: python
+
+            logger = log_helper.get_logger(__name__, logging.INFO,
+                            fmt='%(asctime)s-%(levelname)s: %(message)s')
+    """
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    handler = logging.StreamHandler(sys.stdout)
+
+    if fmt:
+        formatter = logging.Formatter(fmt=fmt, datefmt='%Y-%m-%d %H:%M:%S')
+        handler.setFormatter(formatter)
+    else:
+        formatter = logging.Formatter(
+            fmt='%(asctime)s: %(filename)s:%(lineno)d %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        handler.setFormatter(formatter)
+
+    logger.addHandler(handler)
+
+    # stop propagate for propagating may print
+    # log multiple times
+    logger.propagate = False
+    return logger
 
 
 logger = _setup_logging()
