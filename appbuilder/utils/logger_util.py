@@ -121,7 +121,7 @@ def _setup_logging():
 
 
 
-def get_logger(name, level=logging.INFO, fmt=None):
+def get_logger(name, level=logging.INFO):
     """
     Get logger from logging with given name, level and format without
     setting logging basicConfig.
@@ -145,13 +145,9 @@ def get_logger(name, level=logging.INFO, fmt=None):
     logger.setLevel(level)
     handler = logging.StreamHandler(sys.stdout)
 
-    if fmt:
-        formatter = logging.Formatter(fmt=fmt, datefmt='%Y-%m-%d %H:%M:%S')
-        handler.setFormatter(formatter)
-    else:
-        formatter = logging.Formatter(
-            fmt='%(asctime)s: %(filename)s:%(lineno)d %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-        handler.setFormatter(formatter)
+    formatter = logging.Formatter(
+        fmt='%(asctime)s: %(filename)s:%(lineno)d %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    handler.setFormatter(formatter)
 
     logger.addHandler(handler)
 
