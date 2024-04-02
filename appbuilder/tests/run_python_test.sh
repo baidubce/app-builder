@@ -39,8 +39,11 @@
 
 # 4、执行setup.py，生产whl包，并更新当前环境的python库
 python3 -m pip install wheel
+python3 -m pip install coverage
+python3 -m pip install diff-cover
+
 python3 setup.py bdist_wheel
-pip install -U dist/*.whl
+python3 -m pip install -U dist/*.whl
 cd appbuilder/tests/
 
 
