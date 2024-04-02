@@ -185,7 +185,7 @@ class Excel2Figure(Component):
 
         figure_url = ""
         try:
-            figure_url = data["result"]["content"][-1]["text"]["extra"]["files"][0]
+            figure_url = data["result"]["content"][-1]["text"][0]
         except Exception as e:
             logging.warning(
                     f"failed to generate figure for query={query}, excel_file_url={excel_file_url}")
