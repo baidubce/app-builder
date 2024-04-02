@@ -31,15 +31,17 @@
 # commit_id=$AGILE_REVISION
 # # checkout 到指定commit
 # git checkout $commit_id
+# 代码Pass，保存在流水线配置中，并在流水线环境执行
 
-# 3、执行setup.py，生产whl包，并更新当前环境的python库
+# 3、单测环境的涉密准备
+# 3.1、首先是各个单测所需的token、appid、secret等信息，会保存在仅在百度内网可以下载的环境中
+# 代码Pass，保存在流水线配置中，并在流水线环境执行
+
+# 4、执行setup.py，生产whl包，并更新当前环境的python库
 python3 -m pip install wheel
 python3 setup.py bdist_wheel
 pip install -U dist/*.whl
 cd appbuilder/tests/
-
-# 4、单测环境的涉密准备
-# 4.1、首先是各个单测所需的token、appid、secret等信息，会保存在仅在百度内网可以下载的环境中
 
 
 # 5、执行parallel_ut_run.py，运行python单元测试
@@ -70,5 +72,6 @@ git_dir=$(pwd | sed 's/appbuilder\/tests//')
 python3 -u sed_str.py coverage.xml $python_lib $git_dir
 # 最后进行增量代码覆盖率测试
 echo "增量代码覆盖率为："
-diff-cover coverage.xml --compare-branch=origin/master   --html-report coverage_diff.html
+diff-cover coverage.xml --compare-branch=origin/master   --html-report coverage_diff.html --fail-under=90
+if [ $? -ne 0 ]; then echo "增量代码的单元测试覆盖率低于90%，请完善单元测试后重试" && exit 1; fi
 echo "--------------------------"
