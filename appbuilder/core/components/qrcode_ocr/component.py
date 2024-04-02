@@ -17,6 +17,7 @@
 import base64
 import json
 
+from appbuilder.core import utils
 from appbuilder.core.component import Component
 from appbuilder.core.components.qrcode_ocr.model import *
 from appbuilder.core.message import Message
@@ -43,6 +44,32 @@ class QRcodeOCR(Component):
            print(out.content)
 
         """
+
+    name = "qrcode_ocr"
+    version = "v1"
+    manifests = [
+        {
+            "name": "qrcode_ocr",
+            "description": "需要对图片中的二维码、条形码进行检测和识别，返回存储的文字信息及其位置信息，使用该工具",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "待识别文件的文件名"
+                    },
+                    "location": {
+                        "type": "string",
+                        "description": "是否输出二维码/条形码位置信息"
+                    }
+                },
+                "required": ["file_names"]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, location: str = "true", timeout: float = None, retry: int = 0) -> Message:
@@ -74,7 +101,7 @@ class QRcodeOCR(Component):
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = QRcodeOutMsg(**result_dict)
-        return Message(content=out.dict())
+        return Message(content=out.model_dump())
 
     def _recognize(self, request: QRcodeRequest, timeout: float = None,
                    retry: int = 0) -> QRcodeResponse:
@@ -118,3 +145,41 @@ class QRcodeOCR(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        result = {}
+        file_names = kwargs.get("file_names", None)
+        location = kwargs.get("locations", "false")
+        if not file_names:
+            file_names = kwargs.get("files")
+
+        file_urls = kwargs.get("file_urls", {})
+        for file_name in file_names:
+            if utils.is_url(file_name):
+                file_url = file_name
+            else:
+                file_url = file_urls.get(file_name, None)
+            if file_url is None:
+                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+            req = QRcodeRequest()
+            req.url = file_url
+            if not isinstance(location, str) or location not in ("true", "false"):
+                raise InvalidRequestArgumentError("location must be a string with value 'true' or 'false'")
+            req.location = location
+            resp = self._recognize(req)
+            result[file_name] = [item["text"] for item in proto.Message.to_dict(resp).get("codes_result", [])]
+
+        result = json.dumps(result, ensure_ascii=False)
+        if streaming:
+            yield {
+                "type": "text",
+                "text": result,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": "user",
+            }
+        else:
+            return result

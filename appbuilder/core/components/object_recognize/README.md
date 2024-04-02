@@ -16,6 +16,12 @@
 
 ## 基本用法
 
+示例图片为：
+
+![示例图片](./image/object_recognize_test.png)
+
+
+
 ```python
 import os
 import appbuilder
@@ -35,12 +41,13 @@ object_recognition = appbuilder.ObjectRecognition()
 # 执行识别操作并获取结果
 out = object_recognition.run(appbuilder.Message(content={"raw_image": raw_image}))
 print(out.content)
+# {'result': [{'keyword': '苹果', 'score': 0.961247, 'root': '植物-蔷薇科'}, {'keyword': '姬娜果', 'score': 0.740838, 'root': '植物-其它'}, {'keyword': '梨子', 'score': 0.392218, 'root': '商品-水果'}, {'keyword': '车厘子', 'score': 0.193986, 'root': '植物-其它'}, {'keyword': '石榴', 'score': 0.000239, 'root': '植物-千屈菜科'}]}
 ```
 
 ## 参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"

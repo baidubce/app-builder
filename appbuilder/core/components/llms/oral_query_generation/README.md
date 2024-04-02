@@ -26,14 +26,14 @@ text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
         '防抖 开启路径：打开「相机 > 视频 > 点击屏幕上方的“超级防抖”标识」 后置视频同时支持超级防抖和超级防抖Pro功能，开启超级'
         '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
         '，实时视频分享您的生活。')
-oral_query_generation = appbuilder.OralQueryGeneration(model='eb-turbo-appbuilder')
+oral_query_generation = appbuilder.OralQueryGeneration(model='ERNIE Speed-AppBuilder')
 result = oral_query_generation(appbuilder.Message(text))
 print(result)
 ```
 
 ## 参数说明
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
@@ -43,7 +43,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 | 参数名称 | 参数类型 | 是否必须 | 描述 | 示例值 |
 | ------- | ------- | -------- | -------- | -------- |
-| `model` | str | 否 | 模型名称，用于指定要使用的千帆模型。 | eb-turbo-appbuilder |
+| `model` | str | 否 | 模型名称，用于指定要使用的千帆模型。 | ERNIE Speed-AppBuilder |
 | `secret_key` | str | 否 | 用户鉴权token，默认从环境变量中获取: `os.getenv("APPBUILDER_TOKEN", "")` |  |
 | `gateway` | str | 否 | 后端网关服务地址，默认从环境变量中获取: `os.getenv("GATEWAY_URL", "")` |  |
 | `lazy_certification` | bool | 否 | 延迟认证，为True时在第一次运行时认证。默认为False。 | False |

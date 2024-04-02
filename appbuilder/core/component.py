@@ -13,12 +13,13 @@
 # limitations under the License.
 
 """Component模块包括组件基类，用户自定义组件需要继承Component类，并至少实现run方法"""
+import json
 
 from enum import Enum
 
 from pydantic import BaseModel
 from typing import Dict, List, Optional, Any
-
+from appbuilder.core.utils import ttl_lru_cache
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
 
@@ -32,25 +33,29 @@ class ComponentArguments(BaseModel):
         r"""extract ComponentArguments fields to dict"""
 
         inputs = {}
-        for field_name, field in self.__fields__.items():
-            value = getattr(self, field_name)
+        for name, info in self.model_fields.items():
+            value = getattr(self, name)
             # 获取 display_name 元数据
-            variable_name = field.field_info.extra.get('variable_name')
-            if variable_name:
-                # 使用 Enum 成员的实际值
-                if isinstance(value, Message):
-                    inputs[variable_name] = str(value.content)
-                elif isinstance(value, Enum):
-                    inputs[variable_name] = str(value.value)
-                else:
-                    inputs[variable_name] = str(value)
+            if not info.json_schema_extra:
+                continue
+            variable_name = info.json_schema_extra.get('variable_name')
+            if not variable_name:
+                inputs[name] = value
+                continue
+            # 使用 Enum 成员的实际值
+            if isinstance(value, Message):
+                inputs[variable_name] = str(value.content)
+            elif isinstance(value, Enum):
+                inputs[variable_name] = str(value.value)
             else:
-                inputs[field_name] = value
+                inputs[variable_name] = str(value)
         return inputs
 
 
 class Component:
     r"""Component基类, 其它实现的Component子类需要继承该基类，并至少实现run方法."""
+
+    manifests = []
 
     def __init__(
         self,
@@ -76,7 +81,8 @@ class Component:
         self.lazy_certification = lazy_certification
         if not self.lazy_certification:
             self.set_secret_key_and_gateway(self.secret_key, self.gateway)
-
+ 
+    @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
         self.secret_key = secret_key
         self.gateway = gateway
@@ -123,3 +129,13 @@ class Component:
         r"""pass"""
         pass
 
+    def tool_desc(self) -> List[str]:
+        return [json.dumps(manifest, ensure_ascii=False) for manifest in self.manifests]
+
+    def tool_name(self) -> List[str]:
+        return [manifest["name"] for manifest in self.manifests]
+
+    def tool_eval(self, **kwargs):
+        if len(self.manifests) > 0:
+            raise NotImplementedError
+        

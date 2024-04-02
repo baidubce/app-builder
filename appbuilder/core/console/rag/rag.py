@@ -28,7 +28,7 @@ class RAG(Component):
             print(answer.extra)  # 获取结果来源
     """
     name = "rag"
-    integrated_url: str = "/v1/ai_engine/agi_platform/v2/instance/integrated"
+    integrated_url: str = "/v1/ai_engine/agi_platform/v1/instance/integrated"
     # debug_url: str = "/debug"
 
     def __init__(self, app_id: str = ""):
@@ -58,7 +58,7 @@ class RAG(Component):
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
         response = self.http_client.session.post(url=self.http_client.service_url(self.integrated_url),
-                                                 headers=headers, data=payload)
+                                                 headers=headers, data=payload, stream=True)
         response = ConsoleCompletionResponse(response, stream)
         return response.to_message()
 

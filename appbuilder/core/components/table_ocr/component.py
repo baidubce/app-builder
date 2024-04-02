@@ -17,16 +17,17 @@
 import base64
 import json
 
+from appbuilder.core import utils
 from appbuilder.core.component import Component
 from appbuilder.core.components.table_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 
 
 class TableOCR(Component):
     r"""
-       支持识别图片/PDF格式文档中的表格内容，返回各表格的表头表尾内容、单元格文字内容及其行列位置信息，全面覆盖各类表格样式，包括常规有线表格、
+       支持识别图片中的表格内容，返回各表格的表头表尾内容、单元格文字内容及其行列位置信息，全面覆盖各类表格样式，包括常规有线表格、
        无线表格、含合并单元格表格。同时，支持多表格内容识别。
 
        Examples:
@@ -43,6 +44,28 @@ class TableOCR(Component):
            print(out.content)
 
         """
+
+    name = "table_ocr"
+    version = "v1"
+    manifests = [
+        {
+            "name": "table_ocr",
+            "description": "需要识别图片中的表格内容，使用该工具",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "待识别图片的文件名"
+                    }
+                },
+                "required": ["file_names"]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -77,7 +100,7 @@ class TableOCR(Component):
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = TableOCROutMsg(**result_dict)
-        return Message(content=out.dict())
+        return Message(content=out.model_dump())
 
     def _recognize(self, request: TableOCRRequest, timeout: float = None,
                    retry: int = 0) -> TableOCRResponse:
@@ -120,3 +143,69 @@ class TableOCR(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+    def get_table_markdown(self, tables_result):
+        """
+        根据识别到的表格等结果转化成markdown
+        :param tables_result:
+        :return:
+        """
+        markdowns = []
+        for table in tables_result:
+            cells = table["body"]
+            max_row = max(cell['row_end'] for cell in cells)
+            max_col = max(cell['col_end'] for cell in cells)
+            # 初始化表格数组
+            table_arr = [[''] * max_col for _ in range(max_row)]
+            # 填充表格数据
+            for cell in cells:
+                row = cell['row_start']
+                col = cell['col_start']
+                table_arr[row][col] = cell['words']
+
+            markdown_table = ""
+            for row in table_arr:
+                markdown_table += "| " + " | ".join(row) + " |\n"
+            # 生成分隔行
+            separator = "| " + " | ".join(['---'] * max_col) + " |\n"
+            # 插入分隔行在表头下方
+            header, body = markdown_table.split('\n', 1)
+            markdown_table = header + '\n' + separator + body
+            markdowns.append(markdown_table)
+        return markdowns
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        result = {}
+        file_names = kwargs.get("file_names", None)
+        if not file_names:
+            file_names = kwargs.get("files")
+        file_urls = kwargs.get("file_urls", {})
+        for file_name in file_names:
+            if utils.is_url(file_name):
+                file_url = file_name
+            else:
+                file_url = file_urls.get(file_name, None)
+            if file_url is None:
+                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+            req = TableOCRRequest()
+            req.url = file_url
+            req.cell_contents = "false"
+            resp = self._recognize(req)
+            tables_result = proto.Message.to_dict(resp)["tables_result"]
+            markdowns = self.get_table_markdown(tables_result)
+            result[file_name] = markdowns
+
+        result = json.dumps(result, ensure_ascii=False)
+        if streaming:
+            yield {
+                "type": "text",
+                "text": result,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": "user",
+            }
+        else:
+            return result

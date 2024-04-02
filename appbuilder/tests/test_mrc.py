@@ -24,7 +24,7 @@ class TestMRC(unittest.TestCase):
         return mrc class
         '''
         # 设置环境变量和初始化TestMRCComponent实例
-        self.model_name = "eb-turbo-appbuilder"
+        self.model_name = "ERNIE Speed-AppBuilder"
 
         self.mrc = appbuilder.MRC(model=self.model_name)
     def test_mrc_with_default_params(self):

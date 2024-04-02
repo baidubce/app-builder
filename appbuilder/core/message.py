@@ -16,14 +16,14 @@
 
 import uuid
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 from typing import Optional, TypeVar, Generic
 
 
 _T = TypeVar("_T")
 
 
-class Message(BaseModel, Generic[_T]):
+class Message(BaseModel, Generic[_T], extra=Extra.allow):
     content: Optional[_T] = {}
     name: Optional[str] = "msg"
     mtype: Optional[str] = "dict"

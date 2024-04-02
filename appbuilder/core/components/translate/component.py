@@ -22,7 +22,7 @@ import json
 from appbuilder.core.message import Message
 from appbuilder.core.component import Component
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.components.translate.model import *
 
 
@@ -50,6 +50,37 @@ class Translation(Component):
     name = "translate"
     version = "v1"
 
+    manifests = [
+        {
+            "name": "translation",
+            "description": "文本翻译通用版工具，会根据指定的目标语言对文本进行翻译，并返回翻译后的文本。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "q": {
+                        "type": "string",
+                        "description": "需要翻译的源文本，文本翻译工具会将该文本翻译成对应的目标语言"
+                    },
+                    "to_lang": {
+                        "type": "string",
+                        "description": "翻译的目标语言类型，'en'表示翻译成英语, 'zh'表示翻译成中文，'yue'表示翻译成粤语，'wyw'表示翻译成文言文，"
+                                       "'jp'表示翻译成日语，'kor'表示翻译成韩语，'fra'表示翻译成法语，'spa'表示翻译成西班牙语，'th'表示翻译成泰语,"
+                                       "'ara'表示翻译成阿拉伯语，'ru'表示翻译成俄语，'pt'表示翻译成葡萄牙语，'de'表示翻译成德语，'it'表示翻译成意大利语，"
+                                       "'el'表示翻译成希腊语，'nl'表示翻译成荷兰语,'pl'表示翻译成波兰语,'bul'表示翻译成保加利亚语，'est'表示翻译成爱沙尼亚语，"
+                                       "'dan'表示翻译成丹麦语, 'fin'表示翻译成芬兰语，'cs'表示翻译成捷克语，'rom'表示翻译成罗马尼亚语，'slo'表示翻译成斯洛文尼亚语，"
+                                       "'swe'表示翻译成瑞典语，'hu'表示翻译成匈牙利语，'cht'表示翻译成繁体中文，'vie'表示翻译成越南语，默认为'en'",
+                        "enum": ["en", "zh", "yue", "wyw", "jp", "kor", "fra", "spa", "th", "ara", "ru", "pt", "de",
+                                 "it", "el", "nl", "pl", "bul", "est", "dan", "fin", "cs", "rom", "slo", "swe", "hu",
+                                 "cht", "vie"]
+                    }
+                },
+                "required": [
+                    "q"
+                ]
+            }
+        }
+    ]
+
     @HTTPClient.check_param
     def run(self, message: Message, from_lang: str = "auto", to_lang: str = "en",
             timeout: float = None, retry: int = 0) -> Message:
@@ -75,7 +106,7 @@ class Translation(Component):
         result_dict = proto.Message.to_dict(result)
 
         out = TranslateOutMsg(**result_dict["result"])
-        return Message(content=out.dict())
+        return Message(content=out.model_dump())
 
     def _translate(self, request: TranslateRequest, timeout: float = None,
                    retry: int = 0) -> TranslateResponse:
@@ -109,7 +140,40 @@ class Translation(Component):
         request_id = self.http_client.response_request_id(response)
         self.http_client.check_response_json(data)
         if "error_code" in data and "error_msg" in data:
-            raise AppBuilderServerException(request_id=request_id, service_err_code=data["error_code"], service_err_message=data["error_msg"])
+            raise AppBuilderServerException(request_id=request_id, service_err_code=data["error_code"],
+                                            service_err_message=data["error_msg"])
 
         json_str = json.dumps(data)
         return TranslateResponse(TranslateResponse.from_json(json_str))
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        """
+        translate for function call
+        """
+        req = TranslateRequest()
+        text = kwargs.get("q", None)
+        if not text:
+            raise InvalidRequestArgumentError("param `q` must be set")
+        req.q = text
+        to_lang = kwargs.get("to_lang", "en")
+        req.to_lang = to_lang
+        results = proto.Message.to_dict(self._translate(req))["result"]
+        trans_result = results["trans_result"]
+        res = {
+            "原文本": "\n ".join(item["src"] for item in trans_result),
+            "翻译结果": "\n ".join(item["dst"] for item in trans_result)
+        }
+        res = json.dumps(res, ensure_ascii=False, indent=4)
+        if streaming:
+            yield {
+                "type": "text",
+                "text": res,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": 'user',
+            }
+        else:
+            return res

@@ -14,6 +14,8 @@
 
 """ similar question
 """
+import json
+
 from pydantic import Field
 from typing import Optional
 
@@ -40,7 +42,7 @@ class SimilarQuestion(CompletionBaseComponent):
 
             os.environ["APPBUILDER_TOKEN"] = "..."
 
-            qa_mining = appbuilder.SimilarQuestion(model="eb-turbo-appbuilder")
+            qa_mining = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
 
             msg = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
             msg = appbuilder.Message(msg)
@@ -51,6 +53,25 @@ class SimilarQuestion(CompletionBaseComponent):
     name = "similar_question"
     version = "v1"
     meta = SimilarQuestionMeta
+
+    manifests = [
+        {
+            "name": "similar_question",
+            "description": "基于输入的问题，挖掘出与该问题相关的类似问题。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "输入的问题，用于大模型根据该问题输出相关的类似问题。"
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
 
     def __init__(
         self, 
@@ -88,3 +109,21 @@ class SimilarQuestion(CompletionBaseComponent):
             obj:`Message`: 模型运行后的输出消息。
         """
         return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p)
+
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        query = kwargs.get("query", None)
+        if not query:
+            raise ValueError("param `query` is required")
+        msg = Message(query)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, stream=False, temperature=temperature, top_p=top_p)
+
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)

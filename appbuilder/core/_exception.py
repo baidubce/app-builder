@@ -74,18 +74,25 @@ class TypeNotSupportedException(BaseRPCException):
 class AppBuilderServerException(BaseRPCException):
     r"""AppBuilderServerException represent backend server failed response.
     """
+    description: str = "Interal Server Error"
+    code: int = 500
 
     def __init__(self, request_id="", code="", message="", service_err_code="", service_err_message=""):
-        r"""__init__ a AppBuilderServerException instance.
-            :param request_id: str, request unique id.
-            :param code: str, backend .
-            :rtype:
-        """
-        super().__init__("request_id={}, code={}, message={}, service_err_code={}, service_err_message={} ".format(
-            request_id, code, message, service_err_code, service_err_message))
+        self.description = "request_id={}, code={}, message={}, service_err_code={}, service_err_message={} ".format(
+            request_id, code, message, service_err_code, service_err_message)
+        self.code = code if code else self.code
+
+    def __str__(self):
+        return self.description
 
 
 class InvalidRequestArgumentError(BaseRPCException):
     r"""InvalidRequestArgumentError invalid request param
+    """
+    pass
+
+
+class RiskInputException(BaseRPCException):
+    r"""RiskInputException
     """
     pass

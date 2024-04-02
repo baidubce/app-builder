@@ -1,4 +1,4 @@
-# console端RAG操作工具(RAG) （即将上线）
+# console端RAG操作工具(RAG) 
 
 ## 简介
 RAG是基于线上RAG应用的问答组件，可以使用该组件利用线上RAG应用进行问答。
@@ -37,14 +37,16 @@ print(answer.extra)  # 获取结果来源
 
 ## 参数说明
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
 
 ### 初始化参数
-- `app_id`: 线上RAG应用的ID
+- `app_id`: 线上RAG应用的ID，可在[console](https://console.bce.baidu.com/ai_apaas/app)上查看和获取，示例如图
+
+<img width="768" alt="image" src="./image/rag示例.png">
 
 
 ### 调用参数 （以表格形式展示）

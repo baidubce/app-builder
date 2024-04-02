@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import unittest
-import os
 
 import appbuilder
 
@@ -29,8 +28,7 @@ class TestSimilarQuestionComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-
-        self.model_name = "eb-turbo-appbuilder"
+        self.model_name = "ERNIE Speed-AppBuilder"
         self.node = appbuilder.SimilarQuestion(model=self.model_name)
 
     def test_run_with_default_params(self):
@@ -59,6 +57,19 @@ class TestSimilarQuestionComponent(unittest.TestCase):
         """测试无效的 message 参数"""
         with self.assertRaises((ValueError, TypeError)):
             self.node(None, stream=False, temperature=1e-10)
+
+    def test_tool_eval_valid(self):
+        """测试 tool_eval 方法使用有效参数"""
+        query = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
+        result = self.node.tool_eval(name="similar_question", streaming=True, query=query)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+
+    def test_tool_eval_invalid(self):
+        """测试 tool_eval 方法使用无效参数"""
+        with self.assertRaises(ValueError):
+            result = self.node.tool_eval(name="similar_question", streaming=True)
+            next(result)
 
 
 if __name__ == '__main__':

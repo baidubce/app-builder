@@ -15,6 +15,11 @@
 ## 基本用法
 
 下面是植物识别的代码示例：
+
+示例图片为
+
+![示例图片](./image/palnt_recognize_test.jpg)
+
 ```python
 import os
 import requests
@@ -35,13 +40,14 @@ out = plant_recognize.run(inp)
 # 打印识别结果
 print(out.content)  
 
+# {'plant_score_list': [{'name': '榕树', 'score': 0.4230029582977295}, {'name': '榆树', 'score': 0.1273619383573532}, {'name': '美国榆', 'score': 0.12065108865499496}, {'name': '白蜡树', 'score': 0.11650644987821579}, {'name': '雨树', 'score': 0.045340824872255325}]}
 ```
 
 
 ## 参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 import os 
 

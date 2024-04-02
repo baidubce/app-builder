@@ -10,17 +10,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-r"""手写体识别组件"""
+r"""手写文字识别组件"""
 import base64
-
-from appbuilder.core._exception import AppBuilderServerException
+import json
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
 from appbuilder.core.components.handwrite_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
+from appbuilder.core import utils
 
 class HandwriteOCR(Component):
-    r""" 手写体识别识别
+    r""" 手写文字识别组件
     Examples:
 
     .. code-block:: python
@@ -38,6 +39,28 @@ class HandwriteOCR(Component):
         # 打印识别结果
         print(out.content)
      """
+
+    name = "handwriting_ocr"
+    version = "v1"
+    manifests = [
+        {
+            "name": "handwriting_ocr",
+            "description": "需要对图片中手写体文字进行识别时，使用该工具",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "待识别文件的文件名"
+                    }
+                },
+                "required": ["file_names"]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -74,7 +97,46 @@ class HandwriteOCR(Component):
                         height=w.location.height
                     )))
             for w in response.words_result]
-        return Message(content=out.dict())
+        return Message(content=out.model_dump())
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+
+        result = ""
+        file_names = kwargs.get("file_names", None)
+        if not file_names:
+            file_names = kwargs.get("files")
+        file_urls = kwargs.get("file_urls", {})
+        for file_name in file_names:
+
+            if utils.is_url(file_name):
+                file_url = file_name
+            else:
+                file_url = file_urls.get(file_name, None)
+            if file_url is None:
+                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+            req = HandwriteOCRRequest()
+            req.url = file_url
+            req.recognize_granularity = "big"
+            req.probability = "false"
+            req.detect_direction = "true"
+            req.detect_alteration = "true"
+            response = self._recognize(req)
+            text = "".join([w.words for w in response.words_result])
+            result += f"{file_name}的手写识别结果是：{text} "
+
+        if streaming:
+            yield {
+                "type": "text",
+                "text": result,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": "user",
+            }
+        else:
+            return result
 
     def _recognize(self, request: HandwriteOCRRequest, timeout: float = None, retry: int = 0) -> HandwriteOCRResponse:
         r"""调用底层接口进行通用文字识别
@@ -116,5 +178,4 @@ class HandwriteOCR(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
-
 

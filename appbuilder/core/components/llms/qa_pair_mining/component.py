@@ -41,7 +41,7 @@ class QAPairMining(CompletionBaseComponent):
 
             os.environ["APPBUILDER_TOKEN"] = "..."
 
-            qa_mining = appbuilder.QAPairMining(model="eb-turbo-appbuilder")
+            qa_mining = appbuilder.QAPairMining(model="ERNIE Speed-AppBuilder")
             # 输入文本（对此文本挖掘问答对）
             msg =  '2017年，工商银行根据外部宏观环境变化，及时调整业务策略，优化资产负债结构，' + \
                 '保持存贷款业务协调发展，提升资产负债配置效率。' + \

@@ -20,14 +20,14 @@ import json
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, RiskInputException
 from appbuilder.core.components.text_to_image.model import Text2ImageSubmitRequest, Text2ImageQueryRequest, \
     Text2ImageQueryResponse, Text2ImageSubmitResponse, Text2ImageOutMessage, Text2ImageInMessage
 
 
 class Text2Image(Component):
     r"""
-    AI作画组件，即对于输入的文本，输出生成的图片url。
+    文生图组件，即对于输入的文本，输出生成的图片url。
 
     Examples:
 
@@ -42,6 +42,25 @@ class Text2Image(Component):
         # 打印生成结果
         print(out.content) # eg: {"img_urls": ["xxx"]}
     """
+
+    manifests = [
+        {
+            "name": "text_to_image",
+            "description": "文生图工具，当用户的问题需要进行场景、人物、海报等内容的绘制时，使用画图工具。该工具偏向于图片创作，如果Query的需求是生成图表（柱状图、折线图、雷达图等），必须使用代码解释器。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "根据用户的需求构思图片，生成一个画图用的query。特别注意，这个字段只能由中文字符组成，不能含有任何英语描述。 "
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, width: int = 1024, height: int = 1024, image_num: int = 1,
@@ -77,17 +96,17 @@ class Text2Image(Component):
                     task_progress = text2ImageQueryResponse.data.task_progress
                     if task_progress == 1:
                         break
-                    time.sleep(0.2)
+                    time.sleep(1)
             img_urls = self.extract_img_urls(text2ImageQueryResponse)
             out = Text2ImageOutMessage(img_urls=img_urls)
-            return Message(content=dict(out))
+            return Message(content=out.model_dump())
 
     @HTTPClient.check_param
     def submitText2ImageTask(self, request: Text2ImageSubmitRequest, timeout: float = None,
                              retry: int = 0) -> Text2ImageSubmitResponse:
 
         """
-        使用给定的输入并返回AI作画的任务信息。
+        使用给定的输入并返回文生图的任务信息。
 
         参数:
             request (obj:`Text2ImageSubmitRequest`): 输入请求，这是一个必需的参数。
@@ -117,7 +136,7 @@ class Text2Image(Component):
                             retry: int = 0) -> Text2ImageQueryResponse:
 
         """
-        使用给定的输入并返回AI作画的结果。
+        使用给定的输入并返回文生图的结果。
 
         参数:
             request (obj:`Text2ImageQueryRequest`): 输入请求，这是一个必需的参数。
@@ -164,12 +183,42 @@ class Text2Image(Component):
 
         return img_urls
 
+    def tool_eval(
+        self,
+        streaming: bool,
+        origin_query: str,
+        **kwargs,
+    ):
+        """
+        tool eval
+        """
+        query = kwargs.get("query", "")
+        if not query:
+            query = origin_query
+        try:
+            result = self.run(Message({"prompt": query}))
+        except Exception as e:
+            raise AppBuilderServerException(f'绘图服务发生错误：{e}')
+
+        if len(result.content['img_urls']) == 0:
+            raise RiskInputException(f'query：{query} 中可能存在敏感词')
+
+        result = {
+            'event': 'image',
+            'type': 'image',
+            'text': result.content['img_urls'][0],
+        }
+        if streaming:
+            yield result
+        else:
+            return result
+
     @staticmethod
     def check_service_error(request_id: str, data: dict):
         r"""个性化服务response参数检查
 
             参数:
-                request (dict) : AI作画生成结果body返回
+                request (dict) : 文生图生成结果body返回
             返回：
                 无
         """

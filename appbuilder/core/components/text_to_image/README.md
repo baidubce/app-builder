@@ -1,7 +1,7 @@
-# AI作画-高级版 (Text2Image)
+# 文生图 (Text2Image)
 
 ## 简介
-AI作画-高级版（Text2Image）基于文心大模型，可以根据用户输入的文本，自动创作不限定风格的图，为内容创作者提供灵感和高质量配图。
+文生图（Text2Image）基于文心大模型，可以根据用户输入的文本，自动创作不限定风格的图，为内容创作者提供灵感和高质量配图。
 
 ### 功能介绍
 AI一下，文字成画，AI 精准理解中文文本，支持用户自由输入，只需一句话，让文字秒变精美画作，支持自定义丰富的修饰词，可生成不同风格、不同构图、不同流派的图片，满足个性化的图片生成需求。
@@ -12,7 +12,7 @@ AI一下，文字成画，AI 精准理解中文文本，支持用户自由输入
 
 ## 基本用法
 
-下面是AI作画的代码示例: 
+下面是文生图的代码示例: 
 
 ```python
 import os
@@ -26,12 +26,18 @@ content_data = {"prompt": "上海的经典风景", "width": 1024, "height": 1024
 msg = appbuilder.Message(content_data)
 out = text2Image.run(msg)
 print(out.content)
+#{'img_urls': ['...']}
 ```
+
+生成的"上海的经典风景"图片如下
+
+![示例图片](./image/shanghai.png)
+
 
 ## 参数说明
 
 ### 鉴权配置
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
@@ -82,6 +88,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 ## 高级用法
 
-目前该模块仅提供基础的AI作画功能。
+目前该模块仅提供基础的文生图功能。
 ## 更新记录和贡献
-* AI作画能力 (2023-12)
+* 文生图能力 (2023-12)

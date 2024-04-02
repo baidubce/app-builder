@@ -27,14 +27,14 @@ with open('requirements.txt') as f:
 
 setup(
     name='appbuilder-sdk',
-    version='0.3.1',
+    version='0.5.1',
     author='dongdaxiang',
     author_email='dongdaxiang@baidu.com',
     packages=find_packages(),
     install_requires=requirements,
     python_requires='>=3.8',
     extras_require={
-        'serve': ['chainlit~=0.7.700', 'flask~=2.3.2', 'flask-restful==0.3.9']
+        'serve': ['chainlit~=1.0.200', 'flask~=2.3.2', 'flask-restful==0.3.9']
     }
 )
 

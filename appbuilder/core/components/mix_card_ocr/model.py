@@ -14,7 +14,7 @@
 
 """身份证混贴数据类"""
 import proto
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -223,7 +223,7 @@ class MixCardField(BaseModel):
 
     key: str
     value: str
-    position: MixCardPosition
+    position: Optional[MixCardPosition] = None
 
 
 class MixCardContent(BaseModel):
@@ -245,6 +245,6 @@ class MixCardOCROutMsg(BaseModel):
             back(MixCardField): 国徽面信息
             direction(int): 图像旋转角度，0（正向），- 1（逆时针90度），- 2（逆时针180度），- 3（逆时针270度）
     """
-    front: MixCardField = MixCardContent()
-    back: MixCardField = MixCardContent()
+    front: MixCardContent = MixCardContent()
+    back: MixCardContent = MixCardContent()
     direction: int = 0

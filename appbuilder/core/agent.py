@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import sys
+import copy
 import os 
 import logging
 import uuid
 import json
 import inspect
-from pydantic import BaseModel, root_validator, Extra
+from pydantic import BaseModel, model_validator, Extra
 from typing import Optional, Dict, List, Any, Union
 import sqlalchemy
 
@@ -104,7 +105,7 @@ class AgentRuntime(BaseModel):
             class PlaygroundWithHistory(Component):
                 def __init__(self):
                     super().__init__()
-                    self.query_rewrite = QueryRewrite(model="eb-turbo-appbuilder")
+                    self.query_rewrite = QueryRewrite(model="ERNIE Speed-AppBuilder")
                     self.play = Playground(
                         prompt_template="{query}",
                         model="eb-4"
@@ -172,21 +173,19 @@ class AgentRuntime(BaseModel):
         extra = Extra.forbid # 不能传入类定义中未声明的字段
         arbitrary_types_allowed = True # 此设置允许在模型中使用自定义类型的字段
 
-    @root_validator(pre=True)
+    @model_validator(mode='before')
+    @classmethod
     def init(cls, values: Dict) -> Dict:
         """
         初始化 AgentRuntime，UserSession 会在这里被初始化
         
         Args:
-            component (Component): 可运行的 Component
-            user_session_config (sqlalchemy.engine.URL|str|None): Session 输出存储配置字符串。默认使用 sqlite:///user_session.db
-                遵循 sqlalchemy 后端定义，参考文档：https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls
-        
+            values (Dict): 初始化参数
         Returns:
             None
         """
         # 初始化 UserSession
-        values.update(**{
+        values.update({
             "user_session": UserSession(values.get("user_session_config"))
         })
         return values
@@ -205,7 +204,7 @@ class AgentRuntime(BaseModel):
         """
         return self.component.run(message=message, stream=stream, **args)
         
-    def create_flask_app(self):
+    def create_flask_app(self, url_rule="/chat"):
         """ 
         创建 Flask 应用，主要用于 Gunicorn 这样的 WSGI 服务器来运行服务。
         
@@ -230,11 +229,13 @@ class AgentRuntime(BaseModel):
         def handle_bad_request(e):
             return {"code": 400, "message": f'{e}', "result": None}, 400
             
-        @app.errorhandler(RuntimeError)
+        @app.errorhandler(Exception)
         def handle_bad_request(e):
-            return {"code": 1000, "message": f'{e}', "result": None}, 200
+            if hasattr(e, "code"):
+                return {"code": e.code, "message": str(e), "result": None}, 200
+            else:
+                return {"code": 500, "message": "Internal Server Error", "result": None}, 200
 
-        @app.route('/chat', methods=['POST'])
         def warp():
             # 根据component是否lazy_certification，分成两种情况：
             # 1. lazy_certification为True，初始化时未被认证，每次请求都需要带入AppbuilderToken
@@ -246,7 +247,11 @@ class AgentRuntime(BaseModel):
                     app_builder_token = request.headers["X-Appbuilder-Token"]
                     self.component.set_secret_key_and_gateway(secret_key=app_builder_token)
                 except appbuilder.core._exception.BaseRPCException as e:
+                    logging.error(f"failed to verify. err={e}", exc_info=True)
                     raise BadRequest("X-Appbuilder-Token invalid")
+                except Exception as e:
+                    logging.error(f"failed to verify. err={e}", exc_info=True)
+                    raise e
             else:
                 pass
 
@@ -269,47 +274,64 @@ class AgentRuntime(BaseModel):
             request_id = str(uuid.uuid4())
 
             init_context(session_id=session_id, request_id=request_id)
+            logging.info(f"[request_id={request_id}, session_id={session_id}] message={message}, stream={stream}, data={data}")
             try:
                 answer = self.chat(message, stream, **data)
                 if stream:
                     def gen_sse_resp(stream_message):
                         with app.app_context():
                             try:
-                                for it in stream_message.content:
-                                    d = {
-                                        "code": 0, "message": "",
+                                content_iterator = iter(stream_message.content)
+                                prev_content = next(content_iterator)
+                                prev_result = copy.deepcopy(stream_message)
+                                prev_result.content = prev_content
+                                for sub_content in content_iterator:
+                                    logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
+                                    yield "data: " + json.dumps({
+                                            "code": 0, "message": "", 
+                                            "result": {
+                                                "session_id": session_id, 
+                                                "is_completion": False, 
+                                                "answer_message": json.loads(prev_result.json(exclude_none=True))
+                                            }
+                                        }, ensure_ascii=False) + "\n\n"
+                                    prev_result = copy.deepcopy(stream_message)
+                                    prev_result.content = sub_content
+                                logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
+                                yield "data: " + json.dumps({
+                                        "code": 0, "message": "", 
                                         "result": {
                                             "session_id": session_id, 
-                                            "answer_message": {
-                                                "content": it,
-                                                "extra": stream_message.extra if hasattr(stream_message, "extra") else {}
-                                            }
+                                            "is_completion": True, 
+                                            "answer_message": json.loads(prev_result.json(exclude_none=True))
                                         }
-                                    }
-                                    yield "data: " + json.dumps(d, ensure_ascii=False) + "\n\n"
+                                    }, ensure_ascii=False) + "\n\n"
                                 self.user_session._post_append()
                             except Exception as e:
-                                err_resp = {"code": 1000, "message": str(e), "result": None}
+                                code = 500 if not hasattr(e, "code") else e.code
+                                err_resp = {"code": code, "message": str(e), "result": None}
+                                logging.error(f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
                                 yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
                     return Response(
                         gen_sse_resp(answer), 200, 
                         {'Content-Type': 'text/event-stream; charset=utf-8'},
                     )
                 else:
+                    blocking_result = json.loads(copy.deepcopy(answer).json(exclude_none=True))
+                    logging.info(f"[request_id={request_id}, session_id={session_id}] blocking_result={blocking_result}")
                     self.user_session._post_append()
                     return {
-                        "code": 0, "message": "",
-                        "result": {
-                            "session_id": session_id,
-                            "answer_message": json.loads(answer.json(exclude_none=True)),
-                        }
+                        "code": 0, "message": "", 
+                        "result": {"session_id": session_id, "answer_message": blocking_result}
                     }
             except Exception as e:
-                logging.error(e, exc_info=True)
-                raise RuntimeError(e)
+                logging.error(f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
+                raise e
+
+        app.add_url_rule(url_rule, 'chat', warp, methods=['POST'])
         return app
 
-    def serve(self, host='0.0.0.0', debug=True, port=8092):
+    def serve(self, host='0.0.0.0', debug=True, port=8092, url_rule="/chat"):
         """ 
         将 component 服务化，提供 Flask http API 接口
         
@@ -321,7 +343,7 @@ class AgentRuntime(BaseModel):
         Returns:
             None
         """
-        app = self.create_flask_app()
+        app = self.create_flask_app(url_rule=url_rule)
         app.run(host=host, debug=debug, port=port)
         
     def chainlit_demo(self, host='0.0.0.0', port=8091):
@@ -341,7 +363,7 @@ class AgentRuntime(BaseModel):
             import chainlit.cli
         except ImportError:
             raise ImportError("chainlit module is not installed. Please install it using 'pip install "
-                              "chainlit~=0.7.700'.")
+                              "chainlit~=1.0.200'.")
         import click
         from click.testing import CliRunner
         
@@ -369,3 +391,4 @@ class AgentRuntime(BaseModel):
             runner = CliRunner()
             runner.invoke(
                 chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
+

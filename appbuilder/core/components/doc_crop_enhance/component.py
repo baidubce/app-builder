@@ -12,21 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""doc-enhance component."""
+"""doc_crop_enhance component."""
 
 import base64
 import json
 
 from appbuilder.core.component import Component
-from appbuilder.core.components.doc_enhance.model import *
 from appbuilder.core._client import HTTPClient
+from appbuilder.core.components.doc_crop_enhance.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._exception import *
 
 enhance_type_set = [0, 1, 2, 3]
 
 
-class DocEnhance(Component):
+class DocCropEnhance(Component):
     r"""
        对图片中的文件、卡证、票据等内容进行四角点检测定位，提取主体内容并对其进行矫正，同时可选图片增强效果进一步提升图片清晰度，
        达到主体检测矫正并增强的目的，提升图片整体质量
@@ -40,7 +40,7 @@ class DocEnhance(Component):
            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
            os.environ["APPBUILDER_TOKEN"] = '...'
 
-           doc_enhance = appbuilder.DocEnhance()
+           doc_crop_enhance = appbuilder.DocCropEnhance()
            with open("./doc_enhance_test.png", "rb") as f:
                out = self.component.run(appbuilder.Message(content={"raw_image": f.read()}))
            print(out.content)
@@ -65,8 +65,8 @@ class DocEnhance(Component):
                 'points': [{'x': 220, 'y': 705}, {'x': 240, 'y': 0}, {'x': 885, 'y': 2}, {'x': 980, 'y': 759}]},
                 mtype=dict)
         """
-        inp = DocEnhanceInMsg(**message.content)
-        req = DocEnhanceRequest()
+        inp = DocCropEnhanceInMsg(**message.content)
+        req = DocCropEnhanceRequest()
         if inp.raw_image:
             req.image = base64.b64encode(inp.raw_image)
         if inp.url:
@@ -77,21 +77,21 @@ class DocEnhance(Component):
         req.enhance_type = enhance_type
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
-        out = DocEnhanceOutMsg(**result_dict)
-        return Message(content=out.dict())
+        out = DocCropEnhanceOutMsg(**result_dict)
+        return Message(content=out.model_dump())
 
-    def _recognize(self, request: DocEnhanceRequest, timeout: float = None,
-                   retry: int = 0) -> DocEnhanceResponse:
+    def _recognize(self, request: DocCropEnhanceRequest, timeout: float = None,
+                   retry: int = 0) -> DocCropEnhanceResponse:
         r"""文档矫正增强调用
                    参数:
-                       request (obj: `DocEnhanceRequest`) : 文档矫正增强输入参数
+                       request (obj: `DocCropEnhanceRequest`) : 文档矫正增强输入参数
                    返回：
-                       response (obj: `DocEnhanceResponse`): 文档矫正增强返回结果
+                       response (obj: `DocCropEnhanceResponse`): 文档矫正增强返回结果
                """
         if not request.image and not request.url:
             raise ValueError("one of image or url must be set")
 
-        req = json.dumps(DocEnhanceRequest.to_dict(request))
+        req = json.dumps(DocCropEnhanceRequest.to_dict(request))
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
         headers = self.http_client.auth_header()
@@ -103,7 +103,7 @@ class DocEnhance(Component):
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__._check_service_error(request_id, data)
-        res = DocEnhanceResponse.from_json(json.dumps(data))
+        res = DocCropEnhanceResponse.from_json(json.dumps(data))
         res.request_id = request_id
         return res
 

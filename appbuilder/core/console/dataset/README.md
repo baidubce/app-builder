@@ -1,4 +1,4 @@
-# 知识库组件（Dataset）（即将上线）
+# 知识库组件（Dataset）
 
 ## 简介
 知识库组件（Dataset）是对线上知识库操作的组件，可以通过SDK实现创建知识库、添加知识文档、查询知识库文档、删除知识文档等操作，可在平台console中查看结果。
@@ -51,14 +51,16 @@ dataset.delete_documents(document_ids)
 ## 参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ```
 
 ### 初始化参数
-- `dataset_id`: 线上已有知识库id
+- `dataset_id`: 线上已有知识库id，可在[console](https://console.bce.baidu.com/ai_apaas/dataset)上查看和获取，示例如图
+
+<img width="768" alt="image" src="./image/dataset示例.png">
 
 
 ### 创建知识库调用参数
@@ -75,11 +77,12 @@ Dataset(dataset_id=2dae2091-99dc-47dd-8600-ff7c4b3ed93d, dataset_name=my_dataset
 ```
 
 ### 添加文档调用参数
-| 参数名称         | 参数类型     | 是否必须 | 描述                                          | 示例值 |
-|--------------|----------|------|---------------------------------------------|-----|
-| file_paths     | List[String] | 是    | 文档路径列表                                      | ["./path1", "./path2"] |
-| is_custom_process_rule     | bool     | 否    | 是否使用自定义文档处理策略                               | True|
-| custom_process_rule     | Dict     | 否    | 自定义文档处理策略，在is_custom_process_rule为True时需要设置 | {"separators":["。", "，"], "target_length": 300, "overlap_rate": 0.3} |
+| 参数名称         | 参数类型     | 是否必须 | 描述                                                                                                                                                                    | 示例值                                                                  |
+|--------------|----------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| file_paths     | List[String] | 是    | 文档路径列表                                                                                                                                                                | ["./path1", "./path2"]                                               |
+| is_custom_process_rule | bool     | 否    | 是否使用自定义文档处理策略                                                                                                                                                         | True                                                                 |
+| custom_process_rule   | Dict     | 否    | 自定义文档处理策略，在is_custom_process_rule为True时需要设置，separators文本切分符，支持这几种[ , , "？", , "!", "?", "……"]，target_length是文本切片片段长度，取值范围[300, 800]，overlap_rate是文本片段重叠率，取值范围[0, 0.3] | {"separators":["。", "，"], "target_length": 300, "overlap_rate": 0.3} |
+| is_enhanced           |   bool    | 否    | 是否开启知识增强，在检索问答时通过知识点来索引到对应的切片，大模型根据切片内容生成答案，开启知识增强会调用大模型抽取更加丰富的知识点，增加切片的召回率                                                                                                                                                             | False                                                                |
 
 ### 添加文档响应参数
 | 参数名称   | 参数类型            | 描述       | 示例值                                                                                                                      |

@@ -17,12 +17,12 @@ import requests
 import appbuilder
 
 
-class TestDocEnhance(unittest.TestCase):
+class TestDocCropEnhance(unittest.TestCase):
     def setUp(self):
         """
         设置环境变量。
         """
-        self.doc_enhance = appbuilder.DocEnhance()
+        self.doc_crop_enhance = appbuilder.DocCropEnhance()
 
     def test_run_with_raw_image(self):
         """
@@ -43,7 +43,7 @@ class TestDocEnhance(unittest.TestCase):
         # Create message with raw_image
         message = appbuilder.Message(content={"raw_image": raw_image})
         # Doc enhance
-        output = self.doc_enhance.run(message)
+        output = self.doc_crop_enhance.run(message)
         # Assert output is not None
         self.assertIsNotNone(output)
 
@@ -65,7 +65,7 @@ class TestDocEnhance(unittest.TestCase):
         # Create message with image URL
         message = appbuilder.Message(content={"url": image_url})
         # Doc enhance
-        output = self.doc_enhance.run(message)
+        output = self.doc_crop_enhance.run(message)
         # Assert output is not None
         self.assertIsNotNone(output)
 
@@ -88,7 +88,7 @@ class TestDocEnhance(unittest.TestCase):
         # Create message with raw_image
         message = appbuilder.Message(content={"raw_image": raw_image})
         #  Doc enhance with timeout and retry parameters
-        output = self.doc_enhance.run(message, enhance_type=3, timeout=5.0, retry=3)
+        output = self.doc_crop_enhance.run(message, enhance_type=3, timeout=5.0, retry=3)
 
         # Assert output is not None
         self.assertIsNotNone(output)
@@ -109,7 +109,7 @@ class TestDocEnhance(unittest.TestCase):
 
         # Assert ValueError is raised
         with self.assertRaises(ValueError):
-            self.doc_enhance.run(message)
+            self.doc_crop_enhance.run(message)
 
     def test_run_with_invalid_url(self):
         """
@@ -125,7 +125,7 @@ class TestDocEnhance(unittest.TestCase):
         url = "http://example.com/invalid_url.jpg"
         message = appbuilder.Message(content={"url": url})
         with self.assertRaises(appbuilder.AppBuilderServerException):
-            self.doc_enhance.run(message)
+            self.doc_crop_enhance.run(message)
 
 
 if __name__ == '__main__':

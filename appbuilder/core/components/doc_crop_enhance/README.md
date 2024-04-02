@@ -1,7 +1,7 @@
-# 文档矫正增强 (DocEnhance) 
+# 文档矫正增强 (DocCropEnhance) 
 
 ## 简介
-文档矫正增强 (DocEnhance) 可对图片中的文件、卡证、票据等内容进行四角点检测定位，提取主体内容并对其进行矫正，同时可选图片增强效果进一步提升图片清晰度，达到主体检测矫正并增强的目的，提升图片整体质量
+文档矫正增强 (DocCropEnhance) 可对图片中的文件、卡证、票据等内容进行四角点检测定位，提取主体内容并对其进行矫正，同时可选图片增强效果进一步提升图片清晰度，达到主体检测矫正并增强的目的，提升图片整体质量
 ### 功能介绍
 * 文档矫正增强
 
@@ -18,6 +18,11 @@
 ## 基本用法
 
 下面是文档矫正增强代码示例：
+
+示例图片为
+
+![示例图片](./image/doc_enhance_test.png)
+
 ```python
 import os
 import appbuilder
@@ -33,17 +38,18 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/doc_enhance_test.png?" \
             "be8abf28df78010f865e45dfcd6dc3951"
 raw_image = requests.get(image_url).content
 # 创建文档矫正增强组件实例
-doc_enhance = appbuilder.DocEnhance()
+doc_crop_enhance = appbuilder.DocCropEnhance()
 # 执行操作并获取结果
-out = doc_enhance.run(appbuilder.Message(content={"raw_image": raw_image}),enhance_type=3)
+out = doc_crop_enhance.run(appbuilder.Message(content={"raw_image": raw_image}),enhance_type=3)
 print(out.content)
+# {"image_processed": "...", 'points': [{'y': 1371, 'x': 0}, {'x': 0, 'y': 0}, {'x': 997, 'y': 0}, {'x': 994, 'y': 1371}]}
 ```
 
 
 ## 参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
@@ -64,7 +70,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 | 参数名称            | 参数类型    | 描述                                        | 示例值                                                                                     |
 |-----------------|---------|-------------------------------------------|-----------------------------------------------------------------------------------------|
 | image_processed | String  | 返回处理后的图片，base64编码                         | "..."                                                                                   |
-| points          | Array[] | 检测到的图片内主体在原图中的四角点坐标，scan_type = 2 时不返回此参数 | [{ "x": 0, "y": 1371 },{ "x": 0, "y": 0 },{ "x": 997, "y": 0 },{ "x": 994, "y": 1371 }] |
+| points          | Array[] | 检测到的图片内主体在原图中的四角点坐标 | [{ "x": 0, "y": 1371 },{ "x": 0, "y": 0 },{ "x": 997, "y": 0 },{ "x": 994, "y": 1371 }] |
 
 ### 响应示例
 ```json
@@ -78,9 +84,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
   ]
 }
 ```
-### 错误码
-| 错误码 | 描述 |
-|-----|----|
 
 ## 高级用法
 

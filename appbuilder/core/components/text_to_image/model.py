@@ -22,7 +22,7 @@ from pydantic import BaseModel
 
 
 class Text2ImageSubmitRequest(proto.Message):
-    r"""AI作画提交任务的请求体。
+    r"""文生图提交任务的请求体。
 
          参数:
             prompt(str):
@@ -92,7 +92,7 @@ class Text2ImageSubmitRequest(proto.Message):
 
 
 class Text2ImageQueryRequest(proto.Message):
-    r"""AI作画生成结果查询请求体。
+    r"""文生图生成结果查询请求体。
 
          参数:
             task_id(int):
@@ -105,7 +105,7 @@ class Text2ImageQueryRequest(proto.Message):
 
 
 class Text2ImageSubmitResponse(proto.Message):
-    r"""AI作画任务提交接口返回体。
+    r"""文生图任务提交接口返回体。
 
          参数:
             request_id(str):
@@ -132,7 +132,7 @@ class Text2ImageSubmitResponse(proto.Message):
 
 
 class Text2ImageQueryResponse(proto.Message):
-    r"""AI作画任务结果查询接口返回体。.
+    r"""文生图任务结果查询接口返回体。.
 
          参数:
             request_id(str):
@@ -160,7 +160,7 @@ class Text2ImageQueryResponse(proto.Message):
 
 
 class Text2ImageSubmitData(proto.Message):
-    r"""AI作画提交任务接口返回体数据。
+    r"""文生图提交任务接口返回体数据。
 
          参数:
             primary_task_id(str):
@@ -180,7 +180,7 @@ class Text2ImageSubmitData(proto.Message):
 
 
 class Text2ImageQueryData(proto.Message):
-    r"""AI作画任务查询接口返回体数据。
+    r"""文生图任务查询接口返回体数据。
          参数:
             task_id(int):
                 任务 ID.
@@ -212,7 +212,7 @@ class Text2ImageQueryData(proto.Message):
 
 
 class Text2ImageSubTaskResultList(proto.Message):
-    r"""AI作画子任务结果列表。
+    r"""文生图子任务结果列表。
          参数:
             sub_task_status(int):
                 单风格图片状态。有 INIT（初始化），WAIT（排队中）, RUNNING（生成中）, FAILED（失败）, SUCCESS（成功）四种状态，只有 SUCCESS 为成功状态。
@@ -243,7 +243,7 @@ class Text2ImageSubTaskResultList(proto.Message):
 
 
 class Text2ImageFinalImageList(proto.Message):
-    r"""AI作画单风格任务产出的最终图列表。
+    r"""文生图单风格任务产出的最终图列表。
          参数:
             img_approve_conclusion(str):
                 图片机审结果，"block"：输出图片违规；"review": 输出图片疑似违规；"pass": 输出图片未发现问题。
@@ -274,7 +274,7 @@ class Text2ImageFinalImageList(proto.Message):
 
 
 class Text2ImageInMessage(BaseModel):
-    """ AI作画组件输入message.
+    """ 文生图组件输入message.
         参数:
             prompt(str):
                 生图的文本描述。仅支持中文、日常标点符号。不支持英文，特殊符号，限制 200 字。
@@ -283,7 +283,7 @@ class Text2ImageInMessage(BaseModel):
 
 
 class Text2ImageOutMessage(BaseModel):
-    """ AI作画组件输出message.
+    """ 文生图组件输出message.
         参数:
             img_urls(str):
                 图片所在 BOS http 地址，默认 1 小时失效。

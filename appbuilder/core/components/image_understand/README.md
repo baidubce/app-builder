@@ -1,10 +1,9 @@
 # 图像内容理解 （ImageUnderstand）
 
 ## 简介
-图像内容理解 （ImageUnderstand），基于输入的图片、问题、prompt，输出理解图片后的文本信息
+图像内容理解 （ImageUnderstand），输出理解图片后的文本信息
 ### 功能介绍
-为丰富AI应用工作台接入的PaaS能力，与VIS沟通新增图像理解能力， 会基于输入的图片、问题、prompt，输出理解图片后的文本信息
-
+支持输入图片和提问信息，可对输入图片进行理解，输出对图片的一句话描述
 ### 特色优势
 同时，支持客户自主选择，是否调用大模型对输出文本进行润色，目前支持百度文心大模型调用。
 
@@ -14,6 +13,9 @@
 ## 基本用法
 
 下面是图像内容理解的代码示例：
+
+示例图片为：![示例图片](./image/test_image_understand.jpeg)
+
 ```python
 import os
 import appbuilder
@@ -38,7 +40,7 @@ print(out.content)
 ## 参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 import os 
 os.environ["APPBUILDER_TOKEN"] = "..."

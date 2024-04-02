@@ -2,7 +2,7 @@
 
 ## 简介
 
-通用文字识别组件（GeneralOCR）支持多场景、多语种、高精度的文字识别服务，对图片/文件全部文字内容进行检测识别。
+通用文字识别组件（GeneralOCR）支持多场景、多语种、高精度的文字识别服务，对图片全部文字内容进行检测识别。
 
 ### 功能介绍
 覆盖多种通用场景、20+种语言的高精度整图文字检测和识别服务，包括各类印刷和手写文档、网络图片、表格、印章、数字、二维码等；
@@ -10,12 +10,14 @@
 ### 特色优势
 * 准确率高
 
-    针对图片模糊、倾斜、翻转等情况进行专项优化，鲁棒性强，多项ICDAR指标居世界第一，识别准确率高
+    多项ICDAR指标居世界第一，识别准确率高
 ### 应用场景
 支持多场景、多语种、高精度的文字识别服务，可用于纸质文档电子化、办公文档/报表识别、图像内容审核等场景
 ## 基本用法
 
 以下是一个简单的例子来演示如何开始使用GeneralOCR组件：
+
+示例图片为![示例图片](./image/general_ocr_test.png)
 
 ```python
 import os
@@ -38,7 +40,7 @@ print(out.content)
 ##  参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
@@ -51,7 +53,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 调用参数
 | 参数名称    | 参数类型    | 是否必须 | 描述                          | 示例值                                            |
 |---------|---------|------|-----------------------------|------------------------------------------------|
-| message | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"raw_image": b"待识别的图片字节流数据"}) |
+| message | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"raw_image": b"待识别的图片字节流数据"})，图像数据，base64编码后进行urlencode，要求base64编码和urlencode后大小不超过10M，最短边至少15px，最长边最大8192px，支持jpg/jpeg/png/bmp格式 |
 |timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 | retry   | Integer | 否    | HTTP重试次数                    | 3                                              |
 
@@ -101,9 +103,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
     ]
 }
 ```
-### 错误码
-| 错误码 | 描述 |
-|-----|----|
 
 ## 高级用法
 

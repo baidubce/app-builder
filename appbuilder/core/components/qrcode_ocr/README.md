@@ -1,7 +1,7 @@
-# 二维码识别 (QRcode OCR) 
+# 二维码识别 (QRcodeOCR) 
 
 ## 简介
-二维码识别 (QRcode OCR) 可对图片中的二维码、条形码进行检测和识别，返回存储的文字信息及其位置信息。
+二维码识别 (QRcodeOCR) 可对图片中的二维码、条形码进行检测和识别，返回存储的文字信息及其位置信息。
 
 
 ### 功能介绍
@@ -21,6 +21,10 @@
 ## 基本用法
 
 下面是二维码识别的代码示例：
+
+示例图片为：
+![示例图片](./image/qrcode_ocr_test.png)
+
 ```python
 import os
 import appbuilder
@@ -40,13 +44,14 @@ qrcode_ocr = appbuilder.QRcodeOCR()
 # 执行识别操作并获取结果
 out = qrcode_ocr.run(appbuilder.Message(content={"raw_image": raw_image}), location="true")
 print(out.content)
+# {'codes_result': [{'type': 'QR_CODE', 'text': ['ocr文字识别'], 'location': {'top': 506, 'left': 1302, 'width': 1972, 'height': 1961}}]}
 ```
 
 
 ## 参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"

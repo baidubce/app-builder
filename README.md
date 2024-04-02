@@ -2,27 +2,43 @@
 
 <h1>AppBuilder-SDK</h1>
 
-AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括基础云资源、AI能力引擎、千帆大模型以及相关能力组件，提升AI原生应用开发效率。
-
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
 ![Supported Python versions](https://img.shields.io/badge/python-3.8+-orange.svg)
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
+
+AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括基础云资源、AI能力引擎、千帆大模型以及相关能力组件，提升AI原生应用开发效率。
+
+</div>
+<div align="center">
+<h1>AppBuilder-SDK微信交流群</h1>
+<img src='docs/image/wechat_group.png' alt='wechat' width='200' >
 
 </div>
 
 ## News
 * **[云端快速创建RAG、Agent、GBI等应用](https://console.bce.baidu.com/ai_apaas/app)**
 * **[官方组件列表](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#%E5%BC%80%E5%8F%91%E7%BB%84%E4%BB%B6)**
-* **v0.1.0版本发布**：[Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.1.0)
-  * 2023.12.19初始版本发布，基础云组件支持包括BES；AI能力引擎语音、视觉类10个能力，大模型相关RAG、文本生成能力19个。
-* **v0.2.0版本发布** [Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.2.0)
-  * 2023.01.03发布，核心升级点GBI相关组件新增，v0.1.0遗留问题修复
-* **v0.3.0版本发布**
+* **2023.12.19 v0.1.0版本发布**：[Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.1.0)
+  * 初始版本发布，基础云组件支持包括BES；AI能力引擎语音、视觉类10个能力，大模型相关RAG、文本生成能力19个。
+* **2024.01.03 v0.2.0版本发布** [Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.2.0)
+  * 核心升级点GBI相关组件新增，v0.1.0遗留问题修复
+* **2024.01.26 v0.3.0版本发布** [Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.3.0)
   * 新增组件：新增了百度搜索rag组件（RAGwithBaiduSearch)。[Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/rag_with_baidusearch.ipynb)
-  * AgentRuntime更新：1) AgentBase 更名为 AgentRuntime，并增强了数据管理能力。2) AgentRuntime添加了对LLMMessage.extra字段的支持，增加了create_flask_app用于WSGI服务器运行服务，修复了UserSession重复初始化的问题。[Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/agent_runtime.ipynb)
   * 模型列表获取：与千帆大模型平台模型名打通，可动态获取当前账号模型名，并在组件中使用[获取模型列表](https://github.com/baidubce/app-builder/blob/master/README.md#%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8)
   * 可通过官方镜像开发和运行实例代码[二次开发](https://github.com/baidubce/app-builder/blob/master/README.md#%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91)
-
+* **2024.02.27 v0.4.0版本发布** [Release Note](https://github.com/baidubce/app-builder/releases/tag/0.4.0)
+  * AppBuilder Console SDK发布[知识集合Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/console_dataset.ipynb)，[RAG调用Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/console_rag.ipynb)
+  * 大模型组件新增：Excel2Figure(基于Excel信息画图表)
+  * AI能力引擎组件新增&更新：植物识别、动物识别、表格文字识别V2、手写文字识别、二维码识别、身份证混贴识别、文档矫正识别、图像内容理解、流式TTS
+  * AgentRuntime：新增[Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/agent_runtime.ipynb)
+* **2024.03.13 v0.4.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.4.1)
+  * 支持以下功能进行FunctionCall调用：动植物识别、表格文字识别、条形码及二维码识别、身份证混贴识别、手写文字识别、text2image、excel2figure
+* **2024.03.20 v0.5.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.0)
+  * AgentBuilder ConsoleSDK发布 [Agent调用CookBook](https://github.com/baidubce/app-builder/blob/0.5.0/cookbooks/agent_builder.ipynb)
+  * AI能力引擎组件新增：向量检索-VDB
+  * 支持以下功能进行FunctionCall调用并新增[CookBook](https://github.com/baidubce/app-builder/blob/master/cookbooks/general_ocr.ipynb)：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
+* **2024.03.21 v0.5.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.1)
+  * 问题修复：修复了在Python 3.8 及以下环境无法使用AgentBuilder ConsoleSDK的问题。同时，在即将发布的0.6.0版本中，将不再提供对Python 3.8及以下环境的支持，请升级Python版本到3.9
 ## 教程与文档
 
 * **预备步骤**
@@ -39,7 +55,7 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 ```shell
 pip install --upgrade appbuilder-sdk
 ```
-如果在本地无法跑通appbuilder-sdk包，也可以使用我们的官方镜像来按照和运行，具体方案参考**二次开发**部分。
+如果在本地无法跑通appbuilder-sdk包，也可以使用我们的官方镜像来安装和运行，具体方案参考**二次开发**部分。
 
 ## 快速使用
 
@@ -74,7 +90,8 @@ ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder专�
 | ERNIE-Bot-8K               |       eb-8k      |
 | ERNIE-Bot                  |       eb         |
 | ERNIE-Bot-turbo            |       eb-turbo   |
-| EB-turbo-AppBuilder专用版   |       eb-turbo-appbuilder           |
+| EB-turbo-AppBuilder专用版   |       ernie_speed_appbuilder           |
+| ERNIE Speed-AppBuilder   |       ernie_speed_appbuilder           |
 
 
 ### 典型示例
@@ -87,7 +104,7 @@ import appbuilder
 
 # 空模版组件
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
-playground = appbuilder.Playground(prompt_template=template_str, model="eb-turbo-appbuilder")
+playground = appbuilder.Playground(prompt_template=template_str, model="ERNIE Speed-AppBuilder")
 
 # 定义输入，调用空模版组件
 input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
@@ -100,7 +117,7 @@ print(playground(input, stream=False, temperature=1e-10))
 import appbuilder
 
 # 相似问生成组件
-similar_q = appbuilder.SimilarQuestion(model="eb-turbo-appbuilder")
+similar_q = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
 
 # 定义输入，调用相似问生成
 input = appbuilder.Message("我想吃冰淇淋，哪里的冰淇淋比较好吃？")
@@ -111,75 +128,30 @@ print(similar_q(input))
 #### 检索增强问答(Chat RAG)
 ```python
 import appbuilder
-from pathlib import Path
+import os
 
-cluster_id = "your_bes_cluster_id"
-username = "your_bes_cluster_username"
-password = "your_bes_cluster_password"
+# 此处APPBUILDER_TOKEN为限制QPS的试用账号，请在测试您自己的应用时替换为自己的账号Token
+os.environ["APPBUILDER_TOKEN"] = ""
 
-# 基于doc_parser和doc_splitter解
-# 析file_path文件为若干个段落
-def parse_file(file_path, doc_parser, doc_splitter):
-    input_msg = appbuilder.Message(str(file_path))
-    doc_parser_result = doc_parser(input_msg, return_raw=True)
-    doc_splitter_result = doc_splitter(doc_parser_result)
-    return [f"{file_path.name}+{para['text'][:384]}" 
-            for para in doc_splitter_result.content["paragraphs"]]
-
-# 文档切分的分块大小，每个分块最大340个字符
-chunk_size = 340
-# 声明文档解析和文档切分组件
-doc_parser = appbuilder.DocParser()
-doc_splitter = appbuilder.DocSplitter(splitter_type="split_by_chunk", max_segment_length=chunk_size)       
-
-file_dir = "./files"
-# 批量解析，形成段落切片列表
-paragraphs = [para_text for file in Path(file_dir).iterdir() if file.is_file()
-            for para_text in parse_file(file, doc_parser, doc_splitter)]
-
-# 默认使用erniebot-embedding-v1
-embedding = appbuilder.Embedding()
-
-# 将段落切片列表入库到BESVectorStoreIndex，这里面用到的Baidu Elastic Search服务
-segments = appbuilder.Message(resume_paragraphs)
-vector_index = appbuilder.BESVectorStoreIndex.from_segments(
-    segments=segments, cluster_id=cluster_id, user_name=username, 
-    password=password, embedding=embedding)
-
-# 在线检索部分
-retriever = vector_index.as_retriever()
-
-input_msg = appbuilder.Message("appbuilder是什么？")
-result_list = retriever(query=input_msg, top_k=3)
-context_msg = appbuilder.Message([item["text"] for item in result_list])
-
-mrc = appbuilder.MRC()
-rag_result = mrc(input_msg, context_msg)
-
-print(rag_result.content)
-
-```
-
-#### AI能力引擎(AI Engine)
-```python
-import appbuilder
-import requests
-
-# 语音识别组件
-audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
-                   "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
-                   "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
-audio_data = requests.get(audio_file_url).content
-
-asr = appbuilder.ASR()
-inp = appbuilder.Message(content={"raw_audio": audio_data})
-asr_out = asr(inp)
-print(asr_out.content)
+# 此处填写线上RAG应用ID，可在【AppBuilder网页端-我的应用界面】查看
+# 网页链接 https://console.bce.baidu.com/ai_apaas/app
+app_id = ""
+rag_app = appbuilder.console.RAG(app_id)
+query = "中国的首都在哪里"
+answer = rag_app.run(appbuilder.Message(query)) # 新建对话
+print(answer.content)
 ```
 
 ## 应用服务化
 
 AppBuilder-SDK提供对组件的服务化能力。通过定义Agent，开发者可以快速启动Chainlit、Flask等服务化的Demo或API提供快速体验环境。
+
+在需要部署服务的环境中，开发者需要首先手动安装 Chainlit 库
+
+```shell
+pip install chainlit
+```
+而后，使用AppBuilder的Agent服务化功能，即可快速部署服务
 
 ```python
 import appbuilder
@@ -187,7 +159,7 @@ import appbuilder
 # 空模版组件
 playground = appbuilder.Playground(
     prompt_template="{query}",
-    model="eb-turbo-appbuilder"
+    model="ERNIE Speed-AppBuilder"
 )
 
 # 使用 AgentRuntime 来服务化playground组件
@@ -234,7 +206,7 @@ class SimilarQuestion(CompletionBaseComponent):
 
             os.environ["APPBUILDER_TOKEN"] = "..."
 
-            qa_mining = appbuilder.SimilarQuestion(model="eb-turbo-appbuilder")
+            qa_mining = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
 
             msg = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
             msg = appbuilder.Message(msg)

@@ -31,7 +31,7 @@ class TestStyleRewriteComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.model_name = "eb-turbo-appbuilder"
+        self.model_name = "ERNIE Speed-AppBuilder"
         self.node = appbuilder.StyleRewrite(model=self.model_name)
 
     def test_run_with_default_params(self):
@@ -61,7 +61,7 @@ class TestStyleRewriteComponent(unittest.TestCase):
 
     def test_run_with_different_style(self):
         """测试不同的 style 参数值"""
-        node = appbuilder.StyleRewrite("eb-turbo-appbuilder")
+        node = appbuilder.StyleRewrite("ERNIE Speed-AppBuilder")
         msg = appbuilder.Message("测试消息")
         for style in StyleChoices:
             with self.subTest(style=style):
@@ -70,10 +70,24 @@ class TestStyleRewriteComponent(unittest.TestCase):
 
     def test_run_with_stream_and_temperature(self):
         """测试不同的 stream 和 temperature 参数值"""
-        node = appbuilder.StyleRewrite("eb-turbo-appbuilder")
+        node = appbuilder.StyleRewrite("ERNIE Speed-AppBuilder")
         msg = appbuilder.Message("测试消息")
         answer = node(msg, style="激励话术", stream=False, temperature=0.5)
         self.assertIsNotNone(answer)
+
+    def test_tool_eval_valid(self):
+        """测试 tool_eval 方法使用有效参数"""
+        query = "帮我写一篇关于人体工学椅的文案"
+        result = self.node.tool_eval(name="style_rewrite", streaming=True, query=query)
+        res = [item for item in result]
+        print(res)
+        self.assertNotEqual(len(res), 0)
+
+    def test_tool_eval_invalid(self):
+        """测试 tool_eval 方法使用无效参数"""
+        with self.assertRaises(ValueError):
+            result = self.node.tool_eval(name="style_rewrite", streaming=True)
+            next(result)
 
 
 if __name__ == '__main__':

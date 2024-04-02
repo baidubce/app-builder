@@ -16,6 +16,10 @@
 ## 基本用法
 通过如下示例代码可以快速开始使用菜品识别组件：
 
+示例图片为：
+
+![菜品识别示例图片](./image/dish_recognize_test.jpg)
+
 ```python
 import os
 import requests
@@ -39,7 +43,7 @@ print(resp.content)
 
 ## 参数说明
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
@@ -68,9 +72,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 {"result": [{"name": "剁椒鱼头", "calorie": "127"}]}
 ```
 
-### 错误码
-|错误码|描述|
-|------|---|
 
 ## 更新记录和贡献
 * 菜品识别 (2024-01)

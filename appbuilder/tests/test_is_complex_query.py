@@ -29,7 +29,7 @@ class TestIsComplexQueryComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.model_name = "eb-turbo-appbuilder"
+        self.model_name = "ERNIE Speed-AppBuilder"
         self.node = appbuilder.IsComplexQuery(model=self.model_name)
 
     def test_run_with_default_params(self):

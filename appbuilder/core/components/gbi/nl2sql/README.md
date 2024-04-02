@@ -59,7 +59,7 @@ print(f"llm result: {nl2sql_result_message.content.llm_result}")
 ## 参数说明
 
 ### 初始化参数
-- model_name:  支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder"
+- model_name:  支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, ERNIE Speed-AppBuilder
 - table_schemas: 表的 schema，例如:
   
 ```
@@ -80,7 +80,7 @@ CREATE TABLE `supper_market_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ```
 
-- knowledge: 用于提供一些知识, 比如 {"毛利率": "毛收入-毛成本/毛成本"}
+- knowledge: 用于提供一些知识, 比如 {"毛利率": "(销售收入 - 销售成本) / 销售收入"}
 - prompt_template: prompt 模版, 必须包含的格式如下:
                   ***你的描述
                   {schema}

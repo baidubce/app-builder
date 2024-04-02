@@ -1,15 +1,12 @@
-# 动物识别 (Animal Recognition) 
+# 动物识别 (AnimalRecognition) 
 
 ## 简介
-动物识别 (Animal Recognition) 可用于识别一张图片，即对于输入的一张图片（可正常解码，且长宽比较合适），输出动物识别结果。
+动物识别 (AnimalRecognition) 支持对于输入的一张图片（可正常解码），输出动物识别结果。
 
 ### 功能介绍
 * 识别动物名称
 
-  识别近八千种动物，接口返回动物名称、置信度信息，支持自定义返回结果数；
-
-### 特色优势
-* 可识别近八千种动物，接口返回动物名称，并可获取识别结果对应的百科信息；
+  识别近八千种动物，接口返回动物名称、置信度信息，支持自定义返回结果数， 并可获取识别结果对应的百科信息；
 
 ### 应用场景
 * 拍照识图
@@ -18,6 +15,13 @@
 
 
 ## 基本用法
+
+我们选取一张可爱的大熊猫照片，使用动物识别组件进行识别。
+
+
+![大熊猫](./image/animal_recognize_test.png)
+
+
 
 下面是动物识别的代码示例：
 ```python
@@ -45,7 +49,7 @@ print(out.content)
 ## 参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
@@ -98,10 +102,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
     ]
 }
 ```
-
-### 错误码
-| 错误码 | 描述 |
-|-----|----|
 
 ## 高级用法
 
