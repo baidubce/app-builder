@@ -110,12 +110,12 @@ def get_all_unittest_file():
         logger.info("--> {}. {}".format(idx+1, case))
 
     logger.info(
-        "\n涉及C++执行，但可以CPU并行的单测用例：{}个".format(len(CPU_PARALLEL_RUN_UNITTEST)))
+        "\nCPU并行的单测用例：{}个".format(len(CPU_PARALLEL_RUN_UNITTEST)))
     for idx, case in enumerate(CPU_PARALLEL_RUN_UNITTEST):
         logger.info("--> {}. {}".format(idx+1, case))
 
     logger.info(
-        "\n需要C++执行，在CPU上仅能串行执行的单测用例：{}个".format(len(CPU_SERIAL_RUN_UNITTEST)))
+        "\nCPU串行执行的单测用例：{}个".format(len(CPU_SERIAL_RUN_UNITTEST)))
     for idx, case in enumerate(CPU_SERIAL_RUN_UNITTEST):
         logger.info("--> {}. {}".format(idx+1, case))
 
@@ -156,6 +156,18 @@ def run_sync_unittest(test_file):
 
 
 def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
+    """
+    异步运行单元测试，并记录日志文件和结果。
+
+    Args:
+        test_file (str): 测试文件名，包含路径。
+        case_idx (int): 当前测试用例在所有测试用例中的索引值，从1开始。
+        case_num (int): 所有测试用例的数量。
+        timeout (int, optional): 超时时间，默认为1200秒（20分钟）。
+
+    Returns:
+        None, str: 无返回值，会将结果写入到一个文件中。
+    """
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
     cmd = COVERAGE_CMD + [test_file]

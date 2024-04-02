@@ -42,9 +42,6 @@ class TestStyleRewrite(unittest.TestCase):
         param(models[0], text, "激励话术", False, 0.01),
         param(models[0], text, "激励话术", False, 0.99),
 
-        # param("ernie-bot", text, "激励话术", None, None),
-        # param("ernie-bot-4", text, "激励话术", None, None),
-
         param(models[0], text, "客服话术", None, None),
         param(models[0], text, "直播话术", None, None),
         param(models[0], text, "营销话术", None, None),
@@ -71,7 +68,6 @@ class TestStyleRewrite(unittest.TestCase):
             content = "".join([i for i in res.content])
         else:
             content = res.content
-        print("{}：{}".format(model_name, content))
         assert "文心" in content or "Wenxin" in content or "assistant" in content
         # assert "大" in content
         assert "模型" in content or "model" in content or "assistant" in content
@@ -100,10 +96,8 @@ class TestStyleRewrite(unittest.TestCase):
             msg = Message(content=text)
             res = builder(msg, style=style)
             content = res.content
-            print(content)
             assert False, "未捕获到错误信息"
         except Exception as e:
-            print(e)
             # assert isinstance(e, eval(err_type)), "捕获的异常不是预期的类型 实际:{}, 预期:{}".format(e, err_type)
             # assert err_param in str(e), "捕获的异常参数类型不正确"
             assert err_msg in str(e), "捕获的异常消息不正确"
