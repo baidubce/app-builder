@@ -43,7 +43,7 @@ python3 -m pip install coverage
 python3 -m pip install diff-cover
 
 python3 setup.py bdist_wheel
-python3 -m pip install -U dist/*.whl
+python3 -m pip install --force-reinstall dist/*.whl
 cd appbuilder/tests/
 
 
