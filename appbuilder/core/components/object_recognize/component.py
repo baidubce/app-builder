@@ -14,11 +14,13 @@
 
 import base64
 import json
+import os
 
+from appbuilder.core import utils
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.components.object_recognize.model import *
 
 
@@ -41,6 +43,40 @@ class ObjectRecognition(Component):
            print(out.content)
 
         """
+    name = "object_recognition"
+    version = "v1"
+
+    manifests = [
+        {
+            "name": "object_recognition",
+            "description": "提供通用物体及场景识别能力，即对于输入的一张图片，输出图片中的多个物体及场景标签。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "img_url": {
+                        "type": "string",
+                        "description": "待识别图片的url,根据该url能够获取图片"
+                    },
+                    "img_name": {
+                        "type": "string",
+                        "description": "待识别图片的文件名,用于生成图片url"
+                    }
+                },
+                "anyOf": [
+                    {
+                        "required": [
+                            "img_url"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "img_name"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
 
     @HTTPClient.check_param
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
@@ -108,3 +144,45 @@ class ObjectRecognition(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
+
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
+        """
+        object_recognize for function call
+        """
+        img_url = kwargs.get("img_url", None)
+        if not img_url:
+            file_urls = kwargs.get("file_urls", {})
+            img_path = kwargs.get("img_name", None)
+            if not img_path:
+                raise InvalidRequestArgumentError("file name is not set")
+            img_name = os.path.basename(img_path)
+            img_url = file_urls.get(img_name, None)
+            if not img_url:
+                raise InvalidRequestArgumentError(f"file {img_name} url does not exist")
+        score_threshold = kwargs.get("score_threshold", 0.5)
+        req = ObjectRecognitionRequest(url=img_url)
+        result = proto.Message.to_dict(self._recognize(req))
+        results = []
+        for item in result["result"]:
+            if item["score"] < score_threshold and len(results) > 0:
+                continue
+            res = {
+                "物体或场景名称": item["keyword"],
+                "置信度": item["score"],
+                "所属类别": item["root"],
+            }
+            results.append(res)
+        res = json.dumps(results, ensure_ascii=False, indent=4)
+        if streaming:
+            yield {
+                "type": "text",
+                "text": res,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": 'user',
+            }
+        else:
+            return res

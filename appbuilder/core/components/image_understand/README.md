@@ -13,6 +13,9 @@
 ## 基本用法
 
 下面是图像内容理解的代码示例：
+
+示例图片为：![示例图片](./image/test_image_understand.jpeg)
+
 ```python
 import os
 import appbuilder

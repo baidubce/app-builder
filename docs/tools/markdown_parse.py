@@ -50,7 +50,7 @@ sdk_code_dict = {
     "plant_recognize": "plant_recognize",
     "qrcode_ocr": "qrcode_ocr",
     "rag_with_baidu_search": "web_search",
-    "retriever": "retriever",
+    "bes": "retriever",
     "table_ocr": "table_ocr",
     "text_to_image": "image",
     "translate": "translate",
@@ -67,7 +67,8 @@ sdk_code_dict = {
     "bing_image_search": "bing_image_search",
     "news_get": "news_get",
     "weather_query": "weather_query",
-    "video_get": "video_get"
+    "video_get": "video_get",
+    "baidu_vdb": "baidu_vdb"
 
 }
 

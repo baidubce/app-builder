@@ -22,6 +22,9 @@ from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.plant_recognize.model import *
 from typing import Generator, Union
 
+TOP_NUM = 1
+BAIKE_NUM = 0
+
 
 class PlantRecognition(Component):
     r"""
@@ -59,9 +62,9 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "img_path": {
+                    "img_name": {
                         "type": "string",
-                        "description": "待识别图片路径"
+                        "description": "待识别图片的文件名"
                     },
                     "img_url": {
                         "type": "string",
@@ -71,7 +74,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
                 "anyOf": [
                     {
                         "required": [
-                            "img_path"
+                            "img_name"
                         ]
                     },
                     {
@@ -149,31 +152,33 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             返回：
                 Union[Generator[str, None, None], str]: 植物识别结果，包括识别出的植物类别和相应的置信度信息
         """
-        img_path = kwargs.get("img_path", "")
+        img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_path, img_url, file_urls)
+        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls)
         if streaming:
             yield rec_res
         else:
             return rec_res
 
-    def _recognize_w_post_process(self, img_path, img_url, file_urls):
+    def _recognize_w_post_process(self, img_name, img_url, file_urls):
         r"""调底层接口对图片或图片url进行植物识别，并返回类别及其置信度
             参数:
-               img_path (str): 图片路径
+               img_name (str): 图片文件名
                img_url (str): 图片url
                file_urls (dict): 文件名与对应文件url的映射
             返回：
                str: 植物识别结果，包括识别出的动物类别和相应的置信度信息
          """
         req = PlantRecognitionRequest()
-        if img_path in file_urls:
-            req.url = file_urls[img_path]
+        if img_name in file_urls:
+            req.url = file_urls[img_name]
         if img_url:
+            if img_url in file_urls:
+                img_url = file_urls[img_url]
             req.url = img_url
-        req.top_num = 6
-        req.baike_num = 0
+        req.top_num = TOP_NUM
+        req.baike_num = BAIKE_NUM
         result = self.__recognize(req)
         result_dict = proto.Message.to_dict(result)
         rec_res = "模型识别结果为：\n"

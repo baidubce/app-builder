@@ -34,6 +34,8 @@ content_data = {"audio_format": "pcm", "raw_audio": audio_data, "rate": 16000}
 msg = appbuilder.Message(content_data)
 out = asr.run(msg)
 print(out.content)
+
+# {'result': ['北京科技馆。']}
 ```
 ## 参数说明
 
@@ -51,8 +53,8 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 调用参数
 |参数名称 |参数类型 |是否必须 |描述 | 示例值    |
 |--------|--------|--------|----|--------|
-|message |String  |是 |输入的消息，用于模型的主要输入内容。这是一个必需的参数| Message(content={"raw_audio": b"..."}) |
-|audio_format|String|是 |定义语言文件的格式，包括"pcm"、"wav"、"amr"、"m4a"，默认值为"pcm"| pcm    |
+|message |String  |是 |输入的消息，用于模型的主要输入内容。这是一个必需的参数，语音时长最长为60S| Message(content={"raw_audio": b"..."}) |
+|audio_format|String|是 |定义语言文件的格式，包括"pcm"、"wav"、"amr"，默认值为"pcm"| pcm    |
 |rate|Integer|是 |定义录音采样率，固定值16000| 16000  |
 |timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 |retry|Integer|是 |HTTP重试次数| 3      |

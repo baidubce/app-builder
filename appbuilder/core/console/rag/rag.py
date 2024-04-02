@@ -58,7 +58,7 @@ class RAG(Component):
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
         response = self.http_client.session.post(url=self.http_client.service_url(self.integrated_url),
-                                                 headers=headers, data=payload)
+                                                 headers=headers, data=payload, stream=True)
         response = ConsoleCompletionResponse(response, stream)
         return response.to_message()
 

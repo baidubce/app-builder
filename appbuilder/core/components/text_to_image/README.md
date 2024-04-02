@@ -26,7 +26,13 @@ content_data = {"prompt": "上海的经典风景", "width": 1024, "height": 1024
 msg = appbuilder.Message(content_data)
 out = text2Image.run(msg)
 print(out.content)
+#{'img_urls': ['...']}
 ```
+
+生成的"上海的经典风景"图片如下
+
+![示例图片](./image/shanghai.png)
+
 
 ## 参数说明
 

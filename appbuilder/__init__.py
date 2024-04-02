@@ -61,8 +61,12 @@ from .core.components.tts.component import TTS
 from .core.components.extract_table.component import ExtractTableFromDoc
 from .core.components.doc_parser.doc_parser import DocParser, ParserConfig
 from .core.components.doc_splitter.doc_splitter import DocSplitter
-from .core.components.retriever.bes_retriever import BESRetriever
-from .core.components.retriever.bes_retriever import BESVectorStoreIndex
+from .core.components.retriever.bes.bes_retriever import BESRetriever
+from .core.components.retriever.bes.bes_retriever import BESVectorStoreIndex
+from .core.components.retriever.baidu_vdb.baiduvdb_retriever import BaiduVDBVectorStoreIndex
+from .core.components.retriever.baidu_vdb.baiduvdb_retriever import BaiduVDBRetriever
+from .core.components.retriever.baidu_vdb.baiduvdb_retriever import TableParams
+
 from .core.components.dish_recognize.component import DishRecognition
 from .core.components.translate.component import Translation
 from .core.components.animal_recognize.component import AnimalRecognition
@@ -81,7 +85,6 @@ from .core.components.handwrite_ocr.component import HandwriteOCR
 from .core.components.image_understand.component import ImageUnderstand
 from .core.components.mix_card_ocr.component import MixCardOCR
 
-
 from appbuilder.core.message import Message
 from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
@@ -90,6 +93,7 @@ from appbuilder.utils.logger_util import logger
 
 from appbuilder.core.utils import get_model_list
 
+from appbuilder.core.console.agent_builder.agent_builder import AgentBuilder
 
 from .core._exception import (
     BadRequestException,
@@ -136,6 +140,10 @@ __all__ = [
     "DocSplitter",
     "BESRetriever",
     "BESVectorStoreIndex",
+    "BaiduVDBVectorStoreIndex",
+    "BaiduVDBRetriever",
+    "TableParams",
+
     'DishRecognition',
     'Translation',
     'Message',
@@ -152,4 +160,5 @@ __all__ = [
     "HandwriteOCR",
     "ImageUnderstand",
     "MixCardOCR",
+    "AgentBuilder",
 ]

@@ -54,9 +54,9 @@ class ImageUnderstand(Component):
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "img_path": {
+                    "img_name": {
                         "type": "string",
-                        "description": "待识别图片路径"
+                        "description": "待识别图片的文件名"
                     },
                     "img_url": {
                         "type": "string",
@@ -66,7 +66,7 @@ class ImageUnderstand(Component):
                 "anyOf": [
                     {
                         "required": [
-                            "img_path"
+                            "img_name"
                         ]
                     },
                     {
@@ -163,19 +163,28 @@ class ImageUnderstand(Component):
             返回：
                 Union[Generator[str, None, None], str]: 图片内容理解结果
         """
-        img_path = kwargs.get("img_path", "")
+        img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_path, img_url, file_urls)
+        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls)
         if streaming:
-            yield rec_res
+            yield {
+                "type": "text",
+                "text": rec_res,
+                "visible_scope": 'llm',
+            }
+            yield {
+                "type": "text",
+                "text": "",
+                "visible_scope": 'user',
+            }
         else:
             return rec_res
 
-    def _recognize_w_post_process(self, img_path, img_url, file_urls, question="图片内容有哪些") -> str:
+    def _recognize_w_post_process(self, img_name, img_url, file_urls, question="图片内容有哪些") -> str:
         r"""
             参数:
-                img_path (str): 图片路径
+                img_name (str): 图片文件名
                 img_url (bool): 图片url
                 question (str): 询问有关图片内容的问题
                 file_urls (dict): 文件名与对应文件url的映射
@@ -185,9 +194,11 @@ class ImageUnderstand(Component):
         """
         req = ImageUnderstandRequest()
         req.question = question
-        if img_path in file_urls:
-            req.url = file_urls[img_path]
+        if img_name in file_urls:
+            req.url = file_urls[img_name]
         if img_url:
+            if img_url in file_urls:
+                img_url = file_urls[img_url]
             req.url = img_url
         response = self.__recognize(req)
         description_to_llm = response.result.description_to_llm
