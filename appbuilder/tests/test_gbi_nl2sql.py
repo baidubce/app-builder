@@ -69,14 +69,14 @@ PROMPT_TEMPLATE = """
   回答：
 """
 
-@unittest.skip("AssertionError: '新鲜水果' not found in SELECT")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestGBINL2Sql(unittest.TestCase):
 
     def setUp(self):
         """
         设置环境变量及必要数据。
         """
-        model_name = "ERNIE-Bot 4.0"
+        model_name = "ERNIE-Bot-8K"
         table_schemas = [SUPER_MARKET_SCHEMA]
         self.nl2sql_node = appbuilder.NL2Sql(model_name=model_name,
                                              table_schemas=table_schemas)
