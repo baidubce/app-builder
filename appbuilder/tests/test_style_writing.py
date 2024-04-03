@@ -84,6 +84,19 @@ class TestStyleWritingComponent(unittest.TestCase):
         answer = node(msg, style_query="通用", length=100, stream=False, temperature=0.5)
         self.assertIsNotNone(answer)
 
+    def test_tool_eval_valid(self):
+        """测试 tool_eval 方法使用有效参数"""
+        query = "帮我写一篇关于人体工学椅的文案"
+        result = self.node.tool_eval(name="style_writing", streaming=True, query=query)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+
+    def test_tool_eval_invalid(self):
+        """测试 tool_eval 方法使用无效参数"""
+        with self.assertRaises(ValueError):
+            result = self.node.tool_eval(name="style_writing", streaming=True)
+            next(result)
+
 
 if __name__ == '__main__':
     unittest.main()

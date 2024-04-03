@@ -125,6 +125,26 @@ class TestAnimalRecognition(unittest.TestCase):
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.animal_recognition.run(message)
 
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        img_url = "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T" \
+                    "12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad68" \
+                    "62cf937c03f8c5260d51c6ae"
+        img_name = "test_img.jpg"
+        file_urls = {img_name: img_url}
+        result = self.animal_recognition.tool_eval(name="animal_recognition", streaming=True,
+                                                   img_name=img_name, file_urls=file_urls, origin_query="")
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            result = self.animal_recognition.tool_eval(name="animal_recognition", streaming=True,
+                                                       origin_query="")
+            next(result)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import json
 
 """ """
 from appbuilder.core.components.llms.base import CompletionBaseComponent
@@ -85,12 +85,36 @@ class StyleRewrite(CompletionBaseComponent):
     version = "v1"
     meta = StyleRewriteArgs
 
+    manifests = [
+        {
+            "name": "style_rewrite",
+            "description": "能够将一段文本转换成不同的风格（营销、客服、直播、激励及教学话术），同时保持原文的基本意义不变。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "需要改写的文本。"
+                    },
+                    "style": {
+                        "type": "string",
+                        "description": "想要转换的文本风格，目前有营销、客服、直播、激励及教学五种话术可选. 默认是营销话术。",
+                        "enum": ["营销话术", "客服话术", "直播话术", "激励话术", "教学话术"]
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
+
     def __init__(
-        self, 
-        model=None,
-        secret_key: Optional[str] = None, 
-        gateway: str = "",
-        lazy_certification: bool = False,
+            self,
+            model=None,
+            secret_key: Optional[str] = None,
+            gateway: str = "",
+            lazy_certification: bool = False,
     ):
         """初始化StyleRewrite模型。
         
@@ -105,7 +129,8 @@ class StyleRewrite(CompletionBaseComponent):
         
         """
         super().__init__(
-                StyleRewriteArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
+            StyleRewriteArgs, model=model, secret_key=secret_key, gateway=gateway,
+            lazy_certification=lazy_certification)
 
     def run(self, message, style="营销话术", stream=False, temperature=1e-10, top_p=0.0):
         """
@@ -123,3 +148,24 @@ class StyleRewrite(CompletionBaseComponent):
         
         """
         return super().run(message=message, style=style, stream=stream, temperature=temperature, top_p=top_p)
+
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        query = kwargs.get("query", None)
+        if not query:
+            raise ValueError("param `query` is required")
+        msg = Message(query)
+        style = kwargs.get("style", "营销话术")
+        if style not in ["营销话术", "客服话术", "直播话术", "激励话术", "教学话术"]:
+            style = "营销话术"
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, style=style, stream=False, temperature=temperature, top_p=top_p)
+        
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)

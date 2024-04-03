@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import json
 
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core.message import Message
@@ -74,14 +75,14 @@ class LengthChoices(Enum):
 
 class StyleWritingArgs(ComponentArguments):
     """风格写作配置"""
-    message: Message = Field(..., 
-                             variable_name="query", 
+    message: Message = Field(...,
+                             variable_name="query",
                              description="输入消息，用于模型的主要输入内容，例如'帮我生成一个介绍保温杯的话术'")
-    style_query: StyleQueryChoices = Field(...,  
-                                           variable_name="style_query", 
+    style_query: StyleQueryChoices = Field(...,
+                                           variable_name="style_query",
                                            description="风格查询选项，可选值为 'B站', '小红书', '通用'。")
-    length: LengthChoices = Field(...,  
-                                  variable_name="length", 
+    length: LengthChoices = Field(...,
+                                  variable_name="length",
                                   description="输出长度，可选值为 '短' (100), '中' (300), '长' (600)。")
 
 
@@ -107,12 +108,41 @@ class StyleWriting(CompletionBaseComponent):
     version = "v1"
     meta = StyleWritingArgs
 
+    manifests = [
+        {
+            "name": "style_writing",
+            "description": "能够根据用户的输入内容和风格要求，利用大语言模型的生成能力，自动生成符合特定风格的文案。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "用于描述生成文案的主题和要求。"
+                    },
+                    "style": {
+                        "type": "string",
+                        "description": "用于定义文案生成的风格，包括通用、B站、小红书，默认为通用。",
+                        "enum": ["通用", "B站", "小红书"]
+                    },
+                    "length": {
+                        "type": "integer",
+                        "description": "用于定义输出内容的长度。有效的选项包括 100（短）、300（中）、600（长），默认值为 100。",
+                        "enum": [100, 300, 600]
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
+
     def __init__(
-        self, 
-        model=None,
-        secret_key: Optional[str] = None, 
-        gateway: str = "",
-        lazy_certification: bool = False,
+            self,
+            model=None,
+            secret_key: Optional[str] = None,
+            gateway: str = "",
+            lazy_certification: bool = False,
     ):
         """初始化StyleWriting模型。
         
@@ -127,7 +157,8 @@ class StyleWriting(CompletionBaseComponent):
         
         """
         super().__init__(
-                StyleWritingArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
+            StyleWritingArgs, model=model, secret_key=secret_key, gateway=gateway,
+            lazy_certification=lazy_certification)
 
     def run(self, message, style_query="通用", length=100, stream=False, temperature=1e-10, top_p=0):
         """
@@ -144,5 +175,34 @@ class StyleWriting(CompletionBaseComponent):
         返回:
             obj:`Message`: 模型运行后的输出消息。
         """
-        return super().run(message=message, style_query=style_query, length=length, stream=stream, temperature=temperature, top_p=top_p)
+        return super().run(message=message, style_query=style_query, length=length, stream=stream,
+                           temperature=temperature, top_p=top_p)
 
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        query = kwargs.get("query", None)
+        if not query:
+            raise ValueError("param `query` is required")
+        msg = Message(query)
+        style = kwargs.get("style", "通用")
+        if style not in ["通用", "B站", "小红书"]:
+            style = "通用"
+        length = kwargs.get("length", 100)
+        try:
+            length = int(length)
+            if length not in [100, 300, 600]:
+                length = 100
+        except:
+            length = 100
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, style_query=style, length=length, stream=False,
+                              temperature=temperature, top_p=top_p)
+        
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)
