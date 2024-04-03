@@ -23,6 +23,12 @@
 # # 1、克隆git仓库
 # git clone https://github.com/baidubce/app-builder.git
 # cd app-builder
+# 1.1、添加提交者的源
+# fork_repo="https://github.com/$AGILE_MODULE_NAME.git"
+# git clone $fork_repo
+# cd app-builder
+# git remote add upstream https://github.com/baidubce/app-builder.git 
+# git fetch upstream
 
 
 # # 2、checkout到制定commit
@@ -75,6 +81,5 @@ git_dir=$(pwd | sed 's/appbuilder\/tests//')
 python3 -u sed_str.py coverage.xml $python_lib $git_dir
 # 最后进行增量代码覆盖率测试
 echo "增量代码覆盖率为："
-diff-cover coverage.xml --compare-branch=origin/master   --html-report coverage_diff.html --fail-under=90
+diff-cover coverage.xml --compare-branch=upstream/master   --html-report coverage_diff.html --fail-under=90
 if [ $? -ne 0 ]; then echo "增量代码的单元测试覆盖率低于90%，请完善单元测试后重试" && exit 1; fi
-echo "--------------------------"
