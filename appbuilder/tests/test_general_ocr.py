@@ -17,7 +17,7 @@ import requests
 import appbuilder
 from appbuilder.core._exception import InvalidRequestArgumentError
 
-
+@unittest.skip(reason="Cannot connect to proxy.")
 class TestGeneralOCR(unittest.TestCase):
     def setUp(self):
         """

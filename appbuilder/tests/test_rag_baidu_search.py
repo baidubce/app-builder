@@ -3,7 +3,7 @@ import unittest
 import appbuilder
 import json
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestRagBaiduSearch(unittest.TestCase):
 
     def setUp(self):

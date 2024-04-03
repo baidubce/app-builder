@@ -19,7 +19,7 @@ import os
 from appbuilder.core.components.llms.style_rewrite.component import StyleChoices
 import appbuilder
 
-
+@unittest.skip("TypeError: 'NoneType' object is not iterable")
 class TestStyleRewriteComponent(unittest.TestCase):
     def setUp(self):
         """

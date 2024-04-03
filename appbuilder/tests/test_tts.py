@@ -14,8 +14,9 @@
 import unittest
 import appbuilder
 from appbuilder.core._exception import InvalidRequestArgumentError
+import os
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestTTS(unittest.TestCase):
     def setUp(self):
         self.tts = appbuilder.TTS()

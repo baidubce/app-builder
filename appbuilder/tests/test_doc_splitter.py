@@ -19,7 +19,7 @@ import os
 
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDocSplitter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -56,7 +56,7 @@ class TestDocSplitter(unittest.TestCase):
         """
          测试文档分割: 按照标题级别进行分割
         """
-        config = dict(title="test_title_splitter.docx")
+        config = dict(title="title_splitter.docx")
 
         # 1. 文档解析
         current_dir = os.path.dirname(__file__)

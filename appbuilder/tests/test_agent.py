@@ -3,7 +3,7 @@ import pydantic
 import os
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
@@ -15,6 +15,7 @@ class TestAgentRuntime(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
+        pass
 
     def test_init_with_valid_component(self):
         """ 测试在component有效时运行 """

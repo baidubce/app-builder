@@ -17,7 +17,7 @@ import os
 
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestIsComplexQueryComponent(unittest.TestCase):
     def setUp(self):
         """

@@ -4,7 +4,7 @@ import appbuilder
 from appbuilder.core.components.text_to_image.model import (Text2ImageSubmitRequest, Text2ImageSubmitResponse,
                                                             Text2ImageQueryRequest, Text2ImageQueryResponse)
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestText2ImageComponent(unittest.TestCase):
     def setUp(self):
         """

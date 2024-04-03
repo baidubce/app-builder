@@ -16,7 +16,7 @@ import appbuilder
 import os
 import unittest
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestTagExtractionComponent(unittest.TestCase): 
     def setUp(self): 
         """ 设置环境变量。

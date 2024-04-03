@@ -271,7 +271,7 @@ class TitleSplitter(Component):
             os.environ["APPBUILDER_TOKEN"] = "..."
 
             # 先解析
-            msg = Message("./test_title_splitter.docx")
+            msg = Message("./title_splitter.docx")
             parser = DocParser()
             parse_result = parser(msg, return_raw=True)
 
