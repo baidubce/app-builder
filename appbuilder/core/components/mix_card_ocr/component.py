@@ -46,11 +46,11 @@ class MixCardOCR(Component):
         print(out.content)
      """
 
-    name = "idcard_ocr"
+    name = "mixcard_ocr"
     version = "v1"
     manifests = [
         {
-            "name": "idcard_ocr",
+            "name": "mixcard_ocr",
             "description": "当身份证正反面在同一张图片上，需要识别图片中身份证正反面所有字段时，使用该工具",
             "parameters": {
                 "type": "object",
