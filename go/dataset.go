@@ -1,0 +1,220 @@
+// Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package appbuilder
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"mime/multipart"
+	"net/http"
+	"os"
+)
+
+func NewDataset(config *SDKConfig) (*Dataset, error) {
+	if config == nil {
+		return nil, fmt.Errorf("invalid config")
+	}
+	return &Dataset{sdkConfig: config}, nil
+}
+
+type Dataset struct {
+	sdkConfig *SDKConfig
+}
+
+func (t *Dataset) Create(name string) (string, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeader()
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/create")
+	if err != nil {
+		return "", err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	req := map[string]string{"name": name}
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	resp, err := http.DefaultClient.Do(&request)
+	if err != nil {
+		return "", err
+	}
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	rsp := DatasetResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+
+	}
+	if rsp.Code != 0 {
+		return "", fmt.Errorf("requestID=%s, content=%v", requestID, string(data))
+	}
+	return rsp.Result["id"].(string), nil
+}
+
+func (t *Dataset) UploadLocalFile(datasetID string, localFilePath string) (string, error) {
+
+	var data bytes.Buffer
+	w := multipart.NewWriter(&data)
+	file, err := os.Open(localFilePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+	filePart, _ := w.CreateFormFile("file", file.Name())
+	if _, err := io.Copy(filePart, file); err != nil {
+		return "", err
+	}
+	w.Close()
+
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeader()
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/files/upload")
+	if err != nil {
+		return "", err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
+	resp, err := http.DefaultClient.Do(&request)
+	if err != nil {
+		return "", err
+	}
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	respData, err := io.ReadAll(resp.Body)
+	rsp := DatasetResponse{}
+	if err := json.Unmarshal(respData, &rsp); err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	if rsp.Code != 0 {
+		return "", fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
+	}
+	fileID := rsp.Result["id"].(string)
+	if err := t.addFileToDataset(datasetID, fileID); err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	return fileID, nil
+}
+
+func (t *Dataset) addFileToDataset(datasetID string, fileID string) error {
+	header := t.sdkConfig.AuthHeader()
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/documents")
+	if err != nil {
+		return err
+	}
+	request := http.Request{}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	m := map[string]interface{}{
+		"file_ids":   []string{fileID},
+		"dataset_id": datasetID}
+	data, _ := json.Marshal(m)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	resp, err := http.DefaultClient.Do(&request)
+	if err != nil {
+		return err
+	}
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	respData, err := io.ReadAll(resp.Body)
+	rsp := DatasetResponse{}
+	if err := json.Unmarshal(respData, &rsp); err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	if rsp.Code != 0 {
+		return fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
+	}
+	return nil
+}
+
+func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword string) (*ListDocumentResponse, error) {
+	header := t.sdkConfig.AuthHeader()
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/documents")
+	if err != nil {
+		return nil, err
+	}
+	request := http.Request{}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	m := map[string]interface{}{
+		"dataset_id": datasetID,
+		"page":       page,
+		"limit":      limit,
+		"keyword":    keyword,
+	}
+	data, _ := json.Marshal(m)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	resp, err := http.DefaultClient.Do(&request)
+	if err != nil {
+		return nil, err
+	}
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	respData, err := io.ReadAll(resp.Body)
+	rsp := ListDocumentResponse{}
+	if err := json.Unmarshal(respData, &rsp); err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	if rsp.Code != 0 {
+		return nil, fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
+	}
+	return &rsp, nil
+}
+
+func (t *Dataset) DeleteDocument(datasetID, fileID string) error {
+	header := t.sdkConfig.AuthHeader()
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/document/delete")
+	if err != nil {
+		return err
+	}
+	request := http.Request{}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	m := map[string]string{
+		"dataset_id": datasetID,
+		"file_id":    fileID,
+	}
+	data, _ := json.Marshal(m)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	resp, err := http.DefaultClient.Do(&request)
+	if err != nil {
+		return err
+	}
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	return nil
+}
