@@ -88,6 +88,8 @@ class Text2Image(Component):
         text2ImageSubmitResponse = self.submitText2ImageTask(text2ImageSubmitRequest)
         taskId = text2ImageSubmitResponse.data.primary_task_id
         if taskId is not None:
+            task_request_time = 1
+
             while True:
                 request = Text2ImageQueryRequest()
                 request.task_id = taskId
@@ -96,7 +98,14 @@ class Text2Image(Component):
                     task_progress = text2ImageQueryResponse.data.task_progress
                     if task_progress == 1:
                         break
-                    time.sleep(1)
+                    # NOTE(chengmo)：文生图组件的返回时间在10s以上，查询过于频繁会被限流，导致异常报错
+                    # 此处采用 yangyongzhen老师提供的方案，前三次查询间隔3s，后三次查询间隔逐渐增大
+                    if task_request_time <= 3:
+                        time.sleep(3)
+                    else:
+                        time.sleep(task_request_time)
+                    task_request_time += 1
+                    
             img_urls = self.extract_img_urls(text2ImageQueryResponse)
             out = Text2ImageOutMessage(img_urls=img_urls)
             return Message(content=out.model_dump())

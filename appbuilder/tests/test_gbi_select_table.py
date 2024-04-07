@@ -68,14 +68,14 @@ PROMPT_TEMPLATE = """
 回答:
 """
 
-@unittest.skip("AssertionError: 'supper_market_info`")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestGBISelectTable(unittest.TestCase):
 
     def setUp(self):
         """
         设置环境变量及必要数据。
         """
-        model_name = "ERNIE-Bot 4.0"
+        model_name = "ERNIE-Bot-8K"
 
         self.select_table_node = \
             appbuilder.SelectTable(model_name=model_name,
