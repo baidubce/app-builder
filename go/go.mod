@@ -1,3 +1,3 @@
-module github.com/baidubce/app-builder/appbuilder-go
+module github.com/baidubce/appbuilder
 
 go 1.18.1
