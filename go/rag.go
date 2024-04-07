@@ -21,7 +21,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/baidubce/app-builder/appbuilder-go/internal/parser"
+	"github.com/baidubce/appbuilder/internal/parser"
 )
 
 func NewRAG(appID string, config *SDKConfig) (*RAG, error) {

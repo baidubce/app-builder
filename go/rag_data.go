@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/baidubce/app-builder/appbuilder-go/internal/parser"
+	"github.com/baidubce/appbuilder/internal/parser"
 )
 
 type RAGRunResponse struct {

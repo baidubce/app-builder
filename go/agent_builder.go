@@ -24,7 +24,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/baidubce/app-builder/appbuilder-go/internal/parser"
+	"github.com/baidubce/appbuilder/internal/parser"
 )
 
 func NewAgentBuilder(appID string, config *SDKConfig) (*AgentBuilder, error) {

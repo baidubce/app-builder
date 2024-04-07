@@ -20,7 +20,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/baidubce/app-builder/appbuilder-go/internal/parser"
+	"github.com/baidubce/appbuilder/internal/parser"
 )
 
 var eoi = errors.New("iterator exhausted")
