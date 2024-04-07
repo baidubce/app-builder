@@ -209,11 +209,11 @@ event detail: code=0 message='' status='success' event_type='RAGAgent' content_t
 | id        | String | 参考文献ID           |      '1'                                                                  |
 | content         | String | 参考文献内容          |  '工程化原则是指设计案例的时候...'                                                                       |
 | from         | String | 来源          |    'search_baidu' or 'search_db'                                                                     |
-| title         | String | 文档标题          |     '技术写作入门.pdf'                                                                   |
-| segment_id         | String | 文档片段ID          |      'cd5b3123-aac4-4225-a956-b60811bf975d'                                                                  |
-| document_id         | String | 文档ID          |     '5256c6ce-5fbd-4146-a0e7-9aa449fe192b'                                                                   |
-| document_name         | String | 文档名称          |       '技术写作入门.pdf'                                                                 |
-| dataset_id         | String | 文档所属数据集ID          |     'b3ef15ff-a4a8-47af-9eb3-61576c13f661'                                                                   |
+| url         | String | 类型          |    search_baidu 的专有字段                                                                   |
+| segment_id         | String | 文档片段ID          |      'cd5b3123-aac4-4225-a956-b60811bf975d',  search_db 的专有字段                                                                 |
+| document_id         | String | 文档ID          |     '5256c6ce-5fbd-4146-a0e7-9aa449fe192b', search_db 的专有字段                                                                  |
+| document_name         | String | 文档名称          |       '技术写作入门.pdf',  search_db 的专有字段                                                               |
+| dataset_id         | String | 文档所属数据集ID          |     'b3ef15ff-a4a8-47af-9eb3-61576c13f661',  search_db 的专有字段                                                                 |
 
 ## 更新记录和贡献
 * 集成Console AgentBuilder能力(2024-03)
