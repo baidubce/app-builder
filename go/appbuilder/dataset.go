@@ -91,11 +91,11 @@ func (t *Dataset) UploadLocalFile(datasetID string, localFilePath string) (strin
 	if err != nil {
 		return "", err
 	}
-	documentIDList, err := t.addFileToDataset(datasetID, []string{fileID})
+	documentIDs, err := t.addFileToDataset(datasetID, []string{fileID})
 	if err != nil {
 		return "", fmt.Errorf("add file failed: %v", err)
 	}
-	return documentIDList[0], nil
+	return documentIDs[0], nil
 }
 
 func (t *Dataset) uploadLocalFile(localFilePath string) (string, error) {
