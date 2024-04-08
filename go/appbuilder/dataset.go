@@ -70,20 +70,35 @@ func (t *Dataset) Create(name string) (string, error) {
 	return rsp.Result["id"].(string), nil
 }
 
-func (t* Dataset) BatchUploadLocaleFile(datasetID string, localFilePath []string) ([]string, error) {
-	var documentIDS []string
-	for _, localFilePath := range  localFilePath {
-		documentID, err := t.UploadLocalFile(datasetID, localFilePath)
+func (t *Dataset) BatchUploadLocaleFile(datasetID string, localFilePaths []string) ([]string, error) {
+	var fileIDs []string
+	for _, localFilePath := range localFilePaths {
+		fileID, err := t.uploadLocalFile(localFilePath)
 		if err != nil {
 			return nil, err
 		}
-		documentIDS =append(documentIDS, documentID)
+		fileIDs = append(fileIDs, fileID)
+	}
+	documentIDS, err := t.addFileToDataset(datasetID, fileIDs)
+	if err != nil {
+		return nil, err
 	}
 	return documentIDS, nil
-
 }
-func (t *Dataset) UploadLocalFile(datasetID string, localFilePath string) (string, error) {
 
+func (t *Dataset) UploadLocalFile(datasetID string, localFilePath string) (string, error) {
+	fileID, err := t.uploadLocalFile(localFilePath)
+	if err != nil {
+		return "", err
+	}
+	documentIDList, err := t.addFileToDataset(datasetID, []string{fileID})
+	if err != nil {
+		return "", fmt.Errorf("add file failed: %v", err)
+	}
+	return documentIDList[0], nil
+}
+
+func (t *Dataset) uploadLocalFile(localFilePath string) (string, error) {
 	var data bytes.Buffer
 	w := multipart.NewWriter(&data)
 	file, err := os.Open(localFilePath)
@@ -125,18 +140,14 @@ func (t *Dataset) UploadLocalFile(datasetID string, localFilePath string) (strin
 		return "", fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
 	}
 	fileID := rsp.Result["id"].(string)
-	documentID, err := t.addFileToDataset(datasetID, fileID); 
-	if err != nil {
-		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
-	}
-	return documentID, nil
+	return fileID, nil
 }
 
-func (t *Dataset) addFileToDataset(datasetID string, fileID string) (string,error) {
+func (t *Dataset) addFileToDataset(datasetID string, fileID []string) ([]string, error) {
 	header := t.sdkConfig.AuthHeader()
 	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/documents")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	request := http.Request{}
 	request.URL = serviceURL
@@ -144,27 +155,27 @@ func (t *Dataset) addFileToDataset(datasetID string, fileID string) (string,erro
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	m := map[string]interface{}{
-		"file_ids":   []string{fileID},
+		"file_ids":   fileID,
 		"dataset_id": datasetID}
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
 	resp, err := http.DefaultClient.Do(&request)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
-		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	respData, err := io.ReadAll(resp.Body)
 	rsp := DatasetBindResponse{}
 	if err := json.Unmarshal(respData, &rsp); err != nil {
-		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	if rsp.Code != 0 {
-		return "", fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
+		return nil, fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
 	}
-	return rsp.Result.DocumentIDs[0], nil
+	return rsp.Result.DocumentIDs, nil
 }
 
 func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword string) (*ListDocumentResponse, error) {
@@ -218,8 +229,8 @@ func (t *Dataset) DeleteDocument(datasetID, documentID string) error {
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	m := map[string]string{
-		"dataset_id": datasetID,
-		"document_id":  documentID,
+		"dataset_id":  datasetID,
+		"document_id": documentID,
 	}
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
@@ -227,9 +238,6 @@ func (t *Dataset) DeleteDocument(datasetID, documentID string) error {
 	if err != nil {
 		return err
 	}
-	data1, _ := io.ReadAll(resp.Body)
-	fmt.Println(string(data1))
-	
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
