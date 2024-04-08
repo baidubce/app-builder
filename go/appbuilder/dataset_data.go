@@ -20,6 +20,16 @@ type DatasetResponse struct {
 	Result  map[string]interface{} `json:"result"`
 }
 
+type DatasetBindResponse struct {
+	Code    int               `json:"code"`
+	Message string            `json:"message"`
+	Result  DatasetBindResult `json:"result"`
+}
+
+type DatasetBindResult struct {
+	DocumentIDs []string `json:"document_ids"`
+}
+
 type ListDocumentResponse struct {
 	Code    int                        `json:"code"`
 	Message string                     `json:"message"`

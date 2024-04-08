@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/baidubce/appbuilder/internal/parser"
+	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
 
 type RAGRunResponse struct {
@@ -74,7 +74,7 @@ type RAGStreamIterator struct {
 func (t *RAGStreamIterator) Next() (*RAGAnswer, error) {
 	for {
 		if t.eof {
-			return nil, eoi
+			return nil, io.EOF
 		}
 		event, err := readNext(t.p)
 		if err != nil && !errors.Is(err, io.EOF) {
@@ -108,7 +108,7 @@ type RAGOnceIterator struct {
 
 func (t *RAGOnceIterator) Next() (*RAGAnswer, error) {
 	if t.eoi {
-		return nil, eoi
+		return nil, io.EOF
 	}
 	data, err := io.ReadAll(t.body)
 	if err != nil {

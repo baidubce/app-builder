@@ -21,7 +21,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/baidubce/appbuilder/internal/parser"
+	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
 
 const (
@@ -167,7 +167,7 @@ type AgentBuilderStreamIterator struct {
 func (t *AgentBuilderStreamIterator) Next() (*AgentBuilderAnswer, error) {
 	for {
 		if t.eof {
-			return nil, eoi
+			return nil, io.EOF
 		}
 		event, err := readNext(t.p)
 		if err != nil && !errors.Is(err, io.EOF) {
@@ -201,7 +201,7 @@ type AgentBuilderOnceIterator struct {
 
 func (t *AgentBuilderOnceIterator) Next() (*AgentBuilderAnswer, error) {
 	if t.eoi {
-		return nil, eoi
+		return nil, io.EOF
 	}
 	data, err := io.ReadAll(t.body)
 	if err != nil {

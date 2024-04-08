@@ -17,19 +17,15 @@ package appbuilder
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"testing"
 )
 
 func TestNewAgentBuilder(t *testing.T) {
-	os.Setenv("APPBUILDER_TOKEN", "bce-v3/ALTAK-hB90vKrJc1RmeYuHw3zIG/4cf7ee64d6d055515473ca9ea66e0c29c52ee43e")
-	os.Setenv("GATEWAY_URL", "http://10.153.106.18:8093")
-
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	appID := "4ff6ce72-5601-4730-b899-f6e50b3a145b"
+	appID := ""
 	agentBuilder, err := NewAgentBuilder(appID, config)
 	if err != nil {
 		t.Fatalf("new AgentBuidler instance failed")
@@ -38,7 +34,7 @@ func TestNewAgentBuilder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create conversation failed: %v", err)
 	}
-	fileID, err := agentBuilder.UploadLocalFile(conversationID, "/Users/zhangxiaoyu15/Desktop/cv.pdf")
+	fileID, err := agentBuilder.UploadLocalFile(conversationID, "/path/to/cv.pdf")
 	if err != nil {
 		t.Fatalf("upload local file failed: %v", err)
 	}

@@ -49,7 +49,7 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 
 func (t *SDKConfig) AuthHeader() http.Header {
 	header := make(http.Header)
-	header.Set("X-Authorization", t.SecretKey)
+	header.Set("X-Appbuilder-Authorization", t.SecretKey)
 	return header
 }
 

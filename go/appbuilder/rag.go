@@ -21,7 +21,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/baidubce/appbuilder/internal/parser"
+	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
 
 func NewRAG(appID string, config *SDKConfig) (*RAG, error) {
@@ -42,7 +42,7 @@ type RAG struct {
 func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeader()
-	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/create")
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/ai_apaas/v1/instance/integrated")
 	if err != nil {
 		return nil, err
 	}

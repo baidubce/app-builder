@@ -15,15 +15,12 @@
 package appbuilder
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 
-	"github.com/baidubce/appbuilder/internal/parser"
+	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
-
-var eoi = errors.New("iterator exhausted")
 
 type SSEEvent struct {
 	LastEventID string

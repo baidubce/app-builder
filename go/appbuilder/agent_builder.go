@@ -24,7 +24,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/baidubce/appbuilder/internal/parser"
+	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
 
 func NewAgentBuilder(appID string, config *SDKConfig) (*AgentBuilder, error) {
@@ -45,7 +45,7 @@ type AgentBuilder struct {
 func (t *AgentBuilder) CreateConversation() (string, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeader()
-	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/conversation/create")
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/ai_apaas/v1/app/conversation")
 	if err != nil {
 		return "", err
 	}
@@ -94,7 +94,7 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 	}
 	w.Close()
 	request := http.Request{}
-	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/instance/upload")
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/ai_apaas/v1/app/conversation/file/upload")
 	if err != nil {
 		return "", err
 	}
@@ -136,7 +136,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	}
 	request := http.Request{}
 
-	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/instance/integrated")
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/ai_apaas/v1/app/conversation/runs")
 	if err != nil {
 		return nil, err
 	}

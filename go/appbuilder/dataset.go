@@ -22,6 +22,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func NewDataset(config *SDKConfig) (*Dataset, error) {
@@ -69,6 +70,18 @@ func (t *Dataset) Create(name string) (string, error) {
 	return rsp.Result["id"].(string), nil
 }
 
+func (t* Dataset) BatchUploadLocaleFile(datasetID string, localFilePath []string) ([]string, error) {
+	var documentIDS []string
+	for _, localFilePath := range  localFilePath {
+		documentID, err := t.UploadLocalFile(datasetID, localFilePath)
+		if err != nil {
+			return nil, err
+		}
+		documentIDS =append(documentIDS, documentID)
+	}
+	return documentIDS, nil
+
+}
 func (t *Dataset) UploadLocalFile(datasetID string, localFilePath string) (string, error) {
 
 	var data bytes.Buffer
@@ -78,7 +91,7 @@ func (t *Dataset) UploadLocalFile(datasetID string, localFilePath string) (strin
 		return "", err
 	}
 	defer file.Close()
-	filePart, _ := w.CreateFormFile("file", file.Name())
+	filePart, _ := w.CreateFormFile("file", filepath.Base(file.Name()))
 	if _, err := io.Copy(filePart, file); err != nil {
 		return "", err
 	}
@@ -92,7 +105,7 @@ func (t *Dataset) UploadLocalFile(datasetID string, localFilePath string) (strin
 	}
 	request.URL = serviceURL
 	request.Method = "POST"
-	header.Set("Content-Type", "application/json")
+	header.Set("Content-Type", w.FormDataContentType())
 	request.Header = header
 	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
 	resp, err := http.DefaultClient.Do(&request)
@@ -112,17 +125,18 @@ func (t *Dataset) UploadLocalFile(datasetID string, localFilePath string) (strin
 		return "", fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
 	}
 	fileID := rsp.Result["id"].(string)
-	if err := t.addFileToDataset(datasetID, fileID); err != nil {
+	documentID, err := t.addFileToDataset(datasetID, fileID); 
+	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	return fileID, nil
+	return documentID, nil
 }
 
-func (t *Dataset) addFileToDataset(datasetID string, fileID string) error {
+func (t *Dataset) addFileToDataset(datasetID string, fileID string) (string,error) {
 	header := t.sdkConfig.AuthHeader()
 	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/documents")
 	if err != nil {
-		return err
+		return "", err
 	}
 	request := http.Request{}
 	request.URL = serviceURL
@@ -136,26 +150,26 @@ func (t *Dataset) addFileToDataset(datasetID string, fileID string) error {
 	request.Body = io.NopCloser(bytes.NewReader(data))
 	resp, err := http.DefaultClient.Do(&request)
 	if err != nil {
-		return err
+		return "", err
 	}
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
-		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	respData, err := io.ReadAll(resp.Body)
-	rsp := DatasetResponse{}
+	rsp := DatasetBindResponse{}
 	if err := json.Unmarshal(respData, &rsp); err != nil {
-		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	if rsp.Code != 0 {
-		return fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
+		return "", fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
 	}
-	return nil
+	return rsp.Result.DocumentIDs[0], nil
 }
 
 func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword string) (*ListDocumentResponse, error) {
 	header := t.sdkConfig.AuthHeader()
-	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/documents")
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/documents/list_page")
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +205,8 @@ func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword st
 	return &rsp, nil
 }
 
-func (t *Dataset) DeleteDocument(datasetID, fileID string) error {
+func (t *Dataset) DeleteDocument(datasetID, documentID string) error {
+	fmt.Println(datasetID, "  ", documentID)
 	header := t.sdkConfig.AuthHeader()
 	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/document/delete")
 	if err != nil {
@@ -204,7 +219,7 @@ func (t *Dataset) DeleteDocument(datasetID, fileID string) error {
 	request.Header = header
 	m := map[string]string{
 		"dataset_id": datasetID,
-		"file_id":    fileID,
+		"document_id":  documentID,
 	}
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
@@ -212,6 +227,9 @@ func (t *Dataset) DeleteDocument(datasetID, fileID string) error {
 	if err != nil {
 		return err
 	}
+	data1, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(data1))
+	
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)

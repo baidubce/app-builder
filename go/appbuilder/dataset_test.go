@@ -15,14 +15,10 @@
 package appbuilder
 
 import (
-	"os"
 	"testing"
 )
 
 func TestDataset(t *testing.T) {
-	os.Setenv("APPBUILDER_TOKEN", "bce-v3/ALTAK-hB90vKrJc1RmeYuHw3zIG/4cf7ee64d6d055515473ca9ea66e0c29c52ee43e")
-	os.Setenv("GATEWAY_URL", "http://10.153.106.18:8093")
-
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
@@ -32,7 +28,7 @@ func TestDataset(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create dataset failed: %v", err)
 	}
-	documentID, err := dataset.UploadLocalFile(datasetID, "/Users/zhangxiaoyu15/Desktop/cv.pdf")
+	documentID, err := dataset.UploadLocalFile(datasetID, "/path/to/cv.pdf")
 	if err != nil {
 		t.Fatalf("upload file failed: %v", err)
 	}

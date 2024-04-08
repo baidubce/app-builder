@@ -16,22 +16,19 @@ package appbuilder
 
 import (
 	"fmt"
-	"os"
 	"testing"
 )
 
 func TestNewRAG(t *testing.T) {
-	os.Setenv("GATEWAY_URL", "bce-v3/ALTAK-hB90vKrJc1RmeYuHw3zIG/4cf7ee64d6d055515473ca9ea66e0c29c52ee43e")
-	os.Setenv("APPBUILDER_TOKEN", "https://apaas-api-sandbox.baidu-int.com")
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	rag, err := NewRAG("a2c21aa5-bb5e-4e2f-b1b2-2321a806496b", config)
+	rag, err := NewRAG("", config)
 	if err != nil {
-		t.Fatalf("new AgentBuidler instance failed")
+		t.Fatalf("new RAG instance failed")
 	}
-	i, err := rag.Run("ed44dbcc-cd1f-4215-960c-cf599adecfe0", "面试需要注意的细节", true)
+	i, err := rag.Run("", "面试需要注意的细节", true)
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		fmt.Println(answer.Answer)
 	}
