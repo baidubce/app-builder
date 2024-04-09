@@ -55,11 +55,11 @@ func (t *RAGAnswer) transform(res *RAGRunResponse) {
 	t.Events = res.Result.Content
 }
 
-// RAGIterator  定义RAGIterator流式/非流式统一的输出接口
-// 迭代器初始状态可迭代,如果error返回不为空则代表迭代结束，对应如下两种情况：
-// 1. 如果error为eoi，则代表迭代正常结束
-// 2. 如果error不为空且不为eoi，则代表迭代异常
+// RAGIterator 定义RAG流式/非流式迭代器接口
+// 初始状态可迭代,如果返回error不为空则代表迭代结束，
+// error为io.EOF，则代表迭代正常结束，其它则为异常结束
 type RAGIterator interface {
+	// Next 获取处理结果，如果返回error不为空，迭代器自动失效，不允许再调用此方法
 	Next() (*RAGAnswer, error)
 }
 
@@ -103,6 +103,7 @@ func (t *RAGStreamIterator) Next() (*RAGAnswer, error) {
 	}
 }
 
+// RAGOnceIterator 非流式返回时对应的迭代器，只可迭代一次
 type RAGOnceIterator struct {
 	body      io.ReadCloser
 	eoi       bool
