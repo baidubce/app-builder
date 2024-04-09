@@ -1,19 +1,19 @@
 package com.baidubce.appbuilder.console.agentbuilder;
 
 
+import com.baidubce.appbuilder.base.component.Component;
+import com.baidubce.appbuilder.base.config.AppBuilderConfig;
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.base.utils.http.HttpResponse;
+import com.baidubce.appbuilder.base.utils.json.JsonUtils;
+import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderResponse;
+import com.baidubce.appbuilder.model.agentbuilder.ConversationResponse;
+import com.baidubce.appbuilder.model.agentbuilder.FileUploadResponse;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderResponse;
-import com.baidubce.appbuilder.model.agentbuilder.ConversationResponse;
-import com.baidubce.appbuilder.model.agentbuilder.FileUploadResponse;
-import com.baidubce.appbuilder.base.config.AppBuilderConfig;
-import com.baidubce.appbuilder.base.component.Component;
-import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
-import com.baidubce.appbuilder.base.utils.http.HttpResponse;
-import com.baidubce.appbuilder.base.utils.json.JsonUtils;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.io.entity.StringEntity;

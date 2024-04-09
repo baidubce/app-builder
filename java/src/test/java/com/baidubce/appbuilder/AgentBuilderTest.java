@@ -1,5 +1,7 @@
-package com.baidubce.appbuilder.console;
+package com.baidubce.appbuilder;
 
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderResponse;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -9,8 +11,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.baidubce.appbuilder.console.agentbuilder.AgentBuilder;
-import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderResponse;
-import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 
 public class AgentBuilderTest {
     String appId;
@@ -26,7 +26,7 @@ public class AgentBuilderTest {
         AgentBuilder agentBuilder = new AgentBuilder(appId);
         String conversationId = agentBuilder.createConversation();
         assertNotNull(conversationId);
-        String fileId = agentBuilder.uploadLocalFile(conversationId, "java/src/test/com/baidubce/appbuilder/console/files/test.pdf");
+        String fileId = agentBuilder.uploadLocalFile(conversationId, "src/test/java/com/baidubce/appbuilder/files/test.pdf");
         assertNotNull(fileId);
         Iterator<AgentBuilderResponse> itor = agentBuilder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
         assertTrue(itor.hasNext());

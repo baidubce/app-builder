@@ -1,16 +1,15 @@
-package com.baidubce.appbuilder.console;
+package com.baidubce.appbuilder;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.console.rag.RAG;
+import com.baidubce.appbuilder.model.rag.RAGResponse;
 import java.io.IOException;
 import java.util.Iterator;
 
 import static org.junit.Assert.assertTrue;
-
-import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
-import com.baidubce.appbuilder.console.rag.RAG;
-import com.baidubce.appbuilder.model.rag.RAGResponse;
 
 
 public class RAGTest {
@@ -28,7 +27,6 @@ public class RAGTest {
         assertTrue(itor.hasNext());
         while (itor.hasNext()) {
             RAGResponse response = itor.next();
-            System.out.print(response.getResult().getAnswer());
         }
     }
 }

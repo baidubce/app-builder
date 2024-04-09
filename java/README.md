@@ -1,17 +1,36 @@
+AppBuilder Java SDK
 # 安装说明
+> 使用AppBuilder Java SDK要求Java版本>=8
+## Maven
+在pom.xml的dependencies中添加依赖
+```xml
+<dependency>
+    <groupId>com.baidubce</groupId>
+    <artifactId>appbuilder</artifactId>
+    <version>0.5.1</version>
+</dependency>
+```
+## Gradle
+对于Kotlin DSL，在build.gradle.kts的dependencies中添加依赖
+```kotlin
+implementation("com.baidubce:qianfan:0.0.1")
+```
+对于Groovy DSL，在build.gradle的dependencies中添加依赖
+```groovy
+implementation 'com.baidubce:qianfan:0.0.1'
+```
+# 使用示例
+## AgentBuilder组件
 
-
-# AgentBuilder组件
 ```java
-import java.io.IOException;
+
 import java.util.Iterator;
 
-import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.console.agentbuilder.AgentBuilder;
 import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderResponse;
 
 class AgentBuilderDemo {
-    
+
     public static void main(String[] args) {
         //请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
         System.setProperty("APPBUILDER_TOKEN", "bce-YOURTOKEN");
@@ -22,8 +41,7 @@ class AgentBuilderDemo {
         System.out.println(conversationId);
         String fileId = agentBuilder.uploadLocalFile(conversationId, "java/src/test/com/baidubce/appbuilder/console/files/test.pdf");
         Iterator<AgentBuilderResponse> itor = agentBuilder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
-        while(itor.hasNext())
-        {
+        while (itor.hasNext()) {
             AgentBuilderResponse response = itor.next();
             System.out.print(response.getAnswer());
         }
@@ -31,7 +49,7 @@ class AgentBuilderDemo {
 }
 ```
 
-# console端RAG操作工具(RAG)
+## console端RAG操作工具(RAG)
 
 ```java
 import java.io.IOException;
@@ -60,7 +78,7 @@ public class RAGDemo {
 
 ```
 
-# 知识库组件（Dataset）
+## 知识库组件（Dataset）
 
 ```java
 import java.io.IOException;

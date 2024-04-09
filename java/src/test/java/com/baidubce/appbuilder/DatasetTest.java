@@ -1,17 +1,16 @@
-package com.baidubce.appbuilder.console;
+package com.baidubce.appbuilder;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.console.dataset.Dataset;
+import com.baidubce.appbuilder.model.dataset.DocumentListResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-
-import com.baidubce.appbuilder.console.dataset.Dataset;
-import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
-import com.baidubce.appbuilder.model.dataset.DocumentListResponse;
 
 public class DatasetTest {
 
@@ -26,7 +25,7 @@ public class DatasetTest {
         Dataset dataset = new Dataset();
         String datasetId = dataset.createDataset("dataset_name");
         assertNotNull(datasetId);
-        String filePath = "src/test/com/baidubce/appbuilder/console/files/test.pdf";
+        String filePath = "src/test/java/com/baidubce/appbuilder/files/test.pdf";
 
         String[] documentIds = dataset.addDocuments(new ArrayList<>(Collections.singletonList(filePath)), false, null, false);
         assertNotEquals(documentIds.length, 0);
@@ -35,8 +34,5 @@ public class DatasetTest {
         assertNotEquals(resp.getResult().getTotal(), 0);
 
         dataset.deleteDocuments(documentIds);
-
-        assertEquals(resp.getResult().getTotal(), 0);
-
     }
 }

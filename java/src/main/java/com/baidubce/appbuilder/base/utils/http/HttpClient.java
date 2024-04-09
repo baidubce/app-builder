@@ -1,5 +1,7 @@
 package com.baidubce.appbuilder.base.utils.http;
 
+import com.baidubce.appbuilder.base.config.AppBuilderConfig;
+import com.baidubce.appbuilder.base.utils.json.JsonUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,8 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import com.baidubce.appbuilder.base.config.AppBuilderConfig;
-import com.baidubce.appbuilder.base.utils.json.JsonUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
