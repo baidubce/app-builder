@@ -8,7 +8,6 @@ import java.util.*;
 
 import com.baidubce.appbuilder.base.component.Component;
 import com.baidubce.appbuilder.base.config.AppBuilderConfig;
-import com.baidubce.appbuilder.base.exception.AppBuilderInvalidParamException;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.model.dataset.*;
 import com.baidubce.appbuilder.base.utils.http.HttpResponse;
@@ -88,8 +87,8 @@ public class Dataset extends Component {
      * @param isCustomProcessRule 是否使用自定义处理规则
      * @param customProcessRule   自定义处理规则，当isCustomProcessRule为true时，该参数不为空
      * @param isEnhanced          是否开启增强模式
-     * @throws IOException                     当文件上传失败时抛出IOException
-     * @throws AppBuilderServerException       当服务器返回错误码时抛出AppBuilderServerException
+     * @throws IOException               当文件上传失败时抛出IOException
+     * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
     public String[] addDocuments(List<String> filePaths, boolean isCustomProcessRule, Map<String,
             Object> customProcessRule, boolean isEnhanced) throws IOException, AppBuilderServerException {

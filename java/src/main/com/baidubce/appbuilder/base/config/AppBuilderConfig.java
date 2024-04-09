@@ -4,7 +4,7 @@ public class AppBuilderConfig {
     public static final String APPBUILDER_TOKEN = "APPBUILDER_TOKEN";
     public static final String APPBUILDER_GATEWAY_URL = "GATEWAY_URL";
     public static final String APPBUILDER_REQUEST_ID = "X-Appbuilder-Request-Id";
-        public static final String APPBUILDER_DEFAULT_GATEWAY = "https://appbuilder.baidu.com";
+    public static final String APPBUILDER_DEFAULT_GATEWAY = "https://appbuilder.baidu.com";
     // agentbuilder
     // 创建会话
     public static final String CREATE_CONVERSATION_URL = "/api/v1/ai_engine/agi_platform/v1/conversation/create";

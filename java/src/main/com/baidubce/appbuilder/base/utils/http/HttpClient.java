@@ -123,9 +123,8 @@ class StreamIterator<T> implements Iterator<T>, AutoCloseable {
             if (this.resp != null) {
                 this.resp.close();
             }
-
         } catch (Exception ignored) {
-
+            // ignore
         }
     }
 }

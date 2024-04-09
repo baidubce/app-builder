@@ -36,11 +36,11 @@ public class RAG extends Component {
     /**
      * 运行RAG模型，根据输入的问题、会话ID以及是否以流模式返回结果，返回RAGResponse的迭代器。
      *
-     * @param query 问题
+     * @param query          问题
      * @param conversationId 会话ID
-     * @param stream 是否以流模式返回结果
+     * @param stream         是否以流模式返回结果
      * @return RAGResponse的迭代器
-     * @throws IOException 当请求失败时抛出IOException
+     * @throws IOException               当请求失败时抛出IOException
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
     public Iterator<RAGResponse> run(String query, String conversationId, boolean stream) throws IOException, AppBuilderServerException {

@@ -2,7 +2,7 @@ package com.baidubce.appbuilder.model.dataset;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DocumentAddResult{
+public class DocumentAddResult {
     @SerializedName("dataset_id")
     private String datasetId;
     @SerializedName("document_ids")

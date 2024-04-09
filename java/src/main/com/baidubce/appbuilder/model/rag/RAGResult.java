@@ -8,7 +8,6 @@ public class RAGResult {
     private String conversationId;
     @SerializedName("message_id")
     private String messageId;
-    // TODO
     @SerializedName("is_completion")
     private Object isCompletion;
 
