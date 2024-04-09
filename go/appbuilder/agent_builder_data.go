@@ -167,10 +167,12 @@ type AgentBuilderStreamIterator struct {
 func (t *AgentBuilderStreamIterator) Next() (*AgentBuilderAnswer, error) {
 	for {
 		if t.eof {
+			t.body.Close()
 			return nil, io.EOF
 		}
 		event, err := readNext(t.p)
 		if err != nil && !errors.Is(err, io.EOF) {
+			t.body.Close()
 			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 		}
 		var data string
@@ -185,6 +187,7 @@ func (t *AgentBuilderStreamIterator) Next() (*AgentBuilderAnswer, error) {
 		}
 		var resp AgentBuilderRawResponse
 		if err := json.Unmarshal([]byte(event.Data), &resp); err != nil {
+			t.body.Close()
 			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 		}
 		answer := &AgentBuilderAnswer{}
@@ -195,12 +198,12 @@ func (t *AgentBuilderStreamIterator) Next() (*AgentBuilderAnswer, error) {
 
 type AgentBuilderOnceIterator struct {
 	body      io.ReadCloser
-	eoi       bool
+	eof       bool
 	requestID string
 }
 
 func (t *AgentBuilderOnceIterator) Next() (*AgentBuilderAnswer, error) {
-	if t.eoi {
+	if t.eof {
 		return nil, io.EOF
 	}
 	data, err := io.ReadAll(t.body)
@@ -212,7 +215,7 @@ func (t *AgentBuilderOnceIterator) Next() (*AgentBuilderAnswer, error) {
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	t.eoi = true
+	t.eof = true
 	answer := &AgentBuilderAnswer{}
 	answer.transform(&resp)
 	return answer, nil

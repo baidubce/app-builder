@@ -74,10 +74,12 @@ type RAGStreamIterator struct {
 func (t *RAGStreamIterator) Next() (*RAGAnswer, error) {
 	for {
 		if t.eof {
+			t.body.Close()
 			return nil, io.EOF
 		}
 		event, err := readNext(t.p)
 		if err != nil && !errors.Is(err, io.EOF) {
+			t.body.Close()
 			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 		}
 		var data string
@@ -92,6 +94,7 @@ func (t *RAGStreamIterator) Next() (*RAGAnswer, error) {
 		}
 		var resp RAGRunResponse
 		if err := json.Unmarshal([]byte(event.Data), &resp); err != nil {
+			t.body.Close()
 			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 		}
 		answer := &RAGAnswer{}

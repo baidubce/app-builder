@@ -23,17 +23,19 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func NewDataset(config *SDKConfig) (*Dataset, error) {
 	if config == nil {
 		return nil, fmt.Errorf("invalid config")
 	}
-	return &Dataset{sdkConfig: config}, nil
+	return &Dataset{sdkConfig: config, client: &http.Client{Timeout: 60 * time.Second}}, nil
 }
 
 type Dataset struct {
 	sdkConfig *SDKConfig
+	client    *http.Client
 }
 
 func (t *Dataset) Create(name string) (string, error) {
@@ -50,15 +52,19 @@ func (t *Dataset) Create(name string) (string, error) {
 	req := map[string]string{"name": name}
 	data, _ := json.Marshal(req)
 	request.Body = io.NopCloser(bytes.NewReader(data))
-	resp, err := http.DefaultClient.Do(&request)
+	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
 	}
+	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
 	rsp := DatasetResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
@@ -123,7 +129,7 @@ func (t *Dataset) uploadLocalFile(localFilePath string) (string, error) {
 	header.Set("Content-Type", w.FormDataContentType())
 	request.Header = header
 	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
-	resp, err := http.DefaultClient.Do(&request)
+	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
 	}
@@ -132,6 +138,9 @@ func (t *Dataset) uploadLocalFile(localFilePath string) (string, error) {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	respData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
 	rsp := DatasetResponse{}
 	if err := json.Unmarshal(respData, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
@@ -159,7 +168,7 @@ func (t *Dataset) addFileToDataset(datasetID string, fileID []string) ([]string,
 		"dataset_id": datasetID}
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
-	resp, err := http.DefaultClient.Do(&request)
+	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
 	}
@@ -168,6 +177,9 @@ func (t *Dataset) addFileToDataset(datasetID string, fileID []string) ([]string,
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	respData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
 	rsp := DatasetBindResponse{}
 	if err := json.Unmarshal(respData, &rsp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
@@ -197,15 +209,19 @@ func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword st
 	}
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
-	resp, err := http.DefaultClient.Do(&request)
+	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	respData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
 	rsp := ListDocumentResponse{}
 	if err := json.Unmarshal(respData, &rsp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
@@ -238,6 +254,7 @@ func (t *Dataset) DeleteDocument(datasetID, documentID string) error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)

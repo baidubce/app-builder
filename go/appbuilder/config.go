@@ -54,10 +54,7 @@ func (t *SDKConfig) AuthHeader() http.Header {
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
-	absolutePath, err := url.JoinPath(t.GatewayURL, suffix)
-	if err != nil {
-		return nil, err
-	}
+	absolutePath := t.GatewayURL+ suffix
 	url, err := url.Parse(absolutePath)
 	if err != nil {
 		return nil, err

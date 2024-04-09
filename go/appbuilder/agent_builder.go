@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
@@ -32,14 +33,15 @@ func NewAgentBuilder(appID string, config *SDKConfig) (*AgentBuilder, error) {
 		return nil, fmt.Errorf("appID is empty")
 	}
 	if config == nil {
-		return nil, fmt.Errorf("invalid config")
+		return nil, fmt.Errorf("config is nil")
 	}
-	return &AgentBuilder{appID: appID, sdkConfig: config}, nil
+	return &AgentBuilder{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 300 * time.Second}}, nil
 }
 
 type AgentBuilder struct {
 	appID     string
 	sdkConfig *SDKConfig
+	client    *http.Client
 }
 
 func (t *AgentBuilder) CreateConversation() (string, error) {
@@ -56,15 +58,19 @@ func (t *AgentBuilder) CreateConversation() (string, error) {
 	req := map[string]string{"app_id": t.appID}
 	data, _ := json.Marshal(req)
 	request.Body = io.NopCloser(bytes.NewReader(data))
-	resp, err := http.DefaultClient.Do(&request)
+	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
 	}
+	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
 	rsp := make(map[string]interface{})
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
@@ -104,15 +110,19 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 	header.Set("Content-Type", w.FormDataContentType())
 	request.Header = header
 	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
-	resp, err := http.DefaultClient.Do(&request)
+	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
 	}
+	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
 	rsp := make(map[string]interface{})
 	if err := json.Unmarshal(body, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
@@ -140,6 +150,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	if err != nil {
 		return nil, err
 	}
+
 	request.URL = serviceURL
 	request.Method = "POST"
 	header := t.sdkConfig.AuthHeader()
@@ -147,7 +158,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	request.Header = header
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
-	resp, err := http.DefaultClient.Do(&request)
+	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +167,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	if stream {
-		return &AgentBuilderStreamIterator{p: parser.New(resp.Body), requestID: requestID}, nil
+		return &AgentBuilderStreamIterator{p: parser.New(resp.Body), requestID: requestID, body: resp.Body}, nil
 	} else {
 		return &AgentBuilderOnceIterator{body: resp.Body}, nil
 	}

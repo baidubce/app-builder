@@ -2,6 +2,7 @@
 提供Go语言版本的ConsoleSDK，支持调用AgentBuilder、Dataset、RAG等接口能力，方便用户快速集成
 
 ##  安装使用
+支持Go 1.18.1以上版本
 
 ```shell
 go get github.com/baidubce/app-builder/go/appbuilder

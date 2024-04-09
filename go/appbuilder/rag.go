@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
@@ -31,12 +32,13 @@ func NewRAG(appID string, config *SDKConfig) (*RAG, error) {
 	if config == nil {
 		return nil, fmt.Errorf("invalid config")
 	}
-	return &RAG{appID: appID, sdkConfig: config}, nil
+	return &RAG{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 500 * time.Second}}, nil
 }
 
 type RAG struct {
 	appID     string
 	sdkConfig *SDKConfig
+	client    *http.Client
 }
 
 func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator, error) {
@@ -60,7 +62,7 @@ func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator
 	}
 	data, _ := json.Marshal(req)
 	request.Body = io.NopCloser(bytes.NewReader(data))
-	resp, err := http.DefaultClient.Do(&request)
+	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +71,7 @@ func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	if stream {
-		return &RAGStreamIterator{p: parser.New(resp.Body), requestID: requestID}, nil
+		return &RAGStreamIterator{p: parser.New(resp.Body), requestID: requestID,body: resp.Body}, nil
 	} else {
 		return &RAGOnceIterator{body: resp.Body}, nil
 	}
