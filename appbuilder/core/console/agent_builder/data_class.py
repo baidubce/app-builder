@@ -13,10 +13,11 @@
 # limitations under the License.
 
 from pydantic import BaseModel
+from pydantic import Field
 from typing import Union
 
 
-class HTTPRequest(BaseModel):
+class AgentBuilderRequest(BaseModel):
     """会话请求参数
         属性:
             query (str): 查询参数
@@ -26,9 +27,9 @@ class HTTPRequest(BaseModel):
             app_id：应用ID
     """
     query: str = ""
-    response_mode: str
+    stream: bool
     conversation_id: str
-    file_ids: list = []
+    file_ids: list[str] = []
     app_id: str
 
 
@@ -37,8 +38,6 @@ class OriginalEvent(BaseModel):
         属性:
             event_code (int): 0代表成功，非0为失败
             event_message (str): 错误详情
-            node_name (str): 节点名，保留字段
-            dependency_nodes（str）:依赖节点名，保留字段
             event_type（str）：事件类型
             event_status（str）:事件状态
             content_type（str）:内容类型
@@ -46,8 +45,6 @@ class OriginalEvent(BaseModel):
     """
     event_code: int = ""
     event_message: str = ""
-    node_name: str = ""
-    dependency_nodes: list = []
     event_type: str = ""
     event_id: str = ""
     event_status: str = ""
@@ -55,38 +52,23 @@ class OriginalEvent(BaseModel):
     outputs: dict = {}
 
 
-class Result(BaseModel):
+class AgentBuilderResponse(BaseModel):
     """会话请求参数
         属性:
-            answer (str): query结果
-            conversation_id (str): 会话ID
-            message_id (str): 消息ID
-            is_completion（bool）: 会话是否结束
-            content（list[OriginalEvent]）: 事件列表
+            request_id (int): 请求ID
+            date (str): 消息返回时间的时间戳
+            answer (str): 模型回答
+            conversation_id（str）: 会话ID
+            message_id(str): 消息ID
+            is_completion(bool): 是否结束
+            content(list): 内容详情
     """
+    request_id: str = ""
+    date: str = ""
     answer: str = ""
     conversation_id: str = ""
     message_id: str = ""
-    is_completion: Union[bool, None] = ""
-    content: list = []
-
-
-class HTTPResponse(BaseModel):
-    """会话请求参数
-        属性:
-            code (int): 响应状态码
-            message (str): 状态详情
-            trace_id (str): 链路ID
-            time（int）: 消息返回时间的时间戳 ，单位为毫秒
-            prototype（str）: 与前端交互时会用到的字段
-            result: 响应结果
-    """
-    code: int = 0
-    message: str = ""
-    trace_id: str = ""
-    time: int = 0
-    prototype: str = ""
-    result: Result = Result()
+    content: list[OriginalEvent] = []
 
 
 class TextDetail(BaseModel):
@@ -106,17 +88,38 @@ class CodeDetail(BaseModel):
      """
     text: str = ""
     code: str = ""
-    files: list = []
+    files: list[str] = []
+
+
+class RAGReference(BaseModel):
+    """RAG应用详情
+           属性:
+               id (int): 对应来源ID
+               from (str): 信息来源
+               url (str): BaiduSearch 的专用字段
+               content（str）: 般用来当做文档名或者链接的title使用，前端展示可以根据情况截断。
+               segment_id(str): 片段ID
+               document_id(str): 文档ID
+               document_name(str): 文档名
+       """
+    id: str = ""
+    from_: str = Field(..., alias='from')
+    url: str = ""
+    content: str = ""
+    segment_id: str = ""
+    document_id: str = ""
+    dataset_id: str = ""
+    document_name: str = ""
 
 
 class RAGDetail(BaseModel):
-    """content_type=image，详情内容
+    """content_type=rag，详情内容
             属性:
                 text(str): 文本详情
-                references(list[dict]): 引用详情
+                references(list[RAGReference]): 引用详情
     """
     text: str = ""
-    references: list = []
+    references: list[RAGReference] = []
 
 
 class FunctionCallDetail(BaseModel):
@@ -149,7 +152,7 @@ class AudioDetail(BaseModel):
 class VideoDetail(BaseModel):
     """content_type=video，详情内容
             属性:
-                vidoe(str): 视频下载地址
+                video(str): 视频下载地址
     """
     video: str = ""
 
@@ -166,7 +169,7 @@ class Event(BaseModel):
             status (str): 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成）
             event_type（str）: 事件类型
             content_type（str）: 内容类型
-            detail(dict): 事件详情,
+            detail(dict): 事件详情
     """
     code: int = 0
     message: str = ""
@@ -179,46 +182,22 @@ class Event(BaseModel):
 class AgentBuilderAnswer(BaseModel):
     """执行步骤的具体内容
         属性:
-            code (int): 响应code码
-            message (str): 错误详情
             answer(str): query回答内容
             events( list[Event]): 事件列表
        """
-    code: int = 0
-    message: str = ""
     answer: str = ""
-    events: list = []
-
-
-class FileUploadResult(BaseModel):
-    """文档上传结果
-        属性:
-            id (str): 文档ID
-            conversation_id (str): 对话ID
-    """
-    id: str = ""
-    conversation_id: str = ""
+    events: list[Event] = []
 
 
 class FileUploadResponse(BaseModel):
     """文档上传结果
            属性:
-             code (int): 响应code码
-             message (str): 错误详情
-             Result (FileUploadResult): 上传结果
-    """
-    code: int = 0
-    message: str = ""
-    result: FileUploadResult = FileUploadResult()
-
-
-class CreateConversationResult(BaseModel):
-    """文档上传结果
-          属性:
-             code (int): 响应code码
-             message (str): 错误详情
+             request_id (str): 请求ID
+             id (str): 文件ID
              conversation_id (str): 对话ID
     """
+    request_id: str = ""
+    id: str = ""
     conversation_id: str = ""
 
 
@@ -226,9 +205,8 @@ class CreateConversationResponse(BaseModel):
     """文档上传结果
            属性:
              code (int): 响应code码
-             message (str): 错误详情
-             Result (FileUploadResult): 上传结果
+             request_id (str): 请求ID
+             conversation_id (str): 对话ID
     """
-    code: int = 0
-    message: str = ""
-    result: CreateConversationResult = CreateConversationResult()
+    request_id: str = ""
+    conversation_id: str = ""

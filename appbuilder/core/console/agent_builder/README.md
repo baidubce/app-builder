@@ -30,7 +30,7 @@ agent = appbuilder.AgentBuilder(app_id)
 # 创建会话
 conversation_id = agent.create_conversation()
 # 运行对话
-out = agent.run("北京今天天气怎么样", conversation_id)
+out = agent.run(conversation_id, "北京今天天气怎么样")
 # 打印会话结果 
 print(out.content.answer)
 ```
@@ -64,8 +64,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 | 参数名称           | 参数类型               | 描述               | 示例值                                                                    |
 |----------------|--------------------|------------------|------------------------------------------------------------------------|
 | content        | AgentBuilderAnswer | 对话返回结果           |                                                                        |
-| +code          | Int                | 错误码,0代码成功，非0表示失败 | 0                                                                      |
-| +message       | String             | 错误具体消息           |                                                                        |
 | +answer        | String             | 智能体应用返回的回答       |                                                                        |
 | +events        | List[Event]        | 事件列表             |                                                                        |
 | +events[0]     | Event              | 具体事件内容           |                                                                        |
@@ -218,3 +216,4 @@ event detail: code=0 message='' status='success' event_type='RAGAgent' content_t
 ## 更新记录和贡献
 * 集成Console AgentBuilder能力(2024-03)
 * 更新RAG Reference返回值说明(2024-04)
+* 升级AgentBuilder对齐OpenAPI规范接口
