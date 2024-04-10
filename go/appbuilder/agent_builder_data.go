@@ -20,8 +20,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
-
-	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
+	"strings"
 )
 
 const (
@@ -157,36 +156,24 @@ type AgentBuilderIterator interface {
 }
 
 type AgentBuilderStreamIterator struct {
-	body      io.ReadCloser
-	p         *parser.Parser
-	eof       bool
-	closed    bool
 	requestID string
+	r         *sseReader
+	body      io.ReadCloser
 }
 
 func (t *AgentBuilderStreamIterator) Next() (*AgentBuilderAnswer, error) {
-	for {
-		if t.eof {
-			t.body.Close()
-			return nil, io.EOF
-		}
-		event, err := readNext(t.p)
-		if err != nil && !errors.Is(err, io.EOF) {
-			t.body.Close()
-			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
-		}
-		var data string
-		if errors.Is(err, io.EOF) {
-			t.eof = true
-			data = event.Data
-		} else {
-			data = event.Data
-		}
-		if len(data) == 0 {
-			continue
-		}
+	data, err := t.r.ReadMessageLine()
+	if err != nil && !errors.Is(err, io.EOF) {
+		t.body.Close()
+		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
+	}
+	if err != nil && errors.Is(err, io.EOF) {
+		t.body.Close()
+		return nil, err
+	}
+	if strings.HasPrefix(string(data), "data:") {
 		var resp AgentBuilderRawResponse
-		if err := json.Unmarshal([]byte(event.Data), &resp); err != nil {
+		if err := json.Unmarshal(data[5:], &resp); err != nil {
 			t.body.Close()
 			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 		}
@@ -194,19 +181,19 @@ func (t *AgentBuilderStreamIterator) Next() (*AgentBuilderAnswer, error) {
 		answer.transform(&resp)
 		return answer, nil
 	}
+	// 非SSE格式关闭连接，并返回数据
+	t.body.Close()
+	return nil, fmt.Errorf("requestID=%s, body=%s", t.requestID, string(data))
 }
 
 // AgentBuilderOnceIterator 非流式返回时对应的迭代器，只可迭代一次
 type AgentBuilderOnceIterator struct {
 	body      io.ReadCloser
-	eof       bool
 	requestID string
 }
 
 func (t *AgentBuilderOnceIterator) Next() (*AgentBuilderAnswer, error) {
-	if t.eof {
-		return nil, io.EOF
-	}
+
 	data, err := io.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
@@ -216,7 +203,6 @@ func (t *AgentBuilderOnceIterator) Next() (*AgentBuilderAnswer, error) {
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	t.eof = true
 	answer := &AgentBuilderAnswer{}
 	answer.transform(&resp)
 	return answer, nil

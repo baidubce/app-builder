@@ -15,6 +15,7 @@
 package appbuilder
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -24,8 +25,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-
-	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
 
 func NewAgentBuilder(appID string, config *SDKConfig) (*AgentBuilder, error) {
@@ -166,8 +165,9 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
+	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
 	if stream {
-		return &AgentBuilderStreamIterator{p: parser.New(resp.Body), requestID: requestID, body: resp.Body}, nil
+		return &AgentBuilderStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
 	} else {
 		return &AgentBuilderOnceIterator{body: resp.Body}, nil
 	}

@@ -15,14 +15,13 @@
 package appbuilder
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
-
-	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
 
 func NewRAG(appID string, config *SDKConfig) (*RAG, error) {
@@ -70,9 +69,10 @@ func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
+	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
 	if stream {
-		return &RAGStreamIterator{p: parser.New(resp.Body), requestID: requestID,body: resp.Body}, nil
+		return &RAGStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
 	} else {
-		return &RAGOnceIterator{body: resp.Body}, nil
+		return &RAGOnceIterator{body: resp.Body, requestID: requestID}, nil
 	}
 }

@@ -15,42 +15,16 @@
 package appbuilder
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net/http"
-
-	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
 )
 
 type SSEEvent struct {
 	LastEventID string
 	Type        string
 	Data        string
-}
-
-func readNext(p *parser.Parser) (SSEEvent, error) {
-	ev, dirty := SSEEvent{}, false
-	for f := (parser.Field{}); p.Next(&f); {
-		switch f.Name {
-		case parser.FieldNameData:
-			ev.Data += f.Value + "\n"
-			dirty = true
-		case parser.FieldNameEvent:
-			ev.Type = f.Value
-			dirty = true
-		case parser.FieldNameID:
-			dirty = true
-		case parser.FieldNameRetry:
-			dirty = true
-		default:
-			return ev, nil
-		}
-	}
-	err := p.Err()
-	if dirty && err == io.EOF {
-		return ev, err
-	}
-	return SSEEvent{}, err
 }
 
 func checkHTTPResponse(rsp *http.Response) (string, error) {
@@ -64,4 +38,35 @@ func checkHTTPResponse(rsp *http.Response) (string, error) {
 		return requestID, err
 	}
 	return requestID, fmt.Errorf("http status code is %d, content is %s", rsp.StatusCode, string(data))
+}
+
+func NewSSEReader(bufSize int, reader *bufio.Reader) *sseReader {
+	buf := make([]byte, bufSize)
+	return &sseReader{reader: reader, buf: buf, size: 0, cap: bufSize}
+}
+
+type sseReader struct {
+	reader *bufio.Reader
+	buf    []byte
+	size   int
+	cap    int
+}
+
+func (t *sseReader) ReadMessageLine() ([]byte, error) {
+	t.size = 0
+	line, isPrefix, err := t.reader.ReadLine()
+	if err != nil {
+		return nil, err
+	}
+	for isPrefix {
+		t.size += copy(t.buf[t.size:], line)
+		line, isPrefix, err = t.reader.ReadLine()
+	}
+	if len(line)+t.size > t.cap {
+		panic("overflow buffer")
+	}
+	t.size += copy(t.buf[t.size:], line)
+	// 读取空行
+	t.reader.ReadLine()
+	return t.buf[0:t.size], nil
 }

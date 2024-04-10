@@ -19,8 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-
-	"github.com/baidubce/app-builder/go/appbuilder/internal/parser"
+	"strings"
 )
 
 type RAGRunResponse struct {
@@ -64,43 +63,39 @@ type RAGIterator interface {
 }
 
 type RAGStreamIterator struct {
-	body      io.ReadCloser
-	p         *parser.Parser
-	eof       bool
-	closed    bool
 	requestID string
+	r         *sseReader
+	body      io.ReadCloser
 }
 
 func (t *RAGStreamIterator) Next() (*RAGAnswer, error) {
-	for {
-		if t.eof {
-			t.body.Close()
-			return nil, io.EOF
-		}
-		event, err := readNext(t.p)
-		if err != nil && !errors.Is(err, io.EOF) {
-			t.body.Close()
-			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
-		}
-		var data string
-		if errors.Is(err, io.EOF) {
-			t.eof = true
-			data = event.Data
-		} else {
-			data = event.Data
-		}
-		if len(data) == 0 {
-			continue
-		}
+	data, err := t.r.ReadMessageLine()
+	if err != nil && !errors.Is(err, io.EOF) {
+		t.body.Close()
+		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
+	}
+	if err != nil && errors.Is(err, io.EOF) {
+		t.body.Close()
+		return nil, err
+	}
+	if strings.HasPrefix(string(data), "data:") {
 		var resp RAGRunResponse
-		if err := json.Unmarshal([]byte(event.Data), &resp); err != nil {
+		resp.Code = -1
+		if err := json.Unmarshal(data[5:], &resp); err != nil {
 			t.body.Close()
 			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
+		}
+		if resp.Code != 0 {
+			t.body.Close()
+			return nil, fmt.Errorf("requestID=%s, body=%s", t.requestID, string(data))
 		}
 		answer := &RAGAnswer{}
 		answer.transform(&resp)
 		return answer, nil
 	}
+	// 非SSE格式关闭连接，并返回数据
+	t.body.Close()
+	return nil, fmt.Errorf("requestID=%s, body=%s", t.requestID, string(data))
 }
 
 // RAGOnceIterator 非流式返回时对应的迭代器，只可迭代一次
@@ -120,8 +115,13 @@ func (t *RAGOnceIterator) Next() (*RAGAnswer, error) {
 	}
 	defer t.body.Close()
 	var resp RAGRunResponse
+	resp.Code = -1
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
+	}
+	if resp.Code != 0 {
+		t.body.Close()
+		return nil, fmt.Errorf("requestID=%s, body=%s", t.requestID, string(data))
 	}
 	t.eoi = true
 	answer := &RAGAnswer{}
