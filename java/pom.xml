@@ -69,12 +69,6 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <!-- 此处指定main方法入口的class -->
-                            <!--   <mainClass>com.xxx.uploadFile</mainClass>-->
-                        </manifest>
-                    </archive>
                 </configuration>
                 <executions>
                     <execution>

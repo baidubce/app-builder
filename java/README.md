@@ -24,25 +24,29 @@ implementation 'com.baidubce:qianfan:0.0.1'
 
 ```java
 
-import java.util.Iterator;
+import java.io.IOException;
 
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.console.agentbuilder.AgentBuilder;
-import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderResponse;
+import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderIterator;
+import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderResult;
 
 class AgentBuilderDemo {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, AppBuilderServerException {
         //请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
         System.setProperty("APPBUILDER_TOKEN", "bce-YOURTOKEN");
-        String appId = "bce-YOURAPPID";
+        
+        String appId = "YOURAPPID";
 
         AgentBuilder agentBuilder = new AgentBuilder(appId);
         String conversationId = agentBuilder.createConversation();
         System.out.println(conversationId);
         String fileId = agentBuilder.uploadLocalFile(conversationId, "java/src/test/com/baidubce/appbuilder/console/files/test.pdf");
-        Iterator<AgentBuilderResponse> itor = agentBuilder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
-        while (itor.hasNext()) {
-            AgentBuilderResponse response = itor.next();
+        AgentBuilderIterator itor = agentBuilder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
+        while(itor.hasNext())
+        {
+            AgentBuilderResult response = itor.next();
             System.out.print(response.getAnswer());
         }
     }
@@ -64,9 +68,9 @@ public class RAGDemo {
         //请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
         System.setProperty("APPBUILDER_TOKEN", "bce-YOURTOKEN");
 
-        String appID = "bce-YOURAPPID";
+        String appID = "YOURAPPID";
+        
         RAG rag = new RAG(appID);
-
         Iterator<RAGResponse> itor = rag.run("我想了解附近的房产价格，你能帮我查询吗？", "", true);
         System.out.println("输出结果：");
         while (itor.hasNext()) {
