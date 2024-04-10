@@ -58,12 +58,12 @@ class AgentBuilderDemo {
 ## console端RAG操作工具(RAG)
 
 ```java
-import java.io.IOException;
-import java.util.Iterator;
-
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.console.rag.RAG;
+import com.baidubce.appbuilder.model.rag.RAGIterator;
 import com.baidubce.appbuilder.model.rag.RAGResponse;
+
+import java.io.IOException;
 
 public class RAGDemo {
     public static void main(String[] args) throws IOException, AppBuilderServerException {
@@ -73,7 +73,7 @@ public class RAGDemo {
         String appID = "YOURAPPID";
         
         RAG rag = new RAG(appID);
-        Iterator<RAGResponse> itor = rag.run("我想了解附近的房产价格，你能帮我查询吗？", "", true);
+        RAGIterator itor = rag.run("我想了解附近的房产价格，你能帮我查询吗？", "", true);
         System.out.println("输出结果：");
         while (itor.hasNext()) {
             RAGResponse response = itor.next();

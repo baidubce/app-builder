@@ -17,21 +17,21 @@ import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
 public class RAG extends Component {
-    public String AppID;
+    public String appID;
 
     public RAG(String appID) {
         super();
-        this.AppID = appID;
+        this.appID = appID;
     }
 
     public RAG(String appID, String secretKey) {
         super(secretKey);
-        this.AppID = appID;
+        this.appID = appID;
     }
 
     public RAG(String appID, String secretKey, String gateway) {
         super(secretKey, gateway);
-        this.AppID = appID;
+        this.appID = appID;
     }
 
     /**
@@ -46,8 +46,11 @@ public class RAG extends Component {
      */
     public RAGIterator run(String query, String conversationId, boolean stream) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.RAG_RUN_URL;
+        if (this.appID == null || this.appID.isEmpty()) {
+            throw new RuntimeException("Param 'appID' is required!");
+        }
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("app_id", this.AppID);
+        requestBody.put("app_id", this.appID);
         requestBody.put("query", query);
         requestBody.put("conversation_id", conversationId);
         requestBody.put("response_mode", stream ? "streaming" : "blocking");

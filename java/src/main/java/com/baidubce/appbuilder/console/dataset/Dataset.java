@@ -98,6 +98,9 @@ public class Dataset extends Component {
     public String[] addDocuments(List<String> filePaths, boolean isCustomProcessRule, Map<String,
             Object> customProcessRule, boolean isEnhanced) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.DATASET_ADD_FILE_URL;
+        if (this.datasetId == null || this.datasetId.isEmpty()) {
+            throw new RuntimeException("Param 'datasetId' is required! Please set param or call createDataset() first");
+        }
         ArrayList<String> fileIds = new ArrayList<>(filePaths.size());
         for (String filePath : filePaths) {
             String fileId = uploadDocument(filePath);
@@ -135,7 +138,9 @@ public class Dataset extends Component {
      */
     public DocumentListResponse getDocumentList(int page, int limit, String keywork) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.DATASET_GET_FILE_LIST_URL;
-
+        if (this.datasetId == null || this.datasetId.isEmpty()) {
+            throw new RuntimeException("Param 'datasetId' is required! Please set param or call createDataset() first");
+        }
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("dataset_id", this.datasetId);
         requestBody.put("page", page);
@@ -162,7 +167,9 @@ public class Dataset extends Component {
      */
     public void deleteDocument(String documentId) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.DATASET_DELETE_FILE_URL;
-
+        if (this.datasetId == null || this.datasetId.isEmpty()) {
+            throw new RuntimeException("Param 'datasetId' is required! Please set param or call createDataset() first");
+        }
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("dataset_id", this.datasetId);
         requestBody.put("document_id", documentId);

@@ -22,21 +22,21 @@ import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
 public class AgentBuilder extends Component {
-    public String AppID;
+    public String appID;
 
     public AgentBuilder(String appID) {
         super();
-        this.AppID = appID;
+        this.appID = appID;
     }
 
     public AgentBuilder(String appID, String secretKey) {
         super(secretKey);
-        this.AppID = appID;
+        this.appID = appID;
     }
 
     public AgentBuilder(String appID, String secretKey, String gateway) {
         super(secretKey, gateway);
-        this.AppID = appID;
+        this.appID = appID;
     }
 
     /**
@@ -48,9 +48,11 @@ public class AgentBuilder extends Component {
      */
     public String createConversation() throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CREATE_CONVERSATION_URL;
-
+        if (this.appID == null || this.appID.isEmpty()) {
+            throw new RuntimeException("Param 'appID' is required!");
+        }
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("app_id", this.AppID);
+        requestBody.put("app_id", this.appID);
         String jsonBody = JsonUtils.serialize(requestBody);
         ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
@@ -74,12 +76,14 @@ public class AgentBuilder extends Component {
      */
     public String uploadLocalFile(String conversationId, String filePath) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.UPLOAD_FILE_URL;
-
+        if (this.appID == null || this.appID.isEmpty()) {
+            throw new RuntimeException("Param 'appID' is required!");
+        }
         MultipartEntityBuilder builder = MultipartEntityBuilder.create()
                 .setMode(HttpMultipartMode.LEGACY)
                 .setCharset(StandardCharsets.UTF_8);
         builder.addBinaryBody("file", new File(filePath));
-        builder.addTextBody("app_id", this.AppID);
+        builder.addTextBody("app_id", this.appID);
         builder.addTextBody("conversation_id", conversationId);
         builder.addTextBody("scenario", "assistant");
 
@@ -107,8 +111,11 @@ public class AgentBuilder extends Component {
      */
     public AgentBuilderIterator run(String query, String conversationId, String[] fileIds, boolean stream) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.AGENTBUILDER_RUN_URL;
+        if (this.appID == null || this.appID.isEmpty()) {
+            throw new RuntimeException("Param 'appID' is required!");
+        }
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("app_id", this.AppID);
+        requestBody.put("app_id", this.appID);
         requestBody.put("query", query);
         requestBody.put("conversation_id", conversationId);
         requestBody.put("file_ids", fileIds);
