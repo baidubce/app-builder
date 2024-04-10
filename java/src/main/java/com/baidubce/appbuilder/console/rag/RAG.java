@@ -54,11 +54,6 @@ public class RAG extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<Iterator<RAGResponse>> response = httpClient.executeSSE(postRequest, RAGResponse.class);
-        if (response.getCode() != 200) {
-            RAGResponse agentResp = response.getBody().next();
-            throw new AppBuilderServerException(response.getRequestId(), response.getCode(), response.getMessage(),
-                    agentResp.getCode(), agentResp.getMessage());
-        }
         return response.getBody();
     }
 }

@@ -1,18 +1,18 @@
 package com.baidubce.appbuilder.console.dataset;
 
 
-import com.baidubce.appbuilder.model.dataset.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import com.baidubce.appbuilder.model.dataset.*;
 import com.baidubce.appbuilder.base.component.Component;
 import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
-import com.baidubce.appbuilder.model.dataset.*;
 import com.baidubce.appbuilder.base.utils.http.HttpResponse;
 import com.baidubce.appbuilder.base.utils.json.JsonUtils;
+import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -50,11 +50,12 @@ public class Dataset extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<DatasetCreateResponse> response = httpClient.execute(postRequest, DatasetCreateResponse.class);
-        DatasetCreateResponse createResponse = response.getBody();
-        if (createResponse.getCode() != 0) {
-            throw new AppBuilderServerException(response.getRequestId(), createResponse.getCode(), createResponse.getMessage());
+        DatasetCreateResponse respBody = response.getBody();
+        if (respBody.getCode() != 0) {
+            throw new AppBuilderServerException(response.getRequestId(), response.getCode(), response.getMessage(),
+                    respBody.getCode(), respBody.getMessage());
         }
-        this.datasetId = createResponse.getResult().getId();
+        this.datasetId = respBody.getResult().getId();
         return this.datasetId;
     }
 
@@ -69,16 +70,19 @@ public class Dataset extends Component {
     private String uploadDocument(String filePath) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.DATASET_UPLOAD_FILE_URL;
 
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+                .setMode(HttpMultipartMode.LEGACY)
+                .setCharset(StandardCharsets.UTF_8);
         builder.addBinaryBody("file", new File(filePath));
 
         ClassicHttpRequest postRequest = httpClient.createPostRequest(url, builder.build());
         HttpResponse<FileUploadResponse> response = httpClient.execute(postRequest, FileUploadResponse.class);
-        FileUploadResponse uploadResponse = response.getBody();
-        if (uploadResponse.getCode() != 0) {
-            throw new AppBuilderServerException(response.getRequestId(), uploadResponse.getCode(), uploadResponse.getMessage());
+        FileUploadResponse respBody = response.getBody();
+        if (respBody.getCode() != 0) {
+            throw new AppBuilderServerException(response.getRequestId(), response.getCode(), response.getMessage(),
+                    respBody.getCode(), respBody.getMessage());
         }
-        return uploadResponse.getResult().getId();
+        return respBody.getResult().getId();
     }
 
     /**
@@ -111,11 +115,12 @@ public class Dataset extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<DocumentAddResponse> response = httpClient.execute(postRequest, DocumentAddResponse.class);
-        DocumentAddResponse docResponse = response.getBody();
-        if (docResponse.getCode() != 0) {
-            throw new AppBuilderServerException(response.getRequestId(), docResponse.getCode(), docResponse.getMessage());
+        DocumentAddResponse respBody = response.getBody();
+        if (respBody.getCode() != 0) {
+            throw new AppBuilderServerException(response.getRequestId(), response.getCode(), response.getMessage(),
+                    respBody.getCode(), respBody.getMessage());
         }
-        return docResponse.getResult().getDocumentIds();
+        return respBody.getResult().getDocumentIds();
     }
 
     /**
@@ -140,11 +145,12 @@ public class Dataset extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<DocumentListResponse> response = httpClient.execute(postRequest, DocumentListResponse.class);
-        DocumentListResponse docListResponse = response.getBody();
-        if (docListResponse.getCode() != 0) {
-            throw new AppBuilderServerException(response.getRequestId(), docListResponse.getCode(), docListResponse.getMessage());
+        DocumentListResponse respBody = response.getBody();
+        if (respBody.getCode() != 0) {
+            throw new AppBuilderServerException(response.getRequestId(), response.getCode(), response.getMessage(),
+                    respBody.getCode(), respBody.getMessage());
         }
-        return docListResponse;
+        return respBody;
     }
 
     /**
@@ -164,9 +170,10 @@ public class Dataset extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<DocumentDeleteResponse> response = httpClient.execute(postRequest, DocumentDeleteResponse.class);
-        DocumentDeleteResponse delResponse = response.getBody();
-        if (delResponse.getCode() != 0) {
-            throw new AppBuilderServerException(response.getRequestId(), delResponse.getCode(), delResponse.getMessage());
+        DocumentDeleteResponse respBody = response.getBody();
+        if (respBody.getCode() != 0) {
+            throw new AppBuilderServerException(response.getRequestId(), response.getCode(), response.getMessage(),
+                    respBody.getCode(), respBody.getMessage());
         }
     }
 

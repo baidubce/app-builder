@@ -1,10 +1,11 @@
 package com.baidubce.appbuilder;
 
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
-import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderResponse;
-import java.io.IOException;
-import java.util.Iterator;
+import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderIterator;
 
+import java.io.IOException;
+
+import com.baidubce.appbuilder.model.agentbuilder.AgentBuilderResult;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,8 +15,9 @@ import com.baidubce.appbuilder.console.agentbuilder.AgentBuilder;
 
 public class AgentBuilderTest {
     String appId;
+
     @Before
-    public void setUp()  {
+    public void setUp() {
         System.setProperty("APPBUILDER_TOKEN", "xxx");
         System.setProperty("GATEWAY_URL", "xxx");
         appId = "xxx";
@@ -28,10 +30,10 @@ public class AgentBuilderTest {
         assertNotNull(conversationId);
         String fileId = agentBuilder.uploadLocalFile(conversationId, "src/test/java/com/baidubce/appbuilder/files/test.pdf");
         assertNotNull(fileId);
-        Iterator<AgentBuilderResponse> itor = agentBuilder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
+        AgentBuilderIterator itor = agentBuilder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
         assertTrue(itor.hasNext());
         while (itor.hasNext()) {
-            AgentBuilderResponse response = itor.next();
+            AgentBuilderResult result = itor.next();
         }
     }
 
