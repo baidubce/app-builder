@@ -110,4 +110,21 @@ public class DatasetCreateResult {
     public void setPriority(boolean priority) {
         isPriority = priority;
     }
+
+    @Override
+    public String toString() {
+        return "DatasetCreateResult{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", indexingTechnique='" + indexingTechnique + '\'' +
+                ", documentCount=" + documentCount +
+                ", wordCount=" + wordCount +
+                ", createdBy='" + createdBy + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", updatedAt=" + updatedAt +
+                ", isPriority=" + isPriority +
+                '}';
+    }
 }

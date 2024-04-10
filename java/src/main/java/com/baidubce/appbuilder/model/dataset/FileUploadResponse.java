@@ -28,4 +28,13 @@ public class FileUploadResponse {
     public void setResult(FileUploadResult result) {
         this.result = result;
     }
+
+    @Override
+    public String toString() {
+        return "FileUploadResponse{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", result=" + result +
+                '}';
+    }
 }

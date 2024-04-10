@@ -9,6 +9,7 @@ import java.util.Map;
 import com.baidubce.appbuilder.base.component.Component;
 import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.model.rag.RAGIterator;
 import com.baidubce.appbuilder.model.rag.RAGResponse;
 import com.baidubce.appbuilder.base.utils.http.HttpResponse;
 import com.baidubce.appbuilder.base.utils.json.JsonUtils;
@@ -43,7 +44,7 @@ public class RAG extends Component {
      * @throws IOException               当请求失败时抛出IOException
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
-    public Iterator<RAGResponse> run(String query, String conversationId, boolean stream) throws IOException, AppBuilderServerException {
+    public RAGIterator run(String query, String conversationId, boolean stream) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.RAG_RUN_URL;
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("app_id", this.AppID);
@@ -54,6 +55,6 @@ public class RAG extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<Iterator<RAGResponse>> response = httpClient.executeSSE(postRequest, RAGResponse.class);
-        return response.getBody();
+        return new RAGIterator(response);
     }
 }

@@ -69,4 +69,17 @@ public class FileUploadResult {
     public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "FileUploadResult{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", size=" + size +
+                ", extension='" + extension + '\'' +
+                ", mimeType='" + mimeType + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }

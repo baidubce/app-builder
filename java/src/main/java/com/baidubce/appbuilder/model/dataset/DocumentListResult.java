@@ -2,6 +2,8 @@ package com.baidubce.appbuilder.model.dataset;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Arrays;
+
 public class DocumentListResult {
     @SerializedName("has_more")
     private boolean hasMore;
@@ -48,5 +50,16 @@ public class DocumentListResult {
 
     public void setData(DocumentListData[] data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "DocumentListResult{" +
+                "hasMore=" + hasMore +
+                ", limit=" + limit +
+                ", page=" + page +
+                ", total=" + total +
+                ", data=" + Arrays.toString(data) +
+                '}';
     }
 }

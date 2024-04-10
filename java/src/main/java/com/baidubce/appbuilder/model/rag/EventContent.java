@@ -2,6 +2,7 @@ package com.baidubce.appbuilder.model.rag;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,6 +107,22 @@ public class EventContent {
 
     public void setDetail(HashMap<String, String> detail) {
         this.detail = detail;
+    }
+
+    @Override
+    public String toString() {
+        return "EventContent{" +
+                "eventCode='" + eventCode + '\'' +
+                ", enentMessage='" + enentMessage + '\'' +
+                ", nodeName='" + nodeName + '\'' +
+                ", dependencyNodes=" + Arrays.toString(dependencyNodes) +
+                ", eventType='" + eventType + '\'' +
+                ", eventId='" + eventId + '\'' +
+                ", eventStatus='" + eventStatus + '\'' +
+                ", contentType='" + contentType + '\'' +
+                ", outputs=" + outputs +
+                ", detail=" + detail +
+                '}';
     }
 }
 

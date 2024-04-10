@@ -10,8 +10,10 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -26,7 +28,10 @@ public class HttpClient {
     private final CloseableHttpClient client;
 
     public HttpClient(String secretKey, String gateway) {
-        this.client = HttpClients.createDefault();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setResponseTimeout(AppBuilderConfig.HTTP_CLIENT_CONNECTION_TIMEOUT, TimeUnit.SECONDS)
+                .build();
+        this.client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
         this.SecretKey = secretKey;
         this.Gateway = gateway;
     }

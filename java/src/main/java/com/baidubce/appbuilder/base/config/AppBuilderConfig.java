@@ -5,6 +5,10 @@ public class AppBuilderConfig {
     public static final String APPBUILDER_GATEWAY_URL = "GATEWAY_URL";
     public static final String APPBUILDER_REQUEST_ID = "X-Appbuilder-Request-Id";
     public static final String APPBUILDER_DEFAULT_GATEWAY = "https://appbuilder.baidu.com";
+
+    // http client请求超时时间，秒
+    public static final int HTTP_CLIENT_CONNECTION_TIMEOUT = 300;
+    
     // agentbuilder
     // 创建会话
     public static final String CREATE_CONVERSATION_URL = "/api/v1/ai_engine/agi_platform/v1/conversation/create";

@@ -2,6 +2,8 @@ package com.baidubce.appbuilder.model.rag;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Arrays;
+
 public class RAGResult {
     private String answer;
     @SerializedName("conversation_id")
@@ -61,5 +63,17 @@ public class RAGResult {
 
     public void setContent(EventContent[] content) {
         this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "RAGResult{" +
+                "answer='" + answer + '\'' +
+                ", conversationId='" + conversationId + '\'' +
+                ", messageId='" + messageId + '\'' +
+                ", isCompletion=" + isCompletion +
+                ", prototype='" + prototype + '\'' +
+                ", content=" + Arrays.toString(content) +
+                '}';
     }
 }

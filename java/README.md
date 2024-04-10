@@ -41,9 +41,11 @@ class AgentBuilderDemo {
 
         AgentBuilder agentBuilder = new AgentBuilder(appId);
         String conversationId = agentBuilder.createConversation();
-        System.out.println(conversationId);
-        String fileId = agentBuilder.uploadLocalFile(conversationId, "java/src/test/com/baidubce/appbuilder/console/files/test.pdf");
+        System.out.println("conversationId: "+conversationId);
+        String fileId = agentBuilder.uploadLocalFile(conversationId, "FILE_PATH");
+        System.out.println("fileId: "+fileId);
         AgentBuilderIterator itor = agentBuilder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
+        System.out.println("输出结果：");
         while(itor.hasNext())
         {
             AgentBuilderResult response = itor.next();

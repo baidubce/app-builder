@@ -28,4 +28,13 @@ public class DocumentListResponse {
     public void setResult(DocumentListResult result) {
         this.result = result;
     }
+
+    @Override
+    public String toString() {
+        return "DocumentListResponse{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", result=" + result +
+                '}';
+    }
 }
