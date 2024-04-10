@@ -23,11 +23,11 @@ import (
 )
 
 func TestNewRAG(t *testing.T) {
-	config, err := NewSDKConfig("https://apaas-api-sandbox.baidu-int.com", "bce-v3/ALTAK-78FF1FAmDQ6iRghl0mHoh/95c80c27e3b958d1a603fd12e8faca58a9d3f0d0")
+	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	rag, err := NewRAG("74016aec-649f-4dcf-ad17-691cdbf89283", config)
+	rag, err := NewRAG("", config)
 	if err != nil {
 		t.Fatalf("new RAG instance failed")
 	}
