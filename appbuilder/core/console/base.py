@@ -86,7 +86,7 @@ class ConsoleCompletionResponse(CompletionResponse):
                                 for ref in references:
                                     key = ref["from"]
                                     if key in self.extra.keys():
-                                        self.extra[key].extend(ref)
+                                        self.extra[key].append(ref)
                                     else:
                                         self.extra[key] = [ref]
 
@@ -120,7 +120,7 @@ class ConsoleCompletionResponse(CompletionResponse):
                                     for ref in references:
                                         key = ref["from"]
                                         if key in self._extra.keys():
-                                            self._extra[key].extend(ref)
+                                            self._extra[key].append(ref)
                                         else:
                                             self._extra[key] = [ref]
                     message.extra = self._extra  # Update the original extra
