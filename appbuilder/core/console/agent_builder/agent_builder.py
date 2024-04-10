@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """AgentBuilder组件"""
-
+import os
 import json
 
 from appbuilder.core.component import Message, Component
