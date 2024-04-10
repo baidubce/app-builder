@@ -7,10 +7,10 @@ import sys
 sys.path.append('../..')
 
 import unittest
-
+import os
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestMatching(unittest.TestCase):
 
     def test_example(self):

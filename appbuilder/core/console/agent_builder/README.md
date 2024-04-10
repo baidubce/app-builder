@@ -74,7 +74,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 | ++status       | String             | 事件状态             | 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成）                 |
 | ++event_type   | String             | 事件类型             |                                                                        |
 | ++content_type | String             | 内容类型             | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
-| ++detail       | Dict               | 事件输出详情           | 代码解释器、文生图、工具组件等的详细输出内容                                                 |
+| ++detail       | Dict               | 事件输出详情           | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                                 |
 
 ### 流式返回
 
@@ -151,5 +151,70 @@ for content in message.content:
 print(answer)
 ```
 
+## RAG 关于Reference返回值说明
+
+### 包含RAG组件的 Agent应用调用示例
+```python
+import appbuilder
+app_id = '...'  # 已发布AgentBuilder应用的ID，并且挂载了知识库，回答会触发RAG组件
+
+# 初始化Agent
+agent_builder = appbuilder.AgentBuilder(app_id)
+
+# 创建会话ID
+conversation_id = agent_builder.create_conversation()
+
+# 执行对话
+msg = agent_builder.run(conversation_id, "如何写好一篇技术文档")
+for event in msg.content.events:
+    print("event detail: {}".format(event))
+```
+
+执行后，返回值为：
+```shell
+event detail: code=0 message='' status='done' event_type='function_call' content_type='function_call' detail={'text': {'name': 'rag_agent', 'arguments': {}, 'thought': '', 'component': 'RAGAgent', 'name_cn': '知识问答'}}
+
+event detail: code=0 message='' status='preparing' event_type='RAGAgent' content_type='status' detail={}
+
+event detail: code=0 message='' status='done' event_type='RAGAgent' content_type='rag' detail={'references': [{'id': '1', 'content': '工程化原则是指设计案例的时候，要把案例想象为一个工程。工程从开始到结束要经过下面步骤的：图1-5配置IP地址示例局方提出一个需求；...', 'type': 'engine', 'from': 'search_db', 'title': '技术写作入门.pdf', 'segment_id': 'cd5b3123-aac4-4225-a956-b60811bf975d', 'document_id': '5256c6ce-5fbd-4146-a0e7-9aa449fe192b', 'score': 0.518988, 'document_name': '技术写作入门.pdf', 'dataset_id': 'b3ef15ff-a4a8-47af-9eb3-61576c13f661'}, {'id': '2', 'content': 'ü28~35岁的程序员：处于形成思维方法论和知识体系的阶段，致力于任何新的技术都能迅速看到本质，并快速吸收成为自我知识体系的一部分。有影ü35+的程序员：是了解自己，自我变现的阶段。技术牛逼-->会思考、善表达-->输出价值观-->积累影响力-->普度众生。响上述过程，建议借助技术写作加速自我进阶，它将有助于：...', 'type': 'engine', 'from': 'search_db', 'title': '技术写作入门.pdf', 'segment_id': '72f42e5e-81a3-4a5d-815d-4185905560a0', 'document_id': '5256c6ce-5fbd-4146-a0e7-9aa449fe192b', 'score': 0.518714, 'document_name': '技术写作入门.pdf', 'dataset_id': 'b3ef15ff-a4a8-47af-9eb3-61576c13f661'}], 'text': ''}
+
+event detail: code=0 message='' status='done' event_type='RAGAgent' content_type='rag' detail={'text': '写好一篇技术文档，可以从以下几个方面进行考虑：\n\n* **明确文档目标**：在开始编写之前，要明确文档的目标受众、文档要解决的问题、读者需要了解哪些内容等^[1]^。\n* **注重逻辑性**：在编写过程中，要注重文档的逻辑性，确保内容条理清晰、易于理解。可以使用层叠因果原则等方法来检查文档的逻辑性是否合理^[1]^。\n* **关注细节和准确性**：技术文档需要关注细节和准确性，包括术语的使用、数据的准确性、步骤的详细性等。要确保文档中的信息都是准确无误的，避免给读者造成困惑或误解^[1]^。\n* **考虑可读性和可维护性**：在编写过程中，要考虑文档的可读性和可维护性。可以使用简洁明了的语言、合适的排版和格式、图表和示例等来提高文档的可读性。同时，要注意文档的更新和维护，确保文档的内容与实际情况保持一致^[1]^。\n* **借助技术写作加速自我进阶**：通过技术写作可以倒逼自己总结和整理已有知识，导引自己更深度的思考，训练沟通和表达力，展现优势技术并构建影响力^[2]^。', 'references': []}
+
+event detail: code=0 message='' status='success' event_type='RAGAgent' content_type='status' detail={}
+
+```
+
+当触发RAG组件时，event的标志为 event_type='RAGAgent' content_type='rag'，返回的event中detail中包含references字段，该字段为RAG组件关于参考文献的返回值
+
+```dict
+{
+    'id': '1', 
+    'content': '工程化原则是指设计案例的时候，要把案例想象为一个工程。工程从开始到结束要经过下面步骤的：图1-5配置IP地址示例局方提出一个需求；...', 
+    'type': 'engine', 
+    'from': 'search_db', 
+    'title': '技术写作入门.pdf', 
+    'segment_id': 'cd5b3123-aac4-4225-a956-b60811bf975d', 
+    'document_id': '5256c6ce-5fbd-4146-a0e7-9aa449fe192b', 
+    'score': 0.518988, 
+    'document_name': '技术写作入门.pdf', 
+    'dataset_id': 'b3ef15ff-a4a8-47af-9eb3-61576c13f661'
+}
+```
+
+
+### RAG组件用户需要关注的返回值说明
+
+| 参数名称           | 参数类型               | 描述               | 示例值                                                                    |
+|----------------|--------------------|------------------|------------------------------------------------------------------------|
+| id        | String | 参考文献ID           |      '1'                                                                  |
+| content         | String | 参考文献内容          |  '工程化原则是指设计案例的时候...'                                                                       |
+| from         | String | 来源          |    'search_baidu' or 'search_db'                                                                     |
+| url         | String | 类型          |    search_baidu 的专有字段                                                                   |
+| segment_id         | String | 文档片段ID          |      'cd5b3123-aac4-4225-a956-b60811bf975d',  search_db 的专有字段                                                                 |
+| document_id         | String | 文档ID          |     '5256c6ce-5fbd-4146-a0e7-9aa449fe192b', search_db 的专有字段                                                                  |
+| document_name         | String | 文档名称          |       '技术写作入门.pdf',  search_db 的专有字段                                                               |
+| dataset_id         | String | 文档所属数据集ID          |     'b3ef15ff-a4a8-47af-9eb3-61576c13f661',  search_db 的专有字段                                                                 |
+
 ## 更新记录和贡献
 * 集成Console AgentBuilder能力(2024-03)
+* 更新RAG Reference返回值说明(2024-04)

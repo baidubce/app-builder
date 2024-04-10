@@ -15,11 +15,11 @@ import unittest
 import appbuilder
 import os
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestRag(unittest.TestCase):
 
     def setUp(self):
-        self.app_id = "..."
+        self.app_id = "06e3f5c9-885d-4f85-af57-97dc85ee4606"
 
     def test_rag(self):
         rag_app = appbuilder.console.RAG(self.app_id)

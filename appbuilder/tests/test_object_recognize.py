@@ -17,7 +17,7 @@ import requests
 import appbuilder
 from appbuilder.core._exception import InvalidRequestArgumentError
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestObjectRecognize(unittest.TestCase):
     def setUp(self):
         """

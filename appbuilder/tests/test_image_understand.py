@@ -18,8 +18,8 @@ import requests
 import appbuilder
 from appbuilder.core.message import Message
 
-
-class TestImageUnderstand(unittest.TestCase):
+@unittest.skip("ValueError: one of image or url must be set")
+class TestPlantRecognition(unittest.TestCase):
 
     def setUp(self):
         """

@@ -19,7 +19,7 @@ import unittest
 from typing import List, Tuple
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestQueryRewriteComponent(unittest.TestCase):
     def setUp(self):
         """

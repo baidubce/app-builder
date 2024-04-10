@@ -15,8 +15,8 @@
 import unittest
 import requests
 import appbuilder
-
-
+import os
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestDocCropEnhance(unittest.TestCase):
     def setUp(self):
         """

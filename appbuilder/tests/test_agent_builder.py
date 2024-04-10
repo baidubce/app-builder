@@ -4,7 +4,7 @@ import requests
 import tempfile
 import os
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
@@ -16,17 +16,26 @@ class TestAgentRuntime(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        os.environ["APPBUILDER_TOKEN"] = ""
-        self.app_id = ""
+        self.app_id = "aa8af334-df27-4855-b3d1-0d249c61fc08"
 
     def test_agent_builder_run(self):
         # 如果app_id为空，则跳过单测执行, 避免单测因配置无效而失败
+        """
+        如果app_id为空，则跳过单测执行, 避免单测因配置无效而失败
+    
+        Args:
+            self (unittest.TestCase): unittest的TestCase对象
+    
+        Raises:
+            None: 如果app_id不为空，则不会引发任何异常
+            unittest.SkipTest (optional): 如果app_id为空，则跳过单测执行
+        """
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
-
+    
         agent_builder = appbuilder.AgentBuilder(self.app_id)
         conversation_id = agent_builder.create_conversation()
-
+    
         with tempfile.NamedTemporaryFile(suffix=".png") as fp:
             # 上传植物图片
             img_url = ("https://bj.bcebos.com/v1/appbuilder/test_agent_builder_tr"

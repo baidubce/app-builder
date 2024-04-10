@@ -20,7 +20,7 @@ import requests
 import appbuilder
 from appbuilder.core.message import Message
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestLandmarkRecognition(unittest.TestCase):
 
     def setUp(self):

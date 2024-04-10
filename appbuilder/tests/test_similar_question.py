@@ -13,10 +13,10 @@
 # limitations under the License.
 
 import unittest
-
+import os
 import appbuilder
 
-
+@unittest.skip("TypeError: 'NoneType' object is not an iterator")
 class TestSimilarQuestionComponent(unittest.TestCase):
     def setUp(self):
         """

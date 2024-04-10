@@ -20,7 +20,7 @@ import os
 from appbuilder.utils.logger_util import logger
 from appbuilder import Message, ExtractTableFromDoc, DocParser
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestExtractTableFromDoc(unittest.TestCase):
     """ pass
     """

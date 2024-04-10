@@ -2,7 +2,7 @@ import unittest
 import os
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPlayground(unittest.TestCase):
     def setUp(self):
         """

@@ -16,7 +16,7 @@ import os
 import unittest
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDataset(unittest.TestCase):
 
     @classmethod

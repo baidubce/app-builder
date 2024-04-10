@@ -24,7 +24,7 @@ TEST_TEXT = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
              '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
              '，实时视频分享您的生活。')
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestOralQueryGenerationComponent(unittest.TestCase):
 
     def setUp(self):
