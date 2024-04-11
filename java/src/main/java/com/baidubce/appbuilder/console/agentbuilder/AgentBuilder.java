@@ -116,23 +116,4 @@ public class AgentBuilder extends Component {
         HttpResponse<Iterator<AgentBuilderResponse>> response = httpClient.executeSSE(postRequest, AgentBuilderResponse.class);
         return new AgentBuilderIterator(response.getBody());
     }
-    public static void main(String[] args) throws IOException, AppBuilderServerException {
-        //请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
-        System.setProperty("APPBUILDER_TOKEN", "bce-v3/ALTAK-78FF1FAmDQ6iRghl0mHoh/95c80c27e3b958d1a603fd12e8faca58a9d3f0d0");
-        System.setProperty("GATEWAY_URL", "https://apaas-api-sandbox.baidu-int.com");
-
-        String appId = "af15bb60-449a-4078-bcf9-67697a05d757";
-
-        AgentBuilder agentBuilder = new AgentBuilder(appId);
-        String conversationId = agentBuilder.createConversation();
-        System.out.println(conversationId);
-        String fileId = agentBuilder.uploadLocalFile(conversationId, "/Users/zhoulongchao/IdeaProjects/appbuilder-sdk/java/src/test/java/com/baidubce/appbuilder/files/test.pdf");
-        System.out.println(fileId);
-        AgentBuilderIterator itor = agentBuilder.run("帮我画一幅图，描述春意盎然的场景", conversationId, new String[]{}, false);
-        while(itor.hasNext())
-        {
-            AgentBuilderResult response = itor.next();
-            System.out.print(response.getAnswer());
-        }
-    }
 }
