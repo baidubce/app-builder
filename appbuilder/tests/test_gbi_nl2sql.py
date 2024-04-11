@@ -76,7 +76,7 @@ class TestGBINL2Sql(unittest.TestCase):
         """
         设置环境变量及必要数据。
         """
-        model_name = "ERNIE-Bot-8K"
+        model_name = "ERNIE-Bot-turbo"
         table_schemas = [SUPER_MARKET_SCHEMA]
         self.nl2sql_node = appbuilder.NL2Sql(model_name=model_name,
                                              table_schemas=table_schemas)

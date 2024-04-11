@@ -75,7 +75,7 @@ class TestGBISelectTable(unittest.TestCase):
         """
         设置环境变量及必要数据。
         """
-        model_name = "ERNIE-Bot-8K"
+        model_name = "ERNIE-Bot-turbo"
 
         self.select_table_node = \
             appbuilder.SelectTable(model_name=model_name,
