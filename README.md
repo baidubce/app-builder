@@ -80,14 +80,13 @@ print(", ".join(models))
 
 填写自己的Token，获取模型列表输出如下：
 ``` shell
-ERNIE-Bot 4.0, ERNIE-Bot-8K, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder专用版, Qianfan-Chinese-Llama-2-7B, Yi-34B-Chat, Llama-2-7B-Chat, Llama-2-13B-Chat, Llama-2-70B-Chat, ChatGLM2-6B-32K, ChatLaw, BLOOMZ-7B, Qianfan-BLOOMZ-7B-compressed, AquilaChat-7B
+ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder专用版, Qianfan-Chinese-Llama-2-7B, Yi-34B-Chat, Llama-2-7B-Chat, Llama-2-13B-Chat, Llama-2-70B-Chat, ChatGLM2-6B-32K, ChatLaw, BLOOMZ-7B, Qianfan-BLOOMZ-7B-compressed, AquilaChat-7B
 ```
 
 为方便用户更容易使用模型，以下是一些模型的短名称
 | 千帆模型名                   | AppBuilder-SDK短名 |
 |----------------------------|------------------|
 | ERNIE-Bot 4.0              |       eb-4       |
-| ERNIE-Bot-8K               |       eb-8k      |
 | ERNIE-Bot                  |       eb         |
 | ERNIE-Bot-turbo            |       eb-turbo   |
 | EB-turbo-AppBuilder专用版   |       ernie_speed_appbuilder           |
