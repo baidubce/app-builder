@@ -30,10 +30,14 @@ class ConversationCreateResponse(BaseModel):
     object: str
     created_at: int
 
-
 class ConversationCreateRequest(BaseModel):
     messages: list[AssistantMessage]
 
+class AssistantThread(BaseModel):
+    messages: list[AssistantMessage] = []
+
+class AssistantConversation(BaseModel):
+    messages: list[AssistantMessage] = []
 
 """ Assistant Related Data Class """
 class AssistantFunctionCall(BaseModel):
@@ -75,7 +79,7 @@ class AssistantCreateResponse(BaseModel):
     model: str
     instructions: str
     tools: list[AssistantTool]
-    meta_data: Union[dict, None] = None
+    metadata: Union[dict, None] = None
     created_at: int
     thought_instructions: str
     chat_instructions: str
@@ -100,67 +104,80 @@ class AssistantFilesCreateResponse(BaseModel):
 
 """ Runs Related Data Class """
 
-
-class FunctionCall():
-    name: str
-    arguments: str
-
-
-class ToolCall():
-    id: str
-    type: str
-    function: FunctionCall
-
-
-class SubmitToolOutput():
+class SubmitToolOutput(BaseModel):
     tool_calls: list
 
 
-class RequiredAction():
+class RequiredAction(BaseModel):
     type: str
     submit_tool_outputs: SubmitToolOutput
 
 
-class LastError():
+class LastError(BaseModel):
     type: str
     message: str
 
 
-class FinalAnswer():
+class FinalAnswer(BaseModel):
     type: str
     message: Message
 
 
-# class RunResult():
-#     id: str
-#     object: str
-#     assistant_id: str
-#     conversation_id: str
-#     assistant_config: AssistantConfig
-#     status: str
-#     required_action: RequiredAction
-#     last_error: LastError
-#     final_answer: FinalAnswer
-#     created_at: int
-#     started_at: int
-#     expired_at: int
-#     cancelled_at: int
-#     failed_at: int
-#     completed_at: int
+class RunResult(BaseModel):
+    id: str
+    object: str
+    assistant_id: str
+    thread_id: str
+
+    model: str = ""
+    instructions: str = ""
+    tools: Union[list[AssistantTool], None] = None
+    file_ids: list[str] = []
+    
+    status: str
+    required_action: Union[RequiredAction,None] = None
+    last_error: Union[LastError,None] = None
+    final_answer: Union[FinalAnswer,None] = None
+    created_at: int
+    started_at: int
+    expired_at: int
+    cancelled_at: int
+    failed_at: int
+    completed_at: int
 
 
-# class StreamrRunResult():
-#     id: str
-#     object: str
-#     assistant_id: str
-#     conversation_id: str
-#     assistant_config: AssistantConfig
-#     status: str
-#     required_action: str
-#     last_error: str
-#     final_answer: str
-#     created_at: int
-#     started_at: int
-#     expired_at: int
-#     cancelled_at: int
-#     failed_at: int
+class StreamrRunResult():
+    id: str
+    object: str
+    assistant_id: str
+    conversation_id: str
+    # assistant_config: AssistantConfig
+    status: str
+    required_action: str
+    last_error: str
+    final_answer: str
+    created_at: int
+    started_at: int
+    expired_at: int
+    cancelled_at: int
+    failed_at: int
+
+
+class AssistantToolOutput(BaseModel):
+    tool_call_id: str
+    output: str
+
+class AssistantRunRequest(BaseModel):
+    thread_id: str = ""
+    model:str = ""
+    assistant_id: str = ""
+    metadata: Union[dict, None] = None
+    response_format: str = "text"
+    instructions: str = ""
+    thought_instructions: str = ""
+    chat_instructions: str = ""
+    stream: bool = False
+    thread: Union[AssistantThread,None] = None
+    tools: list[AssistantTool] = []
+    tool_output: Union[AssistantToolOutput, None] = None
+

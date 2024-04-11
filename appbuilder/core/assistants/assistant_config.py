@@ -30,6 +30,15 @@ class AssistantConfig(object):
         self._file_ids = file_ids
         self._model = model
 
+    def merge(self, new_assistant_config: 'AssistantConfig') -> dict:
+        origin_schema = self.to_base_model()
+        new_schema = new_assistant_config.to_base_model()
+        for key in origin_schema.keys():
+            if key in new_schema.keys() and new_schema.get(key):
+                origin_schema[key] = new_schema[key]
+        return origin_schema
+
+
     def length_check(self) -> bool:
         """
         检查各个 str 类型的子属性长度之和是否超过 4096，如果超过则返回 False，否则返回 True。
@@ -72,6 +81,7 @@ class AssistantConfig(object):
             'chat_instructions': self._chat_instructions,
             'tools': self.get_assistant_tool_list(),
             'file_ids': self._file_ids,
+            'model': self._model
         }
 
     # 比较两个 AssistantConfig 对象是否相同, 相同则返回 True，否则返回 False

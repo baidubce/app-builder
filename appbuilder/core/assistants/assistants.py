@@ -15,6 +15,8 @@ import os
 import json
 from appbuilder.core.assistants.assistant_config import AssistantConfig
 from appbuilder.core.assistants import data_class
+from appbuilder.core.assistants.collector import Collector
+from appbuilder.core.assistants.collector import AssistantKeys
 from appbuilder.core._client import HTTPClient
 
 class Assistant(object):
@@ -76,7 +78,9 @@ class Assistants(object):
         user_storage = resp.user_storage
         assistant_config = AssistantConfig(**data)
 
-        return Assistant(assistant_config, id=id, created_at=created_at, user_storage=user_storage)
+        assistant = Assistant(assistant_config, id=id, created_at=created_at, user_storage=user_storage)
+        Collector().add_to_collection(AssistantKeys.ASSISTANT, assistant.id, assistant)
+        return assistant
 
 
     def delete(self, assistant_id: str) -> None:
