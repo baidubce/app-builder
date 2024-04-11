@@ -1,10 +1,11 @@
 package com.baidubce.appbuilder.model.agentbuilder;
 
+
 import java.util.Arrays;
 
 public class AgentBuilderResult {
     private String answer;
-    private EventContent[] content;
+    private Event[] events;
 
     public String getAnswer() {
         return answer;
@@ -15,12 +16,12 @@ public class AgentBuilderResult {
         return this;
     }
 
-    public EventContent[] getContent() {
-        return content;
+    public Event[] getEvents() {
+        return events;
     }
 
-    public AgentBuilderResult setContent(EventContent[] content) {
-        this.content = content;
+    public AgentBuilderResult setEvents(Event[] events) {
+        this.events = events;
         return this;
     }
 
@@ -28,7 +29,7 @@ public class AgentBuilderResult {
     public String toString() {
         return "AgentBuilderResult{" +
                 "answer='" + answer + '\'' +
-                ", content=" + Arrays.toString(content) +
+                ", events=" + Arrays.toString(events) +
                 '}';
     }
 }

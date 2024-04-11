@@ -1,21 +1,28 @@
 package com.baidubce.appbuilder.base.exception;
 
 public class AppBuilderServerException extends Exception {
-    private String requestId;
-    private int code;
+    private final String requestId;
+    private final int code;
+    private final String message;
     private int appbuilderCode;
     private String appbuilderMessage;
+    private String responseBody;
 
     public AppBuilderServerException(String requestId, int code, String message) {
-        super(message); // 调用父类的构造函数，设置异常消息
         this.requestId = requestId;
         this.code = code;
+        this.message = message;
     }
 
     public AppBuilderServerException(String requestId, int code, String message, int appbuilderCode, String appbuilderMessage) {
         this(requestId, code, message);
         this.appbuilderCode = appbuilderCode;
         this.appbuilderMessage = appbuilderMessage;
+    }
+
+    public AppBuilderServerException(String requestId, int code, String message, String responseBody) {
+        this(requestId, code, message);
+        this.responseBody = responseBody;
     }
 
     public String getRequestId() {
@@ -26,14 +33,31 @@ public class AppBuilderServerException extends Exception {
         return code;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public int getAppbuilderCode() {
+        return appbuilderCode;
+    }
+
+    public String getAppbuilderMessage() {
+        return appbuilderMessage;
+    }
+
+    public String getResponseBody() {
+        return responseBody;
+    }
+
     @Override
     public String toString() {
         return "AppBuilderServerException{" +
                 "requestId='" + requestId + '\'' +
                 ", code=" + code +
-                ", message=" + getMessage() +
+                ", message='" + message + '\'' +
                 ", appbuilderCode=" + appbuilderCode +
                 ", appbuilderMessage='" + appbuilderMessage + '\'' +
+                ", responseBody='" + responseBody + '\'' +
                 '}';
     }
 }

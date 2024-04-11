@@ -1,10 +1,12 @@
 package com.baidubce.appbuilder.model.agentbuilder;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ConversationResponse {
     private String requestId;
-    private int code;
-    private String message;
-    private ConversationResult result;
+
+    @SerializedName("conversation_id")
+    private String conversationId;
 
     public String getRequestId() {
         return requestId;
@@ -14,37 +16,19 @@ public class ConversationResponse {
         this.requestId = requestId;
     }
 
-    public int getCode() {
-        return code;
+    public String getConversationId() {
+        return conversationId;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public ConversationResult getResult() {
-        return result;
-    }
-
-    public void setResult(ConversationResult result) {
-        this.result = result;
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
     }
 
     @Override
     public String toString() {
         return "ConversationResponse{" +
                 "requestId='" + requestId + '\'' +
-                ", code=" + code +
-                ", message='" + message + '\'' +
-                ", result=" + result +
+                ", conversationId='" + conversationId + '\'' +
                 '}';
     }
 }

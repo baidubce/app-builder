@@ -11,11 +11,11 @@ public class AppBuilderConfig {
     
     // agentbuilder
     // 创建会话
-    public static final String CREATE_CONVERSATION_URL = "/api/v1/ai_engine/agi_platform/v1/conversation/create";
+    public static final String CREATE_CONVERSATION_URL = "/api/v1/app/conversation";
     // 上传文件
-    public static final String UPLOAD_FILE_URL = "/api/v1/ai_engine/agi_platform/v1/instance/upload";
+    public static final String UPLOAD_FILE_URL = "/api/v1/app/conversation/file/upload";
     // 运行appbuilder
-    public static final String AGENTBUILDER_RUN_URL = "/api/v1/ai_engine/agi_platform/ai_apaas/v1/app/conversation/runs";
+    public static final String AGENTBUILDER_RUN_URL = "/api/v1/app/conversation/runs";
 
     // 运行rag
     public static final String RAG_RUN_URL = "/api/v1/ai_engine/agi_platform/v1/instance/integrated";

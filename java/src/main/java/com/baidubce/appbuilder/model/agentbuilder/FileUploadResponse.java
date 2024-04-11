@@ -1,10 +1,13 @@
 package com.baidubce.appbuilder.model.agentbuilder;
 
+import com.google.gson.annotations.SerializedName;
+
 public class FileUploadResponse {
     private String requestId;
-    private int code;
-    private String message;
-    private FileUploadResult result;
+    @SerializedName("id")
+    private String fileId;
+    @SerializedName("conversation_id")
+    private String conversationId;
 
     public String getRequestId() {
         return requestId;
@@ -14,37 +17,28 @@ public class FileUploadResponse {
         this.requestId = requestId;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public FileUploadResult getResult() {
-        return result;
-    }
-
-    public void setResult(FileUploadResult result) {
-        this.result = result;
+    public String getFileId() {
+        return fileId;
     }
 
     @Override
     public String toString() {
         return "FileUploadResponse{" +
                 "requestId='" + requestId + '\'' +
-                ", code=" + code +
-                ", message='" + message + '\'' +
-                ", result=" + result +
+                ", fileId='" + fileId + '\'' +
+                ", conversationId='" + conversationId + '\'' +
                 '}';
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
+    }
+
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
     }
 }

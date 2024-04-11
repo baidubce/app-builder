@@ -7,18 +7,18 @@ import java.util.Map;
 
 public class EventContent {
     @SerializedName("event_code")
-    String eventCode;
+    private String eventCode;
     @SerializedName("event_message")
-    String enentMessage;
+    private String enentMessage;
     @SerializedName("event_type")
-    String eventType;
+    private String eventType;
     @SerializedName("event_id")
-    String eventId;
+    private String eventId;
     @SerializedName("event_status")
-    String eventStatus;
+    private String eventStatus;
     @SerializedName("content_type")
-    String contentType;
-    Map<String, Object> outputs;
+    private String contentType;
+    private Map<String, Object> outputs;
 
     public String getEventCode() {
         return eventCode;

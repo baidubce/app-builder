@@ -20,6 +20,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 public class HttpClient {
@@ -64,7 +65,8 @@ public class HttpClient {
             return response;
         });
         if (httpResponse.getCode() != 200) {
-            throw new AppBuilderServerException(httpResponse.getRequestId(), httpResponse.getCode(), httpResponse.getMessage());
+            throw new AppBuilderServerException(httpResponse.getRequestId(),
+                    httpResponse.getCode(), httpResponse.getMessage(), httpResponse.getStringBody());
         }
         return httpResponse;
     }
@@ -78,7 +80,12 @@ public class HttpClient {
         }
         String requestId = headers.get(AppBuilderConfig.APPBUILDER_REQUEST_ID);
         if (resp.getCode() != 200) {
-            throw new AppBuilderServerException(requestId, resp.getCode(), resp.getReasonPhrase());
+            String stringBody = "";
+            try {
+                stringBody = EntityUtils.toString(resp.getEntity());
+            } catch (ParseException ignored) {
+            }
+            throw new AppBuilderServerException(requestId, resp.getCode(), resp.getReasonPhrase(), stringBody);
         }
         return new HttpResponse<Iterator<T>>()
                 .setCode(resp.getCode())
