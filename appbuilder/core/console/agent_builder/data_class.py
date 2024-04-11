@@ -161,6 +161,22 @@ class StatusDetail(BaseModel):
     pass
 
 
+class DefaultDetail(BaseModel):
+    """content_type为其它时，详情内容
+        属性:
+            urls(list[str]): 件链接列表
+            files(list[str]): 下载文件地址列表
+            image(str): 工具生成的图片url
+            video(str): 工具生成的语音url
+            audio(str):工具生成的音频url
+       """
+    urls: list[str] = []
+    files: list[str] = []
+    image: str = ""
+    video: str = ""
+    audio: str = ""
+
+
 class Event(BaseModel):
     """执行步骤的具体内容
         属性:

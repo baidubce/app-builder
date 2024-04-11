@@ -64,8 +64,7 @@ class AgentBuilder(Component):
           """
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url("/v1/ai_engine/agi_platform/v1/app/conversation", "/api")
-        url = self.http_client.gateway+ "/api/v1/ai_engine/agi_platform/ai_apaas/v1/app/conversation"
+        url = self.http_client.service_url("/v1/app/conversation/runs", "/api")
         response = self.http_client.session.post(url, headers=headers, json={"app_id": self.app_id}, timeout=None)
         self.http_client.check_response_header(response)
         data = response.json()
@@ -89,8 +88,7 @@ class AgentBuilder(Component):
             'conversation_id': (None, conversation_id),
         }
         headers = self.http_client.auth_header()
-        url = self.http_client.service_url("/v1/ai_engine/agi_platform/v1/app/conversation/file/upload", "/api")
-        url = self.http_client.gateway + "/api/v1/ai_engine/agi_platform/ai_apaas/v1/app/conversation/file/upload"
+        url = self.http_client.service_url("/v1/app/conversation/file/upload ", "/api")
         response = self.http_client.session.post(url, files=multipart_form_data, headers=headers)
         self.http_client.check_response_header(response)
         data = response.json()
@@ -125,8 +123,7 @@ class AgentBuilder(Component):
 
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url("/v1/ai_engine/agi_platform/v1/app/conversation/runs", '/api')
-        url = self.http_client.gateway + "/api/v1/ai_engine/agi_platform/ai_apaas/v1/app/conversation/runs"
+        url = self.http_client.service_url("/v1/app/conversation/runs", '/api')
         response = self.http_client.session.post(url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)
         request_id = self.http_client.response_request_id(response)

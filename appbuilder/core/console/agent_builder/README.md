@@ -141,9 +141,11 @@ for content in message.content:
             video_detail = data_class.VideoDetail(**detail)
             print(video_detail)
         elif content_type == "status":
-            data_class.StatusDetail(**detail)
-    else:
-        print(detail)
+            status_detail = data_class.StatusDetail(**detail)
+            print(status_detail)
+        else:
+            default_detail = data_class.DefaultDetail(**detail)
+            print(default_detail)
 
 # 打印完整的answer结果
 print(answer)
