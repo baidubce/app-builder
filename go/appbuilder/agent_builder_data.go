@@ -126,6 +126,14 @@ type VideoDetail struct {
 
 type StatusDetail struct{}
 
+type DefaultDetail struct {
+	URLS  []string `json:"urls"`
+	Files []string `json:"files"`
+	Image string   `json:"image"`
+	Video string   `json:"video"`
+	Audio string   `json:"audio"`
+}
+
 func (t *AgentBuilderAnswer) transform(inp *AgentBuilderRawResponse) {
 	t.Answer = inp.Answer
 	for _, c := range inp.Content {
@@ -137,12 +145,11 @@ func (t *AgentBuilderAnswer) transform(inp *AgentBuilderRawResponse) {
 			Detail:      c.Outputs}
 		tp, ok := TypeToStruct[ev.ContentType]
 		if !ok {
-			ev.Detail = c.Outputs
-		} else {
-			v := reflect.New(tp)
-			_ = json.Unmarshal(c.Outputs, v.Interface())
-			ev.Detail = v.Elem().Interface()
+			tp = reflect.TypeOf(DefaultDetail{})
 		}
+		v := reflect.New(tp)
+		_ = json.Unmarshal(c.Outputs, v.Interface())
+		ev.Detail = v.Elem().Interface()
 		t.Events = append(t.Events, ev)
 	}
 }

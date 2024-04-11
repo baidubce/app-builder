@@ -16,6 +16,7 @@ package appbuilder
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -42,31 +43,33 @@ func checkHTTPResponse(rsp *http.Response) (string, error) {
 
 func NewSSEReader(bufSize int, reader *bufio.Reader) *sseReader {
 	buf := make([]byte, bufSize)
-	return &sseReader{reader: reader, buf: buf, size: 0, cap: bufSize}
+	return &sseReader{reader: reader, buf: buf}
 }
 
 type sseReader struct {
 	reader *bufio.Reader
 	buf    []byte
-	size   int
-	cap    int
 }
 
 func (t *sseReader) ReadMessageLine() ([]byte, error) {
-	t.size = 0
-	line, isPrefix, err := t.reader.ReadLine()
-	if err != nil {
-		return nil, err
+	size := 0
+	for {
+		line, isPrefix, err := t.reader.ReadLine()
+		if err != nil {
+			return nil, err
+		}
+		if len(line)+size > cap(t.buf) {
+			panic("buffer overflow")
+		}
+		size += copy(t.buf[size:], line)
+		if !isPrefix {
+			break
+		}
 	}
-	for isPrefix {
-		t.size += copy(t.buf[t.size:], line)
-		line, isPrefix, err = t.reader.ReadLine()
-	}
-	if len(line)+t.size > t.cap {
-		panic("overflow buffer")
-	}
-	t.size += copy(t.buf[t.size:], line)
 	// 读取空行
-	t.reader.ReadLine()
-	return t.buf[0:t.size], nil
+	line, _, err := t.reader.ReadLine()
+	if err != nil || len(line) != 0 {
+		return nil, errors.New("invalid sse format")
+	}
+	return t.buf[0:size], nil
 }

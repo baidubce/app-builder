@@ -73,11 +73,8 @@ func main() {
                                 fmt.Println(detail)
                         } else if ev.ContentType == appbuilder.StatusContentType {
                         } else { // 默认是json.RawMessage
-                                detail, ok := ev.Detail.(json.RawMessage)
-                                if !ok {
-                                        fmt.Println("unknown  type")
-                                }
-                                fmt.Println(string(detail))
+                                detail := ev.Detail.(appbuilder.DefaultDetail)
+                                fmt.Println(detail)
                         }
                 }
         }
