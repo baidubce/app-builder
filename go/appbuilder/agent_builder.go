@@ -46,7 +46,7 @@ type AgentBuilder struct {
 func (t *AgentBuilder) CreateConversation() (string, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeader()
-	serviceURL, err := t.sdkConfig.ServiceURL("/v1/app/conversation")
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/app/conversation")
 	if err != nil {
 		return "", err
 	}
@@ -99,7 +99,7 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 	}
 	w.Close()
 	request := http.Request{}
-	serviceURL, err := t.sdkConfig.ServiceURL("/v1/app/conversation/file/upload")
+	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/app/conversation/file/upload")
 	if err != nil {
 		return "", err
 	}
