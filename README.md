@@ -90,7 +90,6 @@ ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-3.5-4K-0205, ERNIE-3.5-8K-0205, ERNIE-3.5-8K-122
 | 千帆模型名                   | AppBuilder-SDK短名 |
 |----------------------------|------------------|
 | ERNIE-Bot 4.0              |       eb-4       |
-| ERNIE-Bot-8K               |       eb-8k      |
 | ERNIE-Bot                  |       eb         |
 | ERNIE-Bot-turbo            |       eb-turbo   |
 | EB-turbo-AppBuilder专用版   |       ernie_speed_appbuilder           |
