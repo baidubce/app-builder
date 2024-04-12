@@ -25,7 +25,6 @@ r"""模型名称到简称的映射.
 # 实际上，模型名称和简称之间存在多对一的关系，因此这里不能仅使用一个字典来存储名称映射信息
 model_name_mapping = [
     ("ERNIE-Bot 4.0", "eb-4"),
-    ("ERNIE-Bot-8K", "eb-8k"),
     ("ERNIE-Bot", "eb"),
     ("ERNIE-Bot-turbo", "eb-turbo"),
     ("EB-turbo-AppBuilder专用版", "eb-turbo-appbuilder"),

@@ -13,9 +13,8 @@
 # limitations under the License.
 
 """AgentBuilder组件"""
-
-import json
 import os
+import json
 
 from appbuilder.core.component import Message, Component
 from appbuilder.core.console.agent_builder import data_class
@@ -65,14 +64,12 @@ class AgentBuilder(Component):
           """
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url("/v1/ai_engine/agi_platform/v1/conversation/create", "/api")
+        url = self.http_client.service_url("/v1/app/conversation", "/api")
         response = self.http_client.session.post(url, headers=headers, json={"app_id": self.app_id}, timeout=None)
         self.http_client.check_response_header(response)
-        request_id = self.http_client.response_request_id(response)
         data = response.json()
-        self._check_console_response(request_id, data)
         resp = data_class.CreateConversationResponse(**data)
-        return resp.result.conversation_id
+        return resp.conversation_id
 
     def upload_local_file(self, conversation_id, local_file_path: str) -> str:
         r"""上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
@@ -89,17 +86,14 @@ class AgentBuilder(Component):
             'file': (os.path.basename(local_file_path), open(local_file_path, 'rb')),
             'app_id': (None, self.app_id),
             'conversation_id': (None, conversation_id),
-            'scenario': (None, "assistant")
         }
         headers = self.http_client.auth_header()
-        url = self.http_client.service_url("/v1/ai_engine/agi_platform/v1/instance/upload", "/api")
+        url = self.http_client.service_url("/v1/app/conversation/file/upload", "/api")
         response = self.http_client.session.post(url, files=multipart_form_data, headers=headers)
         self.http_client.check_response_header(response)
-        request_id = self.http_client.response_request_id(response)
         data = response.json()
-        self._check_console_response(request_id, data)
         resp = data_class.FileUploadResponse(**data)
-        return resp.result.id
+        return resp.id
 
     def run(self, conversation_id: str,
             query: str,
@@ -119,17 +113,17 @@ class AgentBuilder(Component):
         if len(conversation_id) == 0:
             raise ValueError("conversation_id is empty")
 
-        req = data_class.HTTPRequest(
+        req = data_class.AgentBuilderRequest(
             app_id=self.app_id,
             conversation_id=conversation_id,
             query=query,
-            response_mode="streaming" if stream else "blocking",
+            stream=True if stream else False,
             file_ids=file_ids,
         )
 
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url("/v1/ai_engine/agi_platform/v1/instance/integrated", '/api')
+        url = self.http_client.service_url("/v1/app/conversation/runs", '/api')
         response = self.http_client.session.post(url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)
         request_id = self.http_client.response_request_id(response)
@@ -138,23 +132,22 @@ class AgentBuilder(Component):
             return Message(content=self._iterate_events(request_id, client.events()))
         else:
             data = response.json()
-            self._check_console_response(request_id, data)
-            resp = data_class.HTTPResponse(**data)
+            resp = data_class.AgentBuilderResponse(**data)
             out = data_class.AgentBuilderAnswer()
             _transform(resp, out)
             return Message(content=out)
 
-    def _iterate_events(self, request_id, events) -> data_class.AgentBuilderAnswer:
+    @staticmethod
+    def _iterate_events(request_id, events) -> data_class.AgentBuilderAnswer:
         for event in events:
             try:
                 data = event.data
                 if len(data) == 0:
                     data = event.raw
                 data = json.loads(data)
-                self._check_console_response(request_id, data)
             except json.JSONDecodeError as e:
                 raise AppBuilderServerException(request_id=request_id, message="json decoder failed {}".format(str(e)))
-            inp = data_class.HTTPResponse(**data)
+            inp = data_class.AgentBuilderResponse(**data)
             out = data_class.AgentBuilderAnswer()
             _transform(inp, out)
             yield out
@@ -170,17 +163,20 @@ class AgentBuilder(Component):
             )
 
 
-def _transform(inp: data_class.HTTPResponse, out: data_class.AgentBuilderAnswer):
-    out.code = inp.code
-    out.message = inp.message
-    out.answer = inp.result.answer
-    for ev in inp.result.content:
+def _transform(inp: data_class.AgentBuilderResponse, out: data_class.AgentBuilderAnswer):
+    out.answer = inp.answer
+    for ev in inp.content:
         event = data_class.Event(
-            code = ev.get("event_code", 0),
-            message = ev.get("event_message", ""),
-            status = ev.get("event_status", ""),
-            event_type = ev.get("event_type", ""),
-            content_type = ev.get("content_type", ""),
-            detail = ev.get("outputs", {})
+            code=ev.event_code,
+            message=ev.event_message,
+            status=ev.event_status,
+            event_type=ev.event_type,
+            content_type=ev.content_type,
+            detail=ev.outputs
         )
         out.events.append(event)
+
+
+
+
+
