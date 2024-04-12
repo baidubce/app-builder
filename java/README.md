@@ -7,17 +7,17 @@ AppBuilder Java SDK
 <dependency>
     <groupId>com.baidubce</groupId>
     <artifactId>appbuilder</artifactId>
-    <version>0.5.1</version>
+    <version>0.6.0</version>
 </dependency>
 ```
 ## Gradle
 对于Kotlin DSL，在build.gradle.kts的dependencies中添加依赖
 ```kotlin
-implementation("com.baidubce:qianfan:0.0.1")
+implementation("com.baidubce:appbuilder:0.6.0")
 ```
 对于Groovy DSL，在build.gradle的dependencies中添加依赖
 ```groovy
-implementation 'com.baidubce:qianfan:0.0.1'
+implementation 'com.baidubce:appbuilder:0.6.0'
 ```
 # 使用示例
 ## AgentBuilder组件
