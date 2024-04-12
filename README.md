@@ -61,9 +61,11 @@ pip install --upgrade appbuilder-sdk
 
 使用AppBuilder SDK之前，请首先申请并设置鉴权参数。具体请参考[认证鉴权](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6)。
 
+在本示例中，我们提供了一个访问和QPS受限的试用Token，供您快速体验AppBuilder SDK。当您需要使用AppBuilder SDK进行开发时，请替换为您的Token。
+
 ``` python
-# 设置环境中的TOKEN，以下示例略
-os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 ```
 
 ## 模型列表
@@ -73,14 +75,15 @@ AppBuilder提供获取千帆模型列表的函数，在运行具体组件之前�
 import appbuilder
 import os
 
-os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 models = appbuilder.get_model_list(api_type_filter=["chat"], is_available=True)
 print(", ".join(models))
 ```
 
-填写自己的Token，获取模型列表输出如下：
+填写自己的Token，获取模型列表输出示例如下：
 ``` shell
-ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, EB-turbo-AppBuilder专用版, Qianfan-Chinese-Llama-2-7B, Yi-34B-Chat, Llama-2-7B-Chat, Llama-2-13B-Chat, Llama-2-70B-Chat, ChatGLM2-6B-32K, ChatLaw, BLOOMZ-7B, Qianfan-BLOOMZ-7B-compressed, AquilaChat-7B
+ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-3.5-4K-0205, ERNIE-3.5-8K-0205, ERNIE-3.5-8K-1222, ERNIE-Speed, ERNIE-Speed-128K（预览版）, ERNIE-Lite-8K, ERNIE-Tiny-8K, ERNIE-Character-8K, EB-turbo-AppBuilder专用版, Qianfan-Chinese-Llama-2-7B, Qianfan-Chinese-Llama-2-13B, Gemma-7B-It, Yi-34B-Chat, Mixtral-8x7B-Instruct, Llama-2-7B-Chat, Llama-2-13B-Chat, Llama-2-70B-Chat, XuanYuan-70B-Chat-4bit, ChatGLM2-6B-32K, ChatLaw, BLOOMZ-7B, Qianfan-BLOOMZ-7B-compressed, AquilaChat-7B, ERNIE-Bot-8K, ERNIE-Lite-8K-0922（原ERNIE-Bot-turbo-0922）
 ```
 
 为方便用户更容易使用模型，以下是一些模型的短名称
@@ -100,6 +103,10 @@ AppBuilder包括基于大模型构建AI原生应用的各类范式，包括基�
 #### 空模版(Playground)
 ```python
 import appbuilder
+import os
+
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
 # 空模版组件
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
@@ -114,6 +121,10 @@ print(playground(input, stream=False, temperature=1e-10))
 #### 文本生成(Text Completion)
 ```python
 import appbuilder
+import os
+
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
 # 相似问生成组件
 similar_q = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
@@ -124,20 +135,23 @@ print(similar_q(input))
 
 ```
 
-#### 检索增强问答(Chat RAG)
+#### 检索增强问答
 ```python
 import appbuilder
 import os
 
-# 此处APPBUILDER_TOKEN为限制QPS的试用账号，请在测试您自己的应用时替换为自己的账号Token
-os.environ["APPBUILDER_TOKEN"] = ""
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-# 此处填写线上RAG应用ID，可在【AppBuilder网页端-我的应用界面】查看
-# 网页链接 https://console.bce.baidu.com/ai_apaas/app
-app_id = ""
-rag_app = appbuilder.console.RAG(app_id)
-query = "中国的首都在哪里"
-answer = rag_app.run(appbuilder.Message(query)) # 新建对话
+# 此处填写线上Agent应用ID，可在【AppBuilder网页端-我的应用界面】查看
+# 本示例提供的Agent应用为：地理小达人
+# 网页已部署的应用链接为「地理小达人」：https://appbuilder.baidu.com/s/x1tSF
+# 以下示例代码展示了如何代码态调用并集成到您的应用中的能力
+app_id = "42eb211a-14b9-43d2-9fae-193c8760ef26"
+agent_builder = appbuilder.AgentBuilder(app_id)
+conversation_id = agent_builder.create_conversation()
+
+answer = agent_builder.run(conversation_id, "中国的首都在哪里")
 print(answer.content)
 ```
 
