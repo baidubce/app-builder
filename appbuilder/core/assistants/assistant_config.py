@@ -74,6 +74,11 @@ class AssistantConfig(object):
                 tool_list.append(data_class.AssistantTool(**tool_descr))
             else:
                 # TODO(chengmo): 添加ThirdpartyTool的语法合法性检查
+                tool_descr = {
+                    'type': 'function',
+                    'function': tool
+                }
+                print(tool_descr)
                 tool_list.append(data_class.AssistantTool(**tool))
         
         self.function_name_component_map = {}
@@ -152,8 +157,12 @@ class AssistantConfig(object):
         return self._chat_instructions
 
     @property
-    def tools(self):
-        return self._tools
+    def builtin_tools(self):
+        return self._builtin_tools
+    
+    @property
+    def thirdparty_tools(self):
+        return self._thirdparty_tools
 
     @property
     def file_ids(self):
