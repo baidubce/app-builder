@@ -40,7 +40,7 @@ contexts=["借款展期部分的利率为年化利率（单利），并按下列
 
 models = appbuilder.get_model_list("", ["chat"], True)
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestSemanticRankComponent(unittest.TestCase):
     @parameterized.expand([param(model, query, contexts) for model in models if model not in ["Yi-34B-Chat", "ChatLaw",
                                                                                    "BLOOMZ-7B",

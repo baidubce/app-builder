@@ -32,7 +32,7 @@ log = get_logger(__name__)
 
 models = appbuilder.get_model_list("", ["chat"], True)
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestMixcardOcr(unittest.TestCase):
     @parameterized.expand([
         param(models[0], "吸塑包装盒在工业化生产和物流运输中分别有什么重要性", None, None),

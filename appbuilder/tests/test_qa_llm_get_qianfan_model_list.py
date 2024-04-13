@@ -30,7 +30,7 @@ util = Utils()
 from appbuilder.utils.logger_util import get_logger
 log = get_logger(__name__)
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestGetQianfanModelList(unittest.TestCase):
     @parameterized.expand([
         param("", [], False),

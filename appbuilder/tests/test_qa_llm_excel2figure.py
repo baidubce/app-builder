@@ -40,7 +40,7 @@ err_file_bos_url = ("https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/[�
                     "bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-02-21T09%3A51%3A14Z/-1/host/1802a9c9142ef328d6"
                     )
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestExcel2figure(unittest.TestCase):
     # @parameterized.expand([
     #     param("ERNIE-Bot 4.0", "2020年各个月份的利润分别是多少？使用条形图绘制出来", file_bos_url),
