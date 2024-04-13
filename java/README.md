@@ -1,6 +1,6 @@
-AppBuilder Java SDK
+AppBuilder Java ConsoleSDK
 # 安装说明
-> 使用AppBuilder Java SDK要求Java版本>=8
+> 使用AppBuilder Java ConsoleSDK要求Java版本>=8
 ## Maven
 在pom.xml的dependencies中添加依赖
 ```xml

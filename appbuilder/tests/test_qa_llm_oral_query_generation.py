@@ -36,7 +36,7 @@ text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
         '，实时视频分享您的生活。')
 models = appbuilder.get_model_list("", ["chat"], True)
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestMixcardOcr(unittest.TestCase):
     @parameterized.expand([
         param(models[0], text, None, None),
