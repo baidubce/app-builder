@@ -39,6 +39,11 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
   * 支持以下功能进行FunctionCall调用并新增[CookBook](https://github.com/baidubce/app-builder/blob/master/cookbooks/general_ocr.ipynb)：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
 * **2024.03.21 v0.5.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.1)
   * 问题修复：修复了在Python 3.8 及以下环境无法使用AgentBuilder ConsoleSDK的问题。同时，在即将发布的0.6.0版本中，将不再提供对Python 3.8及以下环境的支持，请升级Python版本到3.9
+* **2024.04.12 v0.6.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.6.0)
+  * AppBuilder Console SDK 支持 JAVA 语言 [AppBuilder Java ConsoleSDK](./java/README.md)
+  * AppBuilder Console SDK 支持 GO 语言 [AppBuilder GO ConsoleSDK](./go/README.md)
+  * 首页README更新，提供免费的公共试用TOKEN，方便开发者快速体验
+
 ## 教程与文档
 
 * **预备步骤**
