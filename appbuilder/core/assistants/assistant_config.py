@@ -78,8 +78,7 @@ class AssistantConfig(object):
                     'type': 'function',
                     'function': tool
                 }
-                print(tool_descr)
-                tool_list.append(data_class.AssistantTool(**tool))
+                tool_list.append(data_class.AssistantTool(**tool_descr))
         
         self.function_name_component_map = {}
         self.function_name_descr_map = {}
@@ -87,7 +86,7 @@ class AssistantConfig(object):
             if isinstance(tool, Component):
                 self.function_name_component_map[tool.manifests['name']] = tool
             else:
-                self.function_name_descr_map[tool['function'].get("name", "")] = tool
+                self.function_name_descr_map[tool.get("name", "")] = tool
         return tool_list
 
     def to_base_model(self):

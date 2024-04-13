@@ -3,6 +3,8 @@ import pydantic
 import os
 import appbuilder
 
+def get_cur_whether(location:str, unit:str):
+    return "{} 的当前温度是30 {}".format(location, unit)
 
 class TestAssistantTalk(unittest.TestCase):
     def setUp(self) -> None:
@@ -45,7 +47,7 @@ class TestAssistantTalk(unittest.TestCase):
         assistant = appbuilder.assistants.assistants.create(assistant_config)
         conversation = appbuilder.assistants.conversations.create()
 
-        message = appbuilder.assistants.messages.create(
+        appbuilder.assistants.messages.create(
             conversation_id=conversation.id,
             content="今天北京的天气怎么样？",
         )
@@ -55,8 +57,32 @@ class TestAssistantTalk(unittest.TestCase):
             assistant_id=assistant.id,
         )
 
-        print(run_result)
+        self.assertEqual(run_result.status, "requires_action")
+        self.assertEqual(run_result.required_action.type, "submit_tool_outputs")
+        self.assertEqual(len(run_result.required_action.submit_tool_outputs.tool_calls), 1)
+        
+        tool_call = run_result.required_action.submit_tool_outputs.tool_calls[0]
+        
+        self.assertEqual(tool_call.type, "function")
+        self.assertEqual(tool_call.function.name, "get_cur_whether")
+        self.assertEqual(tool_call.function.arguments, '{"location":"北京","unit":"摄氏度"}')
 
+        func_res = get_cur_whether(**eval(tool_call.function.arguments))
+        print("func_res: ", func_res)
+
+        run_id = run_result.id
+        print("run_id: ", run_id)
+
+        appbuilder.assistants.messages.create(
+            conversation_id=conversation.id,
+            content=func_res,
+        )
+        run_result = appbuilder.assistants.runs.run(
+            conversation_id=conversation.id,
+            assistant_id=assistant.id,
+            tool_output={"tool_call_id":tool_call.id, "output": func_res},
+        )
+        print(run_result)
 
 if __name__ == "__main__":
     unittest.main()

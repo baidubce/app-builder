@@ -37,7 +37,7 @@ class Runs():
                 "Assistant with id {} does not exist".format(assistant_id))
         return assistant
 
-    def run(self, assistant_id: str, conversation_id: Union[str, None] = None, assistant_config: Union[AssistantConfig, None] = None, extra_conversation_id: Union[str, None] = None, tool_output=None) -> data_class.RunResult:
+    def run(self, assistant_id: str, conversation_id: Union[str, None] = None, assistant_config: Union[AssistantConfig, None] = None, extra_conversation_id: Union[str, None] = None, tool_output: Union[data_class.ToolOutput,None]=None) -> data_class.RunResult:
         headers = self._http_client.auth_header()
         headers['Content-Type'] = 'application/json'
         headers["Authorization"] = os.getenv("APPBUILDER_TOKEN", "")
@@ -59,7 +59,7 @@ class Runs():
         req.thread_id = conversation_id if conversation_id is not None else ""
         req.stream = False
         # req.thread = extra_conversation_id
-        req.tool_output = tool_output
+        req.tool_output = None if tool_output is None else data_class.ToolOutput(**tool_output)
 
         response = self._http_client.session.post(
             url=url,
@@ -68,6 +68,7 @@ class Runs():
             timeout=None
         )
         data = response.json()
+        print("data: ", data)
         resp = data_class.RunResult(**data)
         return resp
 
@@ -99,7 +100,8 @@ class Runs():
             url=url,
             headers=headers,
             json=req.model_dump(),
-            timeout=None
+            timeout=None,
+            stream=True
         )
 
         sse_client = SSEClient(response)
@@ -149,6 +151,7 @@ class Runs():
         )
 
         data = response.json()
+        print("submit data: ", data)
         resp = data_class.RunResult(**data)
         return resp
 

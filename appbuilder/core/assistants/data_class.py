@@ -103,17 +103,21 @@ class AssistantExample(BaseModel):
     content: str
     function_call: AssistantFunctionCall
 
+class AssistantFunctionJsonSchema(BaseModel):
+    type: str = 'object'
+    properties: Union[dict, None] = None
+    required: Union[list[str],None] = None
 
 class AssistantFunction(BaseModel):
     name: str
     description: str
-    parameters: str
-    responses: str = ""
+    parameters: Union[AssistantFunctionJsonSchema, None] = None
+    responses:  Union[AssistantFunctionJsonSchema, None] = None
     examples: Union[list[list[AssistantExample]], None] = None
 
 
 class AssistantTool(BaseModel):
-    type: str
+    type: str = 'function'
     function: AssistantFunction = None
 
 
@@ -208,7 +212,7 @@ class RunResult(BaseModel):
     model: str = ""
     instructions: str = ""
     tools: Union[list[AssistantTool], None] = None
-    file_ids: list[str] = []
+    file_ids: Union[list[str],None] = None
 
     status: str = ""
     required_action: Union[RequiredAction, None] = None
@@ -312,7 +316,7 @@ class AssistantRunRequest(BaseModel):
 class AssistantSubmitToolOutputsRequest(BaseModel):
     thread_id: str = ""
     run_id: str = ""
-    tool_outputs: Union[ToolOutput, None] = None
+    tool_outputs: Union[list[ToolOutput], None] = None
 
 
 class AssistantRunCancelRequest(BaseModel):
