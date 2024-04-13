@@ -13,6 +13,8 @@
 # limitations under the License.
 
 from appbuilder.core.assistants import data_class
+from appbuilder.core.component import Component
+from typing import Union
 
 class AssistantConfig(object):
     def __init__(self, name: str, description: str, meatadata: dict = {}, response_format: str = "text",
@@ -29,6 +31,7 @@ class AssistantConfig(object):
         self._thirdparty_tools = thirdparty_tools
         self._file_ids = file_ids
         self._model = model
+        self.function_name_component_map = {}
 
     def merge(self, new_assistant_config: 'AssistantConfig') -> dict:
         origin_schema = self.to_base_model()
@@ -55,20 +58,32 @@ class AssistantConfig(object):
         if length > 4096:
             return False
         return True
-    
-    # def find_custom_tool(self, tool_call: ToolCall):
-    #     pass
-
+ 
     def get_assistant_tool_list(self):
         tool_list = []
         if self._builtin_tools:
             for tool in self._builtin_tools:
                 tool_list.append(data_class.AssistantTool(**tool))
+
+        for tool in self._thirdparty_tools:
+            if isinstance(tool, Component):
+                tool_descr = {
+                    'type': 'function',
+                    'function': tool.manifests
+                }
+                tool_list.append(data_class.AssistantTool(**tool_descr))
+            else:
+                # TODO(chengmo): 添加ThirdpartyTool的语法合法性检查
+                tool_list.append(data_class.AssistantTool(**tool))
+        
+        self.function_name_component_map = {}
+        self.function_name_descr_map = {}
+        for tool in self._thirdparty_tools:
+            if isinstance(tool, Component):
+                self.function_name_component_map[tool.manifests['name']] = tool
+            else:
+                self.function_name_descr_map[tool['function'].get("name", "")] = tool
         return tool_list
-
-    def get_tools_descr(self):
-        pass
-
 
     def to_base_model(self):
         return {
@@ -147,6 +162,41 @@ class AssistantConfig(object):
     @property
     def model(self):
         return self._model
+    
+    def find_component_tool(self, tool_call: data_class.ToolCall) -> Union[Component, None]:
+        if tool_call.type != 'function':
+            return None
+        
+        if tool_call.function is None:
+            return None
+        
+        function_name = tool_call.function.name
+        if function_name in self.function_name_component_map:
+            return self.function_name_component_map[function_name]
+        return None
+    
+    def find_thirdparty_tool(self, tool_call: data_class.ToolCall) -> Union[Component, str, None]:
+        if tool_call.type != 'function':
+            return None
+        
+        if tool_call.function is None:
+            return None
+        
+        function_name = tool_call.function.name
+        if function_name in self.function_name_descr_map:
+            return self.function_name_descr_map[function_name]
+        return None
+    
+    def find_custom_tool(self, tool_call: data_class.ToolCall) -> Union[Component, str, None]:
+        component_tool = self.find_component_tool(tool_call)
+        if component_tool is not None:
+            return component_tool
+
+        thirdparty_tool = self.find_thirdparty_tool(tool_call)
+        if thirdparty_tool is not None:
+            return thirdparty_tool
+        
+        raise Exception("Cannot find the tool: {}".format(tool_call))
 
     def __str__(self):
         return "AssistantConfig(name={}, description={}, metadata={}, response_format={}, instructions={}, thought_instructions={}, chat_instructions={}, builtin_tools={}, thirdparty_tools={} file_ids={})".format(self._name, self._description, self._metadata,

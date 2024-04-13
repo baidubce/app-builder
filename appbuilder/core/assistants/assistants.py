@@ -15,8 +15,8 @@ import os
 import json
 from appbuilder.core.assistants.assistant_config import AssistantConfig
 from appbuilder.core.assistants import data_class
-from appbuilder.core.assistants.collector import Collector
-from appbuilder.core.assistants.collector import AssistantKeys
+from appbuilder.utils.collector import Collector
+from appbuilder.utils.collector import AssistantKeys
 from appbuilder.core._client import HTTPClient
 
 class Assistant(object):
@@ -60,7 +60,6 @@ class Assistants(object):
 
         url = "http://10.45.86.48/api/v1/assistants"
 
-        print(assistant_config.to_base_model())
         req = data_class.AssistantCreateRequest(**assistant_config.to_base_model())
 
         response = self._http_client.session.post(
@@ -70,7 +69,6 @@ class Assistants(object):
             timeout = None
         )
         data = response.json()
-        print(data)
         resp = data_class.AssistantCreateResponse(**data)
 
         id = resp.id
@@ -79,7 +77,7 @@ class Assistants(object):
         assistant_config = AssistantConfig(**data)
 
         assistant = Assistant(assistant_config, id=id, created_at=created_at, user_storage=user_storage)
-        Collector().add_to_collection(AssistantKeys.ASSISTANT, assistant.id, assistant)
+        Collector().add_to_collection(AssistantKeys.ASSISTANT, assistant, assistant.id)
         return assistant
 
 

@@ -121,6 +121,10 @@ from .core._exception import (
     AppBuilderServerException,
 )
 
+from appbuilder.core.assistants import assistants
+from appbuilder.core.assistants import AssistantConfig
+from appbuilder.core.assistants import data_class as assistant_data_class
+
 __all__ = [
     'logger',
 
@@ -178,4 +182,8 @@ __all__ = [
     "MixCardOCR",
     "AppBuilderClient",
     "AgentBuilder",
+
+    "AssistantConfig",
+    "assistants",
+    "assistant_data_class",
 ]
