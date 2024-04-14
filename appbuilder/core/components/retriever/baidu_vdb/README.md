@@ -1,4 +1,4 @@
-# 向量检索-VDB（BaiduVDBRetriever）
+# 向量检索-VectorDB（BaiduVectorDBRetriever）
 
 ## 简介
 向量检索-VDB组件（BaiduVDBRetriever）基于一款百度向量数据库的内容检索组件，支持根据文本的向量的相似度进行内容检索。
