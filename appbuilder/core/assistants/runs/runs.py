@@ -68,7 +68,6 @@ class Runs():
             timeout=None
         )
         data = response.json()
-        print("data: ", data)
         resp = data_class.RunResult(**data)
         return resp
 

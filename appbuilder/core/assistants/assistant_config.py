@@ -67,11 +67,12 @@ class AssistantConfig(object):
 
         for tool in self._thirdparty_tools:
             if isinstance(tool, Component):
-                tool_descr = {
-                    'type': 'function',
-                    'function': tool.manifests
-                }
-                tool_list.append(data_class.AssistantTool(**tool_descr))
+                for tool in tool.manifests:
+                    tool_descr = {
+                        'type': 'function',
+                        'function': tool
+                    }
+                    tool_list.append(data_class.AssistantTool(**tool_descr))
             else:
                 # TODO(chengmo): 添加ThirdpartyTool的语法合法性检查
                 tool_descr = {
@@ -84,7 +85,8 @@ class AssistantConfig(object):
         self.function_name_descr_map = {}
         for tool in self._thirdparty_tools:
             if isinstance(tool, Component):
-                self.function_name_component_map[tool.manifests['name']] = tool
+                for func in tool.manifests:
+                    self.function_name_component_map[func['name']] = tool
             else:
                 self.function_name_descr_map[tool.get("name", "")] = tool
         return tool_list

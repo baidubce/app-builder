@@ -63,6 +63,9 @@ class Files(object):
     def __init__(self):
         self._http_client = HTTPClient()
 
+    def add_docments(self, file_path:str, purpose:list):
+        return self.create(file_path, purpose)
+
     def create(self, file_path:str, purpose:str="") -> AssistantFile:
         headers = self._http_client.auth_header()
         headers["Authorization"] =  os.getenv("APPBUILDER_TOKEN", "")

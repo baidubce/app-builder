@@ -59,16 +59,15 @@ class TestAssistantTalk(unittest.TestCase):
 
         run_id = ""
         for r in run_result:
-            print(r)
+            print("\nrun detail: {}\n".format(r))
             if r.status == 'queued':
                 run_obj = r.details.run_object
                 run_id = run_obj.id
-                print("run_id: {}".format(run_id))
             elif r.status == 'requires_action':
                 detail = r.details
                 tool_call = detail.tool_calls[0]
                 func_res = get_cur_whether(**eval(tool_call.function.arguments))
-                submit_res = appbuilder.assistants.runs.submit_tool_outputs(
+                appbuilder.assistants.runs.submit_tool_outputs(
                     run_id=run_id,
                     conversation_id = conversation.id,
                     tool_outputs=[
@@ -76,7 +75,6 @@ class TestAssistantTalk(unittest.TestCase):
                          "output": func_res,}
                     ]
                 )
-                print(submit_res)
 
 
 if __name__ == "__main__":

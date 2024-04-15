@@ -56,6 +56,7 @@ class TestAssistantTalk(unittest.TestCase):
             conversation_id=conversation.id,
             assistant_id=assistant.id,
         )
+        print("\nFirst run result: {}\n".format(run_result))
 
         self.assertEqual(run_result.status, "requires_action")
         self.assertEqual(run_result.required_action.type, "submit_tool_outputs")
@@ -68,21 +69,14 @@ class TestAssistantTalk(unittest.TestCase):
         self.assertEqual(tool_call.function.arguments, '{"location":"北京","unit":"摄氏度"}')
 
         func_res = get_cur_whether(**eval(tool_call.function.arguments))
-        print("func_res: ", func_res)
+        print("\nFunction result: {}\n".format(func_res))
 
-        run_id = run_result.id
-        print("run_id: ", run_id)
-
-        appbuilder.assistants.messages.create(
-            conversation_id=conversation.id,
-            content=func_res,
-        )
         run_result = appbuilder.assistants.runs.run(
             conversation_id=conversation.id,
             assistant_id=assistant.id,
-            tool_output={"tool_call_id":tool_call.id, "output": func_res},
+            tool_output={"tool_call_id":tool_call.id, "output": func_res, "run_id": run_result.id},
         )
-        print(run_result)
+        print("\nFinal run result: {}\n".format(run_result))
 
 if __name__ == "__main__":
     unittest.main()

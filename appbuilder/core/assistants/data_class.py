@@ -296,6 +296,7 @@ class StreamRunMessage(BaseModel):
 class ToolOutput(BaseModel):
     tool_call_id: str = ""
     output: str = ""
+    run_id: str = ""
 
 
 class AssistantRunRequest(BaseModel):
