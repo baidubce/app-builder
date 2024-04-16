@@ -29,11 +29,11 @@ func main() {
 	os.Setenv("GATEWAY_URL", "")
 	config, err := appbuilder.NewSDKConfig("", "")
 	if err != nil {
-		fmt.Println("new sdk failed: ", err)
+		fmt.Println("new config failed: ", err)
 		return
 	}
 	// 初始化实例
-	appID := "请设置正确的应用ID"
+	appID := "请填写正确的应用ID"
 	agentBuilder, err := appbuilder.NewAgentBuilder(appID, config)
 	if err != nil {
 		fmt.Println("new agent builder failed: ", err)
@@ -58,10 +58,10 @@ func main() {
 		return
 	}
 
-	totalAnswer := ""
+	completedAnswer := ""
 	var answer *appbuilder.AgentBuilderAnswer
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
-		totalAnswer = totalAnswer + answer.Answer
+		completedAnswer = completedAnswer + answer.Answer
 		for _, ev := range answer.Events {
 			if ev.ContentType == appbuilder.TextContentType {
 				detail := ev.Detail.(appbuilder.TextDetail)
@@ -94,7 +94,7 @@ func main() {
 	// 迭代正常结束err应为io.EOF
 	if errors.Is(err, io.EOF) {
 		fmt.Println("run success")
-		fmt.Println("智能体回答内容： ", totalAnswer)
+		fmt.Println("智能体回答内容： ", completedAnswer)
 	} else {
 		fmt.Println("run failed:", err)
 	}
@@ -121,7 +121,7 @@ func main() {
 	os.Setenv("GATEWAY_URL", "")
 	config, err := appbuilder.NewSDKConfig("", "")
 	if err != nil {
-		fmt.Println("new sdk failed: ", err)
+		fmt.Println("new config failed: ", err)
 		return
 	}
 	// 初始化dataset实例
@@ -176,11 +176,11 @@ func main() {
 	os.Setenv("GATEWAY_URL", "")
 	config, err := appbuilder.NewSDKConfig("", "")
 	if err != nil {
-		fmt.Println("new sdk failed: ", err)
+		fmt.Println("new config failed: ", err)
 		return
 	}
 	// 初始化RAG实例
-	appID := ""
+	appID := "请填写正确的应用ID"
 	rag, err := appbuilder.NewRAG(appID, config)
 	if err != nil {
 		fmt.Println("new rag instance failed:", err)
@@ -192,16 +192,16 @@ func main() {
 		fmt.Println("run failed:", err)
 		return
 	}
-	totalAnswer := ""
+	completedAnswer := ""
 	// 迭代返回结果
 	var answer *appbuilder.RAGAnswer
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
-		totalAnswer = totalAnswer + answer.Answer
+		completedAnswer = completedAnswer + answer.Answer
 	}
 	// 迭代正常结束err应为io.EOF
 	if errors.Is(err, io.EOF) {
 		fmt.Println("run success")
-		fmt.Println("智能体回答内容： ", totalAnswer)
+		fmt.Println("RAG智能体回答内容： ", completedAnswer)
 	} else {
 		fmt.Println("run failed:", err)
 	}
