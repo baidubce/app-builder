@@ -8,7 +8,7 @@
 go get github.com/baidubce/app-builder/go/appbuilder
 ````
 
-## AgentBuilder使用示例
+## 1. AgentBuilder使用示例
 
 ```go
 package main
@@ -24,7 +24,8 @@ import (
 
 func main() {
 	// 设置APPBUILDER_TOKEN、GATEWAY_URL环境变量
-	os.Setenv("APPBUILDER_TOKEN", "")
+	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
+	// 默认可不填，默认值是 https://appbuilder.baidu.com
 	os.Setenv("GATEWAY_URL", "")
 	config, err := appbuilder.NewSDKConfig("", "")
 	if err != nil {
@@ -32,7 +33,7 @@ func main() {
 		return
 	}
 	// 初始化实例
-	appID := ""
+	appID := "请设置正确的应用ID"
 	agentBuilder, err := appbuilder.NewAgentBuilder(appID, config)
 	if err != nil {
 		fmt.Println("new agent builder failed: ", err)
@@ -101,7 +102,7 @@ func main() {
 
 ```
 
-## Dataset使用示例
+## 2. Dataset使用示例
 ```go
 package main
 
@@ -114,12 +115,13 @@ import (
 )
 
 func main() {
-	// 设置环境变量
-	os.Setenv("APPBUILDER_TOKEN", "")
+	// 设置APPBUILDER_TOKEN、GATEWAY_URL环境变量
+	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
+	// 默认可不填，默认值是 https://appbuilder.baidu.com
 	os.Setenv("GATEWAY_URL", "")
 	config, err := appbuilder.NewSDKConfig("", "")
 	if err != nil {
-		fmt.Println("new client config failed: ", err)
+		fmt.Println("new sdk failed: ", err)
 		return
 	}
 	// 初始化dataset实例
@@ -150,7 +152,11 @@ func main() {
 }
 ```
 
-## RAG使用示例
+## 3. RAG使用示例
+<span style="color:red">⚠️本示例仅适用于2024-04-02之前创建的历史RAG应用，最新创建的智能体应用，请参考上方**AgentBuilder**调用示例。
+</span>
+
+
 ```go
 package main
 
@@ -164,12 +170,14 @@ import (
 )
 
 func main() {
-	// 设置环境变量
-	os.Setenv("APPBUILDER_TOKEN", "")
+	// 设置APPBUILDER_TOKEN、GATEWAY_URL环境变量
+	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
+	// 默认可不填，默认值是 https://appbuilder.baidu.com
 	os.Setenv("GATEWAY_URL", "")
 	config, err := appbuilder.NewSDKConfig("", "")
 	if err != nil {
-		fmt.Println("new config failed: ", err)
+		fmt.Println("new sdk failed: ", err)
+		return
 	}
 	// 初始化RAG实例
 	appID := ""
@@ -198,5 +206,4 @@ func main() {
 		fmt.Println("run failed:", err)
 	}
 }
-
 ```
