@@ -45,7 +45,9 @@ func main() {
 		fmt.Println("create conversation failed: ", err)
 		return
 	}
-	// 上传文件
+	// 与创建AgentBuilder应用时绑定的知识库不同之处在于，
+	// 所上传文件仅在本次会话ID下发生作用，如果创建新的会话ID，上传的文件自动失效
+	// 而知识库在不同的会话ID下均有效
 	fileID, err := agentBuilder.UploadLocalFile(conversationID, "/path/to/cv.pdf")
 	if err != nil {
 		fmt.Println("upload local file failed:", err)
