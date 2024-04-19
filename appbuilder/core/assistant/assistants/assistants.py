@@ -34,9 +34,10 @@ class Assistants(object):
                chat_instructions: Optional[str] = "",
                tools: Optional[list[assistant_class.AssistantTool]] = [],
                file_ids: Optional[list[str]] = [],
-               ) -> assistant_class.BasicAssistant:
+               metadata: Optional[dict] = {},
+               ) -> assistant_class.AssistantCreateResponse:
         headers = self._http_client.auth_header()
-        url = self._http_client.service_url("assistants")
+        url = self._http_client.service_url("/v2/assistants")
 
         req = assistant_class.AssistantCreateRequest(
             name=name,
@@ -49,6 +50,7 @@ class Assistants(object):
             chat_instructions=chat_instructions,
             tools=tools,
             file_ids=file_ids,
+            metadata=metadata,
         )
 
         response = self._http_client.session.post(
@@ -57,19 +59,23 @@ class Assistants(object):
             json=req.model_dump(),
             timeout=None
         )
+        self._http_client.check_response_header(response)
+
         data = response.json()
-        resp = assistant_class.AssistantMessageCreateResponse(**data)
-        assistant = assistant_class.BasicAssistant(**resp.__dict__)
-        Collector().add_to_collection(AssistantKeys.ASSISTANT, assistant, assistant.id)
-        return assistant
+        self._http_client.check_assistant_response(data)
+        
+        resp = assistant_class.AssistantCreateResponse(**data)
+        Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
+        return resp
 
 
 if __name__ == '__main__':
-    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-ykmREDkgAECsWKMod4lyJ/5377100bfcf056e70b5e1e58c6378d50a30fe901"
+    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
 
+    test_file_ids = ["123"] * 11
     assistants = Assistants()
     assistant = assistants.create(
-        name="test",
+        name="Abc-_123",
         description="test",
     )
     print(assistant)

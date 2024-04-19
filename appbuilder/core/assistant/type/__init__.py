@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from .assistant_class import (
-    BasicAssistant,
     AssistantAnnotation,
     AssistantText,
     AssistantContent,

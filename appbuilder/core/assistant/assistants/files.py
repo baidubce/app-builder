@@ -17,93 +17,49 @@
 
 import os
 import json
-from appbuilder.core.assistants import data_class
-from appbuilder.core._client import HTTPClient
+from appbuilder.core.assistant.type import assistant_class
+from appbuilder.core._client import AssistantHTTPClient
 
-class AssistantFile(object):
-    def __init__(self, id:str, bytes:int=0, purpose:str="", create_at:int=0, filename:str="", classification_id:str="", **kwargs):
-        self._id = id
-        self._bytes = bytes
-        self._purpose = purpose
-        self._create_at = create_at
-        self._filename = filename
-        self._classification_id = classification_id
-
-    @property
-    def id(self):
-        return self._file_id
-    
-    @property
-    def bytes(self):
-        return self._bytes
-    
-    @property
-    def purpose(self):
-        return self._purpose
-    
-    @property
-    def create_at(self):
-        return self._create_at
-    
-    @property
-    def filename(self):
-        return self._filename
-    
-    @property
-    def classification_id(self):
-        return self._classification_id
-    
-    def __str__(self) -> str:
-        return f"id: {self._id}, bytes: {self._bytes}, purpose: {self._purpose}, create_at: {self._create_at}, filename: {self._filename}, classification_id: {self._classification_id}"
-
-    def __repr__(self) -> str:
-        return self.__str__()
 
 class Files(object):
     def __init__(self):
-        self._http_client = HTTPClient()
+        self._http_client = AssistantHTTPClient()
 
-    def add_docments(self, file_path:str, purpose:list):
+    def add_docments(self, file_path: str, purpose: list):
         return self.create(file_path, purpose)
 
-    def create(self, file_path:str, purpose:str="") -> AssistantFile:
+    def create(self, file_path: str, purpose: str = "assistant") -> assistant_class.AssistantFilesCreateResponse:
         headers = self._http_client.auth_header()
-        headers["Authorization"] =  os.getenv("APPBUILDER_TOKEN", "")
+        headers["Content-Type"] = "form-data"
+        url = self._http_client.service_url("/v2/storage/files")
 
-        url = "http://10.45.86.48/api/v1/files"
+        if not os.path.exists(file_path):
+            raise ValueError("File {} not exists".format(file_path))
 
         form_data = {
             'file': (os.path.basename(file_path), open(file_path, 'rb')),
         }
+
+        print("form_data", form_data)
+
         response = self._http_client.session.post(
             url,
             headers=headers,
-            files = form_data,
+            files=form_data,
             params={
                 'purpose': purpose
             }
         )
-        
+
+        request_id = self._http_client.response_request_id(response)
         data = response.json()
-        print(data)
-
-        resp = data_class.AssistantFilesCreateResponse(**data)
-        return AssistantFile(**resp.__dict__)
-        
-
-    def delete(self, file_id:str):
-        pass
-
-    def retrieve(self, file_id:str) -> AssistantFile:
-        pass
-
-    def list(self) -> list:
-        pass
+        self._http_client.check_assistant_response(request_id, data)
+        resp = assistant_class.AssistantFilesCreateResponse(**data)
+        return resp
 
 
 if __name__ == '__main__':
-    os.environ["GATEWAY_URL"] = "http://10.45.86.48/"
-    os.environ["APPBUILDER_TOKEN"] = "Bearer bce-v3/ALTAK-6AGZK6hjSpZmEclEuAWje/6d2d2ffc438f9f2ba66e23b21de69d96e7e5713a"
-    
+    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
+
     file = Files().create("/Users/chengmo/workspace/刘鑫的简历.pdf", "test")
     print(file)

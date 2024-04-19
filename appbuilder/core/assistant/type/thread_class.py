@@ -16,9 +16,9 @@ from pydantic import BaseModel
 from typing import Union
 
 from appbuilder.core.assistant.type import (
-    AssistantMessage
+    AssistantMessage,
     AssistantTool,
-
+    AssistantContent
 )
 
 class ConversationCreateResponse(BaseModel):

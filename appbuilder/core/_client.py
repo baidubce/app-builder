@@ -45,7 +45,8 @@ class HTTPClient:
         返回：
             无
         """
-        self.secret_key = secret_key if secret_key else os.getenv("APPBUILDER_TOKEN", "")
+        self.secret_key = secret_key if secret_key else os.getenv(
+            "APPBUILDER_TOKEN", "")
         if not self.secret_key:
             raise ValueError("secret_key is empty, please pass a nonempty secret_key "
                              "or set a secret_key in environment variable")
@@ -122,7 +123,8 @@ class HTTPClient:
             :rtype: str.
         """
         if "code" in data and "message" in data and "requestId" in data:
-            raise AppBuilderServerException(data["requestId"], data["code"], data["message"])
+            raise AppBuilderServerException(
+                data["requestId"], data["code"], data["message"])
 
     @staticmethod
     def check_console_response(response: requests.Response):
@@ -133,7 +135,8 @@ class HTTPClient:
         data = response.json()
         if "code" in data and data.get("code") != 0:
             requestId = __class__.response_request_id(response)
-            raise AppBuilderServerException(requestId, data["code"], data["message"])
+            raise AppBuilderServerException(
+                requestId, data["code"], data["message"])
 
     def auth_header(self):
         r"""auth_header is a helper method return auth info"""
@@ -161,13 +164,16 @@ class HTTPClient:
         def inner(*args, **kwargs):
             retry = kwargs.get("retry", 0)
             if retry < 0 or not isinstance(retry, int):
-                raise InvalidRequestArgumentError("retry must be int and bigger then zero")
+                raise InvalidRequestArgumentError(
+                    "retry must be int and bigger then zero")
             timeout = kwargs.get("timeout", None)
             if timeout and not (isinstance(timeout, float) or isinstance(timeout, tuple)):
-                raise InvalidRequestArgumentError("timeout must be float or tuple of float")
+                raise InvalidRequestArgumentError(
+                    "timeout must be float or tuple of float")
             return func(*args, **kwargs)
 
         return inner
+
 
 class AssistantHTTPClient(HTTPClient):
     def service_url(self, sub_path: str, prefix: str = None):
@@ -179,7 +185,7 @@ class AssistantHTTPClient(HTTPClient):
         # host + fix prefix + sub service path
         prefix = prefix if prefix else ""
         return self.gateway + prefix + sub_path
-    
+
     def auth_header(self):
         r"""auth_header is a helper method return auth info"""
         return {
@@ -187,3 +193,14 @@ class AssistantHTTPClient(HTTPClient):
             "Content-Type": "application/json"
 
         }
+
+    @staticmethod
+    def check_assistant_response(request_id, data):
+        if 'error' in data:
+            raise AssistantServerException(
+                request_id=request_id,
+                code=data['error']['code'],
+                message=data['error']['message'],
+                type=data['error']['type'],
+                params=data['error']['params']
+            )

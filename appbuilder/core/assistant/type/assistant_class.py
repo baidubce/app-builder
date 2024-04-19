@@ -13,7 +13,10 @@
 # limitations under the License.
 
 from pydantic import BaseModel
+from pydantic import Field
 from typing import Union
+from typing import Optional
+from enum import Enum
 
 
 class AssitantFileInfo(BaseModel):
@@ -68,8 +71,6 @@ class AssistantMessageCreateResponse(BaseModel):
     run_id: Union[str, None] = ""
     file_ids: Union[list[str], None] = []
 
-class BasicAssistantInfo(AssistantMessageCreateResponse):
-    pass
 
 class AssistantFilesCreateResponse(BaseModel):
     id: str = ""
@@ -91,10 +92,12 @@ class AssistantExample(BaseModel):
     content: str
     function_call: AssistantFunctionCall
 
+
 class AssistantFunctionJsonSchema(BaseModel):
     type: str = 'object'
     properties: Union[dict, None] = None
-    required: Union[list[str],None] = None
+    required: Union[list[str], None] = None
+
 
 class AssistantFunction(BaseModel):
     name: str
@@ -109,16 +112,26 @@ class AssistantTool(BaseModel):
     function: AssistantFunction = None
 
 
+class ResponseFormat(str, Enum):
+    TEXT = 'text'
+    JSON_OBJECT = 'json_object'
+
+
+class AssistantModel(str, Enum):
+    ERNIE_408K = 'ERNIE-4.0-8K'
+
 class AssistantCreateRequest(BaseModel):
-    model: str = "ERNIE-4.0-8K"
-    name: str
-    description: str
-    response_format: str = "text"
-    instructions: str
-    thought_instructions: str
-    chat_instructions: str
-    tools: list[AssistantTool]
-    file_ids: list[str]
+    model: AssistantModel = Field(default="ERNIE-4.0-8K")
+    name: str = Field(default="", min_length=1,
+                      max_length=64, pattern="^[0-9a-zA-Z_-]+$")
+    description: str = Field(default="", max_length=512)
+    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)
+    instructions: str = Field(default="", max_length=4096)
+    thought_instructions: str = Field(default="", max_length=4096)
+    chat_instructions: str = Field(default="", max_length=4096)
+    tools: list[AssistantTool] = Field(default=[], max_length=10)
+    file_ids: list[str] = Field(default=[], max_length=10)
+    metadata: dict = Field(default={}, max_length=16)
     assistant_id: str = ""
 
 
@@ -127,13 +140,10 @@ class AssistantCreateResponse(BaseModel):
     object: str = ""
     name: str = ""
     description: str = ""
-    model: str = ""
-    instructions: str = ""
-    tools: Union[list[AssistantTool], None] = None
-    metadata: Union[dict, None] = None
+    instructions: str
+    tools: Optional[list[AssistantTool]] = Field(default=[])
     created_at: int = 0
     thought_instructions: str = ""
     chat_instructions: str = ""
-    response_format: str = ""
-    file_ids: Union[list[str], None] = None
-    user_storage: Union[str, None] = None
+    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)
+    file_ids: Optional[list[str]] = Field(default=[])
