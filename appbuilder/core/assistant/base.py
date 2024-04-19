@@ -12,10 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .runs import (
-    Runs
-)
+from appbuilder.core.assistant.assistants import Assistants
+from appbuilder.core.assistant.threads import Threads
 
-__all__ = [
-    'Runs',
-]
+
+class Assistant(object):
+    @property
+    def assistants(self):
+        return Assistants()
+    
+    @property
+    def threads(self):
+        return Threads()
+    
+
+assistants = Assistant()

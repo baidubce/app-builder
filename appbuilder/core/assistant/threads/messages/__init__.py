@@ -12,5 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .messages import Messages
-from .messages import AssistantMessage
+from .messages import (
+    Messages
+)
+
+__all__ = [
+    'Messages',
+]

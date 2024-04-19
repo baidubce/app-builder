@@ -16,10 +16,9 @@ import json
 import os
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.core.assistants import data_class
+from appbuilder.core.assistant.type import data_class
 from appbuilder.core._client import HTTPClient
 from pydantic import BaseModel
-from appbuilder.core.assistants.messages import AssistantMessage
 
 class Conversation():
     def __init__(self, id: str, messages: list[data_class.AssistantMessage]):

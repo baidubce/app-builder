@@ -12,10 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .runs import (
-    Runs
+from .assistants import (
+    Assistants
+)
+
+from .files import (
+    Files
+)
+
+from .assistant_config import (
+    AssistantConfig
 )
 
 __all__ = [
-    'Runs',
+    'Assistants',
+    'Files',
+    'AssistantConfig',
 ]

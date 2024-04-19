@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from appbuilder.core.assistants import data_class
+from appbuilder.core.assistant.type import data_class
 from appbuilder.core.component import Component
 from typing import Union
 

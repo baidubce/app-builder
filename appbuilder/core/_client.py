@@ -168,3 +168,22 @@ class HTTPClient:
             return func(*args, **kwargs)
 
         return inner
+
+class AssistantHTTPClient(HTTPClient):
+    def service_url(self, sub_path: str, prefix: str = None):
+        r"""service_url is a helper method for concatenate service url.
+            :param sub_path: service unique sub path.
+            :param prefix: service prefix.
+            :rtype: str.
+         """
+        # host + fix prefix + sub service path
+        prefix = prefix if prefix else ""
+        return self.gateway + prefix + sub_path
+    
+    def auth_header(self):
+        r"""auth_header is a helper method return auth info"""
+        return {
+            "Authorization": self.secret_key,
+            "Content-Type": "application/json"
+
+        }
