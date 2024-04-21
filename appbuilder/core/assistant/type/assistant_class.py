@@ -36,40 +36,12 @@ class AssistantAnnotation(BaseModel):
 
 class AssistantText(BaseModel):
     value: str = ""
-    annotations: Union[list[str], None] = None
+    annotations: Optional[list[str]] = None
 
 
 class AssistantContent(BaseModel):
     type: str = "text"
-    text: Union[AssistantText, None] = None
-
-
-class AssistantMessage(BaseModel):
-    content: str
-    role: str = "user"
-    file_ids: list[str] = []
-
-
-class AssistantMessageCreateRequest(BaseModel):
-    thread_id: str
-    role: str = 'user'
-    content: str
-    file_ids: Union[list[str], None] = []
-
-
-class AssistantMessageCreateResponse(BaseModel):
-    id: str = ""
-    object: str = ""
-    name: str = ""
-    role: str = ""
-    content: Union[list[AssistantContent], None] = []
-    metadata: Union[dict, None] = None
-    created_at: int = 0
-    thread_id: str = ""
-    content_type: str = 'text'
-    assistant_id: Union[str, None] = ""
-    run_id: Union[str, None] = ""
-    file_ids: Union[list[str], None] = []
+    text: Optional[AssistantText] = None
 
 
 class AssistantFilesCreateResponse(BaseModel):

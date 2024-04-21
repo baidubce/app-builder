@@ -13,21 +13,60 @@
 # limitations under the License.
 
 from pydantic import BaseModel
+from pydantic import Field
+from enum import Enum
 from typing import Union
+from typing import Optional
+from appbuilder.core.assistant.type import AssistantModel,ResponseFormat
 
 from appbuilder.core.assistant.type import (
-    AssistantMessage,
     AssistantTool,
     AssistantContent
 )
 
-class ConversationCreateResponse(BaseModel):
+
+class AssistantMessageRole(str, Enum):
+    USER = 'user'
+
+class AssistantMessage(BaseModel):
+    content: str
+    role: Optional[AssistantMessageRole] = Field(
+        default=AssistantMessageRole.USER)
+    file_ids: Optional[list[str]] = Field(default=[], max_length=10)
+
+
+class AssistantMessageCreateRequest(BaseModel):
+    thread_id: str
+    role: Optional[str] = Field(
+        default=AssistantMessageRole.USER)
+    content: str
+    file_ids: Optional[list[str]] =  Field(default=[], max_length=10)
+
+
+class AssistantMessageCreateResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    role: str = Field(
+        default=AssistantMessageRole.USER)
+    content: Optional[list[AssistantContent]] = []
+    created_at: int = 0
+    thread_id: str = ""
+    assistant_id: Optional[str] = ""
+    run_id: Optional[str] = ""
+    file_ids: Optional[list[str]] = []
+
+
+class AssistantThread(BaseModel):
+    messages: Optional[list[AssistantMessage]] = []
+    metadata: Optional[dict] = Field(default={}, max_length=16)
+
+class ThreadCreateResponse(BaseModel):
     id: str = ""
     object: str = ""
     created_at: int = 0
 
 
-class ConversationCreateRequest(BaseModel):
+class ThreadCreateRequest(BaseModel):
     messages: list[AssistantMessage]
 
 
@@ -66,11 +105,13 @@ class LastError(BaseModel):
     type: str = ""
     message: str = ""
 
+class FinalAnswerMessage(BaseModel):
+    message_id: Optional[str] = ""
+    content: Optional[AssistantContent] = None
 
 class FinalAnswer(BaseModel):
-    type: str = ""
-    message: Union[str, None] = None
-
+    type: Optional[str] = "message"
+    message: Optional[FinalAnswerMessage] = None
 
 class RunResult(BaseModel):
     id: str = ""
@@ -80,13 +121,15 @@ class RunResult(BaseModel):
 
     model: str = ""
     instructions: str = ""
-    tools: Union[list[AssistantTool], None] = None
-    file_ids: Union[list[str],None] = None
+    thought_instructions: str = ""
+    chat_instructions: str = ""
+    tools: Optional[list[AssistantTool]] = None
+    file_ids: Optional[list[str]] = None
 
     status: str = ""
-    required_action: Union[RequiredAction, None] = None
-    last_error: Union[LastError, None] = None
-    final_answer: Union[FinalAnswer, None] = None
+    required_action: Optional[RequiredAction] = None
+    last_error: Optional[LastError] = None
+    final_answer: Optional[FinalAnswer] = None
     created_at: int = 0
     started_at: int = 0
     expired_at: int = 0
@@ -133,33 +176,31 @@ class RunStepResult(BaseModel):
 
 
 class StreamRunDetail(BaseModel):
-    type: str
+    type: str = ""
     message_creation: Union[RunMessageCreation, None] = None
     run_object: Union[RunResult, None] = None
     run_step_object: Union[RunStepResult, None] = None
-    action_info: Union[RunActionInfo, None] = None
     tool_calls: Union[list[ToolCall], None] = None
-    tool_info: Union[list[ToolInfo], None] = None
     error_info: Union[LastError, None] = None
 
 
 class StreamRunStatus(BaseModel):
+    event: str = "status"
     status: str = ""
     send_id: int = 0
     message: str = ""
     event_type: str = ""
-    details: Union[StreamRunDetail, None] = None
+    details: Optional[StreamRunDetail] = None
 
 
 class StreamRunMessage(BaseModel):
+    event: str = "message"
     status: str = ""
     send_id: int = 0
     is_end: int = 0
     message_id: str = ""
     message_index: str = ""
-    content: Union[list[AssistantContent],None] = None
-    metadata: Union[dict,None] = None
-
+    content: Optional[list[AssistantContent]] = None
 
 
 class ToolOutput(BaseModel):
@@ -169,26 +210,26 @@ class ToolOutput(BaseModel):
 
 
 class AssistantRunRequest(BaseModel):
-    thread_id: str = ""
-    model: str = ""
-    assistant_id: str = ""
-    metadata: Union[dict, None] = None
-    response_format: str = "text"
-    instructions: str = ""
-    thought_instructions: str = ""
-    chat_instructions: str = ""
-    stream: bool = False
-    thread: Union[AssistantThread, None] = None
-    tools: list[AssistantTool] = []
-    tool_output: Union[ToolOutput, None] = None
+    thread_id: Optional[str] = Field(default="")
+    model: AssistantModel = Field(default="ERNIE-4.0-8K")
+    assistant_id: Optional[str] = Field(default="")
+    metadata: Optional[dict] =  Field(default={}, max_length=16)
+    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)
+    instructions: Optional[str] = Field(default="", max_length=4096)
+    thought_instructions: Optional[str] = Field(default="", max_length=4096)
+    chat_instructions: Optional[str] = Field(default="", max_length=4096)
+    stream: Optional[bool] = False
+    thread: Optional[AssistantThread] = None
+    tools: Optional[list[AssistantTool]] = []
+    tool_output: Optional[ToolOutput] = None
 
 
 class AssistantSubmitToolOutputsRequest(BaseModel):
-    thread_id: str = ""
-    run_id: str = ""
-    tool_outputs: Union[list[ToolOutput], None] = None
+    thread_id: str = Field(default="", min_length=1)
+    run_id: str = Field(default="", min_length=1)
+    tool_outputs: Optional[list[ToolOutput]] = Field(default=[], min_length=1)
 
 
 class AssistantRunCancelRequest(BaseModel):
-    thread_id: str = ""
-    run_id: str = ""
+    thread_id: str = Field(default="", min_length=1)
+    run_id: str = Field(default="", min_length=1)

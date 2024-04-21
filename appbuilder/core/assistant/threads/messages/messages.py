@@ -12,52 +12,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import os
-from appbuilder.core.assistants import data_class
-from appbuilder.core._client import HTTPClient
+from appbuilder.core.assistant.type import thread_class
+from appbuilder.core._client import AssistantHTTPClient
 from typing import Optional
-from typing import Union
-from appbuilder.core.assistants.data_class import AssistantMessage
+
 
 class Messages(object):
     def __init__(self):
-        self._http_client = HTTPClient()
+        self._http_client = AssistantHTTPClient()
 
-    def create(self, conversation_id: str, content: str, role: str = "user", file_ids: Optional[list[str]] = []) -> data_class.AssistantMessageCreateResponse:
+    def create(self, 
+               thread_id: str,
+               content: str,
+               role: Optional[str] = "user",
+               file_ids: Optional[list[str]] = []) -> thread_class.AssistantMessageCreateResponse:
         headers = self._http_client.auth_header()
-        headers['Content-Type'] = 'application/json'
-        headers["Authorization"] =  os.getenv("APPBUILDER_TOKEN", "")
+        url = self._http_client.service_url("/v2/threads/messages")
 
-        url = "http://10.45.86.48/api/v1/threads/messages"
-        
-        req = data_class.AssistantMessageCreateRequest(
-            thread_id=conversation_id,
+        req = thread_class.AssistantMessageCreateRequest(
+            thread_id=thread_id,
             content=content,
             role=role,
             file_ids=file_ids
         )
 
-        response =self._http_client.session.post(
-            url = url,
+        response = self._http_client.session.post(
+            url=url,
             headers=headers,
             json=req.model_dump(),
             timeout=None
         )
+        self._http_client.check_response_header(response)
 
         data = response.json()
-        resp = data_class.AssistantMessageCreateResponse(**data)
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)
 
-        return resp
+        response = thread_class.AssistantMessageCreateResponse(**data)
+        return response
 
 
 if __name__ == "__main__":
-    os.environ["GATEWAY_URL"] = "http://10.45.86.48/"
-    os.environ["APPBUILDER_TOKEN"] = "Bearer bce-v3/ALTAK-6AGZK6hjSpZmEclEuAWje/6d2d2ffc438f9f2ba66e23b21de69d96e7e5713a"
-    
-    from appbuilder.core.assistants.conversations.conversations import Conversations
-    conversation = Conversations().create()
+    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
+    from appbuilder.core.assistant.threads import Threads
+    conversation = Threads().create()
     message = Messages().create(
-        conversation_id = conversation.id, 
+        thread_id=conversation.id,
         content="hello")
     print(message)

@@ -62,8 +62,9 @@ class Assistants(object):
         self._http_client.check_response_header(response)
 
         data = response.json()
-        self._http_client.check_assistant_response(data)
-        
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)
+
         resp = assistant_class.AssistantCreateResponse(**data)
         Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
         return resp

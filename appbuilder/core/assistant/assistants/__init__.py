@@ -20,12 +20,12 @@ from .files import (
     Files
 )
 
-from .assistant_config import (
-    AssistantConfig
-)
+# from .assistant_config import (
+#     AssistantConfig
+# )
 
 __all__ = [
     'Assistants',
     'Files',
-    'AssistantConfig',
+    # 'AssistantConfig',
 ]

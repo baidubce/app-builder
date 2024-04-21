@@ -50,8 +50,11 @@ class Files(object):
                 }
             )
 
+        self._http_client.check_response_header(response)
+
         request_id = self._http_client.response_request_id(response)
         data = response.json()
+
         self._http_client.check_assistant_response(request_id, data)
         resp = assistant_class.AssistantFilesCreateResponse(**data)
         return resp

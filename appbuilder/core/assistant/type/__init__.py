@@ -16,9 +16,6 @@ from .assistant_class import (
     AssistantAnnotation,
     AssistantText,
     AssistantContent,
-    AssistantMessage,
-    AssistantMessageCreateRequest,
-    AssistantMessageCreateResponse, 
     AssitantFileInfo,
     AssistantFilesCreateResponse,
     AssistantFunctionCall,
@@ -27,7 +24,9 @@ from .assistant_class import (
     AssistantFunction,
     AssistantTool,
     AssistantCreateRequest,
-    AssistantCreateResponse
+    AssistantCreateResponse,
+    AssistantModel,
+    ResponseFormat
 )
 
 
