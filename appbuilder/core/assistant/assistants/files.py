@@ -30,26 +30,25 @@ class Files(object):
 
     def create(self, file_path: str, purpose: str = "assistant") -> assistant_class.AssistantFilesCreateResponse:
         headers = self._http_client.auth_header()
-        headers["Content-Type"] = "form-data"
+        headers.pop("Content-Type")
         url = self._http_client.service_url("/v2/storage/files")
 
         if not os.path.exists(file_path):
             raise ValueError("File {} not exists".format(file_path))
 
-        form_data = {
-            'file': (os.path.basename(file_path), open(file_path, 'rb')),
-        }
+        with open(file_path, 'rb') as f:
+            files = [
+                ('file',(os.path.basename(file_path), f))
+            ]
 
-        print("form_data", form_data)
-
-        response = self._http_client.session.post(
-            url,
-            headers=headers,
-            files=form_data,
-            params={
-                'purpose': purpose
-            }
-        )
+            response = self._http_client.session.post(
+                url,
+                headers=headers,
+                files=files,
+                params={
+                    'purpose': purpose
+                }
+            )
 
         request_id = self._http_client.response_request_id(response)
         data = response.json()
@@ -61,5 +60,5 @@ class Files(object):
 if __name__ == '__main__':
     os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
 
-    file = Files().create("/Users/chengmo/workspace/刘鑫的简历.pdf", "test")
+    file = Files().create("/Users/chengmo/workspace/培训.pdf")
     print(file)
