@@ -26,6 +26,19 @@ class Files(object):
         self._http_client = AssistantHTTPClient()
 
     def create(self, file_path: str, purpose: str = "assistant") -> assistant_type.AssistantFilesCreateResponse:
+        """
+        上传文件到助理存储中。
+        
+        Args:
+            file_path (str): 要上传的文件路径。
+            purpose (str, optional): 上传文件的用途。默认为 "assistant"。
+        
+        Returns:
+            assistant_type.AssistantFilesCreateResponse: 上传文件后返回的响应对象。
+        
+        Raises:
+            ValueError: 如果指定的文件路径不存在，则会引发此异常。
+        """
         headers = self._http_client.auth_header()
         headers.pop("Content-Type")
         url = self._http_client.service_url("/v2/storage/files")
@@ -55,10 +68,3 @@ class Files(object):
         self._http_client.check_assistant_response(request_id, data)
         resp = assistant_type.AssistantFilesCreateResponse(**data)
         return resp
-
-
-if __name__ == '__main__':
-    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
-
-    file = Files().create("/Users/chengmo/workspace/培训.pdf")
-    print(file)

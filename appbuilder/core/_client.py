@@ -177,16 +177,32 @@ class HTTPClient:
 
 class AssistantHTTPClient(HTTPClient):
     def service_url(self, sub_path: str, prefix: str = None):
-        r"""service_url is a helper method for concatenate service url.
-            :param sub_path: service unique sub path.
-            :param prefix: service prefix.
-            :rtype: str.
-         """
-        # host + fix prefix + sub service path
+        """
+        根据给定的子路径和前缀，返回完整的服务URL。
+        
+        Args:
+            sub_path (str): 子路径，例如 "/api/v1/user"。
+            prefix (str, optional): URL前缀，例如 "http://example.com"。默认为None。
+        
+        Returns:
+            str: 完整的服务URL，例如 "http://example.com/api/v1/user"。
+        """
         prefix = prefix if prefix else ""
         return self.gateway + prefix + sub_path
 
     def auth_header(self):
+        """
+        返回一个包含认证信息的字典
+        
+        Args:
+            无参数。
+        
+        Returns:
+            dict: 包含认证信息的字典，包含以下键值对：
+                - "Authorization": str类型，表示认证密钥。
+                - "Content-Type": str类型，表示请求内容类型，固定为"application/json"。
+        
+        """
         r"""auth_header is a helper method return auth info"""
         return {
             "Authorization": self.secret_key,
@@ -196,6 +212,20 @@ class AssistantHTTPClient(HTTPClient):
 
     @staticmethod
     def check_assistant_response(request_id, data):
+        """
+        检查助手的响应结果，如果返回了错误信息，则抛出 AssistantServerException 异常。
+        
+        Args:
+            request_id (str): 请求 ID。
+            data (dict): 助手返回的响应数据。
+        
+        Returns:
+            None
+        
+        Raises:
+            AssistantServerException: 如果助手返回了错误信息，则抛出该异常。
+        
+        """
         if 'error' in data:
             raise AssistantServerException(
                 request_id=request_id,

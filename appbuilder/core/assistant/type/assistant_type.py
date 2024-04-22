@@ -21,52 +21,40 @@ from appbuilder.core.assistant.type import (
     AssistantModel
 )
 
-# class AssitantFileInfo(BaseModel):
-#     url: str = ""
-#     url_type: str = ""
-#     file_name: str = ""
-#     file_id: str = ""
-
-# class AssistantAnnotation(BaseModel):
-#     type: str = "file_info"
-#     text: str = ""
-#     start_index: int = 0
-#     end_index: int = 0
-#     file_info: Union[AssitantFileInfo, None] = None
-
+# AssistantFilesCreateResponse类，用于描述创建助理文件后的响应信息
 class AssistantFilesCreateResponse(BaseModel):
-    id: str = ""
-    bytes: int = 0
-    object: str = ""
-    purpose: str = ""
-    create_at: int = 0
-    filename: str = ""
-    classification_id: str = ""
+    id: str = ""  # 文件ID
+    bytes: int = 0  # 文件大小（字节）
+    object: str = ""  # 文件对象标识
+    purpose: str = ""  # 文件用途
+    create_at: int = 0  # 文件创建时间戳
+    filename: str = ""  # 文件名
+    classification_id: str = ""  # 文件分类ID
 
+# AssistantCreateRequest类，用于描述创建助理的请求参数
 class AssistantCreateRequest(BaseModel):
-    model: AssistantModel = Field(default="ERNIE-4.0-8K")
-    name: str = Field(default="", min_length=1,
-                      max_length=64, pattern="^[0-9a-zA-Z_-]+$")
-    description: str = Field(default="", max_length=512)
-    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)
-    instructions: str = Field(default="", max_length=4096)
-    thought_instructions: str = Field(default="", max_length=4096)
-    chat_instructions: str = Field(default="", max_length=4096)
-    tools: list[AssistantTool] = Field(default=[], max_length=10)
-    file_ids: list[str] = Field(default=[], max_length=10)
-    metadata: dict = Field(default={}, max_length=16)
-    assistant_id: str = ""
+    model: AssistantModel = Field(default="ERNIE-4.0-8K")  # 使用的模型
+    name: str = Field(default="", min_length=1, max_length=64, pattern="^[0-9a-zA-Z_-]+$")  # 助理名称
+    description: str = Field(default="", max_length=512)  # 助理描述
+    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)  # 响应格式
+    instructions: str = Field(default="", max_length=4096)  # 助理的通用指令
+    thought_instructions: str = Field(default="", max_length=4096)  # 助理的思维指令
+    chat_instructions: str = Field(default="", max_length=4096)  # 助理的聊天指令
+    tools: list[AssistantTool] = Field(default=[], max_length=10)  # 助理使用的工具列表
+    file_ids: list[str] = Field(default=[], max_length=10)  # 关联文件的ID列表
+    metadata: dict = Field(default={}, max_length=16)  # 元数据
+    assistant_id: str = ""  # 助理ID
 
-
+# AssistantCreateResponse类，用于描述创建助理后的响应信息
 class AssistantCreateResponse(BaseModel):
-    id: str = ""
-    object: str = ""
-    name: str = ""
-    description: str = ""
-    instructions: str
-    tools: Optional[list[AssistantTool]] = Field(default=[])
-    created_at: int = 0
-    thought_instructions: str = ""
-    chat_instructions: str = ""
-    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)
-    file_ids: Optional[list[str]] = Field(default=[])
+    id: str = ""  # 助理ID
+    object: str = ""  # 助理对象标识
+    name: str = ""  # 助理名称
+    description: str = ""  # 助理描述
+    instructions: str  # 助理的通用指令
+    tools: Optional[list[AssistantTool]] = Field(default=[])  # 助理使用的工具列表
+    created_at: int = 0  # 助理创建时间戳
+    thought_instructions: str = ""  # 助理的思维指令
+    chat_instructions: str = ""  # 助理的聊天指令
+    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)  # 响应格式
+    file_ids: Optional[list[str]] = Field(default=[])  # 关联文件的ID列表

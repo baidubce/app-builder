@@ -32,6 +32,19 @@ class Threads():
         return Runs()
 
     def create(self, messages: Optional[list[thread_type.AssistantMessage]] = []) -> thread_type.ThreadCreateResponse:
+        """
+        创建一个新的对话线程。
+        
+        Args:
+            messages: 要发送给助手的消息列表。如果不传入此参数，则会创建一个空对话线程。
+        
+        Returns:
+            一个ThreadCreateResponse对象，包含新创建的线程的相关信息。
+        
+        Raises:
+            ValueError: 如果传入的messages参数不是列表类型。
+        
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads")
         
@@ -55,10 +68,3 @@ class Threads():
 
         response = thread_type.ThreadCreateResponse(**data)
         return response
-
-
-if __name__ == '__main__':
-    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
-    message = thread_type.AssistantMessage(content="hello")
-    conversations = Threads().create([message])
-    print(conversations)

@@ -42,6 +42,26 @@ class Assistants(object):
                file_ids: Optional[list[str]] = [],
                metadata: Optional[dict] = {},
                ) -> assistant_type.AssistantCreateResponse:
+        """
+        创建助手实例
+        
+        Args:
+            name (str): 助手名称
+            description (str): 助手描述
+            assistant_id (Optional[str], optional): 助手ID. Defaults to "".
+            model (Optional[str], optional): 模型名称. Defaults to "ERNIE-4.0-8K".
+            response_format (Optional[str], optional): 响应格式. Defaults to 'text'.
+            instructions (Optional[str], optional): 指令. Defaults to "".
+            thought_instructions (Optional[str], optional): 思考指令. Defaults to "".
+            chat_instructions (Optional[str], optional): 聊天指令. Defaults to "".
+            tools (Optional[list[assistant_type.AssistantTool]], optional): 工具列表. Defaults to [].
+            file_ids (Optional[list[str]], optional): 文件ID列表. Defaults to [].
+            metadata (Optional[dict], optional): 元数据. Defaults to {}.
+        
+        Returns:
+            assistant_type.AssistantCreateResponse: 助手创建响应
+        
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/assistants")
 

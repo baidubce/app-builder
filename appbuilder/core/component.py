@@ -137,33 +137,3 @@ class Component:
     def tool_eval(self, **kwargs):
         if len(self.manifests) > 0:
             raise NotImplementedError
-        
-    # def get_tool_descr(self) -> dict:
-    #     # 将Component中的mainfest转化为jsonstr格式
-    #     # 例如
-    #     # mainfest = []
-    #     # 生成结果为 {'name': "get_cur_whether", "description"}
-    #     # function_descr = {
-    #     #     'name': "get_cur_whether",
-    #     #     'description': '这是一个获得当地天气的工具',
-    #     #     'parameters': {
-    #     #         'type': "object",
-    #     #         'properties': {
-    #     #             'location': {
-    #     #                 'type': "string",
-    #     #                 'description': "省，市名，例如：河北省",
-    #     #             },
-    #     #             'unit': {
-    #     #                 'type': "string",
-    #     #                 'enum': [
-    #     #                     "摄氏度",
-    #     #                     "华氏度"
-    #     #                 ]
-    #     #             }
-    #     #         },
-    #     #         'required': [
-    #     #             'location'
-    #     #         ]
-    #     #     }
-    #     # }
-    #     return self.manifests

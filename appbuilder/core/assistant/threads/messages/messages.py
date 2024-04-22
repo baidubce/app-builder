@@ -27,6 +27,21 @@ class Messages(object):
                content: str,
                role: Optional[str] = "user",
                file_ids: Optional[list[str]] = []) -> thread_type.AssistantMessageCreateResponse:
+        """
+        创建一条消息。
+        
+        Args:
+            thread_id (str): 线程ID。
+            content (str): 消息内容。
+            role (Optional[str], optional): 角色，可选值为"user"或"assistant"。默认为"user"。
+            file_ids (Optional[list[str]], optional): 消息中包含的文件ID列表。默认为空列表。
+        
+        Returns:
+            thread_type.AssistantMessageCreateResponse: 消息创建响应对象。
+        
+        Raises:
+            HttpError: 如果请求失败，则抛出HttpError异常。
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/messages")
 
@@ -51,13 +66,3 @@ class Messages(object):
 
         response = thread_type.AssistantMessageCreateResponse(**data)
         return response
-
-
-if __name__ == "__main__":
-    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
-    from appbuilder.core.assistant.threads import Threads
-    conversation = Threads().create()
-    message = Messages().create(
-        thread_id=conversation.id,
-        content="hello")
-    print(message)

@@ -174,7 +174,7 @@ class TableOCR(Component):
             markdowns.append(markdown_table)
         return markdowns
 
-    def tool_eval(self, name: str="", streaming: bool = False, **kwargs):
+    def tool_eval(self, name: str, streaming: bool, **kwargs):
         result = {}
         file_names = kwargs.get("file_names", None)
         if not file_names:

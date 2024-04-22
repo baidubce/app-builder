@@ -37,6 +37,31 @@ class Runs():
             metadata: Optional[dict] = {},
             tool_output: Optional[thread_type.ToolOutput] = None,
             ) -> thread_type.RunResult:
+        """
+        Args:
+            assistant_id (str): 助手id
+            thread_id (Optional[str], optional): 对话id. Defaults to "".
+            thread (Optional[thread_type.AssistantThread], optional): 对话信息. Defaults to None.
+            model (Optional[str], optional): 模型名称. Defaults to "ERNIE-4.0-8K".
+            response_format (Optional[str], optional): 返回格式. Defaults to "text".
+            instructions (Optional[str], optional): 指令信息. Defaults to "".
+            thought_instructions (Optional[str], optional): 思考指令信息. Defaults to "".
+            chat_instructions (Optional[str], optional): 闲聊指令信息. Defaults to "".
+            tools (Optional[list[assistant_type.AssistantTool]], optional): 工具列表. Defaults to [].
+            metadata (Optional[dict], optional): 元数据. Defaults to {}.
+            tool_output (Optional[thread_type.ToolOutput], optional): 工具输出. Defaults to None.
+        
+        Returns:
+            thread_type.RunResult: 运行结果
+        
+        Raises:
+            ValueError: thread_id和thread不能同时为空
+        
+        Note:
+            1. 如果thread_id没有传，则thread必须要传值
+            2. 如果这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user
+            3. 如果这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs")
 
@@ -92,6 +117,33 @@ class Runs():
                    metadata: Optional[dict] = {},
                    tool_output: Optional[thread_type.ToolOutput] = None,
                    ):
+        """
+        启动一个流式运行的对话，用于处理对话流中的消息。
+        
+        Args:
+            assistant_id (str): 助理ID。
+            thread_id (Optional[str], optional): 线程ID，用于恢复历史对话。默认为空字符串。
+            thread (Optional[thread_type.AssistantThread], optional): 线程对象，用于恢复历史对话。默认为None。
+            model (Optional[str], optional): 使用的模型名称。默认为"ERNIE-4.0-8K"。
+            response_format (Optional[str], optional): 响应格式，支持"text"和"json"两种格式。默认为"text"。
+            instructions (Optional[str], optional): 指令文本。默认为空字符串。
+            thought_instructions (Optional[str], optional): 思考指令文本。默认为空字符串。
+            chat_instructions (Optional[str], optional): 聊天指令文本。默认为空字符串。
+            tools (Optional[list[assistant_type.AssistantTool]], optional): 使用的工具列表。默认为空列表。
+            metadata (Optional[dict], optional): 元数据字典。默认为空字典。
+            tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象。默认为None。
+        
+        Returns:
+            Iterator[thread_type.AssistantRunEvent]: 返回一个迭代器，用于遍历流式运行中的事件。
+        
+        Raises:
+            ValueError: 如果thread_id和thread参数同时为空，则会引发ValueError异常。
+        
+        Note:
+            1. 如果thread_id没有传，则thread必须要传值。
+            2. 如果这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user。
+            3. 如果这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user。
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs")
 
@@ -131,6 +183,16 @@ class Runs():
         return self._iterate_events(sse_client.events())
 
     def _iterate_events(self, events):
+        """
+        根据给定的事件列表，生成对应的事件处理结果
+        
+        Args:
+            events (list): 事件列表，每个元素为一个包含 'event' 和 'data' 属性的字典对象
+        
+        Returns:
+            generator: 返回一个生成器，每次迭代返回一个处理结果对象，可能是 StreamRunStatus 或 StreamRunMessage
+        
+        """
         for event in events:
             try:
                 event_class = event.event
@@ -157,6 +219,18 @@ class Runs():
                             run_id: str,
                             thread_id: str,
                             tool_outputs: Optional[list[thread_type.ToolOutput]]) -> thread_type.RunResult:
+        """
+        向服务端提交工具输出
+        
+        Args:
+            run_id (str): 运行ID
+            thread_id (str): 线程ID
+            tool_outputs (Optional[list[thread_type.ToolOutput]]): 工具输出列表，可选
+        
+        Returns:
+            thread_type.RunResult: 运行结果
+        
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs/submit_tool_outputs")
 
@@ -182,6 +256,17 @@ class Runs():
         return resp
 
     def cancel(self, run_id: str, thread_id: str) -> thread_type.RunResult:
+        """
+        取消指定线程的运行
+        
+        Args:
+            run_id (str): 运行的ID
+            thread_id (str): 线程的ID
+        
+        Returns:
+            thread_type.RunResult: 取消运行的结果
+        
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs/cancel")
 
@@ -204,32 +289,3 @@ class Runs():
 
         resp = thread_type.RunResult(**data)
         return resp
-
-
-if __name__ == "__main__":
-    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
-
-    from appbuilder.core.assistant.assistants import Assistants
-    assistant = Assistants().create(
-        name="Abc-_123",
-        description="服务机器人"
-    )
-
-    from appbuilder.core.assistant.threads import Threads
-    thread = Threads().create()
-
-    from appbuilder.core.assistant.threads import Messages
-    Messages().create(
-        thread_id=thread.id,
-        content="hello"
-    )
-
-    result = Runs().stream_run(
-        assistant_id=assistant.id,
-        thread_id=thread.id,
-        instructions="每句话开头加上我是秦始皇")
-    # print(result)
-    for r in result:
-        print("\n-------")
-        print(r)
-        print("-------\n")
