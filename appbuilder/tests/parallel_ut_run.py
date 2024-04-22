@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# add test
 import os
 import sys
 import multiprocessing
@@ -190,6 +192,17 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
 
 
 def parallel_execute_unittest(test_cases, parallel_num=4):
+    """
+    并行执行测试用例，并返回执行结果
+    
+    Args:
+        test_cases (list): 测试用例列表，每个元素为测试文件路径
+        parallel_num (int, optional): 并行执行测试用例的数量，默认为4
+    
+    Returns:
+        tuple: 返回一个包含成功用例列表、失败用例列表和总用时的元组
+    
+    """
     case_num = len(test_cases)
     success_cases = []
     failed_cases = []
@@ -221,6 +234,18 @@ def parallel_execute_unittest(test_cases, parallel_num=4):
 
 
 def run_cpu_parallel_unittest():
+    """
+    运行 CPU 并行单测。
+    
+    Args:
+        无
+    
+    Returns:
+        success_cases (list): 运行成功的单测列表
+        failed_cases (list): 运行失败的单测列表
+        total_time (float): 运行单测的总耗时（单位：秒）
+    
+    """
     os.environ["TEST_CASE"] = "CPU_PARALLEL"
     logger.info("\n================ CPU_PARALLEL ================\n")
 
@@ -257,6 +282,17 @@ def run_cpu_parallel_unittest():
 
 
 def run_cpu_serial_unittest():
+    """
+    运行CPU_SERIAL模式下的单元测试,包括并行和串行两种方式,记录并打印成功和失败的情况及耗时
+    
+    Args:
+        无
+    
+    Returns:
+        success_cases (list): 成功运行的测试用例列表
+        failed_cases (list): 失败运行的测试用例列表
+        total_time (float): 运行总耗时（单位：秒）
+    """
     os.environ["TEST_CASE"] = "CPU_SERIAL"
     logger.info("\n================ CPU_SERIAL ================\n")
 
@@ -327,6 +363,16 @@ def run_unknown_unittest():
 
 
 def create_unittest_report():
+    """
+    生成单元测试报告。
+    
+    Args:
+        无。
+    
+    Returns:
+        无返回值。
+    
+    """
     # 创建日志目录
     if not os.path.exists("./ut_logs"):
         os.mkdir("./ut_logs")
