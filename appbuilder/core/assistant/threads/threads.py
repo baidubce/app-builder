@@ -15,11 +15,21 @@
 import os
 from typing import Optional
 from appbuilder.core.assistant.type import thread_class
+from appbuilder.core.assistant.threads.messages import Messages
+from appbuilder.core.assistant.threads.runs import Runs
 from appbuilder.core._client import AssistantHTTPClient
 
 class Threads():
     def __init__(self) -> None:
         self._http_client = AssistantHTTPClient()
+
+    @property
+    def messages(self) -> Messages:
+        return Messages()
+    
+    @property
+    def runs(self) -> Runs:
+        return Runs()
 
     def create(self, messages: Optional[list[thread_class.AssistantMessage]] = []) -> thread_class.ThreadCreateResponse:
         headers = self._http_client.auth_header()

@@ -7,8 +7,7 @@ from appbuilder import TableOCR
 
 class TestAssistantTalk(unittest.TestCase):
     def setUp(self) -> None:
-        os.environ["GATEWAY_URL"] = "http://10.45.86.48/"
-        os.environ["APPBUILDER_TOKEN"] = "Bearer bce-v3/ALTAK-6AGZK6hjSpZmEclEuAWje/6d2d2ffc438f9f2ba66e23b21de69d96e7e5713a"
+        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
 
     def test_end_to_end(self):
         assistant_config = appbuilder.AssistantConfig(

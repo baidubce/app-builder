@@ -17,11 +17,12 @@ from pydantic import Field
 from enum import Enum
 from typing import Union
 from typing import Optional
-from appbuilder.core.assistant.type import AssistantModel,ResponseFormat
 
 from appbuilder.core.assistant.type import (
     AssistantTool,
-    AssistantContent
+    AssistantContent,
+    AssistantModel,
+    ResponseFormat
 )
 
 

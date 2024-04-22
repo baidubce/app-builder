@@ -16,7 +16,7 @@ from appbuilder.core.assistant.assistants import Assistants
 from appbuilder.core.assistant.threads import Threads
 
 
-class Assistant(object):
+class BetaAssistant(object):
     @property
     def assistants(self):
         return Assistants()
@@ -26,4 +26,4 @@ class Assistant(object):
         return Threads()
     
 
-assistants = Assistant()
+beta = BetaAssistant()

@@ -121,6 +121,10 @@ from .core._exception import (
     AppBuilderServerException,
 )
 
+from appbuilder.core.assistant.base import beta
+assistants  = beta.assistants
+threads = beta.threads
+
 __all__ = [
     'logger',
 

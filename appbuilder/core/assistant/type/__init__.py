@@ -12,32 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .assistant_class import (
-    AssistantAnnotation,
-    AssistantText,
-    AssistantContent,
-    AssitantFileInfo,
-    AssistantFilesCreateResponse,
+from .public_class import (
     AssistantFunctionCall,
     AssistantExample,
     AssistantFunctionJsonSchema,
     AssistantFunction,
     AssistantTool,
+    ResponseFormat,
+    AssistantModel,
+    AssistantText,
+    AssistantContent
+)
+
+
+from .assistant_class import (
+    # AssitantFileInfo,
+    # AssistantAnnotation,
+    AssistantFilesCreateResponse,
     AssistantCreateRequest,
     AssistantCreateResponse,
-    AssistantModel,
-    ResponseFormat
 )
 
 
 from .thread_class import (
-    
+    AssistantMessageRole,
+    AssistantMessage,
+    AssistantMessageCreateRequest,
+    AssistantMessageCreateResponse,
+    AssistantThread,
+    ThreadCreateResponse,
+    ThreadCreateRequest,
+    AssistantThread,
     RunActionInfo,
     FuncitonCall,
     ToolCall,
     SubmitToolOutput,
     RequiredAction,
     LastError,
+    FinalAnswerMessage,
     FinalAnswer,
     RunResult,
     RunMessageCreation,

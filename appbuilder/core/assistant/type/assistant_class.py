@@ -14,35 +14,25 @@
 
 from pydantic import BaseModel
 from pydantic import Field
-from typing import Union
 from typing import Optional
-from enum import Enum
+from appbuilder.core.assistant.type import (
+    AssistantTool,
+    ResponseFormat,
+    AssistantModel
+)
 
+# class AssitantFileInfo(BaseModel):
+#     url: str = ""
+#     url_type: str = ""
+#     file_name: str = ""
+#     file_id: str = ""
 
-class AssitantFileInfo(BaseModel):
-    url: str = ""
-    url_type: str = ""
-    file_name: str = ""
-    file_id: str = ""
-
-
-class AssistantAnnotation(BaseModel):
-    type: str = "file_info"
-    text: str = ""
-    start_index: int = 0
-    end_index: int = 0
-    file_info: Union[AssitantFileInfo, None] = None
-
-
-class AssistantText(BaseModel):
-    value: str = ""
-    annotations: Optional[list[str]] = None
-
-
-class AssistantContent(BaseModel):
-    type: str = "text"
-    text: Optional[AssistantText] = None
-
+# class AssistantAnnotation(BaseModel):
+#     type: str = "file_info"
+#     text: str = ""
+#     start_index: int = 0
+#     end_index: int = 0
+#     file_info: Union[AssitantFileInfo, None] = None
 
 class AssistantFilesCreateResponse(BaseModel):
     id: str = ""
@@ -52,45 +42,6 @@ class AssistantFilesCreateResponse(BaseModel):
     create_at: int = 0
     filename: str = ""
     classification_id: str = ""
-
-
-class AssistantFunctionCall(BaseModel):
-    name: str
-    arguments: str
-
-
-class AssistantExample(BaseModel):
-    role: str = "user"
-    content: str
-    function_call: AssistantFunctionCall
-
-
-class AssistantFunctionJsonSchema(BaseModel):
-    type: str = 'object'
-    properties: Union[dict, None] = None
-    required: Union[list[str], None] = None
-
-
-class AssistantFunction(BaseModel):
-    name: str
-    description: str
-    parameters: Union[AssistantFunctionJsonSchema, None] = None
-    responses:  Union[AssistantFunctionJsonSchema, None] = None
-    examples: Union[list[list[AssistantExample]], None] = None
-
-
-class AssistantTool(BaseModel):
-    type: str = 'function'
-    function: AssistantFunction = None
-
-
-class ResponseFormat(str, Enum):
-    TEXT = 'text'
-    JSON_OBJECT = 'json_object'
-
-
-class AssistantModel(str, Enum):
-    ERNIE_408K = 'ERNIE-4.0-8K'
 
 class AssistantCreateRequest(BaseModel):
     model: AssistantModel = Field(default="ERNIE-4.0-8K")
