@@ -13,15 +13,21 @@
 # limitations under the License.
 import os
 from typing import Optional
-from appbuilder.core.assistant.type import assistant_class
+from appbuilder.core.assistant.type import assistant_type
 from appbuilder.utils.collector import Collector
 from appbuilder.utils.collector import AssistantKeys
 from appbuilder.core._client import AssistantHTTPClient
+from appbuilder.core.assistant.assistants.files import Files
 
 
 class Assistants(object):
     def __init__(self):
         self._http_client = AssistantHTTPClient()
+
+    @property
+    def files(self):
+        return Files()
+
 
     def create(self,
                name: str,
@@ -32,14 +38,14 @@ class Assistants(object):
                instructions: Optional[str] = "",
                thought_instructions: Optional[str] = "",
                chat_instructions: Optional[str] = "",
-               tools: Optional[list[assistant_class.AssistantTool]] = [],
+               tools: Optional[list[assistant_type.AssistantTool]] = [],
                file_ids: Optional[list[str]] = [],
                metadata: Optional[dict] = {},
-               ) -> assistant_class.AssistantCreateResponse:
+               ) -> assistant_type.AssistantCreateResponse:
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/assistants")
 
-        req = assistant_class.AssistantCreateRequest(
+        req = assistant_type.AssistantCreateRequest(
             name=name,
             description=description,
             assistant_id=assistant_id,
@@ -65,6 +71,6 @@ class Assistants(object):
         request_id = self._http_client.response_request_id(response)
         self._http_client.check_assistant_response(request_id, data)
 
-        resp = assistant_class.AssistantCreateResponse(**data)
+        resp = assistant_type.AssistantCreateResponse(**data)
         Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
         return resp

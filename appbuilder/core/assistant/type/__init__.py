@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .public_class import (
+from .public_type import (
     AssistantFunctionCall,
     AssistantExample,
     AssistantFunctionJsonSchema,
@@ -25,7 +25,7 @@ from .public_class import (
 )
 
 
-from .assistant_class import (
+from .assistant_type import (
     # AssitantFileInfo,
     # AssistantAnnotation,
     AssistantFilesCreateResponse,
@@ -34,7 +34,7 @@ from .assistant_class import (
 )
 
 
-from .thread_class import (
+from .thread_type import (
     AssistantMessageRole,
     AssistantMessage,
     AssistantMessageCreateRequest,

@@ -12,18 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from appbuilder.core.assistant.assistants import Assistants
-from appbuilder.core.assistant.threads import Threads
-
 
 class BetaAssistant(object):
     @property
     def assistants(self):
+        from appbuilder.core.assistant.assistants import Assistants
         return Assistants()
     
     @property
     def threads(self):
+        from appbuilder.core.assistant.threads import Threads
         return Threads()
     
+    @property
+    def type(self):
+        from appbuilder.core.assistant import type
+        return type
+    
+    @property
+    def assistant_type(self):
+        from appbuilder.core.assistant.type import assistant_type
+        return assistant_type
+    
+    @property
+    def thread_type(self):
+        from appbuilder.core.assistant.type import thread_type
+        return thread_type
+    
+    @property
+    def public_type(self):
+        from appbuilder.core.assistant.type import public_type
+        return public_type
 
 assistant = BetaAssistant()

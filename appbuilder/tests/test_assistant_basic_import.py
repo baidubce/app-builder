@@ -59,6 +59,13 @@ class TestAssistantImport(unittest.TestCase):
         self.assertIn("submit_tool_outputs", obj_dir)
         self.assertIn("cancel", obj_dir)
 
+    def test_type_obj_import(self):
+        from appbuilder import assistant
+        type_folder = assistant.type
+        assistant_type = assistant.assistant_type
+        thread_type = assistant.thread_type
+        public_type = assistant.public_type
+
         
 if __name__ == '__main__':
     unittest.main()

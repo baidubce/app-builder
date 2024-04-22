@@ -14,7 +14,7 @@
 
 import os
 from typing import Optional
-from appbuilder.core.assistant.type import thread_class
+from appbuilder.core.assistant.type import thread_type
 from appbuilder.core.assistant.threads.messages import Messages
 from appbuilder.core.assistant.threads.runs import Runs
 from appbuilder.core._client import AssistantHTTPClient
@@ -31,11 +31,14 @@ class Threads():
     def runs(self) -> Runs:
         return Runs()
 
-    def create(self, messages: Optional[list[thread_class.AssistantMessage]] = []) -> thread_class.ThreadCreateResponse:
+    def create(self, messages: Optional[list[thread_type.AssistantMessage]] = []) -> thread_type.ThreadCreateResponse:
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads")
         
-        req = thread_class.ThreadCreateRequest(
+        if  not isinstance(messages, list):
+            raise ValueError("Threads().create() messages must be a list, but got: {}".format(messages))
+
+        req = thread_type.ThreadCreateRequest(
             messages=messages)
 
         response =self._http_client.session.post(
@@ -50,12 +53,12 @@ class Threads():
         request_id = self._http_client.response_request_id(response)
         self._http_client.check_assistant_response(request_id, data)
 
-        response = thread_class.ThreadCreateResponse(**data)
+        response = thread_type.ThreadCreateResponse(**data)
         return response
 
 
 if __name__ == '__main__':
     os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
-    message = thread_class.AssistantMessage(content="hello")
+    message = thread_type.AssistantMessage(content="hello")
     conversations = Threads().create([message])
     print(conversations)

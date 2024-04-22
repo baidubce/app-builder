@@ -28,17 +28,18 @@ from appbuilder.core.assistant.type import (
 
 class AssistantMessageRole(str, Enum):
     USER = 'user'
+    ASSISTANT = 'assistant'
 
 class AssistantMessage(BaseModel):
     content: str
-    role: Optional[AssistantMessageRole] = Field(
+    role: AssistantMessageRole = Field(
         default=AssistantMessageRole.USER)
     file_ids: Optional[list[str]] = Field(default=[], max_length=10)
 
 
 class AssistantMessageCreateRequest(BaseModel):
     thread_id: str
-    role: Optional[str] = Field(
+    role: AssistantMessageRole = Field(
         default=AssistantMessageRole.USER)
     content: str
     file_ids: Optional[list[str]] =  Field(default=[], max_length=10)
@@ -47,7 +48,7 @@ class AssistantMessageCreateRequest(BaseModel):
 class AssistantMessageCreateResponse(BaseModel):
     id: str = ""
     object: str = ""
-    role: str = Field(
+    role: AssistantMessageRole = Field(
         default=AssistantMessageRole.USER)
     content: Optional[list[AssistantContent]] = []
     created_at: int = 0

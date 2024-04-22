@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import os
-from appbuilder.core.assistant.type import thread_class
+from appbuilder.core.assistant.type import thread_type
 from appbuilder.core._client import AssistantHTTPClient
 from typing import Optional
 
@@ -26,11 +26,11 @@ class Messages(object):
                thread_id: str,
                content: str,
                role: Optional[str] = "user",
-               file_ids: Optional[list[str]] = []) -> thread_class.AssistantMessageCreateResponse:
+               file_ids: Optional[list[str]] = []) -> thread_type.AssistantMessageCreateResponse:
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/messages")
 
-        req = thread_class.AssistantMessageCreateRequest(
+        req = thread_type.AssistantMessageCreateRequest(
             thread_id=thread_id,
             content=content,
             role=role,
@@ -49,7 +49,7 @@ class Messages(object):
         request_id = self._http_client.response_request_id(response)
         self._http_client.check_assistant_response(request_id, data)
 
-        response = thread_class.AssistantMessageCreateResponse(**data)
+        response = thread_type.AssistantMessageCreateResponse(**data)
         return response
 
 

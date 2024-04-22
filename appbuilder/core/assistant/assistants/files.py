@@ -17,7 +17,7 @@
 
 import os
 import json
-from appbuilder.core.assistant.type import assistant_class
+from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
 
 
@@ -25,10 +25,7 @@ class Files(object):
     def __init__(self):
         self._http_client = AssistantHTTPClient()
 
-    def add_docments(self, file_path: str, purpose: list):
-        return self.create(file_path, purpose)
-
-    def create(self, file_path: str, purpose: str = "assistant") -> assistant_class.AssistantFilesCreateResponse:
+    def create(self, file_path: str, purpose: str = "assistant") -> assistant_type.AssistantFilesCreateResponse:
         headers = self._http_client.auth_header()
         headers.pop("Content-Type")
         url = self._http_client.service_url("/v2/storage/files")
@@ -56,7 +53,7 @@ class Files(object):
         data = response.json()
 
         self._http_client.check_assistant_response(request_id, data)
-        resp = assistant_class.AssistantFilesCreateResponse(**data)
+        resp = assistant_type.AssistantFilesCreateResponse(**data)
         return resp
 
 

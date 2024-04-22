@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from appbuilder.core.assistant.type import assistant_class
+from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core.component import Component
 from typing import Union
 
@@ -173,7 +173,7 @@ from typing import Union
 #     def model(self):
 #         return self._model
     
-#     def find_component_tool(self, tool_call: assistant_class.ToolCall) -> Union[Component, None]:
+#     def find_component_tool(self, tool_call: assistant_type.ToolCall) -> Union[Component, None]:
 #         if tool_call.type != 'function':
 #             return None
         
@@ -185,7 +185,7 @@ from typing import Union
 #             return self.function_name_component_map[function_name]
 #         return None
     
-#     def find_thirdparty_tool(self, tool_call: assistant_class.ToolCall) -> Union[Component, str, None]:
+#     def find_thirdparty_tool(self, tool_call: assistant_type.ToolCall) -> Union[Component, str, None]:
 #         if tool_call.type != 'function':
 #             return None
         

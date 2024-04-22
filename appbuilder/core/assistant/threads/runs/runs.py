@@ -14,8 +14,8 @@
 import os
 import json
 from typing import Optional
-from appbuilder.core.assistant.type import thread_class
-from appbuilder.core.assistant.type import assistant_class
+from appbuilder.core.assistant.type import thread_type
+from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
 from appbuilder.utils.sse_util import SSEClient
 
@@ -27,16 +27,16 @@ class Runs():
     def run(self,
             assistant_id: str,
             thread_id: Optional[str] = "",
-            thread: Optional[thread_class.AssistantThread] = None,
+            thread: Optional[thread_type.AssistantThread] = None,
             model: Optional[str] = "ERNIE-4.0-8K",
             response_format: Optional[str] = "text",
             instructions: Optional[str] = "",
             thought_instructions: Optional[str] = "",
             chat_instructions: Optional[str] = "",
-            tools: Optional[list[assistant_class.AssistantTool]] = [],
+            tools: Optional[list[assistant_type.AssistantTool]] = [],
             metadata: Optional[dict] = {},
-            tool_output: Optional[thread_class.ToolOutput] = None,
-            ) -> thread_class.RunResult:
+            tool_output: Optional[thread_type.ToolOutput] = None,
+            ) -> thread_type.RunResult:
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs")
 
@@ -49,7 +49,7 @@ class Runs():
         if thread_id == "" and thread is None:
             raise ValueError("Runs().run() 参数thread_id和thread不能同时为空")
 
-        req = thread_class.AssistantRunRequest(
+        req = thread_type.AssistantRunRequest(
             thread_id=thread_id,
             thread=thread,
             model=model,
@@ -76,21 +76,21 @@ class Runs():
         request_id = self._http_client.response_request_id(response)
         self._http_client.check_assistant_response(request_id, data)
 
-        resp = thread_class.RunResult(**data)
+        resp = thread_type.RunResult(**data)
         return resp
 
     def stream_run(self,
                    assistant_id: str,
                    thread_id: Optional[str] = "",
-                   thread: Optional[thread_class.AssistantThread] = None,
+                   thread: Optional[thread_type.AssistantThread] = None,
                    model: Optional[str] = "ERNIE-4.0-8K",
                    response_format: Optional[str] = "text",
                    instructions: Optional[str] = "",
                    thought_instructions: Optional[str] = "",
                    chat_instructions: Optional[str] = "",
-                   tools: Optional[list[assistant_class.AssistantTool]] = [],
+                   tools: Optional[list[assistant_type.AssistantTool]] = [],
                    metadata: Optional[dict] = {},
-                   tool_output: Optional[thread_class.ToolOutput] = None,
+                   tool_output: Optional[thread_type.ToolOutput] = None,
                    ):
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs")
@@ -104,7 +104,7 @@ class Runs():
         if thread_id == "" and thread is None:
             raise ValueError("Runs().run() 参数thread_id和thread不能同时为空")
 
-        req = thread_class.AssistantRunRequest(
+        req = thread_type.AssistantRunRequest(
             thread_id=thread_id,
             thread=thread,
             model=model,
@@ -144,9 +144,9 @@ class Runs():
                 data = json.loads(data)
 
                 if event_class == "status":
-                    result = thread_class.StreamRunStatus(**data)
+                    result = thread_type.StreamRunStatus(**data)
                 elif event_class == "message":
-                    result = thread_class.StreamRunMessage(**data)
+                    result = thread_type.StreamRunMessage(**data)
 
             except Exception as e:
                 print(e)
@@ -155,13 +155,13 @@ class Runs():
 
     def submit_tool_outputs(self,
                             run_id: str,
-                            conversation_id: str,
-                            tool_outputs: Optional[list[thread_class.ToolOutput]]) -> thread_class.RunResult:
+                            thread_id: str,
+                            tool_outputs: Optional[list[thread_type.ToolOutput]]) -> thread_type.RunResult:
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs/submit_tool_outputs")
 
-        req = thread_class.AssistantSubmitToolOutputsRequest(
-            thread_id=conversation_id,
+        req = thread_type.AssistantSubmitToolOutputsRequest(
+            thread_id=thread_id,
             run_id=run_id,
             tool_outputs=tool_outputs
         )
@@ -178,16 +178,16 @@ class Runs():
         request_id = self._http_client.response_request_id(response)
         self._http_client.check_assistant_response(request_id, data)
 
-        resp = thread_class.RunResult(**data)
+        resp = thread_type.RunResult(**data)
         return resp
 
-    def cancel(self, run_id: str, conversation_id: str) -> thread_class.RunResult:
+    def cancel(self, run_id: str, thread_id: str) -> thread_type.RunResult:
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs/cancel")
 
-        req = thread_class.AssistantRunCancelRequest(
+        req = thread_type.AssistantRunCancelRequest(
             run_id=run_id,
-            thread_id=conversation_id
+            thread_id=thread_id
         )
         
         response = self._http_client.session.post(
@@ -202,7 +202,7 @@ class Runs():
         request_id = self._http_client.response_request_id(response)
         self._http_client.check_assistant_response(request_id, data)
 
-        resp = thread_class.RunResult(**data)
+        resp = thread_type.RunResult(**data)
         return resp
 
 

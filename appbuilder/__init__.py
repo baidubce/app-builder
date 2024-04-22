@@ -181,5 +181,5 @@ __all__ = [
     "AppBuilderClient",
     "AgentBuilder",
 
-    "assistant"
+    "assistant",
 ]

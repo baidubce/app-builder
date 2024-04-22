@@ -2,19 +2,19 @@ import unittest
 import os
 import appbuilder
 
-class TestAssistantImport(unittest.TestCase):
+class TestAssistant(unittest.TestCase):
     def setUp(self):
         os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
 
     def test_assistants_create_v1(self):
-        from appbuilder.core.assistant.type import assistant_class
+        from appbuilder.core.assistant.type import assistant_type
 
         assistant = appbuilder.assistant.assistants.create(
             name="Abc-_123",
             description="test",
         )
 
-        self.assertIsInstance(assistant, assistant_class.AssistantCreateResponse)
+        self.assertIsInstance(assistant, assistant_type.AssistantCreateResponse)
         self.assertEqual(assistant.name, "Abc-_123")
         self.assertEqual(assistant.description, "test")
 
