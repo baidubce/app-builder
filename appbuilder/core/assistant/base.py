@@ -26,4 +26,4 @@ class BetaAssistant(object):
         return Threads()
     
 
-beta = BetaAssistant()
+assistant = BetaAssistant()
