@@ -80,6 +80,7 @@ class TestDocCropEnhance(unittest.TestCase):
             None
 
         """
+        # 定义一个图片URL
         image_url = "https://bj.bcebos.com/v1/appbuilder/doc_enhance_test.png?" \
                     "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01" \
                     "-24T12%3A51%3A09Z%2F-1%2Fhost%2F2020d2433da471b40dafa933d557a1e" \
