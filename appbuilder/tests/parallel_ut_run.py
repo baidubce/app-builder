@@ -147,6 +147,16 @@ def pull_last_n_log(ut_context, file_name, line_count=80):
 
 
 def run_sync_unittest(test_file):
+    """
+    同步运行单元测试
+    
+    Args:
+        test_file (str): 测试文件名
+    
+    Returns:
+        dict: 包含进程对象、日志文件对象以及开始时间的字典
+    
+    """
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
     cmd = COVERAGE_CMD + [test_file]
@@ -373,7 +383,7 @@ def create_unittest_report():
         无返回值。
     
     """
-    # 创建日志目录
+git diff master feature-branch    # 创建日志目录
     if not os.path.exists("./ut_logs"):
         os.mkdir("./ut_logs")
 
