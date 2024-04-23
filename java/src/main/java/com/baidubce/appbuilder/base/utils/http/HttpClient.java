@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.UUID;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -43,6 +44,7 @@ public class HttpClient {
         httpPost.setHeader("X-Appbuilder-Authorization", this.SecretKey);
         httpPost.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
         httpPost.setHeader("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.7.0\",\"appbuilder_sdk_language\":\"java\"}");
+        httpPost.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
         httpPost.setEntity(entity);
         return httpPost;
     }
