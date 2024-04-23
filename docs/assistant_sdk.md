@@ -121,5 +121,5 @@ run_result = appbuilder.assistant.threads.runs.run(
 ## 进阶用法
 
 - [Assistant SDK 数据类型文档](./assistant_type.md)
-- [Assistant SDK 基础能力CookBook](./assistant_example.md)
+- [Assistant SDK 基础能力CookBook](../cookbooks/assistant_function_call.ipynb)
 
