@@ -16,6 +16,7 @@
 """Base client for interact with backend server"""
 
 import os
+import uuid
 from typing import Optional
 
 import requests
@@ -117,7 +118,9 @@ class HTTPClient:
     def auth_header(self):
         r"""auth_header is a helper method return auth info"""
         auth_header = get_default_header()
-        return auth_header.update({"X-Appbuilder-Authorization": self.secret_key})
+        auth_header["X-Appbuilder-Request-Id"] = str(uuid.uuid4())
+        auth_header["X-Appbuilder-Authorization"] = self.secret_key
+        return auth_header
 
     @staticmethod
     def response_request_id(response: requests.Response):

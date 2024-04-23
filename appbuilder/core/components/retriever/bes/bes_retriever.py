@@ -19,6 +19,7 @@
 """
 import importlib
 import os
+import uuid
 import random
 import string
 from typing import Dict, Any
@@ -87,10 +88,13 @@ class BESVectorStoreIndex:
 
         gateway = os.getenv("GATEWAY_URL") if os.getenv("GATEWAY_URL") else GATEWAY_URL
 
+        headers = get_default_header()
+        headers["X-Appbuilder-Request-Id"] = str(uuid.uuid4())
+        headers["X-Appbuilder-Authorization"] = f"{secret_key}"
         connection_params = {
             "hosts": [gateway + self.prefix + self.base_es_url + cluster_id],
             "http_auth": (user_name, password),
-            "headers": get_default_header().update({'X-Appbuilder-Authorization': f"{secret_key}"})
+            "headers": headers
         }
 
         bes_client = self.es(**connection_params)
