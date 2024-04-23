@@ -383,7 +383,7 @@ def create_unittest_report():
         无返回值。
     
     """
-git diff master feature-branch    # 创建日志目录
+    # 创建日志目录
     if not os.path.exists("./ut_logs"):
         os.mkdir("./ut_logs")
 
