@@ -17,6 +17,7 @@ __version__ = '0.7.0'
 
 import sys
 import copy
+import pydantic
 
 class PythonVersionChecker:
     def __init__(self):
@@ -34,12 +35,13 @@ class PythonVersionChecker:
 checker = PythonVersionChecker()
 checker.current_version
 
+class SDKReportConfig(pydantic.BaseModel):
+    appbuilder_sdk_version: str = __version__
+    appbuilder_sdk_language: str = "python"
+
 # report information
 default_header = {
-    "X-Appbuilder-Sdk-Config": {
-        "appbuilder_sdk_version": __version__,
-        "appbuilder_sdk_language": "python",
-    },
+    "X-Appbuilder-Sdk-Config": SDKReportConfig().model_dump_json(),
     "X-Appbuilder-Origin":'appbuilder_sdk'
 }
 
