@@ -19,7 +19,6 @@ public class AgentBuilderTest {
     @Before
     public void setUp() {
         System.setProperty("APPBUILDER_TOKEN", "xxx");
-        System.setProperty("GATEWAY_URL", "xxx");
         appId = "xxx";
     }
 
