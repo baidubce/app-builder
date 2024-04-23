@@ -50,6 +50,8 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 func (t *SDKConfig) AuthHeader() http.Header {
 	header := make(http.Header)
 	header.Set("X-Appbuilder-Authorization", t.SecretKey)
+	header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
+	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.7.0\",\"appbuilder_sdk_language\":\"go\"}")
 	return header
 }
 

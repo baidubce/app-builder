@@ -26,6 +26,7 @@ from appbuilder.core.component import Component, Message
 from appbuilder.core.components.embeddings.component import Embedding
 from appbuilder.core.constants import GATEWAY_URL
 from appbuilder.utils.logger_util import logger
+from appbuilder import get_default_header
 
 
 class BESVectorStoreIndex:
@@ -89,7 +90,7 @@ class BESVectorStoreIndex:
         connection_params = {
             "hosts": [gateway + self.prefix + self.base_es_url + cluster_id],
             "http_auth": (user_name, password),
-            "headers": {'X-Appbuilder-Authorization': f"{secret_key}"}
+            "headers": get_default_header().update({'X-Appbuilder-Authorization': f"{secret_key}"})
         }
 
         bes_client = self.es(**connection_params)

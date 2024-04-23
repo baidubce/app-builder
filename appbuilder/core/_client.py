@@ -21,6 +21,8 @@ from typing import Optional
 import requests
 from requests.adapters import HTTPAdapter, Retry
 
+from appbuilder import get_default_header
+
 from appbuilder.core._exception import *
 from appbuilder.core.constants import GATEWAY_URL
 
@@ -114,7 +116,8 @@ class HTTPClient:
 
     def auth_header(self):
         r"""auth_header is a helper method return auth info"""
-        return {"X-Appbuilder-Authorization": self.secret_key}
+        auth_header = get_default_header()
+        return auth_header.update({"X-Appbuilder-Authorization": self.secret_key})
 
     @staticmethod
     def response_request_id(response: requests.Response):

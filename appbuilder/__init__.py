@@ -13,14 +13,14 @@
 # limitations under the License.
 
 
-__version__ = '0.1.0'
+__version__ = '0.7.0'
 
 import sys
-
+import copy
 
 class PythonVersionChecker:
     def __init__(self):
-        self.min_version = (3, 8)
+        self.min_version = (3, 9)
         self.current_version = sys.version_info
         self.check_version()
 
@@ -33,6 +33,18 @@ class PythonVersionChecker:
 # Creating an instance to test the function
 checker = PythonVersionChecker()
 checker.current_version
+
+# report information
+default_header = {
+    "X-Appbuilder-Sdk-Config": {
+        "appbuilder_sdk_version": __version__,
+        "appbuilder_sdk_language": "python",
+    },
+    "X-Appbuilder-Origin":'appbuilder_sdk'
+}
+
+def get_default_header():
+    return copy.deepcopy(default_header)
 
 from .core import *
 from .core.components.rag_with_baidu_search import RAGWithBaiduSearch
