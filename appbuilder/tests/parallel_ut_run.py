@@ -372,6 +372,32 @@ def run_unknown_unittest():
     return success_cases, failed_cases, end_time - begin_time
 
 
+def record_failed_case():
+    """
+    将失败的单测用例写入到数据库中。
+    Args:
+        failed_cases (list): 失败的单测用例列表。
+    Returns:
+        无返回值。
+    """
+    db = pymysql.connect(host='172.19.166.44',
+                         user='root',
+                         password='yinjiaqi',
+                         database='appbuilder_test',
+                         charset='utf8')
+    time=time()
+    try:
+        cursor = db.cursor()
+        for case in failed_cases:
+            sql = "INSERT INTO Appbuilder_test_failed_case(failed_test) VALUES ('{}')".format(case,time)   
+            cursor.execute(sql)
+            db.commit()
+    except Exception as e:
+        print("数据库连接失败: ", e)
+    finally:
+        db.close()
+
+
 def create_unittest_report():
     """
     生成单元测试报告。
@@ -400,6 +426,11 @@ def create_unittest_report():
         total_failed_cases += failed_cases
         total_ut_time += suite_time
 
+    if len(total_failed_cases) != 0:
+        print("存在数百单测，开始记录失败单测到数据库中")
+        record_failed_case()
+        print("记录失败单测到数据库中完成")
+    
     logger.info("============== Summary Report =============")
     logger.info("\nCI运行结束，总耗时：{}".format(total_ut_time))
     if len(total_failed_cases) != 0:
