@@ -26,7 +26,7 @@ from appbuilder import get_default_header
 
 from appbuilder.core._exception import *
 from appbuilder.core.constants import GATEWAY_URL
-
+from appbuilder.utils.logger_util import logger
 
 class HTTPClient:
     r"""HTTPClient类,实现与后端服务交互的公共方法"""
@@ -93,7 +93,9 @@ class HTTPClient:
          """
         # host + fix prefix + sub service path
         prefix = prefix if prefix else "/rpc/2.0/cloud_hub"
-        return self.gateway + prefix + sub_path
+        final_url = self.gateway + prefix + sub_path
+        logger.debug("Service url: {}\n".format(final_url))
+        return final_url
 
     @staticmethod
     def check_response_json(data: dict):
@@ -120,6 +122,7 @@ class HTTPClient:
         auth_header = get_default_header()
         auth_header["X-Appbuilder-Request-Id"] = str(uuid.uuid4())
         auth_header["X-Appbuilder-Authorization"] = self.secret_key
+        logger.debug("Request header: {}\n".format(auth_header))
         return auth_header
 
     @staticmethod
