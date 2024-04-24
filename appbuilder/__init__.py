@@ -73,6 +73,7 @@ from .core.components.animal_recognize.component import AnimalRecognition
 from .core.components.doc_crop_enhance.component import DocCropEnhance
 from .core.components.qrcode_ocr.component import QRcodeOCR
 from .core.components.table_ocr.component import TableOCR
+from .core.components.doc_format_converter.component import DocFormatConverter
 
 from .core.components.embeddings import Embedding
 from .core.components.matching import Matching
