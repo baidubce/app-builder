@@ -47,6 +47,7 @@ RAG是基于线上RAG应用的问答组件，可以使用该组件利用线上RA
 | result | Message | 返回结果 | Message(name=msg, content=北京市的面积是16410.54平方公里^[2]^。, mtype=dict, extra={'search_baidu': [{'id': '1', 'content': '北京,简称“京”,是中华人民共和国的首都,是全国的政治中心、文化中心,是世界著名古都和现代化国际...', 'type': 'web', 'from': 'search_baidu', 'title': '北京概况_首都之窗_北京市人民政府门户网站', 'url': 'https://www.beijing.gov.cn/renwen/bjgk/?eqid=b987a5f000085b6700000002642e204d'}, 'id', 'content', 'type', 'from', 'title', 'url']}, conversation_id=5a247540-e8cf-402a-a630-8015c24904f5)}) |
 
 #### 调用示例
+
 ```python
 import appbuilder
 import os
@@ -71,6 +72,62 @@ print(answer.extra)  # 获取结果来源
 
 ### Java
 
+#### 组件初始化参数
+
+| 参数名称   | 参数类型      | 描述         | 示例值       |
+|--------|-----------|------------|-----------|
+| appID | String    | 线上RAG应用的ID | "正确的应用ID" |
+
+#### Run方法入参
+
+| 参数名称           | 参数类型   | 是否必须 | 描述                                                 | 示例值         |
+|----------------|--------|------|----------------------------------------------------|-------------|
+| query          | string | 是    | query内容                                                 | "汽车性能参数怎么样" |
+| conversationID | String   | 是    | 若为空字符串服务端会自动创建新的会话ID，若不为空则继续上次对话内容 |             |
+| stream         | boolean   | 是    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |      |
+
+#### Run方法出参
+
+| 参数名称        | 参数类型        | 描述                   | 示例值 |
+|-------------|-------------|----------------------|-----|
+| RAGIterator | RAGIterator | 回答迭代器，流式/非流式均统一返回该类型,每次迭代返回RAGResponse类型 |     |
+
+#### 迭代RAGIterator
+
+| 参数名称           | 参数类型            | 描述      | 示例值 |
+|----------------|-----------------|---------|-----|
+| code         | int          | 响应状态码 |     |
+| message | String          | 响应信息    |     |
+| result    | RAGResult          | 响应结果    |     |
+| +answer      | String          | 回答结果    |     |
+| +conversationId  | String | 会话id    |     |
+| +events       | []EventContent     | 事件流   |     |
+| +events[0]       | EventContent         | 具体事件     |     |
+| ++eventType       | String         | 事件类型     |     |
+| ++eventStatus       | String         | 事件状态     |     |
+| ++outputs       | Map<String, Object>         | 事件内容     |     |
+
+#### 示例代码
+```java
+class RAGDemo {
+    public static void main(String[] args) throws IOException, AppBuilderServerException {
+        // 填写自己的APPBUILDER_TOKEN
+        System.setProperty("APPBUILDER_TOKEN", "填写秘钥");
+        // 填写创建好的appId
+        String appId = "填写线上创建好的appId";
+        
+        RAG rag = new RAG(appId);
+
+        RAGIterator itor = rag.run("我想了解附近的房产价格，你能帮我查询吗？", "", true);
+        System.out.println("输出结果：");
+        // itor.hasNext()返回false时，表示流式调用结束
+        while (itor.hasNext()) {
+            RAGResponse response = itor.next();
+            System.out.print(response.getResult().getAnswer());
+        }
+    }
+}
+```
 ### Go
 
 #### 组件初始化参数
