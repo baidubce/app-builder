@@ -37,7 +37,7 @@ setup(
         'serve': ['chainlit~=1.0.200', 'flask~=2.3.2', 'flask-restful==0.3.9']
     },
     description='Python SDK for Baidu AppBuilder',
-    long_description="百度智能云千帆AppBuilder, 使用开箱即用的组件与框架, 高效开发你的AI原生应用, 更多信息请登录: https://appbuilder.cloud.baidu.com/",
+    long_description="百度智能云千帆AppBuilder, 开箱即用的组件与框架, 高效开发你的AI原生应用, 更多信息请登录: https://appbuilder.cloud.baidu.com/",
     url="https://github.com/baidubce/app-builder",
 
 )
