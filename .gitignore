@@ -49,6 +49,8 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+# Unit test / production
+asr_test.pcm
 
 # Translations
 *.mo
