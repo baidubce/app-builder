@@ -133,6 +133,8 @@ class DocFormatConverter(Component):
                     task_progress = docConverterQueryResponse.result.ret_code
                     if task_progress == 3:
                         break
+                    elif task_progress == 4:
+                        raise AppBuilderServerException(f'任务执行失败')
                     # TODO 文档格式转换查询间隔Refactor
                     if task_request_time <= 3:
                         time.sleep(3)
