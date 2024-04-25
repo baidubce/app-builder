@@ -24,6 +24,7 @@ import time
 from collections import deque
 import logging
 import coverage
+import pymysql
 
 logger = logging.getLogger("root")
 logger.setLevel(logging.INFO)
@@ -389,7 +390,7 @@ def record_failed_case():
     try:
         cursor = db.cursor()
         for case in failed_cases:
-            sql = "INSERT INTO Appbuilder_test_failed_case(failed_test) VALUES ('{}')".format(case,time)   
+            sql = "INSERT INTO Appbuilder_test_failed_case(failed_test) VALUES ('{}')".format(case)   
             cursor.execute(sql)
             db.commit()
     except Exception as e:

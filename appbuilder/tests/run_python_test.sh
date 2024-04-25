@@ -47,6 +47,7 @@
 python3 -m pip install wheel
 python3 -m pip install coverage
 python3 -m pip install diff-cover
+python3 -m pip install pymysql
 
 python3 setup.py bdist_wheel
 python3 -m pip install --force-reinstall dist/*.whl
