@@ -35,7 +35,7 @@ class Assistants(object):
                assistant_id: Optional[str] = "",
                model: Optional[str] = "ERNIE-4.0-8K",
                response_format: Optional[str] = 'text',
-               instructions: Optional[str] = "",
+               instructions: Optional[str] = "你是百度制作的AI助手",
                thought_instructions: Optional[str] = "",
                chat_instructions: Optional[str] = "",
                tools: Optional[list[assistant_type.AssistantTool]] = [],
