@@ -47,15 +47,15 @@ class AssistantCreateRequest(BaseModel):
 
 # AssistantCreateResponse类，用于描述创建助理后的响应信息
 class AssistantCreateResponse(BaseModel):
-    id: str = ""  # 助理ID
-    object: str = ""  # 助理对象标识
-    name: str = ""  # 助理名称
-    description: str = ""  # 助理描述
-    instructions: str  # 助理的通用指令
+    id: Optional[str] = ""  # 助理ID
+    object: Optional[str] = ""  # 助理对象标识
+    name: Optional[str] = ""  # 助理名称
+    description: Optional[str] = ""  # 助理描述
+    instructions: Optional[str]  # 助理的通用指令
     tools: Optional[list[AssistantTool]] = Field(default=[])  # 助理使用的工具列表
-    created_at: int = 0  # 助理创建时间戳
-    thought_instructions: str = ""  # 助理的思维指令
-    chat_instructions: str = ""  # 助理的聊天指令
-    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)  # 响应格式
+    created_at: Optional[int] = 0  # 助理创建时间戳
+    thought_instructions: Optional[str] = ""  # 助理的思维指令
+    chat_instructions: Optional[str] = ""  # 助理的聊天指令
+    response_format: Optional[ResponseFormat] = Field(default=ResponseFormat.TEXT)  # 响应格式
     file_ids: Optional[list[str]] = Field(default=[])  # 关联文件的ID列表
-    metadata: dict = Field(default={}, max_length=16)  # 元数据
+    metadata: Optional[dict] = Field(default={}, max_length=16)  # 元数据

@@ -232,5 +232,5 @@ class AssistantHTTPClient(HTTPClient):
                 code=data['error']['code'],
                 message=data['error']['message'],
                 type=data['error']['type'],
-                params=data['error']['params']
+                params=data['error']['param'] if 'param' in data['error'] else data['error']['params'],
             )

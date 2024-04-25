@@ -44,6 +44,16 @@ class TestAssistant(unittest.TestCase):
             )
         except Exception as e:
             self.assertIn("metadata", e.description)
+
+    def test_assistants_create_v4(self):
+        try:
+            appbuilder.assistant.assistants.create(
+                name="Abc-_123",
+                description="test",
+                assistant_id="12345dsdfg"
+            )
+        except Exception as e:
+            self.assertIn("业务逻辑异常", e.description)
             
 
 if __name__ == '__main__':
