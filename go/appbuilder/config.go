@@ -20,6 +20,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"github.com/google/uuid"
 )
 
 type SDKConfig struct {
@@ -50,6 +51,9 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 func (t *SDKConfig) AuthHeader() http.Header {
 	header := make(http.Header)
 	header.Set("X-Appbuilder-Authorization", t.SecretKey)
+	header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
+	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.7.0\",\"appbuilder_sdk_language\":\"go\"}")
+	header.Set("X-Appbuilder-Request-Id", uuid.NewV4().String())
 	return header
 }
 
