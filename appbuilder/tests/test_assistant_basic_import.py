@@ -3,9 +3,6 @@ import os
 import appbuilder
 
 class TestAssistantImport(unittest.TestCase):
-    def setUp(self):
-        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
-
     def test_assistants_beta_import(self):
         from appbuilder import assistant
         from appbuilder.core.assistant.base import BetaAssistant

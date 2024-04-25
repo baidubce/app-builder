@@ -7,9 +7,6 @@ def get_cur_whether(location:str, unit:str):
 
 
 class TestFunctionCall(unittest.TestCase):
-    def setUp(self):
-        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
-
     def test_run_create_v1(self):
         from appbuilder.core.assistant.type import thread_type
         assistant = appbuilder.assistant.assistants.create(

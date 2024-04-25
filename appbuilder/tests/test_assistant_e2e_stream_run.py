@@ -5,9 +5,6 @@ import time
 import appbuilder
 
 class TestAssistantStreamTalk(unittest.TestCase):
-    def setUp(self) -> None:
-        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
-   
     def test_end_to_end(self):
         begin_time = time.time()
         last_time = time.time()

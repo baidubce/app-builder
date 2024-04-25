@@ -3,9 +3,6 @@ import os
 import appbuilder
 
 class TestAssistant(unittest.TestCase):
-    def setUp(self):
-        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4"
-
     def test_assistants_create_v1(self):
         from appbuilder.core.assistant.type import assistant_type
 
@@ -53,6 +50,7 @@ class TestAssistant(unittest.TestCase):
                 assistant_id="12345dsdfg"
             )
         except Exception as e:
+            print(e)
             self.assertIn("业务逻辑异常", e.description)
             
 
