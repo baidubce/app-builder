@@ -37,7 +37,7 @@ class AssistantCreateRequest(BaseModel):
     name: str = Field(default="", min_length=1, max_length=64, pattern="^[0-9a-zA-Z_-]+$")  # 助理名称
     description: str = Field(default="", max_length=512)  # 助理描述
     response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)  # 响应格式
-    instructions: str = Field(default="", max_length=4096)  # 助理的通用指令
+    instructions: str = Field(default="你是百度制作的AI助手", max_length=4096)  # 助理的通用指令
     thought_instructions: str = Field(default="", max_length=4096)  # 助理的思维指令
     chat_instructions: str = Field(default="", max_length=4096)  # 助理的聊天指令
     tools: list[AssistantTool] = Field(default=[], max_length=10)  # 助理使用的工具列表
