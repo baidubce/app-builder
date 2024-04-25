@@ -52,15 +52,21 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 调用参数
 | 参数名称       |参数类型 |是否必须 | 描述          | 示例值  |
 |------------|--------|--------|-------------|------|
-| file_path    |String  |是 | 需要转换的文件的本地存储路径或远程URL | "./test.pdf" |
-| page_num |String|否 | PDF文件需要转换的页码，默认转换全部页面 | '1' |
+| file_path    |String  |是 | 需要转换的文件的本地存储路径或远程URL,支持图片和PDF, URL长度不超过1024字节，图片base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/jpeg/png/bmp格式, URL对应的PDFbase64编码后大小不超过10M | "./test.pdf" |
+| page_num |String|否 | 需要识别的PDF文件的对应页码，若不传入，默认识别文件所有页，页码从1开始 | '1' |
 
 
 ### 响应参数
 | 参数名称        |参数类型 | 描述   | 示例值                     |
 |-------------|--------|------|-------------------------|
-| word_url |Message  | 转换后word文件 | "http://bos.bce.cn/dsfkjc.docx"|
-| excel_url |Message  | 转换后excel文件 | "http://bos.bce.cn/dsfkjc.xlsx"|
+| word_url |Message  | 还原后的word文件的下载地址,文件识别失败时返回" | "http://bos.bce.cn/dsfkjc.docx"|
+| excel_url |Message  | 还原后的Excel文件的下载地址(源文件中含表格时才会输出),若文档中没有表格则返回"" | "http://bos.bce.cn/dsfkjc.xlsx"|
+
+### 常见错误信息
+| 错误信息                  | 描述          |
+|-------------------------|-------------|
+|IAM Certification failed  |IAM鉴权失败|
+|Check file failed!|文件检查错误,请检查文件大小以及URL是否符合要求  |
 
 ## 更新记录和贡献
 * 文档格式转换 (2024-04)
