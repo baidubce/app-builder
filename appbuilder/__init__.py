@@ -13,14 +13,15 @@
 # limitations under the License.
 
 
-__version__ = '0.1.0'
+__version__ = '0.7.0'
 
 import sys
-
+import copy
+import pydantic
 
 class PythonVersionChecker:
     def __init__(self):
-        self.min_version = (3, 8)
+        self.min_version = (3, 9)
         self.current_version = sys.version_info
         self.check_version()
 
@@ -33,6 +34,19 @@ class PythonVersionChecker:
 # Creating an instance to test the function
 checker = PythonVersionChecker()
 checker.current_version
+
+class SDKReportConfig(pydantic.BaseModel):
+    appbuilder_sdk_version: str = __version__
+    appbuilder_sdk_language: str = "python"
+
+# report information
+default_header = {
+    "X-Appbuilder-Sdk-Config": SDKReportConfig().model_dump_json(),
+    "X-Appbuilder-Origin":'appbuilder_sdk'
+}
+
+def get_default_header():
+    return copy.deepcopy(default_header)
 
 from .core import *
 from .core.components.rag_with_baidu_search import RAGWithBaiduSearch

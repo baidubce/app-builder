@@ -27,14 +27,17 @@ with open('requirements.txt') as f:
 
 setup(
     name='appbuilder-sdk',
-    version='0.6.0',
+    version='0.7.0', #NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
     author='dongdaxiang',
     author_email='dongdaxiang@baidu.com',
     packages=find_packages(),
     install_requires=requirements,
-    python_requires='>=3.8',
+    python_requires='>=3.9',
     extras_require={
         'serve': ['chainlit~=1.0.200', 'flask~=2.3.2', 'flask-restful==0.3.9']
-    }
-)
+    },
+    description='Python SDK for Baidu AppBuilder',
+    long_description="百度智能云千帆AppBuilder, 开箱即用的组件与框架, 高效开发你的AI原生应用, 更多信息请登录: https://appbuilder.cloud.baidu.com/",
+    url="https://github.com/baidubce/app-builder",
 
+)
