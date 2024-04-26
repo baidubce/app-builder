@@ -27,21 +27,36 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 public class HttpClient {
     public String SecretKey;
     public String Gateway;
+    public String GatewayV2;
     private final CloseableHttpClient client;
 
-    public HttpClient(String secretKey, String gateway) {
+    public HttpClient(String secretKey, String gateway, String gatewayV2) {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setResponseTimeout(AppBuilderConfig.HTTP_CLIENT_CONNECTION_TIMEOUT, TimeUnit.SECONDS)
                 .build();
         this.client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
         this.SecretKey = secretKey;
         this.Gateway = gateway;
+        this.GatewayV2 = gatewayV2;
     }
 
     public ClassicHttpRequest createPostRequest(String url, HttpEntity entity) {
         String requestURL = Gateway + url;
         HttpPost httpPost = new HttpPost(requestURL);
         httpPost.setHeader("X-Appbuilder-Authorization", this.SecretKey);
+        httpPost.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
+        httpPost.setHeader("X-Appbuilder-Sdk-Config",
+                "{\"appbuilder_sdk_version\":\"0.7.0\",\"appbuilder_sdk_language\":\"java\"}");
+        httpPost.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
+        httpPost.setEntity(entity);
+        return httpPost;
+    }
+
+    public ClassicHttpRequest createPostRequestV2(String url, HttpEntity entity) {
+        String requestURL = GatewayV2 + url;
+        System.out.println(requestURL);
+        HttpPost httpPost = new HttpPost(requestURL);
+        httpPost.setHeader("Authorization", this.SecretKey);
         httpPost.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
         httpPost.setHeader("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.7.0\",\"appbuilder_sdk_language\":\"java\"}");
         httpPost.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());

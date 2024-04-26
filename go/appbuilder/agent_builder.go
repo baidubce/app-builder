@@ -45,8 +45,8 @@ type AgentBuilder struct {
 
 func (t *AgentBuilder) CreateConversation() (string, error) {
 	request := http.Request{}
-	header := t.sdkConfig.AuthHeader()
-	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/app/conversation")
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation")
 	if err != nil {
 		return "", err
 	}
@@ -99,13 +99,13 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 	}
 	w.Close()
 	request := http.Request{}
-	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/app/conversation/file/upload")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation/file/upload")
 	if err != nil {
 		return "", err
 	}
 	request.URL = serviceURL
 	request.Method = "POST"
-	header := t.sdkConfig.AuthHeader()
+	header := t.sdkConfig.AuthHeaderV2()
 	header.Set("Content-Type", w.FormDataContentType())
 	request.Header = header
 	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
@@ -145,14 +145,14 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	}
 	request := http.Request{}
 
-	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/app/conversation/runs")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation/runs")
 	if err != nil {
 		return nil, err
 	}
 
 	request.URL = serviceURL
 	request.Method = "POST"
-	header := t.sdkConfig.AuthHeader()
+	header := t.sdkConfig.AuthHeaderV2()
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(m)

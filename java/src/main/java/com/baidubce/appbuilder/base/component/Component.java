@@ -32,11 +32,19 @@ public class Component {
                 gateway = AppBuilderConfig.APPBUILDER_DEFAULT_GATEWAY;
             }
         }
+        
+        String gatewayV2 = null;
+        if (gatewayV2 == null || gateway.isEmpty()) {
+            if ((gatewayV2 = System.getProperty(AppBuilderConfig.APPBUILDER_GATEWAY_URL_V2)) == null &&
+                    (gatewayV2 = System.getenv(AppBuilderConfig.APPBUILDER_GATEWAY_URL_V2)) == null) {
+                gatewayV2 = AppBuilderConfig.APPBUILDER_DEFAULT_GATEWAY_V2;
+            }
+        }
         //通过secretKey获取
         if (!secretKey.startsWith("Bearer")) {
             secretKey = String.format("Bearer %s", secretKey);
         }
-        this.httpClient = new HttpClient(secretKey, gateway);
+        this.httpClient = new HttpClient(secretKey, gateway, gatewayV2);
     }
 
 }

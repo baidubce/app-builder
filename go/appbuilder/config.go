@@ -20,12 +20,14 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
 	"github.com/google/uuid"
 )
 
 type SDKConfig struct {
-	GatewayURL string
-	SecretKey  string
+	GatewayURL   string
+	GatewayURLV2 string
+	SecretKey    string
 }
 
 func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
@@ -35,6 +37,12 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 	if len(gatewayURL) == 0 {
 		gatewayURL = "https://appbuilder.baidu.com"
 	}
+
+	gatewayURLV2 := os.Getenv("GATEWAY_URL_V2")
+	if gatewayURLV2 == "" {
+		gatewayURLV2 = "https://qianfan.baidubce.com"
+	}
+
 	if len(secretKey) == 0 {
 		secretKey = os.Getenv("APPBUILDER_TOKEN")
 	}
@@ -45,20 +53,39 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 		secretKey = "Bearer " + secretKey
 	}
 
-	return &SDKConfig{GatewayURL: gatewayURL, SecretKey: secretKey}, nil
+	return &SDKConfig{GatewayURL: gatewayURL, GatewayURLV2: gatewayURLV2, SecretKey: secretKey}, nil
 }
 
 func (t *SDKConfig) AuthHeader() http.Header {
-	header := make(http.Header)
+	header := t.authHeader()
 	header.Set("X-Appbuilder-Authorization", t.SecretKey)
+	return header
+}
+
+func (t *SDKConfig) AuthHeaderV2() http.Header {
+	header := t.authHeader()
+	header.Set("Authorization", t.SecretKey)
+	return header
+}
+
+func (t *SDKConfig) authHeader() http.Header {
+	header := make(http.Header)
 	header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
 	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.7.0\",\"appbuilder_sdk_language\":\"go\"}")
-	header.Set("X-Appbuilder-Request-Id", uuid.NewV4().String())
+	header.Set("X-Appbuilder-Request-Id", uuid.New().String())
 	return header
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
-	absolutePath := t.GatewayURL+ suffix
+	return t.serviceURL(t.GatewayURL, suffix)
+}
+
+func (t *SDKConfig) ServiceURLV2(suffix string) (*url.URL, error) {
+	return t.serviceURL(t.GatewayURLV2, suffix)
+}
+
+func (t *SDKConfig) serviceURL(gateway, suffix string) (*url.URL, error) {
+	absolutePath := gateway + suffix
 	url, err := url.Parse(absolutePath)
 	if err != nil {
 		return nil, err
