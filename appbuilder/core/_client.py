@@ -25,7 +25,7 @@ from requests.adapters import HTTPAdapter, Retry
 from appbuilder import get_default_header
 
 from appbuilder.core._exception import *
-from appbuilder.core.constants import GATEWAY_URL
+from appbuilder.core.constants import GATEWAY_URL, GATEWAY_URL_V2
 from appbuilder.utils.logger_util import logger
 
 class HTTPClient:
@@ -33,15 +33,17 @@ class HTTPClient:
 
     def __init__(self,
                  secret_key: Optional[str] = None,
-                 gateway: str = ""
+                 gateway: str = "",
+                 gateway_v2: str = ""
                  ):
         r"""HTTPClient初始化方法.
 
-            参数:
-                secret_key(str,可选): 用户鉴权token, 默认从环境变量中获取: os.getenv("APPBUILDER_TOKEN", "").
-                gateway(str, 可选): 后端网关服务地址，默认从环境变量中获取: os.getenv("GATEWAY_URL", "")
-            返回：
-                无
+        参数:
+            secret_key(str,可选): 用户鉴权token, 默认从环境变量中获取: os.getenv("APPBUILDER_TOKEN", "").
+            gateway(str, 可选): 后端网关服务地址，默认从环境变量中获取: os.getenv("GATEWAY_URL", "")
+            gateway_v2(str, 可选): 后端OpenAPI网关服务地址，当前仅AgentBuilder使用。默认从环境变量中获取: os.getenv("GATEWAY_URL_V2", "")
+        返回：
+            无
         """
         self.secret_key = secret_key if secret_key else os.getenv("APPBUILDER_TOKEN", "")
         if not self.secret_key:
@@ -57,6 +59,15 @@ class HTTPClient:
 
         if not self.gateway.startswith("http"):
             self.gateway = "https://" + self.gateway
+
+        if not gateway_v2 and not os.getenv("GATEWAY_URL_V2"):
+            self.gateway_v2 = GATEWAY_URL_V2
+        else:
+            self.gateway_v2 = (
+                gateway_v2 if gateway_v2 else os.getenv("GATEWAY_URL_V2", "")
+            )
+        if not self.gateway_v2.startswith("http"):
+            self.gateway_v2 = "https://" + self.gateway_v2
         self.session = requests.sessions.Session()
         self.retry = Retry(total=0, backoff_factor=0.1)
         self.session.mount(self.gateway, HTTPAdapter(max_retries=self.retry))
@@ -90,12 +101,19 @@ class HTTPClient:
             :param sub_path: service unique sub path.
             :param prefix: service prefix.
             :rtype: str.
-         """
+        """
         # host + fix prefix + sub service path
         prefix = prefix if prefix else "/rpc/2.0/cloud_hub"
         final_url = self.gateway + prefix + sub_path
         logger.debug("Service url: {}\n".format(final_url))
         return final_url
+
+    def service_url_v2(self, sub_path: str):
+        r"""service_url is a helper method for concatenate service url for OpenAPI, only used by AgentBuilder.
+        :param sub_path: service unique sub path.
+        :rtype: str.
+        """
+        return self.gateway_v2 + sub_path
 
     @staticmethod
     def check_response_json(data: dict):
@@ -122,6 +140,14 @@ class HTTPClient:
         auth_header = get_default_header()
         auth_header["X-Appbuilder-Request-Id"] = str(uuid.uuid4())
         auth_header["X-Appbuilder-Authorization"] = self.secret_key
+        logger.debug("Request header: {}\n".format(auth_header))
+        return auth_header
+
+    def auth_header_v2(self):
+        r"""auth_header_v2 is a helper method return auth info for OpenAPI, only used by AgentBuilder"""
+        auth_header = get_default_header()
+        auth_header["X-Bce-Request-id"] = str(uuid.uuid4())
+        auth_header["Authorization"] = self.secret_key
         logger.debug("Request header: {}\n".format(auth_header))
         return auth_header
 

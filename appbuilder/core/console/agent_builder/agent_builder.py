@@ -61,10 +61,10 @@ class AgentBuilder(Component):
                     无
                 返回：
                     response (str: ): 唯一会话ID
-          """
-        headers = self.http_client.auth_header()
+        """
+        headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url("/v1/app/conversation", "/api")
+        url = self.http_client.service_url_v2("/v2/app/conversation")
         response = self.http_client.session.post(url, headers=headers, json={"app_id": self.app_id}, timeout=None)
         self.http_client.check_response_header(response)
         data = response.json()
@@ -87,8 +87,8 @@ class AgentBuilder(Component):
             'app_id': (None, self.app_id),
             'conversation_id': (None, conversation_id),
         }
-        headers = self.http_client.auth_header()
-        url = self.http_client.service_url("/v1/app/conversation/file/upload", "/api")
+        headers = self.http_client.auth_header_v2()
+        url = self.http_client.service_url_v2("/v2/app/conversation/file/upload")
         response = self.http_client.session.post(url, files=multipart_form_data, headers=headers)
         self.http_client.check_response_header(response)
         data = response.json()
@@ -121,9 +121,9 @@ class AgentBuilder(Component):
             file_ids=file_ids,
         )
 
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url("/v1/app/conversation/runs", '/api')
+        url = self.http_client.service_url_v2("/v2/app/conversation/runs")
         response = self.http_client.session.post(url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)
         request_id = self.http_client.response_request_id(response)

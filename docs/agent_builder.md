@@ -388,10 +388,10 @@ import (
 )
 
 func main() {
-	// 设置APPBUILDER_TOKEN、GATEWAY_URL环境变量
+	// 设置APPBUILDER_TOKEN、GATEWAY_URL_V2环境变量
 	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
-	// 默认可不填，默认值是 https://appbuilder.baidu.com
-	os.Setenv("GATEWAY_URL", "")
+	// 默认可不填，默认值是 https://qianfan.baidubce.com
+	os.Setenv("GATEWAY_URL_V2", "")
 	config, err := appbuilder.NewSDKConfig("", "")
 	if err != nil {
 		fmt.Println("new config failed: ", err)
