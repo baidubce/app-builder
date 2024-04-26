@@ -136,6 +136,41 @@ dataset.delete_documents(document_ids)
 
 ### Java
 
+#### 组件初始化参数
+
+| 参数名称   | 参数类型      | 是否必须 | 描述      | 示例值 |
+|--------|-----------|------|---------|-----|
+| datasetId | String | 否|线上数据集ID，可通过createDataset()创建数据集 | "正确的数据集ID" |
+
+#### 示例代码
+```java
+class DatasetDemo {
+    public static void main(String[] args) throws IOException, AppBuilderServerException {
+        // 填写自己的APPBUILDER_TOKEN
+        System.setProperty("APPBUILDER_TOKEN", "填写秘钥");
+
+        Dataset ds = new Dataset();
+        // 创建数据集
+        String datasetId = ds.createDataset("java创建数据集");
+        System.out.println("datasetId:  " + datasetId);
+
+        // 上传文档，填写正确的文件路径
+        String filePath = "src/test/java/中秋节.docx";
+        String[] documentIds = ds.addDocuments(new ArrayList<>(Collections.singletonList(filePath)), false, null, false);
+        System.out.println("documentIds:  " + Arrays.toString(documentIds));
+
+        // 获取文档列表
+        DocumentListResponse resp = ds.getDocumentList(1, 20, "");
+        System.out.println("document total num:  " + resp.getResult().getTotal());
+        for (DocumentListData data : resp.getResult().getData()) {
+            System.out.println("documentList:  " + data.getName());
+        }
+        // 删除文档
+        ds.deleteDocuments(documentIds);
+    }
+}
+```
+
 ### Go
 
 #### 组件初始化参数
