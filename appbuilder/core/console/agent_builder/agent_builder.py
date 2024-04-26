@@ -163,6 +163,14 @@ class AgentBuilder(Component):
             )
 
 
+class AgentBuilderClient(AgentBuilder):
+    def __init__(self, app_id: str):
+        """
+        AgentBuilder是用户在AppBuider页面上创建的应用
+        SDK提供了AgentBuilderClient类，用户可以使用该类与已发布的应用进行交互
+        """
+        super().__init__(app_id)
+
 def _transform(inp: data_class.AgentBuilderResponse, out: data_class.AgentBuilderAnswer):
     out.answer = inp.answer
     for ev in inp.content:

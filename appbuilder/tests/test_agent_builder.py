@@ -33,7 +33,7 @@ class TestAgentRuntime(unittest.TestCase):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
     
-        agent_builder = appbuilder.AgentBuilder(self.app_id)
+        agent_builder = appbuilder.AgentBuilderClient(self.app_id)
         conversation_id = agent_builder.create_conversation()
     
         with tempfile.NamedTemporaryFile(suffix=".png") as fp:
