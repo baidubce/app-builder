@@ -62,6 +62,7 @@ func (t *SDKConfig) AuthHeader() http.Header {
 	return header
 }
 
+// AuthHeaderV2 适配OpenAPI，当前仅AgentBuilder使用
 func (t *SDKConfig) AuthHeaderV2() http.Header {
 	header := t.authHeader()
 	header.Set("Authorization", t.SecretKey)
@@ -80,6 +81,7 @@ func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
 	return t.serviceURL(t.GatewayURL, suffix)
 }
 
+// ServiceURLV2 适配OpenAPI，当前仅AgentBuilder使用
 func (t *SDKConfig) ServiceURLV2(suffix string) (*url.URL, error) {
 	return t.serviceURL(t.GatewayURLV2, suffix)
 }

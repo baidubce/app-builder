@@ -52,6 +52,14 @@ public class HttpClient {
         return httpPost;
     }
 
+    /**
+     * 创建一个用于发送 POST 请求的 ClassicHttpRequest 对象
+     * 适配OpenAPI，目前仅AgentBuilder使用
+     *
+     * @param url 请求的 URL
+     * @param entity 请求的实体
+     * @return 返回创建的 ClassicHttpRequest 对象
+     */
     public ClassicHttpRequest createPostRequestV2(String url, HttpEntity entity) {
         String requestURL = GatewayV2 + url;
         System.out.println(requestURL);

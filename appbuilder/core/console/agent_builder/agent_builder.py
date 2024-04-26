@@ -15,7 +15,6 @@
 """AgentBuilder组件"""
 import os
 import json
-import time
 
 from appbuilder.core.component import Message, Component
 from appbuilder.core.console.agent_builder import data_class
@@ -125,13 +124,7 @@ class AgentBuilder(Component):
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
         url = self.http_client.service_url_v2("/v2/app/conversation/runs")
-        print(json.dumps(req.model_dump()))
-        print(json.dumps(headers))
-        start_time = time.time()
         response = self.http_client.session.post(url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
-        end_time = time.time()
-        exec_time = end_time - start_time
-        print(f"excution time: {exec_time}s")
         self.http_client.check_response_header(response)
         request_id = self.http_client.response_request_id(response)
         if stream:
