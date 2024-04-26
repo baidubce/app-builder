@@ -70,11 +70,6 @@ class DocFormatConverter(Component):
                         "type": "string",
                         "description": "待转换文件的URL地址",
                     },
-                    "task_type": {
-                        "type": "string",
-                        "description": "转换任务类型，可选值为：'pic2word', 'pic2excel', 'pdf2word', 'pdf2excel'",
-                        "enum": ["pic2word", "pic2excel", "pdf2word", "pdf2excel"],
-                    },
                     "page_num": {
                         "anyOf": [
                             {"type": "string"},
@@ -84,8 +79,8 @@ class DocFormatConverter(Component):
                     }
                 },
             "anyOf": [
-                    {"required": ["file_name", "task_type"]},
-                    {"required": ["file_url", "task_type"]},
+                    {"required": ["file_name"]},
+                    {"required": ["file_url"]}
                 ]
             }
         }
@@ -141,10 +136,11 @@ class DocFormatConverter(Component):
                     elif task_progress == 4:
                         raise AppBuilderServerException(f'任务执行失败')
                     # TODO 文档格式转换查询间隔Refactor
-                    time.sleep(3)
+                    if task_request_time <= 3:
+                        time.sleep(3)
+                    else:
+                        time.sleep(task_request_time)
                     task_request_time += 1
-                if(task_request_time > 50):
-                    raise AppBuilderServerException(f'文件过大,任务执行超时,推荐使用SDK查询,任务ID: {taskId}')
             word_url = docConverterQueryResponse.result.result_data.word
             excel_url = docConverterQueryResponse.result.result_data.excel
             out = DocFormatConverterOutMessage(word_url=word_url, excel_url=excel_url)
@@ -210,7 +206,6 @@ class DocFormatConverter(Component):
         """
         file_url = kwargs.get("file_url", None)
         page_num = kwargs.get("page_num", '')
-        task_type = kwargs.get("task_type", 'pic2word')
         if page_num:
             if isinstance(page_num, int) or (isinstance(page_num, str) and page_num.isdigit()):
                 page_num = str(page_num)
@@ -232,15 +227,9 @@ class DocFormatConverter(Component):
         except Exception as e:
             raise AppBuilderServerException(f'文档格式转换服务发生错误：{e}')
         if streaming:
-            if(task_type.endswith("word")):
-                yield {
-                    "type": "files",
-                    "text": [result.content['word_url']]
-                }
-            elif(task_type.endswith("excel")):
-                yield {
-                    "type": "files",
-                    "text": [result.content['excel_url']]
-                }
+            yield {
+                "type": "files",
+                "text": [result.content['word_url'], result.content['excel_url']]
+            }
         else:
             return result.content
