@@ -59,7 +59,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 响应参数
 | 参数名称        |参数类型 | 描述   | 示例值                     |
 |-------------|--------|------|-------------------------|
-| word_url |Message  | 还原后的word文件的下载地址,文件识别失败时返回" | "http://bos.bce.cn/dsfkjc.docx"|
+| word_url |Message  | 还原后的word文件的下载地址,文件识别失败时返回空 | "http://bos.bce.cn/dsfkjc.docx"|
 | excel_url |Message  | 还原后的Excel文件的下载地址(源文件中含表格时才会输出),若文档中没有表格则返回"" | "http://bos.bce.cn/dsfkjc.xlsx"|
 
 ### 常见错误信息
