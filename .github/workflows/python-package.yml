@@ -58,20 +58,21 @@ jobs:
         env
         ls
         pwd
-    - name: Checkout Branch
+    - name: Git Clone And Checkout Branch
       run: |
         fork_repo="https://github.com/$GITHUB_ACTOR/app-builder.git"
-        git remote add dev $fork_repo
-        git fetch dev
+        mkdir cicd
+        cd cicd
+        git clone $fork_repo
+        cd app-builder
         git checkout $GITHUB_HEAD_REF
-    - name: Fetch Upstream
-      run: |
         git remote add upstream https://github.com/baidubce/app-builder.git 
         git fetch upstream
         git remote -v
         git status
     - name: Install dependencies
       run: |
+        pwd
         python3 -m ensurepip --upgrade
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade setuptools
@@ -80,9 +81,11 @@ jobs:
         python3 -m pip install diff-cover
     - name: Build whl
       run: |
+        pwd
         python3 setup.py bdist_wheel
         python3 -m pip uninstall -y appbuilder-sdk
         python3 -m pip install dist/*.whl
     - name: Test with unittest
       run: |
+        pwd
         sh appbuilder/tests/run_python_test.sh
