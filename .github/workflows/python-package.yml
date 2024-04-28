@@ -12,12 +12,11 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.9","3.12"]
 
     steps:
     - uses: actions/checkout@v3
@@ -36,3 +35,36 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9","3.12"]
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Print ENV
+      run: |
+        env
+        ls
+        pwd
+    - name: Install dependencies
+      run: |
+        python3 -m ensurepip --upgrade
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade setuptools
+        python3 -m pip install coverage
+        python3 -m pip install diff-cover
+    - name: Build whl
+      run: |
+        python3 setup.py bdist_wheel
+        python3 -m pip uinstall -y appbuilder-sdk
+        python3 -m pip install dist/*.whl
+    - name: Test with unittest
+      run: |
+        sh appbuilder/tests/run_python_test.sh
