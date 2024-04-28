@@ -10,6 +10,7 @@ import com.baidubce.appbuilder.model.agentbuilder.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.Deprecated;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -21,16 +22,19 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 public class AgentBuilder extends Component {
     public String appID;
 
+    @Deprecated
     public AgentBuilder(String appID) {
         super();
         this.appID = appID;
     }
 
+    @Deprecated
     public AgentBuilder(String appID, String secretKey) {
         super(secretKey);
         this.appID = appID;
     }
 
+    @Deprecated
     public AgentBuilder(String appID, String secretKey, String gateway) {
         super(secretKey, gateway);
         this.appID = appID;
