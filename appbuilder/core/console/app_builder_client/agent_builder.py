@@ -17,23 +17,23 @@ import os
 import json
 
 from appbuilder.core.component import Message, Component
-from appbuilder.core.console.agent_builder import data_class
+from appbuilder.core.console.app_builder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
+from appbuilder.utils.func_utils import deprecated
 
-
-class AgentBuilder(Component):
+class AppBuilderClient(Component):
     r"""
-       AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上通过AgentBuilder
+       AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上
        构建并发布的智能体应用，具体包括创建会话、上传文档、运行对话等。
         Examples:
         ... code-block:: python
             import appbuilder
             # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
             os.environ["APPBUILDER_TOKEN"] = '...'
-            # 可在Console AgentBuilder应用页面获取
+            # 可在Console 应用页面获取
             app_id = "app_id"
-            agent_builder = appbuilder.AgentBuilder("app_id")
+            agent_builder = appbuilder.AppBuilderClient("app_id")
             conversation_id = agent_builder.create_conversation()
             file_id = agent_builder.upload_local_file(conversation_id, "/path/to/file")
             message = agent_builder.run(conversation_id, "今天你好吗？")
@@ -46,7 +46,7 @@ class AgentBuilder(Component):
                 参数:
                     app_id (str: 必须) : 应用唯一ID
                 返回：
-                    response (obj: `AgentBuilder`): 智能体实例
+                    response (obj: `AppBuilderClient`): 智能体实例
         """
         super().__init__(**kwargs)
         if (not isinstance(app_id, str)) or len(app_id) == 0:
@@ -163,8 +163,8 @@ class AgentBuilder(Component):
             )
 
 
-
-class AgentBuilderClient(AgentBuilder):
+class AgentBuilder(AppBuilderClient):
+    @deprecated
     def __init__(self, app_id: str):
         """
         初始化方法，用于创建一个新的实例对象。

@@ -109,7 +109,7 @@ class HTTPClient:
         return final_url
 
     def service_url_v2(self, sub_path: str):
-        r"""service_url is a helper method for concatenate service url for OpenAPI, only used by AgentBuilder.
+        r"""service_url is a helper method for concatenate service url for OpenAPI, only used by AppBuilderClient.
         :param sub_path: service unique sub path.
         :rtype: str.
         """
@@ -144,7 +144,7 @@ class HTTPClient:
         return auth_header
 
     def auth_header_v2(self):
-        r"""auth_header_v2 is a helper method return auth info for OpenAPI, only used by AgentBuilder"""
+        r"""auth_header_v2 is a helper method return auth info for OpenAPI, only used by AppBuilderClient"""
         auth_header = get_default_header()
         auth_header["X-Bce-Request-id"] = str(uuid.uuid4())
         auth_header["Authorization"] = self.secret_key

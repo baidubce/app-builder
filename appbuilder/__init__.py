@@ -108,8 +108,8 @@ from appbuilder.utils.logger_util import logger
 
 from appbuilder.core.utils import get_model_list
 
-from appbuilder.core.console.agent_builder.agent_builder import AgentBuilder
-from appbuilder.core.console.agent_builder.agent_builder import AgentBuilderClient
+from appbuilder.core.console.app_builder_client.agent_builder import AppBuilderClient
+from appbuilder.core.console.app_builder_client.agent_builder import AgentBuilderClient
 
 from .core._exception import (
     BadRequestException,
@@ -176,6 +176,6 @@ __all__ = [
     "HandwriteOCR",
     "ImageUnderstand",
     "MixCardOCR",
-    "AgentBuilder",
+    "AppBuilderClient",
     "AgentBuilderClient",
 ]
