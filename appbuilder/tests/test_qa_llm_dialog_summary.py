@@ -33,7 +33,7 @@ log = get_logger(__name__)
 text = "用户:喂我想查一下我的话费\n坐席:好的女士您话费余的话还有87.49元钱\n用户:好的知道了谢谢\n坐席:嗯不客气祝您生活愉快再见"
 models = appbuilder.get_model_list("", ["chat"], True)
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skip("Open api request limit reached")
 class TestDialogSummaryComponent(unittest.TestCase):
     @parameterized.expand([
         # 20240311千帆模型改名兼容
