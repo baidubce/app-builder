@@ -163,6 +163,23 @@ class AgentBuilder(Component):
             )
 
 
+
+class AgentBuilderClient(AgentBuilder):
+    def __init__(self, app_id: str):
+        """
+        初始化方法，用于创建一个新的实例对象。
+
+        为了避免歧义，减少用户上手门槛，推荐使用该类调用AgentBuilder
+        
+        Args:
+            app_id (str): 应用程序的唯一标识符。
+        
+        Returns:
+            None
+        
+        """
+        super().__init__(app_id)
+
 def _transform(inp: data_class.AgentBuilderResponse, out: data_class.AgentBuilderAnswer):
     out.answer = inp.answer
     for ev in inp.content:

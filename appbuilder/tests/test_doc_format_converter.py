@@ -17,7 +17,7 @@ import os
 
 import appbuilder
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip("Open api request limit reached")
 class TestDocFormatConverter(unittest.TestCase):
 
     @classmethod

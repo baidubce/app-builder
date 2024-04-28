@@ -17,7 +17,7 @@ import os
 import unittest
 import appbuilder
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip("Open api request limit reached")
 class TestMRC(unittest.TestCase):
     def setUp(self):
         '''
@@ -27,6 +27,7 @@ class TestMRC(unittest.TestCase):
         self.model_name = "ERNIE Speed-AppBuilder"
 
         self.mrc = appbuilder.MRC(model=self.model_name)
+
     def test_mrc_with_default_params(self):
         """测试 run 方法使用默认参数"""
         # 测试阅读理解问答
@@ -134,6 +135,7 @@ class TestMRC(unittest.TestCase):
         4、车辆行驶证原件和复印件；5、有效的机动车交强险凭证。"""])
         answer = self.mrc(msg, context_list, friendly=True)
         print(answer)
+
     def test_mrc_with_cite(self):
         """测试溯源功能开启情况"""
         # 测试阅读理解问答
