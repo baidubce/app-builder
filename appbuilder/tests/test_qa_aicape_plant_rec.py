@@ -33,7 +33,7 @@ image_url = ("https://bj.bcebos.com/v1/appbuilder/palnt_recognize_test.jpg?autho
              "188d971ca547c53d01742af4a2cbe")
 raw_image = requests.get(image_url).content
 
-@unitest.skip("Open api request limit reached")
+@unittest.skip("Open api request limit reached")
 class TestPlantRecognition(unittest.TestCase):
     @parameterized.expand([
         param(image_url, None, None),

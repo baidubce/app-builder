@@ -33,7 +33,7 @@ image_url=("https://bj.bcebos.com/v1/appbuilder/test_handwrite_ocr.jpg?authoriza
            "83d195c8b")
 raw_image = requests.get(image_url).content
 
-@unitest.skip("Open api request limit reached")
+@unittest.skip("Open api request limit reached")
 class TestHandwritingOcr(unittest.TestCase):
     @parameterized.expand([
         param(image_url, None, None),

@@ -34,7 +34,7 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/table_ocr_test.png?" \
             "064079145ff4698856f477b820147768fc2187d3"
 raw_image = requests.get(image_url).content
 
-@unitest.skip("Open api request limit reached")
+@unittest.skip("Open api request limit reached")
 class TestTableOcr(unittest.TestCase):
     @parameterized.expand([
         param(image_url, None, None),

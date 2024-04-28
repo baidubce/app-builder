@@ -34,7 +34,7 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/doc_enhance_test.png?" \
             "be8abf28df78010f865e45dfcd6dc3951"
 raw_image = requests.get(image_url).content
 
-@unitest.skip("Open api request limit reached")
+@unittest.skip("Open api request limit reached")
 class TestDocCropEnhance(unittest.TestCase):
     @parameterized.expand([
            param(image_url, 0, None, None),

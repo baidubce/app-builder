@@ -33,7 +33,7 @@ log = get_logger(__name__)
 text="文心大模型发布新版"
 models = appbuilder.get_model_list("", ["chat"], True)
 
-@unitest.skip("Open api request limit reached")
+@unittest.skip("Open api request limit reached")
 class TestStyleRewrite(unittest.TestCase):
     @parameterized.expand([
         param(models[0], text, "激励话术", None, None),

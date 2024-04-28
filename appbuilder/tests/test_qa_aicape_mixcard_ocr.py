@@ -33,7 +33,7 @@ image_url = ("https://bj.bcebos.com/v1/appbuilder/test_mix_card_ocr.jpeg?authori
              "296bd29598")
 raw_image = requests.get(image_url).content
 
-@unitest.skip("Open api request limit reached")
+@unittest.skip("Open api request limit reached")
 class TestMixcardOcr(unittest.TestCase):
     @parameterized.expand([
         param(image_url, None, None),

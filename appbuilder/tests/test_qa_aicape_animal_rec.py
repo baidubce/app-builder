@@ -34,7 +34,7 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
                     "62cf937c03f8c5260d51c6ae"
 raw_image = requests.get(image_url).content
 
-@unitest.skip("Open api request limit reached")
+@unittest.skip("Open api request limit reached")
 class TestAnimalRecognition(unittest.TestCase):
     @parameterized.expand([
         param(image_url, None, None),

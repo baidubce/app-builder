@@ -30,7 +30,7 @@ util = Utils()
 from appbuilder.utils.logger_util import get_logger
 log = get_logger(__name__)
 
-@unitest.skip("Open api request limit reached")
+@unittest.skip("Open api request limit reached")
 class TestGetQianfanModelList(unittest.TestCase):
     @parameterized.expand([
         param("", [], False),
