@@ -101,7 +101,7 @@ message = agent.run(conversation_id, "汽车性能参数怎么样", file_ids=[fi
 
 answer = ""
 
-# 每次迭代返回AgentBuilderAnswer结构，内可能包括多个事件内容
+# 每次迭代返回AppBuilderClientAnswer结构，内可能包括多个事件内容
 for content in message.content:
     # stream=True时，将answer拼接起来才是完整的的对话结果
     answer += content.answer
@@ -162,7 +162,7 @@ print(answer)
 #### Run方法出参
 | 参数名称                 | 参数类型         | 描述                   | 示例值 |
 |----------------------|--------------|--------------------|-----|
-| AgentBuilderIterator | AgentBuilderIterator | 回答迭代器，流式/非流式均统一返回该类型,每次迭代返回AgentBuilderResult类型 |     |
+| AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型,每次迭代返回AppBuilderClientIterator类型 |     |
 
 #### 迭代AgentBuilderIterator
 | 参数名称          | 参数类型        | 描述         | 示例值                                                               |
@@ -179,6 +179,9 @@ print(answer)
 
 #### 示例代码
 以调用RAGAgent为例，其他组件调用方式类似。
+
+> Deprecated: AgentBuilder 已废弃，请使用 AppBuilderClient
+
 ```Java
 class AgentBuilderDemo {
 
@@ -193,7 +196,7 @@ class AgentBuilderDemo {
         // 填写上传文件路径
         String fileId = agentBuilder.uploadLocalFile(conversationId, "src/test/java/中秋节.docx");
         // 输入query
-        AgentBuilderIterator itor = agentBuilder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
+        AppBuilderClientIterator itor = agentBuilder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
         StringBuilder anwser = new StringBuilder();
         // itor.hasNext()返回false时，表示流式调用结束
         while(itor.hasNext())
@@ -356,7 +359,7 @@ class ReferenceDetail {
 
 | 参数名称                 | 参数类型                 | 描述                   | 示例值 |
 |----------------------|----------------------|----------------------|-----|
-| AgentBuilderIterator | AgentBuilderIterator | 回答迭代器，流式/非流式均统一返回该类型 |     |
+| AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型 |     |
 | error                | error                | 存在错误时error不为nil，反之   |     |
 
 #### 迭代AgentBuilderIterator
@@ -374,6 +377,8 @@ class ReferenceDetail {
 | ++Detail      | interface{} | 事件输出详情     | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                             |
 
 #### 示例代码
+
+> Deprecated: AgentBuilder 已废弃，请使用 AppBuilderClient
 
 ```Go
 package main
