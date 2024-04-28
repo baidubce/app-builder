@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9","3.12"]
+        python-version: ["3.12"]
 
     steps:
     - uses: actions/checkout@v3
@@ -37,6 +37,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
   test:
     runs-on: ubuntu-latest
+    env:
+      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
     strategy:
       fail-fast: false
       matrix:
