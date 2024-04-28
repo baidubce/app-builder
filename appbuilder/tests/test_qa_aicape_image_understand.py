@@ -34,7 +34,7 @@ image_url = ("https://bj.bcebos.com/v1/appbuilder/test_image_understand.jpeg?aut
              "e25c372b7e56e6")
 raw_image = requests.get(image_url).content
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAnimalRecognition(unittest.TestCase):
     @parameterized.expand([
         param(image_url, "图片里内容是什么?", None, None),
