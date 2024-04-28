@@ -17,10 +17,11 @@ import os
 import json
 
 from appbuilder.core.component import Message, Component
-from appbuilder.core.console.app_builder_client import data_class
+from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.utils.func_utils import deprecated
+from appbuilder.utils.logger_util import logger
 
 class AppBuilderClient(Component):
     r"""
@@ -113,7 +114,7 @@ class AppBuilderClient(Component):
         if len(conversation_id) == 0:
             raise ValueError("conversation_id is empty")
 
-        req = data_class.AgentBuilderRequest(
+        req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
             conversation_id=conversation_id,
             query=query,
@@ -132,13 +133,13 @@ class AppBuilderClient(Component):
             return Message(content=self._iterate_events(request_id, client.events()))
         else:
             data = response.json()
-            resp = data_class.AgentBuilderResponse(**data)
-            out = data_class.AgentBuilderAnswer()
+            resp = data_class.AppBuilderClientResponse(**data)
+            out = data_class.AppBuilderClientAnswer()
             _transform(resp, out)
             return Message(content=out)
 
     @staticmethod
-    def _iterate_events(request_id, events) -> data_class.AgentBuilderAnswer:
+    def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:
         for event in events:
             try:
                 data = event.data
@@ -147,8 +148,8 @@ class AppBuilderClient(Component):
                 data = json.loads(data)
             except json.JSONDecodeError as e:
                 raise AppBuilderServerException(request_id=request_id, message="json decoder failed {}".format(str(e)))
-            inp = data_class.AgentBuilderResponse(**data)
-            out = data_class.AgentBuilderAnswer()
+            inp = data_class.AppBuilderClientResponse(**data)
+            out = data_class.AppBuilderClientAnswer()
             _transform(inp, out)
             yield out
 
@@ -178,9 +179,10 @@ class AgentBuilder(AppBuilderClient):
             None
         
         """
+        logger.info("AgentBuilder is deprecated, please use AppBuilderClient instead")
         super().__init__(app_id)
 
-def _transform(inp: data_class.AgentBuilderResponse, out: data_class.AgentBuilderAnswer):
+def _transform(inp: data_class.AppBuilderClientResponse, out: data_class.AppBuilderClientAnswer):
     out.answer = inp.answer
     for ev in inp.content:
         event = data_class.Event(

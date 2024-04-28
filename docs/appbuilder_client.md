@@ -1,9 +1,9 @@
-# AgentBuilder组件
+# AppBuilderClient组件
 
 ## 简介
 
-AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)
-平台上通过AgentBuilder构建并发布的智能体应用。
+AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)
+平台上通过AppBuilderClient构建并发布的智能体应用。
 
 ### 功能介绍
 
@@ -11,7 +11,7 @@ AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud
 
 ### 特色优势
 
-与云端Console AgentBuilder能力打通，实现低代码会话
+与云端Console 应用能力打通，实现低代码会话
 
 ### 应用场景
 
@@ -68,7 +68,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AgentBuilder应用ID，可在console端查看
 # 初始化智能体
-agent = appbuilder.AgentBuilder(app_id)
+agent = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = agent.create_conversation()
 # 运行对话
@@ -82,7 +82,7 @@ print(out.content.answer)
 ```python
 
 import appbuilder
-from appbuilder.core.console.agent_builder import data_class
+from appbuilder.core.console.appbuilder_client import data_class
 import os
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
@@ -90,7 +90,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AgentBuilder应用的ID
 # 初始化智能体
-agent = appbuilder.AgentBuilder(app_id)
+agent = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = agent.create_conversation()
 
@@ -188,7 +188,7 @@ class AgentBuilderDemo {
         // 填写创建好的appId
         String appId = "填写线上创建好的appId";
 
-        AgentBuilder agentBuilder = new AgentBuilder(appId);
+        AppBuilderClient agentBuilder = new AppBuilderClient(appId);
         String conversationId = agentBuilder.createConversation();
         // 填写上传文件路径
         String fileId = agentBuilder.uploadLocalFile(conversationId, "src/test/java/中秋节.docx");
