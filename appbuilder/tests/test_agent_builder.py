@@ -18,6 +18,9 @@ class TestAgentRuntime(unittest.TestCase):
         """
         self.app_id = "aa8af334-df27-4855-b3d1-0d249c61fc08"
 
+    def test_agent_builder_client(self):
+        agent_builder = appbuilder.AgentBuilderClient(self.app_id)
+
     def test_agent_builder_run(self):
         # 如果app_id为空，则跳过单测执行, 避免单测因配置无效而失败
         """
