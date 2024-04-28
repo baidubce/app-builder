@@ -61,7 +61,7 @@ jobs:
     - name: Checkout Branch
       run: |
         fork_repo="https://github.com/$GITHUB_ACTOR/app-builder.git"
-        git remote add dev fork_repo
+        git remote add dev $fork_repo
         git fetch dev
         git checkout $GITHUB_HEAD_REF
     - name: Fetch Upstream
