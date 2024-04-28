@@ -189,7 +189,7 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
     return
 
 
-def parallel_execute_unittest(test_cases, parallel_num=4):
+def parallel_execute_unittest(test_cases, parallel_num=2):
     case_num = len(test_cases)
     success_cases = []
     failed_cases = []
