@@ -46,89 +46,9 @@ jobs:
         python-version: ["3.9","3.12"]
     
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+    - uses: actions/checkout@v4
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Print ENV
-      run: |
-        env
-        ls
-        pwd
-    - name: Fetch Upstream
-      run: |
-        git remote add upstream https://github.com/baidubce/app-builder.git 
-        git fetch upstream
-    - name: Install dependencies
-      run: |
-        python3 -m ensurepip --upgrade
-        python3 -m pip install --upgrade pip
-        python3 -m pip install --upgrade setuptools
-        python3 -m pip install wheel
-        python3 -m pip install coverage
-        python3 -m pip install diff-cover
-    - name: Build whl
-      run: |
-        python3 setup.py bdist_wheel
-        python3 -m pip uninstall -y appbuilder-sdk
-        python3 -m pip install dist/*.whl
-    - name: Test with unittest
-      run: |
-        sh appbuilder/tests/run_python_test.sh
-
-  Windows-CI-Tests:
-    runs-on: windows-latest
-    env:
-      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9","3.12"]
-    
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Print ENV
-      run: |
-        env
-        ls
-        pwd
-    - name: Fetch Upstream
-      run: |
-        git remote add upstream https://github.com/baidubce/app-builder.git 
-        git fetch upstream
-    - name: Install dependencies
-      run: |
-        python3 -m ensurepip --upgrade
-        python3 -m pip install --upgrade pip
-        python3 -m pip install --upgrade setuptools
-        python3 -m pip install wheel
-        python3 -m pip install coverage
-        python3 -m pip install diff-cover
-    - name: Build whl
-      run: |
-        python3 setup.py bdist_wheel
-        python3 -m pip uninstall -y appbuilder-sdk
-        python3 -m pip install dist/*.whl
-    - name: Test with unittest
-      run: |
-        sh appbuilder/tests/run_python_test.sh
-
-  Mac-CI-Tests:
-    runs-on: macos-latest
-    env:
-      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9","3.12"]
-    
-    steps:
-    - uses: actions/checkout@v3
+        ref: ${{ github.event.pull_request.head.sha }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
@@ -143,6 +63,7 @@ jobs:
         git remote add upstream https://github.com/baidubce/app-builder.git 
         git fetch upstream
         git remote -v
+        git status
     - name: Install dependencies
       run: |
         python3 -m ensurepip --upgrade
