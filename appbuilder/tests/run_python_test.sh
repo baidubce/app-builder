@@ -84,6 +84,12 @@ echo "增量代码覆盖率为："
 diff-cover coverage.xml --compare-branch=upstream/master   --html-report coverage_diff.html --fail-under=90
 cover_result=$?
 
+echo "--------------------------"
+echo "CI 流水线运行结果如下: "
+echo "单测运行结果: $run_result"
+echo "单测覆盖率结果: $cover_result"
+echo "--------------------------"
+
 # 若单测失败，则退出
 if [ $run_result -ne 0 ]; then echo "单测运行失败，请检查错误日志，修复单测后重试" && exit 1; fi
 
