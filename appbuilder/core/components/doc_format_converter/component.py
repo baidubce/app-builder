@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -123,6 +123,8 @@ class DocFormatConverter(Component):
                     submit_request.image =  base64.b64encode(f.read())
         docConverterSubmitResponse = self.submitDocFormatConverterTask(submit_request)
         taskId = docConverterSubmitResponse.result.task_id
+        TASK_PROGRESS_COMPLETED = 3
+        TASK_PROGRESS_FAILED = 4
         if taskId:
             task_request_time = 1
             while True:
@@ -131,9 +133,9 @@ class DocFormatConverter(Component):
                 docConverterQueryResponse = self.queryDocFormatConverterTask(request)
                 if docConverterQueryResponse.result.ret_code is not None:
                     task_progress = docConverterQueryResponse.result.ret_code
-                    if task_progress == 3:
+                    if task_progress == TASK_PROGRESS_COMPLETED:
                         break
-                    elif task_progress == 4:
+                    elif task_progress == TASK_PROGRESS_FAILED:
                         raise AppBuilderServerException(f'任务执行失败')
                     # TODO 文档格式转换查询间隔Refactor
                     if task_request_time <= 3:
