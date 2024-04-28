@@ -196,19 +196,15 @@ class AssistantHTTPClient(HTTPClient):
         
         Args:
             无参数。
-        
-        Returns:
-            dict: 包含认证信息的字典，包含以下键值对：
-                - "Authorization": str类型，表示认证密钥。
-                - "Content-Type": str类型，表示请求内容类型，固定为"application/json"。
-        
         """
         r"""auth_header is a helper method return auth info"""
-        return {
-            "Authorization": self.secret_key,
-            "Content-Type": "application/json"
-
-        }
+        auth_header = get_default_header()
+        auth_header["Authorization"] = self.secret_key
+        auth_header["X-Appbuilder-Request-Id"] = str(uuid.uuid4())
+        auth_header["X-Appbuilder-Authorization"] = self.secret_key
+        auth_header["Content-Type"] = "application/json"
+        logger.debug("Request header: {}\n".format(auth_header))
+        return auth_header
 
     @staticmethod
     def check_assistant_response(request_id, data):
