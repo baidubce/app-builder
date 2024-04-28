@@ -242,15 +242,15 @@ def run_cpu_parallel_unittest():
         for success in retry_success_cases:
             failed_cases.remove(success)
     
-    if len(retry_failed_cases) > 0:
-        logger.info("\n以下单测失败，将重试运行 1 次")
-        for case in retry_failed_cases:
-            logger.info("retry case --> {}".format(case))
-        second_success_cases, second_failed_cases, second_case_time = parallel_execute_unittest(
-            retry_failed_cases, 1)
-        total_case_time += second_case_time
-        for success in second_success_cases:
-            failed_cases.remove(success)
+        if len(retry_failed_cases) > 0:
+            logger.info("\n以下单测失败，将重试运行 1 次")
+            for case in retry_failed_cases:
+                logger.info("retry case --> {}".format(case))
+            second_success_cases, second_failed_cases, second_case_time = parallel_execute_unittest(
+                retry_failed_cases, 1)
+            total_case_time += second_case_time
+            for success in second_success_cases:
+                failed_cases.remove(success)
 
     end_time = time.time()
     logger.info("\n CPU_PARALLEL 运行失败单测： {} 个".format(len(failed_cases)))
@@ -288,15 +288,15 @@ def run_cpu_serial_unittest():
         for success in retry_success_cases:
             failed_cases.remove(success)
 
-    if len(retry_failed_cases) > 0:
-        logger.info("\n以下单测失败，将重试运行 1 次")
-        for case in retry_failed_cases:
-            logger.info("retry case --> {}".format(case))
-        second_success_cases, second_failed_cases, second_case_time = parallel_execute_unittest(
-            retry_failed_cases, 1)
-        total_case_time += second_case_time
-        for success in second_success_cases:
-            failed_cases.remove(success)
+        if len(retry_failed_cases) > 0:
+            logger.info("\n以下单测失败，将重试运行 1 次")
+            for case in retry_failed_cases:
+                logger.info("retry case --> {}".format(case))
+            second_success_cases, second_failed_cases, second_case_time = parallel_execute_unittest(
+                retry_failed_cases, 1)
+            total_case_time += second_case_time
+            for success in second_success_cases:
+                failed_cases.remove(success)
 
     end_time = time.time()
     logger.info("\n CPU_SERIAL 运行失败单测： {} 个".format(len(failed_cases)))
