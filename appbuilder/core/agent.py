@@ -423,7 +423,7 @@ class AgentRuntime(BaseModel):
             raise ValueError("chainlit_agent require component must be an instance of AppBuilderClient")
         conversation_ids = []
 
-        def chat(message: cl.Message):
+        def _chat(message: cl.Message):
             if len(conversation_ids) == 0:
                 raise ValueError("create new conversation failed!")
             conversation_id = conversation_ids[-1]
@@ -447,7 +447,7 @@ class AgentRuntime(BaseModel):
             await msg.send()
             await msg.update()
 
-            stream_message = chat(message)
+            stream_message = _chat(message)
             detail_json_list = []
             for part in stream_message.content:
                 if token := part.answer or "":
