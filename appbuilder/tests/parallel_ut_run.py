@@ -201,23 +201,7 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
                                                                     case_idx, case_num, end_time - begin_time, test_file,))
     return
 
-
-<<<<<<< HEAD
-def parallel_execute_unittest(test_cases, parallel_num=4):
-    """
-    并行执行测试用例，并返回执行结果
-    
-    Args:
-        test_cases (list): 测试用例列表，每个元素为测试文件路径
-        parallel_num (int, optional): 并行执行测试用例的数量，默认为4
-    
-    Returns:
-        tuple: 返回一个包含成功用例列表、失败用例列表和总用时的元组
-    
-    """
-=======
 def parallel_execute_unittest(test_cases, parallel_num=2):
->>>>>>> 890281f40d0a742aad9c66561f108247252b0c77
     case_num = len(test_cases)
     success_cases = []
     failed_cases = []
@@ -249,18 +233,6 @@ def parallel_execute_unittest(test_cases, parallel_num=2):
 
 
 def run_cpu_parallel_unittest():
-    """
-    运行 CPU 并行单测。
-    
-    Args:
-        无
-    
-    Returns:
-        success_cases (list): 运行成功的单测列表
-        failed_cases (list): 运行失败的单测列表
-        total_time (float): 运行单测的总耗时（单位：秒）
-    
-    """
     os.environ["TEST_CASE"] = "CPU_PARALLEL"
     logger.info("\n================ CPU_PARALLEL ================\n")
 
