@@ -11,11 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
 import os
 import unittest
 import appbuilder
+import time
 
 @unittest.skip("Open api request limit reached")
 class TestMRC(unittest.TestCase):
@@ -25,7 +24,6 @@ class TestMRC(unittest.TestCase):
         '''
         # 设置环境变量和初始化TestMRCComponent实例
         self.model_name = "ERNIE Speed-AppBuilder"
-
         self.mrc = appbuilder.MRC(model=self.model_name)
 
     def test_mrc_with_default_params(self):
@@ -60,16 +58,16 @@ class TestMRC(unittest.TestCase):
         有效的身份证明原件和复印件；2、残疾人证原件和复印件；3、驾驶证原件和复印件；
         4、车辆行驶证原件和复印件；5、有效的机动车交强险凭证。"""])
         answer = self.mrc(msg, context_list)
-        print(answer)
+        self.assertIsNotNone(answer)
+        time.sleep(1) 
 
     def test_mrc_with_invalid_context(self):
         """测试run方法使用无效格式的context_list"""
         msg = "残疾人怎么办相关证件"
         msg = appbuilder.Message(msg)
         context_list = appbuilder.Message("无效样式")
-
         self.mrc(msg, context_list)
-
+        time.sleep(1) 
 
     def test_mrc_with_reject(self):
         """测试拒答功能开启情况"""
@@ -85,7 +83,7 @@ class TestMRC(unittest.TestCase):
         北京市无障碍环境建设促进中心（北京市残疾人辅助器具资源中心），咨询电话：63547715 或68397831。三、所需材料：1、
         有效的身份证明原件和复印件；2、残疾人证原件和复印件；3、驾驶证原件和复印件；
         4、车辆行驶证原件和复印件；5、有效的机动车交强险凭证。"""])
-        answer = self.mrc(msg, context_list, reject=True)
+        answer = self.mrc(msg, context_list, reject=True, clarify=True, highlight=True, friendly=True,cite=True)
         print(answer)
     def test_mrc_with_clarify(self):
         """测试澄清功能开启情况"""

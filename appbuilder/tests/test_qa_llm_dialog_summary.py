@@ -89,7 +89,7 @@ class TestDialogSummaryComponent(unittest.TestCase):
         assert "诉求" in content
         assert "回应" in content
         assert "解决情况" in content
-        time.sleep(1)
+        time.sleep(10)
 
     @parameterized.expand([
         # timeout为0
