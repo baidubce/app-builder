@@ -19,7 +19,7 @@ import os
 from appbuilder.core.components.llms.style_rewrite.component import StyleChoices
 import appbuilder
 
-@unittest.skip("TypeError: 'NoneType' object is not iterable")
+@unittest.skip(reason="usual failure")
 class TestStyleRewriteComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -80,7 +80,6 @@ class TestStyleRewriteComponent(unittest.TestCase):
         query = "帮我写一篇关于人体工学椅的文案"
         result = self.node.tool_eval(name="style_rewrite", streaming=True, query=query)
         res = [item for item in result]
-        print(res)
         self.assertNotEqual(len(res), 0)
 
     def test_tool_eval_invalid(self):

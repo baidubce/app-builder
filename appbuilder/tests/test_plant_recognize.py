@@ -18,7 +18,7 @@ import requests
 import appbuilder
 from appbuilder.core.message import Message
 
-@unittest.skip("ValueError: one of image or url must be set")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPlantRecognition(unittest.TestCase):
 
     def setUp(self):

@@ -44,13 +44,13 @@
 # 代码Pass，保存在流水线配置中，并在流水线环境执行
 
 # 4、执行setup.py，生产whl包，并更新当前环境的python库
-python3 -m pip install wheel
-python3 -m pip install coverage
-python3 -m pip install diff-cover
+# python3 -m pip install wheel
+# python3 -m pip install coverage
+# python3 -m pip install diff-cover
 
-python3 setup.py bdist_wheel
-python3 -m pip install --force-reinstall dist/*.whl
-cd appbuilder/tests/
+# python3 setup.py bdist_wheel
+# python3 -m pip install --force-reinstall dist/*.whl
+# cd appbuilder/tests/
 
 
 # 5、执行parallel_ut_run.py，运行python单元测试

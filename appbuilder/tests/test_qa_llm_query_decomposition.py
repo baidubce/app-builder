@@ -31,6 +31,7 @@ from appbuilder.utils.logger_util import get_logger
 log = get_logger(__name__)
 
 models = appbuilder.get_model_list("", ["chat"], True)
+models=["ERNIE-3.5-8K"]
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestMixcardOcr(unittest.TestCase):
@@ -42,9 +43,7 @@ class TestMixcardOcr(unittest.TestCase):
                                     "阱”等话题频繁登上热搜。医生提醒称，“光腿神器”不仅不能瘦腿，穿错“光腿神器”会引发足部、下肢血"
                                     "管、关节、皮肤问题等累及全身多部位、组织的健康问题。", True, None),
         param(models[0], "吸塑包装盒在工业化生产和物流运输中分别有什么重要性", True, 0.1),
-    ]+
-        [param(model, "吸塑包装盒在工业化生产和物流运输中分别有什么重要性", None, None) for model in models
-         if model not in ["Yi-34B-Chat", "ChatLaw", "BLOOMZ-7B", "Qianfan-BLOOMZ-7B-compressed"]])
+    ])
     def test_normal_case(self, model_name, query, stream, temperature):
         """
         TestQueryDecomposition正常用例

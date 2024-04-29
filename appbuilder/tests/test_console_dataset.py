@@ -16,7 +16,7 @@ import os
 import unittest
 import appbuilder
 
-@unittest.skip("current Number of datasets over max_nums_datasets:50")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDataset(unittest.TestCase):
 
     @classmethod
