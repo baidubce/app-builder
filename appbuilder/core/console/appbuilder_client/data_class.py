@@ -17,7 +17,7 @@ from pydantic import Field
 from typing import Union
 
 
-class AgentBuilderRequest(BaseModel):
+class AppBuilderClientRequest(BaseModel):
     """会话请求参数
         属性:
             query (str): 查询参数
@@ -52,7 +52,7 @@ class OriginalEvent(BaseModel):
     outputs: dict = {}
 
 
-class AgentBuilderResponse(BaseModel):
+class AppBuilderClientResponse(BaseModel):
     """会话请求参数
         属性:
             request_id (int): 请求ID
@@ -195,7 +195,7 @@ class Event(BaseModel):
     detail: dict = {}
 
 
-class AgentBuilderAnswer(BaseModel):
+class AppBuilderClientAnswer(BaseModel):
     """执行步骤的具体内容
         属性:
             answer(str): query回答内容
