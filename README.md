@@ -82,15 +82,40 @@ print(answer.content)
     - [企业级问答系统](./cookbooks/qa_system_1_dataset.ipynb)
 
 
-## 系统架构
+## 能力全景图
+<div align="center">
+<img src='docs/image/structure.png' alt='wechat' width='700' >
+</div>
 
 
 ## 文档
 
+- [一、快速开始]()
+    - [安装说明]()
+    - [版本说明]()
+- [二、基础能力组件]()
+    - [组件列表]()
+- [三、流程编排]()
+    - [Assitant SDK]()
+- [四、端到端应用]()
+    - [AppBuilder Client SDK]()
+    - [知识库 Dataset SDK]()
+- [五、应用实践]()
+    - [CookBooks]()
+- [六、服务化部署]()
+    - [API调用]()
+    - [交互式服务]()
+- [七、二次开发]()
+
 
 ## 开源社区与活动
 
+- [Github Issue](https://github.com/baidubce/app-builder/issues):  提交安装/使用问题、报告bug、建议新特性、沟通开发计划等
 
+- [百度智能云千帆社区](https://cloud.baidu.com/qianfandev)：
+    - [千帆杯新手训练营 - 多类型主题练习赛](https://cloud.baidu.com/qianfandev/aimatch)
+    - [千帆杯AI原生应用创意挑战赛 - 教育生态行业赛](https://cloud.baidu.com/qianfandev/topic/269711)
+    - [千帆杯AI原生应用创意挑战赛 - 效率工具常规赛](https://cloud.baidu.com/qianfandev/topic/269599)
 
 ## License
 
