@@ -2,11 +2,15 @@ import unittest
 import os
 import appbuilder
 
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 def get_cur_whether(location:str, unit:str):
     return "{} 的当前温度是30 {}".format(location, unit)
 
 
 class TestFunctionCall(unittest.TestCase):
+    def setUp(self):
+        os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_V2"]
+
     def test_run_create_v1(self):
         from appbuilder.core.assistant.type import thread_type
         assistant = appbuilder.assistant.assistants.create(

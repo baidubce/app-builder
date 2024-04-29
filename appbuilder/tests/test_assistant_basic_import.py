@@ -2,7 +2,11 @@ import unittest
 import os
 import appbuilder
 
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAssistantImport(unittest.TestCase):
+    def setUp(self):
+        os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_V2"]
+
     def test_assistants_beta_import(self):
         from appbuilder import assistant
         from appbuilder.core.assistant.base import BetaAssistant

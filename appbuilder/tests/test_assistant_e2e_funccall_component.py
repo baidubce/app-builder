@@ -3,8 +3,11 @@ import os
 import appbuilder
 
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestFunctionCall(unittest.TestCase):
+    def setUp(self):
+        os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_V2"]
+
     def test_end_to_end(self):
         assistant = appbuilder.assistant.assistants.create(
             name="test_function",
