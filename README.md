@@ -22,14 +22,14 @@
 
 #### AppBuilder-SDK 最新版本 0.7.0 (2024-04-30)
 
-`AppBuilder-SDK` 更新记录&最新特性请查阅我们的[版本说明](./docs/release_note.md)
+`AppBuilder-SDK` 更新记录&最新特性请查阅我们的[版本说明]()
 
 - 我们推荐安装Python最新稳定版本
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
-- 我们也支持多种语言及镜像使用: `Java` 及 `Go` 版本安装，以及通过`docker`镜像使用，请查阅[安装说明](./docs/install.md)
+- 我们也支持多种语言及镜像使用: `Java` 及 `Go` 版本安装，以及通过`docker`镜像使用，请查阅[安装说明]()
 
 
 ## 快速开始你的第一个AI原生应用
@@ -82,30 +82,28 @@ print(answer.content)
     - [企业级问答系统](./cookbooks/qa_system_1_dataset.ipynb)
 
 
-## 能力全景图
+## AppBuilder-SDK 能力全景图
 <div align="center">
 <img src='docs/image/structure.png' alt='wechat' width='700' >
 </div>
 
 
-## 文档
+## 用户文档
 
-- [一、快速开始]()
+- [快速开始]()
     - [安装说明]()
     - [版本说明]()
-- [二、基础能力组件]()
-    - [组件列表]()
-- [三、流程编排]()
-    - [Assitant SDK]()
-- [四、端到端应用]()
-    - [AppBuilder Client SDK]()
-    - [知识库 Dataset SDK]()
-- [五、应用实践]()
+- [核心功能]()
+    - [基础能力组件]()
+    - [流程编排]()
+    - [端到端应用]()
+- [应用实践]()
     - [CookBooks]()
-- [六、服务化部署]()
+- [服务化部署]()
     - [API调用]()
     - [交互式服务]()
-- [七、二次开发]()
+    - [公有云部署]()
+- [二次开发]()
 
 
 ## 开源社区与活动
