@@ -13,11 +13,10 @@
 # limitations under the License.
 import sys
 import copy
-import os 
+import os
 import logging
 import uuid
 import json
-import inspect
 from pydantic import BaseModel, model_validator, Extra
 from typing import Optional, Dict, List, Any, Union
 import sqlalchemy
@@ -170,8 +169,8 @@ class AgentRuntime(BaseModel):
         """
         检查配置
         """
-        extra = Extra.forbid # 不能传入类定义中未声明的字段
-        arbitrary_types_allowed = True # 此设置允许在模型中使用自定义类型的字段
+        extra = Extra.forbid  # 不能传入类定义中未声明的字段
+        arbitrary_types_allowed = True  # 此设置允许在模型中使用自定义类型的字段
 
     @model_validator(mode='before')
     @classmethod
@@ -190,7 +189,7 @@ class AgentRuntime(BaseModel):
         })
         return values
 
-    def chat(self, message: Message, stream: bool=False, **args) -> Message:
+    def chat(self, message: Message, stream: bool = False, **args) -> Message:
         """
         执行一次对话
         
@@ -203,7 +202,7 @@ class AgentRuntime(BaseModel):
             Message
         """
         return self.component.run(message=message, stream=stream, **args)
-        
+
     def create_flask_app(self, url_rule="/chat"):
         """ 
         创建 Flask 应用，主要用于 Gunicorn 这样的 WSGI 服务器来运行服务。
@@ -228,7 +227,7 @@ class AgentRuntime(BaseModel):
         @app.errorhandler(BadRequest)
         def handle_bad_request(e):
             return {"code": 400, "message": f'{e}', "result": None}, 400
-            
+
         @app.errorhandler(Exception)
         def handle_bad_request(e):
             if hasattr(e, "code"):
@@ -274,7 +273,8 @@ class AgentRuntime(BaseModel):
             request_id = str(uuid.uuid4())
 
             init_context(session_id=session_id, request_id=request_id)
-            logging.info(f"[request_id={request_id}, session_id={session_id}] message={message}, stream={stream}, data={data}")
+            logging.info(
+                f"[request_id={request_id}, session_id={session_id}] message={message}, stream={stream}, data={data}")
             try:
                 answer = self.chat(message, stream, **data)
                 if stream:
@@ -286,42 +286,47 @@ class AgentRuntime(BaseModel):
                                 prev_result = copy.deepcopy(stream_message)
                                 prev_result.content = prev_content
                                 for sub_content in content_iterator:
-                                    logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
+                                    logging.info(
+                                        f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
                                     yield "data: " + json.dumps({
-                                            "code": 0, "message": "", 
-                                            "result": {
-                                                "session_id": session_id, 
-                                                "is_completion": False, 
-                                                "answer_message": json.loads(prev_result.json(exclude_none=True))
-                                            }
-                                        }, ensure_ascii=False) + "\n\n"
-                                    prev_result = copy.deepcopy(stream_message)
-                                    prev_result.content = sub_content
-                                logging.info(f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
-                                yield "data: " + json.dumps({
-                                        "code": 0, "message": "", 
+                                        "code": 0, "message": "",
                                         "result": {
-                                            "session_id": session_id, 
-                                            "is_completion": True, 
+                                            "session_id": session_id,
+                                            "is_completion": False,
                                             "answer_message": json.loads(prev_result.json(exclude_none=True))
                                         }
                                     }, ensure_ascii=False) + "\n\n"
+                                    prev_result = copy.deepcopy(stream_message)
+                                    prev_result.content = sub_content
+                                logging.info(
+                                    f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
+                                yield "data: " + json.dumps({
+                                    "code": 0, "message": "",
+                                    "result": {
+                                        "session_id": session_id,
+                                        "is_completion": True,
+                                        "answer_message": json.loads(prev_result.json(exclude_none=True))
+                                    }
+                                }, ensure_ascii=False) + "\n\n"
                                 self.user_session._post_append()
                             except Exception as e:
                                 code = 500 if not hasattr(e, "code") else e.code
                                 err_resp = {"code": code, "message": str(e), "result": None}
-                                logging.error(f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
+                                logging.error(f"[request_id={request_id}, session_id={session_id}] err={e}",
+                                              exc_info=True)
                                 yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
+
                     return Response(
-                        gen_sse_resp(answer), 200, 
+                        gen_sse_resp(answer), 200,
                         {'Content-Type': 'text/event-stream; charset=utf-8'},
                     )
                 else:
                     blocking_result = json.loads(copy.deepcopy(answer).json(exclude_none=True))
-                    logging.info(f"[request_id={request_id}, session_id={session_id}] blocking_result={blocking_result}")
+                    logging.info(
+                        f"[request_id={request_id}, session_id={session_id}] blocking_result={blocking_result}")
                     self.user_session._post_append()
                     return {
-                        "code": 0, "message": "", 
+                        "code": 0, "message": "",
                         "result": {"session_id": session_id, "answer_message": blocking_result}
                     }
             except Exception as e:
@@ -345,7 +350,7 @@ class AgentRuntime(BaseModel):
         """
         app = self.create_flask_app(url_rule=url_rule)
         app.run(host=host, debug=debug, port=port)
-        
+
     def chainlit_demo(self, host='0.0.0.0', port=8091):
         """
         将 component 服务化，提供 chainlit demo 页面
@@ -366,7 +371,7 @@ class AgentRuntime(BaseModel):
                               "chainlit~=1.0.200'.")
         import click
         from click.testing import CliRunner
-        
+
         @cl.on_message  # this function will be called every time a user inputs a message in the UI
         async def main(message: cl.Message):
             session_id = cl.user_session.get("id")
@@ -374,6 +379,7 @@ class AgentRuntime(BaseModel):
             init_context(session_id=session_id, request_id=request_id)
             msg = cl.Message(content="")
             await msg.send()
+            await msg.update()
             stream_message = self.chat(Message(message.content), stream=True)
 
             for part in stream_message.content:
@@ -392,3 +398,82 @@ class AgentRuntime(BaseModel):
             runner.invoke(
                 chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
 
+    def chainlit_agent(self, host='0.0.0.0', port=8091):
+        """
+                将 component 服务化，提供 chainlit demo 页面
+
+                Args:
+                    host (str): 服务 host
+                    port (int): 服务 port
+
+                Returns:
+                    None
+                """
+        # lazy import chainlit
+        try:
+            import chainlit as cl
+            import chainlit.cli
+        except ImportError:
+            raise ImportError("chainlit module is not installed. Please install it using 'pip install "
+                              "chainlit~=1.0.200'.")
+        import click
+        from click.testing import CliRunner
+
+        if not isinstance(self.component, appbuilder.AppBuilderClient):
+            raise ValueError("chainlit_agent require component must be an instance of AppBuilderClient")
+        conversation_ids = []
+
+        def chat(message: cl.Message):
+            if len(conversation_ids) == 0:
+                raise ValueError("create new conversation failed!")
+            conversation_id = conversation_ids[-1]
+            file_ids = []
+            if len(message.elements) > 0:
+                file_id = self.component.upload_local_file(conversation_id, message.elements[0].path)
+                file_ids.append(file_id)
+            return self.component.run(conversation_id=conversation_id, query=message.content, file_ids=file_ids,
+                                      stream=True)
+
+        @cl.on_chat_start
+        async def start():
+            session_id = cl.user_session.get("id")
+            request_id = str(uuid.uuid4())
+            init_context(session_id=session_id, request_id=request_id)
+            conversation_ids.append(self.component.create_conversation())
+
+        @cl.on_message  # this function will be called every time a user inputs a message in the UI
+        async def main(message: cl.Message):
+            msg = cl.Message(content="")
+            await msg.send()
+            await msg.update()
+
+            stream_message = chat(message)
+            detail_json_list = []
+            for part in stream_message.content:
+                if token := part.answer or "":
+                    await msg.stream_token(token)
+                for event in part.events:
+                    detail = event.detail
+                    detail_json = json.dumps(detail, indent=4, ensure_ascii=False)
+                    detail_json_list.append(detail_json)
+            await msg.update()
+
+            @cl.step(name="详细信息")
+            def show_json(detail_json):
+                return "```json\n" + detail_json + "\n```"
+
+            for detail_json in detail_json_list:
+                if len(detail_json) > 2:
+                    show_json(detail_json)
+            await msg.update()
+            self.user_session._post_append()
+
+        # start chainlit service
+        if os.getenv('APPBUILDER_RUN_CHAINLIT') == '1':
+            pass
+        else:
+            os.environ['APPBUILDER_RUN_CHAINLIT'] = '1'
+            target = sys.argv[0]
+            runner = CliRunner()
+            runner.invoke(
+                chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
