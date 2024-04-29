@@ -202,6 +202,7 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
     return
 
 
+<<<<<<< HEAD
 def parallel_execute_unittest(test_cases, parallel_num=4):
     """
     并行执行测试用例，并返回执行结果
@@ -214,6 +215,9 @@ def parallel_execute_unittest(test_cases, parallel_num=4):
         tuple: 返回一个包含成功用例列表、失败用例列表和总用时的元组
     
     """
+=======
+def parallel_execute_unittest(test_cases, parallel_num=2):
+>>>>>>> 890281f40d0a742aad9c66561f108247252b0c77
     case_num = len(test_cases)
     success_cases = []
     failed_cases = []
@@ -267,7 +271,7 @@ def run_cpu_parallel_unittest():
     logger.info("\n CPU_PARALLEL 运行成功单测：{} 个".format(len(success_cases)))
 
     if len(failed_cases) > 0:
-        logger.info("\n以下单测失败，将重试运行一次")
+        logger.info("\n以下单测失败，将重试运行 2 次")
         for case in failed_cases:
             logger.info("retry case --> {}".format(case))
         retry_success_cases, retry_failed_cases, retry_case_time = parallel_execute_unittest(
@@ -277,6 +281,16 @@ def run_cpu_parallel_unittest():
 
         for success in retry_success_cases:
             failed_cases.remove(success)
+    
+        if len(retry_failed_cases) > 0:
+            logger.info("\n以下单测失败，将重试运行 1 次")
+            for case in retry_failed_cases:
+                logger.info("retry case --> {}".format(case))
+            second_success_cases, second_failed_cases, second_case_time = parallel_execute_unittest(
+                retry_failed_cases, 1)
+            total_case_time += second_case_time
+            for success in second_success_cases:
+                failed_cases.remove(success)
 
     end_time = time.time()
     logger.info("\n CPU_PARALLEL 运行失败单测： {} 个".format(len(failed_cases)))
@@ -314,7 +328,7 @@ def run_cpu_serial_unittest():
     logger.info("\n CPU_SERIAL 运行成功单测：{} 个".format(len(success_cases)))
 
     if len(failed_cases) > 0:
-        logger.info("\n以下单测失败，将重试运行一次")
+        logger.info("\n以下单测失败，将重试运行 2 次")
         for case in failed_cases:
             logger.info("retry case --> {}".format(case))
         retry_success_cases, retry_failed_cases, retry_case_time = parallel_execute_unittest(
@@ -324,6 +338,16 @@ def run_cpu_serial_unittest():
 
         for success in retry_success_cases:
             failed_cases.remove(success)
+
+        if len(retry_failed_cases) > 0:
+            logger.info("\n以下单测失败，将重试运行 1 次")
+            for case in retry_failed_cases:
+                logger.info("retry case --> {}".format(case))
+            second_success_cases, second_failed_cases, second_case_time = parallel_execute_unittest(
+                retry_failed_cases, 1)
+            total_case_time += second_case_time
+            for success in second_success_cases:
+                failed_cases.remove(success)
 
     end_time = time.time()
     logger.info("\n CPU_SERIAL 运行失败单测： {} 个".format(len(failed_cases)))

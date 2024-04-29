@@ -10,6 +10,7 @@ import com.baidubce.appbuilder.model.agentbuilder.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.Deprecated;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -21,16 +22,19 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 public class AgentBuilder extends Component {
     public String appID;
 
+    @Deprecated
     public AgentBuilder(String appID) {
         super();
         this.appID = appID;
     }
 
+    @Deprecated
     public AgentBuilder(String appID, String secretKey) {
         super(secretKey);
         this.appID = appID;
     }
 
+    @Deprecated
     public AgentBuilder(String appID, String secretKey, String gateway) {
         super(secretKey, gateway);
         this.appID = appID;
@@ -51,7 +55,7 @@ public class AgentBuilder extends Component {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("app_id", this.appID);
         String jsonBody = JsonUtils.serialize(requestBody);
-        ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<ConversationResponse> response = httpClient.execute(postRequest, ConversationResponse.class);
         ConversationResponse respBody = response.getBody();
@@ -81,7 +85,7 @@ public class AgentBuilder extends Component {
         builder.addTextBody("conversation_id", conversationId);
         builder.addTextBody("scenario", "assistant");
 
-        ClassicHttpRequest postRequest = httpClient.createPostRequest(url, builder.build());
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, builder.build());
         HttpResponse<FileUploadResponse> response = httpClient.execute(postRequest, FileUploadResponse.class);
 
         FileUploadResponse respBody = response.getBody();
@@ -111,7 +115,7 @@ public class AgentBuilder extends Component {
         requestBody.put("file_ids", fileIds);
         requestBody.put("stream", stream);
         String jsonBody = JsonUtils.serialize(requestBody);
-        ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<Iterator<AgentBuilderResponse>> response = httpClient.executeSSE(postRequest, AgentBuilderResponse.class);
         return new AgentBuilderIterator(response.getBody());

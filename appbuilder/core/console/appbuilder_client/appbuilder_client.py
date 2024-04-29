@@ -17,23 +17,24 @@ import os
 import json
 
 from appbuilder.core.component import Message, Component
-from appbuilder.core.console.agent_builder import data_class
+from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
+from appbuilder.utils.func_utils import deprecated
+from appbuilder.utils.logger_util import logger
 
-
-class AgentBuilder(Component):
+class AppBuilderClient(Component):
     r"""
-       AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上通过AgentBuilder
+       AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上
        构建并发布的智能体应用，具体包括创建会话、上传文档、运行对话等。
         Examples:
         ... code-block:: python
             import appbuilder
             # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
             os.environ["APPBUILDER_TOKEN"] = '...'
-            # 可在Console AgentBuilder应用页面获取
+            # 可在Console 应用页面获取
             app_id = "app_id"
-            agent_builder = appbuilder.AgentBuilder("app_id")
+            agent_builder = appbuilder.AppBuilderClient("app_id")
             conversation_id = agent_builder.create_conversation()
             file_id = agent_builder.upload_local_file(conversation_id, "/path/to/file")
             message = agent_builder.run(conversation_id, "今天你好吗？")
@@ -46,7 +47,7 @@ class AgentBuilder(Component):
                 参数:
                     app_id (str: 必须) : 应用唯一ID
                 返回：
-                    response (obj: `AgentBuilder`): 智能体实例
+                    response (obj: `AppBuilderClient`): 智能体实例
         """
         super().__init__(**kwargs)
         if (not isinstance(app_id, str)) or len(app_id) == 0:
@@ -61,10 +62,10 @@ class AgentBuilder(Component):
                     无
                 返回：
                     response (str: ): 唯一会话ID
-          """
-        headers = self.http_client.auth_header()
+        """
+        headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url("/v1/app/conversation", "/api")
+        url = self.http_client.service_url_v2("/v2/app/conversation")
         response = self.http_client.session.post(url, headers=headers, json={"app_id": self.app_id}, timeout=None)
         self.http_client.check_response_header(response)
         data = response.json()
@@ -87,8 +88,8 @@ class AgentBuilder(Component):
             'app_id': (None, self.app_id),
             'conversation_id': (None, conversation_id),
         }
-        headers = self.http_client.auth_header()
-        url = self.http_client.service_url("/v1/app/conversation/file/upload", "/api")
+        headers = self.http_client.auth_header_v2()
+        url = self.http_client.service_url_v2("/v2/app/conversation/file/upload")
         response = self.http_client.session.post(url, files=multipart_form_data, headers=headers)
         self.http_client.check_response_header(response)
         data = response.json()
@@ -113,7 +114,7 @@ class AgentBuilder(Component):
         if len(conversation_id) == 0:
             raise ValueError("conversation_id is empty")
 
-        req = data_class.AgentBuilderRequest(
+        req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
             conversation_id=conversation_id,
             query=query,
@@ -121,9 +122,9 @@ class AgentBuilder(Component):
             file_ids=file_ids,
         )
 
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url("/v1/app/conversation/runs", '/api')
+        url = self.http_client.service_url_v2("/v2/app/conversation/runs")
         response = self.http_client.session.post(url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)
         request_id = self.http_client.response_request_id(response)
@@ -132,13 +133,13 @@ class AgentBuilder(Component):
             return Message(content=self._iterate_events(request_id, client.events()))
         else:
             data = response.json()
-            resp = data_class.AgentBuilderResponse(**data)
-            out = data_class.AgentBuilderAnswer()
+            resp = data_class.AppBuilderClientResponse(**data)
+            out = data_class.AppBuilderClientAnswer()
             _transform(resp, out)
             return Message(content=out)
 
     @staticmethod
-    def _iterate_events(request_id, events) -> data_class.AgentBuilderAnswer:
+    def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:
         for event in events:
             try:
                 data = event.data
@@ -147,8 +148,8 @@ class AgentBuilder(Component):
                 data = json.loads(data)
             except json.JSONDecodeError as e:
                 raise AppBuilderServerException(request_id=request_id, message="json decoder failed {}".format(str(e)))
-            inp = data_class.AgentBuilderResponse(**data)
-            out = data_class.AgentBuilderAnswer()
+            inp = data_class.AppBuilderClientResponse(**data)
+            out = data_class.AppBuilderClientAnswer()
             _transform(inp, out)
             yield out
 
@@ -163,7 +164,25 @@ class AgentBuilder(Component):
             )
 
 
-def _transform(inp: data_class.AgentBuilderResponse, out: data_class.AgentBuilderAnswer):
+class AgentBuilder(AppBuilderClient):
+    @deprecated
+    def __init__(self, app_id: str):
+        """
+        初始化方法，用于创建一个新的实例对象。
+
+        为了避免歧义，减少用户上手门槛，推荐使用该类调用AgentBuilder
+        
+        Args:
+            app_id (str): 应用程序的唯一标识符。
+        
+        Returns:
+            None
+        
+        """
+        logger.info("AgentBuilder is deprecated, please use AppBuilderClient instead")
+        super().__init__(app_id)
+
+def _transform(inp: data_class.AppBuilderClientResponse, out: data_class.AppBuilderClientAnswer):
     out.answer = inp.answer
     for ev in inp.content:
         event = data_class.Event(

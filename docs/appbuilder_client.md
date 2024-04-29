@@ -1,9 +1,9 @@
-# AgentBuilder组件
+# AppBuilderClient组件
 
 ## 简介
 
-AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)
-平台上通过AgentBuilder构建并发布的智能体应用。
+AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)
+平台上通过AppBuilderClient构建并发布的智能体应用。
 
 ### 功能介绍
 
@@ -11,7 +11,7 @@ AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud
 
 ### 特色优势
 
-与云端Console AgentBuilder能力打通，实现低代码会话
+与云端Console 应用能力打通，实现低代码会话
 
 ### 应用场景
 
@@ -25,7 +25,7 @@ AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud
 
 | 参数名称   | 参数类型   | 描述         | 示例值       |
 |--------|--------|------------|-----------|
-| app_id | string | 线上RAG应用的ID | "正确的应用ID" |
+| app_id | string | 线上Agent应用的ID | "正确的应用ID" |
 
 #### Run方法入参
 
@@ -68,7 +68,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AgentBuilder应用ID，可在console端查看
 # 初始化智能体
-agent = appbuilder.AgentBuilder(app_id)
+agent = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = agent.create_conversation()
 # 运行对话
@@ -82,7 +82,7 @@ print(out.content.answer)
 ```python
 
 import appbuilder
-from appbuilder.core.console.agent_builder import data_class
+from appbuilder.core.console.appbuilder_client import data_class
 import os
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
@@ -90,7 +90,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AgentBuilder应用的ID
 # 初始化智能体
-agent = appbuilder.AgentBuilder(app_id)
+agent = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = agent.create_conversation()
 
@@ -101,7 +101,7 @@ message = agent.run(conversation_id, "汽车性能参数怎么样", file_ids=[fi
 
 answer = ""
 
-# 每次迭代返回AgentBuilderAnswer结构，内可能包括多个事件内容
+# 每次迭代返回AppBuilderClientAnswer结构，内可能包括多个事件内容
 for content in message.content:
     # stream=True时，将answer拼接起来才是完整的的对话结果
     answer += content.answer
@@ -120,7 +120,8 @@ for content in message.content:
             print(image_detail.url)
         elif content_type == "rag":
             rag_detail = data_class.RAGDetail(**detail)
-            print(rag_detail.references)
+            if len(rag_detail.references) > 0:
+                print(rag_detail.references)
         elif content_type == "function_call":
             function_call_detail = data_class.FunctionCallDetail(**detail)
             print(function_call_detail.video)
@@ -143,20 +144,213 @@ print(answer)
 
 ### Java
 
+#### 组件初始化参数
+
+| 参数名称   | 参数类型      | 描述         | 示例值       |
+|--------|-----------|------------|-----------|
+| appID | String    | 线上Agent应用的ID | "正确的应用ID" | 
+
+#### Run方法入参
+
+| 参数名称   | 参数类型  | 是否必须 | 描述    | 示例值      |
+|--------|-------|------|-------|---------|
+| query          | String       | 是    | query内容                                            | "汽车性能参数怎么样" |
+| conversationId | String          | 是    | 对话id，可以通过createConversation()获取                |             |
+| fileIds       | String[] | 否    | 对话可引用的文档ID                                         |             |
+| stream         | boolean       | 是    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |     |
+
+#### Run方法出参
+| 参数名称                 | 参数类型         | 描述                   | 示例值 |
+|----------------------|--------------|--------------------|-----|
+| AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型,每次迭代返回AppBuilderClientIterator类型 |     |
+
+#### 迭代AgentBuilderIterator
+| 参数名称          | 参数类型        | 描述         | 示例值                                                               |
+|---------------|-------------|------------|------------------------------------------------------------------------|
+| +answer       | String      | 智能体应用返回的回答 |                                                                    |
+| +events       | Event[]     | 事件列表       |                                                                        |
+| +events[0]    | Event       | 具体事件内容     |                                                                        |
+| ++code        | string      | 错误码        |                                                                        |
+| ++message     | string      | 错误具体消息     |                                                                        |
+| ++status      | string      | 事件状态       | 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成）|
+| ++eventType   | string      | 事件类型       |                                                                        |
+| ++contentType | string      | 内容类型       | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
+| ++detail      | Map<String, Object> | 事件输出详情     | 代码解释器、文生图、工具组件、RAG等的详细输出内容                       |
+
+#### 示例代码
+以调用RAGAgent为例，其他组件调用方式类似。
+
+> Deprecated: AgentBuilder 已废弃，请使用 AppBuilderClient
+
+```Java
+class AgentBuilderDemo {
+
+    public static void main(String[] args) throws IOException, AppBuilderServerException {
+        // 填写自己的APPBUILDER_TOKEN
+        System.setProperty("APPBUILDER_TOKEN", "填写秘钥");
+        // 填写创建好的appId
+        String appId = "填写线上创建好的appId";
+
+        AppBuilderClient agentBuilder = new AppBuilderClient(appId);
+        String conversationId = agentBuilder.createConversation();
+        // 填写上传文件路径
+        String fileId = agentBuilder.uploadLocalFile(conversationId, "src/test/java/中秋节.docx");
+        // 输入query
+        AppBuilderClientIterator itor = agentBuilder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
+        StringBuilder anwser = new StringBuilder();
+        // itor.hasNext()返回false时，表示流式调用结束
+        while(itor.hasNext())
+        {
+            AgentBuilderResult response = itor.next();
+            anwser.append(response.getAnswer());
+            for (Event event : response.getEvents()) {
+                switch (event.getContentType()) {
+                    case "rag":
+                        List<Object> references = (List<Object>)event.getDetail().get("references");
+                        for (Object reference : references) {
+                            RAGReference ragDetail = JsonUtils.deserialize(JsonUtils.serialize(reference), RAGReference.class);
+                            System.out.println("-----------------------------------");
+                            System.out.println("参考文献ID:"+ragDetail.getId());
+                            System.out.println("参考文献内容:"+ragDetail.getContent());
+                            System.out.println("来源:"+ragDetail.getFrom());
+                            System.out.println("BaiduSearch链接:"+ragDetail.getUrl());
+                            System.out.println("类型:"+ragDetail.getType());
+                            System.out.println("文档片段ID:"+ragDetail.getSegmentId());
+                            System.out.println("文档ID:"+ragDetail.getDocumentId());
+                            System.out.println("文档名称:"+ragDetail.getDocumentName());
+                            System.out.println("文档所属数据集ID:"+ragDetail.getDatasetId());
+                            System.out.println("-----------------------------------");
+                        }
+                        break;
+                    default:
+                        // System.out.println(event);
+                }
+            }
+        }
+        System.out.print("输出：");
+        System.out.println(anwser);
+    }
+}
+
+class ReferenceDetail {
+    private int id;
+    private String content;
+    private String from;
+    private String url;
+    private String type;
+    @SerializedName("segment_id")
+    private String segmentId;
+    @SerializedName("document_id")
+    private String documentId;
+    @SerializedName("document_name")
+    private String documentName;
+    @SerializedName("dataset_id")
+    private String datasetId;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getSegmentId() {
+        return segmentId;
+    }
+
+    public void setSegmentId(String segmentId) {
+        this.segmentId = segmentId;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
+
+    public String getDocumentName() {
+        return documentName;
+    }
+
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
+    }
+
+    public String getDatasetId() {
+        return datasetId;
+    }
+
+    public void setDatasetId(String datasetId) {
+        this.datasetId = datasetId;
+    }
+
+    @Override
+    public String toString() {
+        return "RAGReference{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", from='" + from + '\'' +
+                ", url='" + url + '\'' +
+                ", type='" + type + '\'' +
+                ", segmentId='" + segmentId + '\'' +
+                ", documentId='" + documentId + '\'' +
+                ", documentName='" + documentName + '\'' +
+                ", datasetId='" + datasetId + '\'' +
+                '}';
+    }
+}
+
+```
+
 ### Go
 
 #### 组件初始化参数
 
 | 参数名称   | 参数类型      | 描述         | 示例值       |
 |--------|-----------|------------|-----------|
-| app_id | string    | 线上RAG应用的ID | "正确的应用ID" |
+| app_id | string    | 线上Agent应用的ID | "正确的应用ID" |
 | config | SDKConfig | SDK配置信息    |           |
 
 #### Run方法入参
 
 | 参数名称           | 参数类型         | 是否必须 | 描述                                                 | 示例值         |
 |----------------|--------------|------|----------------------------------------------------|-------------|
-| conversationID | 会话ID         | 是    | 若为空字符串服务端会自动创建新的会话ID，若不为空则继续上次对话内容                 |             |
+| conversationID | string         | 是    | 对话ID，可以通过CreateConversation()获取                |             |
 | query          | string       | 是    | query内容                                            | "汽车性能参数怎么样" |
 | stream         | bool         | 是    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |             |
 | file_ids       | list[String] | 否    | 对话可引用的文档ID                                         |             |
@@ -165,7 +359,7 @@ print(answer)
 
 | 参数名称                 | 参数类型                 | 描述                   | 示例值 |
 |----------------------|----------------------|----------------------|-----|
-| AgentBuilderIterator | AgentBuilderIterator | 回答迭代器，流式/非流式均统一返回该类型 |     |
+| AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型 |     |
 | error                | error                | 存在错误时error不为nil，反之   |     |
 
 #### 迭代AgentBuilderIterator
@@ -184,6 +378,8 @@ print(answer)
 
 #### 示例代码
 
+> Deprecated: AgentBuilder 已废弃，请使用 AppBuilderClient
+
 ```Go
 package main
 
@@ -197,10 +393,10 @@ import (
 )
 
 func main() {
-	// 设置APPBUILDER_TOKEN、GATEWAY_URL环境变量
+	// 设置APPBUILDER_TOKEN、GATEWAY_URL_V2环境变量
 	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
-	// 默认可不填，默认值是 https://appbuilder.baidu.com
-	os.Setenv("GATEWAY_URL", "")
+	// 默认可不填，默认值是 https://qianfan.baidubce.com
+	os.Setenv("GATEWAY_URL_V2", "")
 	config, err := appbuilder.NewSDKConfig("", "")
 	if err != nil {
 		fmt.Println("new config failed: ", err)
@@ -241,16 +437,18 @@ func main() {
 		for _, ev := range answer.Events {
 			if ev.ContentType == appbuilder.TextContentType {
 				detail := ev.Detail.(appbuilder.TextDetail)
-				fmt.Println(detail)
+				fmt.Println(detail.Text)
 			} else if ev.ContentType == appbuilder.CodeContentType {
 				detail := ev.Detail.(appbuilder.CodeDetail)
-				fmt.Println(detail)
+				fmt.Println(detail.Code)
 			} else if ev.ContentType == appbuilder.ImageContentType {
 				detail := ev.Detail.(appbuilder.ImageDetail)
-				fmt.Println(detail)
+				fmt.Println(detail.Image)
 			} else if ev.ContentType == appbuilder.RAGContentType {
 				detail := ev.Detail.(appbuilder.RAGDetail)
-				fmt.Println(detail)
+				if len(detail.References) > 0 {
+				    fmt.Println(detail.References)
+				}
 			} else if ev.ContentType == appbuilder.FunctionCallContentType {
 				detail := ev.Detail.(appbuilder.FunctionCallDetail)
 				fmt.Println(detail)

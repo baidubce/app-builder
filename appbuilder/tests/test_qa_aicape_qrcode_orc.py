@@ -34,7 +34,7 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/qrcode_ocr_test.png?" \
             "e74ab057ce26d50e966dc31ff083e6a9c41b"
 raw_image = requests.get(image_url).content
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip("Open api request limit reached")
 class TestQrcodeOcr(unittest.TestCase):
     @parameterized.expand([
         param(image_url, "true", None, None),

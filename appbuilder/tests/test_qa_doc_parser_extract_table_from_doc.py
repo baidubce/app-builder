@@ -31,7 +31,7 @@ log = get_logger(__name__)
 
 png_path = "./data/qa_doc_parser_extract_table_from_doc.png"
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestDocParserExtractTableFromDoc(unittest.TestCase):
     @parameterized.expand([
         param(png_path, True),
