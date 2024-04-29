@@ -121,6 +121,8 @@ from .core._exception import (
     AppBuilderServerException,
 )
 
+from appbuilder.core.assistant.base import assistant
+
 __all__ = [
     'logger',
 
@@ -178,4 +180,6 @@ __all__ = [
     "MixCardOCR",
     "AppBuilderClient",
     "AgentBuilder",
+
+    "assistant",
 ]

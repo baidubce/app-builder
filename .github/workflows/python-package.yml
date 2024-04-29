@@ -40,6 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
+      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
     strategy:
       fail-fast: false
       matrix:

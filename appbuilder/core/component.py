@@ -137,4 +137,3 @@ class Component:
     def tool_eval(self, **kwargs):
         if len(self.manifests) > 0:
             raise NotImplementedError
-        
