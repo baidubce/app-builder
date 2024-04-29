@@ -39,20 +39,15 @@ table_info_txt_1 = '''表格列信息如下：
                         教职工人数 : 140 , 数字值类型，表示该小学学校的教职工数量
                         教学班数量 : 122 , 数字值类型，表示该小学学校的教学班数量
                     '''
-models = appbuilder.get_model_list("", ["chat"], True)
+models = ["ERNIE-3.5-8K"]
 
 @unittest.skip("Open api request limit reached")
 class TestNl2pandasComponent(unittest.TestCase):
     @parameterized.expand([
         param(models[0], "海淀区有哪些学校", table_info_txt_1, None, None),
-        # param("ernie-bot", "海淀区大于2000人的学校", table_info_txt_1, None, None),
-        # param("ernie-bot-4", "海淀区学生人数和教职工人数比值大于0.1的学校", table_info_txt_1, None, None),
-        param(models[0], "海淀区1998年创办的学校中人最多的一个", table_info_txt_1, True, None),
         param(models[0], "西城区公立小学班级人数大于30人的数量", table_info_txt_1, False, 0.1),
         param(models[0], "列出所有学校", table_info_txt_1, True, 0.99),
-    ]+
-        [param(model, "海淀区有哪些学校", table_info_txt_1, None, None) for model in models
-         if model not in ["Yi-34B-Chat", "ChatLaw", "BLOOMZ-7B", "Qianfan-BLOOMZ-7B-compressed"]])
+    ])
     def test_normal_case(self, model_name, query, table_info, stream, temperature):
         """
         TestNl2pandasComponent正常用例

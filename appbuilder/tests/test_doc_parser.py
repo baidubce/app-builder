@@ -22,6 +22,16 @@ class TestDocParser(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """
+        设置测试类所需的全局变量，包括当前文件所在目录路径和测试PDF文件路径。
+        
+        Args:
+            无
+        
+        Returns:
+            无
+        
+        """
         # 获取当前文件所在的目录路径
         cls.current_dir = os.path.dirname(__file__)
         cls.test_pdf_path = os.path.join(cls.current_dir, 'test.pdf')

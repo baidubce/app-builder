@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# add test
 import os
 import sys
 import multiprocessing
@@ -145,6 +147,16 @@ def pull_last_n_log(ut_context, file_name, line_count=80):
 
 
 def run_sync_unittest(test_file):
+    """
+    同步运行单元测试
+    
+    Args:
+        test_file (str): 测试文件名
+    
+    Returns:
+        dict: 包含进程对象、日志文件对象以及开始时间的字典
+    
+    """
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
     cmd = COVERAGE_CMD + [test_file]
@@ -187,7 +199,6 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
     logger.info("[{}] Test Case : {}/{} 耗时: {:.2f} s --> {}".format("OK" if ret == 0 else "ERROR",
                                                                     case_idx, case_num, end_time - begin_time, test_file,))
     return
-
 
 def parallel_execute_unittest(test_cases, parallel_num=2):
     case_num = len(test_cases)
@@ -267,6 +278,17 @@ def run_cpu_parallel_unittest():
 
 
 def run_cpu_serial_unittest():
+    """
+    运行CPU_SERIAL模式下的单元测试,包括并行和串行两种方式,记录并打印成功和失败的情况及耗时
+    
+    Args:
+        无
+    
+    Returns:
+        success_cases (list): 成功运行的测试用例列表
+        failed_cases (list): 失败运行的测试用例列表
+        total_time (float): 运行总耗时（单位：秒）
+    """
     os.environ["TEST_CASE"] = "CPU_SERIAL"
     logger.info("\n================ CPU_SERIAL ================\n")
 
@@ -347,6 +369,16 @@ def run_unknown_unittest():
 
 
 def create_unittest_report():
+    """
+    生成单元测试报告。
+    
+    Args:
+        无。
+    
+    Returns:
+        无返回值。
+    
+    """
     # 创建日志目录
     if not os.path.exists("./ut_logs"):
         os.mkdir("./ut_logs")
@@ -363,7 +395,7 @@ def create_unittest_report():
         total_success_cases += success_cases
         total_failed_cases += failed_cases
         total_ut_time += suite_time
-
+    
     logger.info("============== Summary Report =============")
     logger.info("\nCI运行结束，总耗时：{}".format(total_ut_time))
     if len(total_failed_cases) != 0:

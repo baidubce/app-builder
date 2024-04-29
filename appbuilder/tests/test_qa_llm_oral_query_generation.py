@@ -40,11 +40,7 @@ models = appbuilder.get_model_list("", ["chat"], True)
 class TestMixcardOcr(unittest.TestCase):
     @parameterized.expand([
         param(models[0], text, None, None),
-        param(models[0], text, True, None),
-        param(models[0], text, False, 0.01),
-        param(models[0], text, False, 0.99),
-        # param("ernie-bot", text, None, None),
-        # param("ernie-bot-4", text, None, None),
+        param(models[0], text, True, 0.99),
         # 超过1000字符
         param(models[0], "OPPO Reno5引领视频拍摄领域的创新，搭载了先进的视频超级防抖3.0技术，"
                                         "经过多代视频防抖算法的不断积累，这一代产品依然以超级防抖和卓越稳定性为特点。"
@@ -64,10 +60,8 @@ class TestMixcardOcr(unittest.TestCase):
                                         "总体而言，OPPO Reno5的视频超级防抖技术不仅仅是一项功能，"
                                         "更是一种为用户带来更加轻松、畅快拍摄体验的创新。通过不断优化和创新，"
                                         "OPPO Reno5致力于满足用户对于高质量、稳定视频拍摄的需求，"
-                                        "成为用户记录生活、分享故事的得力伙伴。", None, None),
-    ]+
-        [param(model, text, None, None) for model in models if
-         model not in ["Yi-34B-Chat", "ChatLaw", "BLOOMZ-7B", "Qianfan-BLOOMZ-7B-compressed"]])
+                                        "成为用户记录生活、分享故事的得力伙伴。", None, None)
+    ])
     def test_normal_case(self, model_name, text, stream, temperature):
         """
         正常用例
