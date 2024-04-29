@@ -22,19 +22,19 @@
 
 #### AppBuilder-SDK 最新版本 0.7.0 (2024-04-30)
 
-`AppBuilder-SDK` 更新记录&最新特性请查阅我们的[版本说明]()
+AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明]()
 
-- 我们推荐安装Python最新稳定版本
+- 我们推荐安装`Python`最新稳定版本
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
-- 我们也支持多种语言及镜像使用: `Java` 及 `Go` 版本安装，以及通过`docker`镜像使用，请查阅[安装说明]()
+- 我们也支持多种语言及镜像使用: `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明]()
 
 
 ## 快速开始你的第一个AI原生应用
 
-- 示例为`python`版本`端到端应用`代码，请在安装`appbuilder-sdk`后使用
+- 请在`>=3.9`的Python环境安装`appbuilder-sdk`后使用该端到端应用示例
 - 示例中提供了试用Token，访问和QPS受限，正式使用请替换为您的个人Token
 - 示例中的应用为：[地理小达人](https://appbuilder.baidu.com/s/x1tSF)，点击该连接在网页端试用
 
@@ -84,7 +84,7 @@ print(answer.content)
 
 ## AppBuilder-SDK 能力全景图
 <div align="center">
-<img src='docs/image/structure.png' alt='wechat' width='700' >
+<img src='docs/image/structure.png' alt='wechat' width='800' >
 </div>
 
 
@@ -93,11 +93,11 @@ print(answer.content)
 - [快速开始]()
     - [安装说明]()
     - [版本说明]()
-- [核心功能]()
+- [基础功能]()
     - [基础能力组件]()
     - [流程编排]()
     - [端到端应用]()
-- [应用实践]()
+- [进阶实践]()
     - [CookBooks]()
 - [服务化部署]()
     - [API调用]()
