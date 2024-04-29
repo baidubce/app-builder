@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# add test
 import os
 import sys
 import multiprocessing
@@ -22,6 +24,7 @@ import time
 from collections import deque
 import logging
 import coverage
+import pymysql
 
 logger = logging.getLogger("root")
 logger.setLevel(logging.INFO)
@@ -145,6 +148,16 @@ def pull_last_n_log(ut_context, file_name, line_count=80):
 
 
 def run_sync_unittest(test_file):
+    """
+    同步运行单元测试
+    
+    Args:
+        test_file (str): 测试文件名
+    
+    Returns:
+        dict: 包含进程对象、日志文件对象以及开始时间的字典
+    
+    """
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
     cmd = COVERAGE_CMD + [test_file]
@@ -190,6 +203,17 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
 
 
 def parallel_execute_unittest(test_cases, parallel_num=4):
+    """
+    并行执行测试用例，并返回执行结果
+    
+    Args:
+        test_cases (list): 测试用例列表，每个元素为测试文件路径
+        parallel_num (int, optional): 并行执行测试用例的数量，默认为4
+    
+    Returns:
+        tuple: 返回一个包含成功用例列表、失败用例列表和总用时的元组
+    
+    """
     case_num = len(test_cases)
     success_cases = []
     failed_cases = []
@@ -221,6 +245,18 @@ def parallel_execute_unittest(test_cases, parallel_num=4):
 
 
 def run_cpu_parallel_unittest():
+    """
+    运行 CPU 并行单测。
+    
+    Args:
+        无
+    
+    Returns:
+        success_cases (list): 运行成功的单测列表
+        failed_cases (list): 运行失败的单测列表
+        total_time (float): 运行单测的总耗时（单位：秒）
+    
+    """
     os.environ["TEST_CASE"] = "CPU_PARALLEL"
     logger.info("\n================ CPU_PARALLEL ================\n")
 
@@ -257,6 +293,17 @@ def run_cpu_parallel_unittest():
 
 
 def run_cpu_serial_unittest():
+    """
+    运行CPU_SERIAL模式下的单元测试,包括并行和串行两种方式,记录并打印成功和失败的情况及耗时
+    
+    Args:
+        无
+    
+    Returns:
+        success_cases (list): 成功运行的测试用例列表
+        failed_cases (list): 失败运行的测试用例列表
+        total_time (float): 运行总耗时（单位：秒）
+    """
     os.environ["TEST_CASE"] = "CPU_SERIAL"
     logger.info("\n================ CPU_SERIAL ================\n")
 
@@ -326,7 +373,43 @@ def run_unknown_unittest():
     return success_cases, failed_cases, end_time - begin_time
 
 
+def record_failed_case():
+    """
+    将失败的单测用例写入到数据库中。
+    Args:
+        failed_cases (list): 失败的单测用例列表。
+    Returns:
+        无返回值。
+    """
+    db = pymysql.connect(host='172.19.166.44',
+                         user='root',
+                         password='yinjiaqi',
+                         database='appbuilder_test',
+                         charset='utf8')
+    time=time()
+    try:
+        cursor = db.cursor()
+        for case in failed_cases:
+            sql = "INSERT INTO Appbuilder_test_failed_case(failed_test) VALUES ('{}')".format(case)   
+            cursor.execute(sql)
+            db.commit()
+    except Exception as e:
+        print("数据库连接失败: ", e)
+    finally:
+        db.close()
+
+
 def create_unittest_report():
+    """
+    生成单元测试报告。
+    
+    Args:
+        无。
+    
+    Returns:
+        无返回值。
+    
+    """
     # 创建日志目录
     if not os.path.exists("./ut_logs"):
         os.mkdir("./ut_logs")
@@ -344,6 +427,11 @@ def create_unittest_report():
         total_failed_cases += failed_cases
         total_ut_time += suite_time
 
+    if len(total_failed_cases) != 0:
+        print("存在数百单测，开始记录失败单测到数据库中")
+        record_failed_case()
+        print("记录失败单测到数据库中完成")
+    
     logger.info("============== Summary Report =============")
     logger.info("\nCI运行结束，总耗时：{}".format(total_ut_time))
     if len(total_failed_cases) != 0:
