@@ -87,6 +87,14 @@ print(answer.content)
 <img src='docs/image/structure.png' alt='wechat' width='800' >
 </div>
 
+#### AppBuilder-SDK 能够帮助你做什么？
+
+AppBuilder 可以帮助你进行 AI原生应用开发！ 
+- 搭配AppBuilder网页端，分钟级在本地部署一个专属你的AI原生应用：Agent or RAG or 复杂工作流应用
+- 使用基础组件 + 流程编排，积木式搭建复杂的Assistant + FunctionCall应用
+- 部署到公有云，可选API调用 或 交互式服务，快速集成到你的产品中
+
+
 
 ## 用户文档
 
