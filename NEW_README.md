@@ -8,7 +8,7 @@
 
 </div>
 
-`AppBuilder SDK`是`百度千帆AppBuilder`面向AI原生应用开发者提供的一站式开发工具。通过提供自底向上的：`基础组件`、`流程编排`、`端到端应用`三类SDK，满足各类型开发场景，助力开发效率提升，快速开发并部署AI原生应用。
+`AppBuilder SDK`是`百度千帆AppBuilder`面向AI原生应用开发者提供的一站式开发工具。通过提供自底向上的：`基础组件`、`流程编排`、`端到端应用`三类SDK，满足各类型开发场景，助力效率提升，快速开发并部署AI原生应用。
 
 <div align="center">
 <h1>AppBuilder-SDK微信交流群</h1>
@@ -16,22 +16,23 @@
 
 </div>
 
-##  安装
+##  如何安装
 
-#### AppBuilder-SDK 最新版本 0.7.0
+#### AppBuilder-SDK 最新版本 0.7.0 (2024-04-30)
 
 `AppBuilder-SDK` 更新记录&最新特性请查阅我们的[版本说明](./docs/release_note.md)
 
-#### 安装最新稳定版本 - Python
+#### 我们推荐安装Python最新稳定版本
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
+#### 我们也支持多种语言及镜像使用
 
-`Java` 及 `Go` 版本安装，及通过`docker`镜像使用，请查阅[安装说明](./docs/install.md)
+`Java` 及 `Go` 版本安装，以及通过`docker`镜像使用，请查阅[安装说明](./docs/install.md)
 
 
-## 快速开始第一个AI原生应用
+## 快速开始你的第一个AI原生应用
 
 - 示例为`python`版本`端到端应用`代码，请在安装`appbuilder-sdk`后使用
 - 示例中提供了试用Token，访问和QPS受限，正式使用请替换为您的个人Token
@@ -46,7 +47,7 @@ import os
 # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-# 创建应用构建器对象，传入应用ID，以下为地理小达人应用ID
+# 从AppBuilder网页获取并传入应用ID，以下为地理小达人应用ID
 app_id = "42eb211a-14b9-43d2-9fae-193c8760ef26"
 
 app_builder_client = appbuilder.AppBuilderClient(app_id)
@@ -66,5 +67,19 @@ print(answer.content)
 > 1. **天坛公园**。天坛公园是明清两代的皇家祭祀场所，也是世界上现存规模最大的古代祭祀建筑群。
 > 2. **故宫博物院**。故宫是中国古代建筑和文化的重要遗产，也是北京的一大旅游景点。
 > 3. **长城**。长城是中国古代的一项伟大工程，也是北京周边的重要景点。
-> 4. **颐和园**。颐和园是中国古代皇家园林，也是北京的一大旅游景点。
-> 5. **香山公园**。香山公园是北京的一个自然风景区，秋季的红叶景色非常美丽^[1]^。
+> 4. **颐和园**。颐和园是中国古代皇家园林，也是北京的一大旅游景点^[1]^。
+
+
+**更多AI原生应用示例代码，请查阅 [CookBooks](./cookbooks/README.md)**，我们有以下cookbook推荐您优先阅读：
+- 基础能力组件
+    - [通用文字识别组件](./cookbooks/general_ocr.ipynb)
+    - [基础组件服务化](./cookbooks/agent_runtime.ipynb)
+- 流程编排
+    - [Assistant SDK](./cookbooks/assistant_function_call.ipynb)
+- 端到端应用
+    - [Agent应用](./cookbooks/agent_builder.ipynb)
+    - [RAG应用](./cookbooks/rag.ipynb)
+    - [企业级问答系统](./cookbooks/qa_system_1_dataset.ipynb)
+
+
+## 
