@@ -29,7 +29,7 @@ AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明]()
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
-- 我们也支持多种语言及镜像使用: `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明]()
+- `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明]()
 
 
 ## 快速开始你的第一个AI原生应用
