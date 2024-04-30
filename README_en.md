@@ -12,8 +12,6 @@
 <br>
 
 
-
-
 ## What is AppBuilder SDK?
 
 Baidu AI Cloud Qianfan AppBuilder SDK is a `one-stop development tool` for AI native application developers which contributed by [Baidu AI Cloud Qianfan AppBuilder](https://appbuilder.cloud.baidu.com/).
@@ -32,7 +30,7 @@ We provide three types of functions from bottom to top: basic components, proces
 
 #### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.7.0 (2024-04-30)
 
-Baidu AI Cloud Qianfan AppBuilder SDK update record&the latest features please refer to our [version description](/docs/quick_start/changelog.md)
+Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/quick_start/changelog.md)
 
 - We recommend installing the latest stable version of `Python`
 
