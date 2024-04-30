@@ -14,11 +14,11 @@
 
 ## 什么是AppBuilder-SDK
 
-`百度智能云千帆AppBuilder-SDK`是[百度智能云千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发工具。
+百度智能云千帆AppBuilder-SDK是[百度智能云千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发工具。
 
 我们提供自底向上的：基础组件、流程编排、端到端应用 三类功能。使用百度智能云千帆AppBuilder-SDK，你可以：
 
-- 配合百度智能云千帆AppBuilder平台[网页端](https://console.bce.baidu.com/ai_apaas/app)，分钟级在本地搭建包含百度工业实践的`端到端的AI原生应用`：Agent/RAG/工作流应用
+- 配合百度智能云千帆AppBuilder平台[网页端](https://console.bce.baidu.com/ai_apaas/app)，分钟级在本地搭建包含百度工业实践的`端到端的AI原生应用`
 - 配合 `基础组件` & `流程编排`，积木式搭建个性化的Assistant + FunctionCall应用
 - 提供 `API调用` & `交互式窗口` 两种服务化部署方式，支持快速上云，平滑嵌入到你的产品中
 
