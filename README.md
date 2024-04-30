@@ -44,7 +44,7 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
   * AppBuilder Client SDK 支持 GO 语言 
   * 首页README更新，提供免费的公共试用TOKEN，方便开发者快速体验
 * **2024.04.30 v0.7.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.7.0)
-  * 支持Assistant SDK，允许用户进行流程编排 与 FunctionCall，搭建个性化Agent应用
+  * 支持Assistant SDK，允许用户进行流程编排 与 FunctionCall，搭建个性化Agent应用, 新增[cookbook](/cookbooks/assistant_function_call.ipynb)
   * `AgentBuilder`组件重命名为`AppBuilderClient`, 再未来发布的版本中，将不再提供对`AgentBuilder`组件的后向兼容
   * 首页Readme与文档结构优化
 
