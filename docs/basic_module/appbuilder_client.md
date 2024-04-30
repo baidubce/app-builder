@@ -66,7 +66,7 @@ import os
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 # 设置环境变量
 os.environ["APPBUILDER_TOKEN"] = '...'
-app_id = '...'  # 已发布AgentBuilder应用ID，可在console端查看
+app_id = '...'  # 已发布AppBuilder应用ID，可在console端查看
 # 初始化智能体
 builder = appbuilder.AppBuilderClient(app_id)
 # 创建会话
@@ -88,7 +88,7 @@ import os
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 # 设置环境变量
 os.environ["APPBUILDER_TOKEN"] = '...'
-app_id = '...'  # 已发布AgentBuilder应用的ID
+app_id = '...'  # 已发布AppBuilder应用的ID
 # 初始化智能体
 client = appbuilder.AppBuilderClient(app_id)
 # 创建会话
