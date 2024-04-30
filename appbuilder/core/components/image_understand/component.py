@@ -101,7 +101,12 @@ class ImageUnderstand(Component):
             raise ValueError("question is empty")
         if len(inp.question) > 100:
             raise ValueError("question length bigger than 100")
+        if inp.language != "zh-CN" and inp.language != "en":
+            raise ValueError("illegal language:" + inp.language)
         request.question = inp.question
+        request.output_CHN = True
+        if inp.language == "en":
+            request.output_CHN = False
         response = self.__recognize(request, timeout, retry)
         out = ImageUnderstandOutMsg(description=response.result.description_to_llm)
         return Message(content=out.model_dump())

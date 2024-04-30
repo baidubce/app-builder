@@ -38,24 +38,24 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
 
 #### Run方法非流式返回
 
-| 参数名称           | 参数类型               | 描述         | 示例值                                                                    |
-|----------------|--------------------|------------|------------------------------------------------------------------------|
-| content        | AgentBuilderAnswer | 对话返回结果     |                                                                        |
-| +answer        | String             | 智能体应用返回的回答 |                                                                        |
-| +events        | List[Event]        | 事件列表       |                                                                        |
-| +events[0]     | Event              | 具体事件内容     |                                                                        |
-| ++code         | String             | 错误码        |                                                                        |
-| ++message      | String             | 错误具体消息     |                                                                        |
-| ++status       | String             | 事件状态       | 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成）                 |
-| ++event_type   | String             | 事件类型       |                                                                        |
-| ++content_type | String             | 内容类型       | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
-| ++detail       | Dict               | 事件输出详情     | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                             |
+| 参数名称           | 参数类型                   | 描述         | 示例值                                                                    |
+|----------------|------------------------|------------|------------------------------------------------------------------------|
+| content        | AppBuilderClientAnswer | 对话返回结果     |                                                                        |
+| +answer        | String                 | 智能体应用返回的回答 |                                                                        |
+| +events        | List[Event]            | 事件列表       |                                                                        |
+| +events[0]     | Event                  | 具体事件内容     |                                                                        |
+| ++code         | String                 | 错误码        |                                                                        |
+| ++message      | String                 | 错误具体消息     |                                                                        |
+| ++status       | String                 | 事件状态       | 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成）                 |
+| ++event_type   | String                 | 事件类型       |                                                                        |
+| ++content_type | String                 | 内容类型       | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
+| ++detail       | Dict                   | 事件输出详情     | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                             |
 
 #### Run方法流式返回
 
-| 参数名称    | 参数类型             | 描述                             | 示例值 |
-|---------|------------------|--------------------------------|-----|
-| content | Python Generator | 可迭代，每次迭代返回AgentBuilderAnswer类型 | 无   |
+| 参数名称    | 参数类型             | 描述           | 示例值 |
+|---------|------------------|--------------|-----|
+| content | Python Generator | 可迭代，每次迭代返回AppBuilderClientAnswer类型 | 无   |
 
 #### 非流式调用示例
 
@@ -68,11 +68,11 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AgentBuilder应用ID，可在console端查看
 # 初始化智能体
-agent = appbuilder.AppBuilderClient(app_id)
+builder = appbuilder.AppBuilderClient(app_id)
 # 创建会话
-conversation_id = agent.create_conversation()
+conversation_id = builder.create_conversation()
 # 运行对话
-out = agent.run(conversation_id, "北京今天天气怎么样")
+out = builder.run(conversation_id, "北京今天天气怎么样")
 # 打印会话结果 
 print(out.content.answer)
 ```
@@ -90,14 +90,14 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AgentBuilder应用的ID
 # 初始化智能体
-agent = appbuilder.AppBuilderClient(app_id)
+client = appbuilder.AppBuilderClient(app_id)
 # 创建会话
-conversation_id = agent.create_conversation()
+conversation_id = client.create_conversation()
 
 # 上传一个介绍某汽车产品的说明文档
-file_id = agent.upload_local_file(conversation_id, "/path/to/pdf/file")
+file_id = client.upload_local_file(conversation_id, "/path/to/pdf/file")
 # 引用上传的文档，开始对话
-message = agent.run(conversation_id, "汽车性能参数怎么样", file_ids=[file_id, ], stream=True)
+message = client.run(conversation_id, "汽车性能参数怎么样", file_ids=[file_id, ], stream=True)
 
 answer = ""
 
@@ -164,7 +164,7 @@ print(answer)
 |----------------------|--------------|--------------------|-----|
 | AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型,每次迭代返回AppBuilderClientIterator类型 |     |
 
-#### 迭代AgentBuilderIterator
+#### 迭代AppBuilderClientIterator
 | 参数名称          | 参数类型        | 描述         | 示例值                                                               |
 |---------------|-------------|------------|------------------------------------------------------------------------|
 | +answer       | String      | 智能体应用返回的回答 |                                                                    |
@@ -178,37 +178,45 @@ print(answer)
 | ++detail      | Map<String, Object> | 事件输出详情     | 代码解释器、文生图、工具组件、RAG等的详细输出内容                       |
 
 #### 示例代码
-以调用RAGAgent为例，其他组件调用方式类似。
-
-> Deprecated: AgentBuilder 已废弃，请使用 AppBuilderClient
 
 ```Java
-class AgentBuilderDemo {
+package org.example;
+
+import java.io.IOException;
+import java.util.*;
+
+import com.google.gson.annotations.SerializedName;
+
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
+import com.baidubce.appbuilder.model.appbuilderclient.Event;
+import com.baidubce.appbuilder.base.utils.json.JsonUtils;
+
+class AppBuilderClientDemo {
 
     public static void main(String[] args) throws IOException, AppBuilderServerException {
-        // 填写自己的APPBUILDER_TOKEN
-        System.setProperty("APPBUILDER_TOKEN", "填写秘钥");
-        // 填写创建好的appId
-        String appId = "填写线上创建好的appId";
-
-        AppBuilderClient agentBuilder = new AppBuilderClient(appId);
-        String conversationId = agentBuilder.createConversation();
+        System.setProperty("APPBUILDER_TOKEN", "请设置正确的应用密钥");
+        String appId = "请设置正确的应用ID";
+        AppBuilderClient builder = new AppBuilderClient(appId);
+        String conversationId = builder.createConversation();
         // 填写上传文件路径
-        String fileId = agentBuilder.uploadLocalFile(conversationId, "src/test/java/中秋节.docx");
+        String fileId = builder.uploadLocalFile(conversationId, "/Users/zhangxiaoyu15/PycharmProjects/app-builder/test_app_builder_client/test.pdf");
         // 输入query
-        AppBuilderClientIterator itor = agentBuilder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
+        AppBuilderClientIterator itor = builder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
         StringBuilder anwser = new StringBuilder();
         // itor.hasNext()返回false时，表示流式调用结束
         while(itor.hasNext())
         {
-            AgentBuilderResult response = itor.next();
+            AppBuilderClientResult response = itor.next();
             anwser.append(response.getAnswer());
             for (Event event : response.getEvents()) {
                 switch (event.getContentType()) {
                     case "rag":
                         List<Object> references = (List<Object>)event.getDetail().get("references");
                         for (Object reference : references) {
-                            RAGReference ragDetail = JsonUtils.deserialize(JsonUtils.serialize(reference), RAGReference.class);
+                            ReferenceDetail ragDetail = JsonUtils.deserialize(JsonUtils.serialize(reference), ReferenceDetail.class);
                             System.out.println("-----------------------------------");
                             System.out.println("参考文献ID:"+ragDetail.getId());
                             System.out.println("参考文献内容:"+ragDetail.getContent());
@@ -334,7 +342,6 @@ class ReferenceDetail {
                 '}';
     }
 }
-
 ```
 
 ### Go
@@ -378,7 +385,6 @@ class ReferenceDetail {
 
 #### 示例代码
 
-> Deprecated: AgentBuilder 已废弃，请使用 AppBuilderClient
 
 ```Go
 package main
@@ -404,34 +410,34 @@ func main() {
 	}
 	// 初始化实例
 	appID := "请填写正确的应用ID"
-	agentBuilder, err := appbuilder.NewAgentBuilder(appID, config)
+	builder, err := appbuilder.NewAppBuilderClient(appID, config)
 	if err != nil {
 		fmt.Println("new agent builder failed: ", err)
 		return
 	}
 	// 创建对话ID
-	conversationID, err := agentBuilder.CreateConversation()
+	conversationID, err := builder.CreateConversation()
 	if err != nil {
 		fmt.Println("create conversation failed: ", err)
 		return
 	}
-	// 与创建AgentBuilder应用时绑定的知识库不同之处在于，
+	// 与创建应用时绑定的知识库不同之处在于，
 	// 所上传文件仅在本次会话ID下发生作用，如果创建新的会话ID，上传的文件自动失效
 	// 而知识库在不同的会话ID下均有效
-	fileID, err := agentBuilder.UploadLocalFile(conversationID, "/path/to/cv.pdf")
+	fileID, err := builder.UploadLocalFile(conversationID, "/path/to/cv.pdf")
 	if err != nil {
 		fmt.Println("upload local file failed:", err)
 		return
 	}
 	// 执行流式对话
-	i, err := agentBuilder.Run(conversationID, "描述简历中的候选人情况", []string{fileID}, true)
+	i, err := builder.Run(conversationID, "描述简历中的候选人情况", []string{fileID}, true)
 	if err != nil {
 		fmt.Println("run failed: ", err)
 		return
 	}
 
 	completedAnswer := ""
-	var answer *appbuilder.AgentBuilderAnswer
+	var answer *appbuilder.AppBuilderClientAnswer
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
 		completedAnswer = completedAnswer + answer.Answer
 		for _, ev := range answer.Events {
