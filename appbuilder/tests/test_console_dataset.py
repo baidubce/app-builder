@@ -16,7 +16,7 @@ import os
 import unittest
 import appbuilder
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip(reason="原因是在创建数据集时超过了允许的最大数据集数量(50个)")
 class TestDataset(unittest.TestCase):
 
     @classmethod

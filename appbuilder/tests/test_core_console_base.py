@@ -13,28 +13,65 @@
 # limitations under the License.
 import os
 import unittest
+import json
 
 from appbuilder.core.console.base import ConsoleLLMMessage,ConsoleCompletionResponse
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.core.components.llms.base import CompletionResponse, LLMMessage
 from appbuilder.core.message import Message  
 
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
-@unittest.skip(reason="暂时跳过")
+class Response:
+    def __init__(self,headers=None,status_code=None,text=None):
+        self.status_code=status_code
+        self.headers=headers
+        self.text = text
+    
+    def json(self):
+        return json.loads(self.text)
+        
+        
+
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestCoreConsoleBase(unittest.TestCase):
     def test_ConsoleLLMMessage_init(self):
-        message=Message()
-        llmMessage=LLMMessage(message)
-        clm=ConsoleLLMMessage(llmMessage)
-        self.assertIsInstance(clm,ConsoleLLMMessage)
+        clm=str(ConsoleLLMMessage())
+        assert isinstance(clm,str),f"Expected {clm}, got {str}"
         
-    def test_ConsoleCompletionResponse_init(self):
-        # 测试stream=True
-        cr=CompletionResponse()
-        ccr=ConsoleCompletionResponse(response=cr,stream=True)
+    
+    def test_ConsoleCompletionResponse_init_3(self): 
+        # stream=False test and response.status_code == 200
+        response=Response(
+            headers={"X-Appbuilder-Request-Id":"test_id"},
+            status_code=200,
+            text=json.dumps({
+                "code": "test_code",
+                'message': "test_message"
+                })
+            )
+        with self.assertRaises(AppBuilderServerException):
+            ConsoleCompletionResponse(response=response,stream=False) 
         
         
+    # def test_ConsoleCompletionResponse_init_6(self):    
+    #     response=Response(
+    #         headers={"X-Appbuilder-Request-Id":"test_id"},
+    #         status_code=200,
+    #         text=json.dumps({
+    #             "code": 0,
+    #             'message':"test_message",
+    #             'requestId':"test_requestId",
+    #             'status':"test_status"
+    #             'result'
+    #             })
+    #         )
+    #     ConsoleCompletionResponse(response=response,stream=False)
+        
+        
+    
+    
+    # def test_ConsoleCompletionResponse_to_message(self):
+         
+          
 
 if __name__ == '__main__':
     unittest.main()
