@@ -100,3 +100,6 @@ class TestImageUnderstand(unittest.TestCase):
         self.image_understand.run(inp)
 
 
+if __name__ == "__main__":
+    unittest.main()
+
