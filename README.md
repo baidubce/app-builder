@@ -1,14 +1,18 @@
 <div align="center">
-
 <img src='docs/image/logo.png' alt='logo' width='700' >
+<br>
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
 ![Supported Python versions](https://img.shields.io/badge/python-3.9+-orange.svg)
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
-
 </div>
 
-`百度智能云千帆AppBuilder-SDK`是[百度千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发工具。
+<br>
+
+
+## 什么是AppBuilder-SDK
+
+`百度智能云千帆AppBuilder-SDK`是[百度智能云千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发工具。
 
 我们提供自底向上的：基础组件、流程编排、端到端应用 三类功能。使用百度智能云千帆AppBuilder-SDK，你可以：
 
