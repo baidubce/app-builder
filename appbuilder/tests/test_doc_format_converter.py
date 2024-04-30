@@ -17,7 +17,6 @@ import os
 
 import appbuilder
 
-@unittest.skip("Open api request limit reached")
 class TestDocFormatConverter(unittest.TestCase):
 
     @classmethod
