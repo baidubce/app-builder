@@ -225,17 +225,3 @@ class ImageUnderstand(Component):
                 service_err_code=data.get("error_code"),
                 service_err_message=data.get("error_msg")
             )
-
-
-if __name__ == "__main__":
-    import os
-    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-jGnPHjj8Bua3Z2AIpAltc/051c65f30f7cea0ac96c0e48f2eabdb659a238ce"
-    # 从BOS存储读取样例文件
-    image_url = "https://bj.bcebos.com/v1/appbuilder/test_image_understand.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T09%3A41%3A01Z%2F-1%2Fhost%2Fe8665506e30e0edaec4f1cc84a2507c4cb3fdb9b769de3a5bfe25c372b7e56e6"
-    # 输入参数为一张图片
-    inp = Message(content={"url": image_url, "question": "图片里内容是什么?", "language": "ZH-cn"})
-    # 进行图像内容理解
-    image_understand = ImageUnderstand()
-    out = image_understand.run(inp)
-    # 打印识别结果
-    print(out.content)
