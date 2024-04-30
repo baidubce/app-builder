@@ -19,7 +19,7 @@ import appbuilder
 from appbuilder.core.message import Message
 
 @unittest.skip("ValueError: one of image or url must be set")
-class TestPlantRecognition(unittest.TestCase):
+class TestImageUnderstand(unittest.TestCase):
 
     def setUp(self):
         """
@@ -88,6 +88,15 @@ class TestPlantRecognition(unittest.TestCase):
                                                      origin_query="")
             next(result)
 
+    def test_run_language_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？", "language": "enx"})
+            self.image_understand.run(inp)
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_run_language_en(self):
+        """测试 tool 方法对无效请求的处理。"""
+        inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？", "language": "en"})
+        self.image_understand.run(inp)
+
+
