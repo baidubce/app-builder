@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src='docs/image/logo.png' alt='log' width='600' >
+<img src='docs/image/logo.png' alt='logo' width='700' >
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
 ![Supported Python versions](https://img.shields.io/badge/python-3.9+-orange.svg)
@@ -16,17 +16,12 @@
 - 配合 `基础组件` & `流程编排`，积木式搭建个性化的Assistant + FunctionCall应用
 - 提供 `API调用` & `交互式窗口` 两种服务化部署方式，支持快速上云，平滑嵌入到你的产品中
 
-<div align="center">
-<h1>AppBuilder-SDK微信交流群</h1>
-<img src='docs/image/wechat_group.png' alt='wechat' width='200' >
-
-</div>
 
 ##  如何安装
 
-#### AppBuilder-SDK 最新版本 0.7.0 (2024-04-30)
+#### 百度智能云千帆AppBuilder-SDK 最新版本 0.7.0 (2024-04-30)
 
-AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明]()
+百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明]()
 
 - 我们推荐安装`Python`最新稳定版本
 
@@ -86,7 +81,7 @@ print(answer.content)
     - [企业级问答系统](./cookbooks/qa_system_1_dataset.ipynb)
 
 
-## AppBuilder-SDK 能力全景图
+## 百度智能云千帆AppBuilder-SDK 能力全景图
 <div align="center">
 <img src='docs/image/structure-cn.png' alt='wechat' width='800' >
 </div>
@@ -111,6 +106,10 @@ print(answer.content)
 
 
 ## 开源社区与活动
+<div align="center">
+<h3>百度智能云千帆AppBuilder-SDK微信交流群</h3>
+<img src='docs/image/wechat_group.png' alt='wechat' width='200' >
+</div>
 
 - [Github Issue](https://github.com/baidubce/app-builder/issues):  提交安装/使用问题、报告bug、建议新特性、沟通开发计划等
 
@@ -118,6 +117,8 @@ print(answer.content)
     - [千帆杯新手训练营 - 多类型主题练习赛](https://cloud.baidu.com/qianfandev/aimatch)
     - [千帆杯AI原生应用创意挑战赛 - 教育生态行业赛](https://cloud.baidu.com/qianfandev/topic/269711)
     - [千帆杯AI原生应用创意挑战赛 - 效率工具常规赛](https://cloud.baidu.com/qianfandev/topic/269599)
+
+
 
 ## License
 
