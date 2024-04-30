@@ -11,13 +11,12 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-
+  Pylint:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.12"]
 
     steps:
     - uses: actions/checkout@v3
@@ -36,3 +35,62 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  Linux-CI-Tests:
+    runs-on: ubuntu-latest
+    env:
+      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
+      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9","3.12"]
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Print ENV
+      run: |
+        env
+        ls
+        pwd
+    - name: Git Clone And Checkout Branch
+      run: |
+        fork_repo="https://github.com/$GITHUB_ACTOR/app-builder.git"
+        mkdir cicd
+        cd cicd
+        git clone $fork_repo
+        cd app-builder
+        git checkout $GITHUB_HEAD_REF
+        git remote add upstream https://github.com/baidubce/app-builder.git 
+        git fetch upstream
+        git remote -v
+        git status
+        pwd
+    - name: Install dependencies
+      run: |
+        cd cicd/app-builder
+        pwd
+        python3 -m ensurepip --upgrade
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade setuptools
+        python3 -m pip install wheel
+        python3 -m pip install coverage
+        python3 -m pip install diff-cover
+    - name: Build whl
+      run: |
+        cd cicd/app-builder     
+        pwd
+        python3 setup.py bdist_wheel
+        python3 -m pip uninstall -y appbuilder-sdk
+        python3 -m pip install dist/*.whl
+    - name: Test with unittest
+      run: |
+        cd cicd/app-builder
+        pwd
+        sh appbuilder/tests/run_python_test.sh

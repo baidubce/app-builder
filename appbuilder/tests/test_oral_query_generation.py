@@ -11,8 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
 import os
 import unittest
 import appbuilder
@@ -24,9 +22,8 @@ TEST_TEXT = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
              '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
              '，实时视频分享您的生活。')
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestOralQueryGenerationComponent(unittest.TestCase):
-
     def setUp(self):
         """
         设置环境变量。
@@ -40,7 +37,8 @@ class TestOralQueryGenerationComponent(unittest.TestCase):
 
         self.model_name = 'ERNIE Speed-AppBuilder'
         self.node = appbuilder.OralQueryGeneration(model=self.model_name)
-
+    
+    
     def test_run_with_default_params(self):
         """测试 run 方法使用默认参数"""
         query = TEST_TEXT

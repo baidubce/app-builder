@@ -34,14 +34,14 @@ AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括�
 * **2024.03.13 v0.4.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.4.1)
   * 支持以下功能进行FunctionCall调用：动植物识别、表格文字识别、条形码及二维码识别、身份证混贴识别、手写文字识别、text2image、excel2figure
 * **2024.03.20 v0.5.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.0)
-  * AgentBuilder ConsoleSDK发布 [Agent调用CookBook](https://github.com/baidubce/app-builder/blob/0.5.0/cookbooks/agent_builder.ipynb)
+  * AppBuilderClient SDK发布 [App调用CookBook](./cookbooks/agent_builder.ipynb)
   * AI能力引擎组件新增：向量检索-VDB
   * 支持以下功能进行FunctionCall调用并新增[CookBook](https://github.com/baidubce/app-builder/blob/master/cookbooks/general_ocr.ipynb)：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
 * **2024.03.21 v0.5.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.1)
-  * 问题修复：修复了在Python 3.8 及以下环境无法使用AgentBuilder ConsoleSDK的问题。同时，在即将发布的0.6.0版本中，将不再提供对Python 3.8及以下环境的支持，请升级Python版本到3.9
+  * 问题修复：修复了在Python 3.8 及以下环境无法使用AppBuilderClient ConsoleSDK的问题。同时，在即将发布的0.6.0版本中，将不再提供对Python 3.8及以下环境的支持，请升级Python版本到3.9
 * **2024.04.12 v0.6.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.6.0)
-  * AppBuilder Console SDK 支持 JAVA 语言 [AppBuilder Java ConsoleSDK](./java/README.md)
-  * AppBuilder Console SDK 支持 GO 语言 [AppBuilder GO ConsoleSDK](./go/README.md)
+  * AppBuilder Client SDK 支持 JAVA 语言 
+  * AppBuilder Client SDK 支持 GO 语言 
   * 首页README更新，提供免费的公共试用TOKEN，方便开发者快速体验
 
 ## 教程与文档
@@ -181,10 +181,10 @@ os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8
 # 网页已部署的应用链接为「地理小达人」：https://appbuilder.baidu.com/s/x1tSF
 # 以下示例代码展示了如何代码态调用并集成到您的应用中的能力
 app_id = "42eb211a-14b9-43d2-9fae-193c8760ef26"
-agent_builder = appbuilder.AgentBuilder(app_id)
-conversation_id = agent_builder.create_conversation()
+app_builder_client = appbuilder.AppBuilderClient(app_id)
+conversation_id = app_builder_client.create_conversation()
 
-answer = agent_builder.run(conversation_id, "中国的首都在哪里")
+answer = app_builder_client.run(conversation_id, "中国的首都在哪里")
 print(answer.content)
 ```
 

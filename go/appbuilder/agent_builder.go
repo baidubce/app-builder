@@ -27,6 +27,7 @@ import (
 	"time"
 )
 
+// Deprecated: 请使用AppBuilderClient 代替 AgentBuilder
 func NewAgentBuilder(appID string, config *SDKConfig) (*AgentBuilder, error) {
 	if len(appID) == 0 {
 		return nil, fmt.Errorf("appID is empty")

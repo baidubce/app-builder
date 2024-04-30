@@ -55,8 +55,8 @@ cd appbuilder/tests/
 
 # 5、执行parallel_ut_run.py，运行python单元测试
 python3 parallel_ut_run.py
-# 若单测失败，则退出
-if [ $? -ne 0 ]; then echo "单测运行失败，请检查错误日志，修复单测后重试" && exit 1; fi
+
+run_result=$?
 
 # 6、基于coverage 测试结果计算全量单测覆盖率
 # coverage combine ./appbuilder/tests/
@@ -82,4 +82,16 @@ python3 -u sed_str.py coverage.xml $python_lib $git_dir
 # 最后进行增量代码覆盖率测试
 echo "增量代码覆盖率为："
 diff-cover coverage.xml --compare-branch=upstream/master   --html-report coverage_diff.html --fail-under=90
-if [ $? -ne 0 ]; then echo "增量代码的单元测试覆盖率低于90%，请完善单元测试后重试" && exit 1; fi
+cover_result=$?
+
+echo "--------------------------"
+echo "CI 流水线运行结果如下: "
+echo "单测运行结果: $run_result"
+echo "单测覆盖率结果: $cover_result"
+echo "--------------------------"
+
+# 若单测失败，则退出
+if [ $run_result -ne 0 ]; then echo "单测运行失败，请检查错误日志，修复单测后重试" && exit 1; fi
+
+if [ $cover_result -ne 0 ]; then echo "增量代码的单元测试覆盖率低于90%，请完善单元测试后重试" && exit 1; fi
+

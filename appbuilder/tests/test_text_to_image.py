@@ -17,7 +17,7 @@ class TestText2ImageComponent(unittest.TestCase):
             None.
         """
         self.text2Image = appbuilder.Text2Image()
-
+        
     def test_run(self):
         """
         使用原始文本进行单测
@@ -102,7 +102,7 @@ class TestText2ImageComponent(unittest.TestCase):
         data = {"error_code": "ERROR", "error_msg": "Error message"}
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.text2Image.check_service_error("", data)
-
+    
 
 if __name__ == '__main__':
     unittest.main()

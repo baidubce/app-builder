@@ -210,14 +210,13 @@ class ImageUnderstand(Component):
         r"""个性化服务response参数检查
 
             参数:
-                request (dict) : 地标识别body返回
+                request (dict) : 图像内容理解body返回
             返回：
                 无
         """
-        if "ret_code" in data and data["ret_code"] > 1:
+        if "error_code" in data or "error_msg" in data:
             raise AppBuilderServerException(
                 request_id=request_id,
-                service_err_code=data.get("ret_code"),
-                service_err_message=data.get("ret_msg")
+                service_err_code=data.get("error_code"),
+                service_err_message=data.get("error_msg")
             )
-

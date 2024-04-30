@@ -1,9 +1,9 @@
-# AgentBuilder组件
+# AppBuilderClient组件
 
 ## 简介
 
-AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)
-平台上通过AgentBuilder构建并发布的智能体应用。
+AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)
+平台上通过AppBuilderClient构建并发布的智能体应用。
 
 ### 功能介绍
 
@@ -11,7 +11,7 @@ AgentBuilder组件支持调用在[百度智能云千帆AppBuilder](https://cloud
 
 ### 特色优势
 
-与云端Console AgentBuilder能力打通，实现低代码会话
+与云端Console 应用能力打通，实现低代码会话
 
 ### 应用场景
 
@@ -68,7 +68,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AgentBuilder应用ID，可在console端查看
 # 初始化智能体
-agent = appbuilder.AgentBuilder(app_id)
+agent = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = agent.create_conversation()
 # 运行对话
@@ -82,7 +82,7 @@ print(out.content.answer)
 ```python
 
 import appbuilder
-from appbuilder.core.console.agent_builder import data_class
+from appbuilder.core.console.appbuilder_client import data_class
 import os
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
@@ -90,7 +90,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AgentBuilder应用的ID
 # 初始化智能体
-agent = appbuilder.AgentBuilder(app_id)
+agent = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = agent.create_conversation()
 
@@ -101,7 +101,7 @@ message = agent.run(conversation_id, "汽车性能参数怎么样", file_ids=[fi
 
 answer = ""
 
-# 每次迭代返回AgentBuilderAnswer结构，内可能包括多个事件内容
+# 每次迭代返回AppBuilderClientAnswer结构，内可能包括多个事件内容
 for content in message.content:
     # stream=True时，将answer拼接起来才是完整的的对话结果
     answer += content.answer
@@ -162,7 +162,7 @@ print(answer)
 #### Run方法出参
 | 参数名称                 | 参数类型         | 描述                   | 示例值 |
 |----------------------|--------------|--------------------|-----|
-| AgentBuilderIterator | AgentBuilderIterator | 回答迭代器，流式/非流式均统一返回该类型,每次迭代返回AgentBuilderResult类型 |     |
+| AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型,每次迭代返回AppBuilderClientIterator类型 |     |
 
 #### 迭代AgentBuilderIterator
 | 参数名称          | 参数类型        | 描述         | 示例值                                                               |
@@ -179,6 +179,9 @@ print(answer)
 
 #### 示例代码
 以调用RAGAgent为例，其他组件调用方式类似。
+
+> Deprecated: AgentBuilder 已废弃，请使用 AppBuilderClient
+
 ```Java
 class AgentBuilderDemo {
 
@@ -188,12 +191,12 @@ class AgentBuilderDemo {
         // 填写创建好的appId
         String appId = "填写线上创建好的appId";
 
-        AgentBuilder agentBuilder = new AgentBuilder(appId);
+        AppBuilderClient agentBuilder = new AppBuilderClient(appId);
         String conversationId = agentBuilder.createConversation();
         // 填写上传文件路径
         String fileId = agentBuilder.uploadLocalFile(conversationId, "src/test/java/中秋节.docx");
         // 输入query
-        AgentBuilderIterator itor = agentBuilder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
+        AppBuilderClientIterator itor = agentBuilder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
         StringBuilder anwser = new StringBuilder();
         // itor.hasNext()返回false时，表示流式调用结束
         while(itor.hasNext())
@@ -356,7 +359,7 @@ class ReferenceDetail {
 
 | 参数名称                 | 参数类型                 | 描述                   | 示例值 |
 |----------------------|----------------------|----------------------|-----|
-| AgentBuilderIterator | AgentBuilderIterator | 回答迭代器，流式/非流式均统一返回该类型 |     |
+| AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型 |     |
 | error                | error                | 存在错误时error不为nil，反之   |     |
 
 #### 迭代AgentBuilderIterator
@@ -374,6 +377,8 @@ class ReferenceDetail {
 | ++Detail      | interface{} | 事件输出详情     | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                             |
 
 #### 示例代码
+
+> Deprecated: AgentBuilder 已废弃，请使用 AppBuilderClient
 
 ```Go
 package main

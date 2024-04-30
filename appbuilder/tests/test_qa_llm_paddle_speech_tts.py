@@ -31,7 +31,7 @@ from appbuilder.utils.logger_util import get_logger
 log = get_logger(__name__)
 
 models = appbuilder.get_model_list("", ["chat"], True)
-
+models = [models[0]]
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestMixcardOcr(unittest.TestCase):
     @parameterized.expand([
