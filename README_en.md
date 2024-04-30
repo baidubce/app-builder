@@ -44,7 +44,7 @@ python3 -m pip install --upgrade appbuilder-sdk
 
 ## Quickly start your first AI native application!
 
-- Please install `appbuilder sdk` in a Python environment with '>=3.9' and use this end-to-end application example
+- Please install `appbuilder sdk` in a Python environment with `>=3.9` and use this end-to-end application example
 - The example provides a trial token, but access and QPS are restricted. Please replace it with your personal token for official use
 - The application in the example is: [Geography expert](https://appbuilder.baidu.com/s/x1tSF), Click on the link to try it out on the web page
 
@@ -61,9 +61,9 @@ os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8
 app_id = "42eb211a-14b9-43d2-9fae-193c8760ef26"
 
 app_builder_client = appbuilder.AppBuilderClient(app_id)
-conversation_id = app_builder_client.create_conversation("Where is the capital of the United States and what is the climate like? answer by english")
+conversation_id = app_builder_client.create_conversation()
 
-answer = app_builder_client.run(conversation_id, "")
+answer = app_builder_client.run(conversation_id, "Where is the capital of the United States and what is the climate like? answer by english")
 print(answer.content)
 ```
 
@@ -118,10 +118,7 @@ print(answer.content)
 
 - [Github Issue](https://github.com/baidubce/app-builder/issues):  Submit installation/usage issues, report bugs, suggest new features, communicate development plans, etc
 
-- [Baidu AI Cloud Qianfan Community](https://cloud.baidu.com/qianfandev)：
-    - [千帆杯新手训练营 - 多类型主题练习赛](https://cloud.baidu.com/qianfandev/aimatch)
-    - [千帆杯AI原生应用创意挑战赛 - 教育生态行业赛](https://cloud.baidu.com/qianfandev/topic/269711)
-    - [千帆杯AI原生应用创意挑战赛 - 效率工具常规赛](https://cloud.baidu.com/qianfandev/topic/269599)
+- [Baidu AI Cloud Qianfan Community](https://cloud.baidu.com/qianfandev)
 
 
 
