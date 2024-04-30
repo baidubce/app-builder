@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>AppBuilder-SDK</h1>
+<img src='docs/image/logo.png' alt='log' width='600' >
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
 ![Supported Python versions](https://img.shields.io/badge/python-3.9+-orange.svg)
@@ -8,9 +8,13 @@
 
 </div>
 
-`AppBuilder-SDK`是[百度千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发工具。
+`百度智能云千帆AppBuilder-SDK`是[百度千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发工具。
 
-我们提供自底向上的：基础组件、流程编排、端到端应用 三类功能，满足各类型开发场景，助力效率提升，快速开发并部署AI原生应用。
+我们提供自底向上的：基础组件、流程编排、端到端应用 三类功能。使用百度智能云千帆AppBuilder-SDK，你可以：
+
+- 配合百度智能云千帆AppBuilder平台[网页端](https://appbuilder.cloud.baidu.com/)，分钟级在本地搭建包含百度工业实践的`端到端的AI原生应用`：Agent/RAG/工作流应用
+- 配合 `基础组件` & `流程编排`，积木式搭建个性化的Assistant + FunctionCall应用
+- 提供 `API调用` & `交互式窗口` 两种服务化部署方式，支持快速上云，平滑嵌入到你的产品中
 
 <div align="center">
 <h1>AppBuilder-SDK微信交流群</h1>
@@ -84,14 +88,8 @@ print(answer.content)
 
 ## AppBuilder-SDK 能力全景图
 <div align="center">
-<img src='docs/image/structure.png' alt='wechat' width='800' >
+<img src='docs/image/structure-cn.png' alt='wechat' width='800' >
 </div>
-
-#### AppBuilder-SDK 能够帮助你做什么？
-- 配合AppBuilder网页端，分钟级在本地搭建一个专属你的AI原生应用：Agent or RAG or 专属工作流应用
-- 使用基础组件 + 流程编排，积木式搭建个性化的Assistant + FunctionCall应用
-- 部署到公有云，可选API调用 或 交互式服务，快速集成到你的产品中
-
 
 
 ## 用户文档
