@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""AgentBuilder组件"""
+"""AppBuilderClient组件"""
 import os
 import json
 
@@ -34,10 +34,10 @@ class AppBuilderClient(Component):
             os.environ["APPBUILDER_TOKEN"] = '...'
             # 可在Console 应用页面获取
             app_id = "app_id"
-            agent_builder = appbuilder.AppBuilderClient("app_id")
-            conversation_id = agent_builder.create_conversation()
-            file_id = agent_builder.upload_local_file(conversation_id, "/path/to/file")
-            message = agent_builder.run(conversation_id, "今天你好吗？")
+            client = appbuilder.AppBuilderClient("app_id")
+            conversation_id = client.create_conversation()
+            file_id = client.upload_local_file(conversation_id, "/path/to/file")
+            message = client.run(conversation_id, "今天你好吗？")
             # 打印对话结果
             print(message.content)
     """
@@ -194,8 +194,3 @@ def _transform(inp: data_class.AppBuilderClientResponse, out: data_class.AppBuil
             detail=ev.outputs
         )
         out.events.append(event)
-
-
-
-
-

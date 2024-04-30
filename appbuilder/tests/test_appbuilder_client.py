@@ -36,10 +36,10 @@ class TestAgentRuntime(unittest.TestCase):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
     
-        agent_builder = appbuilder.AppBuilderClient(self.app_id)
-        conversation_id = agent_builder.create_conversation()
-        msg = agent_builder.run(conversation_id, "你可以做什么？")
-    
+        builder = appbuilder.AppBuilderClient(self.app_id)
+        conversation_id = builder.create_conversation()
+        msg = builder.run(conversation_id, "你可以做什么？")
+        print(msg)
         # with tempfile.NamedTemporaryFile(suffix=".png") as fp:
         #     # 上传植物图片
         #     img_url = ("https://bj.bcebos.com/v1/appbuilder/test_agent_builder_tr"

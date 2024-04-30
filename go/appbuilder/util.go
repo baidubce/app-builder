@@ -69,7 +69,8 @@ func (t *sseReader) ReadMessageLine() ([]byte, error) {
 	// 读取空行
 	line, _, err := t.reader.ReadLine()
 	if err != nil || len(line) != 0 {
-		return nil, errors.New("invalid sse format")
+		size += copy(t.buf[size:], line)
+		return nil, errors.New(string(t.buf[0:size]))
 	}
 	return t.buf[0:size], nil
 }
