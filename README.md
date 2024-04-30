@@ -79,7 +79,7 @@ print(answer.content)
 - 基础能力组件: SDK集成各类AI能力，如图像识别、文字识别等
     - [通用文字识别组件](/cookbooks/components/general_ocr.ipynb)
     - [基础组件服务化](/cookbooks/components/agent_runtime.ipynb)
-- 流程编排: 基于基础能力组件，编排个性化Agent应用
+- 流程编排: 基于基础能力组件，自定义FunctionCall，编排个性化Agent应用
     - [Assistant SDK](/cookbooks/pipeline/assistant_function_call.ipynb)
 - 端到端应用：直接调用在平台上创建并发布的应用
     - [Agent应用](/cookbooks/agent_builder.ipynb)
