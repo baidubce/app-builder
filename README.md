@@ -14,7 +14,7 @@
 
 ## 什么是AppBuilder-SDK
 
-百度智能云千帆AppBuilder-SDK是[百度智能云千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发工具。
+百度智能云千帆AppBuilder-SDK是[百度智能云千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发平台的客户端SDK。
 
 我们提供自底向上的：基础组件、流程编排、端到端应用 三类功能。使用百度智能云千帆AppBuilder-SDK，你可以：
 
@@ -29,7 +29,7 @@
 
 百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/quick_start/changelog.md)
 
-- 我们推荐安装`Python`最新稳定版本
+- `Python`版本安装，要求Python版本 >= `3.9`
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
@@ -76,12 +76,12 @@ print(answer.content)
 
 
 **更多AI原生应用示例代码，请查阅 [CookBooks](./cookbooks/README.md)**，我们有以下cookbook推荐您优先阅读：
-- 基础能力组件
+- 基础能力组件: SDK集成各类AI能力，如图像识别、文字识别等
     - [通用文字识别组件](/cookbooks/components/general_ocr.ipynb)
     - [基础组件服务化](/cookbooks/components/agent_runtime.ipynb)
-- 流程编排
+- 流程编排: 基于基础能力组件，编排个性化Agent应用
     - [Assistant SDK](/cookbooks/pipeline/assistant_function_call.ipynb)
-- 端到端应用
+- 端到端应用：直接调用在平台上创建并发布的应用
     - [Agent应用](/cookbooks/agent_builder.ipynb)
     - [RAG应用](/cookbooks/end2end_application/rag/rag.ipynb)
     - [企业级问答系统](/cookbooks/end2end_application/rag/qa_system_2_dialogue.ipynb)
