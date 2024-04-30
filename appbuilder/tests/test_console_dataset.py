@@ -16,7 +16,7 @@ import os
 import unittest
 import appbuilder
 
-@unittest.skip("current Number of datasets over max_nums_datasets:50")
+@unittest.skip(reason="数据集问题")
 class TestDataset(unittest.TestCase):
 
     @classmethod

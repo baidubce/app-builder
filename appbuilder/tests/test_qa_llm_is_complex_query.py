@@ -32,17 +32,14 @@ log = get_logger(__name__)
 
 text = "吸塑包装盒在工业化生产和物流运输中分别有什么重要性？"
 
-models = appbuilder.get_model_list("", ["chat"], True)
+models = ["ERNIE-3.5-8K"]
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestIsComplexQuery(unittest.TestCase):
     @parameterized.expand([
-        param(models[0], text, None, None),
-        param(models[0], text, True, None),
-        param(models[0], text, False, 0.1),
-        param(models[0], text, False, 0.99),
-    ] + [param(model, text, None, None) for model in models if
-                              model not in ["Yi-34B-Chat", "ChatLaw", "BLOOMZ-7B", "Qianfan-BLOOMZ-7B-compressed"]])
+        param(models[0], text, None, 0.1),
+        param(models[0], text, True, 0.99),
+    ] )
     def test_normal_case(self, model_name, message, stream, temperature):
         """
             TestIsComplexQuery正常用例

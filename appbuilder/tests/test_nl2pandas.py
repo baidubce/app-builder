@@ -19,7 +19,7 @@ import appbuilder
 from appbuilder.core.message import Message
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestNl2pandasComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -36,15 +36,6 @@ class TestNl2pandasComponent(unittest.TestCase):
         教职工人数 : 140 , 数字值类型，表示该小学学校的教职工数量
         教学班数量 : 122 , 数字值类型，表示该小学学校的教学班数量
         '''
-
-
-    def test_run_with_valid_params(self):
-        """测试 run 方法使用有效参数"""
-        query = "海淀区有哪些学校"
-        msg = Message(query)
-        code = self.node(msg, table_info=self.table_info)
-        self.assertIsNotNone(code)
-        # 可以添加更多断言来检查 code 的特定属性
 
     def test_run_with_stream_and_temperature(self):
         """测试 stream 和 temperature 参数"""

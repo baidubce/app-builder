@@ -18,9 +18,9 @@ import requests
 import appbuilder
 from appbuilder.core.message import Message
 
-@unittest.skip("ValueError: one of image or url must be set")
-class TestImageUnderstand(unittest.TestCase):
 
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+class TestPlantRecognition(unittest.TestCase):
     def setUp(self):
         """
         设置环境变量
