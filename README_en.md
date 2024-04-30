@@ -25,7 +25,7 @@ We provide three types of functions from bottom to top: basic components, proces
 
 - Collaborate with basic components and process orchestration to build personalized `Assistant` + `FunctionCall` applications in a modular manner
 
-- Provide two service-oriented deployment methods: API calls and interactive windows, supporting fast cloud deployment and smooth embedding into your product
+- Provide two service-oriented deployment methods: API calls and interactive windows, supporting fast cloud deployment
 
 
 ##  How to install？
