@@ -7,6 +7,8 @@
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
 </div>
 
+简体中文 | [English](./README_en.md)
+
 <br>
 
 
@@ -25,14 +27,14 @@
 
 #### 百度智能云千帆AppBuilder-SDK 最新版本 0.7.0 (2024-04-30)
 
-百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明]()
+百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/quick_start/changelog.md)
 
 - 我们推荐安装`Python`最新稳定版本
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
-- `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明]()
+- `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明](/docs/quick_start/install.md)
 
 
 ## 快速开始你的第一个AI原生应用
