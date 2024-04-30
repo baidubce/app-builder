@@ -1,20 +1,22 @@
 # AppBuilder-SDK Documentataion
 
 ## Github 文档
-- [快速开始]()
-    - [安装说明]()
-    - [版本说明]()
-- [基础功能]()
-    - [基础能力组件]()
-    - [流程编排]()
-    - [端到端应用]()
-- [进阶实践]()
-    - [CookBooks]()
-- [服务化部署]()
-    - [API调用]()
-    - [交互式服务]()
-    - [公有云部署]()
-- [二次开发]()
+- [快速开始](./quick_start/README.md)
+    - [安装说明](./quick_start/install.md)
+    - [版本说明](./quick_start/changelog.md)
+- [基础功能](./basic_module/README.md)
+    - [模型列表获取](./basic_module/get_model_list.md)
+    - [基础能力组件](./basic_module/components.md)
+    - [流程编排](./basic_module/assistant_sdk.md)
+    - [端到端应用](./basic_module/appbuilder_client.md)
+    - [知识库管理](./basic_module/dataset.md)
+- [进阶实践](./advanced_application/README.md)
+    - [CookBooks](../cookbooks/README.md)
+- [服务化部署](./service/README.md)
+    - [API调用](./service/flask.md)
+    - [交互式服务](./service/chainlit.md)
+    - [公有云部署](./service/cloud.md)
+- [二次开发](./develop_guide/README.md)
 
 
 ## 平台文档
