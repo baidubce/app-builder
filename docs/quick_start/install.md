@@ -29,7 +29,7 @@ implementation("com.baidubce:appbuilder:0.7.0")
 implementation 'com.baidubce:appbuilder:0.7.0'
 ```
 #### 本地导入
-点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/0.6.0/appbuilder-0.6.0.jar) 下载Jar包，将Jar包导入到项目目录下。
+点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/0.7.0/appbuilder-0.7.0.jar) 下载Jar包，将Jar包导入到项目目录下。
 
 ### Go (仅支持调用端到端应用)
 > 支持Go 1.18.1以上版本
