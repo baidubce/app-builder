@@ -16,7 +16,7 @@
 
 我们提供自底向上的：基础组件、流程编排、端到端应用 三类功能。使用百度智能云千帆AppBuilder-SDK，你可以：
 
-- 配合百度智能云千帆AppBuilder平台[网页端](https://appbuilder.cloud.baidu.com/)，分钟级在本地搭建包含百度工业实践的`端到端的AI原生应用`：Agent/RAG/工作流应用
+- 配合百度智能云千帆AppBuilder平台[网页端](https://console.bce.baidu.com/ai_apaas/app)，分钟级在本地搭建包含百度工业实践的`端到端的AI原生应用`：Agent/RAG/工作流应用
 - 配合 `基础组件` & `流程编排`，积木式搭建个性化的Assistant + FunctionCall应用
 - 提供 `API调用` & `交互式窗口` 两种服务化部署方式，支持快速上云，平滑嵌入到你的产品中
 
@@ -75,14 +75,14 @@ print(answer.content)
 
 **更多AI原生应用示例代码，请查阅 [CookBooks](./cookbooks/README.md)**，我们有以下cookbook推荐您优先阅读：
 - 基础能力组件
-    - [通用文字识别组件](./cookbooks/general_ocr.ipynb)
-    - [基础组件服务化](./cookbooks/agent_runtime.ipynb)
+    - [通用文字识别组件](/cookbooks/components/general_ocr.ipynb)
+    - [基础组件服务化](/cookbooks/components/agent_runtime.ipynb)
 - 流程编排
-    - [Assistant SDK](./cookbooks/assistant_function_call.ipynb)
+    - [Assistant SDK](/cookbooks/pipeline/assistant_function_call.ipynb)
 - 端到端应用
-    - [Agent应用](./cookbooks/agent_builder.ipynb)
-    - [RAG应用](./cookbooks/rag.ipynb)
-    - [企业级问答系统](./cookbooks/qa_system_1_dataset.ipynb)
+    - [Agent应用](/cookbooks/agent_builder.ipynb)
+    - [RAG应用](/cookbooks/end2end_application/rag/rag.ipynb)
+    - [企业级问答系统](/cookbooks/end2end_application/rag/qa_system_2_dialogue.ipynb)
 
 
 ## 百度智能云千帆AppBuilder-SDK 能力全景图
@@ -93,20 +93,20 @@ print(answer.content)
 
 ## 用户文档
 
-- [快速开始]()
-    - [安装说明]()
-    - [版本说明]()
-- [基础功能]()
-    - [基础能力组件]()
-    - [流程编排]()
-    - [端到端应用]()
-- [进阶实践]()
-    - [CookBooks]()
-- [服务化部署]()
-    - [API调用]()
-    - [交互式服务]()
-    - [公有云部署]()
-- [二次开发]()
+- [快速开始](/docs/quick_start/README.md)
+    - [安装说明](/docs/quick_start/install.md)
+    - [版本说明](/docs/quick_start/changelog.md)
+- [基础功能](/docs/basic_module/README.md)
+    - [基础能力组件](/docs/basic_module/components.md)
+    - [流程编排](/docs/basic_module/assistant_sdk.md)
+    - [端到端应用](/docs/basic_module/appbuilder_client.md)
+- [进阶实践](/docs/advanced_application/README.md)
+    - [CookBooks](/cookbooks/README.md)
+- [服务化部署](/docs/service/README.md)
+    - [API调用](/docs/service/flask.md)
+    - [交互式前端](/docs/service/chainlit.md)
+    - [公有云部署](/docs/service/cloud.md)
+- [二次开发](/docs/develop_guide/README.md)
 
 
 ## 开源社区与活动
