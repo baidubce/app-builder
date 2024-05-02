@@ -42,53 +42,25 @@ class ConsoleCompletionResponse(CompletionResponse):
         self.log_id = response.headers.get("X-Appbuilder-Request-Id", None)
         self.extra = {}
 
-        if stream:
-            # 流式数据处理
-            def stream_data():
-                sse_client = SSEClient(response)
-                for event in sse_client.events():
-                    if not event:
-                        continue
-                    answer = self.parse_stream_data(event)
-                    if answer is not None:
-                        yield answer
+        data = response.json()
 
-            self.result = stream_data()
-        else:
-            # 非流式数据的处理
-            if response.status_code != 200:
-                self.error_no = response.status_code
-                self.error_msg = "error"
-                self.result = response.text
+        if "code" in data and data.get("code") != 0:
+            raise AppBuilderServerException(self.log_id, data["code"], data["message"])
 
-                raise AppBuilderServerException(self.log_id, self.error_no, self.result)
-
-            else:
-                data = response.json()
-
-                if "code" in data and data.get("code") != 0:
-                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
-
-                if "code" in data and "message" in data and "requestId" in data:
-                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
-
-                if "code" in data and "message" in data and "status" in data:
-                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
-
-                self.result = data.get("result").get("answer", None)
-                self.conversation_id = data.get("result").get("conversation_id", "")
-                content = data.get("result").get("content", None)
-                if content:
-                    for item in content:
-                        if item.get("content_type") == "references":
-                            references = item.get("outputs").get("references")
-                            if references:
-                                for ref in references:
-                                    key = ref["from"]
-                                    if key in self.extra.keys():
-                                        self.extra[key].append(ref)
-                                    else:
-                                        self.extra[key] = [ref]
+        self.result = data.get("result").get("answer", None)
+        self.conversation_id = data.get("result").get("conversation_id", "")
+        content = data.get("result").get("content", None)
+        if content:
+            for item in content:
+                if item.get("content_type") == "references":
+                    references = item.get("outputs").get("references")
+                    if references:
+                        for ref in references:
+                            key = ref["from"]
+                            if key in self.extra.keys():
+                                self.extra[key].append(ref)
+                            else:
+                                self.extra[key] = [ref]
 
     def message_iterable_wrapper(self, message):
         """
