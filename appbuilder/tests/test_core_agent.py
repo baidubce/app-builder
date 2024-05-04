@@ -15,17 +15,21 @@ import os
 import unittest
 import json
 import subprocess
+import asyncio
 
 from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.component import Component
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestCoreAgent(unittest.TestCase):
-    def setup(self):
-        self.APPBUILDER_RUN_CHAINLIT=os.getenv('APPBUILDER_RUN_CHAINLIT')
+    def setUp(self):
+        self.appbuilder_run_chainlit=os.getenv('APPBUILDER_RUN_CHAINLIT')
         
-    def teardown(self):
-        os.environ['APPBUILDER_RUN_CHAINLIT'] = self.APPBUILDER_RUN_CHAINLIT
+    def tearDown(self):
+        if self.appbuilder_run_chainlit is None:
+            os.unsetenv('APPBUILDER_RUN_CHAINLIT')
+        else:
+            os.environ['APPBUILDER_RUN_CHAINLIT'] = self.appbuilder_run_chainlit
     
     def test_core_agent_create_flask(self):
         # test_core_agent_create_flask_app
@@ -59,13 +63,22 @@ class TestCoreAgent(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             component.run()
         component.batch()
-        component.arun()
-        component.abatch()
         component._trace()
         component._debug()
         component.tool_desc()
         component.tool_name()
         component.tool_eval()
+        # 运行asyncio
+        asyncio.run(component.arun())
+        asyncio.run(component.abatch())
+        # test_tool_eval
+        component.manifests=[1,2,3]
+        with self.assertRaises(NotImplementedError):
+            component.tool_eval()
+        # test self._http_client is None
+        component._http_client = None
+        component.http_client
+        
         
         
 if __name__ == '__main__':

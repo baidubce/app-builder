@@ -116,8 +116,16 @@ class TestCoreConsoleBase(unittest.TestCase):
         )
         ccr=ConsoleCompletionResponse(response) 
         
-        # test_ConsoleCompletionResponse_message_iterable_wrapper
+        # test_ConsoleCompletionResponse_message_iterable_wrapper(原代码可能冗余，迭代器未被调用)
         message = Message()
+        def message_content():
+            resps=[
+                {'result': {'answer': 'test', 'conversation_id': 'test', 'content': content}},
+                {'result': {'answer': 'test', 'conversation_id': 'test', 'content': content}}
+            ]
+            for resp in resps:
+                yield resp
+        message.content = message_content()
         result = ccr.message_iterable_wrapper(message)
   
         #test_ConsoleCompletionResponse_to_message

@@ -15,18 +15,29 @@ import unittest
 import appbuilder
 import os
 
-@unittest.skip("TimeOut")
+from appbuilder.core.console.rag.rag import RAG
+from appbuilder.core.component import Message
+
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestRag(unittest.TestCase):
 
-    def setUp(self):
-        self.app_id = "06e3f5c9-885d-4f85-af57-97dc85ee4606"
-
-    def test_rag(self):
-        rag_app = appbuilder.console.RAG(self.app_id)
-        query = "写一个200字作文，主题关于百度AI"
-        answer = rag_app.run(appbuilder.Message(query))
-        self.assertIsNotNone(answer.content)
-
-
+    def test_init_and_http_client_and_debug(self):
+        # test_init
+        rag = RAG()
+        
+        # test_http_client
+        http_client = rag.http_client
+        
+        # test_debug
+        message=Message()
+        rag.debug(query=message)
+        
+    def test_run(self):
+        rag = RAG()
+        message = Message()
+        response_message=rag.run(query=message,stream=True)
+        self.assertIsInstance(response_message,Message)
+        
+    
 if __name__ == '__main__':
     unittest.main()
