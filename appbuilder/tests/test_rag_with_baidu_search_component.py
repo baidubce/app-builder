@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import unittest
+import os 
 
 from appbuilder.core.components.rag_with_baidu_search.component import RAGWithBaiduSearch
 from appbuilder.core.message import Message 

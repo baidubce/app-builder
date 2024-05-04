@@ -16,28 +16,22 @@ import appbuilder
 import os
 
 from appbuilder.core.console.rag.rag import RAG
-from appbuilder.core.component import Message
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestRag(unittest.TestCase):
 
-    def test_init_and_http_client_and_debug(self):
-        # test_init
-        rag = RAG()
+    def setUp(self):
+        self.app_id = "06e3f5c9-885d-4f85-af57-97dc85ee4606"
+
+    def test_rag(self):
+        rag_app = RAG(self.app_id)
+        query = "写一个200字作文，主题关于百度AI"
+        answer = rag_app.run(appbuilder.Message(query))
+        self.assertIsNotNone(answer.content)
         
-        # test_http_client
-        http_client = rag.http_client
-        
-        # test_debug
-        message=Message()
-        rag.debug(query=message)
-        
-    def test_run(self):
-        rag = RAG()
-        message = Message()
-        response_message=rag.run(query=message,stream=True)
-        self.assertIsInstance(response_message,Message)
-        
-    
+        # test debug
+        rag_app.debug(appbuilder.Message(query))
+
+
 if __name__ == '__main__':
     unittest.main()
