@@ -17,7 +17,6 @@ import os
 
 import appbuilder
 
-@unittest.skip("Open api request limit reached")
 class TestDocFormatConverter(unittest.TestCase):
 
     @classmethod
@@ -26,7 +25,7 @@ class TestDocFormatConverter(unittest.TestCase):
 
     @classmethod
     def test_doc_format_url(cls):
-        image_url = "https://ai-cape-strategy-data.bj.bcebos.com/document-restructure/1EF33F9307451C9413D5D.jpg"
+        image_url = "https://ai-cape-strategy-data.bj.bcebos.com/document-restructure/1EF33F9307451C9413D5D1160.jpg"
         doc_format_converter = appbuilder.DocFormatConverter()
         resp = doc_format_converter(appbuilder.Message({"file_path": image_url}))
 
