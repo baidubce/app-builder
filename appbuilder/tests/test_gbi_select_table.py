@@ -67,8 +67,7 @@ PROMPT_TEMPLATE = """
 问题:{query}
 回答:
 """
-
-@unittest.skip("使用test_gbi_nl2sql.py代替")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestGBISelectTable(unittest.TestCase):
 
     def setUp(self):
@@ -123,7 +122,6 @@ class TestGBISelectTable(unittest.TestCase):
         self.assertIsNotNone(result_message)
         self.assertEqual(len(result_message.content), 1)
         self.assertEqual(result_message.content[0], "supper_market_info")
-
 
 if __name__ == '__main__':
     unittest.main()
