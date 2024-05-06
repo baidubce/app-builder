@@ -27,6 +27,7 @@ from pytest_utils import Utils
 util = Utils()
 
 from appbuilder.utils.logger_util import get_logger
+from appbuilder.core._exception import *
 log = get_logger(__name__)
 
 text = "用户:喂我想查一下我的话费\n坐席:好的女士您话费余的话还有87.49元钱\n用户:好的知道了谢谢\n坐席:嗯不客气祝您生活愉快再见"
@@ -121,7 +122,40 @@ class TestExcel2figure(unittest.TestCase):
             # assert isinstance(e, eval(err_type)), "捕获的异常不是预期的类型 实际:{}, 预期:{}".format(e, err_type)
             assert err_param in str(e), "捕获的异常参数类型不正确"
             assert err_msg in str(e), "捕获的异常消息不正确"
+            
+    def test_check_model_and_get_model_url(self):
+        with self.assertRaises(ModelNotSupportedException):
+            e2f=appbuilder.Excel2Figure(model="Yi-34B-Chat")
+        with self.assertRaises(ValueError):
+            e2f=appbuilder.Excel2Figure(model="")
 
-    
+    def test_run(self):
+        e2f=appbuilder.Excel2Figure(model="Llama-2-7B-Chat")   
+        msg=appbuilder.Message({
+            "query": "2019年各个月份的利润分别是多少？",
+            "excel_file_url": file_bos_url
+        })
+        result_msg=e2f.run(msg)
+        
+    def test_tool_eval(self):
+        e2f=appbuilder.Excel2Figure(model="Llama-2-7B-Chat")   
+        # with self.assertRaises(RuntimeError) as context:
+        te=e2f.tool_eval(
+                streaming=False,
+                origin_query="",
+                file_urls={'test1':'test1','test2':'test2'}
+                )
+        with self.assertRaises(RuntimeError):
+            next(te)
+
+        te=e2f.tool_eval(
+                streaming=False,
+                origin_query="2019年各个月份的利润分别是多少？",
+                file_urls={'[测试]超市收入明细表格.xlsx':file_bos_url}
+                )
+        with self.assertRaises(RuntimeError): 
+            res=next(te)
+        
+        
 if __name__ == '__main__':
     unittest.main()
