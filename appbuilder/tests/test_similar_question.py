@@ -38,26 +38,6 @@ class TestSimilarQuestionComponent(unittest.TestCase):
         answer = self.node(msg)
         self.assertIsNotNone(answer)
 
-    # def test_run_with_custom_params(self):
-    #     """测试 run 方法使用自定义参数"""
-    #     query = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
-    #     msg = appbuilder.Message(query)
-    #     answer = self.node(msg, stream=True, temperature=0.5)
-    #     self.assertIsNotNone(answer)
-    #     # 检查 answer 是否符合预期
-
-    # def test_run_with_invalid_params(self):
-    #     """测试 run 方法使用无效参数"""
-    #     query = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
-    #     msg = appbuilder.Message(query)
-    #     with self.assertRaises((ValueError, TypeError)):
-    #         self.node(msg, invalid_param="invalid")
-
-    # def test_run_with_invalid_message(self):
-    #     """测试无效的 message 参数"""
-    #     with self.assertRaises((ValueError, TypeError)):
-    #         self.node(None, stream=False, temperature=1e-10)
-
     def test_tool_eval_valid(self):
         """测试 tool_eval 方法使用有效参数"""
         query = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"

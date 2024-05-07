@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,19 +42,6 @@ class TestCoreAgent(unittest.TestCase):
         subprocess.check_call(['pip', 'install', 'flask-restful==0.3.9'])
         subprocess.check_call(['pip', 'install', 'werkzeug'])
         app = agent.create_flask_app()
-        
-        # test_core_agent_serve(需要手动确认)
-        # agent.serve()
-
-        # test_core_agent_chainlit_demo(过于消耗时间，先不进行测试)
-        # subprocess.check_call(['pip', 'uninstall', 'chainlit', '-y'])
-        # with self.assertRaises(ImportError):
-        #     agent.chainlit_demo()
-        # subprocess.check_call(['pip', 'install', 'chainlit==1.0.200'])
-        # os.environ['APPBUILDER_RUN_CHAINLIT'] = '1'
-        # agent.chainlit_demo()
-        # os.environ['APPBUILDER_RUN_CHAINLIT'] = '0'
-        # agent.chainlit_demo()
               
     # 附加测试core/component,相关代码还未编写
     def test_core_component(self):

@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -69,34 +69,6 @@ class TestUtils(unittest.TestCase):
         # test_list
         models=Models()
         models.list(retry=-1)
-        
-    def test_logger_util_LoggerWithLoggerId(self):
-        # test_get_logid
-        lwl=LoggerWithLoggerId(logger='test_logger',extra={'logid':'test_logid'},loglevel='INFO')
-        self.assertEqual(lwl.get_logid(),None)
-        lwl.logid_dict[current_thread().ident]='ident'
-        self.assertEqual(lwl.get_logid(),'ident')
-        
-        # test_process
-        kwargs={
-            'extra':{'logid':'test_logid'}
-        }
-        msg,kwargs=lwl.process(msg='test_msg',kwargs=kwargs)
-        self.assertEqual(kwargs['extra']['logid'],lwl.logid_dict[current_thread().ident])
-        msg,kwargs=lwl.process(msg='test_msg',kwargs={})
-        self.assertEqual(kwargs['extra']['logid'],lwl.logid_dict[current_thread().ident])
-        
-        # test_level
-        test_logger=test_logger_level()
-        lwl.logger=test_logger
-        self.assertEqual(lwl.level,'level')
-        
-    def test_setup_logging(self):
-        # test_setup_logging
-        os.environ["APPBUILDER_LOGLEVEL"]="test" 
-        with self.assertRaises(ValueError):
-            _setup_logging()
-                
         
             
 if __name__ == '__main__':

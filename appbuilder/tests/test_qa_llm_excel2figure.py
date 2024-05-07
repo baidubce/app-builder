@@ -27,7 +27,7 @@ from pytest_utils import Utils
 util = Utils()
 
 from appbuilder.utils.logger_util import get_logger
-from appbuilder.core._exception import *
+from appbuilder.core._exception import ModelNotSupportedException
 log = get_logger(__name__)
 
 text = "用户:喂我想查一下我的话费\n坐席:好的女士您话费余的话还有87.49元钱\n用户:好的知道了谢谢\n坐席:嗯不客气祝您生活愉快再见"

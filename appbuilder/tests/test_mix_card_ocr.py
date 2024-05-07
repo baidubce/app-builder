@@ -19,7 +19,7 @@ import requests
 
 import appbuilder
 from appbuilder.core.message import Message
-from appbuilder.core._exception import *
+from appbuilder.core._exception import InvalidRequestArgumentError
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPlantRecognition(unittest.TestCase):
