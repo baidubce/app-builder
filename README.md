@@ -94,11 +94,11 @@ print(answer.content)
 
 | 应用Icon  | 应用链接 | 推荐理由 |
 |--|:--| :--|
-| <img src='docs/image/app-mbti.png' alt='app icon' width='100'> |  [MBTI人格测试](https://console.bce.baidu.com/ai_apaas/examplePage/6f6f1fb4-c03c-4ef4-8bb2-e2a06732786d)| 5道题揭秘你的MBTI人格类型，快来测试吧！|
-| <img src='docs/image/app-paper.png' alt='app icon' width='100'> |  [论文帮手](https://console.bce.baidu.com/ai_apaas/examplePage/62a84f93-c8e0-4aad-b2e7-bb97893387b7)| 提供方向与关键词，我能为你推荐相关论文、提供论文的框架模板，并根据推荐的论文撰写综述。|
-| <img src='docs/image/app-auto.png' alt='app icon' width='100'> |  [汽车专家](https://console.bce.baidu.com/ai_apaas/examplePage/7f7e8c41-057d-4e5b-85de-2137ba03b982)| 为你提供各种汽车相关的信息，包括品牌、型号、配置、价格等方面的信息。|
-| <img src='docs/image/app-travel.png' alt='app icon' width='100'> |   [旅行规划专家](https://console.bce.baidu.com/ai_apaas/examplePage/af495e21-505f-48be-911b-f8b7450c5f71)| 无论你是想探索未知的远方，还是寻找身边的美丽风景，我都会为你提供贴心的旅行建议和信息。|
-| <img src='docs/image/app-aiyinstan.png' alt='app icon' width='100'> |  [爱因斯坦](https://console.bce.baidu.com/ai_apaas/examplePage/1058ade8-a030-406b-bdf3-674aabd5bdf8)| 你好，我是爱因斯坦，让我们一起探索奇妙的科学世界吧！|
+| <img src='docs/image/app-mbti.png' alt='app icon' width='80'> |  [MBTI人格测试](https://console.bce.baidu.com/ai_apaas/examplePage/6f6f1fb4-c03c-4ef4-8bb2-e2a06732786d)| 5道题揭秘你的MBTI人格类型，快来测试吧！|
+| <img src='docs/image/app-paper.png' alt='app icon' width='80'> |  [论文帮手](https://console.bce.baidu.com/ai_apaas/examplePage/62a84f93-c8e0-4aad-b2e7-bb97893387b7)| 提供方向与关键词，我能为你推荐相关论文、提供论文的框架模板，并根据推荐的论文撰写综述。|
+| <img src='docs/image/app-auto.png' alt='app icon' width='80'> |  [汽车专家](https://console.bce.baidu.com/ai_apaas/examplePage/7f7e8c41-057d-4e5b-85de-2137ba03b982)| 为你提供各种汽车相关的信息，包括品牌、型号、配置、价格等方面的信息。|
+| <img src='docs/image/app-travel.png' alt='app icon' width='80'> |   [旅行规划专家](https://console.bce.baidu.com/ai_apaas/examplePage/af495e21-505f-48be-911b-f8b7450c5f71)| 无论你是想探索未知的远方，还是寻找身边的美丽风景，我都会为你提供贴心的旅行建议和信息。|
+| <img src='docs/image/app-aiyinstan.png' alt='app icon' width='80'> |  [爱因斯坦](https://console.bce.baidu.com/ai_apaas/examplePage/1058ade8-a030-406b-bdf3-674aabd5bdf8)| 你好，我是爱因斯坦，让我们一起探索奇妙的科学世界吧！|
 
 ## 百度智能云千帆AppBuilder-SDK 能力全景图
 <div align="center">
