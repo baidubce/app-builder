@@ -26,6 +26,6 @@
   * AppBuilder Console SDK 支持 GO 语言 [AppBuilder GO ConsoleSDK](/go/)
   * 首页README更新，提供免费的公共试用TOKEN，方便开发者快速体验
 * **2024.04.30 v0.7.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.7.0)
-  * 支持Assistant SDK 并提供 [CookBook](/cookbooks/pipeline/assistant_function_call.ipynb)，允许用户进行流程编排 与 FunctionCall，搭建个性化Agent应用
+  * 支持Assistant SDK 并提供 [CookBook](/cookbooks/pipeline/assistant_function_call.ipynb)，包含流程编排与FunctionCall，搭建个性化Agent应用
   * AgentBuilder组件更名为 AppBuilderClient, 后续版本将放弃对 `AgentBuilder` 的后向兼容支持
   * 首页Readme与文档结构优化

@@ -11,7 +11,7 @@
 | 代码态智能体 | 基于 Assistants API，可通过全代码形式创建和调试专属智能体（Agent） | [AssistantAPI](https://cloud.baidu.com/doc/AppBuilder/s/nluzkdben) | *当前文档* |
 | 工具组件 | 基于组件 SDK，可调用包括大模型组件、AI能力组件等在内的多种组件 | [组件SDK](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz) | [组件列表](../appbuilder/core/components) |
 
-Assistants API/SDK 全新开放，火热邀测中。点击[免费申请邀请测试资格](https://cloud.baidu.com/survey/assistantsapi.html)
+Assistants API/SDK 正在内测中，敬请期待公测版本。
 
 </span>
 
