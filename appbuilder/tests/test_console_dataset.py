@@ -12,22 +12,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import uuid
+import time
 
 import unittest
 import appbuilder
+from appbuilder.core._client import HTTPClient
 
-@unittest.skip(reason="数据集问题")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDataset(unittest.TestCase):
-
+    def setUp(self):
+        self.dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+    
     @classmethod
     def setUpClass(cls):
         # 获取当前文件所在的目录路径
         cls.current_dir = os.path.dirname(__file__)
         cls.test_pdf_path = os.path.join(cls.current_dir, 'test.pdf')
 
+    def test_create_dataset(self):
+        # test_dataset
+        dataset_name = "baidu-test"+str(int(time.time()))
+        dataset_id=str(uuid.uuid4())
+        dataset = appbuilder.console.Dataset(dataset_id=dataset_id, dataset_name=dataset_name)
+        dataset.create_dataset
+        http_result=dataset.http_client
+        self.assertIsInstance(http_result, HTTPClient)
+    
     def test_dataset(self):
-        # 创建知识库
-        dataset = appbuilder.console.Dataset.create_dataset("baidu-test")
+        # 初始化数据库
+        dataset = appbuilder.console.Dataset(
+            dataset_id=self.dataset_id,
+            dataset_name="勿删-appbuilder-sdk测试数据集"
+        )
         self.assertIsNotNone(dataset.dataset_id)
 
         # 上传文档
