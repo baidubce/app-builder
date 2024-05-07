@@ -77,7 +77,7 @@ print(answer.content)
 
 #### 更多代码示例
 
-更多AI原生应用示例代码，请查阅 [CookBooks](./cookbooks/README.md)，我们有以下cookbook推荐您优先阅读：
+更多AI原生应用示例代码，请浏览 [CookBooks](./cookbooks/README.md)，我们有以下cookbook推荐您优先阅读：
 
 | 应用类型 |应用链接 | 推荐理由 |
 |--|--|--|
@@ -90,7 +90,7 @@ print(answer.content)
 
 #### 更多应用示例
 
-更多AI原生应用示例，请查阅 [AppBuilder 应用广场](https://console.bce.baidu.com/ai_apaas/appCenter) ，我们有以下热门应用推荐您优先尝试：
+更多AI原生应用示例，请浏览 [AppBuilder 应用广场](https://console.bce.baidu.com/ai_apaas/appCenter) ，我们有以下热门应用推荐您优先尝试：
 
 | 应用Icon  | 应用链接 | 推荐理由 |
 |--|:--:| :--|
