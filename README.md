@@ -75,17 +75,30 @@ print(answer.content)
 > 4. **颐和园**。颐和园是中国古代皇家园林，也是北京的一大旅游景点^[1]^。
 
 
-**更多AI原生应用示例代码，请查阅 [CookBooks](./cookbooks/README.md)**，我们有以下cookbook推荐您优先阅读：
-- 基础能力组件: SDK集成各类AI能力，如图像识别、文字识别等
-    - [通用文字识别组件](/cookbooks/components/general_ocr.ipynb)
-    - [基础组件服务化](/cookbooks/components/agent_runtime.ipynb)
-- 流程编排: 基于基础能力组件，自定义FunctionCall，编排个性化Agent应用
-    - [Assistant SDK](/cookbooks/pipeline/assistant_function_call.ipynb)
-- 端到端应用：直接调用在平台上创建并发布的应用
-    - [Agent应用](/cookbooks/agent_builder.ipynb)
-    - [RAG应用](/cookbooks/end2end_application/rag/rag.ipynb)
-    - [企业级问答系统](/cookbooks/end2end_application/rag/qa_system_2_dialogue.ipynb)
+#### 更多代码示例
 
+更多AI原生应用示例代码，请查阅 [CookBooks](./cookbooks/README.md)，我们有以下cookbook推荐您优先阅读：
+
+| 应用类型 |应用名称 | 应用链接 | 推荐理由 |
+|--|--|--| -- |
+| 基础能力组件 | 通用文字识别 | [链接](/cookbooks/components/general_ocr.ipynb) | 百度AI开放平台提供的通用文字识别-高精度版，尝试获得高精度的识别结果 |
+| 基础能力组件 | 基础组件服务化 | [链接](/cookbooks/components/agent_runtime.ipynb) | 通过flask实现服务化部署 或 通过chainlit实现可交互的前端部署 |
+| 流程编排 | Assistant SDK | [链接](/cookbooks/pipeline/assistant_function_call.ipynb) | 纯代码态搭建一个Agent应用，并实现自定义工作流程及FunctionCall |
+| 端到端应用 | Agent应用 | [链接](/cookbooks/agent_builder.ipynb) | 使用AppBuilder网页端创建并发布一个Agent应用后，通过AppBuilder Client SDK集成到你的系统中 |
+| 端到端应用 | 简历筛选小助手 | [链接](/cookbooks/end2end_application/rag/rag.ipynb) | 通过对本地简历库的简历进行解析、切片、创建索引，实现基于JD进行简历筛选，并对筛选的Top1简历进行总结 |
+| 端到端应用 | 企业级问答系统 | [链接](/cookbooks/end2end_application/rag/qa_system_2_dialogue.ipynb) | 学习如何通过SDK与网页平台搭配，实现离线知识库生产与在线问答 |
+
+#### 更多应用示例
+
+更多AI原生应用示例，请查阅 [AppBuilder 应用广场](https://console.bce.baidu.com/ai_apaas/appCenter) ，我们有以下热门应用推荐您优先尝试：
+
+| 应用Icon | 应用名称 | 应用链接 | 推荐理由 |
+|--|:--:| :--: |:--|
+| <img src='docs/image/app-mbti.png' alt='app icon' width='100'> | MBTI人格测试 | [链接](https://console.bce.baidu.com/ai_apaas/examplePage/6f6f1fb4-c03c-4ef4-8bb2-e2a06732786d)| 5道题揭秘你的MBTI人格类型，快来测试吧！|
+| <img src='docs/image/app-paper.png' alt='app icon' width='100'> | 论文帮手 | [链接](https://console.bce.baidu.com/ai_apaas/examplePage/62a84f93-c8e0-4aad-b2e7-bb97893387b7)| 提供方向与关键词，我能为你推荐相关论文、提供论文的框架模板，并根据推荐的论文撰写综述。|
+| <img src='docs/image/app-auto.png' alt='app icon' width='100'> | 汽车专家 | [链接](https://console.bce.baidu.com/ai_apaas/examplePage/7f7e8c41-057d-4e5b-85de-2137ba03b982)| 为你提供各种汽车相关的信息，包括品牌、型号、配置、价格等方面的信息。|
+| <img src='docs/image/app-travel.png' alt='app icon' width='100'> | 旅行规划专家 | [链接](https://console.bce.baidu.com/ai_apaas/examplePage/af495e21-505f-48be-911b-f8b7450c5f71)| 无论你是想探索未知的远方，还是寻找身边的美丽风景，我都会为你提供贴心的旅行建议和信息。|
+| <img src='docs/image/app-aiyinstan.png' alt='app icon' width='100'> | 爱因斯坦 | [链接](https://console.bce.baidu.com/ai_apaas/examplePage/1058ade8-a030-406b-bdf3-674aabd5bdf8)| 你好，我是爱因斯坦，让我们一起探索奇妙的科学世界吧！|
 
 ## 百度智能云千帆AppBuilder-SDK 能力全景图
 <div align="center">
