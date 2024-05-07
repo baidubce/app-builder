@@ -205,12 +205,12 @@ class AppBuilderClientDemo {
         String fileId = builder.uploadLocalFile(conversationId, "/Users/zhangxiaoyu15/PycharmProjects/app-builder/test_app_builder_client/test.pdf");
         // 输入query
         AppBuilderClientIterator itor = builder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
-        StringBuilder anwser = new StringBuilder();
+        StringBuilder answer = new StringBuilder();
         // itor.hasNext()返回false时，表示流式调用结束
         while(itor.hasNext())
         {
             AppBuilderClientResult response = itor.next();
-            anwser.append(response.getAnswer());
+            answer.append(response.getAnswer());
             for (Event event : response.getEvents()) {
                 switch (event.getContentType()) {
                     case "rag":
@@ -236,7 +236,7 @@ class AppBuilderClientDemo {
             }
         }
         System.out.print("输出：");
-        System.out.println(anwser);
+        System.out.println(answer);
     }
 }
 
