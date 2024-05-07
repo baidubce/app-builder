@@ -41,6 +41,9 @@ jobs:
     env:
       APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
       APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
+      BAIDU_VDB_API_KEY: apaasTest1
+      INSTANCE_ID: vdb-bj-vuzmppgqrnhv
+      DATASET_ID: c4652b26-3f2b-4cd1-9ca2-98cd26adc36f
     strategy:
       fail-fast: false
       matrix:

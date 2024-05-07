@@ -19,6 +19,7 @@ from appbuilder.core.components.doc_crop_enhance.component import DocCropEnhance
 from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter, ChunkSplitter, TitleSplitter
 from appbuilder.core.message import Message
 from appbuilder.core.components.doc_parser.base import ParseResult, ParaNode,Position
+from appbuilder.core.components.doc_format_converter.component import DocFormatConverter
 
 from appbuilder.core._exception import InvalidRequestArgumentError
 
@@ -82,6 +83,20 @@ class TestCoreComponentsDoc(unittest.TestCase):
         message.content=pr
         ts=TitleSplitter()
         ts.run(input_message=message)
+        
+    def test_doc_format_converter_component_tool_eval(self):
+        dfc=DocFormatConverter()
+        result=dfc.tool_eval(streaming=False,origin_query='origin_query',page_num='str page')
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)
+        result=dfc.tool_eval(streaming=False,origin_query='origin_query',page_num=1)
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)
+        result=dfc.tool_eval(streaming=False,origin_query='origin_query',page_num=1,file_name='test')
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)    
+
+            
         
 if __name__ == '__main__':
     unittest.main()
