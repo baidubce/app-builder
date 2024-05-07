@@ -161,7 +161,7 @@ class DocFormatConverter(Component):
         :return: 返回结果
         :rtype: DocFormatConverterSubmitResponse
         """
-        url = self.http_client.service_url("/v1/bce/aip/text_mind/v1/doc_convert/request",'api')
+        url = self.http_client.service_url("/v1/bce/aip/text_mind/v1/doc_convert/request",'/api')
         data = json.loads(DocFormatConverterSubmitRequest.to_json(request, preserving_proto_field_name=True))
         headers = self.http_client.auth_header()
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -185,7 +185,7 @@ class DocFormatConverter(Component):
         :return: 返回结果
         :rtype: DocFormatConverterSubmitResponse
         """
-        url = self.http_client.service_url("/v1/bce/aip/text_mind/v1/doc_convert/get_request_result",'api')
+        url = self.http_client.service_url("/v1/bce/aip/text_mind/v1/doc_convert/get_request_result",'/api')
         data = {
             "task_id": request.task_id
         }
