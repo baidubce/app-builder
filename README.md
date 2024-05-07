@@ -93,7 +93,7 @@ print(answer.content)
 更多AI原生应用示例，请浏览 [AppBuilder 应用广场](https://console.bce.baidu.com/ai_apaas/appCenter) ，我们有以下热门应用推荐您优先尝试：
 
 | 应用Icon  | 应用链接 | 推荐理由 |
-|--|:--:| :--|
+|--|:--| :--|
 | <img src='docs/image/app-mbti.png' alt='app icon' width='100'> |  [MBTI人格测试](https://console.bce.baidu.com/ai_apaas/examplePage/6f6f1fb4-c03c-4ef4-8bb2-e2a06732786d)| 5道题揭秘你的MBTI人格类型，快来测试吧！|
 | <img src='docs/image/app-paper.png' alt='app icon' width='100'> |  [论文帮手](https://console.bce.baidu.com/ai_apaas/examplePage/62a84f93-c8e0-4aad-b2e7-bb97893387b7)| 提供方向与关键词，我能为你推荐相关论文、提供论文的框架模板，并根据推荐的论文撰写综述。|
 | <img src='docs/image/app-auto.png' alt='app icon' width='100'> |  [汽车专家](https://console.bce.baidu.com/ai_apaas/examplePage/7f7e8c41-057d-4e5b-85de-2137ba03b982)| 为你提供各种汽车相关的信息，包括品牌、型号、配置、价格等方面的信息。|
