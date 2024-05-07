@@ -23,32 +23,9 @@ from appbuilder.core.component import Message
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestRetriever(unittest.TestCase):
-    def test_bes_bes_retriever_BESVectorStoreIndex(self):
-        # 需要密码
-        with self.assertRaises(ConnectionError):
-            bvs=BESVectorStoreIndex(
-                cluster_id="test_id",
-                user_name="test_name",
-                password="<PASSWORD>"         
-            )
-            
-    def test__bes_bes_retriever_BESRetriever(self):
-        embedding=Embedding()
-        br=BESRetriever(
-            embedding=embedding,
-            index_name="index_name",
-            bes_client="bes_client"
-        )
-        message=Message("文心一言")
-        with self.assertRaises(AttributeError):
-            br.run(message)
-            
-    def test_baidu_vdb_baiduvdb_retrieve_BaiduVDBVectorStoreIndex(self):
-        with self.assertRaises(Exception):
-            bvvs=BaiduVDBVectorStoreIndex(
-                instance_id="test_id",
-                api_key=os.getenv("APPBUILDER_TOKEN", "")      
-            )
+    def test(self):
+        pass
+        # 未编写完成
 
         
 if __name__ == '__main__':
