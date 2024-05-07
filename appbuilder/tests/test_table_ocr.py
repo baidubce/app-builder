@@ -17,6 +17,8 @@ import requests
 import appbuilder
 import os
 
+from appbuilder.core._exception import InvalidRequestArgumentError 
+
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestTableOCR(unittest.TestCase):
     def setUp(self):
@@ -126,6 +128,26 @@ class TestTableOCR(unittest.TestCase):
         message = appbuilder.Message(content={"url": url})
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.table_ocr.run(message)
+            
+    def test_tool_eval(self):
+        image_url = "https://bj.bcebos.com/v1/appbuilder/table_ocr_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024" \
+                    "-01-24T12%3A37%3A09Z%2F-1%2Fhost%2Fab528a5a9120d328dc6d18c6" \
+                    "064079145ff4698856f477b820147768fc2187d3"
+        result=self.table_ocr.tool_eval(name='name',streaming=False,files=['test'])
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)
+        result=self.table_ocr.tool_eval(
+            name='name',
+            streaming=True,
+            file_names=['test'],
+            file_urls={'test':image_url}
+            )
+        res=next(result)
+        self.assertEqual(res['visible_scope'],'llm')
+        res=next(result)
+        self.assertEqual(res['visible_scope'],'user')
+        
 
 
 if __name__ == '__main__':
