@@ -20,11 +20,6 @@ class BetaAssistant(object):
         return Assistants()
     
     @property
-    def files(self):
-        from appbuilder.core.assistant.assistants import Files
-        return Files()
-    
-    @property
     def threads(self):
         from appbuilder.core.assistant.threads import Threads
         return Threads()
