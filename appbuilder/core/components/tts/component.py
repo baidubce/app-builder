@@ -97,9 +97,7 @@ class TTS(Component):
         """
         if model != self.Baidu_TTS and model != self.PaddleSpeech_TTS:
             raise InvalidRequestArgumentError(
-                "unsupported model {}, expected model in {'baidu-tts', 'paddlespeech-tts'}".format(
-                    model
-                )
+                f"unsupported model {model}, expected model in {'baidu-tts', 'paddlespeech-tts'}"
             )
         self.model = model
         inp = TTSInMsg(**message.content)

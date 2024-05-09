@@ -83,7 +83,7 @@ class Excel2Figure(Component):
     @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def _check_model_and_get_model_url(self, model, model_type):
         if model and model in self.excluded_models:
-            raise ModelNotSupportedException(f"Model {model} not supported, expected in {self.exclued_models}")
+            raise ModelNotSupportedException(f"Model {model} not supported, expected in {self.excluded_models}")
         if not model:
             raise ValueError("model must be provided")
         if self.__class__.model_info is None:
