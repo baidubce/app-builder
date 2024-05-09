@@ -15,6 +15,7 @@
 from pydantic import BaseModel
 from pydantic import Field
 from typing import Optional
+from enum import Enum
 from appbuilder.core.assistant.type import (
     AssistantTool,
     ResponseFormat,
@@ -30,6 +31,50 @@ class AssistantFilesCreateResponse(BaseModel):
     create_at: int = 0  # 文件创建时间戳
     filename: str = ""  # 文件名
     classification_id: str = ""  # 文件分类ID
+    
+class AuditStatus(int,Enum):
+    AUDITING = -1, # 审核中 
+    NOT_AUDITED = 0, # 未审核
+    APPROVED = 1, # 审核通过
+    REJECTED = 2, # 审核不通过
+    NEEDS_FURTHER_AUDIT = 3, # 需要进一步审核
+    AUDIT_FAILED_SERVICE_EXCEPTION = 4, # 审核失败（服务异常）
+    AUDIT_FAILED_TIMEOUT = 5, # 审核失败（审核超时）
+
+
+class AssistantFilesListData(BaseModel):
+    id: str = ""  # 文件ID
+    bytes: int = 0  # 文件大小（字节）
+    object: str = ""  # 文件对象标识
+    purpose: str = ""  # 文件用途
+    censored :AuditStatus = Field()  # 审核状态
+    create_at: int = 0  # 文件创建时间戳
+    filename: str = ""  # 文件名
+    classification_id: str = ""  # 文件分类ID
+    file_type: str = "" # 文件类型
+    
+
+class AssistantFilesListResponse(BaseModel):
+    object :str = "list"
+    data: list[AssistantFilesListData] = []
+    
+
+class AssistantFilesQueryResponse(BaseModel):
+    id: str = ""  # 文件ID
+    bytes: int = 0  # 文件大小（字节）
+    object: str = ""  # 文件对象标识
+    purpose: str = ""  # 文件用途
+    censored :AuditStatus = Field()  # 审核状态
+    create_at: int = 0  # 文件创建时间戳
+    filename: str = ""  # 文件名
+    classification_id: str = ""  # 文件分类ID
+    file_type: str = "" # 文件类型
+    
+class AssistantFilesDeleteResponse(BaseModel):
+    id: str = ""  # 文件ID
+    object: str = ""  # 文件对象标识
+    deleted: bool = False  # 是否删除成功	
+    
 
 # AssistantCreateRequest类，用于描述创建助理的请求参数
 class AssistantCreateRequest(BaseModel):
@@ -59,3 +104,4 @@ class AssistantCreateResponse(BaseModel):
     response_format: Optional[ResponseFormat] = Field(default=ResponseFormat.TEXT)  # 响应格式
     file_ids: Optional[list[str]] = Field(default=[])  # 关联文件的ID列表
     metadata: Optional[dict] = Field(default={}, max_length=16)  # 元数据
+

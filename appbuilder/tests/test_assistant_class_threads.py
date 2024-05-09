@@ -29,6 +29,22 @@ class TestThreadCreate(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             appbuilder.assistant.threads.create(message)
+            
+    def test_threads_query_delete(self):
+        from appbuilder.core.assistant.type import thread_type
+        message = thread_type.AssistantMessage(
+            content="hello world"
+        )
+        thread = appbuilder.assistant.threads.create([message])
+        
+        # test query
+        thr_query = appbuilder.assistant.threads.query(thread_id=thread.id)
+        self.assertIsInstance(thr_query, thread_type.ThreadQueryResponse)
+        
+        #test delete
+        thr_delete = appbuilder.assistant.threads.delete(thread_id=thread.id)
+        self.assertIsInstance(thr_delete, thread_type.ThreadDeleteResponse)
+
 
 if __name__ == '__main__':
     unittest.main()

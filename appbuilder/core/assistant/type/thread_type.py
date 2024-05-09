@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from pydantic import BaseModel
 from pydantic import Field
 from enum import Enum
@@ -56,7 +55,97 @@ class AssistantMessageCreateResponse(BaseModel):
     assistant_id: Optional[str] = ""
     run_id: Optional[str] = ""
     file_ids: Optional[list[str]] = []
+    
+    
+class AssistantMessageListRole(str, Enum):
+    DESC = 'desc'
+    ASC = 'asc'
+    
+    
+class AssistantMessageListRequest(BaseModel):
+    thread_id: str
+    limit: int = -20
+    order: AssistantMessageListRole = Field(
+        default=AssistantMessageListRole.DESC)
+    after: str = ""
+    before: str = ""
+    
+    
+class AssistantMessageListResponseData(BaseModel):
+    id: str = ""
+    object: str = ""
+    role: AssistantMessageRole = Field()
+    content: Optional[list[AssistantContent]] = []
+    created_at: int = 0
+    thread_id: str = ""
+    assistant_id: Optional[str] = ""
+    run_id: Optional[str] = ""
+    file_ids: Optional[list[str]] = []
+    
+    
+class AssistantMessageListResponse(BaseModel):
+    object: str = ""
+    data: list[AssistantMessageListResponseData] = []
+    first_id: Optional[str] = ""
+    last_id: Optional[str] = ""
+    has_more: bool = False
+    
+class AssistantMessageQueryRequest(BaseModel):
+    thread_id: str
+    message_id: str
 
+class AssistantMessageQueryResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    role: AssistantMessageRole = Field()
+    content: Optional[list[AssistantContent]] = []
+    created_at: int = 0
+    thread_id: str = ""
+    assistant_id: Optional[str] = ""
+    run_id: Optional[str] = ""
+    file_ids: Optional[list[str]] = []
+    
+    
+class AssistantMessageUpdateRequest(BaseModel):
+    thread_id: str
+    message_id: str
+    content: Optional[str] 
+    file_ids: Optional[list[str]] = []
+    
+    
+class AssistantMessageUpdateResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    role: AssistantMessageRole = Field(default=AssistantMessageRole.USER)
+    content: Optional[list[AssistantContent]] = []
+    created_at: int = 0
+    thread_id: str = ""
+    assistant_id: Optional[str] = ""
+    run_id: Optional[str] = ""
+    file_ids: Optional[list[str]] = []
+    
+class AssistantMessageFilesRequest(BaseModel):
+    thread_id: str
+    message_id: str
+    limit: int = -20
+    order : AssistantMessageListRole = Field(
+        default=AssistantMessageListRole.DESC)
+    after: str = ""
+    before: str = ""
+    
+class AssistantContentFilesData(BaseModel):
+    id: str = ""
+    object: str = ""
+    created_at: int = 0
+    message_id: str = ""
+    
+class AssistantMessageFilesResponse(BaseModel):
+    object: str = ""
+    data: list[AssistantContentFilesData] = []
+    first_id: Optional[str] = ""
+    last_id: Optional[str] = ""
+    has_more: bool = False
+    
 
 class AssistantThread(BaseModel):
     messages: Optional[list[AssistantMessage]] = []
@@ -66,11 +155,35 @@ class ThreadCreateResponse(BaseModel):
     id: str = ""
     object: str = ""
     created_at: int = 0
-
+    metadata: dict = {}
 
 class ThreadCreateRequest(BaseModel):
     messages: list[AssistantMessage]
 
+class ThreadQueryRequest(BaseModel):
+    thread_id: str
+
+class ThreadQueryResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    created_at: int = 0
+    metadata: dict = {}
+    
+class ThreadDeleteRequest(BaseModel):
+    thread_id: str
+
+class ThreadDeleteResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    deleted: bool = False
+    
+class ThreadUpdateRequest(BaseModel):
+    thread_id: str
+    metadata: Optional[dict] = Field(default={}, max_length=16)
+    
+class ThreadUpdateResponse(BaseModel):
+    id: str = ""
+    object: str = ""
 
 class AssistantThread(BaseModel):
     messages: list[AssistantMessage] = []
@@ -142,6 +255,7 @@ class RunResult(BaseModel):
 
 class RunMessageCreation(BaseModel):
     message_id: str = ""
+
 
 
 class ToolInfo(BaseModel):
