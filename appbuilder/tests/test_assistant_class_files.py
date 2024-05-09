@@ -26,8 +26,8 @@ class TestFilesCreate(unittest.TestCase):
         file_path = "./data/qa_doc_parser_extract_table_from_doc.png"
         file = appbuilder.assistant.assistants.files.create(file_path=file_path)
         
-        # test List
-        files_list = appbuilder.assistant.assistants.files.List()
+        # test list
+        files_list = appbuilder.assistant.assistants.files.list()
         self.assertIsInstance(files_list, assistant_type.AssistantFilesListResponse)
         
         # test query

@@ -70,7 +70,7 @@ class Files(object):
         return resp
 
         
-    def List(self) -> assistant_type.AssistantFilesListResponse:
+    def list(self) -> assistant_type.AssistantFilesListResponse:
         """
         列出存储中的文件列表
         
