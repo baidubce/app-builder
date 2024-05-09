@@ -25,6 +25,20 @@ class Steps():
 
     def list(self, thread_id: str, run_id: str, limit: int = 20,
                    order: str = 'desc', after: str = "", before: str = "") -> thread_type.RunStepListResponse:
+        """
+        根据thread_id和run_id，列出对应run的历史step记录
+        
+        Args:
+            thread_id (str): 线程ID
+            run_id (str): 运行ID
+            limit (int, optional): 步骤数量限制，默认为20
+            order (str, optional): 排序方式，'asc'表示升序，'desc'表示降序，默认为'desc'
+            after (str, optional): 过滤出时间戳晚于此值的步骤，默认为空
+            before (str, optional): 过滤出时间戳早于此值的步骤，默认为空
+        
+        Returns:
+            thread_type.RunStepListResponse: 线程运行步骤列表的响应对象
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs/steps/list")
         req = thread_type.AssistantRunStepListRequest(
@@ -49,6 +63,17 @@ class Steps():
         return resp
 
     def query(self, thread_id: str, run_id: str, step_id: str) -> thread_type.RunStepResult:
+        """
+        根据thread_id，run_id和step_id，查询对应step的信息
+        
+        Args:
+            thread_id (str): 线程ID
+            run_id (str): 运行ID
+            step_id (str): 步骤ID
+        
+        Returns:
+            thread_type.RunStepResult: 步骤运行结果
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs/steps/query")
         req = thread_type.AssistantRunStepQueryRequest(

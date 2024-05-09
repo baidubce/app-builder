@@ -299,6 +299,23 @@ class Runs():
 
     def list(self, thread_id: str, limit: int = 20,
              order: str = 'desc', after: str = "", before: str = "") -> thread_type.RunListResponse:
+        """
+        列出对应thread的历史run记录
+        
+        Args:
+            thread_id (str): 线程ID
+            limit (int, optional): 列表数量限制，默认为20
+            order (str, optional): 排序方式，'asc'为升序，'desc'为降序，默认为'desc'
+            after (str, optional): 返回在指定时间之后的运行列表，默认为空字符串
+            before (str, optional): 返回在指定时间之前的运行列表，默认为空字符串
+        
+        Returns:
+            thread_type.RunListResponse: 列出对应thread的历史run记录
+        
+        Raises:
+            无
+        
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs/list")
 
@@ -325,6 +342,16 @@ class Runs():
         return resp
 
     def query(self, thread_id: str, run_id: str) -> thread_type.RunResult:
+        """
+        根据thread_id和run_id，查询run的详情
+        
+        Args:
+            thread_id (str): 线程ID。
+            run_id (str): 运行ID。
+        
+        Returns:
+            thread_type.RunResult: 查询到的运行结果。
+        """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs/query")
 
