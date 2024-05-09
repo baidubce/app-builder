@@ -160,20 +160,20 @@ class RunStepDetail(BaseModel):
 
 
 class RunStepResult(BaseModel):
-    id: str = ""
-    object: str = ""
-    assistant_id: str = ""
-    thread_id: str = ""
-    run_id: str = ""
-    status: str = ""
-    created_at: int = 0
-    started_at: int = 0
-    expired_at: int = 0
-    cancelled_at: int = 0
-    failed_at: int = 0
-    completed_at: int = 0
-    last_error: Union[LastError, None] = None
-    type: str = 'null'
+    id: Optional[str] = ""
+    object: Optional[str] = ""
+    assistant_id: Optional[str] = ""
+    thread_id: Optional[str] = ""
+    run_id: Optional[str] = ""
+    status: Optional[str] = ""
+    created_at: Optional[int] = 0
+    started_at: Optional[int] = 0
+    expired_at: Optional[int] = 0
+    cancelled_at: Optional[int] = 0
+    failed_at: Optional[int] = 0
+    completed_at: Optional[int] = 0
+    last_error: Union[LastError, str] = ""
+    type: Optional[str] = 'null'
     step_datail: Union[RunStepDetail, None] = None
 
 
@@ -235,3 +235,46 @@ class AssistantSubmitToolOutputsRequest(BaseModel):
 class AssistantRunCancelRequest(BaseModel):
     thread_id: str = Field(default="", min_length=1)
     run_id: str = Field(default="", min_length=1)
+
+
+class RunListOrderEnum(str, Enum):
+    DESC = "desc"
+    ASC = "asc"
+
+class AssistantRunListRequest(BaseModel):
+    thread_id: str = Field(default="", min_length=1)
+    limit: int = Field(default=20)
+    order: RunListOrderEnum = Field(default=RunListOrderEnum.DESC)
+    after: str = Field(default="")
+    before: str = Field(default="")
+
+class RunListResponse(BaseModel):
+    object: Optional[str] = Field(default="list")
+    first_id: Optional[str] = Field(default="")
+    last_id: Optional[str] = Field(default="")
+    has_more: Optional[bool] = Field(default=False)
+    data: Optional[list[RunResult]] = Field(default=[])
+
+class AssistantRunQueryRequest(BaseModel):
+    thread_id: str = Field(default="", min_length=1)
+    run_id: str = Field(default="", min_length=1)
+
+class AssistantRunStepListRequest(BaseModel):
+    thread_id: str = Field(default="", min_length=1)
+    run_id: str = Field(default="", min_length=1)
+    limit: int = Field(default=20)
+    order: RunListOrderEnum = Field(default=RunListOrderEnum.DESC)
+    after: str = Field(default="")
+    before: str = Field(default="")
+
+class RunStepListResponse(BaseModel):
+    object: Optional[str] = Field(default="list")
+    first_id: Optional[str] = Field(default="")
+    last_id: Optional[str] = Field(default="")
+    has_more: Optional[bool] = Field(default=False)
+    data: Optional[list[RunStepResult]] = Field(default=[])
+
+class AssistantRunStepQueryRequest(BaseModel):
+    thread_id: str = Field(default="", min_length=1)
+    run_id: str = Field(default="", min_length=1)
+    step_id: str = Field(default="", min_length=1)
