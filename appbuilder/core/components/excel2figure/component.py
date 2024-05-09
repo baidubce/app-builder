@@ -83,7 +83,7 @@ class Excel2Figure(Component):
     @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def _check_model_and_get_model_url(self, model, model_type):
         if model and model in self.excluded_models:
-            raise ModelNotSupportedException(f"Model {model} not supported")
+            raise ModelNotSupportedException(f"Model {model} not supported, expected in {self.exclued_models}")
         if not model:
             raise ValueError("model must be provided")
         if self.__class__.model_info is None:
@@ -206,7 +206,7 @@ class Excel2Figure(Component):
             query = origin_query
         try:
             if len(file_urls) != 1:
-                raise ValueError(f"仅支持file_urls有且仅有一个文件，len(file_urls)={len(file_urls)}") 
+                raise ValueError(f"file_urls mismatched, expectd len(file_urls)==1，got {len(file_urls)}") 
             excel_file_name, excel_file_url = list(file_urls.items())[0]
             result_msg = self._run_excel2figure(
             	query=query, 
@@ -215,7 +215,7 @@ class Excel2Figure(Component):
 				excel_file_name=excel_file_name)
             
             if not result_msg.content:
-                raise RuntimeError(f"未能成功绘制图表，请调整query后重试")
+                raise RuntimeError(f"excel to figure failed, retry after modify query")
 
             result = {
                 'event': 'excel_to_figure',
@@ -223,7 +223,7 @@ class Excel2Figure(Component):
                 'text': [result_msg.content],
             }
         except Exception as e:
-            raise RuntimeError(f'绘制图表时发生错误：{e}')
+            raise RuntimeError(f'excel to figure error：{e}')
             
         if streaming:
             yield result

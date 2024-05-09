@@ -84,7 +84,7 @@ class DishRecognition(Component):
         :return: 包含食物识别结果的响应对象。
         """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         if not request.top_num:
             request.top_num = 1
         if not request.filter_threshold:

@@ -82,7 +82,7 @@ class AppBuilderClient(Component):
             """
 
         if len(conversation_id) == 0:
-            raise ValueError("conversation_id is empty")
+            raise ValueError("conversation_id is empty, you can run self.create_conversation to get a conversation_id")
         multipart_form_data = {
             'file': (os.path.basename(local_file_path), open(local_file_path, 'rb')),
             'app_id': (None, self.app_id),
@@ -112,7 +112,9 @@ class AppBuilderClient(Component):
         """
 
         if len(conversation_id) == 0:
-            raise ValueError("conversation_id is empty")
+            raise ValueError(
+                "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
+            )
 
         req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,

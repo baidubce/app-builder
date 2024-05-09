@@ -117,7 +117,7 @@ class GeneralOCR(Component):
                        response (obj: `GeneralOCRResponse`): 通用文字识别返回结果
                """
         if not request.image and not request.url and not request.pdf_file and not request.ofd_file:
-            raise ValueError("one of image or url or must pdf_file or ofd_file be set")
+            raise ValueError("request format error, one of image or url or must pdf_file or ofd_file be set")
         data = GeneralOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
@@ -158,11 +158,11 @@ class GeneralOCR(Component):
             file_urls = kwargs.get("file_urls", {})
             img_path = kwargs.get("img_name", None)
             if not img_path:
-                raise InvalidRequestArgumentError("file name is not set")
+                raise InvalidRequestArgumentError("request format error, file name is not set")
             img_name = os.path.basename(img_path)
             img_url = file_urls.get(img_name, None)
             if not img_url:
-                raise InvalidRequestArgumentError(f"file {img_name} url does not exist")
+                raise InvalidRequestArgumentError(f"request format error, file {img_name} url does not exist")
         req = GeneralOCRRequest(url=img_url)
         req.detect_direction = "true"
         req.language_type = "auto_detect"

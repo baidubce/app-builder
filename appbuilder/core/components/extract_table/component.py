@@ -64,12 +64,12 @@ class ExtractTableFromDoc(Component):
         """ para_check
         """
         if table_max_size < 30:
-            raise ValueError("table_max_size must be >= 30")
+            raise ValueError("table_max_size mismached, expected table_max_size >= 30, got {}".format(table_max_size))
         if doc_node_num_before_table < 1 or doc_node_num_before_table > 10:
-            raise ValueError("doc_node_num_before_table must be >=1, <=10]")
+            raise ValueError("doc_node_num_before_table mismatched, expected [1, 10], got {}".format(doc_node_num_before_table))
         obj = message.content.get("result", {}).get("result_list", [])
         if len(obj) < 1:
-            raise ValueError("Input check failed, it must be raw_doc_parser output.")
+            raise ValueError("Input check failed, expected raw_doc_parser output.")
 
     def _post_process(self, resp):
         """ pass

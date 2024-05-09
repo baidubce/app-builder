@@ -72,7 +72,7 @@ class NL2Sql(Component):
         super().__init__(meta=NL2SqlArgs)
 
         if model_name not in SUPPORTED_MODEL_NAME:
-            raise ValueError(f"model_name 错误， 请使用 {SUPPORTED_MODEL_NAME} 中的大模型")
+            raise ValueError(f"model_name mismatchhed, expected in {SUPPORTED_MODEL_NAME}, got {model_name}")
         self.model_name = model_name
         self.server_sub_path = "/v1/ai_engine/gbi/v1/gbi_nl2sql"
         self.table_schemas = table_schemas

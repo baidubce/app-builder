@@ -126,13 +126,13 @@ class QueryRewrite(CompletionBaseComponent):
 
 
         if message is None:
-            raise ValueError("输入消息不能为空")
+            raise ValueError("input message is required")
 
         sum_len = sum(len(item) for item in message.content)
         if len(message.content) > 10 or len(message.content) % 2 == 0:
-            raise ValueError("非法输入，目前支持5轮以下改写，合法输入列表元素个数为低于10的奇数、即1、3、5、9")
+            raise ValueError(f"illegal input，expected len(message.content) in {1,3,5,9}, got {len(message.content)}")
         if sum_len > 4000:
-            raise ValueError("非法输入，字符总长度不超过5000")
+            raise ValueError(f"illegal input, expected length <= 4000, got {len(sum_len)}")
         if rewrite_type == "带机器人回复":
             converted_input = ''.join([f"{'User:' if i % 2 == 0 else 'Assistant:'}\
                                        {message.content[i]}\n" for i in range(len(message.content))])

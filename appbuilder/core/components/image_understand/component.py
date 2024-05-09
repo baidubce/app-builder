@@ -98,11 +98,11 @@ class ImageUnderstand(Component):
         if inp.url:
             request.url = inp.url
         if inp.question == "":
-            raise ValueError("question is empty")
+            raise ValueError("request format error, question is empty")
         if len(inp.question) > 100:
-            raise ValueError("question length bigger than 100")
+            raise ValueError(f"request format error, expected len(question)>100, got {len(inp.question)}")
         if inp.language != "zh-CN" and inp.language != "en":
-            raise ValueError("illegal language:" + inp.language)
+            raise ValueError(f"request format error, expected language in ['zh-CN', 'en'], got {inp.language}")
         request.question = inp.question
         request.output_CHN = True
         if inp.language == "en":
@@ -122,7 +122,7 @@ class ImageUnderstand(Component):
                 response (obj: `ImageUnderstandResponse`): 图像内容理解输出
         """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
         data = ImageUnderstandRequest.to_dict(request)

@@ -91,7 +91,7 @@ class Dataset:
         documents = self.get_documents(1, MAX_DOCUMENTS_NUM)
         current_documents_num = len(documents.data)
         if len(file_path_list) + current_documents_num > MAX_DOCUMENTS_NUM:
-            raise ValueError(f"单个数据集可上传数量上限为{MAX_DOCUMENTS_NUM}，目前最大还可上传{MAX_DOCUMENTS_NUM-current_documents_num}份文档")
+            raise ValueError(f"too much documents. at most upload {MAX_DOCUMENTS_NUM} documents per dataset，left {MAX_DOCUMENTS_NUM-current_documents_num} documents can be uploaded")
 
         file_ids = []
         for file_path in file_path_list:

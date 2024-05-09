@@ -118,7 +118,7 @@ class AnimalRecognition(Component):
                        response (obj: `AnimalRecognitionResponse`): 动物识别返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
 
         data = AnimalRecognitionRequest.to_dict(request)
         if self.http_client.retry.total != retry:

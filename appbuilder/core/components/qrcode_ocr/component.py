@@ -96,7 +96,7 @@ class QRcodeOCR(Component):
         if inp.url:
             req.url = inp.url
         if not isinstance(location, str) or location not in ('true', 'false'):
-            raise InvalidRequestArgumentError("location must be a string with value 'true' or 'false'")
+            raise InvalidRequestArgumentError(f"illegal location, expected location is 'true' or 'false', got {location}")
         req.location = location
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
@@ -112,7 +112,7 @@ class QRcodeOCR(Component):
                        response (obj: `QRcodeResponse`): 二维码识别返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
 
         data = QRcodeRequest.to_dict(request)
         if self.http_client.retry.total != retry:
@@ -160,11 +160,13 @@ class QRcodeOCR(Component):
             else:
                 file_url = file_urls.get(file_name, None)
             if file_url is None:
-                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+                raise InvalidRequestArgumentError(f"request format error, file {file_name} url does not exist")
             req = QRcodeRequest()
             req.url = file_url
             if not isinstance(location, str) or location not in ("true", "false"):
-                raise InvalidRequestArgumentError("location must be a string with value 'true' or 'false'")
+                raise InvalidRequestArgumentError(
+                    f"illegal location, expected location is 'true' or 'false', got {location}"
+                )
             req.location = location
             resp = self._recognize(req)
             result[file_name] = [item["text"] for item in proto.Message.to_dict(resp).get("codes_result", [])]

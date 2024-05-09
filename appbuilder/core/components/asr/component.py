@@ -176,11 +176,13 @@ class ASR(Component):
             file_urls = kwargs.get("file_urls", {})
             file_path = kwargs.get("file_name", None)
             if not file_path:
-                raise InvalidRequestArgumentError("file name is not set")
+                raise InvalidRequestArgumentError("request format error, file name is not set")
             file_name = os.path.basename(file_path)
             file_url = file_urls.get(file_name, None)
             if not file_url:
-                raise InvalidRequestArgumentError(f"file {file_url} url does not exist")
+                raise InvalidRequestArgumentError(
+                    f"request format error, file {file_url} url does not exist"
+                )
 
         _, file_type = os.path.splitext(os.path.basename(urlparse(file_url).path))
         file_type = file_type.strip('.')
