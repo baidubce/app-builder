@@ -31,6 +31,11 @@ from .assistant_type import (
     AssistantFilesCreateResponse,
     AssistantCreateRequest,
     AssistantCreateResponse,
+    AuditStatus,
+    AssistantFilesListData,
+    AssistantFilesListResponse,
+    AssistantFilesQueryResponse,
+    AssistantFilesDeleteResponse
 )
 
 
@@ -62,5 +67,20 @@ from .thread_type import (
     ToolOutput,
     AssistantRunRequest,
     AssistantSubmitToolOutputsRequest,
-    AssistantRunCancelRequest
+    AssistantRunCancelRequest,
+    AssistantMessageListRole,
+    AssistantMessageListRequest,
+    AssistantMessageListResponse,
+    AssistantMessageListResponseData,
+    AssistantMessageQueryRequest,
+    AssistantMessageQueryResponse,
+    AssistantMessageUpdateRequest,
+    AssistantMessageUpdateResponse,
+    AssistantMessageFilesRequest,
+    AssistantMessageFilesResponse,
+    AssistantContentFilesData,
+    ThreadQueryRequest,
+    ThreadQueryResponse,
+    ThreadDeleteRequest,
+    ThreadDeleteResponse,
 )
