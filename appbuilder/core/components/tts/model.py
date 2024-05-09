@@ -117,7 +117,7 @@ class TTSRequest(proto.Message):
         if self.aue == 0:
             self.aue = 3
         if self.aue not in {3, 4, 5, 6}:
-            raise ValueError("aue value is illegal, exepect in {3, 4, 5, 6}, got {}".format(self.aue))
+            raise ValueError(f"aue value is illegal, exepect in {3, 4, 5, 6}, got {self.aue}")
 
     def validate_paddle_speech_tts(self):
         """验证参数是否合法"""
