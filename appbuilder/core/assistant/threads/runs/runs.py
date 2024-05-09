@@ -110,6 +110,22 @@ class Runs():
         resp = thread_type.RunResult(**data)
         return resp
 
+    def stream(self,
+              assistant_id: str,
+              thread_id: Optional[str] = "",
+              thread: Optional[thread_type.AssistantThread] = None,
+              model: Optional[str] = "ERNIE-4.0-8K",
+              response_format: Optional[str] = "text",
+              instructions: Optional[str] = "",
+              thought_instructions: Optional[str] = "",
+              chat_instructions: Optional[str] = "",
+              tools: Optional[list[assistant_type.AssistantTool]] = [],
+              metadata: Optional[dict] = {},
+              tool_output: Optional[thread_type.ToolOutput] = None,
+              ) -> thread_type.RunResult:
+        pass
+
+
     def stream_run(self,
                    assistant_id: str,
                    thread_id: Optional[str] = "",
