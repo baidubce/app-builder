@@ -43,8 +43,8 @@ class TestMessageCreate(unittest.TestCase):
             content="hello world?"
         )
 
-        # test List
-        msg_list = appbuilder.assistant.threads.messages.List(
+        # test list
+        msg_list = appbuilder.assistant.threads.messages.list(
             thread_id=msg.thread_id,
             limit=1
         ) 

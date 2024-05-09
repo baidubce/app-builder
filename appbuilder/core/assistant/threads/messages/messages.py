@@ -66,8 +66,48 @@ class Messages(object):
 
         response = thread_type.AssistantMessageCreateResponse(**data)
         return response
+    
+    def update(self,
+               thread_id: str,
+               message_id: str,
+               content: Optional[str],
+               file_ids: Optional[list[str]] = []) -> thread_type.AssistantMessageUpdateResponse:
+        """
+        修改Message对象，允许content和file_ids字段
+        Args:
+            thread_id (str): 线程ID。
+            message_id (str): 消息ID。
+            content (Optional[str], optional): 消息内容。默认为空字符串。
+            file_ids (Optional[list[str]], optional): 消息中包含的文件ID列表。默认为空列表。
+        Returns:
+            thread_type.AssistantMessageUpdateResponse: 消息更新响应对象。
+        Raises:
+            HttpError: 如果请求失败，则抛出HttpError异常。
+        """
+        headers = self._http_client.auth_header()
+        url = self._http_client.service_url("/v2/threads/messages/update")
+        
+        req = thread_type.AssistantMessageUpdateRequest(
+            thread_id = thread_id, 
+            message_id = message_id,
+            content = content,
+            file_ids = file_ids
+        )
+        
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json=req.model_dump(),
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+        data = response.json()
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)
+        response = thread_type.AssistantMessageUpdateResponse(**data)
+        return response  
 
-    def List(self,
+    def list(self,
             thread_id: str,
             limit: int = 20,
             order: str = "desc",
@@ -149,45 +189,6 @@ class Messages(object):
         response = thread_type.AssistantMessageQueryResponse(**data)
         return response  
     
-    def update(self,
-               thread_id: str,
-               message_id: str,
-               content: Optional[str],
-               file_ids: Optional[list[str]] = []) -> thread_type.AssistantMessageUpdateResponse:
-        """
-        修改Message对象，允许content和file_ids字段
-        Args:
-            thread_id (str): 线程ID。
-            message_id (str): 消息ID。
-            content (Optional[str], optional): 消息内容。默认为空字符串。
-            file_ids (Optional[list[str]], optional): 消息中包含的文件ID列表。默认为空列表。
-        Returns:
-            thread_type.AssistantMessageUpdateResponse: 消息更新响应对象。
-        Raises:
-            HttpError: 如果请求失败，则抛出HttpError异常。
-        """
-        headers = self._http_client.auth_header()
-        url = self._http_client.service_url("/v2/threads/messages/update")
-        
-        req = thread_type.AssistantMessageUpdateRequest(
-            thread_id = thread_id, 
-            message_id = message_id,
-            content = content,
-            file_ids = file_ids
-        )
-        
-        response = self._http_client.session.post(
-            url=url,
-            headers=headers,
-            json=req.model_dump(),
-            timeout=None
-        )
-        self._http_client.check_response_header(response)
-        data = response.json()
-        request_id = self._http_client.response_request_id(response)
-        self._http_client.check_assistant_response(request_id, data)
-        response = thread_type.AssistantMessageUpdateResponse(**data)
-        return response  
     
     def files(self,
               thread_id:str,
