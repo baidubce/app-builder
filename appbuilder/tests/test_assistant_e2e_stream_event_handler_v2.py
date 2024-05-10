@@ -33,10 +33,17 @@ class MyEventHandler(AssistantEventHandler):
     def get_cur_whether(self, location:str, unit:str):
         return "{} 的当前温度是30 {}".format(location, unit)
     
-    def messages(self, messages_event: StreamRunMessage):
-        info = messages_event.content[-1].text.value
-        # 使用红色打印
-        print("\n\033[1;31m","-> Assistant 回答: ", info, "\033[0m")
+    def run_begin(self, status_event):
+        run_id = self.stream_run_context.current_run_id
+        thread_id = self.stream_run_context.current_thread_id
+        print("Run_id: {}, Thread_id: {}".format(run_id, thread_id))
+
+    def run_end(self, status_event):
+        print("\n", status_event)
+        
+    def tool_step_begin(self, status_event):
+        step_id = self.stream_run_context.current_run_step_id
+        print("Step_id: {}".format(step_id))
     
     def tool_calls(self, status_event):
         current_tool_calls = self.stream_run_context.current_tool_calls
@@ -83,7 +90,8 @@ class TestFunctionCall(unittest.TestCase):
             assistant_id=assistant.id,
             event_handler=MyEventHandler(),
         ) as stream:
-            stream.until_done()
+            for _ in stream:
+                ...
 
 if __name__ == "__main__":
     unittest.main()

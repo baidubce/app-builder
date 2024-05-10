@@ -20,12 +20,37 @@ from appbuilder.utils.logger_util import logger
 
 
 class StreamRunContext(object):
+    """
+    StreamRunContext类用于管理和维护流式运行时的上下文信息。
+
+    这个类提供了存储和获取当前流事件、工具调用、运行ID、运行步骤ID、线程ID和助手ID等属性的功能。
+    通过创建StreamRunContext的实例，可以方便地跟踪和处理流式运行时的各种状态和数据。
+
+    Attributes:
+        current_event: 当前流事件的对象。
+        current_tool_calls: 当前工具调用的相关信息。
+        current_run_id: 当前运行的唯一标识符。
+        current_run_step_id: 当前运行步骤的唯一标识符。
+        current_thread_id: 当前线程的唯一标识符。
+        current_assistant_id: 当前助手的唯一标识符。
+
+    Note:
+        这个类通常作为其他流式处理类（如StreamProcessor、StreamHandler等）的组成部分，
+        用于在流式处理过程中传递和共享上下文信息。
+    """
+
     def __init__(self) -> None:
+        # 当前事件
         self._current_event = None
+        # 当前工具调用
         self._current_tool_calls = None
+        # 当前运行ID
         self._current_run_id = None
+        # 当前运行步骤ID
         self._current_run_step_id = None
+        # 当前线程ID
         self._current_thread_id = None
+        # 当前助手ID
         self._current_assistant_id = None
 
     @property
@@ -44,7 +69,7 @@ class StreamRunContext(object):
     @property
     def current_tool_calls(self) -> Union[list[thread_type.ToolCall], None]:
         return self._current_tool_calls
-    
+
     def set_current_tool_calls(self, tool_calls):
         if isinstance(tool_calls, list) and len(tool_calls) > 0:
             for call in tool_calls:
@@ -57,7 +82,7 @@ class StreamRunContext(object):
     @property
     def current_run_id(self) -> Union[str, None]:
         return self._current_run_id
-    
+
     def set_current_run_id(self, run_id):
         if isinstance(run_id, str) and len(run_id) > 0:
             self._current_run_id = run_id
@@ -67,33 +92,32 @@ class StreamRunContext(object):
     @property
     def current_run_step_id(self) -> Union[str, None]:
         return self._current_run_step_id
-    
+
     def set_current_run_step_id(self, run_step_id):
         if isinstance(run_step_id, str) and len(run_step_id) > 0:
             self._current_run_step_id = run_step_id
         else:
             self._current_run_step_id = None
-    
+
     @property
     def current_thread_id(self) -> Union[str, None]:
         return self._current_thread_id
-    
+
     def set_current_thread_id(self, thread_id):
         if isinstance(thread_id, str) and len(thread_id) > 0:
             self._current_thread_id = thread_id
         else:
             self._current_thread_id = None
-    
+
     @property
     def current_assistant_id(self) -> Union[str, None]:
         return self._current_assistant_id
-    
+
     def set_current_assistant_id(self, assistant_id):
         if isinstance(assistant_id, str) and len(assistant_id) > 0:
             self._current_assistant_id = assistant_id
         else:
             self._current_assistant_id = None
-
 
     def reset_step_context(self):
         self._current_tool_calls = None
@@ -102,8 +126,22 @@ class StreamRunContext(object):
 
 
 class AssistantEventHandler():
-    def __init__(self):
-        pass
+    """
+    AssistantEventHandler类用于处理Assistant流式返回的相关事件。
+
+    这个类作为Assistant流式事件的处理中心，负责接收和处理来自Assistant的各种事件，
+    如用户交互、数据更新、状态变化等。通过实现不同的事件处理方法，
+    可以定义Assistant在不同事件下的行为逻辑。
+
+    Assistant事件处理程序通常与具体的Assistant实例相关联，用于管理和控制Assistant的运行流程，
+    以及与其他系统组件的交互。
+
+    该类包含多个方法，每个方法对应一种特定事件的处理逻辑。
+    当相应的事件发生时，Assistant或相关系统会调用这些方法，以执行预定义的操作。
+
+    通过继承AssistantEventHandler类并重写其方法，可以实现自定义的Assistant流式事件处理逻辑，
+    从而满足特定的业务需求。
+    """
 
     def _init(self, response):
         self._response = response
@@ -114,6 +152,19 @@ class AssistantEventHandler():
 
     def __stream__(self) -> Iterator[Union[
             thread_type.StreamRunStatus, thread_type.StreamRunMessage, str]]:
+        """
+        获取流数据的迭代器，用于从事件流中读取并处理事件数据。
+
+        Args:
+            无参数。
+
+        Returns:
+            返回一个迭代器，每次迭代返回一个Union[StreamRunStatus, StreamRunMessage, str]类型的值。
+            StreamRunStatus类型表示流运行状态，StreamRunMessage类型表示流运行消息，str类型表示异常信息。
+
+        Raises:
+            流式运行过程中的任何异常都会在此抛出
+        """
         try:
             for event in self._event_stream:
                 self.stream_run_context.reset_step_context()
@@ -124,6 +175,17 @@ class AssistantEventHandler():
 
     def __stream_event_process__(self, event) -> Union[
             thread_type.StreamRunStatus, thread_type.StreamRunMessage, dict]:
+        """
+        处理从stream收到的event
+
+        Args:
+            event (thread_type.StreamEvent): 从stream收到的event对象
+
+        Returns:
+            Union[thread_type.StreamRunStatus, thread_type.StreamRunMessage, dict]:
+                根据event的类型，返回相应的StreamRunStatus、StreamRunMessage对象或原始数据字典
+
+        """
         event_type = event.event
         raw_data = event.data
         if len(raw_data) == 0:
@@ -142,10 +204,12 @@ class AssistantEventHandler():
             stream_run_status = thread_type.StreamRunStatus(**data)
             self.stream_run_context.set_current_event(stream_run_status)
 
-            # stream内置的handler，不建议用户重载
+            # stream内置的handler，用于设置stream_context，不建议用户重载
             context_func_map = {
                 "tool_calls": self._before_tool_calls,
                 "run_begin": self._before_run_begin,
+                "tool_step_begin": self._before_tool_step,
+                "tool_step_end": self._before_tool_step,
             }
             if stream_run_status.event_type in context_func_map:
                 context_func = context_func_map[stream_run_status.event_type]
@@ -185,23 +249,31 @@ class AssistantEventHandler():
     def __iter__(self):
         for item in self._iterator:
             yield item
-    
+
     def until_done(self):
         for _ in self._iterator:
             ...
 
     def _before_run_begin(self, stream_run_status):
-        self.stream_run_context.set_current_run_id(stream_run_status.details.run_object.id)
-        self.stream_run_context.set_current_assistant_id(stream_run_status.details.run_object.assistant_id)
-        self.stream_run_context.set_current_thread_id(stream_run_status.details.run_object.thread_id)
+        self.stream_run_context.set_current_run_id(
+            stream_run_status.details.run_object.id)
+        self.stream_run_context.set_current_assistant_id(
+            stream_run_status.details.run_object.assistant_id)
+        self.stream_run_context.set_current_thread_id(
+            stream_run_status.details.run_object.thread_id)
 
     def _before_tool_calls(self, stream_run_status):
-        self.stream_run_context.set_current_tool_calls(stream_run_status.details.tool_calls)
+        self.stream_run_context.set_current_tool_calls(
+            stream_run_status.details.tool_calls)
+
+    def _before_tool_step(self, stream_run_status):
+        self.stream_run_context.set_current_run_step_id(
+            stream_run_status.details.run_step_object.id)
 
     def messages(self, messages_event: thread_type.StreamRunMessage):
-        # 用户可以重载此函数，当触发messages事件时，会回调此函数
+        # 用户可以重载此函数，当触发messages打印事件时，会回调此函数
         pass
-    
+
     def tool_calls(self, status_event: thread_type.StreamRunStatus):
         # 用户可以重载此函数，当触发tool_calls事件时，会回调此函数
         pass
@@ -245,7 +317,7 @@ class AssistantStreamManager(AssistantEventHandler):
         self._event_handler = event_handler
         self._event_handler._init(self._response)
 
-    def __enter__(self) -> AssistantEventHandler:  
+    def __enter__(self) -> AssistantEventHandler:
         return self._event_handler
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
