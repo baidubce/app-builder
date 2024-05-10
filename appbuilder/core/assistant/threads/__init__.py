@@ -22,10 +22,12 @@ from .messages import (
 
 from .runs import (
     Runs,
+    Steps
 )
 
 ___all__ = [
     'Threads',
     'Messages',
     'Runs',
+    'Steps'
 ]
