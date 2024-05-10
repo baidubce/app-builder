@@ -47,10 +47,9 @@ from .assistant_type import (
     AssistantDeleteResponse,
     AssistantFilesRequest,
     AssistantFilesResponse,
-    AssistantFilesListRequest,
-    AssistantFilesListResponse,
+    AssistantMountedFilesListRequest,
+    AssistantMountedFilesListResponse,
     AssistantFilesDeleteRequest,
-    AssistantFilesDeleteResponse
 )
 
 

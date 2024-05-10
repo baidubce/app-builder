@@ -74,7 +74,6 @@ class AssistantFilesDeleteResponse(BaseModel):
     id: str = ""  # 文件ID
     object: str = ""  # 文件对象标识
     deleted: bool = False  # 是否删除成功	
-    
 
 # AssistantCreateRequest类，用于描述创建助理的请求参数
 class AssistantCreateRequest(BaseModel):
@@ -187,14 +186,14 @@ class AssistantFilesResponse(BaseModel):
     created_at: Optional[int] = 0  # 助理创建时间戳
     assistant_id: Optional[str] = ""  # Assistant对象的id，值等于入参
     
-class AssistantFilesListRequest(BaseModel):
+class AssistantMountedFilesListRequest(BaseModel):
     assistant_id: Optional[str] = ""  # Assistant对象的id
     limit: Optional[int] =   Field(default=20) # 列举结果数量上限
     order: AssistantListRole = Field(default= AssistantListRole.DESC) # 排序字段
     after: Optional[str] =   Field(default="") # 查询指定file_id之后创建的File
     before: Optional[str] =   Field(default="") # 查询指定file_id之前创建的File
 
-class AssistantFilesListResponse(BaseModel):
+class AssistantMountedFilesListResponse(BaseModel):
     object: str = "list" # 结构类型，返回值固定为 list
     data: Optional[list[AssistantFilesResponse]] = Field(default=[]) # file对象列表
     first_id: Optional[str] = "" # 返回的列表中第一条assistant的id
@@ -205,7 +204,3 @@ class AssistantFilesDeleteRequest(BaseModel):
     assistant_id: Optional[str] = ""  # 助理ID
     file_id: Optional[str] = ""  # File对象的id
     
-class AssistantFilesDeleteResponse(BaseModel):
-    id: Optional[str] = ""  # 助理ID
-    object: Optional[str] = ""  # 助理对象标识
-    deleted: bool = False  # 删除状态

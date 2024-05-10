@@ -92,7 +92,8 @@ class TestAssistant(unittest.TestCase):
         assistant_files_list = appbuilder.assistant.assistants.mounted_files_list(
             assistant_id = assistant.id,
         )
-        self.assertIsInstance(assistant_files_list, assistant_type.AssistantFilesListResponse)
+        self.assertIsInstance(assistant_files_list, assistant_type.AssistantMountedFilesListResponse)
+        self.assertEqual(len(assistant_files_list.data), 1)
         
         # test assistant unmount_files
         assistant_files_delete = appbuilder.assistant.assistants.unmount_files(

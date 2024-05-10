@@ -30,9 +30,10 @@ class Assistants(object):
 
 
     def create(self,
+               assistant_id : Optional[str] = "",
                name: str,
                description: str,
-               model: str = "ERNIE-4.0-8K",
+               model: Optional[str] = "ERNIE-4.0-8K",
                response_format: Optional[str] = 'text',
                instructions: Optional[str] = "你是百度制作的AI助手",
                thought_instructions: Optional[str] = "",
@@ -62,7 +63,6 @@ class Assistants(object):
         
         """
         headers = self._http_client.auth_header()
-        headers["Content-Type"] = "application/json"
         url = self._http_client.service_url("/v2/assistants")
 
         req = assistant_type.AssistantCreateRequest(
@@ -130,7 +130,6 @@ class Assistants(object):
         """
         
         headers = self._http_client.auth_header()
-        headers["Content-Type"] = "application/json"
         url = self._http_client.service_url("/v2/assistants/update")
         
         req = assistant_type.AssistantUpdateRequest(
@@ -184,7 +183,6 @@ class Assistants(object):
         
         
         headers = self._http_client.auth_header()
-        headers["Content-Type"] = "application/json"
         url = self._http_client.service_url("/v2/assistants/list")
         
         req = assistant_type.AssistantListRequest(
@@ -225,7 +223,6 @@ class Assistants(object):
         """
         
         headers = self._http_client.auth_header()
-        headers["Content-Type"] = "application/json"
         url = self._http_client.service_url("/v2/assistants/query")
         
         req = assistant_type.AssistantQueryRequest(
@@ -261,13 +258,10 @@ class Assistants(object):
         
         Raises:
             HttpRequestError: 发送HTTP请求时发生错误。
-            HttpResponseError: HTTP响应错误，如状态码不为200等。
-            SchemaValidationError: 响应体格式验证错误。
         
         """
         
         headers = self._http_client.auth_header()
-        headers["Content-Type"] = "application/json"
         url = self._http_client.service_url("/v2/assistants/delete")
         
         req = assistant_type.AssistantDeleteRequest(
@@ -290,13 +284,12 @@ class Assistants(object):
         return resp
     
     
-    
     def mount_files(self,
             assistant_id: Optional[str],
             file_id: Optional[str]
             ) -> assistant_type.AssistantFilesResponse:
         """
-        查询Assistant挂载的File列表
+        指定file_id和assistant_id，挂载File到对应的Assistant
         
         Args:
             assistant_id (Optional[str]): 助理ID。
@@ -308,7 +301,6 @@ class Assistants(object):
         """
         
         headers = self._http_client.auth_header()
-        headers["Content-Type"] = "application/json"
         url = self._http_client.service_url("/v2/assistants/files")
         
         req = assistant_type.AssistantFilesRequest(
@@ -336,7 +328,7 @@ class Assistants(object):
                    limit: Optional[int] = 20,
                    order: Optional[str] =  'desc' , 
                    after: Optional[str] =  "", 
-                   before: Optional[str] =  "") -> assistant_type.AssistantFilesListResponse:
+                   before: Optional[str] =  "") -> assistant_type.AssistantMountedFilesListResponse:
         """
         查询Assistant挂载的File列表
         
@@ -353,10 +345,9 @@ class Assistants(object):
         """
         
         headers = self._http_client.auth_header()
-        headers["Content-Type"] = "application/json"
         url = self._http_client.service_url("/v2/assistants/files/list")
         
-        req = assistant_type.AssistantFilesListRequest(
+        req = assistant_type.AssistantMountedFilesListRequest(
             assistant_id=assistant_id,
             limit=limit,
             order=order,
@@ -375,7 +366,7 @@ class Assistants(object):
         request_id = self._http_client.response_request_id(response)
         self._http_client.check_assistant_response(request_id, data)    
         
-        resp = assistant_type.AssistantFilesListResponse(**data)
+        resp = assistant_type.AssistantMountedFilesListResponse(**data)
         return resp
     
     def unmount_files(self,
@@ -393,7 +384,6 @@ class Assistants(object):
         """
         
         headers = self._http_client.auth_header()
-        headers["Content-Type"] = "application/json"
         url = self._http_client.service_url("/v2/assistants/files/delete")
         
         req = assistant_type.AssistantFilesDeleteRequest(
