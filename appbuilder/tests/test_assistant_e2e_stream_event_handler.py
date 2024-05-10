@@ -2,9 +2,8 @@ import unittest
 import pydantic
 import os
 import appbuilder
-
-def get_cur_whether(location:str, unit:str):
-    return "{} 的当前温度是30 {}".format(location, unit)
+from appbuilder import AssistantEventHandler
+from appbuilder.core.assistant.type.thread_type import StreamRunMessage
 
 check_tool = {
     "name": "get_cur_whether",
@@ -30,6 +29,33 @@ check_tool = {
     }
 }
 
+class MyEventHandler(AssistantEventHandler):
+    def get_cur_whether(self, location:str, unit:str):
+        return "{} 的当前温度是30 {}".format(location, unit)
+    
+    def messages(self, messages_event: StreamRunMessage):
+        info = messages_event.content[-1].text.value
+        # 使用红色打印
+        print("\n\033[1;31m","-> Assistant 回答: ", info, "\033[0m")
+    
+    def tool_calls(self, status_event):
+        current_tool_calls = self.stream_run_context.current_tool_calls
+        for tool_call in current_tool_calls:
+            name = tool_call.function.name
+            
+            if name == "get_cur_whether":
+                arguments = tool_call.function.arguments
+                func_res = self.get_cur_whether(**eval(arguments))
+                submit_res = appbuilder.assistant.threads.runs.submit_tool_outputs(
+                    run_id=self.stream_run_context.current_run_id,
+                    thread_id=self.stream_run_context.current_thread_id,
+                    tool_outputs=[
+                        {"tool_call_id": tool_call.id,
+                            "output": func_res,}
+                    ]
+                )
+
+
 # @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestFunctionCall(unittest.TestCase):
     def setUp(self):
@@ -52,34 +78,12 @@ class TestFunctionCall(unittest.TestCase):
             content="今天北京的天气怎么样？",
         )
 
-        run_result = appbuilder.assistant.threads.runs.stream_run(
+        with appbuilder.assistant.threads.runs.stream_run_with_handler(
             thread_id=thread.id,
             assistant_id=assistant.id,
-        )
-
-        run_id = ""
-        for run_step in run_result:
-            print("\nRun result: {}\n".format(run_step))
-            if run_step.status == 'queued':
-                run_obj = run_step.details.run_object
-                run_id = run_obj.id
-            elif run_step.status == 'requires_action':
-                detail = run_step.details
-                tool_call = detail.tool_calls[0]
-                func_res = get_cur_whether(**eval(tool_call.function.arguments))
-                submit_res = appbuilder.assistant.threads.runs.submit_tool_outputs(
-                    run_id=run_id,
-                    thread_id=thread.id,
-                    tool_outputs=[
-                        {"tool_call_id": tool_call.id,
-                            "output": func_res,}
-                    ]
-                )
-                self.assertIsInstance(submit_res, appbuilder.assistant.type.RunResult)
-
-        self.assertIsInstance(run_step, appbuilder.assistant.type.StreamRunStatus)
-        self.assertEqual(run_step.status, 'completed')
-        self.assertEqual(run_step.event_type, 'run_end')
+            event_handler=MyEventHandler(),
+        ) as stream:
+            stream.until_done()
 
 if __name__ == "__main__":
     unittest.main()

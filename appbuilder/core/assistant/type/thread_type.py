@@ -195,7 +195,7 @@ class RunActionInfo(BaseModel):
     actionContent: str = ""
 
 
-class FuncitonCall(BaseModel):
+class FunctionCall(BaseModel):
     name: str = ""
     arguments: str = ""
     output: str = ""
@@ -204,7 +204,7 @@ class FuncitonCall(BaseModel):
 class ToolCall(BaseModel):
     id: str = ""
     type: str = 'function'
-    function: Union[FuncitonCall, None] = None
+    function: Union[FunctionCall, None] = None
 
 
 class SubmitToolOutput(BaseModel):

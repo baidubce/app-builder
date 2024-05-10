@@ -13,8 +13,10 @@
 # limitations under the License.
 import os
 import json
-from typing import Optional
+from typing import Optional, Union
 from appbuilder.core.assistant.threads.runs.steps import Steps
+from appbuilder.core.assistant.threads.runs.stream_helper import AssistantStreamManager
+from appbuilder.core.assistant.threads.runs.stream_helper import AssistantEventHandler
 from appbuilder.core.assistant.type import thread_type
 from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
@@ -111,7 +113,7 @@ class Runs():
         return resp
     
 
-    def stream(self,
+    def _stream(self,
                    assistant_id: str,
                    thread_id: Optional[str] = "",
                    thread: Optional[thread_type.AssistantThread] = None,
@@ -185,9 +187,8 @@ class Runs():
             stream=True,
             timeout=None
         )
-        
-        return response
 
+        return response
 
     def stream_run(self,
                    assistant_id: str,
@@ -201,7 +202,7 @@ class Runs():
                    tools: Optional[list[assistant_type.AssistantTool]] = [],
                    metadata: Optional[dict] = {},
                    tool_output: Optional[thread_type.ToolOutput] = None,
-                   ):
+                   ) -> Union[thread_type.StreamRunStatus, thread_type.StreamRunMessage, None]:
         """
         启动一个流式运行的对话，用于处理对话流中的消息。
 
@@ -229,43 +230,57 @@ class Runs():
             2. 如果这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user。
             3. 如果这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user。
         """
-        headers = self._http_client.auth_header()
-        url = self._http_client.service_url("/v2/threads/runs")
 
-        """
-        注意：
-            1. 若thread_id没有传，则thread必须要传值
-            2. 若这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user
-            3. 若这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user
-        """
-        if thread_id == "" and thread is None:
-            raise ValueError("Runs().run() 参数thread_id和thread不能同时为空")
-
-        req = thread_type.AssistantRunRequest(
+        response = self._stream(
+            assistant_id=assistant_id,
             thread_id=thread_id,
             thread=thread,
             model=model,
-            assistant_id=assistant_id,
             response_format=response_format,
             instructions=instructions,
             thought_instructions=thought_instructions,
             chat_instructions=chat_instructions,
-            stream=True,
             tools=tools,
             metadata=metadata,
             tool_output=tool_output
         )
-
-        response = self._http_client.session.post(
-            url=url,
-            headers=headers,
-            json=req.model_dump(),
-            stream=True,
-            timeout=None
-        )
         self._http_client.check_response_header(response)
         sse_client = SSEClient(response)
         return self._iterate_events(sse_client.events())
+
+    def stream_run_with_handler(self,
+                   assistant_id: str,
+                   thread_id: Optional[str] = "",
+                   thread: Optional[thread_type.AssistantThread] = None,
+                   model: Optional[str] = "ERNIE-4.0-8K",
+                   response_format: Optional[str] = "text",
+                   instructions: Optional[str] = "",
+                   thought_instructions: Optional[str] = "",
+                   chat_instructions: Optional[str] = "",
+                   tools: Optional[list[assistant_type.AssistantTool]] = [],
+                   metadata: Optional[dict] = {},
+                   tool_output: Optional[thread_type.ToolOutput] = None,
+                   event_handler: Optional[AssistantEventHandler] = None
+                   ) -> AssistantStreamManager:
+        response = self._stream(
+            assistant_id=assistant_id,
+            thread_id=thread_id,
+            thread=thread,
+            model=model,
+            response_format=response_format,
+            instructions=instructions,
+            thought_instructions=thought_instructions,
+            chat_instructions=chat_instructions,
+            tools=tools,
+            metadata=metadata,
+            tool_output=tool_output
+        )
+        self._http_client.check_response_header(response)
+
+        return AssistantStreamManager(
+            response=response,
+            event_handler=event_handler or AssistantEventHandler()
+        )
 
     def _iterate_events(self, events):
         """
