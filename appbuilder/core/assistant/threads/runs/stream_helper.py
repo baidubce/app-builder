@@ -15,8 +15,6 @@ import os
 import json
 from typing import Optional, Iterator, Union
 from appbuilder.core.assistant.type import thread_type
-from appbuilder.core.assistant.type import assistant_type
-from appbuilder.core._client import AssistantHTTPClient
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.utils.logger_util import logger
 
