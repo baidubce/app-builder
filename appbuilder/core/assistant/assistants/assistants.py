@@ -243,7 +243,6 @@ class Assistants(object):
         self._http_client.check_assistant_response(request_id, data)
 
         resp = assistant_type.AssistantQueryResponse(**data)
-        Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
         return resp
     
     def delete(self,
@@ -281,7 +280,6 @@ class Assistants(object):
         self._http_client.check_assistant_response(request_id, data)    
         
         resp = assistant_type.AssistantDeleteResponse(**data)
-        Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
         return resp
     
     
@@ -321,7 +319,6 @@ class Assistants(object):
         self._http_client.check_assistant_response(request_id, data)    
         
         resp = assistant_type.AssistantFilesResponse(**data)
-        Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
         return resp
     
     def mounted_files_list(self,
