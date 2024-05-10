@@ -49,7 +49,7 @@ from .thread_type import (
     ThreadCreateRequest,
     AssistantThread,
     RunActionInfo,
-    FuncitonCall,
+    FunctionCall,
     ToolCall,
     SubmitToolOutput,
     RequiredAction,

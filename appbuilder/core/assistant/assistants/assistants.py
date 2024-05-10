@@ -86,7 +86,6 @@ class Assistants(object):
             timeout=None
         )
         self._http_client.check_response_header(response)
-
         data = response.json()
         request_id = self._http_client.response_request_id(response)
         self._http_client.check_assistant_response(request_id, data)

@@ -20,7 +20,16 @@ from .steps import (
     Steps,
 )
 
+from .stream_helper import (
+    StreamRunContext,
+    AssistantEventHandler,
+    AssistantStreamManager,
+)
+
 __all__ = [
     'Runs',
-    'Steps'
+    'Steps',
+    'StreamRunContext',
+    'AssistantEventHandler',
+    'AssistantStreamManager'
 ]
