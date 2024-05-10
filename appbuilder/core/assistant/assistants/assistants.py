@@ -32,7 +32,7 @@ class Assistants(object):
     def create(self,
                name: str,
                description: str,
-               model: str,
+               model: str = "ERNIE-4.0-8K",
                response_format: Optional[str] = 'text',
                instructions: Optional[str] = "你是百度制作的AI助手",
                thought_instructions: Optional[str] = "",
