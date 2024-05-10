@@ -30,9 +30,9 @@ class Assistants(object):
 
 
     def create(self,
-               assistant_id : Optional[str] = "",
                name: str,
                description: str,
+               assistant_id: Optional[str] = "",
                model: Optional[str] = "ERNIE-4.0-8K",
                response_format: Optional[str] = 'text',
                instructions: Optional[str] = "你是百度制作的AI助手",
@@ -68,6 +68,7 @@ class Assistants(object):
         req = assistant_type.AssistantCreateRequest(
             name=name,
             description=description,
+            assistant_id=assistant_id,
             model=model,
             response_format=response_format,
             instructions=instructions,
