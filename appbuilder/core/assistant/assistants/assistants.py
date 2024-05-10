@@ -32,8 +32,7 @@ class Assistants(object):
     def create(self,
                name: str,
                description: str,
-               assistant_id: Optional[str] = "",
-               model: Optional[str] = "ERNIE-4.0-8K",
+               model: str,
                response_format: Optional[str] = 'text',
                instructions: Optional[str] = "你是百度制作的AI助手",
                thought_instructions: Optional[str] = "",
@@ -63,12 +62,12 @@ class Assistants(object):
         
         """
         headers = self._http_client.auth_header()
+        headers["Content-Type"] = "application/json"
         url = self._http_client.service_url("/v2/assistants")
 
         req = assistant_type.AssistantCreateRequest(
             name=name,
             description=description,
-            assistant_id=assistant_id,
             model=model,
             response_format=response_format,
             instructions=instructions,
@@ -94,3 +93,330 @@ class Assistants(object):
         resp = assistant_type.AssistantCreateResponse(**data)
         Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
         return resp
+    
+    def update(self,
+               assistant_id: str,
+               model: Optional[str],
+               name: Optional[str],
+               description: Optional[str],
+               instructions: Optional[str] = "",
+               tools: Optional[list[assistant_type.AssistantTool]] = [],
+               created_at: Optional[int] = 0 ,
+               thought_instructions: Optional[str] = "",
+               chat_instructions: Optional[str] = "",
+               response_format: Optional[str] = "text",
+               file_ids: Optional[list[str]] = [],
+               metadata: Optional[dict] = {}
+               ) -> assistant_type.AssistantUpdateResponse:
+        """
+        根据assistant_id修改一个已创建的Assistant
+        
+        Args:
+            assistant_id (str): 助手ID。
+            model (Optional[str]): 助手模型。
+            name (Optional[str]): 助手名称。
+            description (Optional[str]): 助手描述。
+            response_format (Optional[str], optional): 响应格式。默认为None。
+            instructions (Optional[str], optional): 助手指令。默认为None。
+            thought_instructions (Optional[str], optional): 思考指令。默认为None。
+            chat_instructions (Optional[str], optional): 聊天指令。默认为None。
+            tools (Optional[list[assistant_type.AssistantTool]], optional): 助手工具列表。默认为空列表。
+            file_ids (Optional[list[str]], optional): 文件ID列表。默认为空列表。
+            metadata (Optional[dict], optional): 助手元数据。默认为空字典。
+        
+        Returns:
+            assistant_type.AssistantUpdateResponse: 助手更新响应。
+        
+        """
+        
+        headers = self._http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+        url = self._http_client.service_url("/v2/assistants/update")
+        
+        req = assistant_type.AssistantUpdateRequest(
+            assistant_id=assistant_id,
+            model=model,
+            name=name,
+            description=description,
+            response_format=response_format,
+            instructions=instructions,
+            thought_instructions=thought_instructions,
+            chat_instructions=chat_instructions,
+            tools=tools,
+            file_ids=file_ids,
+            metadata=metadata,
+        )
+        
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json=req.model_dump(),
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+
+        data = response.json()
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)
+
+        resp = assistant_type.AssistantUpdateResponse(**data)
+        return resp
+    
+    def list(self,
+             limit: Optional[int] = 20,
+             order: Optional[str] = "desc",
+             after: Optional[str] = "",
+             before: Optional[str] = "",
+             ) -> assistant_type.AssistantListResponse:
+        """
+        查询当前用户已创建的assistant列表
+        
+        Args:
+            limit (Optional[int], optional): 返回助手列表的最大数量，默认为20。
+            order (Optional[str], optional): 返回助手列表的排序方式，可选值为"asc"或"desc"，默认为"desc"。
+            after (Optional[str], optional): 返回助手列表中id在指定id之后的助手，默认为空字符串。
+            before (Optional[str], optional): 返回助手列表中id在指定id之前的助手，默认为空字符串。
+        
+        Returns:
+            assistant_type.AssistantListResponse: 助手列表响应体。
+        
+        """
+        
+        
+        headers = self._http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+        url = self._http_client.service_url("/v2/assistants/list")
+        
+        req = assistant_type.AssistantListRequest(
+            limit=limit,
+            order=order,
+            after=after,
+            before=before
+        )
+        
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json=req.model_dump(),
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+
+        data = response.json()
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)
+
+        resp = assistant_type.AssistantListResponse(**data)
+        return resp
+    
+    def query(self,
+              assistant_id: Optional[str]) -> assistant_type.AssistantQueryResponse:
+        """
+        根据assistant_id查询Assistant信息
+        
+        Args:
+            assistant_id (Optional[str]): 助手ID
+        
+        Returns:
+            assistant_type.AssistantQueryResponse: 助手查询响应结果
+        
+        Raises:
+            HTTPError: 请求失败，抛出HTTPError异常
+        """
+        
+        headers = self._http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+        url = self._http_client.service_url("/v2/assistants/query")
+        
+        req = assistant_type.AssistantQueryRequest(
+            assistant_id=assistant_id
+        )
+        
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json=req.model_dump(),
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+
+        data = response.json()
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)
+
+        resp = assistant_type.AssistantQueryResponse(**data)
+        Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
+        return resp
+    
+    def delete(self,
+               assistant_id: Optional[str]) -> assistant_type.AssistantDeleteResponse:
+        """
+        根据assistant_id删除指定Assitant
+        
+        Args:
+            assistant_id (Optional[str]): 待删除的助手实例ID。
+        
+        Returns:
+            assistant_type.AssistantDeleteResponse: 删除助手实例后的响应结果。
+        
+        Raises:
+            HttpRequestError: 发送HTTP请求时发生错误。
+            HttpResponseError: HTTP响应错误，如状态码不为200等。
+            SchemaValidationError: 响应体格式验证错误。
+        
+        """
+        
+        headers = self._http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+        url = self._http_client.service_url("/v2/assistants/delete")
+        
+        req = assistant_type.AssistantDeleteRequest(
+            assistant_id=assistant_id
+        )
+        
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json=req.model_dump(),
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+        data = response.json()
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)    
+        
+        resp = assistant_type.AssistantDeleteResponse(**data)
+        Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
+        return resp
+    
+    
+    
+    def mount_files(self,
+            assistant_id: Optional[str],
+            file_id: Optional[str]
+            ) -> assistant_type.AssistantFilesResponse:
+        """
+        查询Assistant挂载的File列表
+        
+        Args:
+            assistant_id (Optional[str]): 助理ID。
+            file_id (Optional[str]): 文件ID。
+        
+        Returns:
+            assistant_type.AssistantFilesResponse: 助理文件列表响应对象。
+        
+        """
+        
+        headers = self._http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+        url = self._http_client.service_url("/v2/assistants/files")
+        
+        req = assistant_type.AssistantFilesRequest(
+            assistant_id=assistant_id,
+            file_id=file_id
+        )
+        
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json=req.model_dump(),
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+        data = response.json()
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)    
+        
+        resp = assistant_type.AssistantFilesResponse(**data)
+        Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
+        return resp
+    
+    def mounted_files_list(self,
+                   assistant_id: Optional[str],  
+                   limit: Optional[int] = 20,
+                   order: Optional[str] =  'desc' , 
+                   after: Optional[str] =  "", 
+                   before: Optional[str] =  "") -> assistant_type.AssistantFilesListResponse:
+        """
+        查询Assistant挂载的File列表
+        
+        Args:
+            assistant_id (Optional[str]): 助手ID，为空时获取当前登录用户的助手文件列表。
+            limit (Optional[int], optional): 每页最多显示多少个文件。默认为20。
+            order (Optional[AssistantListRole], optional): 文件列表排序方式。可选值为 'asc' 或 'desc'。默认为 'desc'。
+            after (Optional[str], optional): 返回文件ID大于该值的文件列表。默认为空字符串。
+            before (Optional[str], optional): 返回文件ID小于该值的文件列表。默认为空字符串。
+        
+        Returns:
+            assistant_type.AssistantFilesListResponse: 包含文件列表信息的响应对象。
+        
+        """
+        
+        headers = self._http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+        url = self._http_client.service_url("/v2/assistants/files/list")
+        
+        req = assistant_type.AssistantFilesListRequest(
+            assistant_id=assistant_id,
+            limit=limit,
+            order=order,
+            after=after,
+            before=before
+        )
+        
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json=req.model_dump(),
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+        data = response.json()
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)    
+        
+        resp = assistant_type.AssistantFilesListResponse(**data)
+        return resp
+    
+    def unmount_files(self,
+                     assistant_id: Optional[str],
+                     file_id: Optional[str]
+                     ) -> assistant_type.AssistantFilesDeleteResponse:
+        """
+        指定assistant_id和file_id，解绑Assistant中对应File的关联
+        
+        Args:
+            assistant_id (Optional[str]): 助理ID。
+            file_id (Optional[str]): 文件ID。
+        Returns:
+            assistant_type.AssistantFilesDeleteResponse: 响应对象。
+        """
+        
+        headers = self._http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+        url = self._http_client.service_url("/v2/assistants/files/delete")
+        
+        req = assistant_type.AssistantFilesDeleteRequest(
+            assistant_id=assistant_id,
+            file_id=file_id
+        )
+        
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json=req.model_dump(),
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+        data = response.json()
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)    
+        
+        resp = assistant_type.AssistantFilesDeleteResponse(**data)
+        return resp
+            
+
+             
+    
+    
+        
