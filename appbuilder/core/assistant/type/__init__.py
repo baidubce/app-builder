@@ -35,7 +35,21 @@ from .assistant_type import (
     AssistantFilesListData,
     AssistantFilesListResponse,
     AssistantFilesQueryResponse,
-    AssistantFilesDeleteResponse
+    AssistantFilesDeleteResponse,
+    AssistantUpdateRequest,
+    AssistantUpdateResponse,
+    AssistantListRole,
+    AssistantListRequest,
+    AssistantListResponse,
+    AssistantQueryRequest,
+    AssistantQueryResponse,
+    AssistantDeleteRequest,
+    AssistantDeleteResponse,
+    AssistantFilesRequest,
+    AssistantFilesResponse,
+    AssistantMountedFilesListRequest,
+    AssistantMountedFilesListResponse,
+    AssistantFilesDeleteRequest,
 )
 
 
