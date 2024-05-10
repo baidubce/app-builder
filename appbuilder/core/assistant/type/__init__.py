@@ -50,6 +50,7 @@ from .assistant_type import (
     AssistantMountedFilesListRequest,
     AssistantMountedFilesListResponse,
     AssistantFilesDeleteRequest,
+    AssistantFilesContentResponse
 )
 
 

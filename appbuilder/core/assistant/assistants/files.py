@@ -20,6 +20,7 @@ import json
 from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
 
+from appbuilder.core._exception import AppBuilderServerException
 
 class Files(object):
     def __init__(self):
@@ -170,10 +171,60 @@ class Files(object):
         resp = assistant_type.AssistantFilesDeleteResponse(**data)
         return resp
     
-    def download(self,file_id:str):
-        pass 
+    def download(self,
+                 file_id:str,
+                 file_path:str=""):
+        headers = self._http_client.auth_header()
+        headers['Content-Type'] = 'application/json'
+        url = self._http_client.service_url("/v2/storage/files/download")
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json={
+                'file_id': file_id
+            },
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+        request_id = self._http_client.response_request_id(response) 
+        
+        filename=response.headers['Content-Disposition'].split("filename=")[-1]
+        file_path+=filename
+        try:    
+            with open(file_path,'wb') as file:
+                for chunk in response.iter_content():
+                    if chunk:
+                        file.write(chunk)
+        except Exception as e:
+            raise FileNotFoundError("请检查文件路径是否正确")
+        
+           
         
     def content(self,file_id:str):
-        pass
+        headers = self._http_client.auth_header()
+        headers['Content-Type'] = 'application/json'
+        url = self._http_client.service_url("/v2/storage/files/content")
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json={
+                'file_id': file_id
+            },
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+        request_id = self._http_client.response_request_id(response)
+        
+        content=b''
+        for chunk in response.iter_content():
+            if chunk:
+                content+=chunk
+        
+        res=assistant_type.AssistantFilesContentResponse(
+            content_type =response.headers['Content-Type'],
+            content = content
+        )
+        
+        return res
 
  
