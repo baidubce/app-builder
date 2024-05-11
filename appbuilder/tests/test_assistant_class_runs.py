@@ -61,5 +61,10 @@ class TestFunctionCall(unittest.TestCase):
                 assistant_id=assistant.id,
             )
 
+    def test_threads_run_raise(self):
+        run=appbuilder.core.assistant.threads.runs.runs.Runs()
+        with self.assertRaises(ValueError):
+            run._stream(assistant_id='')
+
 if __name__ == '__main__':
     unittest.main()

@@ -122,6 +122,9 @@ from .core._exception import (
 )
 
 from appbuilder.core.assistant.base import assistant
+from appbuilder.core.assistant.threads.runs import StreamRunContext
+from appbuilder.core.assistant.threads.runs import AssistantEventHandler
+from appbuilder.core.assistant.threads.runs import AssistantStreamManager
 
 __all__ = [
     'logger',
@@ -182,4 +185,7 @@ __all__ = [
     "AgentBuilder",
 
     "assistant",
+    "StreamRunContext",
+    "AssistantEventHandler",
+    "AssistantStreamManager"
 ]

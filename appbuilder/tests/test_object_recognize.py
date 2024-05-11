@@ -147,7 +147,11 @@ class TestObjectRecognize(unittest.TestCase):
         with self.assertRaises(InvalidRequestArgumentError):
             result = self.object_recognition.tool_eval(name="object_recognition", streaming=True)
             next(result)
-
+        
+        with self.assertRaises(InvalidRequestArgumentError):
+            result=self.object_recognition.tool_eval(name='test',streaming=False,file_urls={'test_01':'test'},img_name='test')
+            next(result)
+        
 
 if __name__ == '__main__':
     unittest.main()

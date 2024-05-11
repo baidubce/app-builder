@@ -98,6 +98,18 @@ class TestImageUnderstand(unittest.TestCase):
         """测试 tool 方法对无效请求的处理。"""
         inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？", "language": "en"})
         self.image_understand.run(inp)
+    
+    def test_run_raise(self):
+        # question is empty
+        with self.assertRaises(ValueError):
+            inp = Message(content={"raw_image": self.raw_image, "question": ""})
+            self.image_understand.run(inp)
+        
+        # question length bigger than 100
+        with self.assertRaises(ValueError):
+            question="test"*26
+            inp = Message(content={"raw_image": self.raw_image, "question": question, "language": ""})
+            self.image_understand.run(inp)
 
 
 if __name__ == "__main__":

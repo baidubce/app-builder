@@ -68,3 +68,112 @@ class Files(object):
         self._http_client.check_assistant_response(request_id, data)
         resp = assistant_type.AssistantFilesCreateResponse(**data)
         return resp
+
+        
+    def list(self) -> assistant_type.AssistantFilesListResponse:
+        """
+        列出存储中的文件列表
+        
+        Args:
+            无
+        
+        Returns:
+            assistant_type.AssistantFilesListResponse: 文件列表的响应对象，包含以下属性：
+        
+        Raises:
+            assistant_type.AssistantError: 请求发生错误时抛出，具体错误信息可通过 `error_msg` 属性获取
+        """
+        headers = self._http_client.auth_header()
+        headers['Content-Type'] = 'application/json'
+        url = self._http_client.service_url("/v2/storage/files/list")
+        
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json={},
+            timeout=None
+        ) 
+        self._http_client.check_response_header(response)
+
+        request_id = self._http_client.response_request_id(response)
+        data = response.json()
+
+        self._http_client.check_assistant_response(request_id, data)
+        resp = assistant_type.AssistantFilesListResponse(**data)
+        return resp
+
+    
+    
+    def query(self,
+              file_id: str,
+            ) -> assistant_type.AssistantFilesQueryResponse:
+        """
+        查询文件详情
+        
+        Args:
+            file_id (str): 文件ID
+        
+        Returns:
+            assistant_type.AssistantFilesQueryResponse: 文件详情
+        
+        Raises:
+            无
+        """
+
+        headers = self._http_client.auth_header()
+        headers['Content-Type'] = 'application/json'
+        url = self._http_client.service_url("/v2/storage/files/query")
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json={
+                'file_id': file_id
+            },
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+
+        request_id = self._http_client.response_request_id(response)
+        data = response.json()
+
+        self._http_client.check_assistant_response(request_id, data)
+        resp = assistant_type.AssistantFilesQueryResponse(**data)
+        return resp 
+    
+    def delete(self,
+               file_id: str,
+            ) -> assistant_type.AssistantFilesDeleteResponse:
+        """
+        删除文件
+        Args:
+            file_id (str): 文件ID
+        Returns:
+            assistant_type.AssistantFilesDeleteResponse: 删除文件后的响应对象。
+        Raises:
+            无
+        """
+        headers = self._http_client.auth_header()
+        headers['Content-Type'] = 'application/json'
+        url = self._http_client.service_url("/v2/storage/files/delete")
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json={
+                'file_id': file_id
+            },
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+        request_id = self._http_client.response_request_id(response)
+        data = response.json()
+        self._http_client.check_assistant_response(request_id, data)
+        resp = assistant_type.AssistantFilesDeleteResponse(**data)
+        return resp
+    
+    def download(self,file_id:str):
+        pass 
+        
+    def content(self,file_id:str):
+        pass
+
+ 

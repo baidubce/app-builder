@@ -19,7 +19,7 @@ import unittest
 from typing import List, Tuple
 import appbuilder
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")  
 class TestQueryRewriteComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -59,6 +59,21 @@ class TestQueryRewriteComponent(unittest.TestCase):
         msg = appbuilder.Message(query)
         answer = node(msg, rewrite_type="带机器人回复", stream=False, temperature=0.5)
         self.assertIsNotNone(answer)
+        
+    def test_run_raise(self):
+        with self.assertRaises(ValueError):
+            self.node(message=None)
+
+        query = ['我应该怎么办理护照？', '您可以查询官网或人工咨询']
+        msg=appbuilder.Message(query)
+        with self.assertRaises(ValueError):
+            self.node(message=msg)
+           
+        test_str='test'*1500    
+        query = [test_str]
+        msg=appbuilder.Message(query)
+        with self.assertRaises(ValueError):
+            self.node(message=msg) 
 
 if __name__ == '__main__':
     unittest.main()
