@@ -198,8 +198,12 @@ class Files(object):
                 for chunk in response.iter_content():
                     if chunk:
                         file.write(chunk)
+        except FileNotFoundError as e:
+            raise FileNotFoundError("请检查文件路径是否正确,错误信息{}".format(e))
+        except OSError as e:
+            raise OSError("磁盘空间不足,错误信息{}".format(e))
         except Exception as e:
-            raise FileNotFoundError("请检查文件路径是否正确")
+            raise Exception("出现错误,错误信息{}".format(e))
         
            
         

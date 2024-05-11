@@ -98,4 +98,6 @@ from .thread_type import (
     ThreadQueryResponse,
     ThreadDeleteRequest,
     ThreadDeleteResponse,
+    ThreadUpdateResponse,
+    AssistantThread
 )
