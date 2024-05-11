@@ -24,7 +24,7 @@ from appbuilder.core.components.dish_recognize.component import DishRecognition
 from appbuilder.core.components.dish_recognize.model import DishRecognitionRequest
 from appbuilder.core.message import Message
 from appbuilder.core.components.llms.base import LLMMessage  
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException,InvalidRequestArgumentError
 
 
 # 创建ShortSpeechRecognitionRequest对象
@@ -86,7 +86,34 @@ class TestCoreComponents(unittest.TestCase):
             'test':'test'
             }
         new_lm=copy.deepcopy(lm)
-                        
+        
+    def test_components_raise(self):
+        # test ASR
+        asr=appbuilder.ASR()
+        tool=asr.tool_eval(name='test',streaming=False,file_urls={'test_1':'test'},file_name='test')
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(tool)
+            
+        # test GeneralOCR
+        go=appbuilder.GeneralOCR()
+        tool=go.tool_eval(name='test',streaming=False,file_urls={'test_1':'test'},img_name='test')
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(tool)
+            
+        # test HandwriteOCR
+        hwo=appbuilder.HandwriteOCR()
+        from appbuilder.core.components.handwrite_ocr.model import HandwriteOCRRequest
+        hwor=HandwriteOCRRequest()
+        with self.assertRaises(ValueError):
+            hwo._recognize(request=hwor)
+            
+        # test_llms_base_ResultProcessor
+        from appbuilder.core.components.llms.base import ResultProcessor,CompletionBaseComponent
+        with self.assertRaises(TypeError):
+            ResultProcessor.process(key='test',result_list=[])
+            
+            
+        
         
 if __name__ == "__main__":
     unittest.main()

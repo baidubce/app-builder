@@ -59,6 +59,11 @@ class TestTTS(unittest.TestCase):
     def test_run_paddlespeech_validation_tts_stream(self):
         with self.assertRaises(InvalidRequestArgumentError):
             self.tts.run(self.text_message, model="paddlespeech-tts", audio_type="mp3", stream=True)
+            
+    def test_run_raise_text_field_empty(self):
+        message=appbuilder.Message(content={"text": ""})
+        with self.assertRaises(InvalidRequestArgumentError):
+            self.tts.run(message)
 
 
 if __name__ == "__main__":

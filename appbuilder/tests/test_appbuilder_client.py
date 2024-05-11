@@ -52,6 +52,14 @@ class TestAgentRuntime(unittest.TestCase):
         #     msg = agent_builder.run(conversation_id, "请识别图中的植物类别", file_ids=[file_id])
         #     print("助理回答内容：", msg.content.answer)
         #     fp.close()
+        
+    def test_upload_local_file_raise(self):
+        builder = appbuilder.AppBuilderClient(self.app_id)
+        with self.assertRaises(ValueError):
+            builder.upload_local_file(conversation_id='', local_file_path='')
+            
+        with self.assertRaises(ValueError):
+            builder.run(conversation_id='', query='')
 
 
 if __name__ == '__main__':
