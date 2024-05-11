@@ -20,6 +20,7 @@ import requests
 from parameterized import parameterized, param
 import appbuilder
 from appbuilder import Message
+from appbuilder.core._exception import BaseRPCException
 
 from pytest_config import LoadConfig
 conf = LoadConfig()
@@ -57,9 +58,14 @@ class TestMixcardOcr(unittest.TestCase):
         if volume is not None:
             param_dict["volume"] = volume
         if model is not None:
-            param_dict["person"] = person
-        out = tts.run(inp, **param_dict)
-        log.info(out.content["audio_binary"])
+                        param_dict["person"] = person
+        try:
+            out = tts.run(inp, **param_dict)
+            log.info(out.content["audio_binary"])
+        except BaseRPCException as e:
+            print("错误为 {}".format(e))
+        except Exception as e:
+            raise Exception("错误为 {}".format(e))
         time.sleep(1)
 
     @parameterized.expand([

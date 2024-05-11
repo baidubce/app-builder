@@ -17,9 +17,11 @@
 
 import os
 import json
+from typing import Optional
 from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
 
+from appbuilder.core._exception import AppBuilderServerException
 
 class Files(object):
     def __init__(self):
@@ -170,10 +172,99 @@ class Files(object):
         resp = assistant_type.AssistantFilesDeleteResponse(**data)
         return resp
     
-    def download(self,file_id:str):
-        pass 
+    def download(self,
+                 file_id:str,
+                 file_path:str="",
+                 timeout:Optional[int]=None,
+                 ):
+        """
+        下载文件
         
-    def content(self,file_id:str):
-        pass
+        Args:
+            file_id (str): 文件ID
+            file_path (str, optional): 文件保存路径，默认为空字符串。如果未指定，则使用文件名的默认值。
+            timeout (Optional[int], optional): 请求超时时间，单位秒。如果未指定，则使用默认超时时间。
+        
+        Returns:
+            None
+        
+        Raises:
+            FileNotFoundError: 当指定的文件路径不存在时引发此异常。
+            OSError: 当磁盘空间不足时引发此异常。
+            Exception: 当发生其他异常时引发此异常。
+        
+        """
+        headers = self._http_client.auth_header()
+        headers['Content-Type'] = 'application/json'
+        url = self._http_client.service_url("/v2/storage/files/download")
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json={
+                'file_id': file_id
+            },
+            timeout=timeout
+        )
+        self._http_client.check_response_header(response)
+        request_id = self._http_client.response_request_id(response) 
+        
+        filename=response.headers['Content-Disposition'].split("filename=")[-1]
+        file_path+=filename
+        try:    
+            with open(file_path,'wb') as file:
+                for chunk in response.iter_content():
+                    if chunk:
+                        file.write(chunk)
+        except FileNotFoundError as e:
+            raise FileNotFoundError("请检查文件路径是否正确,错误信息{}".format(e))
+        except OSError as e:
+            raise OSError("磁盘空间不足,错误信息{}".format(e))
+        except Exception as e:
+            raise Exception("出现错误,错误信息{}".format(e))
+        
+           
+        
+    def content(self,
+                file_id:str,
+                timeout:Optional[int]=None):
+        """
+        获取指定文件的内容
+        
+        Args:
+            file_id (str): 文件ID
+            timeout (Optional[int], optional): 请求超时时间，单位秒. Defaults to None.
+        
+        Returns:
+            assistant_type.AssistantFilesContentResponse: 包含文件内容的响应对象
+        
+        Raises:
+            请求失败将抛出HttpError异常
+        
+        """
+        headers = self._http_client.auth_header()
+        headers['Content-Type'] = 'application/json'
+        url = self._http_client.service_url("/v2/storage/files/content")
+        response = self._http_client.session.post(
+            url=url,
+            headers=headers,
+            json={
+                'file_id': file_id
+            },
+            timeout=timeout
+        )
+        self._http_client.check_response_header(response)
+        request_id = self._http_client.response_request_id(response)
+        
+        content=b''
+        for chunk in response.iter_content():
+            if chunk:
+                content+=chunk
+        
+        res=assistant_type.AssistantFilesContentResponse(
+            content_type =response.headers['Content-Type'],
+            content = content
+        )
+        
+        return res
 
  
