@@ -4,6 +4,8 @@ import appbuilder
 from appbuilder.core.components.text_to_image.model import (Text2ImageSubmitRequest, Text2ImageSubmitResponse,
                                                             Text2ImageQueryRequest, Text2ImageQueryResponse)
 
+from appbuilder.core._exception import RiskInputException 
+
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestText2ImageComponent(unittest.TestCase):
     def setUp(self):
@@ -102,7 +104,20 @@ class TestText2ImageComponent(unittest.TestCase):
         data = {"error_code": "ERROR", "error_msg": "Error message"}
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.text2Image.check_service_error("", data)
-    
+            
+    def test_tool_eval(self):
+        ti=self.text2Image
+        # test streaming=False
+        result=ti.tool_eval(streaming=False,origin_query='test')
+        # test 绘图服务发生错误：{e}
+        with self.assertRaises(appbuilder.AppBuilderServerException):
+            next(result)
+            
+        # test query：{query} 中可能存在敏感词
+        result=ti.tool_eval(streaming=False,origin_query='小明拿刀碎尸了小红')
+        with self.assertRaises(RiskInputException):
+            next(result)
+               
 
 if __name__ == '__main__':
     unittest.main()

@@ -128,6 +128,10 @@ class TestQRcodeOCR(unittest.TestCase):
         message = appbuilder.Message(content={"url": url})
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.qrcode_ocr.run(message)
+        
+        with self.assertRaises(InvalidRequestArgumentError):
+            self.qrcode_ocr.run(message=message,location='test')
+        
             
     def test_tool_eval(self):
         image_url = "https://bj.bcebos.com/v1/appbuilder/qrcode_ocr_test.png?" \
@@ -147,7 +151,18 @@ class TestQRcodeOCR(unittest.TestCase):
         self.assertEqual(res['visible_scope'],'llm')
         res=next(result)
         self.assertEqual(res['visible_scope'],'user')
-
+        
+        result=self.qrcode_ocr.tool_eval(
+            name='name',
+            streaming=False,
+            file_names=['test'],
+            file_urls={'test':image_url},
+            locations = 'test'
+        )
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)
+        
+        
 
 if __name__ == '__main__':
     unittest.main()

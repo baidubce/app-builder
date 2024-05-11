@@ -20,6 +20,7 @@ import requests
 import appbuilder
 from appbuilder.core.message import Message
 from appbuilder.core._exception import InvalidRequestArgumentError
+from appbuilder.core.components.mix_card_ocr.model import MixCardOCRRequest
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPlantRecognition(unittest.TestCase):
@@ -95,6 +96,13 @@ class TestPlantRecognition(unittest.TestCase):
             file_names=['test'],
             file_urls={'test':self.image_url}
             )
+        
+    def test_recognize_raise(self):
+        mco=appbuilder.MixCardOCR()
+        with self.assertRaises(ValueError):
+            mcor=MixCardOCRRequest()
+            mco._recognize(request=mcor)
+        
 
 if __name__ == '__main__':
     unittest.main()
