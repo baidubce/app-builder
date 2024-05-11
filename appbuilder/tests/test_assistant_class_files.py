@@ -42,7 +42,7 @@ class TestFilesCreate(unittest.TestCase):
         # test download
         with self.assertRaises(FileNotFoundError):
             appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/data/")
-        appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/test/")
+        appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/")
         
         # test delete
         files_delete = appbuilder.assistant.assistants.files.delete(file_id=file.id)
