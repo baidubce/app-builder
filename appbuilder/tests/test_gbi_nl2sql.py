@@ -19,6 +19,7 @@ import appbuilder
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import NL2SqlResult, SessionRecord
 from appbuilder.core.components.gbi.basic import ColumnItem
+from appbuilder.core._exception import BaseRPCException
 
 SUPER_MARKET_SCHEMA = """
 ```

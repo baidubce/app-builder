@@ -1,3 +1,4 @@
+import time
 import unittest
 import os
 import appbuilder
@@ -6,7 +7,7 @@ from appbuilder.core.components.text_to_image.model import (Text2ImageSubmitRequ
 
 from appbuilder.core._exception import RiskInputException 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestText2ImageComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -72,6 +73,7 @@ class TestText2ImageComponent(unittest.TestCase):
         response = self.text2Image.queryText2ImageData(request)
         self.assertIsNotNone(response)
         self.assertIsInstance(response, Text2ImageQueryResponse)
+        time.sleep(1)
 
     def test_extract_img_urls(self):
         """
@@ -89,6 +91,7 @@ class TestText2ImageComponent(unittest.TestCase):
         response.data.sub_task_result_list = [{'final_image_list': [{'img_url': 'http://example.com'}]}]
         img_urls = self.text2Image.extract_img_urls(response)
         self.assertEqual(img_urls, ['http://example.com'])
+        time.sleep(1)
 
     def test_check_service_error(self):
         """
@@ -104,6 +107,7 @@ class TestText2ImageComponent(unittest.TestCase):
         data = {"error_code": "ERROR", "error_msg": "Error message"}
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.text2Image.check_service_error("", data)
+        time.sleep(1)
             
     def test_tool_eval(self):
         ti=self.text2Image
@@ -112,6 +116,7 @@ class TestText2ImageComponent(unittest.TestCase):
         # test 绘图服务发生错误：{e}
         with self.assertRaises(appbuilder.AppBuilderServerException):
             next(result)
+        time.sleep(1)
             
         # test query：{query} 中可能存在敏感词
         result=ti.tool_eval(streaming=False,origin_query='小明拿刀碎尸了小红')
