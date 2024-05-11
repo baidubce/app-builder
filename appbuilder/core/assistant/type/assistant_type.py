@@ -205,3 +205,8 @@ class AssistantFilesDeleteRequest(BaseModel):
     assistant_id: Optional[str] = ""  # 助理ID
     file_id: Optional[str] = ""  # File对象的id
     
+    
+class AssistantFilesContentResponse(BaseModel):
+    content_type:Optional[str] = ""  # 文件类型
+    content :Optional[bytes] =b"" # 二进制流数据
+    
