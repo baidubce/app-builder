@@ -20,7 +20,7 @@ import requests
 from parameterized import parameterized, param
 import appbuilder
 from appbuilder import Message
-from ppbuilder.core._exception import BaseRPCException
+from appbuilder.core._exception import BaseRPCException
 
 from pytest_config import LoadConfig
 conf = LoadConfig()
