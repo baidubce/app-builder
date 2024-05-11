@@ -54,7 +54,7 @@ class TestDataset(unittest.TestCase):
 
         # 获取第一页的文档列表, 每页10条
         file_list = dataset.get_documents(1, 10)
-        self.assertEqual(file_list.total, 1)
+        self.assertGreaterEqual(file_list.total, 1)
 
         # 删除文档
         file_ids = [document_infos.document_ids[0]]

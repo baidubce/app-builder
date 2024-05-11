@@ -132,7 +132,7 @@ class QueryRewrite(CompletionBaseComponent):
         if len(message.content) > 10 or len(message.content) % 2 == 0:
             raise ValueError(f"illegal input，expected len(message.content) in {1,3,5,9}, got {len(message.content)}")
         if sum_len > 4000:
-            raise ValueError(f"illegal input, expected length <= 4000, got {len(sum_len)}")
+            raise ValueError(f"illegal input, expected length <= 4000, got {sum_len}")
         if rewrite_type == "带机器人回复":
             converted_input = ''.join([f"{'User:' if i % 2 == 0 else 'Assistant:'}\
                                        {message.content[i]}\n" for i in range(len(message.content))])
