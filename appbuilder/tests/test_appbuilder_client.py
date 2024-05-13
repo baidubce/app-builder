@@ -40,18 +40,16 @@ class TestAgentRuntime(unittest.TestCase):
         conversation_id = builder.create_conversation()
         msg = builder.run(conversation_id, "你可以做什么？")
         print(msg)
-        # with tempfile.NamedTemporaryFile(suffix=".png") as fp:
-        #     # 上传植物图片
-        #     img_url = ("https://bj.bcebos.com/v1/appbuilder/test_agent_builder_tr"
-        #                "ee.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzL"
-        #                "m%2F2024-03-20T08%3A03%3A16Z%2F-1%2Fhost%2F8227f2bb97928b1957a9a6"
-        #                "c14c4e307ef195d18ec68b22764158690cecbd9fc7")
-        #     raw_image = requests.get(img_url).content
-        #     fp.write(raw_image)
-        #     file_id = agent_builder.upload_local_file(conversation_id, fp.name)
-        #     msg = agent_builder.run(conversation_id, "请识别图中的植物类别", file_ids=[file_id])
-        #     print("助理回答内容：", msg.content.answer)
-        #     fp.close()
+        with tempfile.NamedTemporaryFile(suffix=".png") as fp:
+            # 上传植物图片
+            img_url = ("https://bj.bcebos.com/v1/appbuilder/test_agent_builder_tr"
+                       "ee.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzL"
+                       "m%2F2024-03-20T08%3A03%3A16Z%2F-1%2Fhost%2F8227f2bb97928b1957a9a6"
+                       "c14c4e307ef195d18ec68b22764158690cecbd9fc7")
+            raw_image = requests.get(img_url).content
+            fp.write(raw_image)
+            file_id = builder.upload_local_file(conversation_id, fp.name)
+            fp.close()
         
     def test_upload_local_file_raise(self):
         builder = appbuilder.AppBuilderClient(self.app_id)
