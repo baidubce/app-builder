@@ -96,7 +96,8 @@ class QRcodeOCR(Component):
         if inp.url:
             req.url = inp.url
         if not isinstance(location, str) or location not in ('true', 'false'):
-            raise InvalidRequestArgumentError("location must be a string with value 'true' or 'false'")
+            raise InvalidRequestArgumentError(
+                f"illegal location, expected location is 'true' or 'false', got {location}")
         req.location = location
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
@@ -112,7 +113,8 @@ class QRcodeOCR(Component):
                        response (obj: `QRcodeResponse`): 二维码识别返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError(
+                "request format error, one of image or url must be set")
 
         data = QRcodeRequest.to_dict(request)
         if self.http_client.retry.total != retry:
@@ -121,7 +123,8 @@ class QRcodeOCR(Component):
         headers['content-type'] = 'application/x-www-form-urlencoded'
         headers['Accept'] = 'application/json'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/qrcode")
-        response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
+        response = self.http_client.session.post(
+            url, headers=headers, data=data, timeout=timeout)
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
@@ -160,14 +163,18 @@ class QRcodeOCR(Component):
             else:
                 file_url = file_urls.get(file_name, None)
             if file_url is None:
-                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+                raise InvalidRequestArgumentError(
+                    f"request format error, file {file_name} url does not exist")
             req = QRcodeRequest()
             req.url = file_url
             if not isinstance(location, str) or location not in ("true", "false"):
-                raise InvalidRequestArgumentError("location must be a string with value 'true' or 'false'")
+                raise InvalidRequestArgumentError(
+                    f"illegal location, expected location is 'true' or 'false', got {location}"
+                )
             req.location = location
             resp = self._recognize(req)
-            result[file_name] = [item["text"] for item in proto.Message.to_dict(resp).get("codes_result", [])]
+            result[file_name] = [item["text"]
+                                 for item in proto.Message.to_dict(resp).get("codes_result", [])]
 
         result = json.dumps(result, ensure_ascii=False)
         if streaming:

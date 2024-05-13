@@ -125,7 +125,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
                 response (obj: `PlantRecognitionResponse`): 植物识别返回结果
         """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         data = PlantRecognitionRequest.to_dict(request)
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry

@@ -234,7 +234,7 @@ class ResultProcessor:
         elif key == 'search_db':
             return result_list
         else:
-            raise TypeError(f"不支持的tools: {key}")
+            raise TypeError(f"illegal argument key, expected key in {'search_baidu','search_db'}, got {key}")
 
 
 class CompletionBaseComponent(Component):
@@ -291,15 +291,15 @@ class CompletionBaseComponent(Component):
     @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def _check_model_and_get_model_url(self, model, model_type):
         if model and model in self.excluded_models:
-            raise ModelNotSupportedException(f"Model {model} not supported")
+            raise ModelNotSupportedException(f"unsupport model, epected model in {self.excluded_models}, got {model}")
         if not model:
-            raise ValueError("model_name must be provided")
+            raise ValueError("illegal argument, model_name can't be empty")
         if self.__class__.model_info is None:
             self.set_secret_key_and_gateway()
         m_type = self.model_info.get_model_type(model)
         if m_type != model_type:
             raise ModelNotSupportedException(
-                f"Model {model} with type [{m_type}] not supported, only support {model_type} type")
+                f"unsupport model_type for model {model}, expected model_type in {model_type}, got {m_type}")
 
         model_url = self.model_info.get_model_url(model)
         return model_url

@@ -27,8 +27,8 @@ class PythonVersionChecker:
 
     def check_version(self):
         if self.current_version < self.min_version:
-            raise EnvironmentError(f"Python version {self.min_version[0]}.{self.min_version[1]} or higher is required, "
-                                   f"you are using Python {self.current_version[0]}.{self.current_version[1]}.")
+            raise EnvironmentError(f"Mismatched Python version. Expected Python version >= {self.min_version[0]}.{self.min_version[1]}, "
+                                   f"Got Python version {self.current_version[0]}.{self.current_version[1]}.")
 
 
 # Creating an instance to test the function

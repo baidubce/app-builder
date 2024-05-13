@@ -73,7 +73,7 @@ class DocCropEnhance(Component):
             req.url = inp.url
         req.scan_type = 3
         if enhance_type not in enhance_type_set:
-            raise InvalidRequestArgumentError(f"enhance_type only support {enhance_type_set}")
+            raise InvalidRequestArgumentError(f"mismatched argument enhance_type, expected enhance_type in {enhance_type_set}")
         req.enhance_type = enhance_type
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
@@ -89,7 +89,7 @@ class DocCropEnhance(Component):
                        response (obj: `DocCropEnhanceResponse`): 文档矫正增强返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request argument error, one of image or url must be set")
 
         req = json.dumps(DocCropEnhanceRequest.to_dict(request))
         if self.http_client.retry.total != retry:

@@ -138,7 +138,7 @@ class UserSession(object):
             # 非服务化版本使用内存存储
             for key, message in message_dict.items():
                 if not isinstance(message, Message):
-                    raise ValueError("message must be Message type")
+                    raise ValueError("session format error, message must be Message type")
                 if key not in ctx.session_vars_dict:
                     ctx.session_vars_dict[key] = []
                 ctx.session_vars_dict[key].append(message)
@@ -146,9 +146,11 @@ class UserSession(object):
             # 服务化版本使用数据库存储
             for key, message in message_dict.items():
                 if not isinstance(message, Message):
-                    raise ValueError("message must be Message type")
+                    raise ValueError("session format error, message must be Message type")
                 if key in ctx.session_vars_dict:
-                    raise KeyError(f"key {key} has already been appended")
+                    raise KeyError(
+                        f"session format error, key {key} has already been appended"
+                    )
                 ctx.session_vars_dict[key] = message
 
     def _post_append(self) -> None:

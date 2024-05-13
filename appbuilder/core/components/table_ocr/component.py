@@ -111,7 +111,8 @@ class TableOCR(Component):
                        response (obj: `TableOCRResponse`): 表格文字识别返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError(
+                "request format error, one of image or url must be set")
 
         data = TableOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
@@ -119,7 +120,8 @@ class TableOCR(Component):
         headers = self.http_client.auth_header()
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/table")
-        response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
+        response = self.http_client.session.post(
+            url, headers=headers, data=data, timeout=timeout)
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
@@ -186,7 +188,9 @@ class TableOCR(Component):
             else:
                 file_url = file_urls.get(file_name, None)
             if file_url is None:
-                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+                raise InvalidRequestArgumentError(
+                    f"request format error, file {file_name} url does not exist"
+                )
             req = TableOCRRequest()
             req.url = file_url
             req.cell_contents = "false"

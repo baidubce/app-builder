@@ -148,8 +148,7 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
 
         # query 长度限制不能超过 72
         if len(message.content) > 72:
-            raise AppBuilderServerException(
-                    service_err_message="限制query长度不能超过72")
+            raise AppBuilderServerException(service_err_message="query is too long, expected <= 72, got {}".format(len(message.content)))
         
         instruction = instruction if instruction is not None else self.instruction
         reject = reject if reject is not None else self.reject

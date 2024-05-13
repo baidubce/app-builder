@@ -108,7 +108,7 @@ class GeneralOCR(Component):
         return Message(content=out.model_dump())
 
     def _recognize(self, request: GeneralOCRRequest, timeout: float = None,
-                  retry: int = 0) -> GeneralOCRResponse:
+                   retry: int = 0) -> GeneralOCRResponse:
         r"""调用底层接口进行通用文字识别
                    参数:
                        request (obj: `GeneralOCRRequest`) : 通用文字识别输入参数
@@ -117,14 +117,16 @@ class GeneralOCR(Component):
                        response (obj: `GeneralOCRResponse`): 通用文字识别返回结果
                """
         if not request.image and not request.url and not request.pdf_file and not request.ofd_file:
-            raise ValueError("one of image or url or must pdf_file or ofd_file be set")
+            raise ValueError(
+                "request format error, one of image or url or must pdf_file or ofd_file be set")
         data = GeneralOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
         headers = self.http_client.auth_header()
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/accurate_basic")
-        response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
+        response = self.http_client.session.post(
+            url, headers=headers, data=data, timeout=timeout)
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
@@ -158,11 +160,13 @@ class GeneralOCR(Component):
             file_urls = kwargs.get("file_urls", {})
             img_path = kwargs.get("img_name", None)
             if not img_path:
-                raise InvalidRequestArgumentError("file name is not set")
+                raise InvalidRequestArgumentError(
+                    "request format error, file name is not set")
             img_name = os.path.basename(img_path)
             img_url = file_urls.get(img_name, None)
             if not img_url:
-                raise InvalidRequestArgumentError(f"file {img_name} url does not exist")
+                raise InvalidRequestArgumentError(
+                    f"request format error, file {img_name} url does not exist")
         req = GeneralOCRRequest(url=img_url)
         req.detect_direction = "true"
         req.language_type = "auto_detect"

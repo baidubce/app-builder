@@ -65,6 +65,5 @@ class TestDataset(unittest.TestCase):
         self.assertIsInstance(document_list.total, int)
 
 
-
 if __name__ == '__main__':
     unittest.main()

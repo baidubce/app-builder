@@ -64,7 +64,8 @@ def _try_import() -> None:
         import pymochow
     except ImportError:
         raise ImportError(
-            "`pymochow` package not found, please run `pip install pymochow`"
+            "pymochow module is not installed. "
+            "Please install it using 'pip install pymochow'."
         )
 
 
@@ -333,7 +334,7 @@ class BaiduVDBVectorStoreIndex:
         vector_dims = len(segment_vectors[0])
         segments = segments.content
         if len(segments) == 0:
-            raise ValueError("add_segments函数 参数segment 内容为空")
+            raise ValueError("segments is emtpty")
 
         rows = []
         for segment, vector in zip(segments, segment_vectors):
@@ -473,7 +474,8 @@ class BaiduVDBRetriever(Component):
         if len(content) == 0:
             raise ValueError("Parameter `query` content is empty")
         if len(content) > 512:
-            raise ValueError("Parameter `query` content is too long, max length per batch size is 512")
+            raise ValueError(
+                "Parameter `query` content is too long, max length per batch size is 512")
 
         query_embedding = self.embedding(query)
         anns = AnnSearch(

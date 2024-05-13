@@ -80,7 +80,7 @@ class Runs():
             3. 若这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user
         """
         if thread_id == "" and thread is None:
-            raise ValueError("Runs().run() 参数thread_id和thread不能同时为空")
+            raise ValueError("Runs().run() argument thread_id && thread can't be empty at the same time")
 
         req = thread_type.AssistantRunRequest(
             thread_id=thread_id,
@@ -163,7 +163,7 @@ class Runs():
             3. 若这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user
         """
         if thread_id == "" and thread is None:
-            raise ValueError("Runs().run() 参数thread_id和thread不能同时为空")
+            raise ValueError("Runs().run() argument thread_id and thread can't be empty at the same time")
 
         req = thread_type.AssistantRunRequest(
             thread_id=thread_id,

@@ -203,7 +203,7 @@ class AgentRuntime(BaseModel):
             Message
         """
         return self.component.run(message=message, stream=stream, **args)
-        
+
     def create_flask_app(self, url_rule="/chat"):
         """ 
         创建 Flask 应用，主要用于 Gunicorn 这样的 WSGI 服务器来运行服务。
@@ -228,7 +228,7 @@ class AgentRuntime(BaseModel):
         @app.errorhandler(BadRequest)
         def handle_bad_request(e):
             return {"code": 400, "message": f'{e}', "result": None}, 400
-            
+
         @app.errorhandler(Exception)
         def handle_bad_request(e):
             if hasattr(e, "code"):
@@ -345,7 +345,7 @@ class AgentRuntime(BaseModel):
         """
         app = self.create_flask_app(url_rule=url_rule)
         app.run(host=host, debug=debug, port=port)
-        
+
     def chainlit_demo(self, host='0.0.0.0', port=8091):
         """
         将 component 服务化，提供 chainlit demo 页面
@@ -366,7 +366,7 @@ class AgentRuntime(BaseModel):
                               "chainlit~=1.0.200'.")
         import click
         from click.testing import CliRunner
-        
+
         @cl.on_message  # this function will be called every time a user inputs a message in the UI
         async def main(message: cl.Message):
             session_id = cl.user_session.get("id")
@@ -391,4 +391,3 @@ class AgentRuntime(BaseModel):
             runner = CliRunner()
             runner.invoke(
                 chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
-
