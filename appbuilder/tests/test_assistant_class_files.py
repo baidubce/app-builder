@@ -34,6 +34,16 @@ class TestFilesCreate(unittest.TestCase):
         files_query = appbuilder.assistant.assistants.files.query(file_id=file.id)
         self.assertIsInstance(files_query, assistant_type.AssistantFilesQueryResponse)
         
+        # test content
+        files_content=appbuilder.assistant.assistants.files.content(file_id=file.id)
+        self.assertIsInstance(files_content, assistant_type.AssistantFilesContentResponse)
+        self.assertIsInstance(files_content.content, bytes)
+        
+        # test download
+        with self.assertRaises(FileNotFoundError):
+            appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/data/")
+        appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/")
+        
         # test delete
         files_delete = appbuilder.assistant.assistants.files.delete(file_id=file.id)
         self.assertIsInstance(files_delete, assistant_type.AssistantFilesDeleteResponse)

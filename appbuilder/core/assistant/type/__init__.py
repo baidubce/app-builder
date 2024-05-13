@@ -50,6 +50,7 @@ from .assistant_type import (
     AssistantMountedFilesListRequest,
     AssistantMountedFilesListResponse,
     AssistantFilesDeleteRequest,
+    AssistantFilesContentResponse
 )
 
 
@@ -97,4 +98,6 @@ from .thread_type import (
     ThreadQueryResponse,
     ThreadDeleteRequest,
     ThreadDeleteResponse,
+    ThreadUpdateResponse,
+    AssistantThread
 )
