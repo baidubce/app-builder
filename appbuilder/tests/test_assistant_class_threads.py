@@ -41,7 +41,11 @@ class TestThreadCreate(unittest.TestCase):
         thr_query = appbuilder.assistant.threads.query(thread_id=thread.id)
         self.assertIsInstance(thr_query, thread_type.ThreadQueryResponse)
         
-        #test delete
+        # test update 
+        thr_update = appbuilder.assistant.threads.update(thread_id=thread.id)
+        self.assertIsInstance(thr_update, thread_type.ThreadUpdateResponse)
+        
+        # test delete
         thr_delete = appbuilder.assistant.threads.delete(thread_id=thread.id)
         self.assertIsInstance(thr_delete, thread_type.ThreadDeleteResponse)
 

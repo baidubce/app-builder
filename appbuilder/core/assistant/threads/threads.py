@@ -130,3 +130,26 @@ class Threads():
         self._http_client.check_assistant_response(request_id, data)
         response = thread_type.ThreadDeleteResponse(**data)
         return response
+    
+    def update(self,
+               thread_id:str ,
+               metadata:Optional[dict] ={} )->thread_type.ThreadUpdateResponse:
+        headers = self._http_client.auth_header()
+        url = self._http_client.service_url("/v2/threads/update")
+        
+        req = thread_type.ThreadUpdateRequest(
+            thread_id=thread_id)
+
+        response =self._http_client.session.post(
+            url = url,
+            headers=headers,
+            json=req.model_dump(),
+            timeout=None
+        )
+        self._http_client.check_response_header(response)
+
+        data = response.json()
+        request_id = self._http_client.response_request_id(response)
+        self._http_client.check_assistant_response(request_id, data)
+        response = thread_type.ThreadUpdateResponse(**data)
+        return response
