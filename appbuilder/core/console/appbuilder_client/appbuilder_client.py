@@ -154,8 +154,7 @@ class AppBuilderClient(Component):
                     data = event.raw
                 data = json.loads(data)
             except json.JSONDecodeError as e:
-                raise AppBuilderServerException(
-                    request_id=request_id, message="json decoder failed {}".format(str(e)))
+                raise AppBuilderServerException(request_id=request_id, message="json decoder failed {}".format(str(e)))
             inp = data_class.AppBuilderClientResponse(**data)
             out = data_class.AppBuilderClientAnswer()
             _transform(inp, out)
@@ -187,8 +186,7 @@ class AgentBuilder(AppBuilderClient):
             None
 
         """
-        logger.info(
-            "AgentBuilder is deprecated, please use AppBuilderClient instead")
+        logger.info("AgentBuilder is deprecated, please use AppBuilderClient instead")
         super().__init__(app_id)
 
 
