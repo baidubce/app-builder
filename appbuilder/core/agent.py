@@ -257,20 +257,20 @@ class AgentRuntime(BaseModel):
 
             data = request.get_json()
             if "message" not in data:
-                raise BadRequest("request format error, message is required")
+                raise BadRequest("message is required")
             message = Message(data.pop('message'))
             if "session_id" not in data:
                 session_id = str(uuid.uuid4())
             else:
                 session_id = data.pop("session_id")
                 if not isinstance(session_id, str):
-                    raise BadRequest("request format error, session_id must be str type")
+                    raise BadRequest("session_id must be str type")
             if "stream" not in data:
                 stream = False
             else:
                 stream = data.pop("stream")
                 if not isinstance(stream, bool):
-                    raise BadRequest("request format error, stream must be bool type")
+                    raise BadRequest("stream must be bool type")
             request_id = str(uuid.uuid4())
 
             init_context(session_id=session_id, request_id=request_id)
