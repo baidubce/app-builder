@@ -2,9 +2,9 @@ import os
 import sys
 import unittest
 import subprocess
+from appbuilder.core.component import Component
 from appbuilder import (
     AgentRuntime,
-    AppBuilderClient,
 )
 
 
@@ -24,8 +24,8 @@ class TestAgentRuntime(unittest.TestCase):
 
     def test_chainlit_agent_import_failed(self):
         """测试import chainlit失败"""
-        component = AppBuilderClient(self.app_id)
-        agent = AgentRuntime(component=component)
+        component = Component()
+        agent = AgentRuntime()
         subprocess.check_call(
             [sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"]
         )
