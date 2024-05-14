@@ -174,7 +174,7 @@ class Files(object):
     
     def download(self,
                  file_id:str,
-                 file_path:str="",
+                 file_path:str="", # 要求若文件路径不为空，需要以/结尾，默认下载到当前文件夹
                  timeout:Optional[int]=None,
                  ):
         """
@@ -189,13 +189,22 @@ class Files(object):
             None
         
         Raises:
-            FileNotFoundError: 当指定的文件路径不存在时引发此异常。
+            FileNotFoundError: 当指定的文件路径或文件不存在时引发此异常。
             OSError: 当磁盘空间不足时引发此异常。
             Exception: 当发生其他异常时引发此异常。
         
         """
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be str")
+        if file_id == "" or file_id is None:
+            raise ValueError("file_id cannot be empty or None")
+        try:
+            self.query(file_id)
+        except:
+            raise FileNotFoundError("can't find file with id {}".format(file_id))
+        if file_path != "" and not file_path.endswith('/'):
+            raise ValueError("file_path must be a file path")
         headers = self._http_client.auth_header()
-        headers['Content-Type'] = 'application/json'
         url = self._http_client.service_url("/v2/storage/files/download")
         response = self._http_client.session.post(
             url=url,
@@ -206,7 +215,7 @@ class Files(object):
             timeout=timeout
         )
         self._http_client.check_response_header(response)
-        request_id = self._http_client.response_request_id(response) 
+        self._http_client.response_request_id(response) 
         
         filename=response.headers['Content-Disposition'].split("filename=")[-1]
         file_path+=filename
@@ -221,6 +230,7 @@ class Files(object):
             raise OSError("磁盘空间不足,错误信息{}".format(e))
         except Exception as e:
             raise Exception("出现错误,错误信息{}".format(e))
+        
         
            
         
@@ -239,8 +249,13 @@ class Files(object):
         
         Raises:
             请求失败将抛出HttpError异常
-        
+            FileNotFoundError: 当指定的文件路径不存在时引发此异常。
+
         """
+        try:
+            self.query(file_id)
+        except:
+            raise FileNotFoundError("can't find file with id {}".format(file_id))
         headers = self._http_client.auth_header()
         headers['Content-Type'] = 'application/json'
         url = self._http_client.service_url("/v2/storage/files/content")

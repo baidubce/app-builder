@@ -81,7 +81,11 @@ class TestAssistant(unittest.TestCase):
         # create file
         file_path = "./data/qa_doc_parser_extract_table_from_doc.png"
         file = appbuilder.assistant.assistants.files.create(file_path=file_path)
-
+        with self.assertRaises(FileNotFoundError):
+            appbuilder.assistant.assistants.mount_files(
+                assistant_id = assistant.id,
+                file_id = "test_not_exist",
+            )
         assistant_mount = appbuilder.assistant.assistants.mount_files(
             assistant_id = assistant.id,
             file_id = file.id,
@@ -96,6 +100,11 @@ class TestAssistant(unittest.TestCase):
         self.assertEqual(len(assistant_files_list.data), 1)
         
         # test assistant unmount_files
+        with self.assertRaises(FileNotFoundError):
+            appbuilder.assistant.assistants.unmount_files(
+                assistant_id = assistant.id,
+                file_id = "test_not_exist",
+            )
         assistant_files_delete = appbuilder.assistant.assistants.unmount_files(
             assistant_id = assistant.id,
             file_id = file.id,
