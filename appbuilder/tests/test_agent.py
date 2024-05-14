@@ -19,7 +19,7 @@ class TestAgentRuntime(unittest.TestCase):
         """
         pass
 
-    def test_err_http(self):
+    def test_no_token_http(self):
         """ 测试http """
         component = appbuilder.Playground(
             prompt_template="{query}",
@@ -36,6 +36,29 @@ class TestAgentRuntime(unittest.TestCase):
             "stream": False
         }
         headers = {}
+        response = client.post('/chat', json=payload, headers=headers)
+        self.assertNotEqual(response.json.get('code'), 0)
+  
+    def test_err_http(self):
+        """ 测试http """
+        component = appbuilder.Playground(
+            prompt_template="{query}",
+            model="ERNIE-3.5-8K",
+            lazy_certification=True,
+        )
+        agent = appbuilder.AgentRuntime(component=component)
+        app = agent.create_flask_app(url_rule="/chat")
+        app.config['TESTING'] = True
+        client = app.test_client()
+        
+        payload = {
+            "message": {"query": "你好"},
+            "stream": False
+        }
+        headers = {
+            "X-Appbuilder-Authorization": "...",
+            "X-Appbuilder-Token": "..."
+        }
         response = client.post('/chat', json=payload, headers=headers)
         self.assertNotEqual(response.json.get('code'), 0)
         
