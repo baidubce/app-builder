@@ -25,7 +25,7 @@ class TestAgentRuntime(unittest.TestCase):
     def test_chainlit_agent_import_failed(self):
         """测试import chainlit失败"""
         component = Component()
-        agent = AgentRuntime()
+        agent = AgentRuntime(component=component)
         subprocess.check_call(
             [sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"]
         )
