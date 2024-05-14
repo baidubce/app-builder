@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 import pydantic
@@ -7,10 +8,12 @@ from appbuilder.core.component import Component
 from appbuilder import (
     AgentRuntime,
     Message,
-    Playground
+    Playground,
+    AppBuilderClient,
 )
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
@@ -62,13 +65,21 @@ class TestAgentRuntime(unittest.TestCase):
             self.assertIs(type(it), str)
 
     def test_chainlit_agent_import_failed(self):
-        """ 测试在参数有效时运行 """
+        """ 测试import chainlit失败 """
+        component = AppBuilderClient(self.app_id)
+        agent = AgentRuntime(component=component)
         subprocess.check_call([sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"])
         with self.assertRaises(ImportError):
-            component = Component()
-            agent = AgentRuntime(component=component)
             agent.chainlit_agent()
         subprocess.check_call([sys.executable, "-m", "pip", "install", "chainlit"])
+
+    def test_chainlit_agent_component_error(self):
+        """ 测试chainlit agent组件错误 """
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "chainlit"])
+        component = Component()
+        agent = AgentRuntime(component=component)
+        with self.assertRaises(ValueError):
+            agent.chainlit_agent()
 
 
 if __name__ == '__main__':

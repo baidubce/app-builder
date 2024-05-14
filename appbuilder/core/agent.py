@@ -363,7 +363,7 @@ class AgentRuntime(BaseModel):
             import chainlit.cli
         except ImportError:
             raise ImportError("chainlit module is not installed. Please install it using 'pip install "
-                              "chainlit~=1.0.200'.")
+                            "chainlit~=1.0.200'.")
         import click
         from click.testing import CliRunner
 

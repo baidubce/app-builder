@@ -17,6 +17,8 @@ import os
 
 import appbuilder
 
+
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDocFormatConverter(unittest.TestCase):
 
     @classmethod
