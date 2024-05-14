@@ -34,7 +34,7 @@ class AgentRuntime(BaseModel):
     AgentRuntime 是对组件调用的服务化封装，开发者不是必须要用 AgentRuntime 才能运行自己的组件服务。
     但 AgentRuntime 可以快速帮助开发者服务化组件服务，并且提供API、对话框等部署方式。
     此外，结合 Component 和 Message 自带的运行和调试接口，可以方便开发者快速获得一个调试 Agent 的服务。
-  
+
     AgentRuntime 接受两个参数:
         component (Component): 可运行的 Component, 需要实现 run(message, stream, **args) 方法  
         user_session_config (sqlalchemy.engine.URL|str|None): Session 输出存储配置字符串。默认使用 sqlite:///user_session.db
@@ -151,7 +151,7 @@ class AgentRuntime(BaseModel):
             )
             agent = appbuilder.AgentRuntime(component=component)
             agent.serve(debug=False, port=8091)
- 
+
         .. code-block:: shell
             curl --location 'http://0.0.0.0:8091/chat' \
                 --header 'Content-Type: application/json' \
@@ -221,7 +221,7 @@ class AgentRuntime(BaseModel):
             from werkzeug.exceptions import BadRequest
         except ImportError:
             raise ImportError("Flask module is not installed. Please install it using 'pip install "
-                              "flask~=2.3.2 flask-restful==0.3.9'.")
+                               "flask~=2.3.2 flask-restful==0.3.9'.")
         app = Flask(__name__)
         app.json.ensure_ascii = False
 
@@ -409,7 +409,7 @@ class AgentRuntime(BaseModel):
             import chainlit.cli
         except ImportError:
             raise ImportError("chainlit module is not installed. Please install it using 'pip install "
-                              "chainlit~=1.0.200'.")
+                            "chainlit~=1.0.200'.")
         import click
         from click.testing import CliRunner
 

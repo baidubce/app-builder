@@ -1,10 +1,16 @@
+import sys
 import unittest
 import pydantic
-import os
+import subprocess
 import appbuilder
+from appbuilder.core.component import Component
+from appbuilder import (
+    AgentRuntime,
+    Message,
+    Playground
+)
 
-
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
@@ -16,25 +22,25 @@ class TestAgentRuntime(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        pass
+        self.app_id = "aa8af334-df27-4855-b3d1-0d249c61fc08"
 
     def test_init_with_valid_component(self):
         """ 测试在component有效时运行 """
-        component = appbuilder.Playground(
+        component = Playground(
             prompt_template="{query}",
             model="eb-4"
         )
-        agent = appbuilder.AgentRuntime(component=component)
+        agent = AgentRuntime(component=component)
 
     def test_init_with_invalid_component(self):
         """ 测试在component非法时运行 """
         component = "invalid_component"
         with self.assertRaises(pydantic.ValidationError):
-            agent = appbuilder.AgentRuntime(component=component)
+            agent = AgentRuntime(component=component)
 
     def test_chat_with_valid_message_and_blocking(self):
         """ 测试在消息有效时处理 """
-        component = appbuilder.Playground(
+        component = Playground(
             prompt_template="{query}",
             model="eb-4"
         )
@@ -45,30 +51,24 @@ class TestAgentRuntime(unittest.TestCase):
 
     def test_chat_with_valid_message_and_streaming(self):
         """ 测试在消息有效时处理 """
-        component = appbuilder.Playground(
+        component = Playground(
             prompt_template="{query}",
             model="eb-4"
         )
-        agent = appbuilder.AgentRuntime(component=component)
-        message = appbuilder.Message({"query": "你好"})
+        agent = AgentRuntime(component=component)
+        message = Message({"query": "你好"})
         answer = agent.chat(message, stream=True)
         for it in answer.content:
             self.assertIs(type(it), str)
 
-    def test_chainlit_agent_with_valid_param(self):
+    def test_chainlit_agent_import_failed(self):
         """ 测试在参数有效时运行 """
-        component = appbuilder.AppBuilderClient(self.app_id)
-        agent = appbuilder.AgentRuntime(component=component)
-
-    def test_chainlit_agent_with_invalid_param(self):
-        """ 测试在参数非法时运行 """
-        component = appbuilder.Playground(
-            prompt_template="{query}",
-            model="eb-4"
-        )
-        agent = appbuilder.AgentRuntime(component=component)
-        with self.assertRaises(ValueError):
+        subprocess.check_call([sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"])
+        with self.assertRaises(ImportError):
+            component = Component()
+            agent = AgentRuntime(component=component)
             agent.chainlit_agent()
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "chainlit"])
 
 
 if __name__ == '__main__':

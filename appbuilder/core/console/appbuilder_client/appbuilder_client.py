@@ -26,8 +26,8 @@ from appbuilder.utils.logger_util import logger
 
 class AppBuilderClient(Component):
     r"""
-       AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上
-       构建并发布的智能体应用，具体包括创建会话、上传文档、运行对话等。
+    AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上
+    构建并发布的智能体应用，具体包括创建会话、上传文档、运行对话等。
         Examples:
         ... code-block:: python
             import appbuilder
