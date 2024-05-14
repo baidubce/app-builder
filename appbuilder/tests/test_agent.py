@@ -5,7 +5,7 @@ import appbuilder
 from unittest.mock import MagicMock
 
 
-#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
