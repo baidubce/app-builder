@@ -3,6 +3,7 @@ import pydantic
 import os
 import appbuilder
 
+
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
@@ -24,7 +25,7 @@ class TestAgentRuntime(unittest.TestCase):
             model="eb-4"
         )
         agent = appbuilder.AgentRuntime(component=component)
-    
+
     def test_init_with_invalid_component(self):
         """ 测试在component非法时运行 """
         component = "invalid_component"
@@ -53,6 +54,22 @@ class TestAgentRuntime(unittest.TestCase):
         answer = agent.chat(message, stream=True)
         for it in answer.content:
             self.assertIs(type(it), str)
+
+    def test_chainlit_agent_with_valid_param(self):
+        """ 测试在参数有效时运行 """
+        component = appbuilder.AppBuilderClient(self.app_id)
+        agent = appbuilder.AgentRuntime(component=component)
+
+    def test_chainlit_agent_with_invalid_param(self):
+        """ 测试在参数非法时运行 """
+        component = appbuilder.Playground(
+            prompt_template="{query}",
+            model="eb-4"
+        )
+        agent = appbuilder.AgentRuntime(component=component)
+        with self.assertRaises(ValueError):
+            agent.chainlit_agent()
+
 
 if __name__ == '__main__':
     unittest.main()
