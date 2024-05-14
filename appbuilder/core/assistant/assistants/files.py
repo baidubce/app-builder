@@ -201,9 +201,9 @@ class Files(object):
         try:
             self.query(file_id)
         except:
-            raise FileNotFoundError("can't find file with id {}".format(file_id))
+            raise FileNotFoundError
         if file_path != "" and not file_path.endswith('/'):
-            raise ValueError("file_path must be a file path")
+            raise ValueError("file_path must be a file directory")
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/storage/files/download")
         response = self._http_client.session.post(
@@ -215,7 +215,6 @@ class Files(object):
             timeout=timeout
         )
         self._http_client.check_response_header(response)
-        self._http_client.response_request_id(response) 
         
         filename=response.headers['Content-Disposition'].split("filename=")[-1]
         file_path+=filename
@@ -268,7 +267,6 @@ class Files(object):
             timeout=timeout
         )
         self._http_client.check_response_header(response)
-        request_id = self._http_client.response_request_id(response)
         
         content=b''
         for chunk in response.iter_content():
