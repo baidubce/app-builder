@@ -1,4 +1,6 @@
 import os
+import sys
+import subprocess
 import unittest
 import pydantic
 import appbuilder
@@ -7,6 +9,7 @@ from appbuilder import (
     AgentRuntime,
     Message,
     Playground,
+    AppBuilderClient
 )
 
 
@@ -65,8 +68,22 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试chainlit agent组件错误 """
         component = Component()
         agent = AgentRuntime(component=component)
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"]
+        )
+        with self.assertRaises(ImportError):
+            agent.chainlit_agent()
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "chainlit~=1.0.200"]
+        )
         with self.assertRaises(ValueError):
             agent.chainlit_agent()
+
+    # def test_chainlit_demo_component_running(self):
+    #     """ 测试chainlit demo组件运行 """
+    #     agent_builder = AppBuilderClient(self.app_id)
+    #     agent = AgentRuntime(component=agent_builder)
+    #     agent.chainlit_agent()
 
 
 if __name__ == '__main__':
