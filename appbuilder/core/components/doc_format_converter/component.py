@@ -136,7 +136,7 @@ class DocFormatConverter(Component):
                     if task_progress == TASK_PROGRESS_COMPLETED:
                         break
                     elif task_progress == TASK_PROGRESS_FAILED:
-                        raise AppBuilderServerException(f'任务执行失败')
+                        raise AppBuilderServerException(f'doc convert task progress failed: {docConverterQueryResponse.error_msg}')
                     # TODO 文档格式转换查询间隔Refactor
                     if task_request_time <= 3:
                         time.sleep(3)
@@ -148,7 +148,7 @@ class DocFormatConverter(Component):
             out = DocFormatConverterOutMessage(word_url=word_url, excel_url=excel_url)
             return Message(content=out.model_dump())
         else:
-            raise AppBuilderServerException(f'文档格式转换服务发生错误：{docConverterSubmitResponse.error_msg}')
+            raise AppBuilderServerException(f'service error when doc convert：{docConverterSubmitResponse.error_msg}')
 
 
     @HTTPClient.check_param
@@ -161,7 +161,7 @@ class DocFormatConverter(Component):
         :return: 返回结果
         :rtype: DocFormatConverterSubmitResponse
         """
-        url = self.http_client.service_url("/v1/bce/aip/text_mind/v1/doc_convert/request",'api')
+        url = self.http_client.service_url("/v1/bce/aip/text_mind/v1/doc_convert/request",'/api')
         data = json.loads(DocFormatConverterSubmitRequest.to_json(request, preserving_proto_field_name=True))
         headers = self.http_client.auth_header()
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -185,7 +185,7 @@ class DocFormatConverter(Component):
         :return: 返回结果
         :rtype: DocFormatConverterSubmitResponse
         """
-        url = self.http_client.service_url("/v1/bce/aip/text_mind/v1/doc_convert/get_request_result",'api')
+        url = self.http_client.service_url("/v1/bce/aip/text_mind/v1/doc_convert/get_request_result",'/api')
         data = {
             "task_id": request.task_id
         }
@@ -212,22 +212,22 @@ class DocFormatConverter(Component):
             if isinstance(page_num, int) or (isinstance(page_num, str) and page_num.isdigit()):
                 page_num = str(page_num)
             else:
-                raise InvalidRequestArgumentError("page_num must be a integer")
+                raise InvalidRequestArgumentError("request format error, page_num must be a integer")
         if not file_url or not (file_url.startswith("http") or file_url.startswith("https")):
             file_urls = kwargs.get("file_urls", {})
             file_path = kwargs.get("file_name", file_url)
             if not file_path:
-                raise InvalidRequestArgumentError("file name is not set")
+                raise InvalidRequestArgumentError("request format error, file name is not set")
             file_name = os.path.basename(file_path)
             file_url = file_urls.get(file_name, None)
             if not file_url:
-                raise InvalidRequestArgumentError("file url is not set")
+                raise InvalidRequestArgumentError("request format error, file url is not set")
         try:
             result = self.run(Message({"file_path": file_url, "page_num": page_num}))
         except AppBuilderServerException:
             raise
         except Exception as e:
-            raise AppBuilderServerException(f'文档格式转换服务发生错误：{e}')
+            raise AppBuilderServerException(f'service error when doc convert：{e}')
         if streaming:
             yield {
                 "type": "files",

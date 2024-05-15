@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""AgentBuilder组件"""
+"""AppBuilderClient组件"""
 import os
 import json
 
@@ -22,6 +22,7 @@ from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
+
 
 class AppBuilderClient(Component):
     r"""
@@ -34,10 +35,10 @@ class AppBuilderClient(Component):
             os.environ["APPBUILDER_TOKEN"] = '...'
             # 可在Console 应用页面获取
             app_id = "app_id"
-            agent_builder = appbuilder.AppBuilderClient("app_id")
-            conversation_id = agent_builder.create_conversation()
-            file_id = agent_builder.upload_local_file(conversation_id, "/path/to/file")
-            message = agent_builder.run(conversation_id, "今天你好吗？")
+            client = appbuilder.AppBuilderClient("app_id")
+            conversation_id = client.create_conversation()
+            file_id = client.upload_local_file(conversation_id, "/path/to/file")
+            message = client.run(conversation_id, "今天你好吗？")
             # 打印对话结果
             print(message.content)
     """
@@ -66,7 +67,8 @@ class AppBuilderClient(Component):
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
         url = self.http_client.service_url_v2("/v2/app/conversation")
-        response = self.http_client.session.post(url, headers=headers, json={"app_id": self.app_id}, timeout=None)
+        response = self.http_client.session.post(
+            url, headers=headers, json={"app_id": self.app_id}, timeout=None)
         self.http_client.check_response_header(response)
         data = response.json()
         resp = data_class.CreateConversationResponse(**data)
@@ -82,15 +84,18 @@ class AppBuilderClient(Component):
             """
 
         if len(conversation_id) == 0:
-            raise ValueError("conversation_id is empty")
+            raise ValueError(
+                "conversation_id is empty, you can run self.create_conversation to get a conversation_id")
         multipart_form_data = {
             'file': (os.path.basename(local_file_path), open(local_file_path, 'rb')),
             'app_id': (None, self.app_id),
             'conversation_id': (None, conversation_id),
         }
         headers = self.http_client.auth_header_v2()
-        url = self.http_client.service_url_v2("/v2/app/conversation/file/upload")
-        response = self.http_client.session.post(url, files=multipart_form_data, headers=headers)
+        url = self.http_client.service_url_v2(
+            "/v2/app/conversation/file/upload")
+        response = self.http_client.session.post(
+            url, files=multipart_form_data, headers=headers)
         self.http_client.check_response_header(response)
         data = response.json()
         resp = data_class.FileUploadResponse(**data)
@@ -101,7 +106,6 @@ class AppBuilderClient(Component):
             file_ids: list = [],
             stream: bool = False,
             ) -> Message:
-
         r""" 动物识别
                 参数:
                     query (str: 必须): query内容
@@ -112,7 +116,9 @@ class AppBuilderClient(Component):
         """
 
         if len(conversation_id) == 0:
-            raise ValueError("conversation_id is empty")
+            raise ValueError(
+                "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
+            )
 
         req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
@@ -125,7 +131,8 @@ class AppBuilderClient(Component):
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
         url = self.http_client.service_url_v2("/v2/app/conversation/runs")
-        response = self.http_client.session.post(url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
+        response = self.http_client.session.post(
+            url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)
         request_id = self.http_client.response_request_id(response)
         if stream:
@@ -171,16 +178,17 @@ class AgentBuilder(AppBuilderClient):
         初始化方法，用于创建一个新的实例对象。
 
         为了避免歧义，减少用户上手门槛，推荐使用该类调用AgentBuilder
-        
+
         Args:
             app_id (str): 应用程序的唯一标识符。
-        
+
         Returns:
             None
-        
+
         """
         logger.info("AgentBuilder is deprecated, please use AppBuilderClient instead")
         super().__init__(app_id)
+
 
 def _transform(inp: data_class.AppBuilderClientResponse, out: data_class.AppBuilderClientAnswer):
     out.answer = inp.answer
@@ -194,8 +202,3 @@ def _transform(inp: data_class.AppBuilderClientResponse, out: data_class.AppBuil
             detail=ev.outputs
         )
         out.events.append(event)
-
-
-
-
-

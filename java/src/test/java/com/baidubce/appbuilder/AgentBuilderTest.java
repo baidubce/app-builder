@@ -13,32 +13,34 @@ import static org.junit.Assert.*;
 
 import com.baidubce.appbuilder.console.agentbuilder.AgentBuilder;
 
-public class AgentBuilderTest {
+public class AgentBuilderTest{
     String appId;
 
     @Before
     public void setUp() {
-        System.setProperty("APPBUILDER_TOKEN", "xxx");
-        appId = "xxx";
+        System.setProperty("APPBUILDER_TOKEN", "");
+        appId = "";
     }
 
     @Test
     public void testAgentBuilder() throws IOException, AppBuilderServerException {
-        AgentBuilder agentBuilder = new AgentBuilder(appId);
-        String conversationId = agentBuilder.createConversation();
+        AgentBuilder builder = new AgentBuilder(appId);
+        String conversationId = builder.createConversation();
         assertNotNull(conversationId);
-        String fileId = agentBuilder.uploadLocalFile(conversationId, "src/test/java/com/baidubce/appbuilder/files/test.pdf");
+        String fileId = builder.uploadLocalFile(conversationId, "/path/to/file");
         assertNotNull(fileId);
-        AgentBuilderIterator itor = agentBuilder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
+        AgentBuilderIterator itor = builder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
         assertTrue(itor.hasNext());
         while (itor.hasNext()) {
             AgentBuilderResult result = itor.next();
+            System.out.println(result);
+
         }
     }
 
     @Test(expected = AppBuilderServerException.class)
     public void testCreateConversation_AppBuilderServerException() throws IOException, AppBuilderServerException {
-        AgentBuilder agentBuilder = new AgentBuilder("appId");
-        agentBuilder.createConversation();
+        AgentBuilder builder = new AgentBuilder("appId");
+        builder.createConversation();
     }
 }

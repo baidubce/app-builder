@@ -15,17 +15,22 @@ import unittest
 import appbuilder
 import os
 
-@unittest.skip("TimeOut")
+from appbuilder.core.console.rag.rag import RAG
+
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestRag(unittest.TestCase):
 
     def setUp(self):
         self.app_id = "06e3f5c9-885d-4f85-af57-97dc85ee4606"
 
     def test_rag(self):
-        rag_app = appbuilder.console.RAG(self.app_id)
+        rag_app = RAG(self.app_id)
         query = "写一个200字作文，主题关于百度AI"
         answer = rag_app.run(appbuilder.Message(query))
         self.assertIsNotNone(answer.content)
+        
+        # test debug
+        rag_app.debug(appbuilder.Message(query))
 
 
 if __name__ == '__main__':

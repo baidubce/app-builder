@@ -18,9 +18,9 @@ import requests
 import appbuilder
 from appbuilder.core.message import Message
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
-class TestPlantRecognition(unittest.TestCase):
 
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+class TestImageUnderstand(unittest.TestCase):
     def setUp(self):
         """
         设置环境变量
@@ -88,6 +88,30 @@ class TestPlantRecognition(unittest.TestCase):
                                                      origin_query="")
             next(result)
 
+    def test_run_language_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？", "language": "enx"})
+            self.image_understand.run(inp)
 
-if __name__ == '__main__':
+    def test_run_language_en(self):
+        """测试 tool 方法对无效请求的处理。"""
+        inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？", "language": "en"})
+        self.image_understand.run(inp)
+    
+    def test_run_raise(self):
+        # question is empty
+        with self.assertRaises(ValueError):
+            inp = Message(content={"raw_image": self.raw_image, "question": ""})
+            self.image_understand.run(inp)
+        
+        # question length bigger than 100
+        with self.assertRaises(ValueError):
+            question="test"*26
+            inp = Message(content={"raw_image": self.raw_image, "question": question, "language": ""})
+            self.image_understand.run(inp)
+
+
+if __name__ == "__main__":
     unittest.main()
+

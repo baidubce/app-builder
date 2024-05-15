@@ -19,7 +19,7 @@ class TestAgentRuntime(unittest.TestCase):
         self.app_id = "aa8af334-df27-4855-b3d1-0d249c61fc08"
 
     def test_agent_builder_client(self):
-        agent_builder = appbuilder.AgentBuilder(self.app_id)
+        agent_builder = appbuilder.AppBuilderClient(self.app_id)
 
     def test_agent_builder_run(self):
         # 如果app_id为空，则跳过单测执行, 避免单测因配置无效而失败
@@ -36,22 +36,20 @@ class TestAgentRuntime(unittest.TestCase):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
     
-        agent_builder = appbuilder.AppBuilderClient(self.app_id)
-        conversation_id = agent_builder.create_conversation()
-        msg = agent_builder.run(conversation_id, "你可以做什么？")
-    
-        # with tempfile.NamedTemporaryFile(suffix=".png") as fp:
-        #     # 上传植物图片
-        #     img_url = ("https://bj.bcebos.com/v1/appbuilder/test_agent_builder_tr"
-        #                "ee.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzL"
-        #                "m%2F2024-03-20T08%3A03%3A16Z%2F-1%2Fhost%2F8227f2bb97928b1957a9a6"
-        #                "c14c4e307ef195d18ec68b22764158690cecbd9fc7")
-        #     raw_image = requests.get(img_url).content
-        #     fp.write(raw_image)
-        #     file_id = agent_builder.upload_local_file(conversation_id, fp.name)
-        #     msg = agent_builder.run(conversation_id, "请识别图中的植物类别", file_ids=[file_id])
-        #     print("助理回答内容：", msg.content.answer)
-        #     fp.close()
+        builder = appbuilder.AppBuilderClient(self.app_id)
+        conversation_id = builder.create_conversation()
+        msg = builder.run(conversation_id, "你可以做什么？")
+        print(msg)
+        respid = builder.upload_local_file(conversation_id, "./data/qa_appbuilder_client_demo.pdf")
+        print(respid)
+        
+    def test_upload_local_file_raise(self):
+        builder = appbuilder.AppBuilderClient(self.app_id)
+        with self.assertRaises(ValueError):
+            builder.upload_local_file(conversation_id='', local_file_path='')
+            
+        with self.assertRaises(ValueError):
+            builder.run(conversation_id='', query='')
 
 
 if __name__ == '__main__':

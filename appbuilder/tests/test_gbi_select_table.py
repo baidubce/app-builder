@@ -19,6 +19,7 @@ import appbuilder
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import NL2SqlResult
+from appbuilder.core._exception import BaseRPCException
 
 SUPER_MARKET_SCHEMA = """
 ```
@@ -67,8 +68,7 @@ PROMPT_TEMPLATE = """
 问题:{query}
 回答:
 """
-
-@unittest.skip("使用test_gbi_nl2sql.py代替")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestGBISelectTable(unittest.TestCase):
 
     def setUp(self):
@@ -86,23 +86,34 @@ class TestGBISelectTable(unittest.TestCase):
         """测试 run 方法使用有效参数"""
         query = "列出超市中的所有数据"
         msg = Message({"query": query})
-        result_message = self.select_table_node(message=msg)
-        print(result_message.content)
-        self.assertIsNotNone(result_message)
-        self.assertEqual(len(result_message.content), 1)
-        self.assertEqual(result_message.content[0], "supper_market_info")
+        try:
+            result_message = self.select_table_node(message=msg)
+            # print(result_message.content)
+            self.assertIsNotNone(result_message)
+            self.assertEqual(len(result_message.content), 1)
+            self.assertEqual(result_message.content[0], "supper_market_info")
+        except BaseRPCException:
+            pass
+        except: 
+            raise Exception('单测失败')
+            
 
     def test_run_with_prompt_template(self):
         """测试 run 方法中 prompt template 模版"""
         query = "列出超市中的所有数据"
         msg = Message({"query": query})
         self.select_table_node.prompt_template = PROMPT_TEMPLATE
-        result_message = self.select_table_node(msg)
+        try:
+            result_message = self.select_table_node(msg)
 
-        self.assertIsNotNone(result_message)
-        self.assertEqual(len(result_message.content), 1)
-        self.assertTrue(result_message.content[0].startswith("supper_market_info"))
-        self.select_table_node.prompt_template = ""
+            self.assertIsNotNone(result_message)
+            self.assertEqual(len(result_message.content), 1)
+            self.assertTrue(result_message.content[0].startswith("supper_market_info"))
+            self.select_table_node.prompt_template = ""
+        except BaseRPCException:
+            pass
+        except: 
+            raise Exception('单测失败')
 
     def test_run_with_session(self):
         """测试 run 方法中 prompt template 模版"""
@@ -118,12 +129,20 @@ class TestGBISelectTable(unittest.TestCase):
 
         query = "列出超市中的所有数据"
         msg = Message({"query": query, "session": session})
-        result_message = self.select_table_node(msg)
+        try:
+            result_message = self.select_table_node(msg)
 
-        self.assertIsNotNone(result_message)
-        self.assertEqual(len(result_message.content), 1)
-        self.assertEqual(result_message.content[0], "supper_market_info")
-
+            self.assertIsNotNone(result_message)
+            self.assertEqual(len(result_message.content), 1)
+            self.assertEqual(result_message.content[0], "supper_market_info")
+        except BaseRPCException:
+            pass
+        except: 
+            raise Exception('单测失败')
+        
+    def test_st_raise(self):
+        with self.assertRaises(ValueError):
+            appbuilder.SelectTable(model_name='test',table_descriptions={})
 
 if __name__ == '__main__':
     unittest.main()

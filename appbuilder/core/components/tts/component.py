@@ -96,18 +96,20 @@ class TTS(Component):
                  message (obj: `Message`): 文本转语音结果. 举例: Message(content={"audio_binary": b"xxx", "audio_type": "mp3"})
         """
         if model != self.Baidu_TTS and model != self.PaddleSpeech_TTS:
-            raise InvalidRequestArgumentError("unsupported model {}".format(model))
+            raise InvalidRequestArgumentError(
+                f"unsupported model {model}, expected model in {'baidu-tts', 'paddlespeech-tts'}"
+            )
         self.model = model
         inp = TTSInMsg(**message.content)
         if len(inp.text) == 0:
-            raise InvalidRequestArgumentError("text field is empty")
+            raise InvalidRequestArgumentError("request format error, text field is empty")
         if model == self.Baidu_TTS and (stream or audio_type not in ["mp3", "wav"]):
-            raise InvalidRequestArgumentError("Baidu_TTS argument error")
+            raise InvalidRequestArgumentError("Baidu_TTS argument error, expected audio type in {'mp3', 'wav'}")
         elif model == self.PaddleSpeech_TTS:
             if stream and audio_type != "pcm":
-                raise InvalidRequestArgumentError("Invalid audio type")
+                raise InvalidRequestArgumentError("Invalid audio type, expected audio type is {'pcm'}")
             elif not stream and audio_type != "wav":
-                raise InvalidRequestArgumentError("Invalid audio type")
+                raise InvalidRequestArgumentError("Invalid audio type, expected audio type is {'wav'}")
 
         request = TTSRequest()
         request.tex = inp.text
@@ -219,4 +221,3 @@ def _iterate_chunk(request_id, response):
         raise AppBuilderServerException(request_id=request_id, message=traceback.format_exc())
     finally:
         response.close()
-

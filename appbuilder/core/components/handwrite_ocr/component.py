@@ -113,7 +113,7 @@ class HandwriteOCR(Component):
             else:
                 file_url = file_urls.get(file_name, None)
             if file_url is None:
-                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+                raise InvalidRequestArgumentError(f"request format error, file {file_name} url does not exist")
             req = HandwriteOCRRequest()
             req.url = file_url
             req.recognize_granularity = "big"
@@ -147,7 +147,7 @@ class HandwriteOCR(Component):
                        response (obj: `HandwriteOCRResponse`): 通用文字识别返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         data = HandwriteOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry

@@ -4,6 +4,8 @@ import appbuilder
 from appbuilder.core.components.text_to_image.model import (Text2ImageSubmitRequest, Text2ImageSubmitResponse,
                                                             Text2ImageQueryRequest, Text2ImageQueryResponse)
 
+from appbuilder.core._exception import RiskInputException 
+
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestText2ImageComponent(unittest.TestCase):
     def setUp(self):
@@ -102,7 +104,6 @@ class TestText2ImageComponent(unittest.TestCase):
         data = {"error_code": "ERROR", "error_msg": "Error message"}
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.text2Image.check_service_error("", data)
-    
 
 if __name__ == '__main__':
     unittest.main()

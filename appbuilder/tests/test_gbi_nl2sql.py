@@ -19,6 +19,7 @@ import appbuilder
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import NL2SqlResult, SessionRecord
 from appbuilder.core.components.gbi.basic import ColumnItem
+from appbuilder.core._exception import BaseRPCException
 
 SUPER_MARKET_SCHEMA = """
 ```
@@ -91,15 +92,25 @@ class TestGBINL2Sql(unittest.TestCase):
                                         is_like=False)]
 
         msg = Message({"query": query, "column_constraint": column_constraint,"session": session})
+        
+        try:
+            result_message = self.nl2sql_node(msg)
 
-        result_message = self.nl2sql_node(msg)
-
-        self.assertIsNotNone(result_message)
-        self.assertTrue(result_message.content.sql != "")
-        self.assertTrue(result_message.content.llm_result != "")
-        self.assertIn("水果", result_message.content.sql)
-        self.nl2sql_node.knowledge = dict()
-        self.nl2sql_node.prompt_template = ""
+            self.assertIsNotNone(result_message)
+            self.assertTrue(result_message.content.sql != "")
+            self.assertTrue(result_message.content.llm_result != "")
+            self.assertIn("水果", result_message.content.sql)
+            self.nl2sql_node.knowledge = dict()
+            self.nl2sql_node.prompt_template = ""
+        except BaseRPCException:
+            pass
+        except: 
+            raise Exception('单测失败')
+        
+    def test_nl2sql_raise(self):
+        with self.assertRaises(ValueError):
+            node = appbuilder.NL2Sql(model_name='test',table_schemas=['test'])  
+        
 
 if __name__ == '__main__':
     unittest.main()

@@ -111,11 +111,13 @@ class TTSRequest(proto.Message):
         """检查baidu-tts模型请求参数"""
         self.__validate()
         if self.per not in {0, 1, 3, 4, 5, 103, 106, 110, 111, 5003, 5118}:
-            raise ValueError("per value is illegal")
+            raise ValueError(
+                f"per value is illegal, exepcted in {0, 1, 3, 4, 5, 103, 106, 110, 111, 5003, 5118}, got {self.per}"
+            )
         if self.aue == 0:
             self.aue = 3
         if self.aue not in {3, 4, 5, 6}:
-            raise ValueError("aue value is illegal")
+            raise ValueError(f"aue value is illegal, exepect in {3, 4, 5, 6}, got {self.aue}")
 
     def validate_paddle_speech_tts(self):
         """验证参数是否合法"""
@@ -123,7 +125,7 @@ class TTSRequest(proto.Message):
         if self.aue == 0:
             self.aue = 6
         if self.aue not in {6}:
-            raise ValueError("aue value is illegal")
+            raise ValueError("aue value is illegal, expectd aue value is 6, got{}".format(self.aue))
 
 
 class TTSResponse(proto.Message):

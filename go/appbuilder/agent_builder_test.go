@@ -21,6 +21,7 @@ import (
 )
 
 func TestNewAgentBuilder(t *testing.T) {
+
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
@@ -34,7 +35,7 @@ func TestNewAgentBuilder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create conversation failed: %v", err)
 	}
-	fileID, err := agentBuilder.UploadLocalFile(conversationID, "/path/to/cv.pdf")
+	fileID, err := agentBuilder.UploadLocalFile(conversationID, "./cv.pdf")
 	if err != nil {
 		t.Fatalf("upload local file failed: %v", err)
 	}

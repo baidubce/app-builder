@@ -48,8 +48,10 @@ class HTTPClient:
         self.secret_key = secret_key if secret_key else os.getenv(
             "APPBUILDER_TOKEN", "")
         if not self.secret_key:
-            raise ValueError("secret_key is empty, please pass a nonempty secret_key "
-                             "or set a secret_key in environment variable")
+            raise ValueError(
+                "secret_key is empty, please pass a nonempty secret_key "
+                'or set a secret_key in environment variable "APPBUILDER_TOKEN"'
+            )
         if not self.secret_key.startswith("Bearer"):
             self.secret_key = "Bearer {}".format(self.secret_key)
 
@@ -165,11 +167,15 @@ class HTTPClient:
             retry = kwargs.get("retry", 0)
             if retry < 0 or not isinstance(retry, int):
                 raise InvalidRequestArgumentError(
-                    "retry must be int and bigger then zero")
+                    'Rqeuest argument "retry" format error. Expected retry >=0. Got {}'.format(
+                        retry
+                    )
+                )
             timeout = kwargs.get("timeout", None)
             if timeout and not (isinstance(timeout, float) or isinstance(timeout, tuple)):
                 raise InvalidRequestArgumentError(
-                    "timeout must be float or tuple of float")
+                    "Request argument \"timeout\" format error, Expected timeout be float or tuple of float"
+                )
             return func(*args, **kwargs)
 
         return inner

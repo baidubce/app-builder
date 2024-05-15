@@ -105,7 +105,7 @@ class Text2Image(Component):
                     else:
                         time.sleep(task_request_time)
                     task_request_time += 1
-                    
+
             img_urls = self.extract_img_urls(text2ImageQueryResponse)
             out = Text2ImageOutMessage(img_urls=img_urls)
             return Message(content=out.model_dump())
@@ -207,10 +207,10 @@ class Text2Image(Component):
         try:
             result = self.run(Message({"prompt": query}))
         except Exception as e:
-            raise AppBuilderServerException(f'绘图服务发生错误：{e}')
+            raise AppBuilderServerException(f'service error when text to image：{e}')
 
         if len(result.content['img_urls']) == 0:
-            raise RiskInputException(f'query：{query} 中可能存在敏感词')
+            raise RiskInputException(f"query：{query} may exists sensitive words")
 
         result = {
             'event': 'image',

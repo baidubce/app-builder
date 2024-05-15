@@ -41,6 +41,10 @@ class ImageUnderstandRequest(proto.Message):
         proto.STRING,
         number=3,
     )
+    output_CHN: bool = proto.Field(
+        proto.BOOL,
+        number=4
+    )
 
 
 class ImageUnderstandTask(proto.Message):
@@ -209,6 +213,7 @@ class ImageUnderstandInMsg(BaseModel):
     raw_image: bytes = b''
     url: str = ""
     question: str = ""
+    language: str = "zh-CN"
 
 
 class ImageUnderstandOutMsg(BaseModel):

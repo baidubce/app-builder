@@ -19,6 +19,8 @@ import requests
 
 import appbuilder
 from appbuilder.core.message import Message
+from appbuilder.core._exception import InvalidRequestArgumentError
+from appbuilder.core.components.mix_card_ocr.model import MixCardOCRRequest
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPlantRecognition(unittest.TestCase):
@@ -73,7 +75,34 @@ class TestPlantRecognition(unittest.TestCase):
         inp = Message(content={"raw_image": self.raw_image})
         msg = self.mix_card_ocr.run(inp)
         self.assertIsNotNone(msg.content)
-
+        
+    def test_tool_eval(self):
+        result=self.mix_card_ocr.tool_eval(name='name',streaming=False,files=['test'])
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)
+        result=self.mix_card_ocr.tool_eval(
+            name='name',
+            streaming=True,
+            file_names=['test'],
+            file_urls={'test':self.image_url}
+            )
+        res=next(result)
+        self.assertEqual(res['visible_scope'],'llm')
+        res=next(result)
+        self.assertEqual(res['visible_scope'],'user')
+        result=self.mix_card_ocr.tool_eval(
+            name='name',
+            streaming=False,
+            file_names=['test'],
+            file_urls={'test':self.image_url}
+            )
+        
+    def test_recognize_raise(self):
+        mco=appbuilder.MixCardOCR()
+        with self.assertRaises(ValueError):
+            mcor=MixCardOCRRequest()
+            mco._recognize(request=mcor)
+        
 
 if __name__ == '__main__':
     unittest.main()

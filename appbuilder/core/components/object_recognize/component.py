@@ -112,7 +112,7 @@ class ObjectRecognition(Component):
                        response (obj: `ObjectRecognitionResponse`): 通用物体与场景识别返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
 
         data = ObjectRecognitionRequest.to_dict(request)
         if self.http_client.retry.total != retry:
@@ -154,11 +154,11 @@ class ObjectRecognition(Component):
             file_urls = kwargs.get("file_urls", {})
             img_path = kwargs.get("img_name", None)
             if not img_path:
-                raise InvalidRequestArgumentError("file name is not set")
+                raise InvalidRequestArgumentError("request format error, file name is not set")
             img_name = os.path.basename(img_path)
             img_url = file_urls.get(img_name, None)
             if not img_url:
-                raise InvalidRequestArgumentError(f"file {img_name} url does not exist")
+                raise InvalidRequestArgumentError(f"request format error, file {img_name} url does not exist")
         score_threshold = kwargs.get("score_threshold", 0.5)
         req = ObjectRecognitionRequest(url=img_url)
         result = proto.Message.to_dict(self._recognize(req))
