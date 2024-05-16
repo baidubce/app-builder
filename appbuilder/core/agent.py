@@ -426,7 +426,7 @@ class AgentRuntime(BaseModel):
                 file_id = self.component.upload_local_file(conversation_id, message.elements[0].path)
                 file_ids.append(file_id)
             return self.component.run(conversation_id=conversation_id, query=message.content, file_ids=file_ids,
-                                      stream=True)
+                                    stream=True)
 
         @cl.on_chat_start
         async def start():
