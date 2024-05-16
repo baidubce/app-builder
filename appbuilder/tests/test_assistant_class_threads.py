@@ -41,9 +41,11 @@ class TestThreadCreate(unittest.TestCase):
         thr_query = appbuilder.assistant.threads.query(thread_id=thread.id)
         self.assertIsInstance(thr_query, thread_type.ThreadQueryResponse)
         
-        # test update 
+        # test update
         with self.assertRaises(TypeError):
             appbuilder.assistant.threads.update(thread_id=thread.id,metadata=123)
+        with self.assertRaises(ValueError):
+            appbuilder.assistant.threads.update(thread_id=thread.id,metadata={'finish_reason'*10:'513value'})
         with self.assertRaises(ValueError):
             appbuilder.assistant.threads.update(thread_id=thread.id,metadata={'finish_reason':'513value'*64+'A'})
         thr_update = appbuilder.assistant.threads.update(thread_id=thread.id)

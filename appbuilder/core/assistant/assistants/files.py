@@ -21,7 +21,7 @@ from typing import Optional
 from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
 
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException,HTTPConnectionException
 
 class Files(object):
     def __init__(self):
@@ -194,6 +194,8 @@ class Files(object):
             Exception: 当发生其他异常时引发此异常。
         
         """
+        if not isinstance(file_path, str):
+            raise TypeError("file_path must be str")
         if not isinstance(file_id, str):
             raise TypeError("file_id must be str")
         if file_id == "" or file_id is None:
@@ -201,19 +203,22 @@ class Files(object):
         try:
             self.query(file_id)
         except:
-            raise FileNotFoundError
+            raise FileNotFoundError("file_id {} not found".format(file_id))
         if file_path != "" and not file_path.endswith('/'):
             raise ValueError("file_path must be a file directory")
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/storage/files/download")
-        response = self._http_client.session.post(
-            url=url,
-            headers=headers,
-            json={
-                'file_id': file_id
-            },
-            timeout=timeout
-        )
+        try:
+            response = self._http_client.session.post(
+                url=url,
+                headers=headers,
+                json={
+                    'file_id': file_id
+                },
+                timeout=timeout
+            )
+        except:
+            raise HTTPConnectionException("request failed")
         self._http_client.check_response_header(response)
         
         filename=response.headers['Content-Disposition'].split("filename=")[-1]
@@ -251,6 +256,8 @@ class Files(object):
             FileNotFoundError: 当指定的文件路径不存在时引发此异常。
 
         """
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be str")
         try:
             self.query(file_id)
         except:
@@ -258,14 +265,17 @@ class Files(object):
         headers = self._http_client.auth_header()
         headers['Content-Type'] = 'application/json'
         url = self._http_client.service_url("/v2/storage/files/content")
-        response = self._http_client.session.post(
-            url=url,
-            headers=headers,
-            json={
-                'file_id': file_id
-            },
-            timeout=timeout
-        )
+        try:
+            response = self._http_client.session.post(
+                url=url,
+                headers=headers,
+                json={
+                    'file_id': file_id
+                },
+                timeout=timeout
+            )
+        except:
+            raise HTTPConnectionException("request failed")
         self._http_client.check_response_header(response)
         
         content=b''

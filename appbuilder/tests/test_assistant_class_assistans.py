@@ -116,7 +116,50 @@ class TestAssistant(unittest.TestCase):
             assistant_id = assistant.id,
         )
         self.assertIsInstance(assistant_delete, assistant_type.AssistantDeleteResponse)
-            
+        
+    def test_unmote_raise(self):
+        with self.assertRaises(TypeError):
+            appbuilder.assistant.assistants.unmount_files(
+                assistant_id = "test",
+                file_id = 123,
+            )
+        with self.assertRaises(TypeError):
+            appbuilder.assistant.assistants.unmount_files(
+                assistant_id = 123,
+                file_id = "test",
+            )
+        with self.assertRaises(ValueError):
+            appbuilder.assistant.assistants.unmount_files(
+                assistant_id = "",
+                file_id = "test",
+            )
+        with self.assertRaises(ValueError):
+            appbuilder.assistant.assistants.unmount_files(
+                assistant_id = "test",
+                file_id = "",
+            )
+
+    def test_mount_raise(self):
+        with self.assertRaises(TypeError):
+            appbuilder.assistant.assistants.mount_files(
+                assistant_id = "test",
+                file_id = 123,
+            )
+        with self.assertRaises(TypeError):
+            appbuilder.assistant.assistants.mount_files(
+                assistant_id = 123,
+                file_id = "test",
+            )
+        with self.assertRaises(ValueError):
+            appbuilder.assistant.assistants.mount_files(
+                assistant_id = "",
+                file_id = "test",
+            )
+        with self.assertRaises(ValueError):
+            appbuilder.assistant.assistants.mount_files(
+                assistant_id = "test",
+                file_id = "",
+            )
 
 if __name__ == '__main__':
     unittest.main()

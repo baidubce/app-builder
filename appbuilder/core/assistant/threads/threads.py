@@ -149,7 +149,9 @@ class Threads():
         """
         if not isinstance(metadata, dict):
             raise TypeError("Threads().update() metadata must be a dict, but got: {}".format(type(metadata)))
-        for value in metadata.values():
+        for key,value in metadata.items():
+            if len(key)>64:
+                raise ValueError("Threads().update() metadata key must be less than 64, but got: {}".format(len(key)))
             if len(value)>512:
                 raise ValueError("Threads().update() metadata value must be less than 512, but got: {}".format(len(value)))
         headers = self._http_client.auth_header()

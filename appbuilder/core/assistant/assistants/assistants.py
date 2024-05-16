@@ -297,6 +297,14 @@ class Assistants(object):
             assistant_type.AssistantFilesResponse: 助理文件列表响应对象。
         
         """
+        if not isinstance(assistant_id, str):
+            raise TypeError("assistant_id must be a string")
+        if not assistant_id:
+            raise ValueError("assistant_id can't be empty")
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be a string")
+        if not file_id:
+            raise ValueError("file_id can't be empty")
         try:
             self.files.query(file_id)
         except:
@@ -383,6 +391,14 @@ class Assistants(object):
         Returns:
             assistant_type.AssistantFilesDeleteResponse: 响应对象。
         """
+        if not isinstance(assistant_id, str):
+            raise TypeError("assistant_id must be a string")
+        if not assistant_id:
+            raise ValueError("assistant_id can't be empty")
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be a string")
+        if not file_id:
+            raise ValueError("file_id can't be empty")
         try:
             list_response=self.mounted_files_list(assistant_id, limit=2147483647)
             exist_files = False
