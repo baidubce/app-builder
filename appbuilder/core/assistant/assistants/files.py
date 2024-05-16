@@ -121,7 +121,8 @@ class Files(object):
         Raises:
             无
         """
-
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be str")
         headers = self._http_client.auth_header()
         headers['Content-Type'] = 'application/json'
         url = self._http_client.service_url("/v2/storage/files/query")
@@ -133,13 +134,18 @@ class Files(object):
             },
             timeout=None
         )
-        self._http_client.check_response_header(response)
+        try:
+            self._http_client.check_response_header(response)
 
-        request_id = self._http_client.response_request_id(response)
-        data = response.json()
+            request_id = self._http_client.response_request_id(response)
+            data = response.json()
 
-        self._http_client.check_assistant_response(request_id, data)
-        resp = assistant_type.AssistantFilesQueryResponse(**data)
+            self._http_client.check_assistant_response(request_id, data)
+            resp = assistant_type.AssistantFilesQueryResponse(**data)
+        except AssertionError:
+            raise ValueError('file_id {} is not exist'.format(file_id))
+        except TypeError:
+            raise ValueError('file_id {} is not exist'.format(file_id))
         return resp 
     
     def delete(self,

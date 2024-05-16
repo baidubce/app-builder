@@ -31,6 +31,10 @@ class TestFilesCreate(unittest.TestCase):
         self.assertIsInstance(files_list, assistant_type.AssistantFilesListResponse)
         
         # test query
+        with self.assertRaises(TypeError):
+            appbuilder.assistant.assistants.files.query(file_id=123)
+        with self.assertRaises(ValueError):
+            appbuilder.assistant.assistants.files.query(file_id="test")
         files_query = appbuilder.assistant.assistants.files.query(file_id=file.id)
         self.assertIsInstance(files_query, assistant_type.AssistantFilesQueryResponse)
         
