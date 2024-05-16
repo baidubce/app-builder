@@ -27,6 +27,74 @@ class TestAgentRuntime(unittest.TestCase):
         """
         self.app_id = "aa8af334-df27-4855-b3d1-0d249c61fc08"
 
+    def test_no_token_http(self):
+        """ 测试http """
+        component = appbuilder.Playground(
+            prompt_template="{query}",
+            model="ERNIE-3.5-8K",
+            lazy_certification=True,
+        )
+        agent = appbuilder.AgentRuntime(component=component)
+        app = agent.create_flask_app(url_rule="/chat")
+        app.config['TESTING'] = True
+        client = app.test_client()
+        
+        payload = {
+            "message": {"query": "你好"},
+            "stream": False
+        }
+        headers = {}
+        response = client.post('/chat', json=payload, headers=headers)
+        self.assertNotEqual(response.json.get('code'), 0)
+  
+    def test_err_http(self):
+        """ 测试http """
+        component = appbuilder.Playground(
+            prompt_template="{query}",
+            model="ERNIE-3.5-8K",
+            lazy_certification=True,
+        )
+        agent = appbuilder.AgentRuntime(component=component)
+        app = agent.create_flask_app(url_rule="/chat")
+        app.config['TESTING'] = True
+        client = app.test_client()
+        
+        payload = {
+            "message": {"query": "你好"},
+            "stream": False
+        }
+        headers = {
+            "X-Appbuilder-Authorization": "...",
+            "X-Appbuilder-Token": "..."
+        }
+        response = client.post('/chat', json=payload, headers=headers)
+        self.assertNotEqual(response.json.get('code'), 0)
+        
+
+    def test_http(self):
+        """ 测试http """
+        component = appbuilder.Playground(
+            prompt_template="{query}",
+            model="ERNIE-3.5-8K",
+            lazy_certification=True,
+        )
+        agent = appbuilder.AgentRuntime(component=component)
+        app = agent.create_flask_app(url_rule="/chat")
+        app.config['TESTING'] = True
+        client = app.test_client()
+        
+        payload = {
+            "message": {"query": "你好"},
+            "stream": False
+        }
+        headers = {
+            "X-Appbuilder-Authorization": os.environ.get("APPBUILDER_TOKEN", ""),
+            "X-Appbuilder-Token": os.environ.get("APPBUILDER_TOKEN", "")
+        }
+        response = client.post('/chat', json=payload, headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json.get('code'), 0)
+        
     def test_init_with_valid_component(self):
         """ 测试在component有效时运行 """
         component = Playground(
