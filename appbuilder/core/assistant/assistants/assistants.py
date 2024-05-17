@@ -101,7 +101,6 @@ class Assistants(object):
                description: Optional[str],
                instructions: Optional[str] = "",
                tools: Optional[list[assistant_type.AssistantTool]] = [],
-               created_at: Optional[int] = 0 ,
                thought_instructions: Optional[str] = "",
                chat_instructions: Optional[str] = "",
                response_format: Optional[str] = "text",
