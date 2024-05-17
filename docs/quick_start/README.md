@@ -127,3 +127,27 @@ agent = appbuilder.AgentRuntime(component=playground)
 # 启动chainlit demo，会自动在浏览器打开体验对话框页面
 agent.chainlit_demo(port=8091)
 ```
+
+也可以对AppBuilderClient进行服务化，快速部署
+
+```python
+import os
+from appbuilder.core.component import Component
+from appbuilder import (
+    AgentRuntime,
+    AppBuilderClient,
+)
+
+
+if __name__ == "__main__":
+    # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+
+    # 此处填写线上Agent应用ID，可在【AppBuilder网页端-我的应用界面】查看
+    # 本示例提供的Agent应用为：地理小达人
+    # 网页已部署的应用链接为「地理小达人」：https://appbuilder.baidu.com/s/x1tSF
+    app_id = "42eb211a-14b9-43d2-9fae-193c8760ef26"
+    agent_builder = AppBuilderClient(app_id)
+    agent = AgentRuntime(component=agent_builder)
+    agent.chainlit_agent(port=8091)
+```
