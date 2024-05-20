@@ -134,6 +134,26 @@ class Threads():
     def update(self,
                thread_id:str ,
                metadata:Optional[dict] ={} )->thread_type.ThreadUpdateResponse:
+        """
+        更新thread信息
+        
+        Args:
+            thread_id (str): 线程ID
+            metadata (Optional[dict], optional): thread元数据. Defaults to {}.
+        
+        Returns:
+            thread_type.ThreadUpdateResponse: thread更新响应
+        
+        Raises:
+            ValueError: 如果metadata不是字典类型或metadata的值超过512个字符
+        """
+        if not isinstance(metadata, dict):
+            raise TypeError("Threads().update() metadata must be a dict, but got: {}".format(type(metadata)))
+        for key,value in metadata.items():
+            if len(key)>64:
+                raise ValueError("Threads().update() metadata key must be less than 64, but got: {}".format(len(key)))
+            if len(value)>512:
+                raise ValueError("Threads().update() metadata value must be less than 512, but got: {}".format(len(value)))
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/update")
         

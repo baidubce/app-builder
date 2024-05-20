@@ -21,7 +21,7 @@ from typing import Optional
 from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
 
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException,HTTPConnectionException
 
 class Files(object):
     def __init__(self):
@@ -121,7 +121,8 @@ class Files(object):
         Raises:
             无
         """
-
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be str")
         headers = self._http_client.auth_header()
         headers['Content-Type'] = 'application/json'
         url = self._http_client.service_url("/v2/storage/files/query")
@@ -133,13 +134,18 @@ class Files(object):
             },
             timeout=None
         )
-        self._http_client.check_response_header(response)
+        try:
+            self._http_client.check_response_header(response)
 
-        request_id = self._http_client.response_request_id(response)
-        data = response.json()
+            request_id = self._http_client.response_request_id(response)
+            data = response.json()
 
-        self._http_client.check_assistant_response(request_id, data)
-        resp = assistant_type.AssistantFilesQueryResponse(**data)
+            self._http_client.check_assistant_response(request_id, data)
+            resp = assistant_type.AssistantFilesQueryResponse(**data)
+        except AssertionError:
+            raise ValueError('file_id {} is not exist'.format(file_id))
+        except TypeError:
+            raise ValueError('file_id {} is not exist'.format(file_id))
         return resp 
     
     def delete(self,
@@ -174,7 +180,7 @@ class Files(object):
     
     def download(self,
                  file_id:str,
-                 file_path:str="",
+                 file_path:str="", # 要求若文件路径不为空，需要以/结尾，默认下载到当前文件夹
                  timeout:Optional[int]=None,
                  ):
         """
@@ -189,24 +195,37 @@ class Files(object):
             None
         
         Raises:
-            FileNotFoundError: 当指定的文件路径不存在时引发此异常。
+            FileNotFoundError: 当指定的文件路径或文件不存在时引发此异常。
             OSError: 当磁盘空间不足时引发此异常。
             Exception: 当发生其他异常时引发此异常。
         
         """
+        if not isinstance(file_path, str):
+            raise TypeError("file_path must be str")
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be str")
+        if file_id == "" or file_id is None:
+            raise ValueError("file_id cannot be empty or None")
+        try:
+            self.query(file_id)
+        except:
+            raise FileNotFoundError("file_id {} not found".format(file_id))
+        if file_path != "" and not file_path.endswith('/'):
+            raise ValueError("file_path must be a file directory")
         headers = self._http_client.auth_header()
-        headers['Content-Type'] = 'application/json'
         url = self._http_client.service_url("/v2/storage/files/download")
-        response = self._http_client.session.post(
-            url=url,
-            headers=headers,
-            json={
-                'file_id': file_id
-            },
-            timeout=timeout
-        )
+        try:
+            response = self._http_client.session.post(
+                url=url,
+                headers=headers,
+                json={
+                    'file_id': file_id
+                },
+                timeout=timeout
+            )
+        except:
+            raise HTTPConnectionException("request failed")
         self._http_client.check_response_header(response)
-        request_id = self._http_client.response_request_id(response) 
         
         filename=response.headers['Content-Disposition'].split("filename=")[-1]
         file_path+=filename
@@ -221,6 +240,7 @@ class Files(object):
             raise OSError("磁盘空间不足,错误信息{}".format(e))
         except Exception as e:
             raise Exception("出现错误,错误信息{}".format(e))
+        
         
            
         
@@ -239,21 +259,30 @@ class Files(object):
         
         Raises:
             请求失败将抛出HttpError异常
-        
+            FileNotFoundError: 当指定的文件路径不存在时引发此异常。
+
         """
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be str")
+        try:
+            self.query(file_id)
+        except:
+            raise FileNotFoundError("can't find file with id {}".format(file_id))
         headers = self._http_client.auth_header()
         headers['Content-Type'] = 'application/json'
         url = self._http_client.service_url("/v2/storage/files/content")
-        response = self._http_client.session.post(
-            url=url,
-            headers=headers,
-            json={
-                'file_id': file_id
-            },
-            timeout=timeout
-        )
+        try:
+            response = self._http_client.session.post(
+                url=url,
+                headers=headers,
+                json={
+                    'file_id': file_id
+                },
+                timeout=timeout
+            )
+        except:
+            raise HTTPConnectionException("request failed")
         self._http_client.check_response_header(response)
-        request_id = self._http_client.response_request_id(response)
         
         content=b''
         for chunk in response.iter_content():
