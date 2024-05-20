@@ -59,17 +59,10 @@ import appbuilder
 os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 
 assistant = appbuilder.assistant.assistants.create(
-<<<<<<< HEAD
-	name="my_first_assistant",
-	description="你是一个热心肠的朋友，可以回答一些问题",
-	instruction="请用亲切的语气回答用户的每一个问题",
-)
-=======
 				name="my_first_assistant",
 				description="你是一个热心肠的朋友，可以回答一些问题",
 				instructions="请用亲切的语气回答用户的每一个问题",
 			)
->>>>>>> origin/new-fetch
 
 ```
 
@@ -108,16 +101,9 @@ import appbuilder
 os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 
 assistant = appbuilder.assistant.assistants.create(
-<<<<<<< HEAD
-	name="my_first_assistant",
-	description="你是一个热心肠的朋友，可以回答一些问题",
-	instruction="请用亲切的语气回答用户的每一个问题"
-)
-=======
 				name="my_first_assistant",
 				description="你是一个热心肠的朋友，可以回答一些问题",
 				instructions="请用亲切的语气回答用户的每一个问题")
->>>>>>> origin/new-fetch
 
 thread = appbuilder.assistant.threads.create()
 
