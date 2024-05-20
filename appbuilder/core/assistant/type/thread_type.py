@@ -184,8 +184,6 @@ class ThreadUpdateRequest(BaseModel):
 class ThreadUpdateResponse(BaseModel):
     id: str = ""
     object: str = ""
-    created_at: Optional[int] = 0
-    metadata: Optional[dict] = {}
 
 class AssistantThread(BaseModel):
     messages: list[AssistantMessage] = []
