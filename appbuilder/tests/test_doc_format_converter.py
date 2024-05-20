@@ -25,6 +25,9 @@ class TestDocFormatConverter(unittest.TestCase):
     def setUpClass(cls):
         pass
 
+    def setUp(self):
+        os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_DOC_FORMAT"]
+
     @classmethod
     def test_doc_format_url(cls):
         image_url = "https://ai-cape-strategy-data.bj.bcebos.com/document-restructure/1EF33F9307451C9413D5D1160.jpg"
