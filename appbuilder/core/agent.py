@@ -34,7 +34,7 @@ class AgentRuntime(BaseModel):
     AgentRuntime 是对组件调用的服务化封装，开发者不是必须要用 AgentRuntime 才能运行自己的组件服务。
     但 AgentRuntime 可以快速帮助开发者服务化组件服务，并且提供API、对话框等部署方式。
     此外，结合 Component 和 Message 自带的运行和调试接口，可以方便开发者快速获得一个调试 Agent 的服务。
-  
+
     AgentRuntime 接受两个参数:
         component (Component): 可运行的 Component, 需要实现 run(message, stream, **args) 方法  
         user_session_config (sqlalchemy.engine.URL|str|None): Session 输出存储配置字符串。默认使用 sqlite:///user_session.db
@@ -151,7 +151,7 @@ class AgentRuntime(BaseModel):
             )
             agent = appbuilder.AgentRuntime(component=component)
             agent.serve(debug=False, port=8091)
- 
+
         .. code-block:: shell
             curl --location 'http://0.0.0.0:8091/chat' \
                 --header 'Content-Type: application/json' \
@@ -221,7 +221,7 @@ class AgentRuntime(BaseModel):
             from werkzeug.exceptions import BadRequest
         except ImportError:
             raise ImportError("Flask module is not installed. Please install it using 'pip install "
-                              "flask~=2.3.2 flask-restful==0.3.9'.")
+                               "flask~=2.3.2 flask-restful==0.3.9'.")
         app = Flask(__name__)
         app.json.ensure_ascii = False
 
@@ -367,7 +367,7 @@ class AgentRuntime(BaseModel):
             import chainlit.cli
         except ImportError:
             raise ImportError("chainlit module is not installed. Please install it using 'pip install "
-                              "chainlit~=1.0.200'.")
+                            "chainlit~=1.0.200'.")
         import click
         from click.testing import CliRunner
 
@@ -383,6 +383,86 @@ class AgentRuntime(BaseModel):
             for part in stream_message.content:
                 if token := part or "":
                     await msg.stream_token(token)
+            await msg.update()
+            self.user_session._post_append()
+
+        # start chainlit service
+        if os.getenv('APPBUILDER_RUN_CHAINLIT') == '1':
+            pass
+        else:
+            os.environ['APPBUILDER_RUN_CHAINLIT'] = '1'
+            target = sys.argv[0]
+            runner = CliRunner()
+            runner.invoke(
+                chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
+
+    def chainlit_agent(self, host='0.0.0.0', port=8091):
+        """
+                将 component 服务化，提供 chainlit demo 页面
+
+                Args:
+                    host (str): 服务 host
+                    port (int): 服务 port
+
+                Returns:
+                    None
+                """
+        # lazy import chainlit
+        try:
+            import chainlit as cl
+            import chainlit.cli
+        except ImportError:
+            raise ImportError("chainlit module is not installed. Please install it using 'pip install "
+                            "chainlit~=1.0.200'.")
+        import click
+        from click.testing import CliRunner
+
+        if not isinstance(self.component, appbuilder.AppBuilderClient):
+            raise ValueError("chainlit_agent require component must be an instance of AppBuilderClient")
+        conversation_ids = []
+
+        def _chat(message: cl.Message):
+            if len(conversation_ids) == 0:
+                raise ValueError("create new conversation failed!")
+            conversation_id = conversation_ids[-1]
+            file_ids = []
+            if len(message.elements) > 0:
+                file_id = self.component.upload_local_file(conversation_id, message.elements[0].path)
+                file_ids.append(file_id)
+            return self.component.run(conversation_id=conversation_id, query=message.content, file_ids=file_ids,
+                                    stream=True)
+
+        @cl.on_chat_start
+        async def start():
+            session_id = cl.user_session.get("id")
+            request_id = str(uuid.uuid4())
+            init_context(session_id=session_id, request_id=request_id)
+            conversation_ids.append(self.component.create_conversation())
+
+        @cl.on_message  # this function will be called every time a user inputs a message in the UI
+        async def main(message: cl.Message):
+            msg = cl.Message(content="")
+            await msg.send()
+            await msg.update()
+
+            stream_message = _chat(message)
+            detail_json_list = []
+            for part in stream_message.content:
+                if token := part.answer or "":
+                    await msg.stream_token(token)
+                for event in part.events:
+                    detail = event.detail
+                    detail_json = json.dumps(detail, indent=4, ensure_ascii=False)
+                    detail_json_list.append(detail_json)
+            await msg.update()
+
+            @cl.step(name="详细信息")
+            def show_json(detail_json):
+                return "```json\n" + detail_json + "\n```"
+
+            for detail_json in detail_json_list:
+                if len(detail_json) > 2:
+                    show_json(detail_json)
             await msg.update()
             self.user_session._post_append()
 
