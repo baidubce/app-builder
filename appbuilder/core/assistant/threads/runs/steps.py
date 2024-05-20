@@ -91,5 +91,6 @@ class Steps():
         data = response.json()
         request_id = self._http_client.response_request_id(response)
         self._http_client.check_assistant_response(request_id, data)
+        print(data)
         resp = thread_type.RunStepResult(**data)
         return resp
