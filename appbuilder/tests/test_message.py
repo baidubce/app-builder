@@ -11,15 +11,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-
+import os
+import unittest
 from appbuilder.core.message import Message
 
+
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+class TestMessage(unittest.TestCase):
+    def setUp(self):
+        """
+        pass
+        """
+        pass
+
+    def test_message(self):
+        """
+        test message
+        """
+        m = Message({"query": "my message"}, name="m")
+        print(m)
+        m = Message(content={"query": "my message"}, name="m")
+        print(m)
+
 if __name__ == "__main__":
-    m = Message({"query": "my message"}, name="m")
-    print(m)
-
-    m = Message(content={"query": "my message"}, name="m")
-    print(m)
-
+    unittest.main()
