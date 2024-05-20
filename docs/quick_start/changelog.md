@@ -29,3 +29,8 @@
   * 提供Assistant SDK 功能，新增 [CookBook](/cookbooks/pipeline/assistant_function_call.ipynb)，包含流程编排与FunctionCall，搭建个性化Agent应用
   * AgentBuilder组件更名为 AppBuilderClient, 后续版本将放弃对 `AgentBuilder` 的后向兼容支持
   * 首页Readme与文档结构优化
+* **2024.05.21 v0.7.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.7.1)
+  * 更新Assistant SDK 功能，为assistants/threads/messages/runs/files模块提供了完整的增删改查api
+  * 支持AppBuilder Client通过chainlit进行可视化的服务化部署
+  * 优化SDK的报错信息提示，方便开发者进行debug
+  * 修复文档格式转换组件域名错误问题
