@@ -135,17 +135,18 @@ class Threads():
                thread_id:str ,
                metadata:Optional[dict] ={} )->thread_type.ThreadUpdateResponse:
         """
-        更新thread信息
+        更新线程信息
         
         Args:
             thread_id (str): 线程ID
-            metadata (Optional[dict], optional): thread元数据. Defaults to {}.
+            metadata (Optional[dict], optional): 线程元数据. 默认为空字典.
         
         Returns:
-            thread_type.ThreadUpdateResponse: thread更新响应
+            thread_type.ThreadUpdateResponse: 线程更新响应
         
         Raises:
-            ValueError: 如果metadata不是字典类型或metadata的值超过512个字符
+            TypeError: 如果metadata不是字典类型
+            ValueError: 如果metadata的键超过64个字符或值超过512个字符
         """
         if not isinstance(metadata, dict):
             raise TypeError("Threads().update() metadata must be a dict, but got: {}".format(type(metadata)))

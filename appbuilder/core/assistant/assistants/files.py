@@ -110,17 +110,19 @@ class Files(object):
               file_id: str,
             ) -> assistant_type.AssistantFilesQueryResponse:
         """
-        查询文件详情
+        根据文件ID查询文件信息
         
         Args:
             file_id (str): 文件ID
         
         Returns:
-            assistant_type.AssistantFilesQueryResponse: 文件详情
+            assistant_type.AssistantFilesQueryResponse: 文件查询响应对象
         
         Raises:
-            无
+            TypeError: 如果file_id不是str类型
+            ValueError: 如果file_id不存在
         """
+
         if not isinstance(file_id, str):
             raise TypeError("file_id must be str")
         headers = self._http_client.auth_header()
@@ -188,17 +190,19 @@ class Files(object):
         
         Args:
             file_id (str): 文件ID
-            file_path (str, optional): 文件保存路径，默认为空字符串。如果未指定，则使用文件名的默认值。
+            file_path (str, optional): 文件保存路径，默认为空字符串。如果未指定，则使用文件名的默认值。要求若文件路径不为空，需要以/结尾。
             timeout (Optional[int], optional): 请求超时时间，单位秒。如果未指定，则使用默认超时时间。
         
         Returns:
             None
         
         Raises:
+            TypeError: 当file_path或file_id类型不为str时引发此异常。
+            ValueError: 当file_id为空或None时，或file_path不是文件目录时引发此异常。
             FileNotFoundError: 当指定的文件路径或文件不存在时引发此异常。
             OSError: 当磁盘空间不足时引发此异常。
+            HTTPConnectionException: 当请求失败时引发此异常。
             Exception: 当发生其他异常时引发此异常。
-        
         """
         if not isinstance(file_path, str):
             raise TypeError("file_path must be str")
@@ -258,9 +262,10 @@ class Files(object):
             assistant_type.AssistantFilesContentResponse: 包含文件内容的响应对象
         
         Raises:
-            请求失败将抛出HttpError异常
-            FileNotFoundError: 当指定的文件路径不存在时引发此异常。
-
+            TypeError: 当file_id不是字符串类型时引发此异常
+            FileNotFoundError: 当指定的文件路径不存在时引发此异常
+            HTTPConnectionException: 当请求失败时引发此异常
+        
         """
         if not isinstance(file_id, str):
             raise TypeError("file_id must be str")
