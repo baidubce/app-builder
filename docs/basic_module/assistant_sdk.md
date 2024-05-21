@@ -7,9 +7,9 @@
 封装程度由高至低，提供了三种类型的SDK
 | 分类   | 场景及使用方式   | 百度云文档链接         | SDK 文档链接|
 |--------|--------|------------|------------|
-| 端到端应用 | 在 AppBuilder 产品界面上通过零代码、低代码方式创建的 AI 原生应用，支持通过应用 API/SDK 进行调用 | [应用API及SDK](https://cloud.baidu.com/doc/AppBuilder/s/Flpv3oxup) | [Agent SDK](./agent_builder.md) |
+| 端到端应用 | 在 AppBuilder 产品界面上通过零代码、低代码方式创建的 AI 原生应用，支持通过应用 API/SDK 进行调用 | [应用API及SDK](https://cloud.baidu.com/doc/AppBuilder/s/Flpv3oxup) | [Agent SDK](./appbuilder_client.md) |
 | 代码态智能体 | 基于 Assistants API，可通过全代码形式创建和调试专属智能体（Agent） | [AssistantAPI](https://cloud.baidu.com/doc/AppBuilder/s/nluzkdben) | *当前文档* |
-| 工具组件 | 基于组件 SDK，可调用包括大模型组件、AI能力组件等在内的多种组件 | [组件SDK](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz) | [组件列表](../appbuilder/core/components) |
+| 工具组件 | 基于组件 SDK，可调用包括大模型组件、AI能力组件等在内的多种组件 | [组件SDK](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz) | [组件列表](/appbuilder/core/components/) |
 
 Assistants API/SDK 正在内测中，敬请期待公测版本。
 
@@ -292,5 +292,5 @@ msg_files = appbuilder.assistant.threads.messages.files(
 ## 进阶用法
 
 - [Assistant SDK 数据类型文档](./assistant_type.md)
-- [Assistant SDK 基础能力CookBook](../cookbooks/assistant_function_call.ipynb)
+- [Assistant SDK 基础能力CookBook](/cookbooks/pipeline/assistant_function_call.ipynb)
 
