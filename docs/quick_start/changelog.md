@@ -30,7 +30,7 @@
   * AgentBuilder组件更名为 AppBuilderClient, 后续版本将放弃对 `AgentBuilder` 的后向兼容支持
   * 首页Readme与文档结构优化
 * **2024.05.21 v0.7.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.7.1)
-  * 更新Assistant SDK 功能，为assistants/threads/messages/runs/files模块提供了完整的增删改查api
+  * 更新Assistant SDK 功能，为assistants/threads/messages/runs/files模块提供了完整的增删改查api, 新增`appbuilder.AssistantEventHandler`与`appbuilder.assistant.threads.runs.stream_run_with_handler`方法，更好的支持Assistant的流式调用
   * 支持AppBuilder Client通过chainlit进行可视化的服务化部署
   * 优化SDK的报错信息提示，方便开发者进行debug
-  * 修复文档格式转换组件域名错误问题
+  * 修复文档格式转换组件的域名错误问题
