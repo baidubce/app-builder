@@ -364,18 +364,21 @@ class AgentRuntime(BaseModel):
         app.run(host=host, debug=debug, port=port)
 
     def prepare_chainlit_readme(self):
-        # 获取当前python命令执行的路径，而不是文件的位置
-        cwd_path = os.getcwd()
-        # 获取当前文件的路径所在文件夹
-        current_file_path = os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__)))
-        chainlit_readme_path = os.path.join(
-            current_file_path, "utils", "chainlit.md")
+        try:
+            # 获取当前python命令执行的路径，而不是文件的位置
+            cwd_path = os.getcwd()
+            # 获取当前文件的路径所在文件夹
+            current_file_path = os.path.dirname(
+                os.path.dirname(os.path.abspath(__file__)))
+            chainlit_readme_path = os.path.join(
+                current_file_path, "utils", "chainlit.md")
 
-        # 拷贝chainlit_readme到cwd_path
-        # 如果cwd_path下已经存在chainlit_readme，则不拷贝
-        if not os.path.exists(os.path.join(cwd_path, "chainlit.md")):
-            shutil.copy(chainlit_readme_path, cwd_path)
+            # 拷贝chainlit_readme到cwd_path
+            # 如果cwd_path下已经存在chainlit_readme，则不拷贝
+            if not os.path.exists(os.path.join(cwd_path, "chainlit.md")):
+                shutil.copy(chainlit_readme_path, cwd_path)
+        except:
+            logger.error("Failed to copy chainlit.md to current directory")
 
     def chainlit_demo(self, host='0.0.0.0', port=8091):
         """
