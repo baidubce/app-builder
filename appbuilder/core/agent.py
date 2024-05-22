@@ -27,6 +27,7 @@ from appbuilder.core.context import init_context
 from appbuilder.core.user_session import UserSession
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
+from appbuilder.utils.logger_util import logger
 
 
 class AgentRuntime(BaseModel):
@@ -398,15 +399,15 @@ class AgentRuntime(BaseModel):
 
     def chainlit_agent(self, host='0.0.0.0', port=8091):
         """
-                将 component 服务化，提供 chainlit demo 页面
+        将 appbuilder client 服务化，提供 chainlit demo 页面
 
-                Args:
-                    host (str): 服务 host
-                    port (int): 服务 port
+        Args:
+            host (str): 服务 host
+            port (int): 服务 port
 
-                Returns:
-                    None
-                """
+        Returns:
+            None
+        """
         # lazy import chainlit
         try:
             import chainlit as cl
@@ -459,7 +460,6 @@ class AgentRuntime(BaseModel):
             @cl.step(name="详细信息")
             def show_json(detail_json):
                 return "```json\n" + detail_json + "\n```"
-
             for detail_json in detail_json_list:
                 if len(detail_json) > 2:
                     show_json(detail_json)
