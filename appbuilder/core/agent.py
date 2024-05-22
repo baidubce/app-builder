@@ -291,30 +291,27 @@ class AgentRuntime(BaseModel):
                         with app.app_context():
                             try:
                                 content_iterator = iter(stream_message.content)
-                                prev_content = next(content_iterator)
-                                prev_result = copy.deepcopy(stream_message)
-                                prev_result.content = prev_content
+                                result = None
                                 for sub_content in content_iterator:
+                                    result = copy.deepcopy(stream_message)
+                                    result.content = sub_content
                                     logging.info(
-                                        f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
+                                        f"[request_id={request_id}, session_id={session_id}] streaming_result={result}")
                                     yield "data: " + json.dumps({
                                         "code": 0, "message": "",
                                         "result": {
                                             "session_id": session_id,
                                             "is_completion": False,
-                                            "answer_message": json.loads(prev_result.json(exclude_none=True))
+                                            "answer_message": json.loads(result.json(exclude_none=True))
                                         }
                                     }, ensure_ascii=False) + "\n\n"
-                                    prev_result = copy.deepcopy(stream_message)
-                                    prev_result.content = sub_content
-                                logging.info(
-                                    f"[request_id={request_id}, session_id={session_id}] streaming_result={prev_result}")
+                                result.content = ""
                                 yield "data: " + json.dumps({
                                     "code": 0, "message": "",
                                     "result": {
                                         "session_id": session_id,
                                         "is_completion": True,
-                                        "answer_message": json.loads(prev_result.json(exclude_none=True))
+                                        "answer_message": json.loads(result.json(exclude_none=True))
                                     }
                                 }, ensure_ascii=False) + "\n\n"
                                 self.user_session._post_append()
