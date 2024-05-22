@@ -219,8 +219,8 @@ class RequiredAction(BaseModel):
 
 
 class LastError(BaseModel):
-    type: str = ""
-    message: str = ""
+    type: Optional[str] = ""
+    message: Optional[str] = ""
 
 class FinalAnswerMessage(BaseModel):
     message_id: Optional[str] = ""
@@ -288,7 +288,7 @@ class RunStepResult(BaseModel):
     cancelled_at: Optional[int] = 0
     failed_at: Optional[int] = 0
     completed_at: Optional[int] = 0
-    last_error: Union[LastError, str] = ""
+    last_error: Union[LastError, str, None] = None
     type: Optional[str] = 'null'
     step_datail: Union[RunStepDetail, None] = None
 

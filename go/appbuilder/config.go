@@ -72,7 +72,7 @@ func (t *SDKConfig) AuthHeaderV2() http.Header {
 func (t *SDKConfig) authHeader() http.Header {
 	header := make(http.Header)
 	header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
-	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.7.0\",\"appbuilder_sdk_language\":\"go\"}")
+	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.7.1\",\"appbuilder_sdk_language\":\"go\"}")
 	header.Set("X-Appbuilder-Request-Id", uuid.New().String())
 	return header
 }
