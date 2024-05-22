@@ -101,7 +101,6 @@ class Assistants(object):
                description: Optional[str],
                instructions: Optional[str] = "",
                tools: Optional[list[assistant_type.AssistantTool]] = [],
-               created_at: Optional[int] = 0 ,
                thought_instructions: Optional[str] = "",
                chat_instructions: Optional[str] = "",
                response_format: Optional[str] = "text",
@@ -297,6 +296,18 @@ class Assistants(object):
             assistant_type.AssistantFilesResponse: 助理文件列表响应对象。
         
         """
+        if not isinstance(assistant_id, str):
+            raise TypeError("assistant_id must be a string")
+        if not assistant_id:
+            raise ValueError("assistant_id can't be empty")
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be a string")
+        if not file_id:
+            raise ValueError("file_id can't be empty")
+        try:
+            self.files.query(file_id)
+        except:
+            raise FileNotFoundError("can't find file with id {}".format(file_id))
         
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/assistants/files")
@@ -379,7 +390,25 @@ class Assistants(object):
         Returns:
             assistant_type.AssistantFilesDeleteResponse: 响应对象。
         """
-        
+        if not isinstance(assistant_id, str):
+            raise TypeError("assistant_id must be a string")
+        if not assistant_id:
+            raise ValueError("assistant_id can't be empty")
+        if not isinstance(file_id, str):
+            raise TypeError("file_id must be a string")
+        if not file_id:
+            raise ValueError("file_id can't be empty")
+        try:
+            list_response=self.mounted_files_list(assistant_id, limit=2147483647)
+            exist_files = False
+            for data in list_response.data:
+                if data.id == file_id:
+                    exist_files = True
+                    break
+            if exist_files == False:
+                raise FileNotFoundError
+        except:
+            raise FileNotFoundError("can't find file with id {}".format(file_id))
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/assistants/files/delete")
         

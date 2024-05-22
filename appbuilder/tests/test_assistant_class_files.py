@@ -31,18 +31,37 @@ class TestFilesCreate(unittest.TestCase):
         self.assertIsInstance(files_list, assistant_type.AssistantFilesListResponse)
         
         # test query
+        with self.assertRaises(TypeError):
+            appbuilder.assistant.assistants.files.query(file_id=123)
+        with self.assertRaises(ValueError):
+            appbuilder.assistant.assistants.files.query(file_id="test")
         files_query = appbuilder.assistant.assistants.files.query(file_id=file.id)
         self.assertIsInstance(files_query, assistant_type.AssistantFilesQueryResponse)
         
         # test content
+        with self.assertRaises(TypeError):
+            appbuilder.assistant.assistants.files.content(file_id=123)
+        with self.assertRaises(FileNotFoundError):
+            appbuilder.assistant.assistants.files.content(file_id='test_not_exist')
         files_content=appbuilder.assistant.assistants.files.content(file_id=file.id)
         self.assertIsInstance(files_content, assistant_type.AssistantFilesContentResponse)
         self.assertIsInstance(files_content.content, bytes)
         
         # test download
+        with self.assertRaises(TypeError):
+            appbuilder.assistant.assistants.files.download(file_id='test', file_path=123)
+        with self.assertRaises(TypeError):
+            appbuilder.assistant.assistants.files.download(file_id=123, file_path="./data/")
+        with self.assertRaises(FileNotFoundError):
+            appbuilder.assistant.assistants.files.download(file_id='test_not_exist', file_path="./data/")
+        with self.assertRaises(ValueError):
+            appbuilder.assistant.assistants.files.download(file_id='', file_path="./data/")
         with self.assertRaises(FileNotFoundError):
             appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/data/")
+        with self.assertRaises(ValueError):
+            appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/test")
         appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/")
+
         
         # test delete
         files_delete = appbuilder.assistant.assistants.files.delete(file_id=file.id)

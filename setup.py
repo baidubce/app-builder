@@ -25,12 +25,19 @@ from setuptools import setup, find_packages
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
+packages = find_packages()
+package_data = {}
+for package in packages:
+    if package.startswith('appbuilder.utils'):
+        package_data[package] = ["*.md"]
+
 setup(
     name='appbuilder-sdk',
-    version='0.7.0', #NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
+    version='0.7.1', #NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
     author='dongdaxiang',
     author_email='dongdaxiang@baidu.com',
-    packages=find_packages(),
+    packages=packages,
+    package_data=package_data,
     install_requires=requirements,
     python_requires='>=3.9',
     extras_require={

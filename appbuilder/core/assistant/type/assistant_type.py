@@ -103,7 +103,6 @@ class AssistantCreateResponse(BaseModel):
     response_format: Optional[ResponseFormat] = Field(default=ResponseFormat.TEXT)  # 响应格式
     file_ids: Optional[list[str]] = Field(default=[])  # 关联文件的ID列表
     metadata: Optional[dict] = Field(default={}, max_length=16)  # 元数据
-    assistant_id: str = ""  # 助理ID
 
 class AssistantUpdateRequest(BaseModel):
     assistant_id: Optional[str] = ""  # 助理ID
@@ -119,7 +118,7 @@ class AssistantUpdateRequest(BaseModel):
     metadata: dict = Field(default={}, max_length=16)  # 元数据
     
 class AssistantUpdateResponse(BaseModel):
-    assistant_id: Optional[str] = ""  # 助理ID
+    id: Optional[str] = ""  # 助理ID
     model: Optional[str] = ""  # 助理对象标识
     name: Optional[str] = ""  # 助理名称
     description: Optional[str] = ""  # 助理描述

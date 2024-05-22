@@ -17,11 +17,16 @@ import os
 
 import appbuilder
 
+
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDocFormatConverter(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         pass
+
+    def setUp(self):
+        os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_DOC_FORMAT"]
 
     @classmethod
     def test_doc_format_url(cls):
