@@ -1,10 +1,12 @@
 import os
 import sys
+import json
 import subprocess
 import unittest
 import pydantic
 import appbuilder
 from appbuilder.core.component import Component
+from appbuilder.utils.sse_util import SSEClient
 from appbuilder import (
     AgentRuntime,
     Message,
@@ -13,7 +15,7 @@ from appbuilder import (
 )
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
@@ -69,8 +71,35 @@ class TestAgentRuntime(unittest.TestCase):
         }
         response = client.post('/chat', json=payload, headers=headers)
         self.assertNotEqual(response.json.get('code'), 0)
-        
 
+    def test_stream_http(self):
+        """ 测试http """
+        component = appbuilder.Playground(
+            prompt_template="{query}",
+            model="ERNIE-3.5-8K",
+            lazy_certification=True,
+        )
+        agent = appbuilder.AgentRuntime(component=component)
+        app = agent.create_flask_app(url_rule="/chat")
+        app.config['TESTING'] = True
+        client = app.test_client()
+        
+        payload = {
+            "message": {"query": "你好"},
+            "stream": True
+        }
+        headers = {
+            "X-Appbuilder-Authorization": os.environ.get("APPBUILDER_TOKEN", ""),
+            "X-Appbuilder-Token": os.environ.get("APPBUILDER_TOKEN", "")
+        }
+        response = client.post('/chat', json=payload, headers=headers)
+        for e in response.text.split("\n\n"):
+            data_str = e.strip()
+            if data_str:
+                data_str = data_str[len("data: "):]
+                data = json.loads(data_str)
+                self.assertEqual(data.get('code'), 0)
+        
     def test_http(self):
         """ 测试http """
         component = appbuilder.Playground(
