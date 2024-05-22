@@ -1,10 +1,10 @@
 # 开发指引
 
 ## 二次开发
-当前面向开发者提供开放的数据结构，包括Message和Component，方便开发者融入个人已有的大模型应用程序。此部分仍在不断建设中。
+当前已集成Python版本AppBuilder-SDK 0.7.1及相关依赖，方便开发者融入个人已有的大模型应用程序。此部分仍在不断建设中。
 二次开发可以采用官方提供的开发镜像，便于快速安装各种依赖库。
 ``` shell
-docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.1.0
+docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.7.1
 ```
 
 ### 消息(Message)
