@@ -1,16 +1,16 @@
-# 口语化Query生成（OralQueryGeneration）
+# 口语化Query生成（Oral Query Generation）
 
 ## 简介
-口语化Query生成组件（OralQueryGeneration）可以基于输入文本生成与文档内容相关的Query。
+口语化Query生成组件（Oral Query Generation）可以基于输入文本生成与文档内容相关的Query。
 
 ### 功能介绍
 基于输入文本生成与文档内容相关的Query。
 
 ### 特色优势
-生成高质量Query。
+生成的query划分为问题和短语两种类型，可分别用于不同场景。
 
 ### 应用场景
-可用于文档生成推荐问题、文档索引增强等。
+可用于推荐问题生成、标签生成、文档索引增强等。
 
 ## 基本用法
 ### 快速开始
@@ -27,7 +27,7 @@ text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
         '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
         '，实时视频分享您的生活。')
 oral_query_generation = appbuilder.OralQueryGeneration(model='ERNIE Speed-AppBuilder')
-result = oral_query_generation(appbuilder.Message(text))
+result = oral_query_generation(appbuilder.Message(text), query_type='全部', output_format='str')
 print(result)
 ```
 
@@ -53,6 +53,8 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 | 参数名称 | 参数类型 | 是否必须 | 描述 | 示例值 |
 | ------- | ------- | -------- | -------- | -------- |
 | `message` | obj | 是 | 输入消息，用于模型的主要输入内容。 | Message(content='...') |
+| `query_type` | str | 否 | 待生成的query类型，包括问题、短语和全部（问题+短语）。默认为全部。 | 全部 |
+| `output_format` | str | 否 | 输出格式，包括json和str。默认为str。 | str |
 | `stream` | bool | 否 | 指定是否以流式形式返回响应。默认为 False。 | False |
 | `temperature` | float | 否 | 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。 | 0.1 |
 
@@ -78,11 +80,19 @@ Message(name=msg, content=1、OPPO Reno5上的超级防抖
 ## 高级用法
 
 ## 更新记录和贡献
-### 2023.12.07
-#### [Added]
-- 增加口语化Query生成能力。
-- 增加口语化Query生成单元测试。
+### 2024.5.22
+#### [Updated]
+- 升级能力，主要升级内容如下：
+  - 生成的query要求能够使用输入文本进行回答。
+  - 生成的query划分为问题和短语类型。
+  - 生成的query数量不再限制为10个。
+- 在调用组件时，支持输出问题、短语或全部（问题 + 短语）；支持输出格式为json或者str（兼容之前版本的输出格式）。
 
 ### 2024.1.24
 #### [Updated]
 - 更新README。
+
+### 2023.12.07
+#### [Added]
+- 增加口语化Query生成组件。
+- 增加口语化Query生成组件单元测试。

@@ -64,6 +64,7 @@ from .core.components.llms.query_rewrite import QueryRewrite
 from .core.components.llms.dialog_summary import DialogSummary
 from .core.components.llms.is_complex_query import IsComplexQuery
 from .core.components.llms.query_decomposition import QueryDecomposition
+from .core.components.llms.hallucination_detection import HallucinationDetection
 from .core.components.llms.playground import Playground
 
 from .core.components.asr.component import ASR
@@ -164,6 +165,7 @@ __all__ = [
     "BaiduVDBVectorStoreIndex",
     "BaiduVDBRetriever",
     "TableParams",
+    "HallucinationDetection",
 
     'DishRecognition',
     'Translation',
