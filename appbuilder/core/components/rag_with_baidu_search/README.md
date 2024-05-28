@@ -127,16 +127,21 @@ print(result)
 
 ### 返回参数说明
 
-返回的message中extra字段包含了BaiduSearch结果，具体字段说明如下：
+返回的message中具体字段说明如下：
 
-| 字段        | 字段说明   |
-|-----------|--------|
-| content   | 网页内容摘要 |
-| url       | 网页链接   |
-| ref_id    | 序号     |
-| title     | 标题     |
-| icon      | 网站图标   |
-| site_name | 网站名    |
+| 字段            | 字段说明   |
+|---------------|--------|
+| name          | 名称     | 
+| mtype         | 类型     | 
+| content       | 内容     |  
+| extra         | 引用     | 
+| +search_baidu | 百度搜索结果 |
+| ++content     | 网页内容摘要 |
+| ++url         | 网页链接   |
+| ++ref_id      | 序号     |
+| ++title       | 标题     |
+| ++icon        | 网站图标   |
+| ++site_name   | 网站名    |
 
 
 ### 典型返回样例
