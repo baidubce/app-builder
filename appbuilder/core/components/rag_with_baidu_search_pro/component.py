@@ -1,10 +1,16 @@
-# -*- coding: utf-8 -*-
-"""
-@time :    22.5.24  AM11:52
-@File:     _component
-@Author :  baiyuchen
-@Version:  python3.8
-"""
+# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import json
 from typing import Optional
 from pydantic import Field
@@ -13,6 +19,19 @@ from appbuilder.core.message import Message
 from appbuilder.core.utils import ModelInfo, ttl_lru_cache
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.rag_with_baidu_search_pro.parse_rag_pro_response import ParseRagProResponse
+from pydantic import BaseModel, Field, conint, confloat
+from typing import Optional
+
+
+class RagWithBaiduSearchProRequest(BaseModel):
+    message: object
+    stream: bool = False
+    instruction: str
+    model: Optional[str] = None
+    temperature: confloat(ge=0, le=1) = Field(1e-10, description="temperature范围在0到1之间")
+    top_p: confloat(ge=0, le=1) = Field(1e-10, description="top_p范围在0到1之间")
+    search_top_k: conint(ge=1) = Field(4, description="search_top_k必须是大于等于1的整数")
+    hide_corner_markers: bool = True
 
 
 class RagWithBaiduSearchProArgs(ComponentArguments):
@@ -70,22 +89,23 @@ class RagWithBaiduSearchPro(Component):
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
 
-        req_dict = {
-            "message": [{
-                "role": "user",
-                "content": message.content
-            }],
-            "instruction": instruction.content if instruction else "",
-            "search_top_k": search_top_k,
-            "stream": stream,
-            "hide_corner_markers": hide_corner_markers,
-            "model": self.model,
-            "temperature": temperature,
-            "top_p": top_p
-        }
-        payload = json.dumps(req_dict)
+        req = RagWithBaiduSearchProRequest(
+            message=[
+                {
+                    "role": "user",
+                    "content": message.content
+                }
+            ],
+            stream=stream,
+            instruction=instruction.content if instruction else "",
+            model=self.model,
+            temperature=temperature,
+            top_p=top_p,
+            search_top_k=search_top_k,
+            hide_corner_markers=hide_corner_markers
+        )
         server_url = self.http_client.service_url(sub_path=self.server_sub_path)
-        response = self.http_client.session.post(url=server_url, headers=headers, data=payload, stream=stream)
+        response = self.http_client.session.post(url=server_url, headers=headers, json=req.model_dump(), stream=stream)
         self.http_client.check_response_header(response)
 
         return ParseRagProResponse(response, stream).to_message()
