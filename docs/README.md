@@ -17,6 +17,7 @@
     - [交互式服务](./service/chainlit.md)
     - [公有云部署](./service/cloud.md)
 - [二次开发](./develop_guide/README.md)
+    - [AppBuilder SDK 运行环境超参配置说明](./develop_guide/env.md)
 
 
 ## 平台文档
