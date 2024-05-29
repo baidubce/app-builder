@@ -20,7 +20,7 @@
 
 下面是身份证混贴识别的代码示例：
 
-示例图片为：![示例图片](./image/test_mix_card_ocr.jpeg)
+示例图片为：![示例图片](https://bj.bcebos.com/v1/appbuilder/test_mix_card_ocr.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T06%3A18%3A11Z%2F-1%2Fhost%2F695b8041c1ded194b9e80dbe1865e4393da5a3515e90d72d81ef18296bd29598)
 
 ```python
 import os
