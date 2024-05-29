@@ -60,12 +60,32 @@ class TestOralQueryGenerationComponent(unittest.TestCase):
         self.assertIsNotNone(answer)
         print(f'\n[result]\n{answer.content}\n')
 
+    def test_run_with_phrase_output_and_str_output(self):
+        """测试 run 方法，输出query类型为短语，输出格式为str
+        """
+        text = TEST_TEXT
+        msg = appbuilder.Message(text)
+        answer = self.query_generation(msg, query_type='短语', output_format='str')
+        # print(answer)
+        self.assertIsNotNone(answer)
+        print(f'\n[result]\n{answer.content}\n')
+
     def test_run_with_stream_and_temperature(self):
         """测试不同的 stream 和 temperature 参数值
         """
         text = TEST_TEXT
         msg = appbuilder.Message(text)
         answer = self.query_generation(msg, stream=False, temperature=0.5)
+        # print(answer)
+        self.assertIsNotNone(answer)
+        print(f'\n[result]\n{answer.content}\n')
+
+    def test_run_with_ultra_long_input(self):
+        """测试大模型执行报错
+        """
+        text = TEST_TEXT * 100
+        msg = appbuilder.Message(text)
+        answer = self.query_generation(msg)
         # print(answer)
         self.assertIsNotNone(answer)
         print(f'\n[result]\n{answer.content}\n')

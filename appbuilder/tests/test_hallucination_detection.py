@@ -15,6 +15,8 @@ import os
 import unittest
 import appbuilder
 
+from appbuilder.core._exception import AppBuilderServerException
+
 
 TEST_QUERY = '澳门新麻蒲烤肉店每天开门吗？'
 TEST_CONTEXT = \
@@ -62,6 +64,30 @@ class TestHallucinationDetectionComponent(unittest.TestCase):
         msg = appbuilder.Message({'query': query, 'context': context, 'answer': answer})
         answer = self.hallucination_detection(msg)
         # print(answer)
+        self.assertIsNotNone(answer)
+        print(f'\n[result]\n{answer.content}\n')
+
+    def test_run_with_stream_and_temperature(self):
+        """测试不同的 stream 和 temperature 参数值
+        """
+        query = TEST_QUERY
+        context = TEST_CONTEXT
+        answer = TEST_ANSWER
+        msg = appbuilder.Message({'query': query, 'context': context, 'answer': answer})
+        answer = self.hallucination_detection(msg, stream=False, temperature=0.5)
+        # print(answer)
+        self.assertIsNotNone(answer)
+        print(f'\n[result]\n{answer.content}\n')
+
+    def test_run_with_ultra_long_input(self):
+        """测试大模型执行报错
+        """
+        query = TEST_QUERY
+        context = TEST_CONTEXT * 100
+        answer = TEST_ANSWER
+        msg = appbuilder.Message({'query': query, 'context': context, 'answer': answer})
+        answer = self.hallucination_detection(msg)
+        print(answer)
         self.assertIsNotNone(answer)
         print(f'\n[result]\n{answer.content}\n')
 

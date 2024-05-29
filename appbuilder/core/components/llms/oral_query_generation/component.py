@@ -140,6 +140,8 @@ class OralQueryGeneration(CompletionBaseComponent):
         """
         兼容老版本的输出格式
         """
+        if model_output is None:
+            return None
         # print(model_output)
         
         match_obj = re.search(r'```json\n(.+)\n```', model_output, flags=re.DOTALL)
