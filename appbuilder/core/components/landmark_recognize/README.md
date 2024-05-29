@@ -17,7 +17,7 @@
 
 下面是地标识别的代码示例：
 
-示例图片为：![示例图片](./image/landmark_test.jpeg)
+示例图片为：![示例图片](https://bj.bcebos.com/v1/appbuilder/landmark_test.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A59%3A56Z%2F-1%2Fhost%2Fc249a068c6f321b91da0d0fd629b26ded58dcac2b6a3674f32378f5eb8df1ed0)
 
 ```python
 import os

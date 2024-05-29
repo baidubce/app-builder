@@ -19,7 +19,7 @@
 
 下面是手写文字识别的代码示例：
 
-示例图片为 ![示例图片](./image/test_handwrite_ocr.jpg)
+示例图片为 ![示例图片](https://bj.bcebos.com/v1/appbuilder/test_handwrite_ocr.jpg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-23T11%3A58%3A09Z%2F-1%2Fhost%2F677f93445fb65157bee11cd492ce213d5c56e7a41827e45ce7e32b083d195c8b)
 
 ```python
 import os

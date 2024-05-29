@@ -21,7 +21,8 @@
 
 示例图片为
 
-![示例图片](./image/doc_enhance_test.png)
+![示例图片](https://bj.bcebos.com/v1/appbuilder/doc_enhance_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A51%3A09Z%2F-1%2Fhost%2F2020d2433da471b40dafa933d557a1ebe8abf28df78010f865e45dfcd6dc3951)
+
 
 ```python
 import os
