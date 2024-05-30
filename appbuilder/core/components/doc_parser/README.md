@@ -189,7 +189,7 @@ class Table(BaseModel):
 ```
 表格解析结构说明, 以下图为例：
 
-<img width="512" alt="image" src="./image/table.png">
+<img width="512" alt="image" src="https://bj.bcebos.com/v1/appbuilder-sdk-components/table.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-05-30T03%3A09%3A32Z%2F-1%2Fhost%2Fb36695708e047713b5fe17b49733228aecdaf46322a5cec8d4e7bd0989032197">
 
 ```python
 # cells中一共有26个元素，matrix中的每一个元素代表单元格在cells中的索引
