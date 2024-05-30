@@ -110,7 +110,7 @@ class OralQueryGeneration(CompletionBaseComponent):
             answer = oral_query_generation(appbuilder.Message(text), query_type='全部', output_format='str')
             print(answer.content)
     """
-    name = 'oral_query_generation'
+    name = 'query_generation'
     version = 'v1'
     meta = OralQueryGenerationArgs
 
