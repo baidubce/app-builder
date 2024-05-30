@@ -104,7 +104,7 @@ class ObjectRecognition(Component):
         return Message(content=out.model_dump())
 
     def _recognize(self, request: ObjectRecognitionRequest, timeout: float = None,
-                  retry: int = 0) -> ObjectRecognitionResponse:
+                  retry: int = 0, request_id: str = None) -> ObjectRecognitionResponse:
         r"""调用底层接口进行通用物体与场景识别
                    参数:
                        request (obj: `ObjectRecognitionRequest`) : 通用物体与场景识别输入参数
@@ -117,7 +117,7 @@ class ObjectRecognition(Component):
         data = ObjectRecognitionRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v2/advanced_general")
         response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
@@ -149,6 +149,7 @@ class ObjectRecognition(Component):
         """
         object_recognize for function call
         """
+        traceid = kwargs.get("traceid")
         img_url = kwargs.get("img_url", None)
         if not img_url:
             file_urls = kwargs.get("file_urls", {})
@@ -161,7 +162,7 @@ class ObjectRecognition(Component):
                 raise InvalidRequestArgumentError(f"request format error, file {img_name} url does not exist")
         score_threshold = kwargs.get("score_threshold", 0.5)
         req = ObjectRecognitionRequest(url=img_url)
-        result = proto.Message.to_dict(self._recognize(req))
+        result = proto.Message.to_dict(self._recognize(req, traceid))
         results = []
         for item in result["result"]:
             if item["score"] < score_threshold and len(results) > 0:

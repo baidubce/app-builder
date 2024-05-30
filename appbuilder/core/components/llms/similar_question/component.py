@@ -95,7 +95,7 @@ class SimilarQuestion(CompletionBaseComponent):
         super().__init__(
                 SimilarQuestionMeta, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
-    def run(self, message, stream=False, temperature=1e-10, top_p=0.0):
+    def run(self, message, stream=False, temperature=1e-10, top_p=0.0, request_id=None):
         """
         给定输入（message）到模型运行，同时指定运行参数，并返回结果。
 
@@ -108,12 +108,13 @@ class SimilarQuestion(CompletionBaseComponent):
         返回:
             obj:`Message`: 模型运行后的输出消息。
         """
-        return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p)
+        return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p, request_id=request_id)
 
     def tool_eval(self, name: str, streaming: bool = False, **kwargs):
         """
         tool_eval for function call
         """
+        traceid = kwargs.get("traceid")
         query = kwargs.get("query", None)
         if not query:
             raise ValueError("param `query` is required")
@@ -121,7 +122,7 @@ class SimilarQuestion(CompletionBaseComponent):
         model_configs = kwargs.get('model_configs', {})
         temperature = model_configs.get("temperature", 1e-10)
         top_p = model_configs.get("top_p", 0.0)
-        message = super().run(message=msg, stream=False, temperature=temperature, top_p=top_p)
+        message = super().run(message=msg, stream=False, temperature=temperature, top_p=top_p, request_id=traceid)
 
         if streaming:
             yield str(message.content)

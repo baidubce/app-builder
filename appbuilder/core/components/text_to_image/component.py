@@ -63,8 +63,16 @@ class Text2Image(Component):
     ]
 
     @HTTPClient.check_param
-    def run(self, message: Message, width: int = 1024, height: int = 1024, image_num: int = 1,
-            timeout: float = None, retry: int = 0):
+    def run(
+        self,
+        message: Message,
+        width: int = 1024,
+        height: int = 1024,
+        image_num: int = 1,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None
+    ):
         """
         输入文本并返回生成的图片url。
 
@@ -85,7 +93,7 @@ class Text2Image(Component):
         text2ImageSubmitRequest.width = width
         text2ImageSubmitRequest.height = height
         text2ImageSubmitRequest.image_num = image_num
-        text2ImageSubmitResponse = self.submitText2ImageTask(text2ImageSubmitRequest)
+        text2ImageSubmitResponse = self.submitText2ImageTask(text2ImageSubmitRequest, request_id=request_id)
         taskId = text2ImageSubmitResponse.data.primary_task_id
         if taskId is not None:
             task_request_time = 1
@@ -93,7 +101,7 @@ class Text2Image(Component):
             while True:
                 request = Text2ImageQueryRequest()
                 request.task_id = taskId
-                text2ImageQueryResponse = self.queryText2ImageData(request)
+                text2ImageQueryResponse = self.queryText2ImageData(request, request_id=request_id)
                 if text2ImageQueryResponse.data.task_progress is not None:
                     task_progress = text2ImageQueryResponse.data.task_progress
                     if task_progress == 1:
@@ -111,8 +119,13 @@ class Text2Image(Component):
             return Message(content=out.model_dump())
 
     @HTTPClient.check_param
-    def submitText2ImageTask(self, request: Text2ImageSubmitRequest, timeout: float = None,
-                             retry: int = 0) -> Text2ImageSubmitResponse:
+    def submitText2ImageTask(
+        self,
+        request: Text2ImageSubmitRequest,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> Text2ImageSubmitResponse:
 
         """
         使用给定的输入并返回文生图的任务信息。
@@ -127,7 +140,7 @@ class Text2Image(Component):
         """
         url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
         data = Text2ImageSubmitRequest.to_json(request)
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/json'
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
@@ -141,8 +154,13 @@ class Text2Image(Component):
         response.request_id = request_id
         return response
 
-    def queryText2ImageData(self, request: Text2ImageQueryRequest, timeout: float = None,
-                            retry: int = 0) -> Text2ImageQueryResponse:
+    def queryText2ImageData(
+        self,
+        request: Text2ImageQueryRequest,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> Text2ImageQueryResponse:
 
         """
         使用给定的输入并返回文生图的结果。
@@ -159,7 +177,7 @@ class Text2Image(Component):
         data = {
             "task_id": request.task_id
         }
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/json'
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
@@ -191,36 +209,6 @@ class Text2Image(Component):
                             img_urls.append(final_image.img_url)
 
         return img_urls
-
-    def tool_eval(
-        self,
-        streaming: bool,
-        origin_query: str,
-        **kwargs,
-    ):
-        """
-        tool eval
-        """
-        query = kwargs.get("query", "")
-        if not query:
-            query = origin_query
-        try:
-            result = self.run(Message({"prompt": query}))
-        except Exception as e:
-            raise AppBuilderServerException(f'service error when text to image：{e}')
-
-        if len(result.content['img_urls']) == 0:
-            raise RiskInputException(f"query：{query} may exists sensitive words")
-
-        result = {
-            'event': 'image',
-            'type': 'image',
-            'text': result.content['img_urls'][0],
-        }
-        if streaming:
-            yield result
-        else:
-            return result
 
     @staticmethod
     def check_service_error(request_id: str, data: dict):
