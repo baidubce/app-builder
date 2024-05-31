@@ -105,7 +105,7 @@ class QRcodeOCR(Component):
         return Message(content=out.model_dump())
 
     def _recognize(self, request: QRcodeRequest, timeout: float = None,
-                   retry: int = 0) -> QRcodeResponse:
+                   retry: int = 0, request_id: str = None) -> QRcodeResponse:
         r"""调用二维码识别底层能力
                    参数:
                        request (obj: `QRcodeRequest`) : 二维码识别输入参数
@@ -119,7 +119,7 @@ class QRcodeOCR(Component):
         data = QRcodeRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         headers['Accept'] = 'application/json'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/qrcode")
@@ -151,6 +151,7 @@ class QRcodeOCR(Component):
 
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         result = {}
+        traceid = kwargs.get("traceid")
         file_names = kwargs.get("file_names", None)
         location = kwargs.get("locations", "false")
         if not file_names:
@@ -172,9 +173,10 @@ class QRcodeOCR(Component):
                     f"illegal location, expected location is 'true' or 'false', got {location}"
                 )
             req.location = location
-            resp = self._recognize(req)
-            result[file_name] = [item["text"]
-                                 for item in proto.Message.to_dict(resp).get("codes_result", [])]
+            resp = self._recognize(req, traceid)
+            result[file_name] = [
+                item["text"] for item in proto.Message.to_dict(resp).get("codes_result", [])
+            ]
 
         result = json.dumps(result, ensure_ascii=False)
         if streaming:

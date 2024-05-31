@@ -109,7 +109,7 @@ class Translation(Component):
         return Message(content=out.model_dump())
 
     def _translate(self, request: TranslateRequest, timeout: float = None,
-                   retry: int = 0) -> TranslateResponse:
+                   retry: int = 0, request_id: str = None) -> TranslateResponse:
         """
         根据提供的 TranslateRequest 执行文本翻译。
 
@@ -128,7 +128,7 @@ class Translation(Component):
         request_data = TranslateRequest.to_json(request)
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/json;charset=utf-8'
 
         url = self.http_client.service_url("/v1/bce/aip/mt/texttrans/v1")
@@ -150,6 +150,7 @@ class Translation(Component):
         """
         translate for function call
         """
+        traceid = kwargs.get("traceid")
         req = TranslateRequest()
         text = kwargs.get("q", None)
         if not text:
@@ -157,7 +158,7 @@ class Translation(Component):
         req.q = text
         to_lang = kwargs.get("to_lang", "en")
         req.to_lang = to_lang
-        results = proto.Message.to_dict(self._translate(req))["result"]
+        results = proto.Message.to_dict(self._translate(req, traceid))["result"]
         trans_result = results["trans_result"]
         res = {
             "原文本": "\n ".join(item["src"] for item in trans_result),

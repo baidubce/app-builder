@@ -334,6 +334,7 @@ class CompletionBaseComponent(Component):
             obj:`Message`: Output message after running model.
         """
 
+        request_id = kwargs.get('request_id')
         specific_params = {k: v for k, v in kwargs.items() if k in self.meta.model_fields}
         model_config_params = {k: v for k, v in kwargs.items() if k in ModelArgsConfig.model_fields}
 
@@ -346,7 +347,7 @@ class CompletionBaseComponent(Component):
         query, inputs, response_mode, user_id = self.get_compeliton_params(specific_inputs, model_config_inputs)
         model_config = self.get_model_config(model_config_inputs)
         request = self.gene_request(query, inputs, response_mode, user_id, model_config)
-        response = self.completion(self.version, self.base_url, request)
+        response = self.completion(self.version, self.base_url, request, request_id)
 
         if response.error_no != 0:
             raise AppBuilderServerException(service_err_code=response.error_no, service_err_message=response.error_msg)
@@ -379,11 +380,18 @@ class CompletionBaseComponent(Component):
         self.model_config["model"]["completion_params"]["top_p"] = model_config_inputs.top_p
         return self.model_config
 
-    def completion(self, version, base_url, request: CompletionRequest, timeout: float = None,
-                   retry: int = 0) -> CompletionResponse:
+    def completion(
+        self,
+        version,
+        base_url,
+        request: CompletionRequest,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> CompletionResponse:
         r"""Send a byte array of an audio file to obtain the result of speech recognition."""
 
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers["Content-Type"] = "application/json"
 
         completion_url = "/" + self.version + "/api/llm/" + self.name

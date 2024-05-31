@@ -107,8 +107,13 @@ class GeneralOCR(Component):
         out = GeneralOCROutMsg(**result_dict)
         return Message(content=out.model_dump())
 
-    def _recognize(self, request: GeneralOCRRequest, timeout: float = None,
-                   retry: int = 0) -> GeneralOCRResponse:
+    def _recognize(
+        self,
+        request: GeneralOCRRequest,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> GeneralOCRResponse:
         r"""调用底层接口进行通用文字识别
                    参数:
                        request (obj: `GeneralOCRRequest`) : 通用文字识别输入参数
@@ -122,7 +127,7 @@ class GeneralOCR(Component):
         data = GeneralOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/accurate_basic")
         response = self.http_client.session.post(
@@ -155,6 +160,7 @@ class GeneralOCR(Component):
         """
         general_ocr for function call
         """
+        traceid = kwargs.get("traceid")
         img_url = kwargs.get("img_url", None)
         if not img_url:
             file_urls = kwargs.get("file_urls", {})
@@ -170,7 +176,7 @@ class GeneralOCR(Component):
         req = GeneralOCRRequest(url=img_url)
         req.detect_direction = "true"
         req.language_type = "auto_detect"
-        result = proto.Message.to_dict(self._recognize(req))
+        result = proto.Message.to_dict(self._recognize(req, traceid))
         results = {
             "识别结果": " \n".join(item["words"] for item in result["words_result"])
         }
