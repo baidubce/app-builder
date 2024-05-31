@@ -99,15 +99,6 @@ class ResponseFormat(str, Enum):
     JSON_OBJECT = 'json_object'
 
 
-class AssistantModel(str, Enum):
-    """
-    表示助理模型的枚举类型。
-
-    Values:
-        ERNIE_408K: ERNIE-4.0-8K模型。
-    """
-    ERNIE_408K = 'ERNIE-4.0-8K'
-
 class AssistantText(BaseModel):
     """
     表示助理文本内容的模型。
