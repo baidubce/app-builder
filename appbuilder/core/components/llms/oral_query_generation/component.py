@@ -26,6 +26,7 @@ from appbuilder.core.components.llms.base import CompletionBaseComponent, ModelA
 from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.utils.logger_util import logger
 
 
 class QueryTypeChoices(Enum):
@@ -162,6 +163,32 @@ class OralQueryGeneration(CompletionBaseComponent):
             queries += regenerated_output.get(key, [])
         regenerated_output = '\n'.join([f'{index}. {query}' for index, query in enumerate(queries, 1)])
         return regenerated_output
+
+    def completion(self, version, base_url, request, timeout: float = None,
+                   retry: int = 0):
+        r"""Send a byte array of an audio file to obtain the result of speech recognition."""
+
+        headers = self.http_client.auth_header()
+        headers["Content-Type"] = "application/json"
+
+        stream = True if request.response_mode == "streaming" else False
+        
+        url = self.http_client.service_url("/app/query_generation", self.base_url)
+
+        logger.debug(
+            "request url: {}, method: {}, json: {}, headers: {}".format(url,
+                                                                        "POST",
+                                                                        request.params,
+                                                                        headers))
+        response = self.http_client.session.post(url, json=request.params, headers=headers, timeout=timeout,
+                                                 stream=stream)
+
+        logger.debug(
+            "request url: {}, method: {}, json: {}, headers: {}, response: {}".format(url, "POST",
+                                                                                      request.params,
+                                                                                      headers,
+                                                                                      response))
+        return self.gene_response(response, stream)
 
     def run(self, message, query_type='全部', output_format='str', stream=False, temperature=1e-10, top_p=0.0):
         """

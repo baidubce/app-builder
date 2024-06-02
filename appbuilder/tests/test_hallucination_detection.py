@@ -87,7 +87,7 @@ class TestHallucinationDetectionComponent(unittest.TestCase):
         answer = TEST_ANSWER
         msg = appbuilder.Message({'query': query, 'context': context, 'answer': answer})
         answer = self.hallucination_detection(msg)
-        print(answer)
+        # print(answer)
         self.assertIsNotNone(answer)
         print(f'\n[result]\n{answer.content}\n')
 
