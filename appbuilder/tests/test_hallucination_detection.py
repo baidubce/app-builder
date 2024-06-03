@@ -91,6 +91,44 @@ class TestHallucinationDetectionComponent(unittest.TestCase):
         self.assertIsNotNone(answer)
         print(f'\n[result]\n{answer.content}\n')
 
+    def test_tool_eval_with_default_params(self):
+        """测试 tool_eval 方法使用默认参数
+        """
+        query = TEST_QUERY
+        context = TEST_CONTEXT
+        answer = TEST_ANSWER
+        answer = self.hallucination_detection.tool_eval(name='', query=query, context=context, answer=answer)
+        # print(answer)
+        self.assertIsNotNone(answer)
+        print(f'\n[result]\n{answer}\n')
+
+    def test_tool_eval_with_model_configs(self):
+        """测试 tool_eval 方法使用不同temperature和top_p参数值。
+        """
+        query = TEST_QUERY
+        context = TEST_CONTEXT
+        answer = TEST_ANSWER
+        model_configs = {'temperature': 0.5, 'top_p': 0.5}
+        answer = self.hallucination_detection.tool_eval(name='',
+                                                        query=query,
+                                                        context=context,
+                                                        answer=answer,
+                                                        model_configs=model_configs)
+        # print(answer)
+        self.assertIsNotNone(answer)
+        print(f'\n[result]\n{answer}\n')
+
+    def test_tool_eval_with_empty_query(self):
+        """测试 tool_eval 方法使用空输入query
+        """
+        query = ''
+        context = TEST_CONTEXT
+        answer = TEST_ANSWER
+        answer = self.hallucination_detection.tool_eval(name='', query=query, context=context, answer=answer)
+        # print(answer)
+        self.assertIsNotNone(answer)
+        print(f'\n[result]\n{answer}\n')
+
 
 if __name__ == '__main__':
     unittest.main()
