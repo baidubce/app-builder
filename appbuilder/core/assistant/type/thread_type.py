@@ -20,7 +20,6 @@ from typing import Optional
 from appbuilder.core.assistant.type import (
     AssistantTool,
     AssistantContent,
-    AssistantModel,
     ResponseFormat
 )
 
@@ -329,7 +328,7 @@ class ToolOutput(BaseModel):
 
 class AssistantRunRequest(BaseModel):
     thread_id: Optional[str] = Field(default="")
-    model: AssistantModel = Field(default="ERNIE-4.0-8K")
+    model: str = Field(default="ERNIE-4.0-8K")
     assistant_id: Optional[str] = Field(default="")
     metadata: Optional[dict] =  Field(default={}, max_length=16)
     response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)

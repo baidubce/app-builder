@@ -19,7 +19,6 @@ from .public_type import (
     AssistantFunction,
     AssistantTool,
     ResponseFormat,
-    AssistantModel,
     AssistantText,
     AssistantContent
 )
