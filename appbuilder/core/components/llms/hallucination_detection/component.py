@@ -77,6 +77,36 @@ class HallucinationDetection(CompletionBaseComponent):
     version = 'v1'
     meta = HallucinationDetectionArgs
 
+    manifests = [
+        {
+            "name": "hallucination_detection",
+            "description": "输入用户查询query、检索结果context以及根据检索结果context生成的用户查询query的回答answer，判断answer" \
+                           "中是否存在幻觉。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "text": "string",
+                        "description": "用户查询。"
+                    },
+                    "context": {
+                        "text": "string",
+                        "description": "检索结果。"
+                    },
+                    "answer": {
+                        "text": "string",
+                        "description": "根据检索结果context生成的用户查询query的回答answer。"
+                    }
+                },
+                "required": [
+                    "query",
+                    "context",
+                    "answer"
+                ]
+            }
+        }
+    ]
+
     def __init__(
         self, 
         model=None,
@@ -159,3 +189,29 @@ class HallucinationDetection(CompletionBaseComponent):
         result = response.to_message()
 
         return result
+
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        query = kwargs.get('query', None)
+        context = kwargs.get('context', None)
+        answer = kwargs.get('answer', None)
+        if not query:
+            raise ValueError('param `query` is required')
+        if not context:
+            raise ValueError('param `context` is required')
+        if not answer:
+            raise ValueError('param `answer` is required')
+        msg = Message({'query': query, 'context': context, 'answer': answer})
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get('temperature', 1e-10)
+        top_p = model_configs.get('top_p', 0.0)
+        message = self.run(message=msg,
+                           stream=False,
+                           temperature=temperature,
+                           top_p=top_p)
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)

@@ -90,6 +90,15 @@ class TestOralQueryGenerationComponent(unittest.TestCase):
         self.assertIsNotNone(answer)
         print(f'\n[result]\n{answer.content}\n')
 
+    def test_tool_eval_with_default_params(self):
+        """测试 tool_eval 方法使用默认参数
+        """
+        text = TEST_TEXT
+        answer = self.query_generation.tool_eval(name='', text=text)
+        # print(answer)
+        self.assertIsNotNone(answer)
+        print(f'\n[result]\n{answer}\n')
+
 
 if __name__ == '__main__':
     unittest.main()

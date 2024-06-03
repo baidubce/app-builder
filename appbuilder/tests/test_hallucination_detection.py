@@ -91,6 +91,17 @@ class TestHallucinationDetectionComponent(unittest.TestCase):
         self.assertIsNotNone(answer)
         print(f'\n[result]\n{answer.content}\n')
 
+    def test_tool_eval_with_default_params(self):
+        """测试 tool_eval 方法使用默认参数
+        """
+        query = TEST_QUERY
+        context = TEST_CONTEXT * 100
+        answer = TEST_ANSWER
+        answer = self.hallucination_detection.tool_eval(name='', query=query, context=context, answer=answer)
+        # print(answer)
+        self.assertIsNotNone(answer)
+        print(f'\n[result]\n{answer}\n')
+
 
 if __name__ == '__main__':
     unittest.main()
