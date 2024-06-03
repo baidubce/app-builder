@@ -257,7 +257,7 @@ class OralQueryGeneration(CompletionBaseComponent):
 
         return result
 
-    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+    def tool_eval(self, name: str, stream: bool = False, **kwargs):
         """
         tool_eval for function call
         """
@@ -273,10 +273,11 @@ class OralQueryGeneration(CompletionBaseComponent):
         message = self.run(message=msg,
                            query_type=query_type,
                            output_format=output_format,
-                           stream=False,
+                           stream=stream,
                            temperature=temperature,
                            top_p=top_p)
-        if streaming:
-            yield str(message.content)
+        if stream:
+            for data in message.content:
+                yield data
         else:
-            return str(message.content)
+            return message.content

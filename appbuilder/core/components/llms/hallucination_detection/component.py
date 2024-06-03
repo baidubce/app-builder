@@ -190,7 +190,7 @@ class HallucinationDetection(CompletionBaseComponent):
 
         return result
 
-    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+    def tool_eval(self, name: str, stream: bool = False, **kwargs):
         """
         tool_eval for function call
         """
@@ -204,10 +204,11 @@ class HallucinationDetection(CompletionBaseComponent):
         temperature = model_configs.get('temperature', 1e-10)
         top_p = model_configs.get('top_p', 0.0)
         message = self.run(message=msg,
-                           stream=False,
+                           stream=stream,
                            temperature=temperature,
                            top_p=top_p)
-        if streaming:
-            yield str(message.content)
+        if stream:
+            for data in message.content:
+                yield data
         else:
-            return str(message.content)
+            return message.content

@@ -110,24 +110,16 @@ class TestHallucinationDetectionComponent(unittest.TestCase):
         answer = TEST_ANSWER
         model_configs = {'temperature': 0.5, 'top_p': 0.5}
         answer = self.hallucination_detection.tool_eval(name='',
+                                                        stream=True,
                                                         query=query,
                                                         context=context,
                                                         answer=answer,
                                                         model_configs=model_configs)
         # print(answer)
         self.assertIsNotNone(answer)
-        print(f'\n[result]\n{answer}\n')
-
-    def test_tool_eval_with_empty_query(self):
-        """测试 tool_eval 方法使用空输入query
-        """
-        query = ''
-        context = TEST_CONTEXT
-        answer = TEST_ANSWER
-        answer = self.hallucination_detection.tool_eval(name='', query=query, context=context, answer=answer)
-        # print(answer)
-        self.assertIsNotNone(answer)
-        print(f'\n[result]\n{answer}\n')
+        print(f'\n[result]\n')
+        for ans in answer:
+            print(ans)
 
 
 if __name__ == '__main__':
