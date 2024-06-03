@@ -101,6 +101,7 @@ class HandwriteOCR(Component):
 
     def tool_eval(self, name: str, streaming: bool, **kwargs):
 
+        traceid = kwargs.get("traceid")
         result = ""
         file_names = kwargs.get("file_names", None)
         if not file_names:
@@ -120,7 +121,7 @@ class HandwriteOCR(Component):
             req.probability = "false"
             req.detect_direction = "true"
             req.detect_alteration = "true"
-            response = self._recognize(req)
+            response = self._recognize(req, traceid)
             text = "".join([w.words for w in response.words_result])
             result += f"{file_name}的手写识别结果是：{text} "
 
@@ -138,7 +139,13 @@ class HandwriteOCR(Component):
         else:
             return result
 
-    def _recognize(self, request: HandwriteOCRRequest, timeout: float = None, retry: int = 0) -> HandwriteOCRResponse:
+    def _recognize(
+        self, 
+        request: HandwriteOCRRequest, 
+        timeout: float = None, 
+        retry: int = 0,
+        request_id: str = None,
+    ) -> HandwriteOCRResponse:
         r"""调用底层接口进行通用文字识别
                     参数:
                        request (obj: `HandwriteOCRRequest`) : 通用文字识别输入参数
@@ -151,7 +158,7 @@ class HandwriteOCR(Component):
         data = HandwriteOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/handwriting")
         response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)

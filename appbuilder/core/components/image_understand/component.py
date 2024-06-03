@@ -111,8 +111,13 @@ class ImageUnderstand(Component):
         out = ImageUnderstandOutMsg(description=response.result.description_to_llm)
         return Message(content=out.model_dump())
 
-    def __recognize(self, request: ImageUnderstandRequest, timeout: float = None,
-                    retry: int = 0) -> ImageUnderstandResponse:
+    def __recognize(
+        self, 
+        request: ImageUnderstandRequest, 
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> ImageUnderstandResponse:
         r"""调用底层接口进行图像内容理解
 
             参数:
@@ -126,7 +131,7 @@ class ImageUnderstand(Component):
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
         data = ImageUnderstandRequest.to_dict(request)
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['Content-Type'] = 'application/json'
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/image-understanding/request")
         response = self.http_client.session.post(url, json=data, timeout=timeout, headers=headers)
@@ -156,8 +161,13 @@ class ImageUnderstand(Component):
                 # 避免触发限流（>1QPS），等待1.1秒
                 time.sleep(1.1)
 
-    def tool_eval(self, name: str, streaming: bool,
-                  origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:
+    def tool_eval(
+        self,
+        name: str,
+        streaming: bool,
+        origin_query: str,
+        **kwargs,
+    ) -> Union[Generator[str, None, None], str]:
         r"""用于工具的执行，调用底层接口进行图像内容理解
             参数:
                 name (str): 工具名
@@ -168,10 +178,11 @@ class ImageUnderstand(Component):
             返回：
                 Union[Generator[str, None, None], str]: 图片内容理解结果
         """
+        traceid = kwargs.get("traceid")
         img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls)
+        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
         if streaming:
             yield {
                 "type": "text",
@@ -186,7 +197,14 @@ class ImageUnderstand(Component):
         else:
             return rec_res
 
-    def _recognize_w_post_process(self, img_name, img_url, file_urls, question="图片内容有哪些") -> str:
+    def _recognize_w_post_process(
+        self,
+        img_name,
+        img_url,
+        file_urls,
+        question="图片内容有哪些",
+        request_id=None,
+    ) -> str:
         r"""
             参数:
                 img_name (str): 图片文件名
@@ -205,7 +223,7 @@ class ImageUnderstand(Component):
             if img_url in file_urls:
                 img_url = file_urls[img_url]
             req.url = img_url
-        response = self.__recognize(req)
+        response = self.__recognize(req, request_id)
         description_to_llm = response.result.description_to_llm
         description_processed = description_to_llm.rsplit("。", 2)[0]
         return description_processed

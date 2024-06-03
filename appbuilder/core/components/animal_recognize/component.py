@@ -108,8 +108,13 @@ class AnimalRecognition(Component):
         out = AnimalRecognitionOutMsg(**result_dict)
         return Message(content=out.model_dump())
 
-    def _recognize(self, request: AnimalRecognitionRequest, timeout: float = None,
-                   retry: int = 0) -> AnimalRecognitionResponse:
+    def _recognize(
+        self,
+        request: AnimalRecognitionRequest,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> AnimalRecognitionResponse:
         r"""调用底层接口进行动物识别
 
                    参数:
@@ -123,7 +128,7 @@ class AnimalRecognition(Component):
         data = AnimalRecognitionRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/animal")
         response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
@@ -136,8 +141,13 @@ class AnimalRecognition(Component):
         animalRes.request_id = request_id
         return animalRes
 
-    def tool_eval(self, name: str, streaming: bool,
-                  origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:
+    def tool_eval(
+        self,
+        name: str,
+        streaming: bool,
+        origin_query: str,
+        **kwargs,
+    ) -> Union[Generator[str, None, None], str]:
         r"""用于工具的执行，通过调用底层接口进行动物识别
                    参数:
                        name (str): 工具名
@@ -147,16 +157,17 @@ class AnimalRecognition(Component):
                    返回：
                        Union[Generator[str, None, None], str]: 动物识别结果，包括识别出的动物类别和相应的置信度信息
         """
+        traceid = kwargs.get("traceid")
         img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls)
+        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, traceid)
         if streaming:
             yield rec_res
         else:
             return rec_res
 
-    def _recognize_w_post_process(self, img_name, img_url, file_urls) -> str:
+    def _recognize_w_post_process(self, img_name, img_url, file_urls, request_id=None) -> str:
         r"""调底层接口对图片或图片url进行动物识别，并返回类别及其置信度
                    参数:
                        img_name (str): 图片文件名
@@ -174,7 +185,7 @@ class AnimalRecognition(Component):
             req.url = img_url
         req.top_num = TOP_NUM
         req.baike_num = BAIKE_NUM
-        result = self._recognize(req)
+        result = self._recognize(req, request_id)
         result_dict = proto.Message.to_dict(result)
         rec_res = "模型识别结果为：\n"
         for rec_info in result_dict['result']:

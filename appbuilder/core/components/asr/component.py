@@ -117,8 +117,13 @@ class ASR(Component):
         out = ASROutMsg(result=list(response.result))
         return Message(content=out.model_dump())
 
-    def _recognize(self, request: ShortSpeechRecognitionRequest, timeout: float = None,
-                   retry: int = 0) -> ShortSpeechRecognitionResponse:
+    def _recognize(
+        self,
+        request: ShortSpeechRecognitionRequest,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> ShortSpeechRecognitionResponse:
         """
         使用给定的输入并返回语音识别的结果。
 
@@ -131,7 +136,7 @@ class ASR(Component):
             obj:`ShortSpeechRecognitionResponse`: 接口返回的输出消息。
         """
         ContentType = "audio/" + request.format + ";rate=" + str(request.rate)
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = ContentType
         params = {
             'dev_pid': request.dev_pid,
@@ -187,13 +192,14 @@ class ASR(Component):
         _, file_type = os.path.splitext(os.path.basename(urlparse(file_url).path))
         file_type = file_type.strip('.')
 
+        traceid = kwargs.get("traceid")
         req = ShortSpeechRecognitionRequest()
         req.speech = requests.get(file_url).content
         req.format = file_type
-        req.cuid = str(uuid.uuid4())
+        req.cuid = traceid if traceid else str(uuid.uuid4())
         req.dev_pid = "80001"
         req.rate = 16000
-        result = proto.Message.to_dict(self._recognize(req))
+        result = proto.Message.to_dict(self._recognize(req, request_id=traceid))
         results = {
             "识别结果": " \n".join(item for item in result["result"])
         }

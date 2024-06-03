@@ -114,8 +114,13 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         out = PlantRecognitionOutMsg(plant_score_list=plant_score_list)
         return Message(content=out.model_dump())
 
-    def __recognize(self, request: PlantRecognitionRequest, timeout: float = None, retry: int = 0) \
-            -> PlantRecognitionResponse:
+    def __recognize(
+        self,
+        request: PlantRecognitionRequest,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> PlantRecognitionResponse:
         r"""调用底层接口植物识别
 
             参数:
@@ -129,7 +134,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         data = PlantRecognitionRequest.to_dict(request)
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/plant")
         response = self.http_client.session.post(url, data=data, timeout=timeout, headers=headers)
@@ -140,8 +145,13 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         self.__class__.__check_service_error(request_id, data)
         return PlantRecognitionResponse(data, request_id=request_id)
 
-    def tool_eval(self, name: str, streaming: bool,
-                  origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:
+    def tool_eval(
+        self, 
+        name: str, 
+        streaming: bool,
+        origin_query: str,
+        **kwargs,
+    ) -> Union[Generator[str, None, None], str]:
         r"""用于工具的执行，通过调用底层接口进行植物识别
             参数:
                 name (str): 工具名
@@ -152,16 +162,17 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             返回：
                 Union[Generator[str, None, None], str]: 植物识别结果，包括识别出的植物类别和相应的置信度信息
         """
+        traceid = kwargs.get("traceid")
         img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls)
+        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, traceid)
         if streaming:
             yield rec_res
         else:
             return rec_res
 
-    def _recognize_w_post_process(self, img_name, img_url, file_urls):
+    def _recognize_w_post_process(self, img_name, img_url, file_urls, request_id=None):
         r"""调底层接口对图片或图片url进行植物识别，并返回类别及其置信度
             参数:
                img_name (str): 图片文件名
@@ -179,7 +190,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             req.url = img_url
         req.top_num = TOP_NUM
         req.baike_num = BAIKE_NUM
-        result = self.__recognize(req)
+        result = self.__recognize(req, request_id)
         result_dict = proto.Message.to_dict(result)
         rec_res = "模型识别结果为：\n"
         for rec_info in result_dict['result']:

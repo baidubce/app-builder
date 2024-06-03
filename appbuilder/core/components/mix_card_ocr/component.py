@@ -108,7 +108,7 @@ class MixCardOCR(Component):
         out.direction = response.direction
         return Message(content=out.model_dump())
 
-    def _recognize(self, request: MixCardOCRRequest, timeout: float = None, retry: int = 0) -> MixCardOCRResponse:
+    def _recognize(self, request: MixCardOCRRequest, timeout: float = None, retry: int = 0, request_id: str = None) -> MixCardOCRResponse:
         r"""调用底层身份证混贴识别
                 参数:
                     request (obj: `GeneralOCRRequest`) : 通用文字识别输入参数
@@ -121,7 +121,7 @@ class MixCardOCR(Component):
         data = MixCardOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/multi_idcard")
         response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
@@ -151,6 +151,7 @@ class MixCardOCR(Component):
 
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         result = {}
+        traceid = kwargs.get("traceid")
         file_names = kwargs.get("file_names", None)
         if not file_names:
             file_names = kwargs.get("files")
@@ -169,7 +170,7 @@ class MixCardOCR(Component):
             request.detect_quality = "false"
             request.detect_photo = "false"
             request.detect_card = "false"
-            response = self._recognize(request)
+            response = self._recognize(request, traceid)
             out = MixCardOCROutMsg()
             for res in response.words_result:
                 card_type = res.card_info.card_type
