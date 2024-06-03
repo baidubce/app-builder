@@ -19,6 +19,7 @@ import sys
 import copy
 import pydantic
 
+
 class PythonVersionChecker:
     def __init__(self):
         self.min_version = (3, 9)
@@ -27,28 +28,34 @@ class PythonVersionChecker:
 
     def check_version(self):
         if self.current_version < self.min_version:
-            raise EnvironmentError(f"Mismatched Python version. Expected Python version >= {self.min_version[0]}.{self.min_version[1]}, "
-                                   f"Got Python version {self.current_version[0]}.{self.current_version[1]}.")
+            raise EnvironmentError(
+                f"Mismatched Python version. Expected Python version >= {self.min_version[0]}.{self.min_version[1]}, "
+                f"Got Python version {self.current_version[0]}.{self.current_version[1]}.")
 
 
 # Creating an instance to test the function
 checker = PythonVersionChecker()
 checker.current_version
 
+
 class SDKReportConfig(pydantic.BaseModel):
     appbuilder_sdk_version: str = __version__
     appbuilder_sdk_language: str = "python"
 
+
 # report information
 default_header = {
     "X-Appbuilder-Sdk-Config": SDKReportConfig().model_dump_json(),
-    "X-Appbuilder-Origin":'appbuilder_sdk'
+    "X-Appbuilder-Origin": 'appbuilder_sdk'
 }
+
 
 def get_default_header():
     return copy.deepcopy(default_header)
 
+
 from .core import *
+from .core.components.rag_with_baidu_search_pro import RagWithBaiduSearchPro
 from .core.components.rag_with_baidu_search import RAGWithBaiduSearch
 from .core import console
 from .core.components.excel2figure import Excel2Figure
@@ -109,7 +116,7 @@ from appbuilder.utils.logger_util import logger
 
 from appbuilder.core.utils import get_model_list
 
-from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient 
+from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
 
 from .core._exception import (

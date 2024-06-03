@@ -87,7 +87,7 @@ class DocFormatConverter(Component):
     ]
 
     @HTTPClient.check_param
-    def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
+    def run(self, message: Message, timeout: float = None, retry: int = 0, request_id: str = None) -> Message:
         """
         将PDF、JPG、PNG、BMP等格式文件转换为Word、Excel格式，并返回转换后的文件URL。
 
@@ -121,7 +121,7 @@ class DocFormatConverter(Component):
             else:
                 with open(doc_message.file_path, 'rb') as f:
                     submit_request.image =  base64.b64encode(f.read())
-        docConverterSubmitResponse = self.submitDocFormatConverterTask(submit_request)
+        docConverterSubmitResponse = self.submitDocFormatConverterTask(submit_request, request_id)
         taskId = docConverterSubmitResponse.result.task_id
         TASK_PROGRESS_COMPLETED = 3
         TASK_PROGRESS_FAILED = 4
@@ -130,7 +130,7 @@ class DocFormatConverter(Component):
             while True:
                 request = DocFormatConverterQueryRequest()
                 request.task_id = taskId
-                docConverterQueryResponse = self.queryDocFormatConverterTask(request)
+                docConverterQueryResponse = self.queryDocFormatConverterTask(request, request_id)
                 if docConverterQueryResponse.result.ret_code is not None:
                     task_progress = docConverterQueryResponse.result.ret_code
                     if task_progress == TASK_PROGRESS_COMPLETED:
@@ -152,8 +152,13 @@ class DocFormatConverter(Component):
 
 
     @HTTPClient.check_param
-    def submitDocFormatConverterTask(self, request: DocFormatConverterSubmitRequest, timeout: float = None, 
-                                retry: int = 0) -> DocFormatConverterSubmitResponse:
+    def submitDocFormatConverterTask(
+        self,
+        request: DocFormatConverterSubmitRequest,
+        timeout: float = None, 
+        retry: int = 0,
+        request_id: str = None,
+    ) -> DocFormatConverterSubmitResponse:
         """
         提交任务
         :param request: 请求参数
@@ -163,7 +168,7 @@ class DocFormatConverter(Component):
         """
         url = self.http_client.service_url("/v1/bce/aip/text_mind/v1/doc_convert/request",'/api')
         data = json.loads(DocFormatConverterSubmitRequest.to_json(request, preserving_proto_field_name=True))
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
@@ -176,8 +181,13 @@ class DocFormatConverter(Component):
         return response
 
     @HTTPClient.check_param
-    def queryDocFormatConverterTask(self, request: DocFormatConverterQueryRequest, timeout: float = None, 
-                                retry: int = 0) -> DocFormatConverterQueryResponse:
+    def queryDocFormatConverterTask(
+        self,
+        request: DocFormatConverterQueryRequest,
+        timeout: float = None, 
+        retry: int = 0,
+        request_id: str = None
+    ) -> DocFormatConverterQueryResponse:
         """
         查询任务
         :param request: 请求参数
@@ -190,7 +200,7 @@ class DocFormatConverter(Component):
             "task_id": request.task_id
         }
         data = json.loads(DocFormatConverterQueryRequest.to_json(request, preserving_proto_field_name=True))
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = "application/x-www-form-urlencoded"
 
         if retry != self.http_client.retry.total:
@@ -206,6 +216,7 @@ class DocFormatConverter(Component):
         """
         tool eval
         """
+        traceid = kwargs.get("traceid")
         file_url = kwargs.get("file_url", None)
         page_num = kwargs.get("page_num", '')
         if page_num:
@@ -223,7 +234,7 @@ class DocFormatConverter(Component):
             if not file_url:
                 raise InvalidRequestArgumentError("request format error, file url is not set")
         try:
-            result = self.run(Message({"file_path": file_url, "page_num": page_num}))
+            result = self.run(Message({"file_path": file_url, "page_num": page_num}), traceid)
         except AppBuilderServerException:
             raise
         except Exception as e:

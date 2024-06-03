@@ -28,6 +28,7 @@ from appbuilder.core._exception import *
 from appbuilder.core.constants import GATEWAY_URL, GATEWAY_URL_V2
 from appbuilder.utils.logger_util import logger
 
+
 class HTTPClient:
     r"""HTTPClient类,实现与后端服务交互的公共方法"""
 
@@ -140,18 +141,18 @@ class HTTPClient:
             raise AppBuilderServerException(
                 requestId, data["code"], data["message"])
 
-    def auth_header(self):
+    def auth_header(self, request_id: Optional[str] = None):
         r"""auth_header is a helper method return auth info"""
         auth_header = get_default_header()
-        auth_header["X-Appbuilder-Request-Id"] = str(uuid.uuid4())
+        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else str(uuid.uuid4())
         auth_header["X-Appbuilder-Authorization"] = self.secret_key
         logger.debug("Request header: {}\n".format(auth_header))
         return auth_header
 
-    def auth_header_v2(self):
+    def auth_header_v2(self, request_id: Optional[str] = None):
         r"""auth_header_v2 is a helper method return auth info for OpenAPI, only used by AppBuilderClient"""
         auth_header = get_default_header()
-        auth_header["X-Bce-Request-id"] = str(uuid.uuid4())
+        auth_header["X-Bce-Request-id"] = request_id if request_id else str(uuid.uuid4())
         auth_header["Authorization"] = self.secret_key
         logger.debug("Request header: {}\n".format(auth_header))
         return auth_header
@@ -185,28 +186,28 @@ class AssistantHTTPClient(HTTPClient):
     def service_url(self, sub_path: str, prefix: str = None):
         """
         根据给定的子路径和前缀，返回完整的服务URL。
-        
+
         Args:
             sub_path (str): 子路径，例如 "/api/v1/user"。
             prefix (str, optional): URL前缀，例如 "http://example.com"。默认为None。
-        
+
         Returns:
             str: 完整的服务URL，例如 "http://example.com/api/v1/user"。
         """
         prefix = prefix if prefix else ""
         return self.gateway + prefix + sub_path
 
-    def auth_header(self):
+    def auth_header(self, request_id: Optional[str] = None):
         """
         返回一个包含认证信息的字典
-        
+
         Args:
             无参数。
         """
         r"""auth_header is a helper method return auth info"""
         auth_header = get_default_header()
         auth_header["Authorization"] = self.secret_key
-        auth_header["X-Appbuilder-Request-Id"] = str(uuid.uuid4())
+        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else str(uuid.uuid4())
         auth_header["X-Appbuilder-Authorization"] = self.secret_key
         auth_header["Content-Type"] = "application/json"
         logger.debug("Request header: {}\n".format(auth_header))
@@ -216,17 +217,17 @@ class AssistantHTTPClient(HTTPClient):
     def check_assistant_response(request_id, data):
         """
         检查助手的响应结果，如果返回了错误信息，则抛出 AssistantServerException 异常。
-        
+
         Args:
             request_id (str): 请求 ID。
             data (dict): 助手返回的响应数据。
-        
+
         Returns:
             None
-        
+
         Raises:
             AssistantServerException: 如果助手返回了错误信息，则抛出该异常。
-        
+
         """
         if 'error' in data:
             raise AssistantServerException(

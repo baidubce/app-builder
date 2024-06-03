@@ -103,7 +103,7 @@ class TableOCR(Component):
         return Message(content=out.model_dump())
 
     def _recognize(self, request: TableOCRRequest, timeout: float = None,
-                   retry: int = 0) -> TableOCRResponse:
+                   retry: int = 0, request_id: str = None) -> TableOCRResponse:
         r"""调用底层接口进行表格文字识别
                    参数:
                        request (obj: `TableOCRRequest`) : 表格文字识别输入参数
@@ -117,7 +117,7 @@ class TableOCR(Component):
         data = TableOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/table")
         response = self.http_client.session.post(
@@ -178,6 +178,7 @@ class TableOCR(Component):
 
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         result = {}
+        traceid = kwargs.get("traceid")
         file_names = kwargs.get("file_names", None)
         if not file_names:
             file_names = kwargs.get("files")
@@ -194,7 +195,7 @@ class TableOCR(Component):
             req = TableOCRRequest()
             req.url = file_url
             req.cell_contents = "false"
-            resp = self._recognize(req)
+            resp = self._recognize(req, traceid)
             tables_result = proto.Message.to_dict(resp)["tables_result"]
             markdowns = self.get_table_markdown(tables_result)
             result[file_name] = markdowns

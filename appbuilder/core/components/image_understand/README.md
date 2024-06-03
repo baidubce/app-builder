@@ -14,7 +14,7 @@
 
 下面是图像内容理解的代码示例：
 
-示例图片为：![示例图片](./image/test_image_understand.jpeg)
+示例图片为：![示例图片](https://bj.bcebos.com/v1/appbuilder/test_image_understand.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T09%3A41%3A01Z%2F-1%2Fhost%2Fe8665506e30e0edaec4f1cc84a2507c4cb3fdb9b769de3a5bfe25c372b7e56e6)
 
 ```python
 import os
