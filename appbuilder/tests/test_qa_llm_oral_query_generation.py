@@ -94,7 +94,7 @@ class TestMixcardOcr(unittest.TestCase):
                                                 'through: appbuilder.get_model_list()'
         ),
         param(
-            "ERNIE-Bot 4.0", None, "ValueError", "query", "Input should be a valid string"
+            "ERNIE-Bot 4.0", None, "ValueError", "text", "Input text should be a valid string"
         )
     ])
     def test_abnormal_case(self, model_name, text, err_type, err_param, err_msg):
