@@ -46,13 +46,13 @@ class Text2Image(Component):
     manifests = [
         {
             "name": "text_to_image",
-            "description": "文生图工具，当用户的问题需要进行场景、人物、海报等内容的绘制时，使用画图工具。该工具偏向于图片创作，如果Query的需求是生成图表（柱状图、折线图、雷达图等），必须使用代码解释器。",
+            "description": "文生图，该组件只用于图片创作。当用户需要进行场景、人物、海报等内容的绘制时，使用该画图组件。如果用户需要生成图表（柱状图、折线图、雷达图等），则必须使用代码解释器。",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "query": {
                         "type": "string",
-                        "description": "根据用户的需求构思图片，生成一个画图用的query。特别注意，这个字段只能由中文字符组成，不能含有任何英语描述。 "
+                        "description": "文生图用的query。特别注意，这个字段只能由中文字符组成，不能含有任何英语描述。"
                     }
                 },
                 "required": [
