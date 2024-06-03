@@ -49,6 +49,17 @@ class TestAssistant(unittest.TestCase):
         except Exception as e:
             self.assertIn("metadata", e.description)
 
+    def test_assistants_create_v4(self):
+        from appbuilder.core.assistant.type import assistant_type
+        assistant=appbuilder.assistant.assistants.create(
+            model = "ERNIE-4.0-8K",
+            name="测试",
+            description="test",
+            metadata={
+                "key": "value",
+            }
+        )
+        self.assertIsInstance(assistant, assistant_type.AssistantCreateResponse)
             
     def test_Assistant(self):
         from appbuilder.core.assistant.type import assistant_type
