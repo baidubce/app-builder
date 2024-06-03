@@ -141,12 +141,16 @@ class HallucinationDetection(CompletionBaseComponent):
             result (Message): 模型运行后的输出消息。
         """
         inputs = message.content
+        query = inputs.pop('query', None)
+        assert query, 'You must input query and query should not be empty'
+        assert 'context' in inputs and inputs['context'], 'You must input context and context should not be empty'
+        assert 'answer' in inputs and inputs['answer'], 'You must input answer and answer should not be empty'
         response_mode = "streaming" if stream else "blocking"
         user_id = message.id
         model_config_inputs = ModelArgsConfig(**{"stream": stream, "temperature": temperature, "top_p": top_p})
         model_config = self.get_model_config(model_config_inputs)
 
-        request = self.gene_request('', inputs, response_mode, user_id, model_config)
+        request = self.gene_request(query, inputs, response_mode, user_id, model_config)
         response = self.completion(self.version, self.base_url, request)
 
         if response.error_no != 0:

@@ -78,9 +78,9 @@ class OutputFormatChoices(Enum):
 class OralQueryGenerationArgs(ComponentArguments):
     """口语化Query生成配置
     """
-    query: str = Field(...,
-                       valiable_name='query',
-                       description='输入文本，用于生成Query')
+    text: str = Field(...,
+                      valiable_name='text',
+                      description='输入文本，用于生成Query')
     query_type: QueryTypeChoices = Field(...,
                                          variable_name='query_type',
                                          description='待生成的query类型，可选值为问题、短语和全部（问题+短语）。')
@@ -141,8 +141,8 @@ class OralQueryGeneration(CompletionBaseComponent):
         """
         兼容老版本的输出格式
         """
-        if model_output is None:
-            return None
+        if not isinstance(model_output, str):
+            return model_output
         # print(model_output)
         
         match_obj = re.search(r'```json\n(.+)\n```', model_output, flags=re.DOTALL)
@@ -160,7 +160,10 @@ class OralQueryGeneration(CompletionBaseComponent):
 
         queries = []
         for key in ['问题', '短语']:
-            queries += regenerated_output.get(key, [])
+            queries += regenerated_output.pop(key, [])
+        for value in regenerated_output.values():
+            queries += value
+        
         regenerated_output = '\n'.join([f'{index}. {query}' for index, query in enumerate(queries, 1)])
         return regenerated_output
 
@@ -206,6 +209,7 @@ class OralQueryGeneration(CompletionBaseComponent):
             result (Message): 模型运行后的输出消息。
         """
         text = message.content
+        assert text, 'Input text should be a valid string'
         inputs = {
             'text': text,
             'query_type': query_type
