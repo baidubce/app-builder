@@ -334,6 +334,8 @@ class CompletionBaseComponent(Component):
             obj:`Message`: Output message after running model.
         """
 
+        timeout = kwargs.get('timeout')
+        retry = kwargs.get('retry', 0)
         request_id = kwargs.get('request_id')
         specific_params = {k: v for k, v in kwargs.items() if k in self.meta.model_fields}
         model_config_params = {k: v for k, v in kwargs.items() if k in ModelArgsConfig.model_fields}
@@ -347,7 +349,14 @@ class CompletionBaseComponent(Component):
         query, inputs, response_mode, user_id = self.get_compeliton_params(specific_inputs, model_config_inputs)
         model_config = self.get_model_config(model_config_inputs)
         request = self.gene_request(query, inputs, response_mode, user_id, model_config)
-        response = self.completion(self.version, self.base_url, request, request_id)
+        response = self.completion(
+            version=self.version,
+            base_url=self.base_url,
+            request=request,
+            timeout=timeout,
+            retry=retry,
+            request_id=request_id
+        )
 
         if response.error_no != 0:
             raise AppBuilderServerException(service_err_code=response.error_no, service_err_message=response.error_msg)
