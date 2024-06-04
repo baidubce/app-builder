@@ -115,6 +115,33 @@ class OralQueryGeneration(CompletionBaseComponent):
     version = 'v1'
     meta = OralQueryGenerationArgs
 
+    manifests = [
+        {
+            "name": "query_generation",
+            "description": "输入文本、待生成的query类型和输出格式，生成query，并按照要求的格式进行输出。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "text": "string",
+                        "description": "输入文本，组件会根据该输入文本生成query。"
+                    },
+                    "query_type": {
+                        "text": "string",
+                        "description": "待生成的query类型，可选问题、短语以及全部（问题 + 短语）。"
+                    },
+                    "output_format": {
+                        "text": "string",
+                        "description": "输出格式，可选json或str，str格式与老版本输出格式相同。"
+                    }
+                },
+                "required": [
+                    "text"
+                ]
+            }
+        }
+    ]
+
     def __init__(
         self, 
         model=None,
@@ -229,3 +256,28 @@ class OralQueryGeneration(CompletionBaseComponent):
         result.content = self.regenerate_output(result.content, output_format)
 
         return result
+
+    def tool_eval(self, name: str, stream: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        text = kwargs.get('text', None)
+        query_type = kwargs.get('query_type', '全部')
+        output_format = kwargs.get('output_format', 'str')
+        if not text:
+            raise ValueError('param `text` is required')
+        msg = Message(text)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get('temperature', 1e-10)
+        top_p = model_configs.get('top_p', 0.0)
+        message = self.run(message=msg,
+                           query_type=query_type,
+                           output_format=output_format,
+                           stream=stream,
+                           temperature=temperature,
+                           top_p=top_p)
+        if stream:
+            for data in message.content:
+                yield data
+        else:
+            return message.content
