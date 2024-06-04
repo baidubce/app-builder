@@ -65,16 +65,20 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 ### 响应示例
 ```
-Message(name=msg, content=1、OPPO Reno5上的超级防抖
-2、怎么开启OPPO Reno5的超级防抖
-3、OPPO Reno5的超级防抖Pro
-4、前置视频上的超级防抖
-5、跑步时拍照OPPO Reno5的超级防抖
-6、OPPO Reno5的多代视频防抖
-7、OPPO Reno5的超级防抖算法
-8、OPPO Reno5的超级防抖怎么用
-9、OPPO Reno5的超级防抖如何开启
-10、OPPO Reno5的超级防抖Pro如何使用, mtype=dict, extra={})
+Message(name=msg, content=1. OPPO Reno5上有什么特殊的功能？
+2. 视频超级防抖是什么？
+3. 视频超级防抖有什么作用？
+4. 如何在OPPO Reno5上开启视频超级防抖？
+5. 视频超级防抖Pro是什么？
+6. 开启视频超级防抖后，屏幕上会出现什么？
+7. 前置视频有防抖算法吗？
+8. OPPO Reno5上的视频超级防抖
+9. 视频超级防抖3.0
+10. 多代视频防抖算法积累的作用
+11. 开启视频超级防抖的方法
+12. 视频超级防抖Pro的功能
+13. 开启视频超级防抖后，屏幕上会出现的东西
+14. 前置视频防抖算法的作用, mtype=dict, extra={'search_db': [{'completed_at': 1717077564, 'content': '你生成的Query只能是【问题】或【短语】。【问题】通常是疑问句并且包含疑问词，你生成的【问题】必须能够使用输入文本进行回答；【短语】通常是一个陈述句并且不包含疑问词，你生成的【短语】必须能够在输入文本中找到对应的信息。', 'coord': "{'box': [[0, 0, 1, 1]], 'page_num': 0}", 'created_at': 1717077559, 'created_by': 'aad73ef2-a3e3-43f5-9282-72513be7bf43', 'dataset_id': 'd26f4d81-de98-4c47-853e-3951d9188077', 'dataset_name': 'Query生成', 'disabled_at': None, 'disabled_by': None, 'document': {'data_source_type': 'custom_upload', 'doc_type': None, 'id': 'f1646560-bb1b-45b5-9ff3-77e814e42608', 'name': 'Query生成requirement映射表.xlsx'}, 'document_id': 'f1646560-bb1b-45b5-9ff3-77e814e42608', 'document_name': 'Query生成requirement映射表.xlsx', 'enabled': True, 'error': None, 'hit_count': 0, 'id': 'b34887f6-61d4-400d-9c71-d942940485e8', 'index_node_hash': '', 'index_node_id': 'f1646560-bb1b-45b5-9ff3-77e814e42608-2', 'indexing_at': 1717077559, 'inner_id': '', 'keywords': [], 'mock_id': '', 'position': 2, 'score': 0.783262, 'segments_type': 3, 'sentences': [{'content': '全部', 'id': 'f1646560-bb1b-45b5-9ff3-77e814e42608-2-0', 'score': 0.783262, 'source': 'custom'}], 'status': 'completed', 'stopped_at': 1717077559, 'title': 'Query生成requirement映射表.xlsx', 'tokens': 0, 'type': 'engine', 'word_count': 110}]}, token_usage={'prompt_tokens': 278, 'completion_tokens': 130, 'total_tokens': 408})
 ```
 
 ## 高级用法

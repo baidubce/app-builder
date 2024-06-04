@@ -36,7 +36,7 @@ context = \
 来新麻蒲必试的有两样东西，现在差不多每间烤肉店都有炉边烤蛋，但大家知道吗？原来新麻蒲就是炉边烤蛋的开创者，既然是始祖，这已经是个非吃不可的理由！还有一款必试的就是护心肉，即是猪的横隔膜与肝中间的部分，每头猪也只有200克这种肉，非常珍贵，其味道吃起来有种独特的肉香味，跟牛护心肉一样精彩！
 秘制猪皮
 很多怕胖的女生看到猪皮就怕怕，但其实猪皮含有大量胶原蛋白，营养价值很高呢！这里红通通的猪皮还经过韩国秘制酱汁处理过，会有一点点辣味。烤猪皮的时候也需特别注意火侯，这样吃起来才会有外脆内Q的口感！'''
-answer = '澳门新麻蒲烤肉店并不是每天开门，周日休息。'
+answer = '澳门新麻蒲烤肉店并不是每天开门。'
 
 inputs = {'query': query, 'context': context, 'answer': answer}
 msg = appbuilder.Message(inputs)
@@ -77,6 +77,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 ### 响应示例
 ```
+Message(name=msg, content=存在幻觉, mtype=dict, extra={}, token_usage={'prompt_tokens': 748, 'completion_tokens': 2, 'total_tokens': 750})
 ```
 
 ### 错误码
