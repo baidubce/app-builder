@@ -223,7 +223,7 @@ class ImageUnderstand(Component):
             if img_url in file_urls:
                 img_url = file_urls[img_url]
             req.url = img_url
-        response = self.__recognize(req, request_id)
+        response = self.__recognize(req, request_id=request_id)
         description_to_llm = response.result.description_to_llm
         description_processed = description_to_llm.rsplit("。", 2)[0]
         return description_processed

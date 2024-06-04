@@ -121,7 +121,7 @@ class HandwriteOCR(Component):
             req.probability = "false"
             req.detect_direction = "true"
             req.detect_alteration = "true"
-            response = self._recognize(req, traceid)
+            response = self._recognize(req, request_id=traceid)
             text = "".join([w.words for w in response.words_result])
             result += f"{file_name}的手写识别结果是：{text} "
 

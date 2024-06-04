@@ -158,7 +158,7 @@ class Translation(Component):
         req.q = text
         to_lang = kwargs.get("to_lang", "en")
         req.to_lang = to_lang
-        results = proto.Message.to_dict(self._translate(req, traceid))["result"]
+        results = proto.Message.to_dict(self._translate(req, request_id=traceid))["result"]
         trans_result = results["trans_result"]
         res = {
             "原文本": "\n ".join(item["src"] for item in trans_result),

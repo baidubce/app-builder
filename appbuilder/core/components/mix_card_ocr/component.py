@@ -170,7 +170,7 @@ class MixCardOCR(Component):
             request.detect_quality = "false"
             request.detect_photo = "false"
             request.detect_card = "false"
-            response = self._recognize(request, traceid)
+            response = self._recognize(request, request_id=traceid)
             out = MixCardOCROutMsg()
             for res in response.words_result:
                 card_type = res.card_info.card_type

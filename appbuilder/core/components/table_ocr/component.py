@@ -195,7 +195,7 @@ class TableOCR(Component):
             req = TableOCRRequest()
             req.url = file_url
             req.cell_contents = "false"
-            resp = self._recognize(req, traceid)
+            resp = self._recognize(req, request_id=traceid)
             tables_result = proto.Message.to_dict(resp)["tables_result"]
             markdowns = self.get_table_markdown(tables_result)
             result[file_name] = markdowns
