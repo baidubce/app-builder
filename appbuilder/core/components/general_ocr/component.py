@@ -52,7 +52,7 @@ class GeneralOCR(Component):
     manifests = [
         {
             "name": "general_ocr",
-            "description": "提供更高精度的通用文字识别能力，能够识别图片中的文字",
+            "description": "提供更高精度的通用文字识别能力，能够识别图片中的文字，不支持html后缀文件的输入",
             "parameters": {
                 "type": "object",
                 "properties": {

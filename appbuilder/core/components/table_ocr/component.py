@@ -50,7 +50,7 @@ class TableOCR(Component):
     manifests = [
         {
             "name": "table_ocr",
-            "description": "需要识别图片中的表格内容，使用该工具",
+            "description": "需要识别图片中的表格内容，使用该工具, 但不支持html后缀文件的识别",
             "parameters": {
                 "type": "object",
                 "properties": {
