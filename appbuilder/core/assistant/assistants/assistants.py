@@ -68,7 +68,6 @@ class Assistants(object):
         req = assistant_type.AssistantCreateRequest(
             name=name,
             description=description,
-            assistant_id=assistant_id,
             model=model,
             response_format=response_format,
             instructions=instructions,
