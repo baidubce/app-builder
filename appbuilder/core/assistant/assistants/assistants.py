@@ -32,7 +32,6 @@ class Assistants(object):
     def create(self,
                name: str,
                description: str,
-               assistant_id: Optional[str] = "",
                model: Optional[str] = "ERNIE-4.0-8K",
                response_format: Optional[str] = 'text',
                instructions: Optional[str] = "你是百度制作的AI助手",
@@ -48,7 +47,6 @@ class Assistants(object):
         Args:
             name (str): 助手名称
             description (str): 助手描述
-            assistant_id (Optional[str], optional): 助手ID. Defaults to "".
             model (Optional[str], optional): 模型名称. Defaults to "ERNIE-4.0-8K".
             response_format (Optional[str], optional): 响应格式. Defaults to 'text'.
             instructions (Optional[str], optional): 指令. Defaults to "".
