@@ -44,6 +44,42 @@ def create(self,
     """
 ```
 
+- appbuilder.assistant.assistants.create 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#1%E5%88%9B%E5%BB%BAassistant)
+
+- appbuilder.assistant.assistants.create 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0)
+
+```python
+class AssistantCreateRequest(BaseModel):
+    model: str = Field(default="ERNIE-4.0-8K")  # 使用的模型
+    name: str = Field(default="", min_length=1, max_length=128, pattern="^[\u4e00-\u9fa50-9a-zA-Z_-]+$")  # 助理名称
+    description: str = Field(default="", max_length=512)  # 助理描述
+    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)  # 响应格式
+    instructions: str = Field(default="你是百度制作的AI助手", max_length=4096)  # 助理的通用指令
+    thought_instructions: str = Field(default="", max_length=4096)  # 助理的思维指令
+    chat_instructions: str = Field(default="", max_length=4096)  # 助理的聊天指令
+    tools: list[AssistantTool] = Field(default=[], max_length=10)  # 助理使用的工具列表
+    file_ids: list[str] = Field(default=[], max_length=10)  # 关联文件的ID列表
+    metadata: dict = Field(default={}, max_length=16)  # 元数据
+```
+
+- appbuilder.assistant.assistants.create 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0)
+
+```python
+class AssistantCreateResponse(BaseModel):
+    id: Optional[str] = ""  # 助理ID
+    object: Optional[str] = ""  # 助理对象标识
+    name: Optional[str] = ""  # 助理名称
+    description: Optional[str] = ""  # 助理描述
+    instructions: Optional[str]  # 助理的通用指令
+    tools: Optional[list[AssistantTool]] = Field(default=[])  # 助理使用的工具列表
+    created_at: Optional[int] = 0  # 助理创建时间戳
+    thought_instructions: Optional[str] = ""  # 助理的思维指令
+    chat_instructions: Optional[str] = ""  # 助理的聊天指令
+    response_format: Optional[ResponseFormat] = Field(default=ResponseFormat.TEXT)  # 响应格式
+    file_ids: Optional[list[str]] = Field(default=[])  # 关联文件的ID列表
+    metadata: Optional[dict] = Field(default={}, max_length=16)  # 元数据
+```
+
 #### appbuilder.assistant.assistants.update
 
 功能：根据assistant_id修改一个已创建的Assistant
@@ -84,6 +120,43 @@ def update(self,
         """
 ```
 
+- appbuilder.assistant.assistants.update 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#2%E4%BF%AE%E6%94%B9assistant)
+
+- appbuilder.assistant.assistants.update 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-1)
+
+```python
+class AssistantUpdateRequest(BaseModel):
+    assistant_id: Optional[str] = ""  # 助理ID
+    model: str = Field(default="ERNIE-4.0-8K")  # 使用的模型
+    name: str = Field(default="", min_length=1, max_length=128, pattern="^[\u4e00-\u9fa50-9a-zA-Z_-]+$")   # 助理名称
+    description: str = Field(default="", max_length=512)  # 助理描述
+    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)  # 响应格式
+    instructions: str = Field(default="你是百度制作的AI助手", max_length=4096)  # 助理的通用指令
+    thought_instructions: str = Field(default="", max_length=4096)  # 助理的思维指令
+    chat_instructions: str = Field(default="", max_length=4096)  # 助理的聊天指令
+    tools: list[AssistantTool] = Field(default=[], max_length=10)  # 助理使用的工具列表
+    file_ids: list[str] = Field(default=[], max_length=10)  # 关联文件的ID列表
+    metadata: dict = Field(default={}, max_length=16)  # 元数据
+```
+
+- appbuilder.assistant.assistants.update 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-1)
+
+```python
+class AssistantUpdateResponse(BaseModel):
+    id: Optional[str] = ""  # 助理ID
+    model: Optional[str] = ""  # 助理对象标识
+    name: Optional[str] = ""  # 助理名称
+    description: Optional[str] = ""  # 助理描述
+    response_format: Optional[ResponseFormat] = Field(default=ResponseFormat.TEXT)  # 响应格式
+    instructions: Optional[str]  # 助理的通用指令
+    created_at: Optional[int] = 0  # 助理创建时间戳
+    thought_instructions: Optional[str] = ""  # 助理的思维指令
+    chat_instructions: Optional[str] = ""  # 助理的聊天指令
+    tools: Optional[list[AssistantTool]] = Field(default=[])  # 助理使用的工具列表
+    file_ids: Optional[list[str]] = Field(default=[])  # 关联文件的ID列表
+    metadata: Optional[dict] = Field(default={}, max_length=16)  # 元数据
+```
+
 #### appbuilder.assistant.assistants.list
 
 功能：查询当前用户已创建的assistant列表
@@ -110,6 +183,29 @@ def list(self,
         """
 ```
 
+- appbuilder.assistant.assistants.list 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#3-%E6%9F%A5%E8%AF%A2assistant%E5%88%97%E8%A1%A8)
+
+- appbuilder.assistant.assistants.list 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-2)
+
+```python
+class AssistantListRequest(BaseModel):
+    limit: Optional[int] =   Field(default=20) # 列举结果数量上限
+    order: Optional[AssistantListRole] =   Field(default= AssistantListRole.DESC) # 排序字段
+    after: Optional[str] =   Field(default="") # 查询指定assistant_id之后创建的Assistant
+    before: Optional[str] =   Field(default="") # 查询指定assistant_id之前创建的Assistant
+```
+
+- appbuilder.assistant.assistants.list 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-2)
+
+```python
+class AssistantListResponse(BaseModel):
+    object: str = "list" # 结构类型，返回值固定为 list
+    data: Optional[list[AssistantCreateResponse]] = Field(default=[]) # Assistant对象列表
+    first_id: Optional[str] = "" # 返回的列表中第一条assistant的id
+    last_id: Optional[str] = "" # 返回的列表中最后一条assistant的id
+    has_more: bool = False # 是否还有更多的数据
+```
+
 #### appbuilder.assistant.assistants.query
 
 功能：根据assistant_id查询Assistant信息
@@ -129,6 +225,33 @@ def query(self,
         Raises:
             HTTPError: 请求失败，抛出HTTPError异常
         """
+```
+
+- appbuilder.assistant.assistants.query 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#4-%E6%9F%A5%E8%AF%A2assistant)
+
+- appbuilder.assistant.assistants.query 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-3)
+
+```python
+class AssistantQueryRequest(BaseModel):
+    assistant_id: Optional[str] = ""  # 助理ID
+```
+
+- appbuilder.assistant.assistants.query 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-3)
+
+```python
+class AssistantQueryResponse(BaseModel):
+    id: Optional[str] = ""  # 助理ID
+    object: Optional[str] = ""  # 助理对象标识
+    name: Optional[str] = ""  # 助理名称
+    description: Optional[str] = ""  # 助理描述
+    instructions: Optional[str]  # 助理的通用指令
+    tools: Optional[list[AssistantTool]] = Field(default=[])  # 助理使用的工具列表
+    created_at: Optional[int] = 0  # 助理创建时间戳
+    thought_instructions: Optional[str] = ""  # 助理的思维指令
+    chat_instructions: Optional[str] = ""  # 助理的聊天指令
+    response_format: Optional[ResponseFormat] = Field(default=ResponseFormat.TEXT)  # 响应格式
+    file_ids: Optional[list[str]] = Field(default=[])  # 关联文件的ID列表
+    metadata: Optional[dict] = Field(default={}, max_length=16)  # 元数据 
 ```
 
 #### appbuilder.assistant.assistants.delete
@@ -153,6 +276,24 @@ def delete(self,
         """
 ```
 
+- appbuilder.assistant.assistants.delete 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#5-%E5%88%A0%E9%99%A4assistant)
+
+- appbuilder.assistant.assistants.delete 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-4)
+
+```python
+class AssistantDeleteRequest(BaseModel):
+    assistant_id: Optional[str] = ""  # 助理ID
+```
+
+- appbuilder.assistant.assistants.delete 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-4)
+
+```python
+class AssistantDeleteResponse(BaseModel):
+    id: Optional[str] = ""  # 助理ID
+    object: Optional[str] = ""  # 助理对象标识
+    deleted: bool = False  # 删除状态
+```
+
 #### appbuilder.assistant.assistants.mount_files
 
 功能：指定file_id和assistant_id，挂载File到对应的Assistant
@@ -173,6 +314,26 @@ def mount_files(self,
             assistant_type.AssistantFilesResponse: 助理文件列表响应对象。
         
         """
+```
+
+- appbuilder.assistant.assistants.mount_files 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#6-%E6%8C%82%E8%BD%BDfile%E5%88%B0assistant)
+
+- appbuilder.assistant.assistants.mount_files 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-5)
+
+```python
+class AssistantFilesRequest(BaseModel):
+    assistant_id: Optional[str] = ""  # 助理ID
+    file_id: Optional[str] = ""  # File对象的id
+```
+
+- appbuilder.assistant.assistants.mount_files 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-5)
+
+```python
+class AssistantFilesResponse(BaseModel):
+    id: Optional[str] = ""  # File对象的id，值等于入参
+    object: Optional[str] = ""  # 助理对象标识
+    created_at: Optional[int] = 0  # 助理创建时间戳
+    assistant_id: Optional[str] = ""  # Assistant对象的id，值等于入参
 ```
 
 #### appbuilder.assistant.assistants.mounted_files_list
@@ -202,6 +363,24 @@ def mounted_files_list(self,
         """
 ```
 
+- appbuilder.assistant.assistants.mounted_files_list 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#7-%E6%9F%A5%E8%AF%A2assistant%E6%8C%82%E8%BD%BD%E7%9A%84file%E5%88%97%E8%A1%A8)
+
+- appbuilder.assistant.assistants.mounted_files_list 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-6)
+
+```python
+class AssistantFilesDeleteRequest(BaseModel):
+    assistant_id: Optional[str] = ""  # 助理ID
+    file_id: Optional[str] = ""  # File对象的id
+```
+
+- appbuilder.assistant.assistants.mounted_files_list 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-6)
+
+```python
+class AssistantFilesContentResponse(BaseModel):
+    content_type:Optional[str] = ""  # 文件类型
+    content :Optional[bytes] =b"" # 二进制流数据
+```
+
 #### appbuilder.assistant.assistants.unmount_files
 
 功能：指定assistant_id和file_id，解绑Assistant中对应File的关联
@@ -221,6 +400,26 @@ def unmount_files(self,
             assistant_type.AssistantFilesDeleteResponse: 响应对象。
         """
 ```
+
+- appbuilder.assistant.assistants.unmount_files 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#8-%E8%A7%A3%E7%BB%91assistant%E6%8C%82%E8%BD%BD%E7%9A%84file)
+
+- appbuilder.assistant.assistants.unmount_files 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-7)
+
+```python
+class AssistantFilesDeleteRequest(BaseModel):
+    assistant_id: Optional[str] = ""  # 助理ID
+    file_id: Optional[str] = ""  # File对象的id
+```
+
+- appbuilder.assistant.assistants.unmount_files 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qluzl0y5e#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-7)
+
+```python
+class AssistantFilesDeleteResponse(BaseModel):
+    id: str = ""  # 文件ID
+    object: str = ""  # 文件对象标识
+    deleted: bool = False  # 是否删除成功	
+```
+
 
 ## appbuilder.assistant.assistants.files
 
@@ -246,6 +445,28 @@ def create(self, file_path: str, purpose: str = "assistant") -> assistant_type.A
         """
 ```
 
+- appbuilder.assistant.assistants.files.create 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#1%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6)
+
+- appbuilder.assistant.assistants.files.create 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0)
+
+```python
+file_path (str): 要上传的文件路径。
+purpose (str, optional): 上传文件的用途。默认为 "assistant"。
+```
+
+- appbuilder.assistant.assistants.files.create 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0)
+
+```python
+class AssistantFilesCreateResponse(BaseModel):
+    id: str = ""  # 文件ID
+    bytes: int = 0  # 文件大小（字节）
+    object: str = ""  # 文件对象标识
+    purpose: str = ""  # 文件用途
+    create_at: int = 0  # 文件创建时间戳
+    filename: str = ""  # 文件名
+    classification_id: str = ""  # 文件分类ID
+```
+
 #### appbuilder.assistant.assistants.files.list
 
 功能：列出存储中的文件列表
@@ -265,6 +486,17 @@ def list(self) -> assistant_type.AssistantFilesListResponse:
             assistant_type.AssistantError: 请求发生错误时抛出，具体错误信息可通过 `error_msg` 属性获取
         """
 ```
+
+- appbuilder.assistant.assistants.files.list 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#2%E6%9F%A5%E8%AF%A2%E5%B7%B2%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%96%87%E4%BB%B6%E5%88%97%E8%A1%A8)
+
+- appbuilder.assistant.assistants.files.list 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-1)
+
+```python
+class AssistantFilesListResponse(BaseModel):
+    object :str = "list"
+    data: list[AssistantFilesListData] = []
+```
+**注：**AssistantFilesListData类即为AssistantFilesQueryResponse类
 
 #### appbuilder.assistant.assistants.files.query
 
@@ -289,6 +521,64 @@ def query(self,
     """
 ```
 
+- appbuilder.assistant.assistants.files.query 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#3%E6%9F%A5%E8%AF%A2%E5%B7%B2%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%96%87%E4%BB%B6%E4%BF%A1%E6%81%AF)
+
+- appbuilder.assistant.assistants.files.query 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-2)
+
+```python
+file_id (str): 文件ID
+```
+
+- appbuilder.assistant.assistants.files.query 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-2)
+
+```python
+class AssistantFilesQueryResponse(BaseModel):
+    id: str = ""  # 文件ID
+    bytes: int = 0  # 文件大小（字节）
+    object: str = ""  # 文件对象标识
+    purpose: str = ""  # 文件用途
+    censored :AuditStatus = Field()  # 审核状态
+    create_at: int = 0  # 文件创建时间戳
+    filename: str = ""  # 文件名
+    classification_id: str = ""  # 文件分类ID
+    file_type: str = "" # 文件类型
+```
+
+#### appbuilder.assistant.assistants.files.delete
+
+功能：根据file_id删除一个已上传的文件
+
+```python
+def delete(self,
+        file_id: str,
+    ) -> assistant_type.AssistantFilesDeleteResponse:
+"""
+删除文件
+Args:
+    file_id (str): 文件ID
+Returns:
+    assistant_type.AssistantFilesDeleteResponse: 删除文件后的响应对象。
+Raises:
+    无
+"""
+```
+
+- appbuilder.assistant.assistants.files.delete 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#4%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6)
+
+- appbuilder.assistant.assistants.files.delete 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-3)
+
+```python
+file_id (str): 文件ID
+```
+
+- appbuilder.assistant.assistants.files.delete 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-3)
+
+```python
+class AssistantFilesDeleteResponse(BaseModel):
+    id: str = ""  # 文件ID
+    object: str = ""  # 文件对象标识
+    deleted: bool = False  # 是否删除成功	
+```
 
 #### appbuilder.assistant.assistants.files.download
 
@@ -321,6 +611,14 @@ def download(self,
         """
 ```
 
+- appbuilder.assistant.assistants.files.download 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#5%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6)
+
+- appbuilder.assistant.assistants.files.download 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-4)
+
+```python
+file_id (str): 文件ID
+```
+
 #### appbuilder.assistant.assistants.files.content
 
 功能：获取指定文件的内容
@@ -347,6 +645,14 @@ def content(self,
     """
 ```
 
+- appbuilder.assistant.assistants.files.content 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#6%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9)
+
+- appbuilder.assistant.assistants.files.content 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/ulv0g1t3x#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-5)
+
+```python
+file_id (str): 文件ID
+```
+
 ## appbuilder.assistant.threads
 
 #### appbuilder.assistant.threads.create
@@ -370,6 +676,25 @@ def create(self, messages: Optional[list[thread_type.AssistantMessage]] = []) ->
         """
 ```
 
+- appbuilder.assistant.threads.create 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#1-%E5%88%9B%E5%BB%BAthread)
+
+- appbuilder.assistant.threads.create 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0)
+
+```python
+class ThreadCreateRequest(BaseModel):
+    messages: list[AssistantMessage]
+```
+
+- appbuilder.assistant.threads.create 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0)
+
+```python
+class ThreadCreateResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    created_at: int = 0
+    metadata: dict = {}
+```
+
 #### appbuilder.assistant.threads.query
 
 功能：查询对话线程信息。
@@ -388,6 +713,25 @@ def query(self,
         """
 ```
 
+- appbuilder.assistant.threads.query 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#2-%E6%9F%A5%E8%AF%A2thread)
+
+- appbuilder.assistant.threads.query 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-1)
+
+```python
+class ThreadQueryRequest(BaseModel):
+    thread_id: str
+```
+
+- appbuilder.assistant.threads.query 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-1)
+
+```python
+class ThreadQueryResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    created_at: int = 0
+    metadata: dict = {}
+```
+
 #### appbuilder.assistant.threads.delete
 
 功能：删除对话线程。
@@ -404,6 +748,24 @@ def delete(self,
         Raises:
             ValueError: 如果传入的thread_id参数不是字符串类型。
         """
+```
+
+- appbuilder.assistant.threads.delete 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#3-%E5%88%A0%E9%99%A4thread)
+
+- appbuilder.assistant.threads.delete 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-2)
+
+```python
+class ThreadDeleteRequest(BaseModel):
+    thread_id: str
+```
+
+- appbuilder.assistant.threads.delete 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-2)
+
+```python
+class ThreadDeleteResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    deleted: bool = False
 ```
 
 #### appbuilder.assistant.threads.update
@@ -428,6 +790,26 @@ def update(self,
         TypeError: 如果metadata不是字典类型
         ValueError: 如果metadata的键超过64个字符或值超过512个字符
     """
+```
+
+- appbuilder.assistant.threads.update 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#4-%E4%BF%AE%E6%94%B9thread)
+
+- appbuilder.assistant.threads.update 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-3)
+
+```python
+class ThreadUpdateRequest(BaseModel):
+    thread_id: str
+    metadata: Optional[dict] = Field(default={}, max_length=16)
+```
+
+- appbuilder.assistant.threads.update 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/Nlv0g3e50#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-3)
+
+```python
+class ThreadUpdateResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    created_at: Optional[int] = 0
+    metadata: Optional[dict] = {}
 ```
 
 ## appbuilder.assistant.threads.messages
@@ -457,31 +839,35 @@ def create(self,
     Raises:
         HttpError: 如果请求失败，则抛出HttpError异常。
     """
-
 ```
 
-#### appbuilder.assistant.threads.messages.update
+- appbuilder.assistant.threads.messages.create 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#1-%E5%88%9B%E5%BB%BAmessage)
 
-功能：修改Message对象，允许content和file_ids字段
+- appbuilder.assistant.threads.messages.create 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0)
 
 ```python
-def update(self,
-               thread_id: str,
-               message_id: str,
-               content: Optional[str],
-               file_ids: Optional[list[str]] = []) -> thread_type.AssistantMessageUpdateResponse:
-        """
-        修改Message对象，允许content和file_ids字段
-        Args:
-            thread_id (str): 线程ID。
-            message_id (str): 消息ID。
-            content (Optional[str], optional): 消息内容。默认为空字符串。
-            file_ids (Optional[list[str]], optional): 消息中包含的文件ID列表。默认为空列表。
-        Returns:
-            thread_type.AssistantMessageUpdateResponse: 消息更新响应对象。
-        Raises:
-            HttpError: 如果请求失败，则抛出HttpError异常。
-        """
+class AssistantMessageCreateRequest(BaseModel):
+    thread_id: str
+    role: AssistantMessageRole = Field(
+        default=AssistantMessageRole.USER)
+    content: str
+    file_ids: Optional[list[str]] =  Field(default=[], max_length=10)
+```
+
+- appbuilder.assistant.threads.messages.create 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0)
+
+```python
+class AssistantMessageCreateResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    role: AssistantMessageRole = Field(
+        default=AssistantMessageRole.USER)
+    content: Optional[list[AssistantContent]] = []
+    created_at: int = 0
+    thread_id: str = ""
+    assistant_id: Optional[str] = ""
+    run_id: Optional[str] = ""
+    file_ids: Optional[list[str]] = []
 ```
 
 #### appbuilder.assistant.threads.messages.list
@@ -512,6 +898,32 @@ def list(self,
         """
 ```
 
+- appbuilder.assistant.threads.messages.list 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#2-%E6%9F%A5%E8%AF%A2thread%E4%B8%8B%E7%9A%84message%E5%88%97%E8%A1%A8)
+
+- appbuilder.assistant.threads.messages.list 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-1)
+
+```python
+class AssistantMessageListRequest(BaseModel):
+    thread_id: str
+    limit: int = -20
+    order: AssistantMessageListRole = Field(
+        default=AssistantMessageListRole.DESC)
+    after: str = ""
+    before: str = ""
+```
+
+- appbuilder.assistant.threads.messages.list 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-1)
+
+```python
+class AssistantMessageListResponse(BaseModel):
+    object: str = ""
+    data: list[AssistantMessageListResponseData] = []
+    first_id: Optional[str] = ""
+    last_id: Optional[str] = ""
+    has_more: bool = False
+```
+**注：**AssistantMessageListResponseData类即为AssistantMessageQueryResponse类
+
 #### appbuilder.assistant.threads.messages.query
 
 功能：根据message_id查询指定Message的信息
@@ -535,9 +947,85 @@ def query(self,
         """
 ```
 
+- appbuilder.assistant.threads.messages.query 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#3-%E6%9F%A5%E8%AF%A2%E6%8C%87%E5%AE%9Amessage)
+
+- appbuilder.assistant.threads.messages.query 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-2)
+
+```python
+class AssistantMessageQueryRequest(BaseModel):
+    thread_id: str
+    message_id: str
+```
+
+- appbuilder.assistant.threads.messages.query 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-2)
+
+```python
+class AssistantMessageQueryResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    role: AssistantMessageRole = Field()
+    content: Optional[list[AssistantContent]] = []
+    created_at: int = 0
+    thread_id: str = ""
+    assistant_id: Optional[str] = ""
+    run_id: Optional[str] = ""
+    file_ids: Optional[list[str]] = []
+```
+
+#### appbuilder.assistant.threads.messages.update
+
+功能：修改Message对象，允许content和file_ids字段
+
+```python
+def update(self,
+               thread_id: str,
+               message_id: str,
+               content: Optional[str],
+               file_ids: Optional[list[str]] = []) -> thread_type.AssistantMessageUpdateResponse:
+        """
+        修改Message对象，允许content和file_ids字段
+        Args:
+            thread_id (str): 线程ID。
+            message_id (str): 消息ID。
+            content (Optional[str], optional): 消息内容。默认为空字符串。
+            file_ids (Optional[list[str]], optional): 消息中包含的文件ID列表。默认为空列表。
+        Returns:
+            thread_type.AssistantMessageUpdateResponse: 消息更新响应对象。
+        Raises:
+            HttpError: 如果请求失败，则抛出HttpError异常。
+        """
+```
+
+- appbuilder.assistant.threads.messages.update 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#4-%E4%BF%AE%E6%94%B9message%E5%AF%B9%E8%B1%A1)
+
+- appbuilder.assistant.threads.messages.update 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-3)
+
+```python
+class AssistantMessageUpdateRequest(BaseModel):
+    thread_id: str
+    message_id: str
+    content: Optional[str] 
+    file_ids: Optional[list[str]] = []
+```
+
+- appbuilder.assistant.threads.messages.update 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-3)
+
+```python
+class AssistantMessageUpdateResponse(BaseModel):
+    id: str = ""
+    object: str = ""
+    role: AssistantMessageRole = Field(default=AssistantMessageRole.USER)
+    content: Optional[list[AssistantContent]] = []
+    created_at: int = 0
+    thread_id: str = ""
+    assistant_id: Optional[str] = ""
+    run_id: Optional[str] = ""
+    file_ids: Optional[list[str]] = []
+```
+
 #### appbuilder.assistant.threads.messages.files
 
-功能：获取指定消息 ID 的附件信息。
+功能：查询一个Message对象下的文件列表
 
 ```python
 def files(self,
@@ -562,6 +1050,34 @@ def files(self,
             thread_type.AssistantMessageFilesResponse: 附件信息响应对象。
         """
 ```
+
+- appbuilder.assistant.threads.messages.files 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#5-%E6%9F%A5%E8%AF%A2message%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E5%88%97%E8%A1%A8)
+
+- appbuilder.assistant.threads.messages.files 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-4)
+
+```python
+class AssistantMessageFilesRequest(BaseModel):
+    thread_id: str
+    message_id: str
+    limit: int = -20
+    order : AssistantMessageListRole = Field(
+        default=AssistantMessageListRole.DESC)
+    after: str = ""
+    before: str = ""
+```
+
+- appbuilder.assistant.threads.messages.files 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/qlv0g47sk#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-4)
+
+```python
+class AssistantMessageFilesResponse(BaseModel):
+    object: str = ""
+    data: list[AssistantContentFilesData] = []
+    first_id: Optional[str] = ""
+    last_id: Optional[str] = ""
+    has_more: bool = False
+```
+**注：**AssistantContentFilesData类即为AssistantFilesResponse类
+
 
 ## appbuilder.assistant.threads.runs
 
@@ -609,6 +1125,56 @@ def run(self,
         2. 如果这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user
         3. 如果这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user
     """
+```
+
+- appbuilder.assistant.threads.runs.run 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#1-%E8%BF%90%E8%A1%8C)
+
+- appbuilder.assistant.threads..runs.run 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0)
+
+```python
+class AssistantRunRequest(BaseModel):
+    thread_id: Optional[str] = Field(default="")
+    model: str = Field(default="ERNIE-4.0-8K")
+    assistant_id: Optional[str] = Field(default="")
+    metadata: Optional[dict] =  Field(default={}, max_length=16)
+    response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)
+    instructions: Optional[str] = Field(default="", max_length=4096)
+    thought_instructions: Optional[str] = Field(default="", max_length=4096)
+    chat_instructions: Optional[str] = Field(default="", max_length=4096)
+    stream: Optional[bool] = False
+    thread: Optional[AssistantThread] = None
+    tools: Optional[list[AssistantTool]] = []
+    tool_output: Optional[ToolOutput] = None
+```
+
+- appbuilder.assistant.threads..runs.run 的[流式响应参数](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0)
+
+- appbuilder.assistant.threads..runs.run 的[非流式响应参数](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#%E9%9D%9E%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0)
+
+```python
+class RunResult(BaseModel):
+    id: str = ""
+    object: str = ""
+    assistant_id: str = ""
+    thread_id: str = ""
+
+    model: str = ""
+    instructions: str = ""
+    thought_instructions: str = ""
+    chat_instructions: str = ""
+    tools: Optional[list[AssistantTool]] = None
+    file_ids: Optional[list[str]] = None
+
+    status: str = ""
+    required_action: Optional[RequiredAction] = None
+    last_error: Optional[LastError] = None
+    final_answer: Optional[FinalAnswer] = None
+    created_at: int = 0
+    started_at: int = 0
+    expired_at: int = 0
+    cancelled_at: int = 0
+    failed_at: int = 0
+    completed_at: int = 0
 ```
 
 #### appbuilder.assistant.threads.runs.stream_run
@@ -681,6 +1247,46 @@ def submit_tool_outputs(self,
     """
 ```
 
+- appbuilder.assistant.threads.runs.submit_tool_outputs 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#2-%E6%B5%81%E5%BC%8F%E8%B0%83%E7%94%A8%E6%97%B6%E6%8F%90%E4%BA%A4%E5%B7%A5%E5%85%B7%E8%BE%93%E5%87%BA)
+
+- appbuilder.assistant.threads..runs.submit_tool_outputs 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-1)
+
+```python
+class AssistantSubmitToolOutputsRequest(BaseModel):
+    thread_id: str = Field(default="", min_length=1)
+    run_id: str = Field(default="", min_length=1)
+    tool_outputs: Optional[list[ToolOutput]] = Field(default=[], min_length=1)
+```
+
+- appbuilder.assistant.threads..runs.submit_tool_outputs 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#%E5%93%8D%E5%BA%94%E8%AF%B4%E6%98%8E-1)
+
+
+```python
+class RunResult(BaseModel):
+    id: str = ""
+    object: str = ""
+    assistant_id: str = ""
+    thread_id: str = ""
+
+    model: str = ""
+    instructions: str = ""
+    thought_instructions: str = ""
+    chat_instructions: str = ""
+    tools: Optional[list[AssistantTool]] = None
+    file_ids: Optional[list[str]] = None
+
+    status: str = ""
+    required_action: Optional[RequiredAction] = None
+    last_error: Optional[LastError] = None
+    final_answer: Optional[FinalAnswer] = None
+    created_at: int = 0
+    started_at: int = 0
+    expired_at: int = 0
+    cancelled_at: int = 0
+    failed_at: int = 0
+    completed_at: int = 0
+```
+
 #### appbuilder.assistant.threads.runs.cancel
 
 功能：在流式运行过程，中断该thread.stream_run的运行
@@ -700,3 +1306,106 @@ def cancel(self, run_id: str, thread_id: str) -> thread_type.RunResult:
     """
 ```
 
+- appbuilder.assistant.threads.runs.cancel 对应的 [Assistant API 链接](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#3-%E6%B5%81%E5%BC%8F%E8%B0%83%E7%94%A8%E6%97%B6%E5%8F%96%E6%B6%88%E8%BF%90%E8%A1%8C)
+
+- appbuilder.assistant.threads..runs.cancel 的[请求参数](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0-2)
+
+```python
+class AssistantRunCancelRequest(BaseModel):
+    thread_id: str = Field(default="", min_length=1)
+    run_id: str = Field(default="", min_length=1)
+
+```
+
+- appbuilder.assistant.threads..runs.cancel 的[响应参数](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0-1)
+
+
+```python
+class RunResult(BaseModel):
+    id: str = ""
+    object: str = ""
+    assistant_id: str = ""
+    thread_id: str = ""
+
+    model: str = ""
+    instructions: str = ""
+    thought_instructions: str = ""
+    chat_instructions: str = ""
+    tools: Optional[list[AssistantTool]] = None
+    file_ids: Optional[list[str]] = None
+
+    status: str = ""
+    required_action: Optional[RequiredAction] = None
+    last_error: Optional[LastError] = None
+    final_answer: Optional[FinalAnswer] = None
+    created_at: int = 0
+    started_at: int = 0
+    expired_at: int = 0
+    cancelled_at: int = 0
+    failed_at: int = 0
+    completed_at: int = 0
+
+```
+
+
+## appbuilder.assistant公共类
+
+- AssistantTool
+
+```python
+class AssistantTool(BaseModel):
+    """
+    表示助理工具的模型。
+
+    Attributes:
+        type (str): 工具的类型，默认为 'function'。
+        function (AssistantFunction): 功能的实例。
+    """
+    type: str = 'function'
+    function: AssistantFunction = None
+```
+
+- AssistantContent
+
+```python
+class AssistantContent(BaseModel):
+    """
+    表示助理内容的模型。
+
+    Attributes:
+        type (str): 内容类型，默认为 "text"。
+        text (Optional[AssistantText]): 文本内容的实例，默认为None。
+    """
+    type: str = "text"
+    text: Optional[AssistantText] = None
+```
+
+- AssistantText
+
+```python
+class AssistantText(BaseModel):
+    """
+    表示助理文本内容的模型。
+
+    Attributes:
+        value (str): 文本的值。
+        annotations (Optional[list[str]]): 文本的注解列表，默认为None。
+    """
+    value: str = ""
+    annotations: Optional[list[str]] = None
+```
+
+- ResponseFormat
+
+```python
+class ResponseFormat(str, Enum):
+    """
+    表示响应格式的枚举类型。
+
+    Values:
+        TEXT: 文本格式。
+        JSON_OBJECT: JSON对象格式。
+    """
+    TEXT = 'text'
+    JSON_OBJECT = 'json_object'
+```
