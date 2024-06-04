@@ -94,10 +94,8 @@ client = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = client.create_conversation()
 
-# 上传一个介绍某汽车产品的说明文档
-file_id = client.upload_local_file(conversation_id, "/path/to/pdf/file")
-# 引用上传的文档，开始对话
-message = client.run(conversation_id, "汽车性能参数怎么样", file_ids=[file_id, ], stream=True)
+# 引用上传的文档，开始对话(注意：这里的file_ids不是必填项)
+message = client.run(conversation_id, "汽车性能参数怎么样", stream=True)
 
 answer = ""
 
@@ -201,10 +199,8 @@ class AppBuilderClientDemo {
         String appId = "请设置正确的应用ID";
         AppBuilderClient builder = new AppBuilderClient(appId);
         String conversationId = builder.createConversation();
-        // 填写上传文件路径
-        String fileId = builder.uploadLocalFile(conversationId, "/Users/zhangxiaoyu15/PycharmProjects/app-builder/test_app_builder_client/test.pdf");
         // 输入query
-        AppBuilderClientIterator itor = builder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
+        AppBuilderClientIterator itor = builder.run("中国四大传统节日是哪四个", conversationId, new String[]{}, false);
         StringBuilder answer = new StringBuilder();
         // itor.hasNext()返回false时，表示流式调用结束
         while(itor.hasNext())
@@ -424,13 +420,8 @@ func main() {
 	// 与创建应用时绑定的知识库不同之处在于，
 	// 所上传文件仅在本次会话ID下发生作用，如果创建新的会话ID，上传的文件自动失效
 	// 而知识库在不同的会话ID下均有效
-	fileID, err := builder.UploadLocalFile(conversationID, "/path/to/cv.pdf")
-	if err != nil {
-		fmt.Println("upload local file failed:", err)
-		return
-	}
 	// 执行流式对话
-	i, err := builder.Run(conversationID, "描述简历中的候选人情况", []string{fileID}, true)
+	i, err := builder.Run(conversationID, "描述简历中的候选人情况",nil, true)
 	if err != nil {
 		fmt.Println("run failed: ", err)
 		return
