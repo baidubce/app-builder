@@ -24,7 +24,7 @@ class InnerSession(requests.sessions.Session):
         """
         super(InnerSession, self).__init__(*args, **kwargs)
 
-    def prepare_curl(self, request: requests.PreparedRequest) -> str:
+    def build_curl(self, request: requests.PreparedRequest) -> str:
         """
         Generate cURL command from prepared request object.
         """
@@ -38,7 +38,7 @@ class InnerSession(requests.sessions.Session):
                 body = json.loads(request.body)
                 body = "'{0}'".format(json.dumps(body, ensure_ascii=False))
                 curl += " \\\n-d {0}".format(body)
-            except json.JSONDecodeError:
+            except:
                 curl += " \\\n-d '{0}'".format(request.body)
         return curl
 
@@ -46,5 +46,5 @@ class InnerSession(requests.sessions.Session):
         """
         Send request using inner session.
         """
-        logger.debug("\n" + self.prepare_curl(request) + "\n")
+        logger.debug("Curl Command:\n" + self.build_curl(request) + "\n")
         return super(InnerSession, self).send(request, **kwargs)
