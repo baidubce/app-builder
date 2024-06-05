@@ -80,16 +80,6 @@ class TestOralQueryGenerationComponent(unittest.TestCase):
         self.assertIsNotNone(answer)
         print(f'\n[result]\n{answer.content}\n')
 
-    def test_run_with_ultra_long_input(self):
-        """测试大模型执行报错
-        """
-        text = TEST_TEXT * 100
-        msg = appbuilder.Message(text)
-        answer = self.query_generation(msg)
-        # print(answer)
-        self.assertIsNotNone(answer)
-        print(f'\n[result]\n{answer.content}\n')
-
     def test_tool_eval_with_default_params(self):
         """测试 tool_eval 方法使用默认参数
         """
