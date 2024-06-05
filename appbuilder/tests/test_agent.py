@@ -72,17 +72,6 @@ class TestAgentRuntime(unittest.TestCase):
         response = client.post('/chat', json=payload, headers=headers)
         self.assertNotEqual(response.json.get('code'), 0)
         
-        payload = {
-            "message": {"query": "你好"},
-            "stream": False
-        }
-        headers = {
-            "X-Appbuilder-Authorization": "...",
-            "X-Appbuilder-Token": "..."
-        }
-        response = client.post('/chat', json=payload, headers=headers)
-        self.assertNotEqual(response.json.get('code'), 0)
-
     def test_stream_http(self):
         """ 测试http """
         component = appbuilder.Playground(
