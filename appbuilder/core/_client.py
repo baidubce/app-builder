@@ -144,7 +144,9 @@ class HTTPClient:
     def auth_header(self, request_id: Optional[str] = None):
         r"""auth_header is a helper method return auth info"""
         auth_header = get_default_header()
-        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else str(uuid.uuid4())
+        new_request_id = str(uuid.uuid4())
+        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else new_request_id
+        auth_header["X-Bce-Request-Id"] = request_id if request_id else new_request_id
         auth_header["X-Appbuilder-Authorization"] = self.secret_key
         logger.debug("Request header: {}\n".format(auth_header))
         return auth_header
@@ -152,7 +154,9 @@ class HTTPClient:
     def auth_header_v2(self, request_id: Optional[str] = None):
         r"""auth_header_v2 is a helper method return auth info for OpenAPI, only used by AppBuilderClient"""
         auth_header = get_default_header()
-        auth_header["X-Bce-Request-id"] = request_id if request_id else str(uuid.uuid4())
+        new_request_id = str(uuid.uuid4())
+        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else new_request_id
+        auth_header["X-Bce-Request-Id"] = request_id if request_id else new_request_id
         auth_header["Authorization"] = self.secret_key
         logger.debug("Request header: {}\n".format(auth_header))
         return auth_header
@@ -207,7 +211,9 @@ class AssistantHTTPClient(HTTPClient):
         r"""auth_header is a helper method return auth info"""
         auth_header = get_default_header()
         auth_header["Authorization"] = self.secret_key
-        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else str(uuid.uuid4())
+        new_request_id = str(uuid.uuid4())
+        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else new_request_id
+        auth_header["X-Bce-Request-Id"] = request_id if request_id else new_request_id
         auth_header["X-Appbuilder-Authorization"] = self.secret_key
         auth_header["Content-Type"] = "application/json"
         logger.debug("Request header: {}\n".format(auth_header))
