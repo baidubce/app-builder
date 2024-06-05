@@ -97,7 +97,7 @@ conversation_id = client.create_conversation()
 # 上传一个介绍某汽车产品的说明文档
 file_id = client.upload_local_file(conversation_id, "/path/to/pdf/file")
 # 引用上传的文档，开始对话
-# 注意file_ids不是必填项，如果不需要引用文档，则file_ids为空或跳过即可
+# 注意file_ids不是必填项，如果不需要引用特定文档，file_ids留空即可
 message = client.run(conversation_id, "汽车性能参数怎么样", file_ids=[file_id, ], stream=True)
 
 answer = ""
@@ -205,7 +205,7 @@ class AppBuilderClientDemo {
         // 填写上传文件路径
         String fileId = builder.uploadLocalFile(conversationId, "/Users/zhangxiaoyu15/PycharmProjects/app-builder/test_app_builder_client/test.pdf");
         // 输入query
-        // 注意file_ids不是必填项，如果不需要引用文档，则file_ids为空或跳过即可
+        // 注意file_ids不是必填项，如果不需要引用特定文档，则将new String[]{fileId}更换为new String[]{}即可
         AppBuilderClientIterator itor = builder.run("中国四大传统节日是哪四个", conversationId, new String[]{fileId}, false);
         StringBuilder answer = new StringBuilder();
         // itor.hasNext()返回false时，表示流式调用结束
@@ -432,7 +432,7 @@ func main() {
 		return
 	}
 	// 执行流式对话
-    // 注意file_ids不是必填项，如果不需要引用文档，则file_ids为空或跳过即可
+    // 注意file_ids不是必填项，如果不需要引用特定的文档，则将[]string{fileID}更换为nil即可
 	i, err := builder.Run(conversationID, "描述简历中的候选人情况", []string{fileID}, true)
 	if err != nil {
 		fmt.Println("run failed: ", err)
