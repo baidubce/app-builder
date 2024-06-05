@@ -433,8 +433,8 @@ func main() {
 	}
 	// 执行流式对话
     // 注意file_ids不是必填项，如果不需要引用特定的文档，则将[]string{fileID}更换为nil即可
-    // 同时还需要将上文的fileID, err := builder.UploadLocalFile(conversationID, "/path/to/cv.pdf")代码
-    //更换为 _, err = client.UploadLocalFile(conversationID, "./cv.pdf"),否则会报错
+    // 同时还需要将上文的fileID, err := builder.UploadLocalFile(conversationID,  "/path/to/cv.pdf")代码
+    // 更换为 _, err = client.UploadLocalFile(conversationID,  "/path/to/cv.pdf"),否则会报错
 	i, err := builder.Run(conversationID, "描述简历中的候选人情况", []string{fileID}, true)代码更换为
 	if err != nil {
 		fmt.Println("run failed: ", err)
