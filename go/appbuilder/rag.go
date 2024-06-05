@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -26,10 +27,10 @@ import (
 
 func NewRAG(appID string, config *SDKConfig) (*RAG, error) {
 	if len(appID) == 0 {
-		return nil, fmt.Errorf("appID is empty")
+		return nil, errors.New("appID is empty")
 	}
 	if config == nil {
-		return nil, fmt.Errorf("invalid config")
+		return nil, errors.New("invalid config")
 	}
 	return &RAG{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 500 * time.Second}}, nil
 }
@@ -72,7 +73,6 @@ func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator
 	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
 	if stream {
 		return &RAGStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
-	} else {
-		return &RAGOnceIterator{body: resp.Body, requestID: requestID}, nil
 	}
+	return &RAGOnceIterator{body: resp.Body, requestID: requestID}, nil
 }

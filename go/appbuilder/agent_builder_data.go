@@ -76,7 +76,7 @@ type Event struct {
 	Status      string
 	EventType   string
 	ContentType string
-	Detail      interface{}
+	Detail      any
 }
 
 type TextDetail struct {
@@ -106,10 +106,10 @@ type Reference struct {
 }
 
 type FunctionCallDetail struct {
-	Text  interface{} `json:"text"`
-	Image string      `json:"image"`
-	Audio string      `json:"audio"`
-	Video string      `json:"video"`
+	Text  any    `json:"text"`
+	Image string `json:"image"`
+	Audio string `json:"audio"`
+	Video string `json:"video"`
 }
 
 type ImageDetail struct {
@@ -200,7 +200,6 @@ type AgentBuilderOnceIterator struct {
 }
 
 func (t *AgentBuilderOnceIterator) Next() (*AgentBuilderAnswer, error) {
-
 	data, err := io.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)

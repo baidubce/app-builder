@@ -15,19 +15,21 @@
 package appbuilder
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 type SDKConfig struct {
 	GatewayURL   string
 	GatewayURLV2 string
 	SecretKey    string
+	logger       zerolog.Logger
 }
 
 func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
@@ -47,18 +49,28 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 		secretKey = os.Getenv("APPBUILDER_TOKEN")
 	}
 	if len(secretKey) == 0 {
-		fmt.Errorf("secret key is empty")
+		log.Error().Msg("secret key is empty")
 	}
 	if !strings.HasPrefix(secretKey, "Bearer ") {
 		secretKey = "Bearer " + secretKey
 	}
 
-	return &SDKConfig{GatewayURL: gatewayURL, GatewayURLV2: gatewayURLV2, SecretKey: secretKey}, nil
+	logLevel := os.Getenv("APPBUILDER_LOGLEVEL")
+	zerologLevel := zerolog.InfoLevel
+	if strings.ToLower(logLevel) == "debug" {
+		zerologLevel = zerolog.DebugLevel
+	}
+
+	sdkConfig := &SDKConfig{GatewayURL: gatewayURL, GatewayURLV2: gatewayURLV2, SecretKey: secretKey}
+	sdkConfig.logger = zerolog.New(os.Stdout).Level(zerologLevel)
+
+	return sdkConfig, nil
 }
 
 func (t *SDKConfig) AuthHeader() http.Header {
 	header := t.authHeader()
 	header.Set("X-Appbuilder-Authorization", t.SecretKey)
+	t.logger.Debug().Msgf("Auth Header %v", header)
 	return header
 }
 
@@ -66,6 +78,7 @@ func (t *SDKConfig) AuthHeader() http.Header {
 func (t *SDKConfig) AuthHeaderV2() http.Header {
 	header := t.authHeader()
 	header.Set("Authorization", t.SecretKey)
+	t.logger.Debug().Msgf("Auth Header %v", header)
 	return header
 }
 
@@ -88,6 +101,7 @@ func (t *SDKConfig) ServiceURLV2(suffix string) (*url.URL, error) {
 
 func (t *SDKConfig) serviceURL(gateway, suffix string) (*url.URL, error) {
 	absolutePath := gateway + suffix
+	t.logger.Debug().Msgf("Service URL %s", absolutePath)
 	url, err := url.Parse(absolutePath)
 	if err != nil {
 		return nil, err

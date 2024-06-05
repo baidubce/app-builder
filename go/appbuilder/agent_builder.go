@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -30,10 +31,10 @@ import (
 // Deprecated: 请使用AppBuilderClient 代替 AgentBuilder
 func NewAgentBuilder(appID string, config *SDKConfig) (*AgentBuilder, error) {
 	if len(appID) == 0 {
-		return nil, fmt.Errorf("appID is empty")
+		return nil, errors.New("appID is empty")
 	}
 	if config == nil {
-		return nil, fmt.Errorf("config is nil")
+		return nil, errors.New("config is nil")
 	}
 	return &AgentBuilder{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 300 * time.Second}}, nil
 }
@@ -71,7 +72,7 @@ func (t *AgentBuilder) CreateConversation() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]interface{})
+	rsp := make(map[string]any)
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -123,7 +124,7 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]interface{})
+	rsp := make(map[string]any)
 	if err := json.Unmarshal(body, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -136,9 +137,9 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 
 func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string, stream bool) (AgentBuilderIterator, error) {
 	if len(conversationID) == 0 {
-		return nil, fmt.Errorf("conversationID mustn't be empty")
+		return nil, errors.New("conversationID mustn't be empty")
 	}
-	m := map[string]interface{}{"app_id": t.appID,
+	m := map[string]any{"app_id": t.appID,
 		"conversation_id": conversationID,
 		"query":           query,
 		"file_ids":        fileIDS,
@@ -169,7 +170,6 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
 	if stream {
 		return &AgentBuilderStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
-	} else {
-		return &AgentBuilderOnceIterator{body: resp.Body}, nil
 	}
+	return &AgentBuilderOnceIterator{body: resp.Body}, nil
 }

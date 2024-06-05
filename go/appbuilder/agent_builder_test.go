@@ -21,7 +21,6 @@ import (
 )
 
 func TestNewAgentBuilder(t *testing.T) {
-
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
