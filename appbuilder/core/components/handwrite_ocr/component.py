@@ -45,7 +45,7 @@ class HandwriteOCR(Component):
     manifests = [
         {
             "name": "handwriting_ocr",
-            "description": "需要对图片中手写体文字进行识别时，使用该工具",
+            "description": "需要对图片中手写体文字进行识别时，使用该工具，不支持PDF文件，如果用户没有提供图片文件，应引导用户提供图片，而不是尝试使用该工具",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -121,7 +121,7 @@ class HandwriteOCR(Component):
             req.probability = "false"
             req.detect_direction = "true"
             req.detect_alteration = "true"
-            response = self._recognize(req, traceid)
+            response = self._recognize(req, request_id=traceid)
             text = "".join([w.words for w in response.words_result])
             result += f"{file_name}的手写识别结果是：{text} "
 

@@ -33,7 +33,7 @@ for package in packages:
 
 setup(
     name='appbuilder-sdk',
-    version='0.7.1', #NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
+    version='0.8.0', #NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
     author='dongdaxiang',
     author_email='dongdaxiang@baidu.com',
     packages=packages,

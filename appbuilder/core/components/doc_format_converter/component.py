@@ -121,7 +121,7 @@ class DocFormatConverter(Component):
             else:
                 with open(doc_message.file_path, 'rb') as f:
                     submit_request.image =  base64.b64encode(f.read())
-        docConverterSubmitResponse = self.submitDocFormatConverterTask(submit_request, request_id)
+        docConverterSubmitResponse = self.submitDocFormatConverterTask(submit_request, request_id=request_id)
         taskId = docConverterSubmitResponse.result.task_id
         TASK_PROGRESS_COMPLETED = 3
         TASK_PROGRESS_FAILED = 4
@@ -130,7 +130,7 @@ class DocFormatConverter(Component):
             while True:
                 request = DocFormatConverterQueryRequest()
                 request.task_id = taskId
-                docConverterQueryResponse = self.queryDocFormatConverterTask(request, request_id)
+                docConverterQueryResponse = self.queryDocFormatConverterTask(request, request_id=request_id)
                 if docConverterQueryResponse.result.ret_code is not None:
                     task_progress = docConverterQueryResponse.result.ret_code
                     if task_progress == TASK_PROGRESS_COMPLETED:
@@ -234,7 +234,7 @@ class DocFormatConverter(Component):
             if not file_url:
                 raise InvalidRequestArgumentError("request format error, file url is not set")
         try:
-            result = self.run(Message({"file_path": file_url, "page_num": page_num}), traceid)
+            result = self.run(Message({"file_path": file_url, "page_num": page_num}), request_id=traceid)
         except AppBuilderServerException:
             raise
         except Exception as e:

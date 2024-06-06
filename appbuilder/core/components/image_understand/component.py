@@ -139,7 +139,6 @@ class ImageUnderstand(Component):
         data = response.json()
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
-        self.__class__.__check_service_error(request_id, data)
         task = ImageUnderstandTask(data, request_id=request_id)
         task_id = task.result.get("task_id", "")
         if task_id == "":
@@ -151,7 +150,7 @@ class ImageUnderstand(Component):
             data = response.json()
             self.http_client.check_response_json(data)
             request_id = self.http_client.response_request_id(response)
-            self.__class__.__check_service_error(request_id, data)
+            self.__class__.__check_service_error(request_id, data.get("result", {}))
             # 处理成功
             response = ImageUnderstandResponse(data)
             if response.result.ret_code == 0:
@@ -223,7 +222,7 @@ class ImageUnderstand(Component):
             if img_url in file_urls:
                 img_url = file_urls[img_url]
             req.url = img_url
-        response = self.__recognize(req, request_id)
+        response = self.__recognize(req, request_id=request_id)
         description_to_llm = response.result.description_to_llm
         description_processed = description_to_llm.rsplit("。", 2)[0]
         return description_processed
@@ -237,9 +236,11 @@ class ImageUnderstand(Component):
             返回：
                 无
         """
-        if "error_code" in data or "error_msg" in data:
+        ret_code = data.get("ret_code", 0)
+        if ret_code != 0 and ret_code != 1:
             raise AppBuilderServerException(
                 request_id=request_id,
-                service_err_code=data.get("error_code"),
-                service_err_message=data.get("error_msg")
+                service_err_code=data.get("ret_code", ""),
+                service_err_message=data.get("ret_msg", "")
             )
+

@@ -50,7 +50,7 @@ class TableOCR(Component):
     manifests = [
         {
             "name": "table_ocr",
-            "description": "需要识别图片中的表格内容，使用该工具",
+            "description": "需要识别图片中的表格内容，使用该工具, 但不支持html后缀文件的识别",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -195,7 +195,7 @@ class TableOCR(Component):
             req = TableOCRRequest()
             req.url = file_url
             req.cell_contents = "false"
-            resp = self._recognize(req, traceid)
+            resp = self._recognize(req, request_id=traceid)
             tables_result = proto.Message.to_dict(resp)["tables_result"]
             markdowns = self.get_table_markdown(tables_result)
             result[file_name] = markdowns

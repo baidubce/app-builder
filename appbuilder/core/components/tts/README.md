@@ -58,18 +58,18 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 无
 
 ### 调用参数
-| 参数名称       | 参数类型    | 是否必须 | 描述                                                                                                                                                                 | 示例值                                 |
-|------------|---------|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
-| message    | String  | 是    | 待转成语音的文本                                                                                                                                                           | Message(content={"text": "需合成的文本"}) |
-| model      | String  | 否    | 默认是`baidu-tts`模型，可选值：`paddlespeech-tts`、`baidu-tts`                                                                                                                | paddlespeech-tts                    |
-| speed      | Integer | 否    | 语音语速，默认是5中等语速，取值范围在0~15之间，如果使用paddlespeech-tts模型，参数自动失效                                                                                                            | 5                                   |
-| pitch      | Integer | 否    | 语音音调，默认是5中等音调，取值范围在0~15之间，如果使用paddlespeech-tts模型，参数自动失效                                                                                                            | 5                                   |
-| volume     | Integer | 否    | 语音音量，默认是5中等音量，取值范围在0~15之间，如果使用paddlespeech-tts模型，参数自动失效                                                                                                            | 5                                   |
-| person     | Integer | 否    | 语音人物特征，默认是0(度小美),可选值: 1(度小宇) 、0(度小美)、 3(度逍遥-基础)、  4(度丫丫)、 5003(度逍遥-精品)、  5118(度小鹿) 、106(度博文)、 110(度小童)、 111(度小萌)、 103(度米朵)、 5(度小娇), 如果选择模型为paddlespeech-tts，参数自动失效 | 0                                   |
-| audio_type | String  | 否    | 音频文件格式，默认是`mp3`, 如果使用`paddlespeech-tts`模型非流式返回，参数只能设为`wav`，如果使用`paddlespeech-tts`模型流式返回，参数只能设为`pcm`                                                                | wav                                 |
-| stream     | Bool    | 否    | 目前仅`paddlespeech-tts`模型支持流式返回                                                                                                                                      | False                               |
-| retry      | Integer | 否    | HTTP重试次数                                                                                                                                                           | 3                                   |
-| timeout    | Integer | 否    | HTTP超时时间                                                                                                                                                           | 5                                   |
+| 参数名称       | 参数类型    | 是否必须 | 描述                                                                                                                                                                                             | 示例值                                 |
+|------------|---------|------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| message    | String  | 是    | 待转成语音的文本                                                                                                                                                                                       | Message(content={"text": "需合成的文本"}) |
+| model      | String  | 否    | 默认是`baidu-tts`模型，可选值：`paddlespeech-tts`、`baidu-tts`                                                                                                                                            | paddlespeech-tts                    |
+| speed      | Integer | 否    | 语音语速，默认是5中等语速，取值范围在0~15之间，仅当模型为`baidu-tts`参数有效，如果模型为`paddlespeech-tts`，参数自动失效                                                                                                                  | 5                                   |
+| pitch      | Integer | 否    | 语音音调，默认是5中等音调，取值范围在0~15之间，仅当模型为`baidu-tts`参数有效，如果模型为`paddlespeech-tts`，参数自动失效                                                                                                                  | 5                                   |
+| volume     | Integer | 否    | 语音音量，默认是5中等音量，取值范围在0~15之间，,仅当模型为`baidu-tts`参数有效，如果模型为`paddlespeech-tts`，参数自动失效                                                                                                                 | 5                                   |
+| person     | Integer | 否    | 语音人物特征，默认是0(度小美),普通音库可选值包括: 0(度小美)、1(度小宇)、3(度逍遥-基础)、4(度丫丫)；精品音库包括：5003(度逍遥-精品)、  5118(度小鹿) 、106(度博文)、 110(度小童)、 111(度小萌)、 103(度米朵)、 5(度小娇),仅当模型为`baidu-tts`参数有效，如果模型为`paddlespeech-tts`，参数自动失效 | 0                                   |
+| audio_type | String  | 否    | 音频文件格式，如果使用`baidu-tts`模型可选`mp3`, `wav`; 如果使用`paddlespeech-tts`模型非流式返回，参数只能设为`wav`;如果使用`paddlespeech-tts`模型流式返回，参数只能设为`pcm`                                                                     | wav                                 |
+| stream     | Bool    | 否    | 默认是False, 目前`paddlespeech-tts`模型支持流式返回，`baidu-tts`模型不支持流式返回                                                                                                                                    | False                               |
+| retry      | Integer | 否    | HTTP重试次数                                                                                                                                                                                       | 3                                   |
+| timeout    | Integer | 否    | HTTP超时时间                                                                                                                                                                                       | 5                                   |
 
 ### 非流式语音响应参数
 | 参数名称          | 参数类型   | 描述     | 示例值     |
