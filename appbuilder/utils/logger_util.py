@@ -106,6 +106,8 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         """
         set filename
         """
+        if "file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
         LOGGING_CONFIG["handlers"]["file"]["filename"] = filename
         logging.config.dictConfig(LOGGING_CONFIG)
 
