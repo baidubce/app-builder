@@ -101,6 +101,14 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         level
         """
         return self.logger.level
+    
+    def setFilename(self, filename):
+        """
+        set filename
+        """
+        LOGGING_CONFIG["handlers"]["file"]["filename"] = filename
+        logging.config.dictConfig(LOGGING_CONFIG)
+
 
     def process(self, msg, kwargs):
         """
