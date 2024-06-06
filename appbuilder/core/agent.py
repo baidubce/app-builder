@@ -279,9 +279,10 @@ class AgentRuntime(BaseModel):
                 stream = data.pop("stream")
                 if not isinstance(stream, bool):
                     raise BadRequest("stream must be bool type")
-            request_id = str(uuid.uuid4())
+            request_id = request.headers.get("X-Appbuilder-Request-Id", str(uuid.uuid4()))
+            user_id = request.headers.get("X-Appbuilder-User-Id", None)
 
-            init_context(session_id=session_id, request_id=request_id)
+            init_context(session_id=session_id, request_id=request_id, user_id=user_id)
             logging.info(
                 f"[request_id={request_id}, session_id={session_id}] message={message}, stream={stream}, data={data}")
             try:

@@ -25,6 +25,7 @@ class TestFilesCreate(unittest.TestCase):
         from appbuilder.core.assistant.type import assistant_type
         file_path = "./data/qa_doc_parser_extract_table_from_doc.png"
         file = appbuilder.assistant.assistants.files.create(file_path=file_path)
+        self.assertIsInstance(file, assistant_type.AssistantFilesCreateResponse)
         
         # test list
         files_list = appbuilder.assistant.assistants.files.list()

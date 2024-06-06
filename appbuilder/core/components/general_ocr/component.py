@@ -176,7 +176,7 @@ class GeneralOCR(Component):
         req = GeneralOCRRequest(url=img_url)
         req.detect_direction = "true"
         req.language_type = "auto_detect"
-        result = proto.Message.to_dict(self._recognize(req, traceid))
+        result = proto.Message.to_dict(self._recognize(req, request_id=traceid))
         results = {
             "识别结果": " \n".join(item["words"] for item in result["words_result"])
         }

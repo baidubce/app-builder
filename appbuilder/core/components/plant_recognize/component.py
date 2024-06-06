@@ -166,7 +166,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, traceid)
+        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
         if streaming:
             yield rec_res
         else:
@@ -190,7 +190,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             req.url = img_url
         req.top_num = TOP_NUM
         req.baike_num = BAIKE_NUM
-        result = self.__recognize(req, request_id)
+        result = self.__recognize(req, request_id=request_id)
         result_dict = proto.Message.to_dict(result)
         rec_res = "模型识别结果为：\n"
         for rec_info in result_dict['result']:

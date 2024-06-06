@@ -173,7 +173,7 @@ class QRcodeOCR(Component):
                     f"illegal location, expected location is 'true' or 'false', got {location}"
                 )
             req.location = location
-            resp = self._recognize(req, traceid)
+            resp = self._recognize(req, request_id=traceid)
             result[file_name] = [
                 item["text"] for item in proto.Message.to_dict(resp).get("codes_result", [])
             ]

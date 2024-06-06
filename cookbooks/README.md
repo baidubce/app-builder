@@ -15,6 +15,11 @@
 
 ### 流程编排
 - [基于AssistantSDK 实现FunctionCall](/cookbooks/pipeline/assistant_function_call.ipynb)
+- [AssistantSDK assistant函数演示](/cookbooks/pipeline/assistant.ipynb)
+- [AssistantSDK file函数演示](/cookbooks/pipeline/file.ipynb)
+- [AssistantSDK message函数演示](/cookbooks/pipeline/message.ipynb)
+- [AssistantSDK run函数演示](/cookbooks/pipeline/run.ipynb)
+- [AssistantSDK thread函数演示](/cookbooks/pipeline/thread.ipynb)
 
 
 ### 端到端应用
