@@ -45,7 +45,7 @@ class HandwriteOCR(Component):
     manifests = [
         {
             "name": "handwriting_ocr",
-            "description": "需要对图片中手写体文字进行识别时，使用该工具",
+            "description": "需要对图片中手写体文字进行识别时，使用该工具，不支持PDF文件，如果用户没有提供图片文件，应引导用户提供图片，而不是尝试使用该工具",
             "parameters": {
                 "type": "object",
                 "properties": {
