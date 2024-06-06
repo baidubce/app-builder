@@ -52,12 +52,25 @@ public class HttpClient {
         if (systemLogLevel == null || systemLogLevel.isEmpty()) {
             LOGGER.setLevel(Level.INFO);
             handler.setLevel(Level.INFO);
-        } else if (systemLogLevel.toLowerCase().equals("debug")) {
-            LOGGER.setLevel(Level.FINE);
-            handler.setLevel(Level.FINE);
         } else {
-            LOGGER.setLevel(Level.INFO);
-            handler.setLevel(Level.INFO);
+            switch (systemLogLevel.toLowerCase()) {
+                case "debug":
+                    LOGGER.setLevel(Level.FINE);
+                    handler.setLevel(Level.FINE);
+                    break;
+                case "warning":
+                    LOGGER.setLevel(Level.WARNING);
+                    handler.setLevel(Level.WARNING);
+                    break;
+                case "error":
+                    LOGGER.setLevel(Level.SEVERE);
+                    handler.setLevel(Level.SEVERE);
+                    break;
+                default:
+                    LOGGER.setLevel(Level.INFO);
+                    handler.setLevel(Level.INFO);
+                    break;
+            }
         }
         LOGGER.addHandler(handler);
 
@@ -72,7 +85,7 @@ public class HttpClient {
                 LOGGER.addHandler(fileHandler);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to create log file: " + systemLogFile, e); 
-            }  
+            }
         }
     }
 

@@ -57,10 +57,17 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 		secretKey = "Bearer " + secretKey
 	}
 
-	logLevel := os.Getenv("APPBUILDER_LOGLEVEL")
+	logLevel := strings.ToLower(os.Getenv("APPBUILDER_LOGLEVEL"))
 	zerologLevel := zerolog.InfoLevel
-	if strings.ToLower(logLevel) == "debug" {
+	switch logLevel {
+	case "debug":
 		zerologLevel = zerolog.DebugLevel
+	case "warning":
+		zerologLevel = zerolog.WarnLevel
+	case "error":
+		zerologLevel = zerolog.ErrorLevel
+	default:
+		zerologLevel = zerolog.InfoLevel
 	}
 
 	sdkConfig := &SDKConfig{GatewayURL: gatewayURL, GatewayURLV2: gatewayURLV2, SecretKey: secretKey}
