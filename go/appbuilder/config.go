@@ -15,6 +15,8 @@
 package appbuilder
 
 import (
+	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -107,4 +109,29 @@ func (t *SDKConfig) serviceURL(gateway, suffix string) (*url.URL, error) {
 		return nil, err
 	}
 	return url, nil
+}
+
+func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
+	curlCmd := fmt.Sprintf("curl -L %v \\\n", req.URL.String()) // add -L flag for following redirects
+
+	for k, v := range req.Header {
+		header := fmt.Sprintf("-H '%v: %v' \\\n", k, v[0])
+		curlCmd = fmt.Sprintf("%v %v", curlCmd, header)
+	}
+
+	if req.Method == "POST" {
+		bodyBytes, err := io.ReadAll(req.Body)
+		if err != nil {
+			t.logger.Error().Msgf("Failed to read request body: %v", err)
+			return
+		}
+		req.Body.Close()
+		req.Body = io.NopCloser(strings.NewReader(string(bodyBytes)))
+
+		body := fmt.Sprintf("-d '%v'", string(bodyBytes))
+		curlCmd = fmt.Sprintf("%v %v", curlCmd, body)
+	}
+	if t.logger.GetLevel() == zerolog.DebugLevel {
+		fmt.Println("\n" + curlCmd + "\n")
+	}
 }

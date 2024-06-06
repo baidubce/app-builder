@@ -59,6 +59,7 @@ func (t *AgentBuilder) CreateConversation() (string, error) {
 	req := map[string]string{"app_id": t.appID}
 	data, _ := json.Marshal(req)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
@@ -159,6 +160,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	request.Header = header
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err

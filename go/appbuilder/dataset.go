@@ -53,6 +53,7 @@ func (t *Dataset) Create(name string) (string, error) {
 	req := map[string]string{"name": name}
 	data, _ := json.Marshal(req)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
@@ -168,6 +169,7 @@ func (t *Dataset) addFileToDataset(datasetID string, fileID []string) ([]string,
 		"dataset_id": datasetID}
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
@@ -209,6 +211,7 @@ func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword st
 	}
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err

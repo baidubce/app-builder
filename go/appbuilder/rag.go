@@ -62,6 +62,7 @@ func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator
 	}
 	data, _ := json.Marshal(req)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
