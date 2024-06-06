@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import java.util.UUID;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -60,6 +60,20 @@ public class HttpClient {
             handler.setLevel(Level.INFO);
         }
         LOGGER.addHandler(handler);
+
+        String systemLogFile = System.getProperty(AppBuilderConfig.APPBUILDER_LOGFILE);
+        if (systemLogFile == null || systemLogFile.isEmpty()) {
+            systemLogFile = System.getenv(AppBuilderConfig.APPBUILDER_LOGFILE);
+        }
+
+        if (systemLogFile != null && !systemLogFile.isEmpty()) {
+            try {
+                FileHandler fileHandler = new FileHandler(systemLogFile);
+                LOGGER.addHandler(fileHandler);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to create log file: " + systemLogFile, e); 
+            }  
+        }
     }
 
     public ClassicHttpRequest createPostRequest(String url, HttpEntity entity) {

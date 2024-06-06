@@ -22,11 +22,13 @@ import (
 )
 
 func TestNewAppBuilderClient(t *testing.T) {
-	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	os.Setenv("APPBUILDER_LOGLEVEL", "INFO")
+	os.Setenv("APPBUILDER_LOGFILE", "")
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
+
 	appID := ""
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {

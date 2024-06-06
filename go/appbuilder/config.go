@@ -65,7 +65,17 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 
 	sdkConfig := &SDKConfig{GatewayURL: gatewayURL, GatewayURLV2: gatewayURLV2, SecretKey: secretKey}
 
-	sdkConfig.logger = zerolog.New(os.Stdout).Level(zerologLevel)
+	logFile := os.Getenv("APPBUILDER_LOGFILE")
+	if len(logFile) > 0 {
+		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err != nil {
+			sdkConfig.logger = zerolog.New(os.Stdout).Level(zerologLevel)
+		} else {
+			sdkConfig.logger = zerolog.New(f).Level(zerologLevel)
+		}
+	} else {
+		sdkConfig.logger = zerolog.New(os.Stdout).Level(zerologLevel)
+	}
 
 	return sdkConfig, nil
 }
@@ -133,6 +143,19 @@ func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
 		curlCmd = fmt.Sprintf("%v %v", curlCmd, body)
 	}
 	if t.logger.GetLevel() == zerolog.DebugLevel {
+		logFile := os.Getenv("APPBUILDER_LOGFILE")
+		if len(logFile) > 0 {
+			file, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err != nil {
+				fmt.Println("Failed to open log file:", err)
+				return
+			}
+			defer file.Close()
+
+			originalStdout := os.Stdout
+			defer func() { os.Stdout = originalStdout }()
+			os.Stdout = file
+		}
 		fmt.Println("\n" + curlCmd + "\n")
 	}
 }

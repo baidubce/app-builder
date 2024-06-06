@@ -24,28 +24,34 @@ from threading import current_thread
 
 
 LOGGING_CONFIG = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '[%(asctime)s.%(msecs)03d] %(filename)s [line:%(lineno)d] %(levelname)s [%(logid)s] %(message)s',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "[%(asctime)s.%(msecs)03d] %(filename)s [line:%(lineno)d] %(levelname)s [%(logid)s] %(message)s",
         },
     },
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'standard',
-            'stream': 'ext://sys.stdout',  # Use standard output
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+            "stream": "ext://sys.stdout",  # Use standard output
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "tmp.log",
+            "formatter": "standard",
         },
     },
-    'loggers': {
-        'appbuilder': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
+    "loggers": {
+        "appbuilder": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
         },
-    }
+    },
 }
 
 
@@ -57,6 +63,11 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         """
         init
         """
+        log_file = os.environ.get("APPBUILDER_LOGFILE", "")
+        if log_file:
+            LOGGING_CONFIG["handlers"]["file"]["filename"] = log_file
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
+            LOGGING_CONFIG["handlers"]["file"]["level"] = loglevel
         LOGGING_CONFIG['handlers']['console']['level'] = loglevel
         LOGGING_CONFIG['loggers']['appbuilder']['level'] = loglevel
         logging.config.dictConfig(LOGGING_CONFIG)
@@ -120,7 +131,6 @@ def _setup_logging():
     return LoggerWithLoggerId(logging.getLogger('appbuilder'), {'logid': ''}, log_level.upper())
 
 
-
 def get_logger(name, level=logging.INFO):
     """
     Get logger from logging with given name, level and format without
@@ -158,5 +168,3 @@ def get_logger(name, level=logging.INFO):
 
 
 logger = _setup_logging()
-
-

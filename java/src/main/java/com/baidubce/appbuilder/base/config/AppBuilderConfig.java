@@ -8,6 +8,7 @@ public class AppBuilderConfig {
     public static final String APPBUILDER_DEFAULT_GATEWAY = "https://appbuilder.baidu.com";
     public static final String APPBUILDER_DEFAULT_GATEWAY_V2 = "https://qianfan.baidubce.com";
     public static final String APPBUILDER_LOGLEVEL = "APPBUILDER_LOGLEVEL";
+    public static final String APPBUILDER_LOGFILE = "APPBUILDER_LOGFILE";
 
     // http client请求超时时间，秒
     public static final int HTTP_CLIENT_CONNECTION_TIMEOUT = 300;
