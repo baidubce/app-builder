@@ -113,6 +113,9 @@ class CompletionResponse(object):
             else:
                 data = response.json()
 
+                if data.get("code") and "message" in data:
+                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
+
                 if "code" in data and "message" in data and "requestId" in data:
                     raise AppBuilderServerException(self.log_id, data["code"], data["message"])
 
@@ -136,6 +139,8 @@ class CompletionResponse(object):
         if parsed_str:
             try:
                 data = json.loads(parsed_str)
+                if data.get("code") and "message" in data:
+                    raise AppBuilderServerException(self.log_id, data["code"], data["message"])
                 if "code" in data and "message" in data and "requestId" in data:
                     raise AppBuilderServerException(self.log_id, data["code"], data["message"])
                 if "code" in data and "message" in data and "status" in data:

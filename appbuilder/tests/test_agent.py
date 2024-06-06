@@ -15,7 +15,7 @@ from appbuilder import (
 )
 
 
-#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
@@ -71,7 +71,7 @@ class TestAgentRuntime(unittest.TestCase):
         }
         response = client.post('/chat', json=payload, headers=headers)
         self.assertNotEqual(response.json.get('code'), 0)
-
+        
     def test_stream_http(self):
         """ 测试http """
         component = appbuilder.Playground(
