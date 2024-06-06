@@ -101,14 +101,28 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         level
         """
         return self.logger.level
-    
+
     def setFilename(self, filename):
         """
         set filename
         """
         LOGGING_CONFIG["handlers"]["file"]["filename"] = filename
+        print(LOGGING_CONFIG)
         logging.config.dictConfig(LOGGING_CONFIG)
 
+    def setLoglevel(self, level):
+        """
+        set log level
+        """
+        log_level = level.strip().lower()
+
+        if log_level not in ["debug", "info", "warning", "error"]:
+            raise ValueError("expected APPBUILDER_LOGLEVEL in [debug, info, warning, error], but got %s" % log_level)
+        log_level = log_level.upper()
+        LOGGING_CONFIG['handlers']['console']['level'] = log_level
+        LOGGING_CONFIG['loggers']['appbuilder']['level'] = log_level
+        LOGGING_CONFIG["handlers"]["file"]["level"] = log_level
+        logging.config.dictConfig(LOGGING_CONFIG)
 
     def process(self, msg, kwargs):
         """

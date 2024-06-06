@@ -167,7 +167,7 @@ export APPBUILDER_LOGLEVEL=INFO
 也可以在代码中设置，优先级高于环境变量。
 ```python
 # python
-appbuilder.logger.setLevel("DEBUG")
+appbuilder.logger.setLoglevel("DEBUG")
 ```
 ```java
 // java
@@ -191,7 +191,7 @@ export APPBUILDER_LOGFILE=/tmp/appbuilder.log
 也可以在代码中设置，优先级高于环境变量。
 ```python
 # python
-appbuilder.logger.setFilename("/tmp/rag_with_baidu_search.log")
+appbuilder.logger.setFilename("/tmp/appbuilder.log")
 ```
 ```java
 // java
