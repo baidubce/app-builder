@@ -22,7 +22,6 @@ import appbuilder
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ['APPBUILDER_TOKEN'] = '...'
 
-hallucination_detection = appbuilder.HallucinationDetection()
 
 query = '澳门新麻蒲烤肉店每天开门吗？'
 context = \
@@ -38,6 +37,8 @@ context = \
 很多怕胖的女生看到猪皮就怕怕，但其实猪皮含有大量胶原蛋白，营养价值很高呢！这里红通通的猪皮还经过韩国秘制酱汁处理过，会有一点点辣味。烤猪皮的时候也需特别注意火侯，这样吃起来才会有外脆内Q的口感！'''
 answer = '澳门新麻蒲烤肉店并不是每天开门。'
 
+#! 该组件推荐使用ERNIE Speed-AppBuilder模型。
+hallucination_detection = appbuilder.HallucinationDetection('ERNIE Speed-AppBuilder')
 inputs = {'query': query, 'context': context, 'answer': answer}
 msg = appbuilder.Message(inputs)
 result = hallucination_detection.run(msg)
@@ -48,7 +49,7 @@ print(result)
 ## 参数说明
 
 ### 鉴权说明
-使用组件之前，请首先申请并设置鉴权参数，可参考[使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
+使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
 ```python
 # 设置环境中的TOKEN，以下示例略
 os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
@@ -57,18 +58,18 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 初始化参数
 | 参数名称 | 参数类型 | 是否必须 | 描述 | 示例值 |
 | ------- | ------- | -------- | -------- | -------- |
-| `model` | str | 否 | 模型名称，用于指定要使用的千帆模型。 | ERNIE Speed-AppBuilder |
-| `secret_key` | str | 否 | 用户鉴权token，默认从环境变量中获取: `os.getenv("APPBUILDER_TOKEN", "")` |  |
-| `gateway` | str | 否 | 后端网关服务地址，默认从环境变量中获取: `os.getenv("GATEWAY_URL", "")` |  |
+| `model` | str | 是 | 模型名称，用于指定要使用的千帆模型。推荐使用ERNIE Speed-AppBuilder模型。 | ERNIE Speed-AppBuilder |
+| `secret_key` | str | 否 | 用户鉴权token，默认从环境变量中获取: `os.getenv("APPBUILDER_TOKEN", "")` | bce-v3/XXX |
+| `gateway` | str | 否 | 后端网关服务地址，默认从环境变量中获取: `os.getenv("GATEWAY_URL", "")` | https://appbuilder.baidu.com |
 | `lazy_certification` | bool | 否 | 延迟认证，为True时在第一次运行时认证。默认为False。 | False |
 
-### 调用参数 （以表格形式展示）
+### 调用参数
 | 参数名称 | 参数类型 | 是否必须 | 描述 | 示例值 |
 | ------- | ------- | -------- | -------- | -------- |
 | `message` | obj | 是 | 输入信息，用于传入用户查询query、根据query得到的检索结果context和基于context生成的query的答案answer。 | Message(content={'query': '...', 'context': '...', 'answer': '...'}) |
 | `stream` | bool | 否 | 指定是否以流式形式返回响应。默认为 False。 | False |
 | `temperature` | float | 否 | 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。 | 0.1 |
-| `top_p` | float | 否 | 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。 | 0.0 |
+| `top_p` | float | 否 | 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0.0。 | 0.0 |
 
 ### 响应参数
 | 参数名称 | 参数类型 | 描述 | 示例值 |
