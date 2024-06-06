@@ -107,7 +107,6 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         set filename
         """
         LOGGING_CONFIG["handlers"]["file"]["filename"] = filename
-        print(LOGGING_CONFIG)
         logging.config.dictConfig(LOGGING_CONFIG)
 
     def setLoglevel(self, level):
