@@ -19,6 +19,7 @@ public class AppBuilderClientTest{
     @Before
     public void setUp() {
         System.setProperty("APPBUILDER_TOKEN", "");
+        System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
         appId = "";
     }
 

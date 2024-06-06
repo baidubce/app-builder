@@ -1,11 +1,13 @@
 package com.baidubce.appbuilder.base.component;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.utils.http.HttpClient;
 
 public class Component {
     protected HttpClient httpClient;
-
+    
     public Component() {
         //从环境变量获取
         initClient("", "");
@@ -46,5 +48,4 @@ public class Component {
         }
         this.httpClient = new HttpClient(secretKey, gateway, gatewayV2);
     }
-
 }
