@@ -64,6 +64,7 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 	}
 
 	sdkConfig := &SDKConfig{GatewayURL: gatewayURL, GatewayURLV2: gatewayURLV2, SecretKey: secretKey}
+
 	sdkConfig.logger = zerolog.New(os.Stdout).Level(zerologLevel)
 
 	return sdkConfig, nil

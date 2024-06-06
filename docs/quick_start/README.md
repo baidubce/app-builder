@@ -151,3 +151,26 @@ if __name__ == "__main__":
     agent = AgentRuntime(component=agent_builder)
     agent.chainlit_agent(port=8091)
 ```
+
+### 打印DEBUG日志
+开启DEBUG日志，可以打印出更多的日志信息，方便调试，包括且不限于：请求URL、请求头、请求参数等。
+```bash
+# 可以设置环境变量开启
+# 开启DEBUG
+export APPBUILDER_LOGLEVEL=DEBUG
+# 关闭DEBUG
+export APPBUILDER_LOGLEVEL=INFO
+```
+也可以在代码中设置，优先级高于环境变量。
+```python
+# python
+os.environ["APPBUILDER_LOGLEVEL"] = "DEBUG"
+```
+```java
+// java
+System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
+```
+```golang
+// golang
+os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+```
