@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import logging
 import unittest
 
 from appbuilder.utils.logger_util import LoggerWithLoggerId,_setup_logging
@@ -47,18 +48,18 @@ class TestUtilsLogger(unittest.TestCase):
 
     def test_setup_logging(self):
         # test_setup_logging
+        os.environ["APPBUILDER_LOGFILE"] = "/tmp/appbuilder.log"
+        _setup_logging()
         os.environ["APPBUILDER_LOGLEVEL"]="test" 
-        os.environ["APPBUILDER_LOGFILE"]="/tmp/appbuilder.log"
         with self.assertRaises(ValueError):
             _setup_logging()
 
     def test_set_filename_and_loglevel(self):
         # test_set_filename
         lwl=LoggerWithLoggerId(logger='test_logger',extra={'logid':'test_logid'},loglevel='INFO')
-        with self.assertRaises(ValueError):
-            lwl.setFilename("/tmp/appbuilder.log")
-            lwl.setLoglevel("test")
-
+        lwl.setLoglevel("debug")
+        lwl.setFilename("/tmp/appbuilder.log")
+        self.assertEqual(lwl.logger.level, logging.DEBUG)
 
 if __name__ == '__main__':
     unittest.main()
