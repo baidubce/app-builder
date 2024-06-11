@@ -59,7 +59,7 @@ class TestUtilsLogger(unittest.TestCase):
         lwl=LoggerWithLoggerId(logger='test_logger',extra={'logid':'test_logid'},loglevel='INFO')
         lwl.setLoglevel("debug")
         lwl.setFilename("/tmp/appbuilder.log")
-        self.assertEqual(lwl.logger.level, logging.DEBUG)
-
+         with self.assertRaises(ValueError):
+            lwl.setLevel("test")
 if __name__ == '__main__':
     unittest.main()
