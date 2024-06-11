@@ -60,6 +60,6 @@ class TestUtilsLogger(unittest.TestCase):
         lwl.setLoglevel("debug")
         lwl.setFilename("/tmp/appbuilder.log")
         with self.assertRaises(ValueError):
-            lwl.setLogLevel("test")
+            lwl.setLoglevel("test")
 if __name__ == '__main__':
     unittest.main()
