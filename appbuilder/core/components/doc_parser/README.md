@@ -9,7 +9,7 @@
 ### 特色优势
 DocParser支持解析以下几种类型的文档：
 * 版式文档：「pdf」、「jpg」、「jpeg」、「png」、「bmp」、「tif」、「tiff」、「ofd」
-* 流式文档：「doc」、「docx」、「txt」、「xls」、「xlsx」、「wps」、「ppt」、「pptx」、「html」
+* 流式文档：「doc」、「docx」、「txt」、「xls」、「xlsx」、「wps」、「ppt」、「pptx」
 
 支持解析的文档内容包括：
 * 文档的版式分析，识别文档中的标题、正文、页眉页脚、表格等
