@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -29,10 +30,10 @@ import (
 
 func NewAppBuilderClient(appID string, config *SDKConfig) (*AppBuilderClient, error) {
 	if len(appID) == 0 {
-		return nil, fmt.Errorf("appID is empty")
+		return nil, errors.New("appID is empty")
 	}
 	if config == nil {
-		return nil, fmt.Errorf("config is nil")
+		return nil, errors.New("config is nil")
 	}
 	return &AppBuilderClient{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 300 * time.Second}}, nil
 }
@@ -57,6 +58,7 @@ func (t *AppBuilderClient) CreateConversation() (string, error) {
 	req := map[string]string{"app_id": t.appID}
 	data, _ := json.Marshal(req)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
@@ -70,7 +72,7 @@ func (t *AppBuilderClient) CreateConversation() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]interface{})
+	rsp := make(map[string]any)
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -122,7 +124,7 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]interface{})
+	rsp := make(map[string]any)
 	if err := json.Unmarshal(body, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -135,9 +137,9 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 
 func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []string, stream bool) (AppBuilderClientIterator, error) {
 	if len(conversationID) == 0 {
-		return nil, fmt.Errorf("conversationID mustn't be empty")
+		return nil, errors.New("conversationID mustn't be empty")
 	}
-	m := map[string]interface{}{"app_id": t.appID,
+	m := map[string]any{"app_id": t.appID,
 		"conversation_id": conversationID,
 		"query":           query,
 		"file_ids":        fileIDS,
@@ -157,6 +159,7 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	request.Header = header
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
@@ -168,7 +171,6 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
 	if stream {
 		return &AppBuilderClientStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
-	} else {
-		return &AppBuilderClientOnceIterator{body: resp.Body}, nil
 	}
+	return &AppBuilderClientOnceIterator{body: resp.Body}, nil
 }

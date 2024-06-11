@@ -104,7 +104,6 @@ type AppBuilderClientOnceIterator struct {
 }
 
 func (t *AppBuilderClientOnceIterator) Next() (*AppBuilderClientAnswer, error) {
-
 	data, err := io.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)

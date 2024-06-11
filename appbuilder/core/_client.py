@@ -25,6 +25,7 @@ from requests.adapters import HTTPAdapter, Retry
 from appbuilder import get_default_header
 
 from appbuilder.core._exception import *
+from appbuilder.core._session import InnerSession
 from appbuilder.core.constants import GATEWAY_URL, GATEWAY_URL_V2
 from appbuilder.utils.logger_util import logger
 
@@ -72,7 +73,7 @@ class HTTPClient:
             )
         if not self.gateway_v2.startswith("http"):
             self.gateway_v2 = "https://" + self.gateway_v2
-        self.session = requests.sessions.Session()
+        self.session = InnerSession()
         self.retry = Retry(total=0, backoff_factor=0.1)
         self.session.mount(self.gateway, HTTPAdapter(max_retries=self.retry))
 
@@ -117,7 +118,9 @@ class HTTPClient:
         :param sub_path: service unique sub path.
         :rtype: str.
         """
-        return self.gateway_v2 + sub_path
+        final_url = self.gateway_v2 + sub_path
+        logger.debug("Service url: {}\n".format(final_url))
+        return final_url
 
     @staticmethod
     def check_response_json(data: dict):

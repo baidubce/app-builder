@@ -92,6 +92,7 @@ class OralQueryGenerationArgs(ComponentArguments):
 class OralQueryGeneration(CompletionBaseComponent):
     """
     口语化Query生成，可用于问答场景下对文档增强索引。
+    *注：该组件推荐使用ERNIE Speed-AppBuilder模型。*
 
     Examples:
 
@@ -152,7 +153,7 @@ class OralQueryGeneration(CompletionBaseComponent):
         """初始化口语化Query生成模型。
         
         Args:
-            model (str|None): 模型名称，用于指定要使用的千帆模型。
+            model (str|None): 模型名称，用于指定要使用的千帆模型。推荐使用ERNIE Speed-AppBuilder模型。
             secret_key (str, 可选): 用户鉴权token, 默认从环境变量中获取: os.getenv("APPBUILDER_TOKEN", "").
             gateway (str, 可选): 后端网关服务地址，默认从环境变量中获取: os.getenv("GATEWAY_URL", "")
             lazy_certification (bool, 可选): 延迟认证，为True时在第一次运行时认证. Defaults to False.
@@ -170,7 +171,6 @@ class OralQueryGeneration(CompletionBaseComponent):
         """
         if not isinstance(model_output, str):
             return model_output
-        # print(model_output)
         
         match_obj = re.search(r'```json\n(.+)\n```', model_output, flags=re.DOTALL)
 
@@ -183,7 +183,7 @@ class OralQueryGeneration(CompletionBaseComponent):
             regenerated_output = json.loads(dict_json_text) if dict_json_text is not None else model_output
 
         if output_format == 'json' or not isinstance(regenerated_output, dict):
-            return regenerated_output
+            return json.dumps(regenerated_output, ensure_ascii=False, indent=4)
 
         queries = []
         for key in ['问题', '短语']:
@@ -227,7 +227,7 @@ class OralQueryGeneration(CompletionBaseComponent):
         Args:
             message (Message): 输入消息，用于传入query、context和answer。这是一个必需的参数。
             query_type (str, 可选): 待生成的query类型，包括问题、短语和全部（问题+短语）。默认为全部。
-            output_format (str, 可选): 输出格式，包括json和str。默认为str。
+            output_format (str, 可选): 输出格式，包括json和str，stream为True时，只能以json形式输出。默认为str。
             stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
             temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
             top_p (float, 可选): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。

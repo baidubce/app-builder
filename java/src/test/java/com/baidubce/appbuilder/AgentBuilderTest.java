@@ -19,6 +19,7 @@ public class AgentBuilderTest{
     @Before
     public void setUp() {
         System.setProperty("APPBUILDER_TOKEN", "");
+        System.setProperty("APPBUILDER_LOGLEVEL", "INFO");
         appId = "";
     }
 
@@ -27,7 +28,7 @@ public class AgentBuilderTest{
         AgentBuilder builder = new AgentBuilder(appId);
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
-        String fileId = builder.uploadLocalFile(conversationId, "/path/to/file");
+        String fileId = builder.uploadLocalFile(conversationId, "src/test/java/com/baidubce/appbuilder/files/test.pdf");
         assertNotNull(fileId);
         AgentBuilderIterator itor = builder.run("北京有多少小学生", conversationId, new String[]{fileId}, true);
         assertTrue(itor.hasNext());

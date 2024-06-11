@@ -220,7 +220,7 @@ class Runs():
             tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象。默认为None。
 
         Returns:
-            Iterator[thread_type.AssistantRunEvent]: 返回一个迭代器，用于遍历流式运行中的事件。
+            Union[thread_type.StreamRunStatus, thread_type.StreamRunMessage, None]: 返回一个迭代器，每次迭代返回一个处理结果对象，可能是 StreamRunStatus 或 StreamRunMessage。
 
         Raises:
             ValueError: 如果thread_id和thread参数同时为空，则会引发ValueError异常。
