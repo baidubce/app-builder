@@ -17,6 +17,7 @@ package appbuilder
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -28,7 +29,7 @@ import (
 
 func NewDataset(config *SDKConfig) (*Dataset, error) {
 	if config == nil {
-		return nil, fmt.Errorf("invalid config")
+		return nil, errors.New("invalid config")
 	}
 	return &Dataset{sdkConfig: config, client: &http.Client{Timeout: 60 * time.Second}}, nil
 }
@@ -52,6 +53,7 @@ func (t *Dataset) Create(name string) (string, error) {
 	req := map[string]string{"name": name}
 	data, _ := json.Marshal(req)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
@@ -68,7 +70,6 @@ func (t *Dataset) Create(name string) (string, error) {
 	rsp := DatasetResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
-
 	}
 	if rsp.Code != 0 {
 		return "", fmt.Errorf("requestID=%s, content=%v", requestID, string(data))
@@ -163,11 +164,12 @@ func (t *Dataset) addFileToDataset(datasetID string, fileID []string) ([]string,
 	request.Method = "POST"
 	header.Set("Content-Type", "application/json")
 	request.Header = header
-	m := map[string]interface{}{
+	m := map[string]any{
 		"file_ids":   fileID,
 		"dataset_id": datasetID}
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
@@ -201,7 +203,7 @@ func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword st
 	request.Method = "POST"
 	header.Set("Content-Type", "application/json")
 	request.Header = header
-	m := map[string]interface{}{
+	m := map[string]any{
 		"dataset_id": datasetID,
 		"page":       page,
 		"limit":      limit,
@@ -209,6 +211,7 @@ func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword st
 	}
 	data, _ := json.Marshal(m)
 	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err

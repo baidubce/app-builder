@@ -17,11 +17,12 @@ package appbuilder
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"testing"
 )
 
 func TestNewAgentBuilder(t *testing.T) {
-
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
@@ -35,11 +36,11 @@ func TestNewAgentBuilder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create conversation failed: %v", err)
 	}
-	fileID, err := agentBuilder.UploadLocalFile(conversationID, "./cv.pdf")
+	_, err = agentBuilder.UploadLocalFile(conversationID, "./files/test.pdf")
 	if err != nil {
 		t.Fatalf("upload local file failed: %v", err)
 	}
-	i, err := agentBuilder.Run(conversationID, "描述简历中的候选人情况", []string{fileID}, true)
+	i, err := agentBuilder.Run(conversationID, "描述简历中的候选人情况", nil, true)
 	if err != nil {
 		t.Fatalf("run failed:%v", err)
 	}
