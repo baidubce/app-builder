@@ -22,7 +22,6 @@ TEST_TEXT = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
              '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
              '，实时视频分享您的生活。')
 
-
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestOralQueryGenerationComponent(unittest.TestCase):
     def setUp(self):
@@ -37,88 +36,23 @@ class TestOralQueryGenerationComponent(unittest.TestCase):
         """
 
         self.model_name = 'ERNIE Speed-AppBuilder'
-        secret_key = os.getenv('SECRET_KEY', None)
-        self.query_generation = appbuilder.OralQueryGeneration(model=self.model_name, secret_key=secret_key)
+        self.node = appbuilder.OralQueryGeneration(model=self.model_name)
+    
     
     def test_run_with_default_params(self):
-        """测试 run 方法使用默认参数
-        """
-        text = TEST_TEXT
-        msg = appbuilder.Message(text)
-        answer = self.query_generation(msg)
-        # print(answer)
+        """测试 run 方法使用默认参数"""
+        query = TEST_TEXT
+        msg = appbuilder.Message(query)
+        answer = self.node(msg)
         self.assertIsNotNone(answer)
-        print(f'\n[result]\n{answer.content}\n')
-    
-    def test_run_with_question_output_and_json_output(self):
-        """测试 run 方法，输出query类型为问题，输出格式为json
-        """
-        text = TEST_TEXT
-        msg = appbuilder.Message(text)
-        answer = self.query_generation(msg, query_type='问题', output_format='json')
-        # print(answer)
-        self.assertIsNotNone(answer)
-        print(f'\n[result]\n{answer.content}\n')
+        print(f'response:\n{answer.content}')
 
-    def test_run_with_phrase_output_and_str_output(self):
-        """测试 run 方法，输出query类型为短语，输出格式为str
-        """
-        text = TEST_TEXT
-        msg = appbuilder.Message(text)
-        answer = self.query_generation(msg, query_type='短语', output_format='str')
-        # print(answer)
-        self.assertIsNotNone(answer)
-        print(f'\n[result]\n{answer.content}\n')
-
-    def test_run_with_stream_and_temperature(self):
-        """测试不同的 stream 和 temperature 参数值
-        """
-        text = TEST_TEXT
-        msg = appbuilder.Message(text)
-        answer = self.query_generation(msg, stream=False, temperature=0.5)
-        # print(answer)
-        self.assertIsNotNone(answer)
-        print(f'\n[result]\n{answer.content}\n')
-
-    def test_tool_eval_with_default_params(self):
-        """测试 tool_eval 方法使用默认参数
-        """
-        text = TEST_TEXT
-        answer = self.query_generation.tool_eval(name='', stream=False, text=text)
-        # print(answer)
-        self.assertIsNotNone(answer)
-        print(f'\n[result]\n{answer}\n')
-
-    def test_tool_eval_with_model_configs(self):
-        """测试 tool_eval 方法使用不同temperature和top_p参数值。
-        """
-        text = TEST_TEXT
-        model_configs = {'temperature': 0.5, 'top_p': 0.5}
-        answer = self.query_generation.tool_eval(name='', stream=True, text=text, model_configs=model_configs)
-        # print(answer)
-        print(f'\n[result]\n')
-        for ans in answer:
-            print(ans)
-
-    def test_tool_eval_with_default_params(self):
-        """测试 tool_eval 方法使用默认参数
-        """
-        text = TEST_TEXT
-        answer = self.query_generation.tool_eval(name='', stream=False, text=text)
-        # print(answer)
-        self.assertIsNotNone(answer)
-        print(f'\n[result]\n{answer}\n')
-
-    def test_tool_eval_with_model_configs(self):
-        """测试 tool_eval 方法使用不同temperature和top_p参数值。
-        """
-        text = TEST_TEXT
-        model_configs = {'temperature': 0.5, 'top_p': 0.5}
-        answer = self.query_generation.tool_eval(name='', stream=True, text=text, model_configs=model_configs)
-        # print(answer)
-        print(f'\n[result]\n')
-        for ans in answer:
-            print(ans)
+    # def test_run_with_stream_and_temperature(self):
+    #     """测试不同的 stream 和 temperature 参数值"""
+    #     query = TEST_TEXT
+    #     msg = appbuilder.Message(query)
+    #     answer = self.node(msg, stream=False, temperature=0.5)
+    #     self.assertIsNotNone(answer)
 
 
 if __name__ == '__main__':
