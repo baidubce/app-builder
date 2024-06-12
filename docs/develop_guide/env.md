@@ -32,9 +32,18 @@
     - 超参说明：设置AppBuilder运行的日志级别，可选值：`DEBUG`, `INFO`, `WARNING`, `ERROR`
     - 默认值： INFO
     - 影响范围：当前终端（Terminal）运行的所有AppBuilder程序的日志级别
-    - 注意事项：`APPBUILDER_LOGLEVEL`生效于`import appbuilder`时，若期望该参数生效，需要在`import appbuilder`之前设置
+    - 注意事项：`APPBUILDER_LOGLEVEL`生效于`import appbuilder`时，若期望该参数生效，可使用`appbuilder.logger.setLoglevel("DEBUG")`方法设置
     ```python
-    import os # NOQA
-    os.environ['APPBUILDER_LOGLEVEL'] = 'DEBUG' # NOQA
     import appbuilder # NOQA 
+    appbuilder.logger.setLoglevel("DEBUG") # NOQA
     ```
+
+
+- `APPBUILDER_LOGFILE`
+  - 超参说明：设置AppBuilder运行的日志文件路径，最好是绝对路径
+  - 默认值；空
+  - 注意事项：`APPBUILDER_LOGFILE`生效于`import appbuilder`时，若期望该参数生效，可使用`appbuilder.logger.setLogFile("")`方法设置
+  ```python
+  import appbuilder # NOQA 
+  appbuilder.logger.setFilename("/tmp/appbuilder.log") # NOQA
+  ```
