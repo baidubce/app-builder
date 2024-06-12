@@ -16,7 +16,7 @@ pip install --upgrade appbuilder-sdk
 <dependency>
     <groupId>com.baidubce</groupId>
     <artifactId>appbuilder</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
 </dependency>
 ```
 #### Gradle
@@ -29,7 +29,7 @@ implementation("com.baidubce:appbuilder:0.7.0")
 implementation 'com.baidubce:appbuilder:0.7.0'
 ```
 #### 本地导入
-点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/0.7.0/appbuilder-0.7.0.jar) 下载Jar包，将Jar包导入到项目目录下。
+点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/0.8.0/appbuilder-0.8.0.jar) 下载Jar包，将Jar包导入到项目目录下。
 
 ### Go (仅支持调用端到端应用)
 > 支持Go 1.18.1以上版本
