@@ -22,11 +22,11 @@ pip install --upgrade appbuilder-sdk
 #### Gradle
 对于Kotlin DSL，在build.gradle.kts的dependencies中添加依赖
 ```kotlin
-implementation("com.baidubce:appbuilder:0.7.0")
+implementation("com.baidubce:appbuilder:0.8.0")
 ```
 对于Groovy DSL，在build.gradle的dependencies中添加依赖
 ```groovy
-implementation 'com.baidubce:appbuilder:0.7.0'
+implementation 'com.baidubce:appbuilder:0.8.0'
 ```
 #### 本地导入
 点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/0.8.0/appbuilder-0.8.0.jar) 下载Jar包，将Jar包导入到项目目录下。
