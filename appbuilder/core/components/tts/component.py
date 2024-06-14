@@ -81,7 +81,7 @@ class TTS(Component):
 
             参数：
                 message (obj: `Message`): 待转为语音的文本. 举例: Message(content={"text": "欢迎使用百度语音"})
-                如果选择`baidu-tts`模型，`text`最大文本长度为1024 GBK编码长度, 如果选择`paddlespeech-tts`模型, `text`最大文本长度是510个字符.
+                如果选择`baidu-tts`模型，`text`最大文本长度为1024 GBK编码长度,大约为512个中英文字符;如果选择`paddlespeech-tts`模型, `text`最大文本长度是510个字符.
                 model (str, 可选): 默认是`baidu-tts`模型，可设置为`paddlespeech-tts`
                 speed(int, 可选): 语音语速，默认是5中等语速，取值范围在0~15之间，如果选择模型为paddlespeech-tts，参数自动失效
                 pitch(int, 可选): 语音音调，默认是5中等音调，取值范围在0~15之间，如果选择模型为paddlespeech-tts，参数自动失效
