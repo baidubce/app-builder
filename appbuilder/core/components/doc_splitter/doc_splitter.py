@@ -75,6 +75,11 @@ class DocSplitter(Component):
         if not self.splitter_type:
             raise ValueError("splitter_type must be a value")
 
+        if not parse_result.raw:
+            raise ValueError("The exceptional purpose:Z to determine whether the ParseResult contains a raw value.\n"
+                             "The current value: maybe the value of return_raw is False.\n"
+                             "The expected value: the value of return_raw is True.")
+
         if self.splitter_type == "split_by_chunk":
             xmind_output = parse_result.raw
             # 文档原始的解析结果，作为输入，按照块最大长度，分隔文档
