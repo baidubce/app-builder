@@ -23,7 +23,6 @@ from appbuilder.utils.sse_util import SSEClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
 
-
 class AppBuilderClient(Component):
     r"""
     AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上
@@ -66,7 +65,7 @@ class AppBuilderClient(Component):
         """
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url_v2("/v2/app/conversation")
+        url = self.http_client.service_url_v2("/app/conversation")
         response = self.http_client.session.post(
             url, headers=headers, json={"app_id": self.app_id}, timeout=None)
         self.http_client.check_response_header(response)
@@ -93,7 +92,7 @@ class AppBuilderClient(Component):
         }
         headers = self.http_client.auth_header_v2()
         url = self.http_client.service_url_v2(
-            "/v2/app/conversation/file/upload")
+            "app/conversation/file/upload")
         response = self.http_client.session.post(
             url, files=multipart_form_data, headers=headers)
         self.http_client.check_response_header(response)
@@ -130,7 +129,7 @@ class AppBuilderClient(Component):
 
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url_v2("/v2/app/conversation/runs")
+        url = self.http_client.service_url_v2("/app/conversation/runs")
         response = self.http_client.session.post(
             url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)
