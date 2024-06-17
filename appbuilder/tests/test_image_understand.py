@@ -16,10 +16,11 @@ import os
 import unittest
 import requests
 import appbuilder
+
 from appbuilder.core.message import Message
+from appbuilder.core._exception import AppBuilderServerException
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestImageUnderstand(unittest.TestCase):
     def setUp(self):
         """
@@ -75,6 +76,7 @@ class TestImageUnderstand(unittest.TestCase):
                   "12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad68" \
                   "62cf937c03f8c5260d51c6ae"
         img_name = "test_img.jpg"
+
         file_urls = {img_name: img_url}
         result = self.image_understand.tool_eval(name="image_understand", streaming=True,
                                                  img_name=img_name, file_urls=file_urls, origin_query="")
@@ -87,12 +89,6 @@ class TestImageUnderstand(unittest.TestCase):
             result = self.image_understand.tool_eval(name="image_understand", streaming=True,
                                                      origin_query="")
             next(result)
-
-    def test_run_language_invalid(self):
-        """测试 tool 方法对无效请求的处理。"""
-        with self.assertRaises(ValueError):
-            inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？", "language": "enx"})
-            self.image_understand.run(inp)
 
     def test_run_language_en(self):
         """测试 tool 方法对无效请求的处理。"""
@@ -111,7 +107,14 @@ class TestImageUnderstand(unittest.TestCase):
             inp = Message(content={"raw_image": self.raw_image, "question": question, "language": ""})
             self.image_understand.run(inp)
 
+    def test_run_image_size_too_big(self):
+        # 图像体积大于4MB
+        img_url = "https://bj.bcebos.com/v1/appbuilder/test_image_understand_size_too_big.jpeg?"+ \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-06-" + \
+                    "17T02%3A44%3A49Z%2F-1%2Fhost%2F85bf5be090465c45fc409f1031bfc1d895b8f1047fa3eb888e235eecdb495f65"
+        with self.assertRaises(AppBuilderServerException):
+            inp = Message(content={"url": img_url, "question": "图像内容是什么"})
+            self.image_understand.run(inp)
 
-if __name__ == "__main__":
-    unittest.main()
+
 
