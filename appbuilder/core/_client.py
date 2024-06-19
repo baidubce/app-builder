@@ -26,7 +26,13 @@ from appbuilder import get_default_header
 
 from appbuilder.core._exception import *
 from appbuilder.core._session import InnerSession
-from appbuilder.core.constants import GATEWAY_URL, GATEWAY_URL_V2
+from appbuilder.core.constants import (
+    GATEWAY_URL,
+    GATEWAY_URL_V2,
+    CONSOLE_OPENAPI_VERSION,
+    CONSOLE_OPENAPI_PREFIX,
+    SECRET_KEY_PREFIX
+)
 from appbuilder.utils.logger_util import logger
 
 
@@ -47,24 +53,27 @@ class HTTPClient:
         返回：
             无
         """
-        self.secret_key = secret_key if secret_key else os.getenv(
-            "APPBUILDER_TOKEN", "")
-        if not self.secret_key:
-            raise ValueError(
-                "secret_key is empty, please pass a nonempty secret_key "
-                'or set a secret_key in environment variable "APPBUILDER_TOKEN"'
-            )
-        if not self.secret_key.startswith("Bearer"):
-            self.secret_key = "Bearer {}".format(self.secret_key)
+        self._init_secret_key(secret_key)
+        
+        # Component
+        self._init_gateway_url(gateway)
 
+        # Console OpenAPI
+        self._init_gateway_url_v2(gateway_v2)
+
+        self.session = InnerSession()
+        self.retry = Retry(total=0, backoff_factor=0.1)
+        self.session.mount(self.gateway, HTTPAdapter(max_retries=self.retry))
+
+    def _init_gateway_url(self, gateway: str):
         if not gateway and not os.getenv("GATEWAY_URL"):
             self.gateway = GATEWAY_URL
         else:
             self.gateway = gateway if gateway else os.getenv("GATEWAY_URL", "")
-
         if not self.gateway.startswith("http"):
             self.gateway = "https://" + self.gateway
 
+    def _init_gateway_url_v2(self, gateway_v2: str):
         if not gateway_v2 and not os.getenv("GATEWAY_URL_V2"):
             self.gateway_v2 = GATEWAY_URL_V2
         else:
@@ -73,9 +82,27 @@ class HTTPClient:
             )
         if not self.gateway_v2.startswith("http"):
             self.gateway_v2 = "https://" + self.gateway_v2
-        self.session = InnerSession()
-        self.retry = Retry(total=0, backoff_factor=0.1)
-        self.session.mount(self.gateway, HTTPAdapter(max_retries=self.retry))
+
+        self.console_openapi_verion = os.getenv(
+            "CONSOLE_OPENAPI_VERSION", CONSOLE_OPENAPI_VERSION)
+        self.console_openapi_prefix = os.getenv(
+            "CONSOLE_OPENAPI_PREFIX", CONSOLE_OPENAPI_PREFIX)
+
+    def _init_secret_key(self, secret_key: str):
+        self.secret_key = secret_key if secret_key else os.getenv(
+            "APPBUILDER_TOKEN", "")
+        if not self.secret_key:
+            raise ValueError(
+                "secret_key is empty, please pass a nonempty secret_key "
+                'or set a secret_key in environment variable "APPBUILDER_TOKEN"'
+            )
+        secret_key_prefix = os.getenv("SECRET_KEY_PREFIX", SECRET_KEY_PREFIX)
+
+        if not self.secret_key.startswith(secret_key_prefix):
+            self.secret_key = "{} {}".format(
+                secret_key_prefix, self.secret_key)
+
+        logger.debug("AppBuilder Secret key: {}\n".format(self.secret_key))
 
     @staticmethod
     def check_response_header(response: requests.Response):
@@ -118,7 +145,9 @@ class HTTPClient:
         :param sub_path: service unique sub path.
         :rtype: str.
         """
-        final_url = self.gateway_v2 + sub_path
+        # console_prefix =
+        final_url = self.gateway_v2 + self.console_openapi_prefix + \
+            self.console_openapi_verion+sub_path
         logger.debug("Service url: {}\n".format(final_url))
         return final_url
 
