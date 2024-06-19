@@ -25,7 +25,7 @@
 
 ##  如何安装
 
-#### 百度智能云千帆AppBuilder-SDK 最新版本 0.8.0 (2024-06-07)
+#### 百度智能云千帆AppBuilder-SDK 最新版本 0.8.0 (2024-06-11)
 
 百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/quick_start/changelog.md)
 

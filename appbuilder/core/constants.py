@@ -12,9 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+SECRET_KEY_PREFIX = "Bearer"
 
 GATEWAY_URL = "https://appbuilder.baidu.com"
-GATEWAY_URL_V2 = "https://qianfan.baidubce.com"
 GATEWAY_INNER_URL = "http://appbuilder.sdns.baidu.com"
+
+GATEWAY_URL_V2 = "https://qianfan.baidubce.com"
+CONSOLE_OPENAPI_VERSION = "/v2"
+CONSOLE_OPENAPI_PREFIX = ""
+
 MAX_DOCUMENTS_NUM = 800
 SUPPORTED_FILE_TYPE = ["txt", "pdf", "doc", "docx"]

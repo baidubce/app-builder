@@ -139,6 +139,7 @@ class ImageUnderstand(Component):
         data = response.json()
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
+        self.__class__.__check_create_task_service_error(request_id, data)
         task = ImageUnderstandTask(data, request_id=request_id)
         task_id = task.result.get("task_id", "")
         if task_id == "":
@@ -243,4 +244,22 @@ class ImageUnderstand(Component):
                 service_err_code=data.get("ret_code", ""),
                 service_err_message=data.get("ret_msg", "")
             )
+
+    @staticmethod
+    def __check_create_task_service_error(request_id: str, data: dict):
+        r"""个性化服务response参数检查
+            参数:
+                request_id (str) : 任务请求ID
+                data (dict): 响应数据
+            返回：
+                无
+        """
+
+        if "error_code" in data and "error_msg" in data:
+            raise AppBuilderServerException(
+                request_id=request_id,
+                service_err_code=data.get("error_code", ""),
+                service_err_message=data.get("error_msg", "")
+            )
+
 
