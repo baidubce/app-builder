@@ -92,7 +92,7 @@ class AppBuilderClient(Component):
         }
         headers = self.http_client.auth_header_v2()
         url = self.http_client.service_url_v2(
-            "app/conversation/file/upload")
+            "/app/conversation/file/upload")
         response = self.http_client.session.post(
             url, files=multipart_form_data, headers=headers)
         self.http_client.check_response_header(response)
