@@ -31,7 +31,7 @@ const (
 	GatewayURL            = "GATEWAY_URL"
 	GatewayURLV2          = "GATEWAY_URL_V2"
 	SecretKey             = "APPBUILDER_TOKEN"
-	ConsoelOpenAPIVersion = "CONSOLE_OPENAPI_VERSION"
+	ConsoleOpenAPIVersion = "CONSOLE_OPENAPI_VERSION"
 	ConsoleOpenAPIPrefix  = "CONSOLE_OPENAPI_PREFIX"
 	SecretKeyPrefix       = "SECRET_KEY_PREFIX"
 
@@ -45,7 +45,7 @@ const (
 type SDKConfig struct {
 	GatewayURL            string
 	GatewayURLV2          string
-	ConsoelOpenAPIVersion string
+	ConsoleOpenAPIVersion string
 	ConsoleOpenAPIPrefix  string
 	SecretKey             string
 	logger                zerolog.Logger
@@ -54,21 +54,22 @@ type SDKConfig struct {
 func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 	gatewayURL = getEnvWithDefault(GatewayURL, gatewayURL, DefaultGatewayURL)
 	gatewayURLV2 := getEnvWithDefault(GatewayURL, "", DefaultGatewayURLV2)
-	openAPIVersion := getEnvWithDefault(ConsoelOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
+	openAPIVersion := getEnvWithDefault(ConsoleOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
 	openAPIPrefix := getEnvWithDefault(ConsoleOpenAPIPrefix, "", DefaultConsoleOpenAPIPrefix)
 
 	secretKey = getEnvWithDefault(SecretKey, secretKey, "")
 	if len(secretKey) == 0 {
 		log.Error().Msg("secret key is empty")
 	}
-	if !strings.HasPrefix(secretKey, "Bearer ") {
-		secretKey = DefaultSecretKeyPrefix + " " + secretKey
+	secretKeyPrefix := getEnvWithDefault(SecretKeyPrefix, "", DefaultSecretKeyPrefix)
+	if !strings.HasPrefix(secretKey, secretKeyPrefix) {
+		secretKey = secretKeyPrefix + " " + secretKey
 	}
 
 	sdkConfig := &SDKConfig{
 		GatewayURL:            gatewayURL,
 		GatewayURLV2:          gatewayURLV2,
-		ConsoelOpenAPIVersion: openAPIVersion,
+		ConsoleOpenAPIVersion: openAPIVersion,
 		ConsoleOpenAPIPrefix:  openAPIPrefix,
 		SecretKey:             secretKey,
 	}
@@ -146,7 +147,7 @@ func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
 
 // ServiceURLV2 适配OpenAPI，当前仅AppbuilderClient使用
 func (t *SDKConfig) ServiceURLV2(suffix string) (*url.URL, error) {
-	absolutePath, err := url.JoinPath(t.GatewayURLV2, t.ConsoleOpenAPIPrefix, t.ConsoelOpenAPIVersion, suffix)
+	absolutePath, err := url.JoinPath(t.GatewayURLV2, t.ConsoleOpenAPIPrefix, t.ConsoleOpenAPIVersion, suffix)
 	if err != nil {
 		return nil, err
 	}

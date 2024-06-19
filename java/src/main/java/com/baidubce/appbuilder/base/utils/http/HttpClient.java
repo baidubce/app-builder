@@ -32,6 +32,10 @@ public class HttpClient {
     public String SecretKey;
     public String Gateway;
     public String GatewayV2;
+    public String ConsoleOpenAPIVersion;
+    public String ConsoleOpenAPIPrefix;
+
+    
     private final CloseableHttpClient client;
     private static final Logger LOGGER = Logger.getLogger(Component.class.getName());
 
@@ -116,7 +120,7 @@ public class HttpClient {
      * @return 返回创建的 ClassicHttpRequest 对象
      */
     public ClassicHttpRequest createPostRequestV2(String url, HttpEntity entity) {
-        String requestURL = GatewayV2 + url;
+        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url;
         LOGGER.log(Level.FINE, "requestURL: " + requestURL);
         HttpPost httpPost = new HttpPost(requestURL);
         httpPost.setHeader("Authorization", this.SecretKey);

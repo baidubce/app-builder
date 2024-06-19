@@ -7,7 +7,7 @@ import com.baidubce.appbuilder.base.utils.http.HttpClient;
 
 public class Component {
     protected HttpClient httpClient;
-    
+
     public Component() {
         //从环境变量获取
         initClient("", "");
@@ -22,30 +22,37 @@ public class Component {
     }
 
     private void initClient(String secretKey, String gateway) {
-        if (secretKey == null || secretKey.isEmpty()) {
-            if ((secretKey = System.getProperty(AppBuilderConfig.APPBUILDER_TOKEN)) == null &&
-                    (secretKey = System.getenv(AppBuilderConfig.APPBUILDER_TOKEN)) == null) {
-                throw new RuntimeException("param secretKey is null and env APPBUILDER_TOKEN not set!");
-            }
-        }
-        if (gateway == null || gateway.isEmpty()) {
-            if ((gateway = System.getProperty(AppBuilderConfig.APPBUILDER_GATEWAY_URL)) == null &&
-                    (gateway = System.getenv(AppBuilderConfig.APPBUILDER_GATEWAY_URL)) == null) {
-                gateway = AppBuilderConfig.APPBUILDER_DEFAULT_GATEWAY;
-            }
-        }
+        gateway = getEnvWithDefault(AppBuilderConfig.APPBUILDER_GATEWAY_URL, gateway, AppBuilderConfig.APPBUILDER_DEFAULT_GATEWAY);
+        String gatewayV2 = getEnvWithDefault(AppBuilderConfig.APPBUILDER_GATEWAY_URL_V2, "",
+                AppBuilderConfig.APPBUILDER_DEFAULT_GATEWAY_V2);
         
-        String gatewayV2 = null;
-        if (gatewayV2 == null || gateway.isEmpty()) {
-            if ((gatewayV2 = System.getProperty(AppBuilderConfig.APPBUILDER_GATEWAY_URL_V2)) == null &&
-                    (gatewayV2 = System.getenv(AppBuilderConfig.APPBUILDER_GATEWAY_URL_V2)) == null) {
-                gatewayV2 = AppBuilderConfig.APPBUILDER_DEFAULT_GATEWAY_V2;
-            }
+        secretKey = getEnvWithDefault(AppBuilderConfig.APPBUILDER_TOKEN, secretKey, "");
+        if (secretKey.isEmpty()) {
+            throw new RuntimeException("param secretKey is null and env APPBUILDER_TOKEN not set!");
         }
-        //通过secretKey获取
-        if (!secretKey.startsWith("Bearer")) {
-            secretKey = String.format("Bearer %s", secretKey);
+        String secretKeyPrefix = getEnvWithDefault(AppBuilderConfig.APPBUIDLER_SECRET_KEY_PREFIX, "", AppBuilderConfig.APPBUILDER_DEFAULT_SECRET_KEY_PREFIX);
+        if (!secretKey.startsWith(secretKeyPrefix)) {
+            secretKey = String.format("%s %s", secretKeyPrefix, secretKey);
         }
         this.httpClient = new HttpClient(secretKey, gateway, gatewayV2);
+        this.httpClient.ConsoleOpenAPIPrefix = getEnvWithDefault(AppBuilderConfig.APPBUILDER_CONSOLE_OPENAPI_PREFIX, "",
+                AppBuilderConfig.APPBUILDER_DEFAULT_CONSOLE_OPENAPI_PREFIX);
+        this.httpClient.ConsoleOpenAPIVersion = getEnvWithDefault(AppBuilderConfig.APPBUILDER_CONSOLE_OPENAPI_VERSION, "",
+                AppBuilderConfig.APPBUILDER_DEFAULT_CONSOLE_OPENAPI_VERSION);
+    }
+
+
+    private String getEnvWithDefault(String propertyKey, String currentValue, String defaultValue) {
+        if (currentValue == null || currentValue.isEmpty()) {
+            currentValue = System.getProperty(propertyKey);
+            if (currentValue == null) {
+                currentValue = System.getenv(propertyKey);
+            }
+            if (currentValue == null) {
+                currentValue = defaultValue;
+            }
+        }
+        return currentValue;
     }
 }
+
