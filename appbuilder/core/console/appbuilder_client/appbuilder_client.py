@@ -15,13 +15,39 @@
 """AppBuilderClient组件"""
 import os
 import json
-
+from typing import Optional
 from appbuilder.core.component import Message, Component
 from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
+from appbuilder.core._client import HTTPClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
+
+def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key: Optional[str] = None, gateway_v2: Optional[str]=None) -> list[data_class.AppOverview]:
+    client = HTTPClient(secret_key=secret_key, gateway_v2=gateway_v2)
+    headers = client.auth_header_v2()
+    headers["Content-Type"] = "application/json"
+    url = client.service_url_v2("/apps")
+
+    request = data_class.AppBuilderClientAppListRequest(
+        limit=limit, after=after, before=before
+    )
+
+    response = client.session.post(
+        url = url,
+        headers=headers,
+        json = request.model_dump(),
+    )
+
+    client.check_response_header(response)
+    data = response.json()
+    request_id = client.response_request_id(response)
+    client.check_console_response(request_id, data)
+
+    resp = data_class.AppBuilderClientAppListResponse(**data)
+    out = resp.data
+    return out
 
 class AppBuilderClient(Component):
     r"""
@@ -75,6 +101,8 @@ class AppBuilderClient(Component):
 
     def upload_local_file(self, conversation_id, local_file_path: str) -> str:
         r"""上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
+            该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
+
                 参数:
                     conversation_id (str: 必须) : 会话ID
                     local_file_path (str: 必须) : 本地文件路径
@@ -129,7 +157,7 @@ class AppBuilderClient(Component):
 
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url_v2("/app/conversation/runs")
+        url = self.http_client.service_url_v2("/app/conversation/run")
         response = self.http_client.session.post(
             url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)
@@ -198,6 +226,7 @@ def _transform(inp: data_class.AppBuilderClientResponse, out: data_class.AppBuil
             status=ev.event_status,
             event_type=ev.event_type,
             content_type=ev.content_type,
-            detail=ev.outputs
+            detail=ev.outputs,
+            usage=ev.usage,
         )
         out.events.append(event)
