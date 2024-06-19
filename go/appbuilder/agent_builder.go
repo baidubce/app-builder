@@ -36,13 +36,17 @@ func NewAgentBuilder(appID string, config *SDKConfig) (*AgentBuilder, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
-	return &AgentBuilder{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 300 * time.Second}}, nil
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 300 * time.Second}
+	}
+	return &AgentBuilder{appID: appID, sdkConfig: config, client: client}, nil
 }
 
 type AgentBuilder struct {
 	appID     string
 	sdkConfig *SDKConfig
-	client    *http.Client
+	client    HTTPClient
 }
 
 func (t *AgentBuilder) CreateConversation() (string, error) {

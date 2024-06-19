@@ -35,13 +35,21 @@ func NewAppBuilderClient(appID string, config *SDKConfig) (*AppBuilderClient, er
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
-	return &AppBuilderClient{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 300 * time.Second}}, nil
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 300 * time.Second}
+	}
+	return &AppBuilderClient{appID: appID, sdkConfig: config, client: client}, nil
 }
 
 type AppBuilderClient struct {
 	appID     string
 	sdkConfig *SDKConfig
-	client    *http.Client
+	client    HTTPClient
+}
+
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
 }
 
 func (t *AppBuilderClient) CreateConversation() (string, error) {
