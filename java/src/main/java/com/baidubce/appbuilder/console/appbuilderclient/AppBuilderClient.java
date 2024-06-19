@@ -51,7 +51,7 @@ public class AppBuilderClient extends Component {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("app_id", this.appID);
         String jsonBody = JsonUtils.serialize(requestBody);
-        ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<ConversationResponse> response = httpClient.execute(postRequest, ConversationResponse.class);
         ConversationResponse respBody = response.getBody();
@@ -81,7 +81,7 @@ public class AppBuilderClient extends Component {
         builder.addTextBody("conversation_id", conversationId);
         builder.addTextBody("scenario", "assistant");
 
-        ClassicHttpRequest postRequest = httpClient.createPostRequest(url, builder.build());
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, builder.build());
         HttpResponse<FileUploadResponse> response = httpClient.execute(postRequest, FileUploadResponse.class);
 
         FileUploadResponse respBody = response.getBody();
@@ -111,7 +111,7 @@ public class AppBuilderClient extends Component {
         requestBody.put("file_ids", fileIds);
         requestBody.put("stream", stream);
         String jsonBody = JsonUtils.serialize(requestBody);
-        ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<Iterator<AppBuilderClientResponse>> response = httpClient.executeSSE(postRequest, AppBuilderClientResponse.class);
         return new AppBuilderClientIterator(response.getBody());

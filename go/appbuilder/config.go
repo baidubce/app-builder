@@ -27,34 +27,51 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const (
+	GatewayURL            = "GATEWAY_URL"
+	GatewayURLV2          = "GATEWAY_URL_V2"
+	SecretKey             = "APPBUILDER_TOKEN"
+	ConsoleOpenAPIVersion = "CONSOLE_OPENAPI_VERSION"
+	ConsoleOpenAPIPrefix  = "CONSOLE_OPENAPI_PREFIX"
+	SecretKeyPrefix       = "SECRET_KEY_PREFIX"
+
+	DefaultSecretKeyPrefix       = "Bearer"
+	DefaultGatewayURL            = "https://appbuilder.baidu.com"
+	DefaultGatewayURLV2          = "https://qianfan.baidubce.com"
+	DefaultConsoleOpenAPIVersion = "/v2"
+	DefaultConsoleOpenAPIPrefix  = ""
+)
+
 type SDKConfig struct {
-	GatewayURL   string
-	GatewayURLV2 string
-	SecretKey    string
-	logger       zerolog.Logger
+	GatewayURL            string
+	GatewayURLV2          string
+	ConsoleOpenAPIVersion string
+	ConsoleOpenAPIPrefix  string
+	SecretKey             string
+	logger                zerolog.Logger
 }
 
 func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
-	if len(gatewayURL) == 0 {
-		gatewayURL = os.Getenv("GATEWAY_URL")
-	}
-	if len(gatewayURL) == 0 {
-		gatewayURL = "https://appbuilder.baidu.com"
-	}
+	gatewayURL = getEnvWithDefault(GatewayURL, gatewayURL, DefaultGatewayURL)
+	gatewayURLV2 := getEnvWithDefault(GatewayURL, "", DefaultGatewayURLV2)
+	openAPIVersion := getEnvWithDefault(ConsoleOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
+	openAPIPrefix := getEnvWithDefault(ConsoleOpenAPIPrefix, "", DefaultConsoleOpenAPIPrefix)
 
-	gatewayURLV2 := os.Getenv("GATEWAY_URL_V2")
-	if gatewayURLV2 == "" {
-		gatewayURLV2 = "https://qianfan.baidubce.com"
-	}
-
-	if len(secretKey) == 0 {
-		secretKey = os.Getenv("APPBUILDER_TOKEN")
-	}
+	secretKey = getEnvWithDefault(SecretKey, secretKey, "")
 	if len(secretKey) == 0 {
 		log.Error().Msg("secret key is empty")
 	}
-	if !strings.HasPrefix(secretKey, "Bearer ") {
-		secretKey = "Bearer " + secretKey
+	secretKeyPrefix := getEnvWithDefault(SecretKeyPrefix, "", DefaultSecretKeyPrefix)
+	if !strings.HasPrefix(secretKey, secretKeyPrefix) {
+		secretKey = secretKeyPrefix + " " + secretKey
+	}
+
+	sdkConfig := &SDKConfig{
+		GatewayURL:            gatewayURL,
+		GatewayURLV2:          gatewayURLV2,
+		ConsoleOpenAPIVersion: openAPIVersion,
+		ConsoleOpenAPIPrefix:  openAPIPrefix,
+		SecretKey:             secretKey,
 	}
 
 	logLevel := strings.ToLower(os.Getenv("APPBUILDER_LOGLEVEL"))
@@ -70,8 +87,6 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 		zerologLevel = zerolog.InfoLevel
 	}
 
-	sdkConfig := &SDKConfig{GatewayURL: gatewayURL, GatewayURLV2: gatewayURLV2, SecretKey: secretKey}
-
 	logFile := os.Getenv("APPBUILDER_LOGFILE")
 	if len(logFile) > 0 {
 		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
@@ -85,6 +100,18 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 	}
 
 	return sdkConfig, nil
+}
+
+func getEnvWithDefault(key, paramValue, defaultValue string) string {
+	if paramValue != "" {
+		return paramValue
+	}
+
+	v := os.Getenv(key)
+	if v == "" {
+		return defaultValue
+	}
+	return v
 }
 
 func (t *SDKConfig) AuthHeader() http.Header {
@@ -111,16 +138,23 @@ func (t *SDKConfig) authHeader() http.Header {
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
-	return t.serviceURL(t.GatewayURL, suffix)
+	absolutePath, err := url.JoinPath(t.GatewayURL, suffix)
+	if err != nil {
+		return nil, err
+	}
+	return t.formatURL(absolutePath)
 }
 
-// ServiceURLV2 适配OpenAPI，当前仅AgentBuilder使用
+// ServiceURLV2 适配OpenAPI，当前仅AppbuilderClient使用
 func (t *SDKConfig) ServiceURLV2(suffix string) (*url.URL, error) {
-	return t.serviceURL(t.GatewayURLV2, suffix)
+	absolutePath, err := url.JoinPath(t.GatewayURLV2, t.ConsoleOpenAPIPrefix, t.ConsoleOpenAPIVersion, suffix)
+	if err != nil {
+		return nil, err
+	}
+	return t.formatURL(absolutePath)
 }
 
-func (t *SDKConfig) serviceURL(gateway, suffix string) (*url.URL, error) {
-	absolutePath := gateway + suffix
+func (t *SDKConfig) formatURL(absolutePath string) (*url.URL, error) {
 	t.logger.Debug().Msgf("Service URL %s", absolutePath)
 	url, err := url.Parse(absolutePath)
 	if err != nil {
