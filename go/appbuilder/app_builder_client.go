@@ -47,7 +47,7 @@ type AppBuilderClient struct {
 func (t *AppBuilderClient) CreateConversation() (string, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation")
 	if err != nil {
 		return "", err
 	}
@@ -101,7 +101,7 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 	}
 	w.Close()
 	request := http.Request{}
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation/file/upload")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/file/upload")
 	if err != nil {
 		return "", err
 	}
@@ -147,7 +147,7 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	}
 	request := http.Request{}
 
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation/runs")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/runs")
 	if err != nil {
 		return nil, err
 	}
