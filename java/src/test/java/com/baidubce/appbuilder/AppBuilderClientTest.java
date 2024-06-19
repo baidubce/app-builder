@@ -18,10 +18,10 @@ public class AppBuilderClientTest{
 
     @Before
     public void setUp() {
-        System.setProperty("APPBUILDER_TOKEN", "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58");
+        System.setProperty("APPBUILDER_TOKEN", "");
         System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
         System.setProperty("APPBUILDER_LOGFILE", "");
-        appId = "42eb211a-14b9-43d2-9fae-193c8760ef26";
+        appId = "";
     }
 
     @Test
