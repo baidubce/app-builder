@@ -25,6 +25,21 @@ from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
 
 def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key: Optional[str] = None, gateway_v2: Optional[str]=None) -> list[data_class.AppOverview]:
+    """
+    该接口查询用户下状态为已发布的应用列表
+    
+    Args:
+        limit (int, optional): 返回结果的最大数量，默认值为10。
+        after (str, optional): 返回结果中第一个应用的游标值，用于分页查询。默认值为空字符串。
+        before (str, optional): 返回结果中最后一个应用的游标值，用于分页查询。默认值为空字符串。
+        secret_key (Optional[str], optional): 认证密钥。如果未指定，则使用默认的密钥。默认值为None。
+        gateway_v2 (Optional[str], optional): 网关地址。如果未指定，则使用默认的地址。默认值为None。
+    
+    Returns:
+        list[data_class.AppOverview]: 应用列表。
+    
+    """
+    
     client = HTTPClient(secret_key=secret_key, gateway_v2=gateway_v2)
     headers = client.auth_header_v2()
     headers["Content-Type"] = "application/json"
@@ -34,18 +49,16 @@ def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key:
         limit=limit, after=after, before=before
     )
 
-    response = client.session.post(
+    response = client.session.get(
         url = url,
         headers=headers,
         json = request.model_dump(),
     )
 
+    client.check_console_response(response)
     client.check_response_header(response)
     data = response.json()
-    request_id = client.response_request_id(response)
-    client.check_console_response(request_id, data)
-
-    resp = data_class.AppBuilderClientAppListResponse(**data)
+    resp = data_class.AppBuilderClientAppListResponse(**data['result'])
     out = resp.data
     return out
 

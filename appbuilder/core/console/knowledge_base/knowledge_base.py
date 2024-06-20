@@ -25,7 +25,8 @@ from appbuilder.core.component import Message, Component
 
 class KnowledgeBase(Component):
 
-    def __init__(self, knowledge_id: Optional[str] = None, knowledge_name: Optional[str] = None):
+    def __init__(self, knowledge_id: Optional[str] = None, knowledge_name: Optional[str] = None, **kwargs):
+        super().__init__(**kwargs)
         self.knowledge_id = knowledge_id
         self.knowledge_name = knowledge_name
 
@@ -35,7 +36,8 @@ class KnowledgeBase(Component):
         http_client = HTTPClient()
         headers = http_client.auth_header()
         headers["Content-Type"] = "application/json"
-        response = http_client.session.post(url=http_client.service_url(cls.create_url),
+        create_url = "/v1/ai_engine/agi_platform/v1/datasets/create"
+        response = http_client.session.post(url=http_client.service_url(create_url),
                                             headers=headers, data=payload)
         http_client.check_response_header(response)
         http_client.check_console_response(response)
@@ -50,21 +52,20 @@ class KnowledgeBase(Component):
         if not os.path.exists(file_path):
             raise FileNotFoundError("File {} does not exist".format(file_path))
 
-        headers = self._http_client.auth_header_v2()
+        headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "multipart/form-data"
-        url = self._http_client.service_url_v2("/file")
+        url = self.http_client.service_url_v2("/file")
         with open(file_path, 'rb') as fp:
             files = {'file': (os.path.basename(file_path), fp)}
-            response = self._http_client.session.post(
+            response = self.http_client.session.post(
                 url=url,
                 headers=headers,
                 files=files,
             )
 
             self.http_client.check_response_header(response)
+            self.http_client.check_console_response(response)
             data = response.json()
-            request_id = self.http_client.response_request_id(response)
-            self.http_client.check_console_response(request_id, data)
             resp = data_class.KnowledgeBaseUploadFileResponse(**data)
 
         return resp
@@ -74,15 +75,15 @@ class KnowledgeBase(Component):
                      file_ids: list[str] = [],
                      is_enhanced: bool = False,
                      custom_process_rule: Optional[data_class.CustomProcessRule] = None,
-                     knowledge_base_id: Optional[str] = None):
+                     knowledge_base_id: Optional[str] = None) -> data_class.KnowledgeBaseAddDocumentResponse:
         if self.knowledge_id == None:
             raise ValueError(
                 "Knowledge id cannot be empty, please call `create` first or use existing one")
 
-        headers = self._http_client.auth_header_v2()
+        headers = self.http_client.auth_header_v2()
         headers['content-type'] = 'application/json'
 
-        url = self._http_client.service_url_v2("/knowledge_base/document")
+        url = self.http_client.service_url_v2("/knowledge_base/document")
 
         request = data_class.KnowledgeBaseAddDocumentRequest(
             knowledge_base_id=knowledge_base_id or self.knowledge_id,
@@ -92,7 +93,7 @@ class KnowledgeBase(Component):
             custom_process_rule=custom_process_rule
         )
 
-        response = self._http_client.session.post(
+        response = self.http_client.session.post(
             url=url,
             headers=headers,
             json=request.model_dump()
@@ -110,15 +111,15 @@ class KnowledgeBase(Component):
             raise ValueError(
                 "Knowledge id cannot be empty, please call `create` first or use existing one")
 
-        headers = self._http_client.auth_header_v2()
+        headers = self.http_client.auth_header_v2()
         headers['content-type'] = 'application/json'
 
-        url = self._http_client.service_url_v2("/knowledge_base/document")
+        url = self.http_client.service_url_v2("/knowledge_base/document")
         request = data_class.KnowledgeBaseDeleteDocumentRequest(
             knowledge_base_id=knowledge_base_id or self.knowledge_id,
             document_id=document_id
         )
-        response = self._http_client.session.delete(
+        response = self.http_client.session.delete(
             url=url,
             headers=headers,
             json=request.model_dump()
@@ -131,25 +132,25 @@ class KnowledgeBase(Component):
         resp = data_class.KnowledgeBaseDeleteDocumentResponse(**data)
         return resp
 
-    def get_documents_list(self, limit: int = 10, after: Optional[str] = None, before: Optional[str] = None, knowledge_base_id: Optional[str] = None):
+    def get_documents_list(self, limit: int = 10, after: Optional[str] = "", before: Optional[str] = "", knowledge_base_id: Optional[str] = None):
         if self.knowledge_id == None:
             raise ValueError(
                 "Knowledge id cannot be empty, please call `create` first or use existing one")
 
-        headers = self._http_client.auth_header_v2()
+        headers = self.http_client.auth_header_v2()
         headers['content-type'] = 'application/json'
 
-        url = self._http_client.service_url_v2("/knowledge_base/documents")
+        url = self.http_client.service_url_v2("/knowledge_base/documents")
         request = data_class.KnowledgeBaseGetDocumentsListRequest(
             knowledge_base_id=knowledge_base_id or self.knowledge_id,
             limit=limit,
             after=after,
             before=before
         )
-        response = self._http_client.session.get(
+        response = self.http_client.session.get(
             url=url,
             headers=headers,
-            data=request.model_dump()
+            params=request.model_dump()
         )
 
         self.http_client.check_response_header(response)
