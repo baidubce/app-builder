@@ -98,7 +98,8 @@ class InnerBccClient(bcc_client.BccClient):
             body["isOpenHostnameDomain"] = is_open_hostname_domain
         if admin_pass is not None:
             secret_access_key = self.config.credentials.secret_access_key
-            cipher_admin_pass = aes128_encrypt_16char_key(admin_pass, secret_access_key)
+            cipher_admin_pass = aes128_encrypt_16char_key(
+                admin_pass, secret_access_key)
             body["adminPass"] = cipher_admin_pass
         if zone_name is not None:
             body["zoneName"] = zone_name

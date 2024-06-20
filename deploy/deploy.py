@@ -78,6 +78,7 @@ if __name__ == "__main__":
                 tar.add(file_path, arcname=filename)
 
     url = bos_upload(bos_config, tar_file)
+    os.remove(tar_file)
     client = InnerBccClient(config)
     # create_security_group()
 
@@ -91,6 +92,7 @@ if __name__ == "__main__":
         "cd /root/test\n"
         f"wget -O demo.tar {url.decode('utf-8')}\n"
         "tar -xvf demo.tar\n"
+        "rm demo.tar\n"
         "yum install -y docker\n"
         "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\n"
         f"docker run -it --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 /bin/sh -c '{cmd}'"
