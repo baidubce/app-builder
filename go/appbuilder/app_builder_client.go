@@ -204,8 +204,6 @@ func (t *AppBuilderClient) GetApps(req GetAppsRequest) ([]App, error) {
 		switch v := value.(type) {
 		case float64:
 			params.Add(key, strconv.Itoa(int(v)))
-			fmt.Println(key)
-			fmt.Println(v)
 		case string:
 			if v == "" {
 				continue
