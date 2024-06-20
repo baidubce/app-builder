@@ -148,7 +148,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	}
 	request := http.Request{}
 
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/runs")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/run")
 	if err != nil {
 		return nil, err
 	}

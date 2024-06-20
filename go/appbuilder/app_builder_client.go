@@ -147,7 +147,7 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	}
 	request := http.Request{}
 
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/runs")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/run")
 	if err != nil {
 		return nil, err
 	}
@@ -173,4 +173,44 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 		return &AppBuilderClientStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
 	}
 	return &AppBuilderClientOnceIterator{body: resp.Body}, nil
+}
+
+func (t *AppBuilderClient) GetApps(limit int64, before, after string) ([]App, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/apps")
+	if err != nil {
+		return nil, err
+	}
+	request.URL = serviceURL
+	request.Method = "GET"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	req := map[string]any{
+		"limit":  limit,
+		"before": before,
+		"after":  after,
+	}
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := AppbuilderAppsResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp.Data, nil
 }

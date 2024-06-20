@@ -33,6 +33,17 @@ type AppBuilderClientRawResponse struct {
 	Content        []RawEventDetail `json:"content"`
 }
 
+type AppbuilderAppsResponse struct {
+	RequestID string `json:"request_id"`
+	Data      []App  `json:"data"`
+}
+
+type App struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type AppBuilderClientAnswer struct {
 	Answer string
 	Events []Event
