@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     url = bos_upload(bos_config, tar_file)
     client = InnerBccClient(config)
-    create_security_group()
+    # create_security_group()
 
     # 当前时间字符串
     now_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         "tar -xvf demo.tar\n"
         "yum install -y docker\n"
         "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\n"
-        f"docker run -it --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 {cmd}"
+        f"docker run -it --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 /bin/sh -c '{cmd}'"
     )
 
     spec = data["bce_config"]["spec"]
