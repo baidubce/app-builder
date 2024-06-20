@@ -53,7 +53,7 @@ type SDKConfig struct {
 
 func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 	gatewayURL = getEnvWithDefault(GatewayURL, gatewayURL, DefaultGatewayURL)
-	gatewayURLV2 := getEnvWithDefault(GatewayURL, "", DefaultGatewayURLV2)
+	gatewayURLV2 := getEnvWithDefault(GatewayURLV2, "", DefaultGatewayURLV2)
 	openAPIVersion := getEnvWithDefault(ConsoleOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
 	openAPIPrefix := getEnvWithDefault(ConsoleOpenAPIPrefix, "", DefaultConsoleOpenAPIPrefix)
 
@@ -182,6 +182,8 @@ func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
 
 		body := fmt.Sprintf("-d '%v'", string(bodyBytes))
 		curlCmd = fmt.Sprintf("%v %v", curlCmd, body)
+	} else if req.Method == "GET" {
+		curlCmd = strings.TrimSuffix(curlCmd, " \\\n")
 	}
 	if t.logger.GetLevel() == zerolog.DebugLevel {
 		logFile := os.Getenv("APPBUILDER_LOGFILE")

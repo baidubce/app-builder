@@ -22,7 +22,7 @@ import (
 )
 
 func TestNewAppBuilderClient(t *testing.T) {
-	os.Setenv("APPBUILDER_LOGLEVEL", "INFO")
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
 	config, err := NewSDKConfig("", "")
 	if err != nil {
@@ -34,6 +34,13 @@ func TestNewAppBuilderClient(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new AgentBuidler instance failed")
 	}
+	apps, err := client.GetApps(GetAppsRequest{
+		Limit: 10,
+	})
+	if err != nil {
+		t.Fatalf("get apps failed: %v", err)
+	}
+	fmt.Println(len(apps))
 	conversationID, err := client.CreateConversation()
 	if err != nil {
 		t.Fatalf("create conversation failed: %v", err)

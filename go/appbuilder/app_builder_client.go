@@ -23,15 +23,14 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 )
 
 func NewAppBuilderClient(appID string, config *SDKConfig) (*AppBuilderClient, error) {
-	if len(appID) == 0 {
-		return nil, errors.New("appID is empty")
-	}
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
@@ -45,6 +44,9 @@ type AppBuilderClient struct {
 }
 
 func (t *AppBuilderClient) CreateConversation() (string, error) {
+	if t.appID == "" {
+		return "", errors.New("appID is empty")
+	}
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation")
@@ -84,6 +86,9 @@ func (t *AppBuilderClient) CreateConversation() (string, error) {
 }
 
 func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath string) (string, error) {
+	if t.appID == "" {
+		return "", errors.New("appID is empty")
+	}
 	var data bytes.Buffer
 	w := multipart.NewWriter(&data)
 	appIDPart, _ := w.CreateFormField("app_id")
@@ -136,6 +141,9 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 }
 
 func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []string, stream bool) (AppBuilderClientIterator, error) {
+	if t.appID == "" {
+		return nil, errors.New("appID is empty")
+	}
 	if len(conversationID) == 0 {
 		return nil, errors.New("conversationID mustn't be empty")
 	}
@@ -175,24 +183,38 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	return &AppBuilderClientOnceIterator{body: resp.Body}, nil
 }
 
-func (t *AppBuilderClient) GetApps(limit int64, before, after string) ([]App, error) {
+func (t *AppBuilderClient) GetApps(req GetAppsRequest) ([]App, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/apps")
 	if err != nil {
 		return nil, err
 	}
+
 	request.URL = serviceURL
 	request.Method = "GET"
 	header.Set("Content-Type", "application/json")
 	request.Header = header
-	req := map[string]any{
-		"limit":  limit,
-		"before": before,
-		"after":  after,
+
+	reqMap := make(map[string]any)
+	reqJson, _ := json.Marshal(req)
+	json.Unmarshal(reqJson, &reqMap)
+	params := url.Values{}
+	for key, value := range reqMap {
+		switch v := value.(type) {
+		case float64:
+			params.Add(key, strconv.Itoa(int(v)))
+			fmt.Println(key)
+			fmt.Println(v)
+		case string:
+			if v == "" {
+				continue
+			}
+			params.Add(key, v)
+		}
 	}
-	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	serviceURL.RawQuery = params.Encode()
+
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -203,11 +225,11 @@ func (t *AppBuilderClient) GetApps(limit int64, before, after string) ([]App, er
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := AppbuilderAppsResponse{}
+	rsp := GetAppsResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}

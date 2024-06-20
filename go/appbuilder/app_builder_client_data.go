@@ -33,9 +33,17 @@ type AppBuilderClientRawResponse struct {
 	Content        []RawEventDetail `json:"content"`
 }
 
-type AppbuilderAppsResponse struct {
+type GetAppsRequest struct {
+	Limit  int    `json:"limit"`
+	After  string `json:"after"`
+	Before string `json:"before"`
+}
+
+type GetAppsResponse struct {
 	RequestID string `json:"request_id"`
 	Data      []App  `json:"data"`
+	Code      string `json:"code"`
+	Message   string `json:"message"`
 }
 
 type App struct {
