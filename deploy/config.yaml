@@ -16,6 +16,8 @@ appbuilder_config:
 
     # free mode
     # 启动命令
-    run_cmd: "export APPBUILDER_LOGLEVEL=debug && export APPBUILDER_TOKEN=\"bce xxxx\" && sh zzz.sh"
+    run_cmd: "sh zzz.sh"
 
-    
+env:
+    APPBUILDER_LOGLEVEL: debug
+    APPBUILDER_TOKEN: "bce xxxx"
