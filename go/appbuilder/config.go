@@ -48,6 +48,7 @@ type SDKConfig struct {
 	ConsoleOpenAPIVersion string
 	ConsoleOpenAPIPrefix  string
 	SecretKey             string
+	HTTPClient            HTTPClient // custom HTTP Client, optional
 	logger                zerolog.Logger
 }
 
