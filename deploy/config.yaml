@@ -1,0 +1,24 @@
+bce_config:
+    host: "http://bcc.bj.baidubce.com"
+    bos_host: "bj.bcebos.com"
+    ak: ""
+    sk: ""
+    spec: "bcc.e1.c2m2"
+    root_disk_size_in_gb: 20
+    admin_pass: ""
+    
+
+appbuilder_config:
+    mode: "free" # "free"
+    # 用来打包的代码路径
+    local_dir: ""
+    workspace: "/home/appbuilder"
+
+    # free mode
+    # 启动命令
+    run_cmd: "sh zzz.sh"
+
+env:
+    APPBUILDER_LOGLEVEL: "debug"
+    APPBUILDER_TOKEN: "bce xxxx"
+    
