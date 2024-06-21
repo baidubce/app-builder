@@ -58,7 +58,7 @@ def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key:
     client.check_console_response(response)
     client.check_response_header(response)
     data = response.json()
-    resp = data_class.AppBuilderClientAppListResponse(**data['result'])
+    resp = data_class.AppBuilderClientAppListResponse(**data)
     out = resp.data
     return out
 

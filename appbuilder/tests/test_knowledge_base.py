@@ -21,32 +21,23 @@ import logging
 
 # @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestKnowLedge(unittest.TestCase):
-    def setUp(self) -> None:
-        appbuilder.logger.setLoglevel("DEBUG")
-        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-V3xPTLgugTepGXYzJJAPQ/1c6eb19cb7df08b1e26b8fb7c2113ce555b3d62c"
-        os.environ["GATEWAY_URL_V2"] = "https://qianfan.baidubce.com"
-    
-    def test_create_knowledage(self):
-        knowledge_name = "test_knowledge_" + str(int(time.time()))
-        knowledge = appbuilder.KnowledgeBase.create_knowledge(knowledge_name)
-        # knowledge = appbuilder.KnowledgeBase(knowledge_id="290dbbe5-34c7-4fc5-918a-4a71397e9698")
-        print(knowledge.knowledge_id)
+    def test_doc_knowledage(self):
+        dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+        knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
+
         upload_res = knowledge.upload_file("./data/qa_appbuilder_client_demo.pdf")
-        # print(upload_res)
-        add_res = knowledge.add_document(
-            content_type='raw_text',
-            file_ids=[upload_res.id]
-        )        
-        print(add_res)
-
+        add_res = knowledge.add_document(content_type='raw_text', file_ids=[upload_res.id])
         list_res = knowledge.get_documents_list()
-        print(list_res)
+        delete_res = knowledge.delete_document(document_id=add_res.document_ids[0])
+    
+    def test_xlsx_knowledage(self):
+        dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+        knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
 
-        delete_res = knowledge.delete_document(
-            document_id=add_res.document_ids[0]
-        )
-        print(delete_res)
-
+        upload_res = knowledge.upload_file("./data/qa_demo.xlsx")
+        add_res = knowledge.add_document(content_type='qa', file_ids=[upload_res.id])
+        list_res = knowledge.get_documents_list()
+        delete_res = knowledge.delete_document(document_id=add_res.document_ids[0])
 
 
 if __name__ == '__main__':

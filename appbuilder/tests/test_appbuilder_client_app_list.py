@@ -20,13 +20,9 @@ import logging
 
 # @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestGetAppList(unittest.TestCase):
-    def setUp(self) -> None:
-        appbuilder.logger.setLoglevel("DEBUG")
-        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-FIQYOeHn5bdjDRSuZIYLl/13675fad6caf614cc2397c24a75aaa69f65aba96"
-        os.environ["GATEWAY_URL_V2"] = "https://apaas-api-sandbox.baidu-int.com"
-    
     def test_get_app_list_v1(self):
         app_list = appbuilder.get_app_list()
+        print(app_list)
         self.assertIsInstance(app_list, list)
 
 if __name__ == '__main__':

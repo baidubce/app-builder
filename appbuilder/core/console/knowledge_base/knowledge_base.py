@@ -105,7 +105,6 @@ class KnowledgeBase(Component):
         self.http_client.check_response_header(response)
         self.http_client.check_console_response(response)
         data = response.json()
-        print(data)
         
         resp = data_class.KnowledgeBaseAddDocumentResponse(**data)
         return resp
@@ -160,7 +159,6 @@ class KnowledgeBase(Component):
         self.http_client.check_response_header(response)
         self.http_client.check_console_response(response)
         data = response.json()
-        request_id = self.http_client.response_request_id(response)
         
         resp = data_class.KnowledgeBaseGetDocumentsListResponse(**data)
         return resp
