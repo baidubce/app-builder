@@ -104,7 +104,7 @@ func (t *KnowledgeBase) DeleteDocument(req DeleteDocumentRequest) error {
 	return nil
 }
 
-func (t *KnowledgeBase) ListDocument(req ListDocumentRequest) (*ListDocumentResponse, error) {
+func (t *KnowledgeBase) ListDocument(req ListDocumentRequest) (*KnowledgeBaseListDocumentsResponse, error) {
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledge_base/documents")
 	if err != nil {
@@ -149,11 +149,11 @@ func (t *KnowledgeBase) ListDocument(req ListDocumentRequest) (*ListDocumentResp
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := ListDocumentResponse{}
+	rsp := KnowledgeBaseListDocumentsResponse{}
 	if err := json.Unmarshal(respData, &rsp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	if rsp.Code != 0 {
+	if rsp.Code != "" {
 		return nil, fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
 	}
 	return &rsp, nil
@@ -196,13 +196,13 @@ func (t *KnowledgeBase) UploadFile(localFilePath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := DatasetResponse{}
+	rsp := UploadFileResponse{}
 	if err := json.Unmarshal(respData, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	if rsp.Code != 0 {
+	if rsp.Code != "" {
 		return "", fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
 	}
-	fileID := rsp.Result["id"].(string)
+	fileID := rsp.FileID
 	return fileID, nil
 }

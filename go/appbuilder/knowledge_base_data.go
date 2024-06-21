@@ -14,6 +14,11 @@
 
 package appbuilder
 
+const (
+	ContentTypeRawText = "raw_text"
+	ContentTypeQA      = "qa"
+)
+
 type CreateDocumentRequest struct {
 	KnowledgeBaseID   string            `json:"knowledge_base_id"`
 	ContentType       string            `json:"content_type"`
@@ -35,30 +40,30 @@ type ListDocumentRequest struct {
 }
 
 type CustomProcessRule struct {
-	Separators   string  `json:"separators"`
-	TargetLength int64   `json:"target_length"`
-	OverlapRate  float64 `json:"overlap_rate,omitempty"`
+	Separators   []string `json:"separators"`
+	TargetLength int64    `json:"target_length"`
+	OverlapRate  float64  `json:"overlap_rate,omitempty"`
 }
 
 type CreateDocumentResponse struct {
 	RequestID       string   `json:"request_id"`
 	KnowledgeBaseID string   `json:"knowledge_base_id"`
-	DocumentsIDS    []string `json:"documents_ids"`
+	DocumentsIDS    []string `json:"document_ids"`
 	Code            string   `json:"code"`
 	Message         string   `json:"message"`
 }
 
 type KnowledgeBaseListDocumentsResponse struct {
-	RequestID string   `json:"request_id"`
-	Data      Document `json:"data"`
-	Code      string   `json:"code"`
-	Message   string   `json:"message"`
+	RequestID string     `json:"request_id"`
+	Data      []Document `json:"data"`
+	Code      string     `json:"code"`
+	Message   string     `json:"message"`
 }
 
 type Document struct {
 	ID        string       `json:"id"`
 	Name      string       `json:"name"`
-	CreatedAt string       `json:"created_at"`
+	CreatedAt any          `json:"created_at"`
 	WordCount int64        `json:"word_count"`
 	Enabled   bool         `json:"enabled"`
 	Meta      DocumentMeta `json:"meta"`
@@ -67,4 +72,12 @@ type Document struct {
 type DocumentMeta struct {
 	Source string `json:"source"`
 	FileID string `json:"file_id"`
+}
+
+type UploadFileResponse struct {
+	RequestID string `json:"request_id"`
+	FileID    string `json:"id"`
+	FileName  string `json:"name"`
+	Code      string `json:"code"`
+	Message   string `json:"message"`
 }
