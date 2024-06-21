@@ -1,7 +1,7 @@
 # 文档解析（DocParser）
 
 ## 简介
-文档解析组件（DocParser）可以用于文档内容解析，支持PDF、JPG、DOC、TXT、XLS、PPT等17种文档格式的内容解析。
+文档解析组件（DocParser）可以用于文档内容解析，支持PDF、JPG、DOC、TXT、XLS、PPT等16种文档格式的内容解析。
 
 ### 功能介绍
 文档解析组件（DocParser）支持从文档中解析出文档字符内容、版式信息、位置坐标、表格结构、阅读顺序、标题段落层级树等内容
