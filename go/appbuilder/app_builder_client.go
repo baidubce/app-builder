@@ -30,7 +30,63 @@ import (
 	"time"
 )
 
+func GetApps(req GetAppsRequest, config *SDKConfig) ([]App, error) {
+	request := http.Request{}
+	header := config.AuthHeaderV2()
+	serviceURL, err := config.ServiceURLV2("/apps")
+	if err != nil {
+		return nil, err
+	}
+
+	request.URL = serviceURL
+	request.Method = "GET"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+
+	reqMap := make(map[string]any)
+	reqJson, _ := json.Marshal(req)
+	json.Unmarshal(reqJson, &reqMap)
+	params := url.Values{}
+	for key, value := range reqMap {
+		switch v := value.(type) {
+		case float64:
+			params.Add(key, strconv.Itoa(int(v)))
+		case string:
+			if v == "" {
+				continue
+			}
+			params.Add(key, v)
+		}
+	}
+	serviceURL.RawQuery = params.Encode()
+
+	config.BuildCurlCommand(&request)
+	client := &http.Client{Timeout: 300 * time.Second}
+	resp, err := client.Do(&request)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := GetAppsResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp.Data, nil
+}
+
 func NewAppBuilderClient(appID string, config *SDKConfig) (*AppBuilderClient, error) {
+	if appID == "" {
+		return nil, errors.New("appID is empty")
+	}
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
@@ -44,9 +100,6 @@ type AppBuilderClient struct {
 }
 
 func (t *AppBuilderClient) CreateConversation() (string, error) {
-	if t.appID == "" {
-		return "", errors.New("appID is empty")
-	}
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation")
@@ -86,9 +139,6 @@ func (t *AppBuilderClient) CreateConversation() (string, error) {
 }
 
 func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath string) (string, error) {
-	if t.appID == "" {
-		return "", errors.New("appID is empty")
-	}
 	var data bytes.Buffer
 	w := multipart.NewWriter(&data)
 	appIDPart, _ := w.CreateFormField("app_id")
@@ -141,9 +191,6 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 }
 
 func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []string, stream bool) (AppBuilderClientIterator, error) {
-	if t.appID == "" {
-		return nil, errors.New("appID is empty")
-	}
 	if len(conversationID) == 0 {
 		return nil, errors.New("conversationID mustn't be empty")
 	}
@@ -155,7 +202,7 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	}
 	request := http.Request{}
 
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/run")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/runs")
 	if err != nil {
 		return nil, err
 	}
@@ -181,56 +228,4 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 		return &AppBuilderClientStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
 	}
 	return &AppBuilderClientOnceIterator{body: resp.Body}, nil
-}
-
-func (t *AppBuilderClient) GetApps(req GetAppsRequest) ([]App, error) {
-	request := http.Request{}
-	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/apps")
-	if err != nil {
-		return nil, err
-	}
-
-	request.URL = serviceURL
-	request.Method = "GET"
-	header.Set("Content-Type", "application/json")
-	request.Header = header
-
-	reqMap := make(map[string]any)
-	reqJson, _ := json.Marshal(req)
-	json.Unmarshal(reqJson, &reqMap)
-	params := url.Values{}
-	for key, value := range reqMap {
-		switch v := value.(type) {
-		case float64:
-			params.Add(key, strconv.Itoa(int(v)))
-		case string:
-			if v == "" {
-				continue
-			}
-			params.Add(key, v)
-		}
-	}
-	serviceURL.RawQuery = params.Encode()
-
-	t.sdkConfig.BuildCurlCommand(&request)
-	resp, err := t.client.Do(&request)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	requestID, err := checkHTTPResponse(resp)
-	if err != nil {
-		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
-	}
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
-	}
-	rsp := GetAppsResponse{}
-	if err := json.Unmarshal(data, &rsp); err != nil {
-		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
-	}
-
-	return rsp.Data, nil
 }
