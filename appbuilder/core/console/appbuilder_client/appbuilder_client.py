@@ -170,7 +170,7 @@ class AppBuilderClient(Component):
 
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
-        url = self.http_client.service_url_v2("/app/conversation/run")
+        url = self.http_client.service_url_v2("/app/conversation/runs")
         response = self.http_client.session.post(
             url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)

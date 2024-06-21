@@ -80,7 +80,7 @@ class AppBuilderClientResponse(BaseModel):
     answer: str = ""
     conversation_id: str = ""
     message_id: str = ""
-    is_completion: bool = False
+    is_completion: Optional[bool] = False
     content: list[OriginalEvent] = []
 
 
@@ -260,3 +260,4 @@ class AppBuilderClientAppListResponse(BaseModel):
     request_id: str = Field("", description="请求ID")
     data: Optional[list[AppOverview]] = Field(
         [], description="应用概览列表")
+    
