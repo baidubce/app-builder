@@ -40,7 +40,7 @@ class KnowledgeBaseAddDocumentRequest(BaseModel):
         None, description="自定义分段规则")
 
 
-class KnowledgeBaseAddDocumentResponse(KnowledgeBaseUploadFileResponse):
+class KnowledgeBaseAddDocumentResponse(BaseModel):
     request_id: str = Field(..., description="请求ID")
     knowledge_base_id: str = Field(..., description="知识库ID")
     document_ids: list[str] = Field(..., description="成功新建的文档id集合")
@@ -48,7 +48,7 @@ class KnowledgeBaseAddDocumentResponse(KnowledgeBaseUploadFileResponse):
 
 class KnowledgeBaseDeleteDocumentRequest(BaseModel):
     knowledge_base_id: str = Field(..., description="知识库ID")
-    document_ids: list[str] = Field(..., description="待删除的文档id集合")
+    document_id: str = Field(..., description="待删除的文档id")
 
 
 class KnowledgeBaseDeleteDocumentResponse(BaseModel):

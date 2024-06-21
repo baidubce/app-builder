@@ -53,14 +53,17 @@ class KnowledgeBase(Component):
             raise FileNotFoundError("File {} does not exist".format(file_path))
 
         headers = self.http_client.auth_header_v2()
-        headers["Content-Type"] = "multipart/form-data"
         url = self.http_client.service_url_v2("/file")
-        with open(file_path, 'rb') as fp:
-            files = {'file': (os.path.basename(file_path), fp)}
+
+        with open(file_path, 'rb') as f:
+            multipart_form_data = {
+                'file': (os.path.basename(file_path), f)
+            }
+
             response = self.http_client.session.post(
                 url=url,
                 headers=headers,
-                files=files,
+                files=multipart_form_data,
             )
 
             self.http_client.check_response_header(response)
@@ -100,9 +103,10 @@ class KnowledgeBase(Component):
         )
 
         self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
         data = response.json()
-        request_id = self.http_client.response_request_id(response)
-        self.http_client.check_console_response(request_id, data)
+        print(data)
+        
         resp = data_class.KnowledgeBaseAddDocumentResponse(**data)
         return resp
 
@@ -126,9 +130,9 @@ class KnowledgeBase(Component):
         )
 
         self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
         data = response.json()
-        request_id = self.http_client.response_request_id(response)
-        self.http_client.check_console_response(request_id, data)
+        
         resp = data_class.KnowledgeBaseDeleteDocumentResponse(**data)
         return resp
 
