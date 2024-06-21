@@ -23,14 +23,14 @@ import logging
 class TestKnowLedge(unittest.TestCase):
     def setUp(self) -> None:
         appbuilder.logger.setLoglevel("DEBUG")
-        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-imUyXJpaOWdwnWtsBr62N/17268475ab49864184f7ac9cadf84de96167931e"
-        os.environ["GATEWAY_URL_V2"] = "https://apaas-api-sandbox.baidu-int.com"
+        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-V3xPTLgugTepGXYzJJAPQ/1c6eb19cb7df08b1e26b8fb7c2113ce555b3d62c"
+        os.environ["GATEWAY_URL_V2"] = "https://qianfan.baidubce.com"
     
     def test_create_knowledage(self):
-        # knowledge_name = "test_knowledge" + str(int(time.time()))
-        # knowledge = appbuilder.KnowledgeBase.create_knowledge(knowledge_name)
-        knowledge = appbuilder.KnowledgeBase(knowledge_id="1701805f-832b-41c8-89e8-9fbcc6740601")
-        print(knowledge)
+        knowledge_name = "test_knowledge" + str(int(time.time()))
+        knowledge = appbuilder.KnowledgeBase.create_knowledge(knowledge_name)
+        # knowledge = appbuilder.KnowledgeBase(knowledge_id="290dbbe5-34c7-4fc5-918a-4a71397e9698")
+        print(knowledge.knowledge_id)
         # upload_res = knowledge.upload_file("./data/qa_appbuilder_client_demo.pdf")
         # print(upload_res)
         # add_res = knowledge.add_document(
