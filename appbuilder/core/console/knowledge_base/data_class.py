@@ -25,9 +25,9 @@ class KnowledgeBaseUploadFileResponse(BaseModel):
 
 
 class CustomProcessRule(BaseModel):
-    separators: str = Field(..., description="分句标识符")
-    target_length: int = Field(..., description="分段最大长度")
-    overlap_rate: float = Field(0.25, description="分段重叠最大字数占比，推荐值0.25")
+    separators: list[str] = Field(..., description="分句标识符")
+    target_length: int = Field(..., description="分段最大长度", ge=300, le=1200)
+    overlap_rate: float = Field(0.25, description="分段重叠最大字数占比，推荐值0.25", ge=0, le=0.3)
 
 
 class KnowledgeBaseAddDocumentRequest(BaseModel):

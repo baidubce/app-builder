@@ -26,7 +26,11 @@ class TestKnowLedge(unittest.TestCase):
         knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
 
         upload_res = knowledge.upload_file("./data/qa_appbuilder_client_demo.pdf")
-        add_res = knowledge.add_document(content_type='raw_text', file_ids=[upload_res.id])
+        add_res = knowledge.add_document(content_type='raw_text',
+                                         file_ids=[upload_res.id],
+                                         custom_process_rule=appbuilder.CustomProcessRule(
+                                            separators=["?"], target_length=400
+                                         ))
         list_res = knowledge.get_documents_list()
         delete_res = knowledge.delete_document(document_id=add_res.document_ids[0])
     
