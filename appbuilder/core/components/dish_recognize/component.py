@@ -25,6 +25,7 @@ from appbuilder.core.component import Component
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.dish_recognize.model import *
+from appbuilder.trace import run_trace
 
 
 class DishRecognition(Component):
@@ -48,6 +49,7 @@ class DishRecognition(Component):
     """
 
     @HTTPClient.check_param
+    @run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         """
         根据输入图片进行菜品识别。

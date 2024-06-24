@@ -2,10 +2,14 @@ requests
 proto-plus==1.22.3
 pydantic==2.6.4
 numpy
-SQLAlchemy~=1.4.50
+SQLAlchemy==2.0.30
 urllib3<2.0.0
 tenacity==8.2.3
 pandas
 openpyxl
 pymochow>=1.1.2
 parameterized
+opentelemetry-sdk==1.25.0
+wrapt==1.16.0
+opentelemetry-exporter-otlp==1.25.0  
+opentelemetry-instrumentation==0.46b0 

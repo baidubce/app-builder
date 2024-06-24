@@ -22,6 +22,7 @@ from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
+from appbuilder.trace import run_trace
 
 class AppBuilderClient(Component):
     r"""
@@ -100,6 +101,7 @@ class AppBuilderClient(Component):
         resp = data_class.FileUploadResponse(**data)
         return resp.id
 
+    @run_trace
     def run(self, conversation_id: str,
             query: str,
             file_ids: list = [],

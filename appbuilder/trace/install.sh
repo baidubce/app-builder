@@ -1,0 +1,1 @@
+python3 -m pip install arize-phoenix==4.5.0

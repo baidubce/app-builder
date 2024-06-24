@@ -23,6 +23,7 @@ from appbuilder.core.components.table_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
+from appbuilder.trace import run_trace, tool_eval_streaming_trace
 
 
 class TableOCR(Component):
@@ -68,6 +69,7 @@ class TableOCR(Component):
     ]
 
     @HTTPClient.check_param
+    @run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 表格文字识别
 
@@ -176,6 +178,7 @@ class TableOCR(Component):
             markdowns.append(markdown_table)
         return markdowns
 
+    @tool_eval_streaming_trace   
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         result = {}
         traceid = kwargs.get("traceid")

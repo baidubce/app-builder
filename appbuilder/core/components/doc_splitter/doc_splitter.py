@@ -25,6 +25,7 @@ from appbuilder.core.components.doc_parser.base import ParseResult
 from appbuilder.core.component import Component, Message, ComponentArguments
 from appbuilder.utils.logger_util import logger
 from appbuilder.core.components.doc_parser.base import DocSegment
+from appbuilder.trace import run_trace
 
 
 class DocSplitter(Component):
@@ -58,6 +59,7 @@ class DocSplitter(Component):
 
         super(DocSplitter, self). __init__(meta=self.meta, **kwargs)
 
+    @run_trace
     def run(self, message: Message):
         """
         对输入的解析文档结果，处理为多个段落结果
@@ -139,6 +141,7 @@ class ChunkSplitter(Component):
 
         super(ChunkSplitter, self). __init__(meta=self.meta, **kwargs)
 
+    @run_trace
     def run(self, message: Message):
         """
         对输入的解析文档结果，按照最大段落块大小、结尾分隔符等，处理为多个段落结果
@@ -249,6 +252,7 @@ class TitleSplitter(Component):
         return titles[::-1]
 
     #  按照标题层级进行切分
+    @run_trace
     def run(self, input_message: Message) -> Message:
         """
         对输入的解析文档结果，按照各标题层级，处理为多个段落结果

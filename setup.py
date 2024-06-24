@@ -41,7 +41,7 @@ setup(
     install_requires=requirements,
     python_requires='>=3.9',
     extras_require={
-        'serve': ['chainlit~=1.0.200', 'flask~=2.3.2', 'flask-restful==0.3.9']
+        'serve': ['chainlit~=1.0.200', 'flask~=2.3.2', 'flask-restful==0.3.9', 'arize-phoenix[evals]==4.5.0']
     },
     description='百度智能云千帆AppBuilder-SDK',
     long_description="百度智能云千帆AppBuilder, 开箱即用的组件与框架, 高效开发你的AI原生应用, 更多信息请登录: https://appbuilder.cloud.baidu.com/",

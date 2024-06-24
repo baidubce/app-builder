@@ -20,6 +20,7 @@
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
+from appbuilder.trace import run_trace
 from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
@@ -107,6 +108,7 @@ class QueryRewrite(CompletionBaseComponent):
         super().__init__(
                 QueryRewriteArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
+    @run_trace
     def run(self, message, rewrite_type="带机器人回复", stream=False, temperature=1e-10, top_p=0):
         """
         使用给定的输入运行模型并返回结果。输入列表长度不超过10，字符总长度不超过5000.

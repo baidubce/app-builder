@@ -2,6 +2,7 @@ import json
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.component import Message, Component
 from appbuilder.core.console.base import ConsoleCompletionResponse
+from appbuilder.trace import run_trace
 
 
 class RAG(Component):
@@ -42,6 +43,7 @@ class RAG(Component):
             self._http_client = HTTPClient()
         return self._http_client
 
+    @run_trace
     def run(self, query: Message, conversation_id: str = "", stream: bool = False):
         """
         RAG问答

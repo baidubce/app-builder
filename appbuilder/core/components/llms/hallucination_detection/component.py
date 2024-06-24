@@ -23,6 +23,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.logger_util import logger
+from appbuilder.trace import run_trace, tool_eval_streaming_trace
 
 class HallucinationDetectionArgs(ComponentArguments):
     """幻觉检测配置
@@ -158,6 +159,7 @@ class HallucinationDetection(CompletionBaseComponent):
                                                                                       response))
         return self.gene_response(response, stream)
 
+    @run_trace
     def run(self, message, stream=False, temperature=1e-10, top_p=0.0):
         """
         使用给定的输入运行模型并返回结果。
@@ -191,6 +193,7 @@ class HallucinationDetection(CompletionBaseComponent):
 
         return result
 
+    @tool_eval_streaming_trace
     def tool_eval(self, name: str, stream: bool = False, **kwargs):
         """
         tool_eval for function call

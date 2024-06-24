@@ -18,6 +18,7 @@ from appbuilder.core.assistant.type import thread_type
 from appbuilder.core.assistant.threads.messages import Messages
 from appbuilder.core.assistant.threads.runs import Runs
 from appbuilder.core._client import AssistantHTTPClient
+from appbuilder.trace import assistant_trace
 
 class Threads():
     def __init__(self) -> None:
@@ -31,6 +32,7 @@ class Threads():
     def runs(self) -> Runs:
         return Runs()
 
+    @assistant_trace
     def create(self, messages: Optional[list[thread_type.AssistantMessage]] = []) -> thread_type.ThreadCreateResponse:
         """
         创建一个新的对话线程。
@@ -69,6 +71,7 @@ class Threads():
         response = thread_type.ThreadCreateResponse(**data)
         return response
     
+    @assistant_trace
     def query(self,
               thread_id:str)->thread_type.ThreadQueryResponse:
         """
@@ -100,6 +103,7 @@ class Threads():
         response = thread_type.ThreadQueryResponse(**data)
         return response
     
+    @assistant_trace
     def delete(self,
                thread_id:str)->thread_type.ThreadDeleteResponse:
         """
@@ -131,6 +135,7 @@ class Threads():
         response = thread_type.ThreadDeleteResponse(**data)
         return response
     
+    @assistant_trace
     def update(self,
                thread_id:str ,
                metadata:Optional[dict] ={} )->thread_type.ThreadUpdateResponse:

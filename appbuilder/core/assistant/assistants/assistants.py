@@ -18,7 +18,7 @@ from appbuilder.utils.collector import Collector
 from appbuilder.utils.collector import AssistantKeys
 from appbuilder.core._client import AssistantHTTPClient
 from appbuilder.core.assistant.assistants.files import Files
-
+from appbuilder.trace import assistant_trace
 
 class Assistants(object):
     def __init__(self):
@@ -28,7 +28,7 @@ class Assistants(object):
     def files(self):
         return Files()
 
-
+    @assistant_trace
     def create(self,
                name: str,
                description: str,
@@ -91,6 +91,7 @@ class Assistants(object):
         Collector().add_to_collection(AssistantKeys.ASSISTANT, resp, resp.id)
         return resp
     
+    @assistant_trace
     def update(self,
                assistant_id: str,
                model: Optional[str],
@@ -157,6 +158,7 @@ class Assistants(object):
         resp = assistant_type.AssistantUpdateResponse(**data)
         return resp
     
+    @assistant_trace
     def list(self,
              limit: Optional[int] = 20,
              order: Optional[str] = "desc",
@@ -203,6 +205,7 @@ class Assistants(object):
         resp = assistant_type.AssistantListResponse(**data)
         return resp
     
+    @assistant_trace
     def query(self,
               assistant_id: Optional[str]) -> assistant_type.AssistantQueryResponse:
         """
@@ -240,6 +243,7 @@ class Assistants(object):
         resp = assistant_type.AssistantQueryResponse(**data)
         return resp
     
+    @assistant_trace
     def delete(self,
                assistant_id: Optional[str]) -> assistant_type.AssistantDeleteResponse:
         """
@@ -277,7 +281,7 @@ class Assistants(object):
         resp = assistant_type.AssistantDeleteResponse(**data)
         return resp
     
-    
+    @assistant_trace
     def mount_files(self,
             assistant_id: Optional[str],
             file_id: Optional[str]
@@ -328,6 +332,7 @@ class Assistants(object):
         resp = assistant_type.AssistantFilesResponse(**data)
         return resp
     
+    @assistant_trace
     def mounted_files_list(self,
                    assistant_id: Optional[str],  
                    limit: Optional[int] = 20,
@@ -374,6 +379,7 @@ class Assistants(object):
         resp = assistant_type.AssistantMountedFilesListResponse(**data)
         return resp
     
+    @assistant_trace
     def unmount_files(self,
                      assistant_id: Optional[str],
                      file_id: Optional[str]

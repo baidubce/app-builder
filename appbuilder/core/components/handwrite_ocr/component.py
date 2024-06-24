@@ -19,6 +19,7 @@ from appbuilder.core.components.handwrite_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core import utils
+from appbuilder.trace import run_trace, tool_eval_streaming_trace
 
 class HandwriteOCR(Component):
     r""" 手写文字识别组件
@@ -63,6 +64,7 @@ class HandwriteOCR(Component):
     ]
 
     @HTTPClient.check_param
+    @run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 输入图片并识别其中的文字
 
@@ -99,6 +101,7 @@ class HandwriteOCR(Component):
             for w in response.words_result]
         return Message(content=out.model_dump())
 
+    @tool_eval_streaming_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
 
         traceid = kwargs.get("traceid")

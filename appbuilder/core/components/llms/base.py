@@ -32,6 +32,7 @@ from appbuilder.core.component import ComponentArguments
 from appbuilder.core.utils import ModelInfo, ttl_lru_cache
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
+from appbuilder.trace import run_trace
 
 
 class LLMMessage(Message):
@@ -328,6 +329,7 @@ class CompletionBaseComponent(Component):
         response = CompletionResponse(response, stream)
         return response
 
+    @run_trace
     def run(self, *args, **kwargs):
         """
         Run the model with given input and return the result.
