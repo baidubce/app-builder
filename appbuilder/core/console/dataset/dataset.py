@@ -2,6 +2,7 @@ from typing import List, Dict
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.console.dataset.model import DocumentListResponse, AddDocumentsResponse
 from appbuilder.core.constants import MAX_DOCUMENTS_NUM, SUPPORTED_FILE_TYPE
+from appbuilder.trace import assistant_trace
 import json
 import os
 from appbuilder.utils.func_utils import deprecated
@@ -50,6 +51,7 @@ class Dataset:
         return self._http_client
 
     @classmethod
+    @assistant_trace
     def create_dataset(cls, dataset_name: str):
         """
         创建知识库
@@ -70,6 +72,7 @@ class Dataset:
         return Dataset(dataset_id=response["id"], dataset_name=response["name"])
 
     @deprecated
+    @assistant_trace
     def add_documents(self, file_path_list: List[str], is_custom_process_rule: bool = False,
                       custom_process_rule: Dict = None, is_enhanced: bool = False) -> AddDocumentsResponse:
         """
@@ -133,6 +136,7 @@ class Dataset:
         return res
 
     @deprecated
+    @assistant_trace
     def delete_documents(self, document_ids: List[str]):
         """
         删除知识库中的文档
@@ -159,6 +163,7 @@ class Dataset:
         self.http_client.check_console_response(response)
 
     @deprecated
+    @assistant_trace
     def get_documents(self, page: int, limit: int, keyword: str = "") -> DocumentListResponse:
         """
         获取知识库中的文档列表

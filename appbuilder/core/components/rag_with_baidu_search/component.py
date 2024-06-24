@@ -20,7 +20,7 @@ from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.message import Message
 from pydantic import Field
 from typing import Optional
-
+from appbuilder.trace import run_trace
 
 class RAGWithBaiduSearchArgs(ComponentArguments):
     """
@@ -131,6 +131,7 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
                 max_bytes -= 1
         return ""
 
+    @run_trace
     def run(
         self, 
         message, 

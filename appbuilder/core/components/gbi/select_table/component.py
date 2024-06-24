@@ -21,6 +21,7 @@ from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
+from appbuilder.trace import run_trace
 
 
 class SelectTableArgs(ComponentArguments):
@@ -76,6 +77,7 @@ class SelectTable(Component):
         self.table_descriptions = table_descriptions
         self.prompt_template = prompt_template
 
+    @run_trace
     def run(self,
             message: Message, timeout: int = 60, retry: int = 0) -> Message[List[str]]:
         """

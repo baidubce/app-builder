@@ -20,6 +20,7 @@ from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.plant_recognize.model import *
+from appbuilder.trace import run_trace, tool_eval_streaming_trace
 from typing import Generator, Union
 
 TOP_NUM = 1
@@ -88,6 +89,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
     ]
 
     @HTTPClient.check_param
+    @run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 输入图片并识别其中的植物
 
@@ -145,6 +147,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         self.__class__.__check_service_error(request_id, data)
         return PlantRecognitionResponse(data, request_id=request_id)
 
+    @tool_eval_streaming_trace
     def tool_eval(
         self, 
         name: str, 

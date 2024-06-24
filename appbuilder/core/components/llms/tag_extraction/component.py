@@ -16,6 +16,7 @@
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
+from appbuilder.trace import run_trace
 from pydantic import BaseModel, Field
 from typing import Optional
 
@@ -72,6 +73,7 @@ class TagExtraction(CompletionBaseComponent):
         super().__init__(
                 TagExtractionArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
+    @run_trace    
     def run(self, message, stream=False, temperature=1e-10, top_p=0.0):
         """
         使用给定的输入运行模型并返回结果。

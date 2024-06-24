@@ -27,6 +27,7 @@ from appbuilder.core.component import Component, Message
 from appbuilder.core.components.embeddings.component import Embedding
 from appbuilder.core.constants import GATEWAY_URL
 from appbuilder.utils.logger_util import logger
+from appbuilder.trace import run_trace
 
 DEFAULT_ACCOUNT = "root"
 DEFAULT_DATABASE_NAME = "AppBuilderDatabase"
@@ -445,6 +446,7 @@ class BaiduVDBRetriever(Component):
         self.embedding = embedding
         self.table = table
 
+    @run_trace
     def run(self, query: Message, top_k: int = 1):
         """
         根据query进行查询

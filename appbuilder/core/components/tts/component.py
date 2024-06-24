@@ -23,6 +23,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.components.tts.model import *
+from appbuilder.trace import run_trace
 
 
 class TTS(Component):
@@ -66,6 +67,7 @@ class TTS(Component):
         self.model = ""
 
     @HTTPClient.check_param
+    @run_trace
     def run(self,
             message: Message,
             model: Literal["baidu-tts", "paddlespeech-tts"] = "baidu-tts",
