@@ -1,18 +1,16 @@
 package com.baidubce.appbuilder.model.knowledgebase;
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
 
 public class DocumentAddRequest {
-   @SerializedName("knowledge_base_id")
+    @SerializedName("knowledge_base_id")
     private String knowledgeBaseId;
     @SerializedName("content_type")
     private String contentType;
     @SerializedName("is_enhanced")
     private boolean isEnhanced;
     @SerializedName("file_ids")
-    private List<String> fileIds;
+    private String[] fileIds;
     @SerializedName("custom_process_rule")
     private CustomProcessRule customProcessRule;
 
@@ -40,11 +38,11 @@ public class DocumentAddRequest {
         isEnhanced = enhanced;
     }
 
-    public List<String> getFileIds() {
+    public String[] getFileIds() {
         return fileIds;
     }
 
-    public void setFileIds(List<String> fileIds) {
+    public void setFileIds(String[] fileIds) {
         this.fileIds = fileIds;
     }
 
@@ -58,17 +56,17 @@ public class DocumentAddRequest {
 
     public static class CustomProcessRule {
         @SerializedName("separators")
-        private List<String> separators;
+        private String[] separators;
         @SerializedName("target_length")
         private int targetLength;
         @SerializedName("overlap_rate")
         private double overlapRate;
 
-        public List<String> getSeparators() {
+        public String[] getSeparators() {
             return separators;
         }
 
-        public void setSeparators(List<String> separators) {
+        public void setSeparators(String[] separators) {
             this.separators = separators;
         }
 

@@ -18,6 +18,9 @@ import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.base.utils.http.HttpResponse;
 import com.baidubce.appbuilder.base.utils.json.JsonUtils;
+import com.baidubce.appbuilder.model.appbuilderclient.App;
+import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.AppListResponse;
 import com.baidubce.appbuilder.model.knowledgebase.*;
 
 public class Knowledgebase extends Component{
@@ -48,25 +51,56 @@ public class Knowledgebase extends Component{
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, builder.build());
         HttpResponse<FileUploadResponse> response = httpClient.execute(postRequest, FileUploadResponse.class);
         FileUploadResponse respBody = response.getBody();
-        if (!(respBody.getCode() == null))  {
+        if (!(respBody.getCode() == null)) {
             throw new AppBuilderServerException(response.getRequestId(), response.getCode(), response.getMessage(),
                     respBody.toString());
         }
         return respBody.getId();
     }
 
+    /**
+     * 新增知识库文档
+     *
+     * @param DocumentAddRequest 请求参数
+     * @return documentIds 文档ID
+     * 
+     * @throws IOException               当文件上传失败时抛出IOException
+     * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
+     */
     public String[] addDocument(DocumentAddRequest req) throws IOException, AppBuilderServerException {
-        String url = AppBuilderConfig.DATASET_ADD_FILE_URL;
+        String url = AppBuilderConfig.KNOWLEDGEBASE_ADD_DOCUMENT_URL;
 
         String jsonBody = JsonUtils.serialize(req);
-        ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<DocumentAddResponse> response = httpClient.execute(postRequest, DocumentAddResponse.class);
         DocumentAddResponse respBody = response.getBody();
-        if (!(respBody.getCode() == null) && respBody.getCode() != "") {
+        if (!(respBody.getCode() == null)) {
             throw new AppBuilderServerException(response.getRequestId(), response.getCode(), response.getMessage(),
                     respBody.toString());
         }
         return respBody.getDocumentIds();
+    }
+
+    public  Document[] getDocumentList(DocumentListRequest request) throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.KNOWLEDGEBASE_DOCUMENT_LIST_URL;
+
+        ClassicHttpRequest getRequest = httpClient.createGetRequestV2(url, request.toMap());
+        getRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<DocumentListResponse> response = httpClient.execute(getRequest, DocumentListResponse.class);
+        DocumentListResponse respBody = response.getBody();
+        return respBody.getData();
+    }
+
+    public void deleteDocument(DocumentDeleteRequest request) throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.KNOWLEDGEBASE_DELETE_DOCUMENT_URL;
+        ClassicHttpRequest getRequest = httpClient.createDeleteRequestV2(url, request.toMap());
+        getRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<DocumentDeleteResponse> response = httpClient.execute(getRequest, DocumentDeleteResponse.class);
+        DocumentDeleteResponse respBody = response.getBody();
+        if (!(respBody.getCode() == null)) {
+            throw new AppBuilderServerException(response.getRequestId(), response.getCode(), response.getMessage(),
+                    respBody.toString());
+        }
     }
 }

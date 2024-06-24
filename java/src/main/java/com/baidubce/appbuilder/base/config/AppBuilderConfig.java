@@ -36,6 +36,10 @@ public class AppBuilderConfig {
     public static final String KNOWLEDGEBASE_UPLOAD_FILE_URL = "/file";
     // 新增知识库文档
     public static final String KNOWLEDGEBASE_ADD_DOCUMENT_URL = "/knowledge_base/document";
+    // 获取知识库文档列表
+    public static final String KNOWLEDGEBASE_DOCUMENT_LIST_URL = "/knowledge_base/documents";
+    // 删除知识库文档
+    public static final String KNOWLEDGEBASE_DELETE_DOCUMENT_URL = "/knowledge_base/document";
 
     // 运行rag
     public static final String RAG_RUN_URL = "/api/v1/ai_engine/agi_platform/v1/instance/integrated";

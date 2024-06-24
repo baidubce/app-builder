@@ -2,10 +2,10 @@ package com.baidubce.appbuilder.model.knowledgebase;
 
 import com.google.gson.annotations.SerializedName;
 
-public class FileUploadResponse {
+public class DocumentListResponse {
     @SerializedName("request_id")
     private String requestId;
-    private String id;
+    private Document[] data;
     private String code;
     private String message;
 
@@ -17,12 +17,12 @@ public class FileUploadResponse {
         this.requestId = requestId;
     }
 
-    public String getId() {
-        return id;
+    public Document[] getData() {
+        return data;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setData(Document[] data) {
+        this.data = data;
     }
 
     public String getCode() {
@@ -39,14 +39,5 @@ public class FileUploadResponse {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    @Override
-    public String toString() {
-        return "FileUploadResponse{" +
-                "request_id=" + requestId +
-                ", code='" + code + '\'' +
-                ", message='" + message +
-                '}';
     }
 }

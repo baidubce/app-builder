@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -141,7 +142,7 @@ public class HttpClient {
 
     public ClassicHttpRequest createGetRequestV2(String url, Map<String, Object> map) {
         String urlParams = toQueryString(map);
-        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams; 
+        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams;
         LOGGER.log(Level.FINE, "requestURL: " + requestURL);
         HttpGet httpGet = new HttpGet(requestURL);
         httpGet.setHeader("Authorization", this.SecretKey);
@@ -155,6 +156,24 @@ public class HttpClient {
         }
         LOGGER.log(Level.FINE, "\n" + headers);
         return httpGet;
+    }
+    
+    public ClassicHttpRequest createDeleteRequestV2(String url, Map<String, Object> map) {
+        String urlParams = toQueryString(map);
+        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams;
+        LOGGER.log(Level.FINE, "requestURL: " + requestURL);
+        HttpDelete httpDelete = new HttpDelete(requestURL);
+        httpDelete.setHeader("Authorization", this.SecretKey);
+        httpDelete.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
+        httpDelete.setHeader("X-Appbuilder-Sdk-Config",
+                "{\"appbuilder_sdk_version\":\"0.8.0\",\"appbuilder_sdk_language\":\"java\"}");
+        httpDelete.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
+        String headers = "headers: \n";
+        for (Header header : httpDelete.getHeaders()) {
+            headers += header + "\n";
+        }
+        LOGGER.log(Level.FINE, "\n" + headers);
+        return httpDelete;
     }
 
     public <T> HttpResponse<T> execute(ClassicHttpRequest request, Type bodyType)
