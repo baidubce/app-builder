@@ -104,7 +104,7 @@ func (t *KnowledgeBase) DeleteDocument(req DeleteDocumentRequest) error {
 	return nil
 }
 
-func (t *KnowledgeBase) ListDocument(req ListDocumentRequest) (*KnowledgeBaseListDocumentsResponse, error) {
+func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumentListResponse, error) {
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledge_base/documents")
 	if err != nil {
@@ -149,7 +149,7 @@ func (t *KnowledgeBase) ListDocument(req ListDocumentRequest) (*KnowledgeBaseLis
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := KnowledgeBaseListDocumentsResponse{}
+	rsp := GetDocumentListResponse{}
 	if err := json.Unmarshal(respData, &rsp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}

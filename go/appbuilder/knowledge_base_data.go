@@ -32,7 +32,7 @@ type DeleteDocumentRequest struct {
 	DocumentID      string `json:"document_id"`
 }
 
-type ListDocumentRequest struct {
+type GetDocumentListRequest struct {
 	KnowledgeBaseID string `json:"knowledge_base_id"`
 	Limit           int    `json:"limit,omitempty"`
 	After           string `json:"after,omitempty"`
@@ -53,7 +53,7 @@ type CreateDocumentResponse struct {
 	Message         string   `json:"message"`
 }
 
-type KnowledgeBaseListDocumentsResponse struct {
+type GetDocumentListResponse struct {
 	RequestID string     `json:"request_id"`
 	Data      []Document `json:"data"`
 	Code      string     `json:"code"`

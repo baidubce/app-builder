@@ -34,7 +34,7 @@ func TestKnowledgeBase(t *testing.T) {
 		t.Fatalf("new Knowledge base instance failed")
 	}
 
-	documentsRes, err := client.ListDocument(ListDocumentRequest{
+	documentsRes, err := client.GetDocumentList(GetDocumentListRequest{
 		KnowledgeBaseID: knowledgeBaseID,
 	})
 	if err != nil {
