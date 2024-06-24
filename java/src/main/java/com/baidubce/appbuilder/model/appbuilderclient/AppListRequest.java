@@ -3,7 +3,7 @@ package com.baidubce.appbuilder.model.appbuilderclient;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetAppsRequest {
+public class AppListRequest {
     private int limit;
     private String after;
     private String before;

@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
-import com.baidubce.appbuilder.model.appbuilderclient.GetAppsRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,9 +29,9 @@ public class AppBuilderClientTest{
     @Test
     public void GetAppsTest() throws IOException, AppBuilderServerException {
         AppList builder = new AppList();
-        GetAppsRequest request = new GetAppsRequest();
+        AppListRequest request = new AppListRequest();
         request.setLimit(10);
-        assertNotNull(builder.getApps(request)[0].getId());
+        assertNotNull(builder.getAppList(request)[0].getId());
     }
 
     @Test

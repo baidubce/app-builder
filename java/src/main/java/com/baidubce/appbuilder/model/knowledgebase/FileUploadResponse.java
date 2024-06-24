@@ -1,11 +1,11 @@
-package com.baidubce.appbuilder.model.appbuilderclient;
+package com.baidubce.appbuilder.model.knowledgebase;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AppsResponse {
+public class FileUploadResponse {
     @SerializedName("request_id")
     private String requestId;
-    private App[] data;
+    private String Id;
     private String code;
     private String message;
 
@@ -17,12 +17,12 @@ public class AppsResponse {
         this.requestId = requestId;
     }
 
-    public App[] getData() {
-        return data;
+    public String getId() {
+        return Id;
     }
 
-    public void setData(App[] data) {
-        this.data = data;
+    public void setId(String id) {
+        Id = id;
     }
 
     public String getCode() {
@@ -40,5 +40,13 @@ public class AppsResponse {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    @Override
+    public String toString() {
+        return "FileUploadResponse{" +
+                "request_id=" + requestId +
+                ", code='" + code + '\'' +
+                ", message='" + message +
+                '}';
+    }
 }
-    

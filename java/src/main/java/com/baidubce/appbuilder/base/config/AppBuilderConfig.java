@@ -31,6 +31,12 @@ public class AppBuilderConfig {
     // 运行appbuilder
     public static final String AGENTBUILDER_RUN_URL = "/app/conversation/runs";
 
+    // knowledgebase
+    // 上传文件
+    public static final String KNOWLEDGEBASE_UPLOAD_FILE_URL = "/file";
+    // 新增知识库文档
+    public static final String KNOWLEDGEBASE_ADD_DOCUMENT_URL = "/knowledge_base/document";
+
     // 运行rag
     public static final String RAG_RUN_URL = "/api/v1/ai_engine/agi_platform/v1/instance/integrated";
 
