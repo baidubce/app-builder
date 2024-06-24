@@ -25,7 +25,7 @@ class AppbuilderSDKInstance:
 
         self.credentials = BceCredentials(
             self.bce_config["ak"], self.bce_config["sk"])
-        self.bos_client = self.create_bce_client()
+        self.bos_client = self.create_bos_client()
         self.bcc_client = self.create_bce_client()
 
     def load_config(self, config_path):
@@ -67,15 +67,17 @@ class AppbuilderSDKInstance:
         return url.decode("utf-8")
 
     def build_user_data(self):
-        user_data = (
-            "#!/bin/bash\n"
-            f"wget -O demo.tar {self.tar_bos_url}\n"
-            "tar -xvf demo.tar\n"
-            "rm demo.tar\n"
-            "yum install -y docker\n"
-            "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\n"
-            f"docker run -it --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 /bin/sh -c '{self.build_run_cmd()}'"
-        )
+        print(self.tar_bos_url)
+        user_data = "#!/bin/bash\\n" + \
+            "mkdir test\\n" + \
+            "cd test\\n" + \
+            f"wget -O demo.tar {self.tar_bos_url}\\n"  + \
+            "tar -xvf demo.tar\\n" + \
+            "rm demo.tar\\n" + \
+            "yum install -y docker\\n" + \
+            "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\\n" + \
+            f"docker run -it --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 /bin/sh -c '{self.build_run_cmd()}'" 
+        
         return user_data
 
     def build_run_cmd(self):
@@ -99,6 +101,7 @@ class AppbuilderSDKInstance:
             zone_name="cn-bj-d",
             user_data=self.build_user_data(),
         )
+
 
     def create_security_group(self):
         client_token = str(uuid.uuid4())
@@ -126,9 +129,9 @@ class AppbuilderSDKInstance:
 
     def clear_local(self):
         os.remove(self.tar_file_name)
-
+    
     def deploy(self):
-        self.create_tar(self.tar_file_name)
+        self.create_tar()
         self.tar_bos_url = self.bos_upload()
         self.clear_local()
         self.create_instance()
