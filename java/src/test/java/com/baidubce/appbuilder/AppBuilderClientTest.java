@@ -2,11 +2,13 @@ package com.baidubce.appbuilder;
 
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
+import com.baidubce.appbuilder.console.appbuilderclient.AppList;
 
 import java.io.IOException;
 
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
+import com.baidubce.appbuilder.model.appbuilderclient.GetAppsRequest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,6 +24,14 @@ public class AppBuilderClientTest{
         System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
         System.setProperty("APPBUILDER_LOGFILE", "");
         appId = "";
+    }
+
+    @Test
+    public void GetAppsTest() throws IOException, AppBuilderServerException {
+        AppList builder = new AppList();
+        GetAppsRequest request = new GetAppsRequest();
+        request.setLimit(10);
+        assertNotNull(builder.getApps(request)[0].getId());
     }
 
     @Test

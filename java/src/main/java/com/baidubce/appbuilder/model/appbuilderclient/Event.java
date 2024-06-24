@@ -9,6 +9,7 @@ public class Event {
     private String status;
     private String contentType;
     private Map<String, Object> detail;
+    private Map<String, Object> usage;
 
     public String getCode() {
         return code;
@@ -64,6 +65,15 @@ public class Event {
         return this;
     }
 
+    public Map<String, Object> getUsage() {
+        return usage;
+    }
+
+    public Event setUsage(Map<String, Object> usage) {
+        this.usage = usage;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
@@ -72,7 +82,8 @@ public class Event {
                 ", eventType='" + eventType + '\'' +
                 ", status='" + status + '\'' +
                 ", contentType='" + contentType + '\'' +
-                ", detail=" + detail +
+                ", detail=" + detail + '\'' +
+                ", usage=" + usage +
                 '}';
     }
 }

@@ -2,7 +2,6 @@ package com.baidubce.appbuilder.model.appbuilderclient;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class EventContent {
@@ -19,6 +18,7 @@ public class EventContent {
     @SerializedName("content_type")
     private String contentType;
     private Map<String, Object> outputs;
+    private Map<String, Object> usage;
 
     public String getEventCode() {
         return eventCode;
@@ -76,6 +76,14 @@ public class EventContent {
         this.outputs = outputs;
     }
 
+    public Map<String, Object> getUsage() {
+        return usage;
+    }
+
+    public void setUsage(Map<String, Object> usage) {
+        this.usage = usage;
+    }
+
     @Override
     public String toString() {
         return "EventContent{" +
@@ -85,7 +93,8 @@ public class EventContent {
                 ", eventId='" + eventId + '\'' +
                 ", eventStatus='" + eventStatus + '\'' +
                 ", contentType='" + contentType + '\'' +
-                ", outputs=" + outputs +
+                ", outputs=" + outputs + '\'' +
+                "usage=" + usage + 
                 '}';
     }
 }

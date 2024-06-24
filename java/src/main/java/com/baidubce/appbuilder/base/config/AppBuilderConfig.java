@@ -21,7 +21,9 @@ public class AppBuilderConfig {
     // http client请求超时时间，秒
     public static final int HTTP_CLIENT_CONNECTION_TIMEOUT = 300;
     
-    // agentbuilder
+    // appbuilderclient
+    // 应用列表
+    public static final String APP_LIST_URL = "/apps";
     // 创建会话
     public static final String CREATE_CONVERSATION_URL = "/app/conversation";
     // 上传文件
