@@ -24,22 +24,23 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
 
-def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key: Optional[str] = None, gateway_v2: Optional[str]=None) -> list[data_class.AppOverview]:
+
+def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key: Optional[str] = None, gateway_v2: Optional[str] = None) -> list[data_class.AppOverview]:
     """
     该接口查询用户下状态为已发布的应用列表
-    
+
     Args:
         limit (int, optional): 返回结果的最大数量，默认值为10。
         after (str, optional): 返回结果中第一个应用的游标值，用于分页查询。默认值为空字符串。
         before (str, optional): 返回结果中最后一个应用的游标值，用于分页查询。默认值为空字符串。
         secret_key (Optional[str], optional): 认证密钥。如果未指定，则使用默认的密钥。默认值为None。
         gateway_v2 (Optional[str], optional): 网关地址。如果未指定，则使用默认的地址。默认值为None。
-    
+
     Returns:
         list[data_class.AppOverview]: 应用列表。
-    
+
     """
-    
+
     client = HTTPClient(secret_key=secret_key, gateway_v2=gateway_v2)
     headers = client.auth_header_v2()
     headers["Content-Type"] = "application/json"
@@ -50,9 +51,9 @@ def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key:
     )
 
     response = client.session.get(
-        url = url,
+        url=url,
         headers=headers,
-        json = request.model_dump(),
+        params=request.model_dump(),
     )
 
     client.check_console_response(response)
@@ -61,6 +62,7 @@ def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key:
     resp = data_class.AppBuilderClientAppListResponse(**data)
     out = resp.data
     return out
+
 
 class AppBuilderClient(Component):
     r"""
@@ -194,7 +196,8 @@ class AppBuilderClient(Component):
                     data = event.raw
                 data = json.loads(data)
             except json.JSONDecodeError as e:
-                raise AppBuilderServerException(request_id=request_id, message="json decoder failed {}".format(str(e)))
+                raise AppBuilderServerException(
+                    request_id=request_id, message="json decoder failed {}".format(str(e)))
             inp = data_class.AppBuilderClientResponse(**data)
             out = data_class.AppBuilderClientAnswer()
             _transform(inp, out)
@@ -226,7 +229,8 @@ class AgentBuilder(AppBuilderClient):
             None
 
         """
-        logger.info("AgentBuilder is deprecated, please use AppBuilderClient instead")
+        logger.info(
+            "AgentBuilder is deprecated, please use AppBuilderClient instead")
         super().__init__(app_id)
 
 
