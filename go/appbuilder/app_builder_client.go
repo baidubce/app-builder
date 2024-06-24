@@ -30,7 +30,7 @@ import (
 	"time"
 )
 
-func GetApps(req GetAppsRequest, config *SDKConfig) ([]App, error) {
+func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	request := http.Request{}
 	header := config.AuthHeaderV2()
 	serviceURL, err := config.ServiceURLV2("/apps")
@@ -75,7 +75,7 @@ func GetApps(req GetAppsRequest, config *SDKConfig) ([]App, error) {
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := GetAppsResponse{}
+	rsp := GetAppListResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}

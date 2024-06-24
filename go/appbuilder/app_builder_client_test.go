@@ -28,7 +28,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	apps, err := GetApps(GetAppsRequest{
+	apps, err := GetAppList(GetAppListRequest{
 		Limit: 10,
 	}, config)
 	if err != nil {
