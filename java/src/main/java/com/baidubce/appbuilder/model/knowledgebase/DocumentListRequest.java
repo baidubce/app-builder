@@ -48,7 +48,9 @@ public class DocumentListRequest {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("knowledge_base_id", konwledgeBaseId);
-        map.put("limit", limit);
+        if (limit != 0) {
+            map.put("limit", limit);
+        }
         map.put("after", after);
         map.put("before", before);
         return map;

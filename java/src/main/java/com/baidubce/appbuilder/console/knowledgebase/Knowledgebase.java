@@ -4,9 +4,6 @@ package com.baidubce.appbuilder.console.knowledgebase;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
@@ -18,9 +15,6 @@ import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.base.utils.http.HttpResponse;
 import com.baidubce.appbuilder.base.utils.json.JsonUtils;
-import com.baidubce.appbuilder.model.appbuilderclient.App;
-import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
-import com.baidubce.appbuilder.model.appbuilderclient.AppListResponse;
 import com.baidubce.appbuilder.model.knowledgebase.*;
 
 public class Knowledgebase extends Component{

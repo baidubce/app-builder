@@ -35,7 +35,9 @@ public class AppListRequest {
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("limit", limit);
+        if (limit != 0) {
+            map.put("limit", limit);
+        }
         map.put("after", after);
         map.put("before", before);
         return map;
