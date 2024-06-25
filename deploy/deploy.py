@@ -69,14 +69,14 @@ class AppbuilderSDKInstance:
     def build_user_data(self):
         print(self.tar_bos_url)
         user_data = "#!/bin/bash\\n" + \
-            "mkdir test\\n" + \
-            "cd test\\n" + \
+            "mkdir /root/test\\n" + \
+            "cd /root/test\\n" + \
             f"wget -O demo.tar {self.tar_bos_url}\\n"  + \
             "tar -xvf demo.tar\\n" + \
             "rm demo.tar\\n" + \
             "yum install -y docker\\n" + \
             "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\\n" + \
-            f"docker run -it --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 /bin/sh -c '{self.build_run_cmd()}'" 
+            f"docker run -itd --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 '{self.build_run_cmd()}'" 
         
         return user_data
 

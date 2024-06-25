@@ -149,10 +149,6 @@ class InnerBccClient(bcc_client.BccClient):
             tag_list = [tag.__dict__ for tag in tags]
             body["tags"] = tag_list
         body["cdsAutoRenew"] = cds_auto_renew
-        print("path:" + str(path))
-        print(json.dumps(body))
-        print(params)
-
         return self._send_request(
             http_methods.POST, path, json.dumps(body), params=params, config=config
         )
