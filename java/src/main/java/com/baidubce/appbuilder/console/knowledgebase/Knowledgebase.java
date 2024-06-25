@@ -61,7 +61,7 @@ public class Knowledgebase extends Component{
     /**
      * 新增知识库文档
      *
-     * @param DocumentAddRequest 请求参数
+     * @param req 请求参数
      * @return documentIds 文档ID
      * 
      * @throws IOException               当文件上传失败时抛出IOException

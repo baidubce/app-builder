@@ -21,6 +21,7 @@ public class AppList extends Component {
     /**
      * 获取应用列表
      *
+     * @param request 请求参数
      * @return 返回会话ID
      * @throws IOException               当请求失败时抛出IOException
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
