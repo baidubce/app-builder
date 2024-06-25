@@ -9,7 +9,8 @@ pandas
 openpyxl
 pymochow>=1.1.2
 parameterized
+opentelemetry-api==1.25.0
 opentelemetry-sdk==1.25.0
-wrapt==1.16.0
 opentelemetry-exporter-otlp==1.25.0  
 opentelemetry-instrumentation==0.46b0 
+wrapt==1.16.0
