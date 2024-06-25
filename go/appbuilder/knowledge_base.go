@@ -84,14 +84,29 @@ func (t *KnowledgeBase) DeleteDocument(req DeleteDocumentRequest) error {
 	if err != nil {
 		return err
 	}
+
+	reqMap := make(map[string]any)
+	reqJson, _ := json.Marshal(req)
+	json.Unmarshal(reqJson, &reqMap)
+	params := url.Values{}
+	for key, value := range reqMap {
+		switch v := value.(type) {
+		case float64:
+			params.Add(key, strconv.Itoa(int(v)))
+		case string:
+			if v == "" {
+				continue
+			}
+			params.Add(key, v)
+		}
+	}
+	serviceURL.RawQuery = params.Encode()
+
 	request := http.Request{}
 	request.URL = serviceURL
 	request.Method = "DELETE"
 	header.Set("Content-Type", "application/json")
 	request.Header = header
-
-	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
 	resp, err := http.DefaultClient.Do(&request)
 	if err != nil {
 		return err
