@@ -1,6 +1,5 @@
 import time
 import json
-from graphql import GraphQLError
 
 from appbuilder.core.message import Message
 
@@ -49,16 +48,16 @@ def _deep_retrieve(name, value, span):
             for key, val in value.items():
                 _deep_retrieve(name=f"{name}.{key}", value = val, span = span)
         except (TypeError, ValueError) as e:
-            raise GraphQLError(f"Unable to serialize dict: {e}")
+            raise ValueError(f"Unable to serialize dict: {e}")
     elif isinstance(value, list):
         try:
             # 将列表转换为 JSON 字符串
             for index, item in enumerate(value):
                 _deep_retrieve(name=f"{name}[{index}]", value = item, span = span)
         except (TypeError, ValueError) as e:
-            raise GraphQLError(f"Unable to serialize list: {e}")
+            raise ValueError(f"Unable to serialize list: {e}")
     else:
-        raise GraphQLError(f"Unsupported value type: {type(value)}")
+        raise ValueError(f"Unsupported value type: {type(value)}")
 
 
 
