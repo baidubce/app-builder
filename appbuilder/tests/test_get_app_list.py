@@ -17,7 +17,7 @@ import appbuilder
 from appbuilder.utils.model_util import GetModelListRequest, Models, GetModelListResponse
 appbuilder.logger.setLoglevel("DEBUG")
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestApps(unittest.TestCase):
     def setUp(self):
         """
@@ -37,9 +37,15 @@ class TestApps(unittest.TestCase):
 
     def test_get_app_list_v2(self):
         response = appbuilder.get_app_list(limit=2)
-        print(response)
         self.assertIsInstance(response, list)
         self.assertEqual(len(response),2)
+
+    def test_get_app_list_v3(self):
+        self.assertRaises(ValueError, appbuilder.get_app_list, limit=200)
+        self.assertRaises(ValueError, appbuilder.get_app_list, limit=0)
+
+    def test_get_app_list_v4(self):
+        self.assertRaises(ValueError, appbuilder.get_app_list, limit="a")
 
 if __name__ == '__main__':
     unittest.main()

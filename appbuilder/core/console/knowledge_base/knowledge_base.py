@@ -125,7 +125,7 @@ class KnowledgeBase(Component):
         response = self.http_client.session.delete(
             url=url,
             headers=headers,
-            json=request.model_dump()
+            params=request.model_dump()
         )
 
         self.http_client.check_response_header(response)

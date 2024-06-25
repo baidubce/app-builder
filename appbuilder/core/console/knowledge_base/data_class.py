@@ -57,7 +57,7 @@ class KnowledgeBaseDeleteDocumentResponse(BaseModel):
 
 class KnowledgeBaseGetDocumentsListRequest(BaseModel):
     knowledge_base_id: str = Field(..., description="知识库ID")
-    limit: int = Field(10, description="返回文档数量大小，默认10，最大值100", lt=100)
+    limit: int = Field(10, description="返回文档数量大小，默认10，最大值100", le=100, ge=1)
     after: str = Field(
         "", description="用于分页的游标。after 是一个文档的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 结束，那么你后续的调用可以包含 after=app_id_123 以获取列表的下一页数据。")
     before: str = Field(

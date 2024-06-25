@@ -246,10 +246,10 @@ class CreateConversationResponse(BaseModel):
 
 
 class AppBuilderClientAppListRequest(BaseModel):
-    limit: int = Field(10, description="当次查询的数据大小，默认10，最大值100", lt=100)
+    limit: int = Field(default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
     after: str = Field(
-        "", description="用于分页的游标。after 是一个应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 结束，那么你后续的调用可以包含 after=app_id_123 以获取列表的下一页数据。")
-    before: str = Field("", description="用于分页的游标。与after相反，填写它将获取前一页数据")
+        default="", description="用于分页的游标。after 是一个应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 结束，那么你后续的调用可以包含 after=app_id_123 以获取列表的下一页数据。")
+    before: str = Field(default="", description="用于分页的游标。与after相反，填写它将获取前一页数据")
 
 class AppOverview(BaseModel):
     id: str = Field("", description="应用ID")
