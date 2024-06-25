@@ -50,7 +50,7 @@ func TestKnowledgeBase(t *testing.T) {
 		KnowledgeBaseID: knowledgeBaseID,
 		ContentType:     ContentTypeRawText,
 		FileIDS:         []string{fileID},
-		CustomProcessRule: CustomProcessRule{
+		CustomProcessRule: &CustomProcessRule{
 			Separators:   []string{"。"},
 			TargetLength: 300,
 			OverlapRate:  0.25,

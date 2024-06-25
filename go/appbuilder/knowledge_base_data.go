@@ -20,11 +20,11 @@ const (
 )
 
 type CreateDocumentRequest struct {
-	KnowledgeBaseID   string            `json:"knowledge_base_id"`
-	ContentType       string            `json:"content_type"`
-	IsEnhanced        bool              `json:"is_enhanced"`
-	FileIDS           []string          `json:"file_ids,omitempty"`
-	CustomProcessRule CustomProcessRule `json:"custom_process_rule,omitempty"`
+	KnowledgeBaseID   string             `json:"knowledge_base_id"`
+	ContentType       string             `json:"content_type"`
+	IsEnhanced        bool               `json:"is_enhanced"`
+	FileIDS           []string           `json:"file_ids,omitempty"`
+	CustomProcessRule *CustomProcessRule `json:"custom_process_rule,omitempty"`
 }
 
 type DeleteDocumentRequest struct {
@@ -42,7 +42,7 @@ type GetDocumentListRequest struct {
 type CustomProcessRule struct {
 	Separators   []string `json:"separators"`
 	TargetLength int64    `json:"target_length"`
-	OverlapRate  float64  `json:"overlap_rate,omitempty"`
+	OverlapRate  float64  `json:"overlap_rate"`
 }
 
 type CreateDocumentResponse struct {
