@@ -69,17 +69,17 @@ class TestFunctionCall(unittest.TestCase):
     def test_threads_run_model_raise(self):
         run=appbuilder.core.assistant.threads.runs.runs.Runs()
         with self.assertRaises(ValueError):
-            run.run(assistant_id='test',chat_temperature = 10)
+            run.run(assistant_id='test', thread_id = 'thread_id', chat_temperature = 10)
         with self.assertRaises(ValueError):
-            run._stream(assistant_id='test',chat_temperature = 10)
+            run._stream(assistant_id='test',thread_id = 'thread_id', chat_temperature = 10)
         with self.assertRaises(ValueError):
-            run.run(assistant_id='test',chat_top_p = 10)
+            run.run(assistant_id='test', thread_id = 'thread_id', chat_top_p = 10)
         with self.assertRaises(ValueError):
-            run._stream(assistant_id='test',chat_top_p = 10)
+            run._stream(assistant_id='test', thread_id = 'thread_id', chat_top_p = 10)
         with self.assertRaises(ValueError):
-            run.run(assistant_id='test',chat_penalty_score = 10)
+            run.run(assistant_id='test', thread_id = 'thread_id', chat_penalty_score = 10)
         with self.assertRaises(ValueError):
-            run._stream(assistant_id='test',chat_penalty_score = 10)
+            run._stream(assistant_id='test',thread_id = 'thread_id', chat_penalty_score = 10)
 
 if __name__ == '__main__':
     unittest.main()
