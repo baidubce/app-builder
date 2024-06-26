@@ -1,8 +1,10 @@
 import time
 import uuid
 import os
+import sys
 import yaml
 import tarfile
+import logging
 from datetime import datetime
 
 from baidubce.auth.bce_credentials import BceCredentials
@@ -14,15 +16,12 @@ from _bcc import InnerBccClient
 
 
 class AppbuilderSDKInstance:
-    def __init__(self, config_path):
+    def __init__(self, config_path, level=logging.INFO):
         self.config_path = config_path
         self.load_config()
+        self.logging_level = level
 
         self.tar_file_name = "./demo.tar"
-        self.tar_bos_url = ""
-
-        self.instance_id = None
-        self.public_ip = None
 
         self.credentials = BceCredentials(
             self.bce_config["ak"], self.bce_config["sk"])
@@ -75,12 +74,17 @@ class AppbuilderSDKInstance:
             bucket_name, "demo.tar", timestamp, expiration_in_seconds=3600
         )
         self.tar_bos_url = url.decode("utf-8")
+        if self.tar_bos_url == None:
+            raise Exception("upload to bos failed")
+        self.log.debug(
+            "upload to bos successfully! url: {}".format(self.tar_bos_url))
 
     def clear_local(self):
         os.remove(self.tar_file_name)
 
     def build_user_data(self):
         run_script = self.appbuilder_config["run_script"]
+        work_space = self.appbuilder_config["work_space"]
         user_data = "#!/bin/bash\\n" + \
             "mkdir /root/test\\n" + \
             "cd /root/test\\n" + \
@@ -90,7 +94,7 @@ class AppbuilderSDKInstance:
             f"chmod a+x {run_script}\\n" + \
             "yum install -y docker\\n" + \
             "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\\n" + \
-            f"docker run -itd --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 /home/test/{run_script}"
+            f"docker run -itd --net=host -v /root/test:{work_space} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 {work_space}/{run_script}"
 
         return user_data
 
@@ -123,8 +127,12 @@ class AppbuilderSDKInstance:
             zone_name="cn-bj-d",
             user_data=self.build_user_data(),
         )
+        self.log.debug("create instance info: {}".format(instance))
         self.get_instance_id(instance)
-        print("instance create successfully! id: {}".format(self.instance_id))
+        if self.instance_id == None:
+            raise Exception("create instance failed")
+        self.log.info(
+            "instance create successfully! id: {}".format(self.instance_id))
 
     def get_instance_id(self, instance):
         self.instance_id = instance.instance_ids[0]
@@ -139,9 +147,8 @@ class AppbuilderSDKInstance:
                 response = self.bcc_client.get_instance(instance_id)
             else:
                 response = self.bcc_client.get_instance(self.instance_id)
+            self.log.debug("get instance info: {}".format(response))
             self.public_ip = response.instance.public_ip
-        if self.public_ip is not None and self.public_ip != "":
-            print("public ip create successfully! ip: {}".format(self.public_ip))
 
     def create_security_group(self):
         client_token = str(uuid.uuid4())
@@ -167,16 +174,26 @@ class AppbuilderSDKInstance:
             client_token=client_token,
         )
         self.security_group_id = response.security_group_id
+        if self.security_group_id == None:
+            raise Exception("create security group failed")
+
+        self.log.info("security group create successfully！id: {}".format(
+            self.security_group_id))
         self.save_config(self.config)
 
     def bind_security_group(self):
-        self.bcc_client.bind_instance_to_security_group(
+        response = self.bcc_client.bind_instance_to_security_group(
             self.instance_id, self.security_group_id)
+        self.log.debug("bind instance to security group: {}".format(response))
 
     def _pre_deploy(self):
+        self.log = get_logger(__name__, self.logging_level)
         self.build_run_script()
+        self.log.debug("build run script done!")
         self.create_tar()
+        self.log.debug("create tar done!")
         self.bos_upload()
+        self.log.debug("upload tar to bos done!")
         self.clear_local()
 
     def _deploy(self):
@@ -185,6 +202,8 @@ class AppbuilderSDKInstance:
     def _after_deploy(self):
         self.get_public_ip()
         self.bind_security_group()
+        self.log.info(
+            "deployment finished! public ip: {}".format(self.public_ip))
 
     def deploy(self):
         self._pre_deploy()
@@ -192,6 +211,22 @@ class AppbuilderSDKInstance:
         self._after_deploy()
 
 
+def get_logger(name, level=logging.INFO):
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    handler = logging.StreamHandler(sys.stdout)
+
+    formatter = logging.Formatter(
+        fmt="%(asctime)s: %(filename)s:%(lineno)d %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    handler.setFormatter(formatter)
+
+    logger.addHandler(handler)
+    logger.propagate = False
+    return logger
+
+
 if __name__ == "__main__":
-    instance = AppbuilderSDKInstance("./config.yaml")
+    instance = AppbuilderSDKInstance("./config.yaml", level=logging.DEBUG)
     instance.deploy()
