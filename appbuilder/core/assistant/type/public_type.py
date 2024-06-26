@@ -121,3 +121,21 @@ class AssistantContent(BaseModel):
     """
     type: str = "text"
     text: Optional[AssistantText] = None
+
+
+class AssistantChatParameters(BaseModel):
+    temperature: Optional[float] = 0.8
+    top_p: Optional[float] = 0.8
+    penalty_score: Optional[float] = 1.0
+
+
+class AssistantThoughtParameters(BaseModel):
+    temperature: Optional[float] = 0.1
+    top_p: Optional[float] = 0
+    penalty_score: Optional[float] = 1.0
+    
+
+class AssistantModelParameters(BaseModel):
+    chat_parameters: Optional[AssistantChatParameters] = AssistantChatParameters()
+    thought_parameters: Optional[AssistantThoughtParameters] = AssistantThoughtParameters()
+    
