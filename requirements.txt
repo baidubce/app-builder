@@ -11,4 +11,4 @@ pymochow>=1.1.2
 parameterized
 PyYAML
 bce-python-sdk
-pycrypto
+pycryptodome
