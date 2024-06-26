@@ -23,6 +23,9 @@ class AppbuilderSDKInstance:
         self.tar_file_name = "./demo.tar"
         self.tar_bos_url = ""
 
+        self.instance_id = None
+        self.public_ip = None
+
         self.credentials = BceCredentials(
             self.bce_config["ak"], self.bce_config["sk"])
         self.bos_client = self.create_bos_client()
@@ -67,28 +70,33 @@ class AppbuilderSDKInstance:
         return url.decode("utf-8")
 
     def build_user_data(self):
-        print(self.tar_bos_url)
+        run_script = self.appbuilder_config["run_script"]
         user_data = "#!/bin/bash\\n" + \
             "mkdir /root/test\\n" + \
             "cd /root/test\\n" + \
             f"wget -O demo.tar {self.tar_bos_url}\\n"  + \
             "tar -xvf demo.tar\\n" + \
             "rm demo.tar\\n" + \
+            f"chmod a+x {run_script}\\n" + \
             "yum install -y docker\\n" + \
             "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\\n" + \
-            f"docker run -itd --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 '{self.build_run_cmd()}'" 
-        
+            f"docker run -itd --net=host -v /root/test:/home/test/ --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 /home/test/{run_script}"
+
         return user_data
 
-    def build_run_cmd(self):
+    def build_run_script(self):
         commands = []
         for key, value in self.env.items():
             commands.append(f'export {key}="{value}"')
-        return " && ".join(commands) + " && " + self.appbuilder_config["run_cmd"]
+        run_cmd = " && ".join(commands) + " && " + self.appbuilder_config["run_cmd"]
+        run_script = self.appbuilder_config["local_dir"] + "/" + self.appbuilder_config["run_script"]
+        with open(run_script, 'w') as file:
+            file.write('#!/bin/sh\n')
+            file.write(run_cmd)
 
     def create_instance(self):
         now_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        self.bcc_client.create_instance_by_spec(
+        instance = self.bcc_client.create_instance_by_spec(
             spec=self.bce_config["spec"],  # 实例规格
             image_id="m-43wfwG1G",  # 镜像ID
             # 待创建虚拟机实例的系统盘大小，单位GB，默认是40GB，范围为[40,
@@ -101,7 +109,18 @@ class AppbuilderSDKInstance:
             zone_name="cn-bj-d",
             user_data=self.build_user_data(),
         )
+        self.get_instance_id(instance)
 
+    def get_instance_id(self, instance):
+        self.instance_id = instance.instance_ids[0]
+
+    def get_public_ip(self, instance_id=None):
+        response = None
+        if instance_id != None:
+            response = self.bcc_client.get_instance(instance_id)
+        else:
+            response = self.bcc_client.get_instance(self.instance_id)
+        self.public_ip = response.instance.public_ip
 
     def create_security_group(self):
         client_token = str(uuid.uuid4())
@@ -129,14 +148,18 @@ class AppbuilderSDKInstance:
 
     def clear_local(self):
         os.remove(self.tar_file_name)
-    
+
     def deploy(self):
+        self.build_run_script()
         self.create_tar()
         self.tar_bos_url = self.bos_upload()
         self.clear_local()
         self.create_instance()
-        print(self.bcc_client.list_instances())
-
+        print("instance create successfully! id: {}".format(self.instance_id))
+        while self.public_ip is None:
+            self.get_public_ip("i-HJOiG7E0")
+            if self.public_ip is not None:
+                print("public ip create successfully! ip: {}".format(self.public_ip))
 
 if __name__ == "__main__":
     instance = AppbuilderSDKInstance("./config.yaml")

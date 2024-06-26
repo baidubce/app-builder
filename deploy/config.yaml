@@ -9,15 +9,15 @@ bce_config:
     
 
 appbuilder_config:
-    mode: "free" # "free"
     # 用来打包的代码路径
     local_dir: ""
     workspace: "/home/appbuilder"
 
-    # free mode
-    # 启动命令
-    run_cmd: "sh zzz.sh"
+    # 运行命令
+    run_cmd: ""
+    # 启动脚本
+    run_script: "start.sh"
 
 env:
     APPBUILDER_LOGLEVEL: debug
-    APPBUILDER_TOKEN: "bce xxxx"
+    APPBUILDER_TOKEN: ""
