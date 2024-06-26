@@ -15,10 +15,8 @@ from _bcc import InnerBccClient
 
 class AppbuilderSDKInstance:
     def __init__(self, config_path):
-        self.config = self.load_config(config_path)
-        self.bce_config = self.config["bce_config"]
-        self.appbuilder_config = self.config["appbuilder_config"]
-        self.env = self.config["env"]
+        self.config_path = config_path
+        self.load_config()
 
         self.tar_file_name = "./demo.tar"
         self.tar_bos_url = ""
@@ -31,10 +29,19 @@ class AppbuilderSDKInstance:
         self.bos_client = self.create_bos_client()
         self.bcc_client = self.create_bce_client()
 
-    def load_config(self, config_path):
-        with open(config_path) as f:
+    def load_config(self):
+        with open(self.config_path) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
-        return config
+        self.config = config
+        self.bce_config = self.config["bce_config"]
+        self.appbuilder_config = self.config["appbuilder_config"]
+        self.env = self.config["env"]
+        self.security_group_id = self.bce_config["security_group_id"]
+
+    def save_config(self, config):
+        self.config["bce_config"]["security_group_id"] = self.security_group_id
+        with open(self.config_path, 'w') as f:
+            yaml.dump(config, f, indent=4)
 
     def create_bce_client(self):
         bce_config = BceClientConfiguration(
@@ -67,14 +74,17 @@ class AppbuilderSDKInstance:
         url = self.bos_client.generate_pre_signed_url(
             bucket_name, "demo.tar", timestamp, expiration_in_seconds=3600
         )
-        return url.decode("utf-8")
+        self.tar_bos_url = url.decode("utf-8")
+
+    def clear_local(self):
+        os.remove(self.tar_file_name)
 
     def build_user_data(self):
         run_script = self.appbuilder_config["run_script"]
         user_data = "#!/bin/bash\\n" + \
             "mkdir /root/test\\n" + \
             "cd /root/test\\n" + \
-            f"wget -O demo.tar {self.tar_bos_url}\\n"  + \
+            f"wget -O demo.tar {self.tar_bos_url}\\n" + \
             "tar -xvf demo.tar\\n" + \
             "rm demo.tar\\n" + \
             f"chmod a+x {run_script}\\n" + \
@@ -88,13 +98,17 @@ class AppbuilderSDKInstance:
         commands = []
         for key, value in self.env.items():
             commands.append(f'export {key}="{value}"')
-        run_cmd = " && ".join(commands) + " && " + self.appbuilder_config["run_cmd"]
-        run_script = self.appbuilder_config["local_dir"] + "/" + self.appbuilder_config["run_script"]
+        run_cmd = " && ".join(commands) + " && " + \
+            self.appbuilder_config["run_cmd"]
+        run_script = self.appbuilder_config["local_dir"] + \
+            "/" + self.appbuilder_config["run_script"]
         with open(run_script, 'w') as file:
             file.write('#!/bin/sh\n')
             file.write(run_cmd)
 
     def create_instance(self):
+        if self.security_group_id == None or self.security_group_id == "":
+            self.create_security_group()
         now_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         instance = self.bcc_client.create_instance_by_spec(
             spec=self.bce_config["spec"],  # 实例规格
@@ -110,17 +124,24 @@ class AppbuilderSDKInstance:
             user_data=self.build_user_data(),
         )
         self.get_instance_id(instance)
+        print("instance create successfully! id: {}".format(self.instance_id))
 
     def get_instance_id(self, instance):
         self.instance_id = instance.instance_ids[0]
 
     def get_public_ip(self, instance_id=None):
-        response = None
-        if instance_id != None:
-            response = self.bcc_client.get_instance(instance_id)
-        else:
-            response = self.bcc_client.get_instance(self.instance_id)
-        self.public_ip = response.instance.public_ip
+        if instance_id == None and self.instance_id == None:
+            return
+
+        while self.public_ip is None or self.public_ip == "":
+            response = None
+            if instance_id != None:
+                response = self.bcc_client.get_instance(instance_id)
+            else:
+                response = self.bcc_client.get_instance(self.instance_id)
+            self.public_ip = response.instance.public_ip
+        if self.public_ip is not None and self.public_ip != "":
+            print("public ip create successfully! ip: {}".format(self.public_ip))
 
     def create_security_group(self):
         client_token = str(uuid.uuid4())
@@ -140,26 +161,36 @@ class AppbuilderSDKInstance:
         security_group_rule_list = []
         security_group_rule_list.append(security_group_rule)
 
-        self.bcc_client.create_security_group(
+        response = self.bcc_client.create_security_group(
             name=security_group_name,
             rules=security_group_rule_list,
             client_token=client_token,
         )
+        self.security_group_id = response.security_group_id
+        self.save_config(self.config)
 
-    def clear_local(self):
-        os.remove(self.tar_file_name)
+    def bind_security_group(self):
+        self.bcc_client.bind_instance_to_security_group(
+            self.instance_id, self.security_group_id)
 
-    def deploy(self):
+    def _pre_deploy(self):
         self.build_run_script()
         self.create_tar()
-        self.tar_bos_url = self.bos_upload()
+        self.bos_upload()
         self.clear_local()
+
+    def _deploy(self):
         self.create_instance()
-        print("instance create successfully! id: {}".format(self.instance_id))
-        while self.public_ip is None:
-            self.get_public_ip("i-HJOiG7E0")
-            if self.public_ip is not None:
-                print("public ip create successfully! ip: {}".format(self.public_ip))
+
+    def _after_deploy(self):
+        self.get_public_ip()
+        self.bind_security_group()
+
+    def deploy(self):
+        self._pre_deploy()
+        self._deploy()
+        self._after_deploy()
+
 
 if __name__ == "__main__":
     instance = AppbuilderSDKInstance("./config.yaml")

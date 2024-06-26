@@ -6,7 +6,7 @@ bce_config:
     spec: "bcc.e1.c2m2"
     root_disk_size_in_gb: 20
     admin_pass: ""
-    
+    security_group_id: ""
 
 appbuilder_config:
     # 用来打包的代码路径
