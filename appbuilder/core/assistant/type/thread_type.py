@@ -21,7 +21,9 @@ from appbuilder.core.assistant.type import (
     AssistantTool,
     AssistantContent,
     ResponseFormat,
-    AssistantModelParameters
+    AssistantModelParameters,
+    AssistantUserInfo,
+    AssistantUserLoc
 )
 
 
@@ -344,6 +346,8 @@ class AssistantRunRequest(BaseModel):
     thread: Optional[AssistantThread] = None
     tools: Optional[list[AssistantTool]] = []
     tool_output: Optional[ToolOutput] = None
+    user_info: Optional[AssistantUserInfo] = None
+    user_loc: Optional[AssistantUserLoc] = None
 
 
 class AssistantSubmitToolOutputsRequest(BaseModel):

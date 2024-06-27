@@ -24,6 +24,8 @@ from .public_type import (
     AssistantChatParameters,
     AssistantThoughtParameters,
     AssistantModelParameters,
+    AssistantUserInfo,
+    AssistantUserLoc,
 )
 
 

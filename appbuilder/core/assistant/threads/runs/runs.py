@@ -45,12 +45,9 @@ class Runs():
             tools: Optional[list[assistant_type.AssistantTool]] = [],
             metadata: Optional[dict] = {},
             tool_output: Optional[thread_type.ToolOutput] = None,
-            chat_temperature: Optional[float] = 0.8,
-            chat_top_p: Optional[float] = 0.8,
-            chat_penalty_score: Optional[float] = 1.0,
-            thought_temperature: Optional[float] = 0.01,
-            thought_top_p: Optional[float] = 0.0,
-            thought_penalty_score: Optional[float] = 1.0,
+            model_parameters: Optional[public_type.AssistantModelParameters] = None,
+            user_info: Optional[public_type.AssistantUserInfo] = None,
+            user_loc: Optional[public_type.AssistantUserLoc] = None,
             ) -> thread_type.RunResult:
         """
         Args:
@@ -65,13 +62,9 @@ class Runs():
             tools (Optional[list[assistant_type.AssistantTool]], optional): 工具列表. Defaults to [].
             metadata (Optional[dict], optional): 元数据. Defaults to {}.
             tool_output (Optional[thread_type.ToolOutput], optional): 工具输出. Defaults to None.
-            chat_temperature Optional[float]: 回复模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.8.
-            chat_top_p Optional[float]: 回复模型超参,核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0.8.
-            chat_penalty_score Optional[float]: 回复模型超参,惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。取值范围大于等于1，小于等于2，默认为1.0.
-            thought_temperature Optional[float]: 思考模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01.
-            thought_top_p Optional[float]: 思考模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01.
-            thought_penalty_score Optional[float]: 思考模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01.
-
+            model_parameters (Optional[public_type.AssistantModelParameters], optional): 模型运行参数. Defaults to None.
+            user_info (Optional[public_type.AssistantUserInfo], optional): 用户身份信息. Defaults to None.
+            user_loc (Optional[public_type.AssistantUserLoc], optional): 用户定位信息. Defaults to None.
         Returns:
             thread_type.RunResult: 运行结果
 
@@ -94,6 +87,13 @@ class Runs():
         """
         if thread_id == "" and thread is None:
             raise ValueError("Runs().run() argument thread_id && thread can't be empty at the same time")
+        
+        chat_temperature = model_parameters.chat_parameters.temperature
+        chat_top_p = model_parameters.chat_parameters.top_p
+        chat_penalty_score = model_parameters.chat_parameters.penalty_score
+        thought_temperature = model_parameters.thought_parameters.temperature
+        thought_top_p = model_parameters.thought_parameters.top_p
+        thought_penalty_score = model_parameters.thought_parameters.penalty_score
 
         if chat_temperature < 0 or chat_temperature > 1 or thought_temperature < 0 or thought_temperature > 1:
             raise ValueError("chat_temperature and thought_temperature must be in range [0, 1]")
@@ -102,23 +102,6 @@ class Runs():
         if chat_penalty_score < 1 or chat_penalty_score > 2 or thought_penalty_score < 1 or thought_penalty_score > 2:
             raise ValueError("chat_penalty_score and thought_penalty_score must be in range [1, 2]")
         
-        chat_parameters = public_type.AssistantChatParameters(
-            temperature=chat_temperature,
-            top_p=chat_top_p,
-            penalty_score=chat_penalty_score
-        )
-
-        thought_parameters = public_type.AssistantThoughtParameters(
-            temperature=thought_temperature,
-            top_p=thought_top_p,
-            penalty_score=thought_penalty_score
-        )
-
-        model_parameters = public_type.AssistantModelParameters(
-            chat=chat_parameters,
-            thought=thought_parameters
-        )
-
         req = thread_type.AssistantRunRequest(
             thread_id=thread_id,
             thread=thread,
@@ -132,7 +115,9 @@ class Runs():
             stream=False,
             tools=tools,
             metadata=metadata,
-            tool_output=tool_output
+            tool_output=tool_output,
+            user_info=user_info,
+            user_loc=user_loc
         )
 
         response = self._http_client.session.post(
@@ -163,12 +148,9 @@ class Runs():
                    tools: Optional[list[assistant_type.AssistantTool]] = [],
                    metadata: Optional[dict] = {},
                    tool_output: Optional[thread_type.ToolOutput] = None,
-                   chat_temperature: Optional[float] = 0.8,
-                   chat_top_p: Optional[float] = 0.8,
-                   chat_penalty_score: Optional[float] = 1.0,
-                   thought_temperature: Optional[float] = 0.01,
-                   thought_top_p: Optional[float] = 0.0,
-                   thought_penalty_score: Optional[float] = 1.0,
+                   model_parameters: Optional[public_type.AssistantModelParameters] = None,
+                   user_info: Optional[public_type.AssistantUserInfo] = None,
+                   user_loc: Optional[public_type.AssistantUserLoc] = None,
                    ):
         """
         启动一个流式运行的对话，用于处理对话流中的消息。
@@ -185,12 +167,7 @@ class Runs():
             tools (Optional[list[assistant_type.AssistantTool]], optional): 使用的工具列表。默认为空列表。
             metadata (Optional[dict], optional): 元数据字典。默认为空字典。
             tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象。默认为None。
-            chat_temperature Optional[float]: 回复模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.8.
-            chat_top_p Optional[float]: 回复模型超参,核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0.8.
-            chat_penalty_score Optional[float]: 回复模型超参,惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。取值范围大于等于1，小于等于2，默认为1.0.
-            thought_temperature Optional[float]: 思考模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01.
-            thought_top_p Optional[float]: 思考模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01.
-            thought_penalty_score Optional[float]: 思考模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01.
+            model_parameters (Optional[public_type.AssistantModelParameters], optional): 模型运行参数. Defaults to None.
         
         Returns:
             Iterator[thread_type.AssistantRunEvent]: 返回一个迭代器，用于遍历流式运行中的事件。
@@ -214,6 +191,13 @@ class Runs():
         """
         if thread_id == "" and thread is None:
             raise ValueError("Runs().run() argument thread_id and thread can't be empty at the same time")
+        
+        chat_temperature = model_parameters.chat_parameters.temperature
+        chat_top_p = model_parameters.chat_parameters.top_p
+        chat_penalty_score = model_parameters.chat_parameters.penalty_score
+        thought_temperature = model_parameters.thought_parameters.temperature
+        thought_top_p = model_parameters.thought_parameters.top_p
+        thought_penalty_score = model_parameters.thought_parameters.penalty_score
 
         if chat_temperature < 0 or chat_temperature > 1 or thought_temperature < 0 or thought_temperature > 1:
             raise ValueError("chat_temperature and thought_temperature must be in range [0, 1]")
@@ -221,23 +205,6 @@ class Runs():
             raise ValueError("chat_top_p and thought_top_p must be in range [0, 1]")
         if chat_penalty_score < 1 or chat_penalty_score > 2 or thought_penalty_score < 1 or thought_penalty_score > 2:
             raise ValueError("chat_penalty_score and thought_penalty_score must be in range [1, 2]")
-        
-        chat_parameters = public_type.AssistantChatParameters(
-            temperature=chat_temperature,
-            top_p=chat_top_p,
-            penalty_score=chat_penalty_score
-        )
-
-        thought_parameters = public_type.AssistantThoughtParameters(
-            temperature=thought_temperature,
-            top_p=thought_top_p,
-            penalty_score=thought_penalty_score
-        )
-
-        model_parameters = public_type.AssistantModelParameters(
-            chat=chat_parameters,
-            thought=thought_parameters
-        )
 
         req = thread_type.AssistantRunRequest(
             thread_id=thread_id,
@@ -252,7 +219,9 @@ class Runs():
             model_parameters=model_parameters,
             tools=tools,
             metadata=metadata,
-            tool_output=tool_output
+            tool_output=tool_output,
+            user_info=user_info,
+            user_loc=user_loc
         )
 
         response = self._http_client.session.post(
@@ -277,12 +246,9 @@ class Runs():
                    tools: Optional[list[assistant_type.AssistantTool]] = [],
                    metadata: Optional[dict] = {},
                    tool_output: Optional[thread_type.ToolOutput] = None,
-                   chat_temperature: Optional[float] = 0.8,
-                   chat_top_p: Optional[float] = 0.8,
-                   chat_penalty_score: Optional[float] = 1.0,
-                   thought_temperature: Optional[float] = 0.01,
-                   thought_top_p: Optional[float] = 0.0,
-                   thought_penalty_score: Optional[float] = 1.0,
+                   model_parameters: Optional[public_type.AssistantModelParameters] = None,
+                   user_info: Optional[public_type.AssistantUserInfo] = None,
+                   user_loc: Optional[public_type.AssistantUserLoc] = None,
                    ) -> Union[thread_type.StreamRunStatus, thread_type.StreamRunMessage, None]:
         """
         启动一个流式运行的对话，用于处理对话流中的消息。
@@ -299,12 +265,7 @@ class Runs():
             tools (Optional[list[assistant_type.AssistantTool]], optional): 使用的工具列表。默认为空列表。
             metadata (Optional[dict], optional): 元数据字典。默认为空字典。
             tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象。默认为None。
-            chat_temperature Optional[float]: 回复模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.8.
-            chat_top_p Optional[float]: 回复模型超参,核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0.8.
-            chat_penalty_score Optional[float]: 回复模型超参,惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。取值范围大于等于1，小于等于2，默认为1.0.
-            thought_temperature Optional[float]: 思考模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01.
-            thought_top_p Optional[float]: 思考模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01.
-            thought_penalty_score Optional[float]: 思考模型超参,采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01.
+            model_parameters (Optional[public_type.AssistantModelParameters], optional): 模型参数对象。默认为None。
 
         Returns:
             Union[thread_type.StreamRunStatus, thread_type.StreamRunMessage, None]: 返回一个迭代器，每次迭代返回一个处理结果对象，可能是 StreamRunStatus 或 StreamRunMessage。
@@ -327,15 +288,12 @@ class Runs():
             instructions=instructions,
             thought_instructions=thought_instructions,
             chat_instructions=chat_instructions,
+            model_parameters=model_parameters,
             tools=tools,
             metadata=metadata,
             tool_output=tool_output,
-            chat_temperature=chat_temperature,
-            chat_top_p=chat_top_p,
-            chat_penalty_score=chat_penalty_score,
-            thought_temperature=thought_temperature,
-            thought_top_p=thought_top_p,
-            thought_penalty_score=thought_penalty_score
+            user_info=user_info,
+            user_loc=user_loc
         )
         self._http_client.check_response_header(response)
         sse_client = SSEClient(response)
@@ -354,12 +312,9 @@ class Runs():
                    metadata: Optional[dict] = {},
                    tool_output: Optional[thread_type.ToolOutput] = None,
                    event_handler: Optional[AssistantEventHandler] = None,
-                   chat_temperature: Optional[float] = 0.8,
-                   chat_top_p: Optional[float] = 0.8,
-                   chat_penalty_score: Optional[float] = 1.0,
-                   thought_temperature: Optional[float] = 0.01,
-                   thought_top_p: Optional[float] = 0.0,
-                   thought_penalty_score: Optional[float] = 1.0,
+                   model_parameters: Optional[public_type.AssistantModelParameters] = None,
+                   user_info: Optional[public_type.AssistantUserInfo] = None,
+                   user_loc: Optional[public_type.AssistantUserLoc] = None,
                    ) -> AssistantStreamManager:
         response = self._stream(
             assistant_id=assistant_id,
@@ -370,15 +325,12 @@ class Runs():
             instructions=instructions,
             thought_instructions=thought_instructions,
             chat_instructions=chat_instructions,
+            model_parameters=model_parameters,
             tools=tools,
             metadata=metadata,
             tool_output=tool_output,
-            chat_temperature=chat_temperature,
-            chat_top_p=chat_top_p,
-            chat_penalty_score=chat_penalty_score,
-            thought_temperature=thought_temperature,
-            thought_top_p=thought_top_p,
-            thought_penalty_score=thought_penalty_score
+            user_info=user_info,
+            user_loc=user_loc
         )
         self._http_client.check_response_header(response)
 
