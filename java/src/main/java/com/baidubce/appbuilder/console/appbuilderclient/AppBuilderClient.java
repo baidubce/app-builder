@@ -36,6 +36,7 @@ public class AppBuilderClient extends Component {
         this.appID = appID;
     }
 
+
     /**
      * 创建会话
      *
@@ -55,7 +56,7 @@ public class AppBuilderClient extends Component {
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<ConversationResponse> response = httpClient.execute(postRequest, ConversationResponse.class);
         ConversationResponse respBody = response.getBody();
-
+        
         return respBody.getConversationId();
     }
 

@@ -1,7 +1,5 @@
 package com.baidubce.appbuilder.base.component;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.utils.http.HttpClient;
 
