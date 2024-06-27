@@ -29,7 +29,7 @@ class TestKnowLedge(unittest.TestCase):
         add_res = knowledge.add_document(content_type='raw_text',
                                          file_ids=[upload_res.id],
                                          custom_process_rule=appbuilder.CustomProcessRule(
-                                            separators=["?"], target_length=400,overlap_rate=0.5
+                                            separators=["?"], target_length=400,overlap_rate=0.2
                                          ))
         list_res = knowledge.get_documents_list()
         delete_res = knowledge.delete_document(document_id=add_res.document_ids[0])
