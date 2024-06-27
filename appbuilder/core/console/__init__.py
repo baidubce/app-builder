@@ -14,4 +14,7 @@
 
 from .dataset import Dataset
 from .rag import RAG
-
+from .appbuilder_client import AppBuilderClient
+from .appbuilder_client import get_app_list
+from .knowledge_base import KnowledgeBase
+from .knowledge_base import CustomProcessRule

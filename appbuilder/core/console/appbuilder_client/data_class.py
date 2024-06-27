@@ -15,6 +15,7 @@
 from pydantic import BaseModel
 from pydantic import Field
 from typing import Union
+from typing import Optional
 
 
 class AppBuilderClientRequest(BaseModel):
@@ -31,6 +32,16 @@ class AppBuilderClientRequest(BaseModel):
     conversation_id: str
     file_ids: list[str] = []
     app_id: str
+
+
+class Usage(BaseModel):
+    """
+    模型用量 仅Chat Agent和Function Call有，按照各个独立的event_type计数。
+    """
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0
+    name: str = ""
 
 
 class OriginalEvent(BaseModel):
@@ -50,6 +61,7 @@ class OriginalEvent(BaseModel):
     event_status: str = ""
     content_type: str = ""
     outputs: dict = {}
+    usage: Optional[Usage] = None
 
 
 class AppBuilderClientResponse(BaseModel):
@@ -68,6 +80,7 @@ class AppBuilderClientResponse(BaseModel):
     answer: str = ""
     conversation_id: str = ""
     message_id: str = ""
+    is_completion: Optional[bool] = False
     content: list[OriginalEvent] = []
 
 
@@ -101,6 +114,7 @@ class RAGReference(BaseModel):
                segment_id(str): 片段ID
                document_id(str): 文档ID
                document_name(str): 文档名
+               knowledge_base_id(str): 知识库id  知识问答专有字段 
        """
     id: str = ""
     from_: str = Field(..., alias='from')
@@ -110,6 +124,7 @@ class RAGReference(BaseModel):
     document_id: str = ""
     dataset_id: str = ""
     document_name: str = ""
+    knowledge_base_id: str = ""
 
 
 class RAGDetail(BaseModel):
@@ -186,6 +201,7 @@ class Event(BaseModel):
             event_type（str）: 事件类型
             content_type（str）: 内容类型
             detail(dict): 事件详情
+            usage(Usage): 模型调用的token用量
     """
     code: int = 0
     message: str = ""
@@ -193,6 +209,7 @@ class Event(BaseModel):
     event_type: str = ""
     content_type: str = ""
     detail: dict = {}
+    usage: Optional[Usage] = None
 
 
 class AppBuilderClientAnswer(BaseModel):
@@ -226,3 +243,21 @@ class CreateConversationResponse(BaseModel):
     """
     request_id: str = ""
     conversation_id: str = ""
+
+
+class AppBuilderClientAppListRequest(BaseModel):
+    limit: int = Field(default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
+    after: str = Field(
+        default="", description="用于分页的游标。after 是一个应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 结束，那么你后续的调用可以包含 after=app_id_123 以获取列表的下一页数据。")
+    before: str = Field(default="", description="用于分页的游标。与after相反，填写它将获取前一页数据")
+
+class AppOverview(BaseModel):
+    id: str = Field("", description="应用ID")
+    name: str = Field("", description="应用名称")
+    description: str = Field("", description="应用简介")
+
+class AppBuilderClientAppListResponse(BaseModel):
+    request_id: str = Field("", description="请求ID")
+    data: Optional[list[AppOverview]] = Field(
+        [], description="应用概览列表")
+    

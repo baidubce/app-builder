@@ -12,5 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .appbuilder_client import AppBuilderClient
-from .appbuilder_client import get_app_list
+import unittest
+import requests
+import appbuilder
+import os
+import logging
+
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
+class TestGetAppList(unittest.TestCase):
+    def test_get_app_list_v1(self):
+        app_list = appbuilder.get_app_list()
+        print(app_list)
+        self.assertIsInstance(app_list, list)
+
+if __name__ == '__main__':
+    unittest.main()

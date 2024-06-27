@@ -15,13 +15,54 @@
 """AppBuilderClient组件"""
 import os
 import json
-
+from typing import Optional
 from appbuilder.core.component import Message, Component
 from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
+from appbuilder.core._client import HTTPClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
+
+
+def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key: Optional[str] = None, gateway_v2: Optional[str] = None) -> list[data_class.AppOverview]:
+    """
+    该接口查询用户下状态为已发布的应用列表
+
+    Args:
+        limit (int, optional): 返回结果的最大数量，默认值为10。
+        after (str, optional): 返回结果中第一个应用的游标值，用于分页查询。默认值为空字符串。
+        before (str, optional): 返回结果中最后一个应用的游标值，用于分页查询。默认值为空字符串。
+        secret_key (Optional[str], optional): 认证密钥。如果未指定，则使用默认的密钥。默认值为None。
+        gateway_v2 (Optional[str], optional): 网关地址。如果未指定，则使用默认的地址。默认值为None。
+
+    Returns:
+        list[data_class.AppOverview]: 应用列表。
+
+    """
+
+    client = HTTPClient(secret_key=secret_key, gateway_v2=gateway_v2)
+    headers = client.auth_header_v2()
+    headers["Content-Type"] = "application/json"
+    url = client.service_url_v2("/apps")
+
+    request = data_class.AppBuilderClientAppListRequest(
+        limit=limit, after=after, before=before
+    )
+
+    response = client.session.get(
+        url=url,
+        headers=headers,
+        params=request.model_dump(),
+    )
+
+    client.check_console_response(response)
+    client.check_response_header(response)
+    data = response.json()
+    resp = data_class.AppBuilderClientAppListResponse(**data)
+    out = resp.data
+    return out
+
 
 class AppBuilderClient(Component):
     r"""
@@ -75,6 +116,8 @@ class AppBuilderClient(Component):
 
     def upload_local_file(self, conversation_id, local_file_path: str) -> str:
         r"""上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
+            该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
+
                 参数:
                     conversation_id (str: 必须) : 会话ID
                     local_file_path (str: 必须) : 本地文件路径
@@ -153,7 +196,8 @@ class AppBuilderClient(Component):
                     data = event.raw
                 data = json.loads(data)
             except json.JSONDecodeError as e:
-                raise AppBuilderServerException(request_id=request_id, message="json decoder failed {}".format(str(e)))
+                raise AppBuilderServerException(
+                    request_id=request_id, message="json decoder failed {}".format(str(e)))
             inp = data_class.AppBuilderClientResponse(**data)
             out = data_class.AppBuilderClientAnswer()
             _transform(inp, out)
@@ -185,7 +229,8 @@ class AgentBuilder(AppBuilderClient):
             None
 
         """
-        logger.info("AgentBuilder is deprecated, please use AppBuilderClient instead")
+        logger.info(
+            "AgentBuilder is deprecated, please use AppBuilderClient instead")
         super().__init__(app_id)
 
 
@@ -198,6 +243,7 @@ def _transform(inp: data_class.AppBuilderClientResponse, out: data_class.AppBuil
             status=ev.event_status,
             event_type=ev.event_type,
             content_type=ev.content_type,
-            detail=ev.outputs
+            detail=ev.outputs,
+            usage=ev.usage,
         )
         out.events.append(event)
