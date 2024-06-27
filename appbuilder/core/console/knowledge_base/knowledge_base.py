@@ -106,7 +106,7 @@ class KnowledgeBase(Component):
         return resp
 
     def delete_document(self, document_id: str, knowledge_base_id: Optional[str] = None):
-        if self.knowledge_id == None or knowledge_base_id == None:
+        if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
                 "knowledge_base_id cannot be empty, please call `create` first or use existing one")
 
@@ -132,7 +132,7 @@ class KnowledgeBase(Component):
         return resp
 
     def get_documents_list(self, limit: int = 10, after: Optional[str] = "", before: Optional[str] = "", knowledge_base_id: Optional[str] = None):
-        if self.knowledge_id == None or knowledge_base_id == None:
+        if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
                 "knowledge_base_id cannot be empty, please call `create` first or use existing one")
 
