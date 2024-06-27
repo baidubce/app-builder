@@ -88,20 +88,21 @@ class Runs():
         if thread_id == "" and thread is None:
             raise ValueError("Runs().run() argument thread_id && thread can't be empty at the same time")
         
-        chat_temperature = model_parameters.chat_parameters.temperature
-        chat_top_p = model_parameters.chat_parameters.top_p
-        chat_penalty_score = model_parameters.chat_parameters.penalty_score
-        thought_temperature = model_parameters.thought_parameters.temperature
-        thought_top_p = model_parameters.thought_parameters.top_p
-        thought_penalty_score = model_parameters.thought_parameters.penalty_score
+        if model_parameters:
+            chat_temperature = model_parameters.chat_parameters.temperature
+            chat_top_p = model_parameters.chat_parameters.top_p
+            chat_penalty_score = model_parameters.chat_parameters.penalty_score
+            thought_temperature = model_parameters.thought_parameters.temperature
+            thought_top_p = model_parameters.thought_parameters.top_p
+            thought_penalty_score = model_parameters.thought_parameters.penalty_score
 
-        if chat_temperature < 0 or chat_temperature > 1 or thought_temperature < 0 or thought_temperature > 1:
-            raise ValueError("chat_temperature and thought_temperature must be in range [0, 1]")
-        if chat_top_p < 0 or chat_top_p > 1 or thought_top_p < 0 or thought_top_p > 1:
-            raise ValueError("chat_top_p and thought_top_p must be in range [0, 1]")
-        if chat_penalty_score < 1 or chat_penalty_score > 2 or thought_penalty_score < 1 or thought_penalty_score > 2:
-            raise ValueError("chat_penalty_score and thought_penalty_score must be in range [1, 2]")
-        
+            if chat_temperature < 0 or chat_temperature > 1 or thought_temperature < 0 or thought_temperature > 1:
+                raise ValueError("chat_temperature and thought_temperature must be in range [0, 1]")
+            if chat_top_p < 0 or chat_top_p > 1 or thought_top_p < 0 or thought_top_p > 1:
+                raise ValueError("chat_top_p and thought_top_p must be in range [0, 1]")
+            if chat_penalty_score < 1 or chat_penalty_score > 2 or thought_penalty_score < 1 or thought_penalty_score > 2:
+                raise ValueError("chat_penalty_score and thought_penalty_score must be in range [1, 2]")
+            
         req = thread_type.AssistantRunRequest(
             thread_id=thread_id,
             thread=thread,
@@ -192,19 +193,21 @@ class Runs():
         if thread_id == "" and thread is None:
             raise ValueError("Runs().run() argument thread_id and thread can't be empty at the same time")
         
-        chat_temperature = model_parameters.chat_parameters.temperature
-        chat_top_p = model_parameters.chat_parameters.top_p
-        chat_penalty_score = model_parameters.chat_parameters.penalty_score
-        thought_temperature = model_parameters.thought_parameters.temperature
-        thought_top_p = model_parameters.thought_parameters.top_p
-        thought_penalty_score = model_parameters.thought_parameters.penalty_score
+        if model_parameters:
+    
+            chat_temperature = model_parameters.chat_parameters.temperature
+            chat_top_p = model_parameters.chat_parameters.top_p
+            chat_penalty_score = model_parameters.chat_parameters.penalty_score
+            thought_temperature = model_parameters.thought_parameters.temperature
+            thought_top_p = model_parameters.thought_parameters.top_p
+            thought_penalty_score = model_parameters.thought_parameters.penalty_score
 
-        if chat_temperature < 0 or chat_temperature > 1 or thought_temperature < 0 or thought_temperature > 1:
-            raise ValueError("chat_temperature and thought_temperature must be in range [0, 1]")
-        if chat_top_p < 0 or chat_top_p > 1 or thought_top_p < 0 or thought_top_p > 1:
-            raise ValueError("chat_top_p and thought_top_p must be in range [0, 1]")
-        if chat_penalty_score < 1 or chat_penalty_score > 2 or thought_penalty_score < 1 or thought_penalty_score > 2:
-            raise ValueError("chat_penalty_score and thought_penalty_score must be in range [1, 2]")
+            if chat_temperature < 0 or chat_temperature > 1 or thought_temperature < 0 or thought_temperature > 1:
+                raise ValueError("chat_temperature and thought_temperature must be in range [0, 1]")
+            if chat_top_p < 0 or chat_top_p > 1 or thought_top_p < 0 or thought_top_p > 1:
+                raise ValueError("chat_top_p and thought_top_p must be in range [0, 1]")
+            if chat_penalty_score < 1 or chat_penalty_score > 2 or thought_penalty_score < 1 or thought_penalty_score > 2:
+                raise ValueError("chat_penalty_score and thought_penalty_score must be in range [1, 2]")
 
         req = thread_type.AssistantRunRequest(
             thread_id=thread_id,
