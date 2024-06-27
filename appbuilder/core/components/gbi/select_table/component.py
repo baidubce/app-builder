@@ -21,7 +21,7 @@ from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 
 class SelectTableArgs(ComponentArguments):

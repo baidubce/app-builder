@@ -23,7 +23,7 @@ import numpy as np
 
 from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings import EmbeddingBaseComponent
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 from .base import MatchingBaseComponent, MatchingArgs
 

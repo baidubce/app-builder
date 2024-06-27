@@ -25,7 +25,7 @@ from appbuilder.core.components.doc_parser.base import ParseResult
 from appbuilder.core.component import Component, Message, ComponentArguments
 from appbuilder.utils.logger_util import logger
 from appbuilder.core.components.doc_parser.base import DocSegment
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 
 class DocSplitter(Component):

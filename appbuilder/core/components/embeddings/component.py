@@ -22,7 +22,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings.base import EmbeddingBaseComponent
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 
 class EmbeddingArgs(ComponentArguments):

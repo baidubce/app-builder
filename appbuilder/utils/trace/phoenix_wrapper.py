@@ -18,9 +18,9 @@ from typing import Optional
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--host", "-h", type=str, default="127.0.0.1", help="phoenix服务的url地址")
-parser.add_argument("--port", "-p", type=int, default=8080, help="phoenix服务的端口号")
-parser.add_argument("--timeout", "-t", type=float, default=None, help="phoenix服务的运行时间，不填写则为常驻服务，单位为秒")
+parser.add_argument("--host",  type=str, default="127.0.0.1", help="phoenix服务的url地址")
+parser.add_argument("--port", type=int, default=8080, help="phoenix服务的端口号")
+parser.add_argument("--timeout", type=float, default=None, help="phoenix服务的运行时间，不填写则为常驻服务，单位为秒")
 
 
 def launch_phoenix(host: Optional[str] = "127.0.0.1", port: Optional[int] = 8080, **kwargs):

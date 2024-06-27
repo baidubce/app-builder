@@ -33,7 +33,7 @@ from appbuilder.core.components.doc_format_converter.model import DocFormatConve
                         DocFormatConverterOutMessage, \
                         DocFormatConverterSubmitRequest, DocFormatConverterSubmitResponse, \
                         DocFormatConverterQueryRequest, DocFormatConverterQueryResponse
-from appbuilder import run_trace, tool_eval_streaming_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace, tool_eval_streaming_trace
 
 
 class DocFormatConverter(Component):

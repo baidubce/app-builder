@@ -23,7 +23,7 @@ from appbuilder.core.components.qrcode_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
-from appbuilder import run_trace, tool_eval_streaming_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace, tool_eval_streaming_trace
 
 
 class QRcodeOCR(Component):

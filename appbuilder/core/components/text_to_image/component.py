@@ -23,7 +23,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, RiskInputException
 from appbuilder.core.components.text_to_image.model import Text2ImageSubmitRequest, Text2ImageQueryRequest, \
     Text2ImageQueryResponse, Text2ImageSubmitResponse, Text2ImageOutMessage, Text2ImageInMessage
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 
 class Text2Image(Component):

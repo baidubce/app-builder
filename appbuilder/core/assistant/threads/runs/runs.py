@@ -21,7 +21,7 @@ from appbuilder.core.assistant.type import thread_type
 from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
 from appbuilder.utils.sse_util import SSEClient
-from appbuilder import assistant_trace
+from appbuilder.utils.trace.tracer_wrapper import assistant_trace
 
 
 

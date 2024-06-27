@@ -32,7 +32,7 @@ from appbuilder.core.component import ComponentArguments
 from appbuilder.core.utils import ModelInfo, ttl_lru_cache
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 
 class LLMMessage(Message):

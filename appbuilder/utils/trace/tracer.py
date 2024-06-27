@@ -26,8 +26,6 @@ from opentelemetry.sdk.trace.export import (
 from wrapt import wrap_function_wrapper
 
 from appbuilder.utils.trace._function import _run_trace, _assistant_trace, _tool_eval_streaming_trace
-from appbuilder.utils.trace.tracer_wrapper import run_trace, tool_eval_streaming_trace, assistant_trace
-from appbuilder.utils.trace.phoenix_wrapper import tracer_launch
 from appbuilder import logger
 
 _MODULE_1 = 'appbuilder'

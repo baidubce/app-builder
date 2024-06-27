@@ -26,7 +26,7 @@ from appbuilder.core.component import Component, Message
 from appbuilder.utils.logger_util import logger
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.doc_parser.base import ParserConfig, ParseResult
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 
 class DocParser(Component):

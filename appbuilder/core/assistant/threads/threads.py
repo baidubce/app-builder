@@ -18,7 +18,7 @@ from appbuilder.core.assistant.type import thread_type
 from appbuilder.core.assistant.threads.messages import Messages
 from appbuilder.core.assistant.threads.runs import Runs
 from appbuilder.core._client import AssistantHTTPClient
-from appbuilder import assistant_trace
+from appbuilder.utils.trace.tracer_wrapper import assistant_trace
 
 class Threads():
     def __init__(self) -> None:

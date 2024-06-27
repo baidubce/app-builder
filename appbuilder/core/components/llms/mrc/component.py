@@ -18,7 +18,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from pydantic import Field
 from typing import Optional
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 
 class MrcArgs(ComponentArguments):

@@ -23,7 +23,7 @@ from appbuilder.core._exception import AppBuilderServerException, InvalidRequest
 from appbuilder.core.component import Component
 from appbuilder.core.components.general_ocr.model import *
 from appbuilder.core.message import Message
-from appbuilder import run_trace, tool_eval_streaming_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace, tool_eval_streaming_trace
 
 
 class GeneralOCR(Component):

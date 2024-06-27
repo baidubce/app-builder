@@ -20,7 +20,7 @@ from typing import Optional
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 
 class DialogSummaryArgs(ComponentArguments):

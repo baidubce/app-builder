@@ -22,7 +22,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.image_understand.model import *
 from typing import Generator, Union
-from appbuilder import run_trace, tool_eval_streaming_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace, tool_eval_streaming_trace
 
 
 class ImageUnderstand(Component):

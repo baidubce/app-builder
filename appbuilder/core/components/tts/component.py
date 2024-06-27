@@ -23,7 +23,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.components.tts.model import *
-from appbuilder import run_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace
 
 
 class TTS(Component):

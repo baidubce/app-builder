@@ -26,7 +26,7 @@ from appbuilder.core._exception import AppBuilderServerException, ModelNotSuppor
 from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
 from appbuilder.core.utils import ModelInfo, ttl_lru_cache
-from appbuilder import run_trace, tool_eval_streaming_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace, tool_eval_streaming_trace
 
 
 class Excel2FigureArgs(ComponentArguments):

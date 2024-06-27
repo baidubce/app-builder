@@ -24,7 +24,7 @@ from appbuilder.core.component import Component
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.components.translate.model import *
-from appbuilder import run_trace, tool_eval_streaming_trace
+from appbuilder.utils.trace.tracer_wrapper import run_trace, tool_eval_streaming_trace
 
 
 class Translation(Component):
