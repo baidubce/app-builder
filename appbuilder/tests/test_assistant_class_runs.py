@@ -100,19 +100,18 @@ class TestFunctionCall(unittest.TestCase):
             run.run(assistant_id='test', thread_id = 'thread_id', model_parameters = model_parameters)
         with self.assertRaises(ValueError):
             run._stream(assistant_id='test',thread_id = 'thread_id', model_parameters = model_parameters)
-            model_parameters.chat_parameters.temperature = 0.8
+        model_parameters.chat_parameters.temperature = 0.8
         with self.assertRaises(ValueError):
             model_parameters.chat_parameters.top_p = 10
             run.run(assistant_id='test', thread_id = 'thread_id', model_parameters = model_parameters)
         with self.assertRaises(ValueError):
             run._stream(assistant_id='test', thread_id = 'thread_id', model_parameters = model_parameters)
-            model_parameters.chat_parameters.top_p = 0.8
+        model_parameters.chat_parameters.top_p = 0.8
         with self.assertRaises(ValueError):
             model_parameters.chat_parameters.penalty_score = 10
             run.run(assistant_id='test', thread_id = 'thread_id', model_parameters = model_parameters)
         with self.assertRaises(ValueError):
             run._stream(assistant_id='test',thread_id = 'thread_id', model_parameters = model_parameters)
-            model_parameters.chat_parameters.penalty_score = 1.0
 
 if __name__ == '__main__':
     unittest.main()
