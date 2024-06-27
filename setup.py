@@ -45,7 +45,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'appbuilder_tracer_server=appbuilder.utils.trace.phoenix_wrapper:runtime_main'
+            'appbuilder_trace_server=appbuilder.utils.trace.phoenix_wrapper:runtime_main'
         ]
     },
     description='百度智能云千帆AppBuilder-SDK',

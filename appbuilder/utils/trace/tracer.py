@@ -51,6 +51,8 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         "_original_tool",
         "_original_assistant",
     )
+    def instrumentation_dependencies(self):
+        pass
 
     def _instrument(self, **kwargs):
         if not (tracer_provider := kwargs.get("tracer_provider")):
@@ -102,19 +104,19 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         if appbuilder:
             wrap_function_wrapper(
                 module=_MODULE_1,
-                name='trace._tracer.run_trace_func',
+                name='utils.trace.tracer_wrapper.run_trace_func',
                 wrapper=_appbuilder_run_trace
             )
 
             wrap_function_wrapper(
                 module=_MODULE_1,
-                name='trace._tracer.tool_eval_streaming_trace_func',
+                name='utils.trace.tracer_wrapper.tool_eval_streaming_trace_func',
                 wrapper=_appbuilder_tool_eval_streaming_trace
             )
 
             wrap_function_wrapper(
                 module=_MODULE_1,
-                name='trace._tracer.assistant_trace_func',
+                name='utils.trace.tracer_wrapper.assistant_trace_func',
                 wrapper=_appbuilder_assistant_trace
             )
 
@@ -158,6 +160,7 @@ def create_tracer_provider(enable_phoenix: bool = True, enable_console: bool = F
 
     if enable_phoenix:  # 将trace数据在本地可视化界面展示
         endpoint = f"{host}:{port}{method}"
+        logger.info("OTLPSpanExporter endpoint: {}".format(endpoint))
         tracer_provider.add_span_processor(
             SimpleSpanProcessor(OTLPSpanExporter(endpoint)))
 
@@ -169,7 +172,7 @@ def create_tracer_provider(enable_phoenix: bool = True, enable_console: bool = F
 
 
 class AppBuilderTracer():
-    def __init__(self, enable_phoenix: bool = True, enable_console: bool = False, host: str = "127.0.0.1", port: int = 8080, method="/v1/traces") -> None:
+    def __init__(self, enable_phoenix: bool = True, enable_console: bool = False, host: str = "http://localhost", port: int = 8080, method="/v1/traces") -> None:
         self._tracer_provider = create_tracer_provider(
             enable_phoenix=enable_phoenix,
             enable_console=enable_console,

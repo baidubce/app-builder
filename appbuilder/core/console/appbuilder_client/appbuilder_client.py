@@ -187,7 +187,7 @@ class AppBuilderClient(Component):
             resp = data_class.AppBuilderClientResponse(**data)
             out = data_class.AppBuilderClientAnswer()
             _transform(resp, out)
-            return Message(content=out)
+            return  Message(content=out)
 
     @staticmethod
     def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:

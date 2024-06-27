@@ -47,8 +47,11 @@ def _deep_retrieve(name, value, span):
     递归地将复杂数据类型(list, dict)转换为字符串。
     处理 bool, str, bytes, int, float 形式的基本类型。
     """
-    if isinstance(value, (bool, str, bytes, int, float)):
+    if isinstance(value, (bool, bytes, int, float)):
         span.set_attribute(name, value)
+    elif isinstance(value, str):
+        # 转为utf-8 编码的字符串
+        span.set_attribute(name, value.encode("utf-8").decode())
     elif isinstance(value, Message):
         span.set_attribute(f"{name}.id", value.id if value.id else 'None')
         span.set_attribute(f"{name}.Message-name", value.name if value.name else 'None')
