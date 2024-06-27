@@ -137,6 +137,10 @@ from appbuilder.core.assistant.threads.runs import StreamRunContext
 from appbuilder.core.assistant.threads.runs import AssistantEventHandler
 from appbuilder.core.assistant.threads.runs import AssistantStreamManager
 
+from appbuilder.utils.trace.tracer import AppBuilderTracer
+from appbuilder.utils.trace.phoenix_wrapper import launch_phoenix
+from appbuilder.utils.trace.phoenix_wrapper import stop_phoenix
+
 __all__ = [
     'logger',
 
@@ -206,5 +210,9 @@ __all__ = [
     "assistant",
     "StreamRunContext",
     "AssistantEventHandler",
-    "AssistantStreamManager"
+    "AssistantStreamManager",
+
+    "AppBuilderTracer",
+    "launch_phoenix",
+    "stop_phoenix",
 ]
