@@ -21,8 +21,6 @@ class AppbuilderSDKInstance:
         self.load_config()
         self.logging_level = level
 
-        self.tar_file_name = "./demo.tar"
-
         self.credentials = BceCredentials(
             self.bce_config["ak"], self.bce_config["sk"])
         self.bos_client = self.create_bos_client()
@@ -59,6 +57,8 @@ class AppbuilderSDKInstance:
 
     def create_tar(self):
         local_dir = self.appbuilder_config["local_dir"]
+        timestamp = int(time.time())
+        self.tar_file_name = "pkg_" + str(timestamp) + ".tar"
         with tarfile.open(self.tar_file_name, "w") as tar:
             for filename in os.listdir(local_dir):
                 file_path = os.path.join(local_dir, filename)
@@ -72,10 +72,10 @@ class AppbuilderSDKInstance:
             self.bos_client.create_bucket(bucket_name)
 
         self.bos_client.put_object_from_file(
-            bucket_name, "demo.tar", self.tar_file_name)
+            bucket_name, self.tar_file_name, self.tar_file_name)
         timestamp = int(time.time())
         url = self.bos_client.generate_pre_signed_url(
-            bucket_name, "demo.tar", timestamp, expiration_in_seconds=3600
+            bucket_name, self.tar_file_name, timestamp, expiration_in_seconds=3600
         )
         self.tar_bos_url = url.decode("utf-8")
         if self.tar_bos_url == None:
@@ -84,35 +84,38 @@ class AppbuilderSDKInstance:
             "upload to bos successfully! url: {}".format(self.tar_bos_url))
 
     def clear_local(self):
+        os.remove(self.run_script)
         os.remove(self.tar_file_name)
 
     def build_user_data(self):
-        run_script = self.appbuilder_config["run_script"]
         workspace = self.appbuilder_config["workspace"]
         user_data = "#!/bin/bash\\n" + \
             "mkdir /root/test\\n" + \
             "chmod 777 /root/test\\n" + \
             "cd /root/test\\n" + \
-            f"wget -O demo.tar {self.tar_bos_url}\\n" + \
-            "tar -xvf demo.tar\\n" + \
-            "rm demo.tar\\n" + \
-            f"chmod a+x {run_script}\\n" + \
+            f"wget -O {self.tar_file_name} {self.tar_bos_url}\\n" + \
+            f"tar -xvf {self.tar_file_name}\\n" + \
+            f"rm {self.tar_file_name}\\n" + \
+            f"chmod a+x {self.run_script_name}\\n" + \
             "yum install -y docker\\n" + \
             "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\\n" + \
-            f"docker run -itd --net=host -v /root/test:{workspace} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 {workspace}/{run_script}"
+            f"docker run -itd --net=host -v /root/test:{workspace} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 {workspace}/{self.run_script_name}"
 
         return user_data
 
     def build_run_script(self):
+        timestamp = int(time.time())
+        self.run_script_name = "start_" + str(timestamp) + ".sh"
+        self.run_script = os.path.join(self.appbuilder_config["local_dir"], self.run_script_name)
+
         commands = []
         workspace = self.appbuilder_config["workspace"]
         for key, value in self.env.items():
             commands.append(f'export {key}="{value}"')
         run_cmd = " && ".join(commands) + " && " + \
             self.appbuilder_config["run_cmd"]
-        run_script = self.appbuilder_config["local_dir"] + \
-            "/" + self.appbuilder_config["run_script"]
-        with open(run_script, 'w') as file:
+
+        with open(self.run_script, 'w') as file:
             file.write('#!/bin/sh\n')
             file.write(f'cd {workspace}\n')
             file.write(run_cmd)

@@ -7,18 +7,18 @@ bce_config:
     zone_name: cn-bj-d
     ak: ""
     sk: ""
+    # 服务器登陆密码，自己设置
     admin_pass: ""
 
 appbuilder_config:
     # 运行路径
     workspace: /home/work/appbuilder
-    # 运行脚本
-    run_script: start.sh
-    # 运行命令
-    run_cmd: ""
-    # 本地用来打包的代码路径
-    local_dir: ""
-    
+
+    # 运行命令，根据实际情况修改
+    run_cmd: "python3 component_sample.py"
+    # 本地用来打包的代码路径，根据实际情况修改
+    local_dir: "./sample"
+
 env:
     APPBUILDER_LOGLEVEL: debug
     APPBUILDER_TOKEN: ""
