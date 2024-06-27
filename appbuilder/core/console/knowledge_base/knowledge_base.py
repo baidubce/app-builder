@@ -45,10 +45,6 @@ class KnowledgeBase(Component):
         return KnowledgeBase(knowledge_id=response["id"], knowledge_name=response["name"])
 
     def upload_file(self, file_path: str) -> data_class.KnowledgeBaseUploadFileResponse:
-        if self.knowledge_id == None:
-            raise ValueError(
-                "Knowledge id cannot be empty, please call `create` first or use existing one")
-
         if not os.path.exists(file_path):
             raise FileNotFoundError("File {} does not exist".format(file_path))
 
@@ -79,9 +75,9 @@ class KnowledgeBase(Component):
                      is_enhanced: bool = False,
                      custom_process_rule: Optional[data_class.CustomProcessRule] = None,
                      knowledge_base_id: Optional[str] = None) -> data_class.KnowledgeBaseAddDocumentResponse:
-        if self.knowledge_id == None:
+        if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
-                "Knowledge id cannot be empty, please call `create` first or use existing one")
+                "knowledge_base_id cannot be empty, please call `create` first or use existing one")
 
         headers = self.http_client.auth_header_v2()
         headers['content-type'] = 'application/json'
@@ -110,9 +106,9 @@ class KnowledgeBase(Component):
         return resp
 
     def delete_document(self, document_id: str, knowledge_base_id: Optional[str] = None):
-        if self.knowledge_id == None:
+        if self.knowledge_id == None or knowledge_base_id == None:
             raise ValueError(
-                "Knowledge id cannot be empty, please call `create` first or use existing one")
+                "knowledge_base_id cannot be empty, please call `create` first or use existing one")
 
         headers = self.http_client.auth_header_v2()
         headers['content-type'] = 'application/json'
@@ -136,9 +132,9 @@ class KnowledgeBase(Component):
         return resp
 
     def get_documents_list(self, limit: int = 10, after: Optional[str] = "", before: Optional[str] = "", knowledge_base_id: Optional[str] = None):
-        if self.knowledge_id == None:
+        if self.knowledge_id == None or knowledge_base_id == None:
             raise ValueError(
-                "Knowledge id cannot be empty, please call `create` first or use existing one")
+                "knowledge_base_id cannot be empty, please call `create` first or use existing one")
 
         headers = self.http_client.auth_header_v2()
         headers['content-type'] = 'application/json'
