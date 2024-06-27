@@ -27,6 +27,7 @@ import (
 	"time"
 )
 
+// Deprecated: 已废弃，请使用 NewKnowledgeBase
 func NewDataset(config *SDKConfig) (*Dataset, error) {
 	if config == nil {
 		return nil, errors.New("invalid config")

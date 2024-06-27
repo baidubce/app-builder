@@ -22,18 +22,26 @@ import (
 )
 
 func TestNewAppBuilderClient(t *testing.T) {
-	os.Setenv("APPBUILDER_LOGLEVEL", "INFO")
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
+	apps, err := GetAppList(GetAppListRequest{
+		Limit: 10,
+	}, config)
+	if err != nil {
+		t.Fatalf("get apps failed: %v", err)
+	}
+	fmt.Println(len(apps))
 
 	appID := ""
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Fatalf("new AgentBuidler instance failed")
 	}
+
 	conversationID, err := client.CreateConversation()
 	if err != nil {
 		t.Fatalf("create conversation failed: %v", err)
@@ -50,6 +58,9 @@ func TestNewAppBuilderClient(t *testing.T) {
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		totalAnswer = totalAnswer + answer.Answer
 		for _, ev := range answer.Events {
+			fmt.Println("------------usage------------")
+			usageJson, _ := json.Marshal(ev.Usage)
+			fmt.Printf("%s\n", usageJson)
 			if ev.ContentType == TextContentType {
 				detail := ev.Detail.(TextDetail)
 				fmt.Println("---------------TextDetail------------")
