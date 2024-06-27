@@ -35,6 +35,12 @@ class TestFunctionCall(unittest.TestCase):
         run_result = appbuilder.assistant.threads.runs.run(
             thread_id=thread.id,
             assistant_id=assistant.id,
+            chat_temperature=0.8,
+            chat_top_p=0.8,
+            chat_penalty_score=1.0,
+            thought_temperature=0.8,
+            thought_top_p=0.8,
+            thought_penalty_score=1.0
         )
 
         self.assertIsInstance(run_result, thread_type.RunResult)
