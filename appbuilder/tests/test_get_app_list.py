@@ -17,7 +17,7 @@ import appbuilder
 from appbuilder.utils.model_util import GetModelListRequest, Models, GetModelListResponse
 appbuilder.logger.setLoglevel("DEBUG")
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestApps(unittest.TestCase):
     def setUp(self):
         """
