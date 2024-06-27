@@ -1,23 +1,24 @@
 bce_config:
-    host: "http://bcc.bj.baidubce.com"
-    bos_host: "bj.bcebos.com"
+    host: http://bcc.bj.baidubce.com
+    bos_host: bj.bcebos.com
+    spec: bcc.e1.c2m2
+    root_disk_size_in_gb: 20
+    security_group_id: ""
+    zone_name: cn-bj-d
     ak: ""
     sk: ""
-    spec: "bcc.e1.c2m2"
-    root_disk_size_in_gb: 20
     admin_pass: ""
-    security_group_id: ""
 
 appbuilder_config:
-    # 用来打包的代码路径
-    local_dir: ""
-    workspace: "/home/appbuilder"
-
+    # 运行路径
+    workspace: /home/work/appbuilder
+    # 运行脚本
+    run_script: start.sh
     # 运行命令
     run_cmd: ""
-    # 启动脚本
-    run_script: "start.sh"
-
+    # 本地用来打包的代码路径
+    local_dir: ""
+    
 env:
     APPBUILDER_LOGLEVEL: debug
     APPBUILDER_TOKEN: ""

@@ -32,10 +32,14 @@ class AppbuilderSDKInstance:
         with open(self.config_path) as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
         self.config = config
+
         self.bce_config = self.config["bce_config"]
+        self.security_group_id = self.bce_config["security_group_id"]
+        self.admin_pass = self.bce_config["admin_pass"]
+        self.zone_name = self.bce_config["zone_name"]
+
         self.appbuilder_config = self.config["appbuilder_config"]
         self.env = self.config["env"]
-        self.security_group_id = self.bce_config["security_group_id"]
 
     def save_config(self, config):
         self.config["bce_config"]["security_group_id"] = self.security_group_id
@@ -84,9 +88,10 @@ class AppbuilderSDKInstance:
 
     def build_user_data(self):
         run_script = self.appbuilder_config["run_script"]
-        work_space = self.appbuilder_config["work_space"]
+        workspace = self.appbuilder_config["workspace"]
         user_data = "#!/bin/bash\\n" + \
             "mkdir /root/test\\n" + \
+            "chmod 777 /root/test\\n" + \
             "cd /root/test\\n" + \
             f"wget -O demo.tar {self.tar_bos_url}\\n" + \
             "tar -xvf demo.tar\\n" + \
@@ -94,12 +99,13 @@ class AppbuilderSDKInstance:
             f"chmod a+x {run_script}\\n" + \
             "yum install -y docker\\n" + \
             "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\\n" + \
-            f"docker run -itd --net=host -v /root/test:{work_space} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 {work_space}/{run_script}"
+            f"docker run -itd --net=host -v /root/test:{workspace} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 {workspace}/{run_script}"
 
         return user_data
 
     def build_run_script(self):
         commands = []
+        workspace = self.appbuilder_config["workspace"]
         for key, value in self.env.items():
             commands.append(f'export {key}="{value}"')
         run_cmd = " && ".join(commands) + " && " + \
@@ -108,6 +114,7 @@ class AppbuilderSDKInstance:
             "/" + self.appbuilder_config["run_script"]
         with open(run_script, 'w') as file:
             file.write('#!/bin/sh\n')
+            file.write(f'cd {workspace}\n')
             file.write(run_cmd)
 
     def create_instance(self):
@@ -123,8 +130,8 @@ class AppbuilderSDKInstance:
             network_capacity_in_mbps=1,
             name="instance-appbuilder-sdk-service-{}".format(now_str),
             hostname="host-appbuilder-sdk-service-{}".format(now_str),
-            admin_pass=self.bce_config["admin_pass"],
-            zone_name="cn-bj-d",
+            admin_pass=self.admin_pass,
+            zone_name=self.zone_name,
             user_data=self.build_user_data(),
         )
         self.log.debug("create instance info: {}".format(instance))
@@ -141,7 +148,9 @@ class AppbuilderSDKInstance:
         if instance_id == None and self.instance_id == None:
             return
 
+        self.public_ip = None
         while self.public_ip is None or self.public_ip == "":
+            time.sleep(3)
             response = None
             if instance_id != None:
                 response = self.bcc_client.get_instance(instance_id)
@@ -228,5 +237,5 @@ def get_logger(name, level=logging.INFO):
 
 
 if __name__ == "__main__":
-    instance = AppbuilderSDKInstance("./config.yaml", level=logging.DEBUG)
+    instance = AppbuilderSDKInstance("./config.yaml", level=logging.INFO)
     instance.deploy()
