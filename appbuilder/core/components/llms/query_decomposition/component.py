@@ -20,7 +20,7 @@ from typing import Optional
 from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core.components.llms.base import CompletionBaseComponent
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 
 class QueryDecompositionMeta(ComponentArguments):

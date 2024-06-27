@@ -17,7 +17,7 @@ from appbuilder.core.assistant.type import thread_type
 from appbuilder.core._client import AssistantHTTPClient
 from typing import Optional
 
-from appbuilder.trace import assistant_trace
+from appbuilder import assistant_trace
 
 
 class Messages(object):

@@ -22,7 +22,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.doc_crop_enhance.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._exception import *
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 enhance_type_set = [0, 1, 2, 3]
 

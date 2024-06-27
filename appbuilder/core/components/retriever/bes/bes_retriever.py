@@ -28,7 +28,7 @@ from appbuilder.core.components.embeddings.component import Embedding
 from appbuilder.core.constants import GATEWAY_URL
 from appbuilder.utils.logger_util import logger
 from appbuilder import get_default_header
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 
 class BESVectorStoreIndex:

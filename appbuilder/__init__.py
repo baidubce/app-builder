@@ -140,6 +140,9 @@ from appbuilder.core.assistant.threads.runs import AssistantStreamManager
 from appbuilder.utils.trace.tracer import AppBuilderTracer
 from appbuilder.utils.trace.phoenix_wrapper import launch_phoenix
 from appbuilder.utils.trace.phoenix_wrapper import stop_phoenix
+from appbuilder.utils.trace.tracer_wrapper import run_trace
+from appbuilder.utils.trace.tracer_wrapper import assistant_trace
+from appbuilder.utils.trace.tracer_wrapper import tool_eval_streaming_trace
 
 __all__ = [
     'logger',
@@ -215,4 +218,7 @@ __all__ = [
     "AppBuilderTracer",
     "launch_phoenix",
     "stop_phoenix",
+    "run_trace",
+    "assistant_trace",
+    "tool_eval_streaming_trace"
 ]

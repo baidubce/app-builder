@@ -22,7 +22,7 @@ from appbuilder.core.message import Message
 from pydantic import BaseModel, Field
 from typing import Optional
 from appbuilder.core.component import ComponentArguments
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 
 class Nl2pandasArgs(ComponentArguments):

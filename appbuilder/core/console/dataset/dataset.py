@@ -2,7 +2,7 @@ from typing import List, Dict
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.console.dataset.model import DocumentListResponse, AddDocumentsResponse
 from appbuilder.core.constants import MAX_DOCUMENTS_NUM, SUPPORTED_FILE_TYPE
-from appbuilder.trace import assistant_trace
+from appbuilder import assistant_trace
 import json
 import os
 from appbuilder.utils.func_utils import deprecated

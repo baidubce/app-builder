@@ -20,7 +20,7 @@ import os
 # @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
     def setUp(self):
-        from appbuilder.trace import create_tracer_provider, AppbuilderInstrumentor
+        from appbuilder import create_tracer_provider, AppbuilderInstrumentor
         os.environ["APPBUILDER_SDK_TRACER_CONSOLE"] = "true"
         os.environ["APPBUILDER_SDK_TRACER_PHOENIX"] = "true"
         tracer_provider = create_tracer_provider()

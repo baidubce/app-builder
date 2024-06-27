@@ -2,7 +2,7 @@ import json
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.component import Message, Component
 from appbuilder.core.console.base import ConsoleCompletionResponse
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 
 class RAG(Component):

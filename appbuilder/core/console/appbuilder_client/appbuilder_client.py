@@ -23,7 +23,7 @@ from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._client import HTTPClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 
 def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key: Optional[str] = None, gateway_v2: Optional[str] = None) -> list[data_class.AppOverview]:

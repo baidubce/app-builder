@@ -17,7 +17,7 @@ os.environ["APPBUILDER_SDK_TRACER_CONSOLE"] = "true"
 
 ```python
 # 加载tracer_provider
-from appbuilder.trace import create_tracer_provider, AppbuilderInstrumentor
+from appbuilder import create_tracer_provider, AppbuilderInstrumentor
 tracer_provider = create_tracer_provider()
 
 # 启动AppbuilderInstrumentor打桩器
@@ -99,7 +99,7 @@ instrumentor.uninstrument()
 - 使用ctrl+c结束phoenix程序运行
 
 ```python
-from appbuilder.trace import tracer_launch
+from appbuilder import tracer_launch
 
 # 不添加参数，启动Phoenix，并无结束时间
 tracer_launch()
@@ -122,7 +122,7 @@ os.environ["APPBUILDER_SDK_TRACER_PHOENIX"] = "true"
 
 ```python
 # 加载tracer_provider
-from appbuilder.trace import create_tracer_provider, AppbuilderInstrumentor
+from appbuilder import create_tracer_provider, AppbuilderInstrumentor
 tracer_provider = create_tracer_provider()
 
 # 启动AppbuilderInstrumentor打桩器
@@ -153,7 +153,7 @@ instrumentor.uninstrument()
 #### 创建本地储存容器
 
 ```python
-from appbuilder.trace import LocalSpanExporter
+from appbuilder import LocalSpanExporter
 locals = LocalSpanExporter()
 ```
 
@@ -196,11 +196,11 @@ os.environ["APPBUILDER_SDK_TRACER_PHOENIX"] = "true"
 os.environ["APPBUILDER_SDK_TRACER_CONSOLE"] = "true"
 
 # 加载tracer_provider
-from appbuilder.trace import create_tracer_provider, AppbuilderInstrumentor
+from appbuilder import create_tracer_provider, AppbuilderInstrumentor
 tracer_provider = create_tracer_provider()
 
 # 创建本地储存器
-from appbuilder.trace import LocalSpanExporter
+from appbuilder import LocalSpanExporter
 locals = LocalSpanExporter()
 
 # 向tracer_provider添加本地储存器

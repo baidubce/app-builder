@@ -20,7 +20,7 @@ from appbuilder.core._exception import AppBuilderServerException, InvalidRequest
 from appbuilder.core.component import Component
 from appbuilder.core.components.mix_card_ocr.model import *
 from appbuilder.core.message import Message
-from appbuilder.trace import run_trace, tool_eval_streaming_trace
+from appbuilder import run_trace, tool_eval_streaming_trace
 
 
 class MixCardOCR(Component):

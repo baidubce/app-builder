@@ -27,7 +27,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.logger_util import logger
-from appbuilder.trace import run_trace, tool_eval_streaming_trace
+from appbuilder import run_trace, tool_eval_streaming_trace
 
 class QueryTypeChoices(Enum):
     questions = '问题'

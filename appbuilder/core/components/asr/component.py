@@ -29,7 +29,7 @@ from appbuilder.core._exception import AppBuilderServerException, InvalidRequest
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse, \
     ASRInMsg, ASROutMsg
-from appbuilder.trace import run_trace, tool_eval_streaming_trace
+from appbuilder import run_trace, tool_eval_streaming_trace
 
 
 class ASR(Component):

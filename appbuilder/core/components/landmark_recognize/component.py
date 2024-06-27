@@ -20,7 +20,7 @@ from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.landmark_recognize.model import *
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 
 class LandmarkRecognition(Component):

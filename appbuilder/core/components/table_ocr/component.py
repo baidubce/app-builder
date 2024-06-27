@@ -23,7 +23,7 @@ from appbuilder.core.components.table_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
-from appbuilder.trace import run_trace, tool_eval_streaming_trace
+from appbuilder import run_trace, tool_eval_streaming_trace
 
 
 class TableOCR(Component):

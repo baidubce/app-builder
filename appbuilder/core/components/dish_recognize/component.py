@@ -25,7 +25,7 @@ from appbuilder.core.component import Component
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.dish_recognize.model import *
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 
 class DishRecognition(Component):

@@ -23,7 +23,7 @@ from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import ColumnItem
 from appbuilder.core.components.gbi.basic import NL2SqlResult
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 
 class NL2SqlArgs(ComponentArguments):

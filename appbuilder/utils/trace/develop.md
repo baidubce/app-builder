@@ -8,7 +8,7 @@
 - 在run函数开发完成后需要使用run_trace装饰器进行装饰
 
 ```python
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 @run_trace
 def run():
@@ -21,7 +21,7 @@ def run():
 - 在tool_eval函数开发完成后需要使用装饰器进行装饰
 
 ```python
-from appbuilder.trace import tool_eval_streaming_trace
+from appbuilder import tool_eval_streaming_trace
 
 @tool_eval_streaming_trace
 def tool_eval():
@@ -33,7 +33,7 @@ def tool_eval():
 - assistant api组件函数的开发需要使用装饰器进行装饰
 
 ```python
-from appbuilder.trace import assistant_trace
+from appbuilder import assistant_trace
 
 @assistant_trace
 class Assistant():
@@ -49,7 +49,7 @@ class Assistant():
 - 在run函数开发完成后需要使用run_trace装饰器进行装饰
 
 ```python
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 @run_trace
 def run():
@@ -61,7 +61,7 @@ def run():
 - dataset文件内函数的结构特殊性，因此使用assistant_trace装饰器实现装饰
 
 ```python
-from appbuilder.trace import assistant_trace
+from appbuilder import assistant_trace
 
 @assistant_trace
 def create_dataset():

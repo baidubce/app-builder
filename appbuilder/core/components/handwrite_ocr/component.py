@@ -19,7 +19,7 @@ from appbuilder.core.components.handwrite_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core import utils
-from appbuilder.trace import run_trace, tool_eval_streaming_trace
+from appbuilder import run_trace, tool_eval_streaming_trace
 
 class HandwriteOCR(Component):
     r""" 手写文字识别组件

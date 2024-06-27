@@ -22,7 +22,7 @@ import json
 
 from appbuilder.core.component import Component, Message, ComponentArguments
 from appbuilder.utils.logger_util import logger
-from appbuilder.trace import run_trace
+from appbuilder import run_trace
 
 
 class ExtractTableFromDoc(Component):

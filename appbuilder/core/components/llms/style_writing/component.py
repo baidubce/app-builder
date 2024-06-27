@@ -19,7 +19,7 @@ from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core.message import Message
 
 from appbuilder.core.component import ComponentArguments
-from appbuilder.trace import run_trace, tool_eval_streaming_trace
+from appbuilder import run_trace, tool_eval_streaming_trace
 
 from pydantic import BaseModel, Field
 from typing import Optional

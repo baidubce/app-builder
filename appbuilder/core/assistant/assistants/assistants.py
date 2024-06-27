@@ -18,7 +18,7 @@ from appbuilder.utils.collector import Collector
 from appbuilder.utils.collector import AssistantKeys
 from appbuilder.core._client import AssistantHTTPClient
 from appbuilder.core.assistant.assistants.files import Files
-from appbuilder.trace import assistant_trace
+from appbuilder import assistant_trace
 
 class Assistants(object):
     def __init__(self):
