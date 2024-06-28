@@ -132,8 +132,12 @@ func (t *SDKConfig) AuthHeaderV2() http.Header {
 
 func (t *SDKConfig) authHeader() http.Header {
 	header := make(http.Header)
+	platform := os.Getenv("APPBUILDER_SDK_PLATFORM")
+	if platform == "" {
+		platform = "unknown"
+	}
 	header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
-	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.8.0\",\"appbuilder_sdk_language\":\"go\"}")
+	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"go\",\"appbuilder_sdk_platfrom\":\""+platform+"\"}")
 	header.Set("X-Appbuilder-Request-Id", uuid.New().String())
 	return header
 }
