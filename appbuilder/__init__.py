@@ -15,6 +15,7 @@
 
 __version__ = '0.9.0'
 
+import os
 import sys
 import copy
 import pydantic
@@ -41,6 +42,7 @@ checker.current_version
 class SDKReportConfig(pydantic.BaseModel):
     appbuilder_sdk_version: str = __version__
     appbuilder_sdk_language: str = "python"
+    appbuilder_sdk_platform: str = os.environ.get("APPBUILDER_SDK_PLATFORM", "unknown")
 
 
 # report information
