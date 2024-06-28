@@ -70,6 +70,7 @@ appbuilder_bce_deploy --conf ./config.yaml
 * 取日志 “deployment finished! public ip:”后的ip
 * 稍等两到三分钟，服务启动后即可访问
 ``` bash
+# public_ip为上一步取到的ip
 curl --location 'http://{public_ip}:8091/chat' \
 --header 'Content-Type: application/json' \
 --data '{
