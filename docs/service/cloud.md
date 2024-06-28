@@ -52,7 +52,7 @@ env:
 ```
 * 执行部署
 ```bash
-appbuilder_bcc_deploy --conf ./config.yaml
+appbuilder_bce_deploy --conf ./config.yaml
 ```
 
 ### 请求示例：
