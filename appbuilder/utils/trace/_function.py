@@ -13,6 +13,7 @@
 # limitations under the License.
 import time
 import json
+import inspect
 
 from appbuilder.core.message import Message
 
@@ -47,6 +48,7 @@ def _deep_retrieve(name, value, span):
     递归地将复杂数据类型(list, dict)转换为字符串。
     处理 bool, str, bytes, int, float 形式的基本类型。
     """
+    print("value: {}".format(value))
     if isinstance(value, (bool, bytes, int, float)):
         span.set_attribute(name, value)
     elif isinstance(value, str):
@@ -189,22 +191,32 @@ def _assistant_output(output,span):
 
 
 def _client_input(args,kwargs,span):
-    input_list=[]
+    input_dict={}
     type_name = (bool,str,bytes,int,float,list,dict)
+    sig = inspect.signature(args[0])
+    params = sig.parameters
+    print("!!!params ", params)
+    print("!!!value: ", json.dumps(input_dict, ensure_ascii=False))
+    print(args)
     if args:
-        for value in args:
-            if isinstance(value,type_name):
-                input_list.append(str(value))
-        if input_list:            
-            span.set_attribute("input.value",json.dumps(input_list))
-    
+        for idx, value in enumerate(args):
+            print(idx, value)
+            if isinstance(value, type_name):
+                print(params[idx], value)
+                input_dict[params[idx]] = str(value).encode("utf-8").decode()
+                print("input_dict: ", input_dict)
+    print("!!!value: ", json.dumps(input_dict, ensure_ascii=False))
+    print(kwargs)
     if kwargs:
-        for value in kwargs.values():
-            if isinstance(value,type_name):
-                span.set_attribute("input.value",str(value))
-        span.set_attribute("input.value",json.dumps(input_list))
-            
-        
+        for key, value in kwargs:
+            if isinstance(value, type_name):
+                input_dict[key] = str(value).encode("utf-8").decode()
+                print("input_dict: ", input_dict)
+        # span.set_attribute("input.value",json.dumps(input_dict, ensure_ascii=False))
+    
+    print("!!!value: ", json.dumps(input_dict, ensure_ascii=False))
+    span.set_attribute("input.value",json.dumps(input_dict, ensure_ascii=False))
+
 def _tip(span):
     span.set_attribute('tips','注意:若输入为默认值，则不记录')
 
