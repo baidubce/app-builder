@@ -63,6 +63,7 @@ agent.serve(port=8091)
 
 * 执行部署
 ```bash
+# config.yaml为上面创建的配置文件
 appbuilder_bce_deploy --conf ./config.yaml
 ```
 
