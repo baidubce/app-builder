@@ -22,11 +22,12 @@ from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
 
 from appbuilder.core._exception import AppBuilderServerException,HTTPConnectionException
-
+from appbuilder .trace import assistant_trace
 class Files(object):
     def __init__(self):
         self._http_client = AssistantHTTPClient()
 
+    @assistant_trace
     def create(self, file_path: str, purpose: str = "assistant") -> assistant_type.AssistantFilesCreateResponse:
         """
         上传文件到助理存储中。
@@ -71,7 +72,7 @@ class Files(object):
         resp = assistant_type.AssistantFilesCreateResponse(**data)
         return resp
 
-        
+    @assistant_trace 
     def list(self) -> assistant_type.AssistantFilesListResponse:
         """
         列出存储中的文件列表
@@ -105,7 +106,7 @@ class Files(object):
         return resp
 
     
-    
+    @assistant_trace
     def query(self,
               file_id: str,
             ) -> assistant_type.AssistantFilesQueryResponse:
@@ -150,6 +151,7 @@ class Files(object):
             raise ValueError('file_id {} is not exist'.format(file_id))
         return resp 
     
+    @assistant_trace
     def delete(self,
                file_id: str,
             ) -> assistant_type.AssistantFilesDeleteResponse:
@@ -180,6 +182,7 @@ class Files(object):
         resp = assistant_type.AssistantFilesDeleteResponse(**data)
         return resp
     
+    @assistant_trace
     def download(self,
                  file_id:str,
                  file_path:str="", # 要求若文件路径不为空，需要以/结尾，默认下载到当前文件夹
@@ -246,8 +249,7 @@ class Files(object):
             raise Exception("出现错误,错误信息{}".format(e))
         
         
-           
-        
+    @assistant_trace   
     def content(self,
                 file_id:str,
                 timeout:Optional[int]=None):
