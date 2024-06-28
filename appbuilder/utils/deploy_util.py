@@ -16,7 +16,6 @@
 import time
 import uuid
 import os
-import sys
 import yaml
 import tarfile
 import logging
@@ -26,8 +25,9 @@ from baidubce.auth.bce_credentials import BceCredentials
 from baidubce.bce_client_configuration import BceClientConfiguration
 from baidubce.services.bos.bos_client import BosClient
 from baidubce.services.bcc import bcc_model
-from baidubce.bce_response import BceResponse
-from _bcc import InnerBccClient
+
+from appbuilder.utils.logger_util import logger
+from appbuilder.utils._bcc import InnerBccClient
 
 
 class AppbuilderSDKInstance:
@@ -215,7 +215,7 @@ class AppbuilderSDKInstance:
         self.log.debug("bind instance to security group: {}".format(response))
 
     def _pre_deploy(self):
-        self.log = get_logger(__name__, self.logging_level)
+        self.log = logger
         self.build_run_script()
         self.log.debug("build run script done!")
         self.create_tar()
@@ -237,24 +237,3 @@ class AppbuilderSDKInstance:
         self._pre_deploy()
         self._deploy()
         self._after_deploy()
-
-
-def get_logger(name, level=logging.INFO):
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    handler = logging.StreamHandler(sys.stdout)
-
-    formatter = logging.Formatter(
-        fmt="%(asctime)s: %(filename)s:%(lineno)d %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-    handler.setFormatter(formatter)
-
-    logger.addHandler(handler)
-    logger.propagate = False
-    return logger
-
-
-if __name__ == "__main__":
-    instance = AppbuilderSDKInstance("./config.yaml", level=logging.INFO)
-    instance.deploy()
