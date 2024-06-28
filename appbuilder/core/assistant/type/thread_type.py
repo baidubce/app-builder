@@ -20,7 +20,10 @@ from typing import Optional
 from appbuilder.core.assistant.type import (
     AssistantTool,
     AssistantContent,
-    ResponseFormat
+    ResponseFormat,
+    AssistantModelParameters,
+    AssistantUserInfo,
+    AssistantUserLoc
 )
 
 
@@ -336,9 +339,15 @@ class AssistantRunRequest(BaseModel):
     thought_instructions: Optional[str] = Field(default="", max_length=4096)
     chat_instructions: Optional[str] = Field(default="", max_length=4096)
     stream: Optional[bool] = False
+    model_parameters: Optional[AssistantModelParameters] = AssistantModelParameters()
+    class Config:
+        extra = "forbid"
+        protected_namespaces = ()
     thread: Optional[AssistantThread] = None
     tools: Optional[list[AssistantTool]] = []
     tool_output: Optional[ToolOutput] = None
+    user_info: Optional[AssistantUserInfo] = None
+    user_loc: Optional[AssistantUserLoc] = None
 
 
 class AssistantSubmitToolOutputsRequest(BaseModel):

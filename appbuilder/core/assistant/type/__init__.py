@@ -20,7 +20,12 @@ from .public_type import (
     AssistantTool,
     ResponseFormat,
     AssistantText,
-    AssistantContent
+    AssistantContent,
+    AssistantChatParameters,
+    AssistantThoughtParameters,
+    AssistantModelParameters,
+    AssistantUserInfo,
+    AssistantUserLoc,
 )
 
 

@@ -2,6 +2,8 @@ import unittest
 import os
 import appbuilder
 
+
+
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 def get_cur_whether(location:str, unit:str):
     return "{} 的当前温度是30 {}".format(location, unit)
@@ -32,9 +34,22 @@ class TestFunctionCall(unittest.TestCase):
             file_ids=[file.id]
         )
 
+        model_parameters = appbuilder.assistant.public_type.AssistantModelParameters(
+            chat_parameters = appbuilder.assistant.public_type.AssistantChatParameters(
+                temperature = 0.8,
+                top_p = 0.8,
+                penalty_score = 1.0
+                ),
+            thought_parameters = appbuilder.assistant.public_type.AssistantThoughtParameters(
+                temperature = 0.01,
+                top_p = 0.0,
+                penalty_score = 1.0
+            )
+        )
         run_result = appbuilder.assistant.threads.runs.run(
             thread_id=thread.id,
             assistant_id=assistant.id,
+            model_parameters=model_parameters
         )
 
         self.assertIsInstance(run_result, thread_type.RunResult)
@@ -65,6 +80,38 @@ class TestFunctionCall(unittest.TestCase):
         run=appbuilder.core.assistant.threads.runs.runs.Runs()
         with self.assertRaises(ValueError):
             run._stream(assistant_id='')
+
+    def test_threads_run_model_raise(self):
+        run=appbuilder.core.assistant.threads.runs.runs.Runs()
+        model_parameters = appbuilder.assistant.public_type.AssistantModelParameters(
+            chat_parameters = appbuilder.assistant.public_type.AssistantChatParameters(
+                temperature = 0.8,
+                top_p = 0.8,
+                penalty_score = 1.0
+                ),
+            thought_parameters = appbuilder.assistant.public_type.AssistantThoughtParameters(
+                temperature = 0.01,
+                top_p = 0.0,
+                penalty_score = 1.0
+            )
+        )
+        with self.assertRaises(ValueError):
+            model_parameters.chat_parameters.temperature = 10
+            run.run(assistant_id='test', thread_id = 'thread_id', model_parameters = model_parameters)
+        with self.assertRaises(ValueError):
+            run._stream(assistant_id='test',thread_id = 'thread_id', model_parameters = model_parameters)
+        model_parameters.chat_parameters.temperature = 0.8
+        with self.assertRaises(ValueError):
+            model_parameters.chat_parameters.top_p = 10
+            run.run(assistant_id='test', thread_id = 'thread_id', model_parameters = model_parameters)
+        with self.assertRaises(ValueError):
+            run._stream(assistant_id='test', thread_id = 'thread_id', model_parameters = model_parameters)
+        model_parameters.chat_parameters.top_p = 0.8
+        with self.assertRaises(ValueError):
+            model_parameters.chat_parameters.penalty_score = 10
+            run.run(assistant_id='test', thread_id = 'thread_id', model_parameters = model_parameters)
+        with self.assertRaises(ValueError):
+            run._stream(assistant_id='test',thread_id = 'thread_id', model_parameters = model_parameters)
 
 if __name__ == '__main__':
     unittest.main()

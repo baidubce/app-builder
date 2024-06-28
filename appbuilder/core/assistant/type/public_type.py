@@ -121,3 +121,75 @@ class AssistantContent(BaseModel):
     """
     type: str = "text"
     text: Optional[AssistantText] = None
+
+
+class AssistantChatParameters(BaseModel):
+    """
+    表示助理聊天参数的模型。
+    Attributes:
+        temperature (Optional[float]): 	采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.8。
+        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0.8。
+        penalty_score (Optional[float]): 惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。
+    """
+    temperature: Optional[float] = 0.8
+    top_p: Optional[float] = 0.8
+    penalty_score: Optional[float] = 1.0
+
+
+class AssistantThoughtParameters(BaseModel):
+    """
+    表示助理思考参数的模型。
+    Attributes:
+        temperature (Optional[float]): 	采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01。
+        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0。
+        penalty_score (Optional[float]): 惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。取值范围大于等于1，小于等于2，默认为1.0。
+    """
+    temperature: Optional[float] = 0.01
+    top_p: Optional[float] = 0
+    penalty_score: Optional[float] = 1.0
+    
+
+class AssistantModelParameters(BaseModel):
+    """
+    表示助理模型的参数的模型。
+    Attributes:
+        chat_parameters (Optional[AssistantChatParameters]): 聊天参数的实例，默认为None。
+        thought_parameters (Optional[AssistantThoughtParameters]): 思考参数的实例，默认为None。
+    """
+    chat_parameters: Optional[AssistantChatParameters] = AssistantChatParameters()
+    thought_parameters: Optional[AssistantThoughtParameters] = AssistantThoughtParameters()
+
+
+class AssistantUserInfo(BaseModel):
+    """
+    表示用户信息。
+    Attributes:
+        id (Optional[str]): 用户ID，默认为None。
+        name (Optional[str]): 用户名称，默认为None。
+        nickname (Optional[str]): 用户昵称，默认为None。
+        watermark (Optional[str]): 用户水印，默认为None。
+        intro (Optional[str]): 用户简介，默认为None。
+        baidu_id (Optional[str]): 用户百度ID，默认为None。
+    """
+    id:Optional[str] = None
+    name:Optional[str] = None
+    nickname:Optional[str] = None
+    watermark:Optional[str] = None
+    intro:Optional[str] = None
+    baidu_id: Optional[str] = None 
+
+
+class AssistantUserLoc(BaseModel):
+    """
+    表示用户位置信息。
+    Attributes:
+        loc (Optional[str]): 用户当前的地理位置信息，使用json格式描述
+        uip (Optional[str]): 用户的ipv4地址
+        uipv6 (Optional[str]): 用户的ipv6地址
+    """
+    loc:Optional[str] = None
+    uip:Optional[str] = None
+    uipv6:Optional[str] = None
+
+
+    
