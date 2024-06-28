@@ -17,16 +17,7 @@
   * https://cloud.baidu.com/doc/Reference/s/9jwvz2egb
 
 ### 部署流程：
-* 编写自己的服务运行代码（以组件服务为例）
-```python
-# ./smaple目录下component_sample.py
-import appbuilder
-
-component = appbuilder.Playground(prompt_template="{query}", model="ERNIE-Bot")
-agent = appbuilder.AgentRuntime(component=component)
-agent.serve(port=8091)
-```
-* 完善配置文件
+* 以下面的yaml文件为模板创建config.yaml，完善配置文件
   * 最小修改范围：ak、sk、admin_pass、run_cmd、local_dir、APPBUILDER_TOKEN
 ```yaml
 bce_config:
@@ -47,13 +38,29 @@ appbuilder_config:
     local_dir: "./sample"
     workspace: "/home/work/appbuilder"
 
-    # 运行命令，根据实际使用修改
+    # 服务的运行命令，根据实际使用修改
     run_cmd: "python3 component_sample.py"
 
 env:
     APPBUILDER_LOGLEVEL: debug
     APPBUILDER_TOKEN: ""
 ```
+
+* 编写自己的服务运行代码（以组件服务为例）
+```bash
+mkdir sample
+touch sample/component_sample.py
+# 编辑sample/component_sample.py，写入下面的python代码
+```
+```python
+# ./smaple目录下component_sample.py
+import appbuilder
+
+component = appbuilder.Playground(prompt_template="{query}", model="ERNIE-Bot")
+agent = appbuilder.AgentRuntime(component=component)
+agent.serve(port=8091)
+```
+
 * 执行部署
 ```bash
 appbuilder_bce_deploy --conf ./config.yaml
