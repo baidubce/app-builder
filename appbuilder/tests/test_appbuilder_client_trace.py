@@ -17,7 +17,7 @@ import requests
 import appbuilder
 import os
 
-appbuilder.logger.setLoglevel("Debug")
+# appbuilder.logger.setLoglevel("Debug")
 
 # @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestAppBuilderTrace(unittest.TestCase):
         app_builder_client = appbuilder.AppBuilderClient(app_id)
         for i in range(1):
             conversation_id = app_builder_client.create_conversation()
-            answer = app_builder_client.run(conversation_id, "第{}次向你问好".format(i+1))
+            answer = app_builder_client.run(conversation_id=conversation_id, query="第{}次向你问好".format(i+1))
         tracer.end_trace()
 
 if __name__ == '__main__':

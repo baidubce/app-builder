@@ -195,27 +195,19 @@ def _client_input(args,kwargs,span):
     type_name = (bool,str,bytes,int,float,list,dict)
     sig = inspect.signature(args[0])
     params = sig.parameters
-    print("!!!params ", params)
-    print("!!!value: ", json.dumps(input_dict, ensure_ascii=False))
-    print(args)
-    if args:
-        for idx, value in enumerate(args):
-            print(idx, value)
-            if isinstance(value, type_name):
-                print(params[idx], value)
-                input_dict[params[idx]] = str(value).encode("utf-8").decode()
-                print("input_dict: ", input_dict)
-    print("!!!value: ", json.dumps(input_dict, ensure_ascii=False))
-    print(kwargs)
-    if kwargs:
-        for key, value in kwargs:
-            if isinstance(value, type_name):
-                input_dict[key] = str(value).encode("utf-8").decode()
-                print("input_dict: ", input_dict)
-        # span.set_attribute("input.value",json.dumps(input_dict, ensure_ascii=False))
+    try:
+        if args:
+            for idx, value in enumerate(list(args)):
+                if isinstance(value, type_name):
+                    input_dict[list(params)[idx-1]] = str(value)
+        if kwargs:
+            for key, value in dict(kwargs).items():
+                if isinstance(value, type_name):
+                    input_dict[key] = str(value)
     
-    print("!!!value: ", json.dumps(input_dict, ensure_ascii=False))
-    span.set_attribute("input.value",json.dumps(input_dict, ensure_ascii=False))
+        span.set_attribute("input.value",json.dumps(input_dict, ensure_ascii=False))
+    except Exception as e:
+        print(e)
 
 def _tip(span):
     span.set_attribute('tips','注意:若输入为默认值，则不记录')
@@ -247,7 +239,8 @@ def _run_trace(tracer, func, *args, **kwargs):
         if 'appbuilder_client' in module_name:
             try:
                 _client_input(args=args, kwargs = kwargs,span=new_span)
-            except:
+            except Exception as e:
+                print(e)
                 pass
     return result 
 
