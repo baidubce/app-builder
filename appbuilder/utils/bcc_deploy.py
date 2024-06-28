@@ -19,6 +19,7 @@ import os
 import yaml
 import tarfile
 import logging
+import argparse
 from datetime import datetime
 
 from baidubce.auth.bce_credentials import BceCredentials
@@ -31,10 +32,9 @@ from appbuilder.utils._bcc import InnerBccClient
 
 
 class AppbuilderSDKInstance:
-    def __init__(self, config_path, level=logging.INFO):
+    def __init__(self, config_path):
         self.config_path = config_path
         self.load_config()
-        self.logging_level = level
 
         self.credentials = BceCredentials(
             self.bce_config["ak"], self.bce_config["sk"])
@@ -237,3 +237,16 @@ class AppbuilderSDKInstance:
         self._pre_deploy()
         self._deploy()
         self._after_deploy()
+
+
+def deploy():
+    parser = argparse.ArgumentParser(description="configuration")
+    parser.add_argument("--conf", type=str, help="config yaml file")
+    args = parser.parse_args()
+    conf = args.conf
+    instance = AppbuilderSDKInstance(conf)
+    instance.deploy()
+
+
+if __name__ == '__main__':
+    deploy()

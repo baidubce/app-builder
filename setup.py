@@ -32,19 +32,24 @@ for package in packages:
         package_data[package] = ["*.md"]
 
 setup(
-    name='appbuilder-sdk',
-    version='0.8.0', #NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
-    author='dongdaxiang',
-    author_email='dongdaxiang@baidu.com',
+    name="appbuilder-sdk",
+    # NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
+    version="0.8.0",
+    author="dongdaxiang",
+    author_email="dongdaxiang@baidu.com",
     packages=packages,
     package_data=package_data,
     install_requires=requirements,
-    python_requires='>=3.9',
+    python_requires=">=3.9",
     extras_require={
-        'serve': ['chainlit~=1.0.200', 'flask~=2.3.2', 'flask-restful==0.3.9']
+        "serve": ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9"]
     },
-    description='百度智能云千帆AppBuilder-SDK',
+    entry_points={
+        "console_scripts": [
+            "appbuilder_bcc_deploy=appbuilder.utils.bcc_deploy:deploy",
+        ]
+    },
+    description="百度智能云千帆AppBuilder-SDK",
     long_description="百度智能云千帆AppBuilder, 开箱即用的组件与框架, 高效开发你的AI原生应用, 更多信息请登录: https://appbuilder.cloud.baidu.com/",
     url="https://github.com/baidubce/app-builder",
-
 )
