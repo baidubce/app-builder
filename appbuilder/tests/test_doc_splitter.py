@@ -19,6 +19,7 @@ import os
 
 import appbuilder
 
+
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDocSplitter(unittest.TestCase):
     @classmethod
@@ -87,6 +88,24 @@ class TestDocSplitter(unittest.TestCase):
         # 运行 DocSplitter，确保它能处理无效输入
         with self.assertRaises(ValueError):
             doc_splitter.run(message)
+
+
+    def test_run_splitter_with_invalid_input(self):
+        config = dict(title="title_splitter.docx")
+
+        # 1. 文档解析
+        current_dir = os.path.dirname(__file__)
+        test_pdf_path = os.path.join(current_dir, config["title"])
+        msg = appbuilder.Message(test_pdf_path)
+        parser = appbuilder.DocParser()
+        xmind_output = parser(msg, return_raw=False)
+
+        # 2. 按照文档标题层级分段
+        doc_splitter = appbuilder.DocSplitter(splitter_type="split_by_title")
+
+        # 在这里进行断言，确保你的代码达到预期的效果
+        with self.assertRaises(ValueError):
+            doc_splitter.run(xmind_output)
 
 
 if __name__ == '__main__':

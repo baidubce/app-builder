@@ -27,16 +27,21 @@ import (
 	"time"
 )
 
+// Deprecated: 已废弃，请使用 NewKnowledgeBase
 func NewDataset(config *SDKConfig) (*Dataset, error) {
 	if config == nil {
 		return nil, errors.New("invalid config")
 	}
-	return &Dataset{sdkConfig: config, client: &http.Client{Timeout: 60 * time.Second}}, nil
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 60 * time.Second}
+	}
+	return &Dataset{sdkConfig: config, client: client}, nil
 }
 
 type Dataset struct {
 	sdkConfig *SDKConfig
-	client    *http.Client
+	client    HTTPClient
 }
 
 func (t *Dataset) Create(name string) (string, error) {

@@ -25,7 +25,8 @@ public class AppBuilderClientIterator {
                     .setStatus(contents[i].getEventStatus())
                     .setEventType(contents[i].getEventType())
                     .setContentType(contents[i].getContentType())
-                    .setDetail(contents[i].getOutputs());
+                    .setDetail(contents[i].getOutputs())
+                    .setUsage(contents[i].getUsage());
         });
         return new AppBuilderClientResult()
                 .setAnswer(response.getAnswer())

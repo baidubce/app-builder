@@ -32,13 +32,17 @@ func NewRAG(appID string, config *SDKConfig) (*RAG, error) {
 	if config == nil {
 		return nil, errors.New("invalid config")
 	}
-	return &RAG{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 500 * time.Second}}, nil
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 500 * time.Second}
+	}
+	return &RAG{appID: appID, sdkConfig: config, client: client}, nil
 }
 
 type RAG struct {
 	appID     string
 	sdkConfig *SDKConfig
-	client    *http.Client
+	client    HTTPClient
 }
 
 func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator, error) {

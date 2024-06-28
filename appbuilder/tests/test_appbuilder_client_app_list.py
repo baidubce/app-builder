@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,14 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SECRET_KEY_PREFIX = "Bearer"
+import unittest
+import requests
+import appbuilder
+import os
+import logging
 
-GATEWAY_URL = "https://appbuilder.baidu.com"
-GATEWAY_INNER_URL = "http://appbuilder.sdns.baidu.com"
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
+class TestGetAppList(unittest.TestCase):
+    def test_get_app_list_v1(self):
+        app_list = appbuilder.get_app_list()
+        print(app_list)
+        self.assertIsInstance(app_list, list)
 
-GATEWAY_URL_V2 = "https://qianfan.baidubce.com"
-CONSOLE_OPENAPI_VERSION = "/v2"
-CONSOLE_OPENAPI_PREFIX = ""
-
-MAX_DOCUMENTS_NUM = 800
-SUPPORTED_FILE_TYPE = ["txt", "pdf", "doc", "docx"]
+if __name__ == '__main__':
+    unittest.main()

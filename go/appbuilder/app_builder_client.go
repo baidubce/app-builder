@@ -23,31 +23,94 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 )
 
+func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
+	request := http.Request{}
+	header := config.AuthHeaderV2()
+	serviceURL, err := config.ServiceURLV2("/apps")
+	if err != nil {
+		return nil, err
+	}
+
+	request.URL = serviceURL
+	request.Method = "GET"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+
+	reqMap := make(map[string]any)
+	reqJson, _ := json.Marshal(req)
+	json.Unmarshal(reqJson, &reqMap)
+	params := url.Values{}
+	for key, value := range reqMap {
+		switch v := value.(type) {
+		case float64:
+			params.Add(key, strconv.Itoa(int(v)))
+		case string:
+			if v == "" {
+				continue
+			}
+			params.Add(key, v)
+		}
+	}
+	serviceURL.RawQuery = params.Encode()
+
+	config.BuildCurlCommand(&request)
+	client := &http.Client{Timeout: 300 * time.Second}
+	resp, err := client.Do(&request)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := GetAppListResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp.Data, nil
+}
+
 func NewAppBuilderClient(appID string, config *SDKConfig) (*AppBuilderClient, error) {
-	if len(appID) == 0 {
+	if appID == "" {
 		return nil, errors.New("appID is empty")
 	}
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
-	return &AppBuilderClient{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 300 * time.Second}}, nil
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 300 * time.Second}
+	}
+	return &AppBuilderClient{appID: appID, sdkConfig: config, client: client}, nil
 }
 
 type AppBuilderClient struct {
 	appID     string
 	sdkConfig *SDKConfig
-	client    *http.Client
+	client    HTTPClient
+}
+
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
 }
 
 func (t *AppBuilderClient) CreateConversation() (string, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation")
 	if err != nil {
 		return "", err
 	}
@@ -101,7 +164,7 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 	}
 	w.Close()
 	request := http.Request{}
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation/file/upload")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/file/upload")
 	if err != nil {
 		return "", err
 	}
@@ -147,7 +210,7 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	}
 	request := http.Request{}
 
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation/runs")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/runs")
 	if err != nil {
 		return nil, err
 	}

@@ -36,19 +36,23 @@ func NewAgentBuilder(appID string, config *SDKConfig) (*AgentBuilder, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
-	return &AgentBuilder{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 300 * time.Second}}, nil
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 300 * time.Second}
+	}
+	return &AgentBuilder{appID: appID, sdkConfig: config, client: client}, nil
 }
 
 type AgentBuilder struct {
 	appID     string
 	sdkConfig *SDKConfig
-	client    *http.Client
+	client    HTTPClient
 }
 
 func (t *AgentBuilder) CreateConversation() (string, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation")
 	if err != nil {
 		return "", err
 	}
@@ -102,7 +106,7 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 	}
 	w.Close()
 	request := http.Request{}
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation/file/upload")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/file/upload")
 	if err != nil {
 		return "", err
 	}
@@ -148,7 +152,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	}
 	request := http.Request{}
 
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/v2/app/conversation/runs")
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/runs")
 	if err != nil {
 		return nil, err
 	}

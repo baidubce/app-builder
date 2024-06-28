@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,14 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SECRET_KEY_PREFIX = "Bearer"
-
-GATEWAY_URL = "https://appbuilder.baidu.com"
-GATEWAY_INNER_URL = "http://appbuilder.sdns.baidu.com"
-
-GATEWAY_URL_V2 = "https://qianfan.baidubce.com"
-CONSOLE_OPENAPI_VERSION = "/v2"
-CONSOLE_OPENAPI_PREFIX = ""
-
-MAX_DOCUMENTS_NUM = 800
-SUPPORTED_FILE_TYPE = ["txt", "pdf", "doc", "docx"]
+from .knowledge_base import KnowledgeBase
+from .data_class import CustomProcessRule

@@ -8,6 +8,7 @@ import com.baidubce.appbuilder.base.utils.json.JsonUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,7 +18,9 @@ import java.util.logging.Level;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
+import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -32,6 +35,10 @@ public class HttpClient {
     public String SecretKey;
     public String Gateway;
     public String GatewayV2;
+    public String ConsoleOpenAPIVersion;
+    public String ConsoleOpenAPIPrefix;
+
+    
     private final CloseableHttpClient client;
     private static final Logger LOGGER = Logger.getLogger(Component.class.getName());
 
@@ -116,12 +123,13 @@ public class HttpClient {
      * @return 返回创建的 ClassicHttpRequest 对象
      */
     public ClassicHttpRequest createPostRequestV2(String url, HttpEntity entity) {
-        String requestURL = GatewayV2 + url;
+        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url;
         LOGGER.log(Level.FINE, "requestURL: " + requestURL);
         HttpPost httpPost = new HttpPost(requestURL);
         httpPost.setHeader("Authorization", this.SecretKey);
         httpPost.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
-        httpPost.setHeader("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.8.0\",\"appbuilder_sdk_language\":\"java\"}");
+        httpPost.setHeader("X-Appbuilder-Sdk-Config",
+                "{\"appbuilder_sdk_version\":\"0.8.0\",\"appbuilder_sdk_language\":\"java\"}");
         httpPost.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
         httpPost.setEntity(entity);
         String headers = "headers: \n";
@@ -130,6 +138,42 @@ public class HttpClient {
         }
         LOGGER.log(Level.FINE, "\n" + headers);
         return httpPost;
+    }
+
+    public ClassicHttpRequest createGetRequestV2(String url, Map<String, Object> map) {
+        String urlParams = toQueryString(map);
+        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams;
+        LOGGER.log(Level.FINE, "requestURL: " + requestURL);
+        HttpGet httpGet = new HttpGet(requestURL);
+        httpGet.setHeader("Authorization", this.SecretKey);
+        httpGet.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
+        httpGet.setHeader("X-Appbuilder-Sdk-Config",
+                "{\"appbuilder_sdk_version\":\"0.8.0\",\"appbuilder_sdk_language\":\"java\"}");
+        httpGet.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
+        String headers = "headers: \n";
+        for (Header header : httpGet.getHeaders()) {
+            headers += header + "\n";
+        }
+        LOGGER.log(Level.FINE, "\n" + headers);
+        return httpGet;
+    }
+    
+    public ClassicHttpRequest createDeleteRequestV2(String url, Map<String, Object> map) {
+        String urlParams = toQueryString(map);
+        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams;
+        LOGGER.log(Level.FINE, "requestURL: " + requestURL);
+        HttpDelete httpDelete = new HttpDelete(requestURL);
+        httpDelete.setHeader("Authorization", this.SecretKey);
+        httpDelete.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
+        httpDelete.setHeader("X-Appbuilder-Sdk-Config",
+                "{\"appbuilder_sdk_version\":\"0.8.0\",\"appbuilder_sdk_language\":\"java\"}");
+        httpDelete.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
+        String headers = "headers: \n";
+        for (Header header : httpDelete.getHeaders()) {
+            headers += header + "\n";
+        }
+        LOGGER.log(Level.FINE, "\n" + headers);
+        return httpDelete;
     }
 
     public <T> HttpResponse<T> execute(ClassicHttpRequest request, Type bodyType)
@@ -188,6 +232,25 @@ public class HttpClient {
                 .setHeaders(headers)
                 .setBody(new StreamIterator<>(resp, bodyType));
     }
+
+    private String toQueryString(Map<String, Object> map) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() != null) {
+                if (stringBuilder.length() != 0) {
+                    stringBuilder.append('&');
+                }
+                try {
+                    stringBuilder.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                    stringBuilder.append('=');
+                    stringBuilder.append(URLEncoder.encode(entry.getValue().toString(), "UTF-8"));
+                } catch (Exception e) {
+                    // Should never happen.
+                }
+            }
+        }
+        return stringBuilder.toString();
+    }
     
     private void buildCurlCommand(ClassicHttpRequest request) {
         StringBuilder curlCmd = new StringBuilder("curl -L");
@@ -212,6 +275,6 @@ public class HttpClient {
             } catch (ParseException | IOException e) {}
         }
 
-        LOGGER.log(Level.FINE, "Crul Command: \n" + curlCmd.toString() + "\n");
+        LOGGER.log(Level.FINE, "Curl Command: \n" + curlCmd.toString() + "\n");
     }
 }
