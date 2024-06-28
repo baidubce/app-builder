@@ -18,17 +18,18 @@ import os
 import uuid
 import json
 
-import proto
 import requests
+import tempfile
 from urllib.parse import urlparse
 
-from appbuilder.core import utils
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse, \
     ASRInMsg, ASROutMsg
+
+DEFAULT_AUDIO_MAX_DURATION = 55 * 1000  # 55s
 
 
 class ASR(Component):
@@ -92,7 +93,7 @@ class ASR(Component):
 
     @HTTPClient.check_param
     def run(self, message: Message, audio_format: str = "pcm", rate: int = 16000,
-            timeout: float = None, retry: int = 0) -> Message:
+            timeout: float = None, retry: int = 0, **kwargs) -> Message:
         """
         输入语音文件并返回语音识别结果。
 
@@ -113,16 +114,17 @@ class ASR(Component):
         request.cuid = str(uuid.uuid4())
         request.dev_pid = "80001"
         request.speech = inp.raw_audio
-        response = self._recognize(request, timeout, retry)
+        traceid = kwargs.get("traceid", "")
+        response = self._recognize(request, timeout, retry, request_id=traceid)
         out = ASROutMsg(result=list(response.result))
         return Message(content=out.model_dump())
 
     def _recognize(
-        self,
-        request: ShortSpeechRecognitionRequest,
-        timeout: float = None,
-        retry: int = 0,
-        request_id: str = None,
+            self,
+            request: ShortSpeechRecognitionRequest,
+            timeout: float = None,
+            retry: int = 0,
+            request_id: str = None,
     ) -> ShortSpeechRecognitionResponse:
         """
         使用给定的输入并返回语音识别的结果。
@@ -192,17 +194,18 @@ class ASR(Component):
         _, file_type = os.path.splitext(os.path.basename(urlparse(file_url).path))
         file_type = file_type.strip('.')
 
-        traceid = kwargs.get("traceid")
-        req = ShortSpeechRecognitionRequest()
-        req.speech = requests.get(file_url).content
-        req.format = file_type
-        req.cuid = traceid if traceid else str(uuid.uuid4())
-        req.dev_pid = "80001"
-        req.rate = 16000
-        result = proto.Message.to_dict(self._recognize(req, request_id=traceid))
-        results = {
-            "识别结果": " \n".join(item for item in result["result"])
-        }
+        audio_file = tempfile.NamedTemporaryFile("wb", suffix=file_type)
+        audio_file.write(requests.get(file_url).content)
+
+        raw_audios = _convert(audio_file.name, file_type)
+        text = ""
+        for raw_audio in raw_audios:
+            content_data = {"audio_format": "wav", "raw_audio": raw_audio, "rate": 16000}
+            msg = Message(content_data)
+            out = self.run(msg)
+            text += "".join(out.content["result"])
+        results = {"识别结果": text}
+        audio_file.close()
         res = json.dumps(results, ensure_ascii=False, indent=4)
         if streaming:
             yield {
@@ -217,3 +220,34 @@ class ASR(Component):
             }
         else:
             return res
+
+
+def _convert(path, file_type):
+    from pydub import AudioSegment
+    if file_type.lower() == "mp3":
+        audio = AudioSegment.from_mp3(path)
+    elif file_type.lower() == "wav":
+        audio = AudioSegment.from_wav(path)
+    else:
+        # pydub自动检测音频类型
+        audio = AudioSegment.from_wav(path)
+    # 如果取样率为16000且时长小于60s，则直接读取音频并返回
+    if audio.frame_rate == 16000 and audio.frame_count() * 1000 / audio.frame_rate < DEFAULT_AUDIO_MAX_DURATION:
+        return [open(path, "rb").read()]
+    audio = audio.set_frame_rate(16000)
+    total_milliseconds = int(audio.frame_count() * 1000 / audio.frame_rate)
+    start = 0
+    raw_audio_segs = []
+    while start < total_milliseconds:
+        end = start + DEFAULT_AUDIO_MAX_DURATION
+        if start + DEFAULT_AUDIO_MAX_DURATION > total_milliseconds:
+            end = total_milliseconds
+        audio_seg = audio[start:end]
+        audio_seg_file = tempfile.NamedTemporaryFile("wb", suffix="wav")
+        audio_seg.export(audio_seg_file.name, format="wav")
+        raw_audio_segs.append(open(audio_seg_file.name, "rb").read())
+        start = end
+        audio_seg_file.close()
+    return raw_audio_segs
+
+
