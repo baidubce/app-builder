@@ -46,7 +46,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "appbuilder_bcc_deploy=appbuilder.utils.bcc_deploy:deploy",
+            "appbuilder_bce_deploy=appbuilder.utils.bce_deploy:deploy",
         ]
     },
     description="百度智能云千帆AppBuilder-SDK",
