@@ -234,6 +234,9 @@ class AppbuilderSDKInstance:
             "deployment finished! public ip: {}".format(self.public_ip))
 
     def deploy(self):
+        self.log.info(
+            "The deployment to cloud feature is currently in the beta testing stage.If any issues arise, please submit an issue or contact us through our WeChat group."
+        )
         self._pre_deploy()
         self._deploy()
         self._after_deploy()
