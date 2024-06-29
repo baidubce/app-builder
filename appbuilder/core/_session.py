@@ -15,6 +15,7 @@
 import requests
 import json
 from appbuilder.utils.logger_util import logger
+from appbuilder.utils.trace.tracer_wrapper import session_post
 
 class InnerSession(requests.sessions.Session):
 
@@ -48,3 +49,7 @@ class InnerSession(requests.sessions.Session):
         """
         logger.debug("Curl Command:\n" + self.build_curl(request) + "\n")
         return super(InnerSession, self).send(request, **kwargs)
+
+    @session_post
+    def post(self, url, data=None, json=None, **kwargs):
+        return super().post(url = url, data=data, json=json, **kwargs)

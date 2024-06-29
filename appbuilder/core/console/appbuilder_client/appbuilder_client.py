@@ -23,6 +23,7 @@ from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._client import HTTPClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
+from appbuilder.utils.trace.tracer_wrapper import client_run_trace
 
 
 def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key: Optional[str] = None, gateway_v2: Optional[str] = None) -> list[data_class.AppOverview]:
@@ -143,6 +144,7 @@ class AppBuilderClient(Component):
         resp = data_class.FileUploadResponse(**data)
         return resp.id
 
+    @client_run_trace
     def run(self, conversation_id: str,
             query: str,
             file_ids: list = [],
