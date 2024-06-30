@@ -93,20 +93,28 @@ class IntegratedRequest(BaseModel):
     inputs: IntegratedInputs = Field(..., description='当次对话交互的详情')
     model_configs: IntegratedModelConfigs = Field(..., description='模型配置')
 
+
 class BuiltInTool(BaseModel):
     function_name: str = Field(..., description='能力名称')
     function_desc: str = Field(..., description='能力描述')
+
 
 class BuiltInToolList(BaseModel):
     component_name: str = Field(..., description='组件名称')
     functions: list[BuiltInTool] = Field(..., description='组件能力详情')
 
+
 class GetBuiltInToolResponse(BaseModel):
     code: int = Field(..., description='状态码')
     result: list[BuiltInToolList] = Field(..., description='内置工具列表')
 
+    def __str__(self):
+        return json.dumps(self.dict(), indent=4, ensure_ascii=False)
+
+
 class DTEFunctionCallAgent(Component):
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.user_id = str(uuid.uuid4())
 
     def create_conversation(self) -> str:
@@ -116,10 +124,21 @@ class DTEFunctionCallAgent(Component):
     def create_trace_id(self) -> str:
         """创建追踪ID"""
         return str(uuid.uuid4())
-    
+
     def get_builtin_tool_list(self) -> list[BuiltInToolList]:
-        
-        pass
+        headers = self.http_client.auth_header_v2()
+        headers["Content-Type"] = "application/json"
+        url = "http://copilot-qa.now.baidu-int.com" +\
+            "/dte/api/v2/function_call/get_builtin_tool_list"
+        response = self.http_client.session.post(
+            url, headers=headers, json={}, timeout=None,
+        )
+        self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
+        data = response.json()
+        resp = GetBuiltInToolResponse(**data)
+        return resp
+
 
     def upload_file(self, file_path: str) -> str:
         """上传文件"""
@@ -131,3 +150,9 @@ class DTEFunctionCallAgent(Component):
             inputs: Optional[IntegratedInputs] = None) -> Message:
         """运行对话"""
         return Message()
+
+
+if __name__ == '__main__':
+    dte_function_call_agent = DTEFunctionCallAgent()
+    res = dte_function_call_agent.get_builtin_tool_list()
+    print(res)
