@@ -43,39 +43,14 @@ def _build_curl_from_post(url, headers, json_body, timeout) -> str:
 
 
 def _post_input(args,kwargs,span):
-    type_name = (bool,str,bytes,int,float)
-    try:
-        curl=_build_curl_from_post(
-            url=args[-1], 
-            headers=kwargs['headers'], 
-            json_body=kwargs.get('json',None), 
-            timeout=kwargs.get('timeout',None), 
-            )
-        span.set_attribute("input.value","控制台curl命令:\n{}".format(curl))
-    except:
-        if kwargs:
-            for key,value in kwargs.items():
-                    if key == 'json':
-                        for json_key,json_value in value.items():
-                            if isinstance(json_value,type_name):
-                                span.set_attribute("input.value.json."+json_key,str(json_value))
-                            else:
-                                try:
-                                    span.set_attribute("input.value.json."+json_key,str(json_value))
-                                except:
-                                    pass
 
-                    elif key == 'headers':
-                        for header_key,header_value in value.items():
-                            if header_key in ('Content-Type','Authorization'):
-                                continue
-                            if isinstance(header_value,type_name):
-                                span.set_attribute("input.value.headers."+header_key,str(header_value))
-                            else:
-                                try:
-                                    span.set_attribute("input.value.headers."+header_key,str(header_value))
-                                except:
-                                    pass
+    curl=_build_curl_from_post(
+        url=args[-1], 
+        headers=kwargs['headers'], 
+        json_body=kwargs.get('json',None), 
+        timeout=kwargs.get('timeout',None), 
+        )
+    span.set_attribute("input.value","控制台curl命令:\n{}".format(curl))
 
 
 def _client_input(args,kwargs,span):

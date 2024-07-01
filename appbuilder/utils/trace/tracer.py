@@ -32,15 +32,6 @@ _MODULE_1 = 'appbuilder'
 _MODULE_2 = 'appbuilder-sdk-ext'
 
 
-class LocalSpanExporter(SpanExporter):
-    def __init__(self):
-        self.spans = []
-
-    def export(self, span_data):
-        for span in span_data:
-            self.spans.append(span.to_json())
-
-
 class AppbuilderInstrumentor(BaseInstrumentor):
     """
     Instrumentor for appbuilder and appbuilder-sdk-ext.
