@@ -83,9 +83,18 @@ def _client_run_trace_output(output,span,tracer):
             result = ''
             new_span = tracer.start_span('Client-Stream')
             for message in output.content:
-                # print(message)
                 new_span.set_attribute("openinference.span.kind",'agent')
                 generator_list.append(message)
+                try:
+                    context_message_str=''
+                    for context_message in message.events[0].detail['references']:
+                        for context_message_key,context_message_value in context_message.items():
+                            context_message_str += '{}: {}\n'.format(context_message_key, context_message_value)
+                        context_message_str +='\n'
+
+                    new_span.set_attribute("input.value", 'Context(上下文) For RAG:\n{}'.format(context_message_str))
+                except:
+                    pass
                 try:
                     new_span.set_attribute("output.value", '{}[status:{}]:{}'.format(message.events[0].event_type,message.events[0].status,message.answer))
                     new_span.set_attribute("LLM-RUN-Information."+'prompt-tokens', message.events[0].usage.prompt_tokens)
