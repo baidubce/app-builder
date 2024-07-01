@@ -22,35 +22,60 @@ def _time(start_time,end_time,span):
     span.set_attribute('time.cost-time',str(end_time-start_time)+'s')
 
 
+def _build_curl_from_post(url, headers, json_body, timeout) -> str:
+        """
+        Generate cURL command from post request parameters.
+        """
+        curl = f"curl -L '{url}' \\\n"
+        header_lines = [f"-H '{k}: {v}' \\" for k, v in headers.items() if k != 'Content-Length']
+        if header_lines:
+            header_lines[-1] = header_lines[-1].rstrip(" \\")
+        curl += "\n".join(header_lines)
+        
+        if json_body:
+            body = f"'{json.dumps(json_body, ensure_ascii=False)}'"
+            curl += f" \\\n-d {body}"
+        
+        if timeout is not None:
+            curl += f" \\\n--max-time {timeout}"
+            
+        return curl
+
+
 def _post_input(args,kwargs,span):
     type_name = (bool,str,bytes,int,float)
-    if kwargs:
-        for key,value in kwargs.items():
-                if key == 'json':
-                    for json_key,json_value in value.items():
-                        if isinstance(json_value,type_name):
-                            span.set_attribute("input.value.json."+json_key,str(json_value))
-                        else:
-                            try:
+    try:
+        curl=_build_curl_from_post(
+            url=args[-1], 
+            headers=kwargs['headers'], 
+            json_body=kwargs.get('json',None), 
+            timeout=kwargs.get('timeout',None), 
+            )
+        span.set_attribute("input.value","控制台curl命令:{}".format(curl))
+    except:
+        if kwargs:
+            for key,value in kwargs.items():
+                    if key == 'json':
+                        for json_key,json_value in value.items():
+                            if isinstance(json_value,type_name):
                                 span.set_attribute("input.value.json."+json_key,str(json_value))
-                            except:
-                                pass
+                            else:
+                                try:
+                                    span.set_attribute("input.value.json."+json_key,str(json_value))
+                                except:
+                                    pass
 
-                elif key == 'headers':
-                    for header_key,header_value in value.items():
-                        if header_key in ('Content-Type','Authorization'):
-                            continue
-                        if isinstance(header_value,type_name):
-                            span.set_attribute("input.value.headers."+header_key,str(header_value))
-                        else:
-                            try:
+                    elif key == 'headers':
+                        for header_key,header_value in value.items():
+                            if header_key in ('Content-Type','Authorization'):
+                                continue
+                            if isinstance(header_value,type_name):
                                 span.set_attribute("input.value.headers."+header_key,str(header_value))
-                            except:
-                                pass
-
-
-def _post_output(output,span):
-    pass
+                            else:
+                                try:
+                                    span.set_attribute("input.value.headers."+header_key,str(header_value))
+                                except:
+                                    pass
 
 
 def _client_input(args,kwargs,span):
@@ -140,8 +165,6 @@ def _post_trace(tracer, func, *args, **kwargs):
         new_span.set_attribute("openinference.span.kind",'chain')
         _time(start_time = start_time,end_time = end_time,span = new_span)
         _post_input(args = args, kwargs = kwargs,span = new_span)
-        _post_output(output = result,span = new_span)
-
     return result
 
 def _client_run_trace(tracer, func, *args, **kwargs):
