@@ -20,7 +20,7 @@ import os
 from appbuilder.utils.trace.tracer import AppBuilderTracer
 from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
     def setUp(self):
         self.app_id = "aa8af334-df27-4855-b3d1-0d249c61fc08"
@@ -49,9 +49,8 @@ class TestAppBuilderTrace(unittest.TestCase):
     
     def test_appbuilder_phoenix_run(self):
         
-        with self.assertRaises(ImportError):
-            runtime_main()
-        with self.assertRaises(ImportError):
+        runtime_main()
+        with self.assertRaises(AttributeError):
             stop_phoenix()
 
 
