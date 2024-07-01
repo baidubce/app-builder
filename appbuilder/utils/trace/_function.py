@@ -14,9 +14,7 @@
 import time
 import json
 import inspect
-import appbuilder
-
-appbuilder.logger
+from typing import Generator
 
 def _time(start_time,end_time,span):
     span.set_attribute('time.cost-time',str(end_time-start_time)+'s')
@@ -77,15 +75,17 @@ def _client_input(args,kwargs,span):
 def _client_run_trace_output(output,span,tracer):
     if output:
         run_list = []
+        generator_list = []
         prompt_tokens = 0
         completion_tokens = 0
         total_tokens = 0
-        if output.mtype == 'generator' :
+        if output.mtype == 'generator':
             result = ''
             new_span = tracer.start_span('Client-Stream')
             for message in output.content:
                 # print(message)
                 new_span.set_attribute("openinference.span.kind",'agent')
+                generator_list.append(message)
                 try:
                     new_span.set_attribute("output.value", '{}[status:{}]:{}'.format(message.events[0].event_type,message.events[0].status,message.answer))
                     new_span.set_attribute("LLM-RUN-Information."+'prompt-tokens', message.events[0].usage.prompt_tokens)
@@ -128,6 +128,11 @@ def _client_run_trace_output(output,span,tracer):
             span.set_attribute("llm.token_count.total", total_tokens)
         span.set_attribute("Agent-Running-Process",'==>'.join(run_list))
 
+    return generator_list
+
+def _return_generator(run_list) -> Generator:
+    for item in run_list:
+        yield item
 
 def _post_trace(tracer, func, *args, **kwargs):
     new_func = func
@@ -152,9 +157,14 @@ def _client_run_trace(tracer, func, *args, **kwargs):
         end_time = time.time()
         _time(start_time = start_time,end_time = end_time,span = new_span)
         new_span.set_attribute("openinference.span.kind",'Agent')
-        _client_run_trace_output(output=result,span = new_span,tracer=tracer)
+        generator_list = _client_run_trace_output(output=result,span = new_span,tracer=tracer)
         _client_input(args = args, kwargs = kwargs, span=new_span)
-    return result
+    
+    if generator_list:
+        result.content = _return_generator(generator_list)
+        return result
+    else:
+        return result
 
 
         
