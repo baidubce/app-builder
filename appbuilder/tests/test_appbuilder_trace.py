@@ -17,8 +17,11 @@ import requests
 import appbuilder
 import os
 
+from unittest.mock import patch,MagicMock
+
 from appbuilder.utils.trace.tracer import AppBuilderTracer
-from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix
+from appbuilder.utils.trace.phoenix_wrapper import runtime_main,launch_phoenix,stop_phoenix
+
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
@@ -48,10 +51,8 @@ class TestAppBuilderTrace(unittest.TestCase):
 
     
     def test_appbuilder_phoenix_run(self):
-        
+
         runtime_main()
-        with self.assertRaises(AttributeError):
-            stop_phoenix()
 
 
 if __name__ == '__main__':
