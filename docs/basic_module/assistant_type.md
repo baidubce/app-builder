@@ -1097,6 +1097,9 @@ def run(self,
         tools: Optional[list[assistant_type.AssistantTool]] = [],
         metadata: Optional[dict] = {},
         tool_output: Optional[thread_type.ToolOutput] = None,
+        model_parameters: Optional[public_type.AssistantModelParameters] = None,
+        user_info: Optional[public_type.AssistantUserInfo] = None,
+        user_loc: Optional[public_type.AssistantUserLoc] = None,
         ) -> thread_type.RunResult:
     """
     Args:
@@ -1111,13 +1114,15 @@ def run(self,
         tools (Optional[list[assistant_type.AssistantTool]], optional): 工具列表. Defaults to [].
         metadata (Optional[dict], optional): 元数据. Defaults to {}.
         tool_output (Optional[thread_type.ToolOutput], optional): 工具输出. Defaults to None.
-    
+        model_parameters (Optional[public_type.AssistantModelParameters], optional): 模型运行参数. Defaults to None.
+        user_info (Optional[public_type.AssistantUserInfo], optional): 用户身份信息. Defaults to None.
+        user_loc (Optional[public_type.AssistantUserLoc], optional): 用户定位信息. Defaults to None.
     Returns:
         thread_type.RunResult: 运行结果
-    
+
     Raises:
-        ValueError: thread_id和thread不能同时为空
-    
+        ValueError: thread_id和thread不能同时为空,model_parameters的各个参数不在规定范围内
+
     Note:
         1. 如果thread_id没有传，则thread必须要传值
         2. 如果这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user
@@ -1140,9 +1145,15 @@ class AssistantRunRequest(BaseModel):
     thought_instructions: Optional[str] = Field(default="", max_length=4096)
     chat_instructions: Optional[str] = Field(default="", max_length=4096)
     stream: Optional[bool] = False
+    model_parameters: Optional[AssistantModelParameters] = AssistantModelParameters()
+    class Config:
+        extra = "forbid"
+        protected_namespaces = ()
     thread: Optional[AssistantThread] = None
     tools: Optional[list[AssistantTool]] = []
     tool_output: Optional[ToolOutput] = None
+    user_info: Optional[AssistantUserInfo] = None
+    user_loc: Optional[AssistantUserLoc] = None
 ```
 
 - appbuilder.assistant.threads..runs.run 的[流式响应参数](https://cloud.baidu.com/doc/AppBuilder/s/dlv0g4x9m#%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94%E5%8F%82%E6%95%B0)
@@ -1181,44 +1192,48 @@ class RunResult(BaseModel):
 
 ```python
 def stream_run(self,
-                assistant_id: str,
-                thread_id: Optional[str] = "",
-                thread: Optional[thread_type.AssistantThread] = None,
-                model: Optional[str] = "ERNIE-4.0-8K",
-                response_format: Optional[str] = "text",
-                instructions: Optional[str] = "",
-                thought_instructions: Optional[str] = "",
-                chat_instructions: Optional[str] = "",
-                tools: Optional[list[assistant_type.AssistantTool]] = [],
-                metadata: Optional[dict] = {},
-                tool_output: Optional[thread_type.ToolOutput] = None,
-                ):
+        assistant_id: str,
+        thread_id: Optional[str] = "",
+        thread: Optional[thread_type.AssistantThread] = None,
+        model: Optional[str] = "ERNIE-4.0-8K",
+        response_format: Optional[str] = "text",
+        instructions: Optional[str] = "",
+        thought_instructions: Optional[str] = "",
+        chat_instructions: Optional[str] = "",
+        tools: Optional[list[assistant_type.AssistantTool]] = [],
+        metadata: Optional[dict] = {},
+        tool_output: Optional[thread_type.ToolOutput] = None,
+        model_parameters: Optional[public_type.AssistantModelParameters] = None,
+        user_info: Optional[public_type.AssistantUserInfo] = None,
+        user_loc: Optional[public_type.AssistantUserLoc] = None,
+        ) -> Union[thread_type.StreamRunStatus, thread_type.StreamRunMessage, None]:
     """
     启动一个流式运行的对话，用于处理对话流中的消息。
-    
+
     Args:
-        assistant_id (str): 助理ID。
-        thread_id (Optional[str], optional): 线程ID，用于恢复历史对话。默认为空字符串。
-        thread (Optional[thread_type.AssistantThread], optional): 线程对象，用于恢复历史对话。默认为None。
-        model (Optional[str], optional): 使用的模型名称。默认为"ERNIE-4.0-8K"。
-        response_format (Optional[str], optional): 响应格式，支持"text"和"json"两种格式。默认为"text"。
-        instructions (Optional[str], optional): 指令文本。默认为空字符串。
-        thought_instructions (Optional[str], optional): 思考指令文本。默认为空字符串。
-        chat_instructions (Optional[str], optional): 聊天指令文本。默认为空字符串。
-        tools (Optional[list[assistant_type.AssistantTool]], optional): 使用的工具列表。默认为空列表。
-        metadata (Optional[dict], optional): 元数据字典。默认为空字典。
-        tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象。默认为None。
-    
+    assistant_id (str): 助理ID。
+    thread_id (Optional[str], optional): 线程ID，用于恢复历史对话。默认为空字符串。
+    thread (Optional[thread_type.AssistantThread], optional): 线程对象，用于恢复历史对话。默认为None。
+    model (Optional[str], optional): 使用的模型名称。默认为"ERNIE-4.0-8K"。
+    response_format (Optional[str], optional): 响应格式，支持"text"和"json"两种格式。默认为"text"。
+    instructions (Optional[str], optional): 指令文本。默认为空字符串。
+    thought_instructions (Optional[str], optional): 思考指令文本。默认为空字符串。
+    chat_instructions (Optional[str], optional): 聊天指令文本。默认为空字符串。
+    tools (Optional[list[assistant_type.AssistantTool]], optional): 使用的工具列表。默认为空列表。
+    metadata (Optional[dict], optional): 元数据字典。默认为空字典。
+    tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象。默认为None。
+    model_parameters (Optional[public_type.AssistantModelParameters], optional): 模型参数对象。默认为None。
+
     Returns:
-        Iterator[thread_type.AssistantRunEvent]: 返回一个迭代器，用于遍历流式运行中的事件。
-    
+    Union[thread_type.StreamRunStatus, thread_type.StreamRunMessage, None]: 返回一个迭代器，每次迭代返回一个处理结果对象，可能是 StreamRunStatus 或 StreamRunMessage。
+
     Raises:
-        ValueError: 如果thread_id和thread参数同时为空，则会引发ValueError异常。
-    
+    ValueError: 如果thread_id和thread参数同时为空，则会引发ValueError异常。
+
     Note:
-        1. 如果thread_id没有传，则thread必须要传值。
-        2. 如果这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user。
-        3. 如果这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user。
+    1. 如果thread_id没有传，则thread必须要传值。
+    2. 如果这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user。
+    3. 如果这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user。
     """
 ```
 
@@ -1406,4 +1421,86 @@ class ResponseFormat(str, Enum):
     """
     TEXT = 'text'
     JSON_OBJECT = 'json_object'
+```
+
+- AssistantModelParameters
+  - AssistantThoughtParameters
+  - AssistantChatParameters
+
+```python
+class AssistantModelParameters(BaseModel):
+    """
+    表示助理模型的参数的模型。
+    Attributes:
+        chat_parameters (Optional[AssistantChatParameters]): 聊天参数的实例，默认为None。
+        thought_parameters (Optional[AssistantThoughtParameters]): 思考参数的实例，默认为None。
+    """
+    chat_parameters: Optional[AssistantChatParameters] = AssistantChatParameters()
+    thought_parameters: Optional[AssistantThoughtParameters] = AssistantThoughtParameters()
+
+
+class AssistantThoughtParameters(BaseModel):
+    """
+    表示助理思考参数的模型。
+    Attributes:
+        temperature (Optional[float]): 	采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01。
+        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0。
+        penalty_score (Optional[float]): 惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。取值范围大于等于1，小于等于2，默认为1.0。
+    """
+    temperature: Optional[float] = 0.01
+    top_p: Optional[float] = 0
+    penalty_score: Optional[float] = 1.0
+
+
+class AssistantChatParameters(BaseModel):
+    """
+    表示助理聊天参数的模型。
+    Attributes:
+        temperature (Optional[float]): 	采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.8。
+        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0.8。
+        penalty_score (Optional[float]): 惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。
+    """
+    temperature: Optional[float] = 0.8
+    top_p: Optional[float] = 0.8
+    penalty_score: Optional[float] = 1.0
+```
+
+
+-AssistantUserInfo
+
+```python
+class AssistantUserInfo(BaseModel):
+    """
+    表示用户信息。
+    Attributes:
+        id (Optional[str]): 用户ID，默认为None。
+        name (Optional[str]): 用户名称，默认为None。
+        nickname (Optional[str]): 用户昵称，默认为None。
+        watermark (Optional[str]): 用户水印，默认为None。
+        intro (Optional[str]): 用户简介，默认为None。
+        baidu_id (Optional[str]): 用户百度ID，默认为None。
+    """
+    id:Optional[str] = None
+    name:Optional[str] = None
+    nickname:Optional[str] = None
+    watermark:Optional[str] = None
+    intro:Optional[str] = None
+    baidu_id: Optional[str] = None 
+```
+
+- AssistantUserLoc
+
+```python
+class AssistantUserLoc(BaseModel):
+    """
+    表示用户位置信息。
+    Attributes:
+        loc (Optional[str]): 用户当前的地理位置信息，使用json格式描述
+        uip (Optional[str]): 用户的ipv4地址
+        uipv6 (Optional[str]): 用户的ipv6地址
+    """
+    loc:Optional[str] = None
+    uip:Optional[str] = None
+    uipv6:Optional[str] = None
+
 ```
