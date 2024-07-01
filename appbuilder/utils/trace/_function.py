@@ -51,7 +51,7 @@ def _post_input(args,kwargs,span):
             json_body=kwargs.get('json',None), 
             timeout=kwargs.get('timeout',None), 
             )
-        span.set_attribute("input.value","控制台curl命令:{}".format(curl))
+        span.set_attribute("input.value","控制台curl命令:\n{}".format(curl))
     except:
         if kwargs:
             for key,value in kwargs.items():
