@@ -30,6 +30,8 @@ from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, 
     ASRInMsg, ASROutMsg
 
 DEFAULT_AUDIO_MAX_DURATION = 55 * 1000  # 55s
+# 参考短语音极速版API(https://ai.baidu.com/ai-doc/SPEECH/Jlbxdezuf)
+DEFAULT_FRAME_RATE = 16000
 
 
 class ASR(Component):
@@ -200,7 +202,7 @@ class ASR(Component):
         raw_audios = _convert(audio_file.name, file_type)
         text = ""
         for raw_audio in raw_audios:
-            content_data = {"audio_format": "wav", "raw_audio": raw_audio, "rate": 16000}
+            content_data = {"audio_format": "wav", "raw_audio": raw_audio, "rate": DEFAULT_FRAME_RATE}
             msg = Message(content_data)
             out = self.run(msg)
             text += "".join(out.content["result"])
@@ -232,22 +234,23 @@ def _convert(path, file_type):
         # pydub自动检测音频类型
         audio = AudioSegment.from_wav(path)
     # 如果取样率为16000且时长小于60s，则直接读取音频并返回
-    if audio.frame_rate == 16000 and audio.frame_count() * 1000 / audio.frame_rate < DEFAULT_AUDIO_MAX_DURATION:
+    if (audio.frame_rate == DEFAULT_FRAME_RATE and audio.frame_count() * 1000
+            / audio.frame_rate < DEFAULT_AUDIO_MAX_DURATION):
         return [open(path, "rb").read()]
-    audio = audio.set_frame_rate(16000)
+    audio = audio.set_frame_rate(DEFAULT_FRAME_RATE)
     total_milliseconds = int(audio.frame_count() * 1000 / audio.frame_rate)
     start = 0
-    raw_audio_segs = []
+    raw_audios = []
     while start < total_milliseconds:
         end = start + DEFAULT_AUDIO_MAX_DURATION
         if start + DEFAULT_AUDIO_MAX_DURATION > total_milliseconds:
             end = total_milliseconds
         audio_seg = audio[start:end]
         audio_seg_file = tempfile.NamedTemporaryFile("wb", suffix="wav")
-        audio_seg.export(audio_seg_file.name, format="wav")
-        raw_audio_segs.append(open(audio_seg_file.name, "rb").read())
+        try:
+            audio_seg.export(audio_seg_file.name, format="wav")
+            raw_audios.append(open(audio_seg_file.name, "rb").read())
+        finally:
+            audio_seg_file.close()
         start = end
-        audio_seg_file.close()
-    return raw_audio_segs
-
-
+    return raw_audios
