@@ -84,31 +84,32 @@ def _client_run_trace_output(output,span,tracer):
             for message in output.content:
                 new_span.set_attribute("openinference.span.kind",'agent')
                 generator_list.append(message)
-                try:
-                    context_message_str=""
-                    has_reference = False
-                    for context_message in message.events[0].detail['references']:
+
+                context_message_str=""
+                has_reference = False
+                if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'detail') and message.events[0].detail:
+                    context_message_list = message.events[0].detail.get('references',None)
+                if context_message_list:
+                    for context_message in context_message_list:
                         for context_message_key,context_message_value in context_message.items():
                             context_message_str += '{}: {}\n'.format(context_message_key, context_message_value)
                             has_reference = True
                         context_message_str +='\n'
-                    if has_reference:
-                        new_span.set_attribute("input.value", 'Context(上下文) For RAG:\n{}'.format(context_message_str))
-                except:
-                    pass
+                if has_reference:
+                    new_span.set_attribute("input.value", 'Context(上下文) For RAG:\n{}'.format(context_message_str))
                 try:
                     new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
                 except Exception as e:
                     print(e)
                 result += message.answer
-                try:
+                
+                if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'event_type') and hasattr(message.events[0], 'status'):
                     run_list.append('{}[status:{}]'.format(message.events[0].event_type,message.events[0].status))
-                except: pass
-                try:
+                
+                if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'usage') and message.events[0].usage and hasattr(message.events[0].usage, 'prompt_tokens'):   
                     prompt_tokens = message.events[0].usage.prompt_tokens
                     completion_tokens = message.events[0].usage.completion_tokens
                     total_tokens = message.events[0].usage.total_tokens
-                except:pass
                 
                 new_span.end()
                 new_span = tracer.start_span('Client-Stream')
@@ -123,11 +124,11 @@ def _client_run_trace_output(output,span,tracer):
             events = output.content.events
             for event in events:
                 run_list.append('{}[status:{}]'.format(event.event_type,event.status))
-                try:
+                if hasattr(event, 'usage') and event.usage and hasattr(event.usage, 'prompt_tokens'):
                     prompt_tokens += event.usage.prompt_tokens
                     completion_tokens += event.usage.completion_tokens
                     total_tokens += event.usage.total_tokens
-                except:pass
+
         if total_tokens:
             span.set_attribute("llm.token_count.prompt",prompt_tokens)
             span.set_attribute("llm.token_count.completion", completion_tokens)
