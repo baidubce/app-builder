@@ -19,7 +19,7 @@ import os
 
 from unittest.mock import patch,MagicMock
 
-from appbuilder.utils.trace.tracer import AppBuilderTracer
+from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
 from appbuilder.utils.trace.phoenix_wrapper import runtime_main
 from appbuilder.core.console.appbuilder_client import get_app_list
 
@@ -29,7 +29,7 @@ class TestAppBuilderTrace(unittest.TestCase):
         self.app_id = "2a19f6dd-de02-46d9-841d-ef5c52b00466"
     
     def test_appbuilder_client_trace(self):
-        
+
         tracer=AppBuilderTracer(
             enable_phoenix = True,
             enable_console = True,
@@ -55,12 +55,19 @@ class TestAppBuilderTrace(unittest.TestCase):
         tracer.end_trace()
 
 
-    def test_client_tool_trace_output(self):
-        from appbuilder.utils.trace._function import _client_tool_trace_output
+    def test_client_trace_function(self):
+        from appbuilder.utils.trace._function import _client_tool_trace_output,_client_tool_trace_output_deep_iterate
         class Test:
             test = 'test'
         _client_tool_trace_output(Test,None)
 
+        _client_tool_trace_output_deep_iterate({},None)
+
+    def test_trace_tracer(self):
+        tracer=AppbuilderInstrumentor()
+        tracer.instrumentation_dependencies()
+        tracer._instrument()
+        
 
     def test_appbuilder_phoenix_run(self):
 
