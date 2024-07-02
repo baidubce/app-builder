@@ -20,7 +20,7 @@ import os
 from unittest.mock import patch,MagicMock
 
 from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
-from appbuilder.utils.trace.phoenix_wrapper import runtime_main
+from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix
 from appbuilder.core.console.appbuilder_client import get_app_list
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
@@ -72,6 +72,11 @@ class TestAppBuilderTrace(unittest.TestCase):
     def test_appbuilder_phoenix_run(self):
 
         runtime_main()
+        with self.assertRaises(TypeError):
+            stop_phoenix()
+        
+
+
 
 
 if __name__ == '__main__':
