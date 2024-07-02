@@ -164,11 +164,19 @@ def _client_tool_trace_output(output, span):
         _client_tool_trace_output_deep_iterate(output=output,span=span)
 
 
-def _post_trace(tracer, func, *args, **kwargs):
-    url = ""
-    if len(args) > 1:
-        url = args[-1]
+def _tool_name(args):
+
+    class_name = args[0].__qualname__.split('.')[0]
+    function_name = args[0].__name__
+    if class_name == function_name:
+        return "{}".format(function_name) 
     else:
+        return "{}-{}".format(class_name,function_name)
+    
+
+def _post_trace(tracer, func, *args, **kwargs):
+    url = args[-1]
+    if not isinstance(url, str):
         url = kwargs.get('url','')
     method = url.split('/')[-1]
     with tracer.start_as_current_span("HTTP-POST: {}".format(method)) as new_span:
@@ -198,9 +206,7 @@ def _client_run_trace(tracer, func, *args, **kwargs):
         return result
 
 def _client_tool_trace(tracer, func, *args, **kwargs):
-    class_name = args[0].__qualname__.split('.')[0]
-    function_name = args[0].__name__
-    with tracer.start_as_current_span("{}-{}".format(class_name,function_name)) as new_span:
+    with tracer.start_as_current_span(_tool_name(args=args)) as new_span:
         start_time = time.time()
         result=func(*args, **kwargs)
         end_time = time.time()

@@ -21,6 +21,7 @@ from unittest.mock import patch,MagicMock
 
 from appbuilder.utils.trace.tracer import AppBuilderTracer
 from appbuilder.utils.trace.phoenix_wrapper import runtime_main
+from appbuilder.core.console.appbuilder_client import get_app_list
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
@@ -32,7 +33,7 @@ class TestAppBuilderTrace(unittest.TestCase):
     def test_appbuilder_client_trace(self):
         
         tracer=AppBuilderTracer(
-            enable_phoenix = False,
+            enable_phoenix = True,
             enable_console = True,
             )
         
@@ -47,12 +48,16 @@ class TestAppBuilderTrace(unittest.TestCase):
         # test stream = False
         builder.run(conversation_id=conversation_id, query="你可以做什么？")
 
+        # test get_app_list
+        get_app_list()
+
         tracer.end_trace()
 
     
     def test_appbuilder_phoenix_run(self):
 
         runtime_main()
+
 
 
 if __name__ == '__main__':
