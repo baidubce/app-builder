@@ -74,9 +74,6 @@ class TestAppBuilderTrace(unittest.TestCase):
         runtime_main()
         with self.assertRaises(TypeError):
             stop_phoenix()
-        
-
-
 
 
 if __name__ == '__main__':

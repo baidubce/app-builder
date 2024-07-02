@@ -15,14 +15,10 @@ python3 -m pip install arize-phoenix==4.5.0 -i https://pypi.tuna.tsinghua.edu.cn
 **启动phoenix服务**
 
 ```bash
-# 设置 timeout 为 10 秒
-python3 phoenix_wrapper.py --timeout 10
-
-# 不设置 timeout，服务常驻运行
-python3 phoenix_wrapper.py
-
-phoenix_wrapper.py文件路径为:appbuilder/utils/trace/phoenix_wrapper.py
+appbuilder_trace_server
 ```
+
+- 使用ctrl+c停止phoenix服务
 
 ### 启动Appbuilder-SDK TRACE
 
@@ -54,5 +50,3 @@ for m in msg.content:
 # 结束trace
 tracer.end_trace()
 ```
-
-**接下来你就可以在Phoenix和控制台中查看你的trace信息了**
