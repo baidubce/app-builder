@@ -53,3 +53,15 @@ class InnerSession(requests.sessions.Session):
     @session_post
     def post(self, url, data=None, json=None, **kwargs):
         return super().post(url = url, data=data, json=json, **kwargs)
+    
+    @session_post
+    def delete(self, url, **kwargs):
+        return super().delete(url = url, **kwargs)
+    
+    @session_post
+    def get(self, url, **kwargs):
+        return super().get(url = url, **kwargs)
+    
+    @session_post
+    def put(self, url, data=None, **kwargs):
+        return super().put(url = url, data=data, **kwargs)
