@@ -21,6 +21,10 @@ def client_run_trace_func(func, *args, **kwargs):
     return func(*args, **kwargs)
 
 
+def client_tool_trace_func(func, *args, **kwargs):
+    return func(*args, **kwargs)
+
+
 def session_post(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -35,5 +39,14 @@ def client_run_trace(func):
     def wrapper(*args, **kwargs):
 
         return client_run_trace_func(func, *args, **kwargs)
+    
+    return wrapper 
+
+
+def client_tool_trace(func):
+    @wraps(func)
+
+    def wrapper(*args, **kwargs):
+        return client_tool_trace_func(func, *args, **kwargs)
     
     return wrapper 

@@ -71,7 +71,6 @@ def _client_input(args,kwargs,span):
         print(e)
 
 
-
 def _client_run_trace_output(output,span,tracer):
     if output:
         run_list = []
@@ -141,10 +140,31 @@ def _return_generator(run_list) -> Generator:
     for item in run_list:
         yield item
 
+def _client_tool_trace_output_deep_iterate(output,span):
+    input_dict={}
+    type_name = (bool,str,bytes,int,float,list,dict)
+    try:    
+        if isinstance(output, dict):
+            for key, value in dict(output).items():
+                if isinstance(value, type_name):
+                    input_dict[key] = str(value)
+            span.set_attribute("output.value",json.dumps(input_dict, ensure_ascii=False))
+        else:
+            if isinstance(output, type_name):
+                span.set_attribute("output.value",str(output))
+    except Exception as e:
+        print(e)
+
+
+def _client_tool_trace_output(output, span):
+    if inspect.isclass(output):
+        output_dict = output.__dict__
+        _client_tool_trace_output_deep_iterate(output=output_dict,span=span)
+    else:
+        _client_tool_trace_output_deep_iterate(output=output,span=span)
+
+
 def _post_trace(tracer, func, *args, **kwargs):
-    new_func = func
-    func=args[0]
-    func = new_func
     url = ""
     if len(args) > 1:
         url = args[-1]
@@ -161,9 +181,6 @@ def _post_trace(tracer, func, *args, **kwargs):
     return result
 
 def _client_run_trace(tracer, func, *args, **kwargs):
-    new_func = func
-    func=args[0]
-    func = new_func 
     with tracer.start_as_current_span('AppBuilderClient-RUN') as new_span:
         start_time = time.time()
         result=func(*args, **kwargs)
@@ -180,5 +197,15 @@ def _client_run_trace(tracer, func, *args, **kwargs):
     else:
         return result
 
-
+def _client_tool_trace(tracer, func, *args, **kwargs):
+    class_name = args[0].__qualname__.split('.')[0]
+    function_name = args[0].__name__
+    with tracer.start_as_current_span("{}-{}".format(class_name,function_name)) as new_span:
+        start_time = time.time()
+        result=func(*args, **kwargs)
+        end_time = time.time()
+        _time(start_time = start_time,end_time = end_time,span = new_span)
+        new_span.set_attribute("openinference.span.kind",'tool')
+        _client_tool_trace_output(output=result, span = new_span)
+    return result
         

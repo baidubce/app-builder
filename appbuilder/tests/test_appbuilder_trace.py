@@ -20,7 +20,7 @@ import os
 from unittest.mock import patch,MagicMock
 
 from appbuilder.utils.trace.tracer import AppBuilderTracer
-from appbuilder.utils.trace.phoenix_wrapper import runtime_main,launch_phoenix,stop_phoenix
+from appbuilder.utils.trace.phoenix_wrapper import runtime_main
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
