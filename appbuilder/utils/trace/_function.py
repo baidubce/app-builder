@@ -144,12 +144,18 @@ def _return_generator(run_list) -> Generator:
 def _post_trace(tracer, func, *args, **kwargs):
     new_func = func
     func=args[0]
-    func = new_func 
-    with tracer.start_as_current_span("HTTP-POST") as new_span:
+    func = new_func
+    url = ""
+    if len(args) > 1:
+        url = args[-1]
+    else:
+        url = kwargs.get('url','')
+    method = url.split('/')[-1]
+    with tracer.start_as_current_span("HTTP-POST: {}".format(method)) as new_span:
         start_time = time.time()
         result=func(*args, **kwargs)
         end_time = time.time()
-        new_span.set_attribute("openinference.span.kind",'chain')
+        new_span.set_attribute("openinference.span.kind",'tool')
         _time(start_time = start_time,end_time = end_time,span = new_span)
         _post_input(args = args, kwargs = kwargs,span = new_span)
     return result
