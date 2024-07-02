@@ -1,7 +1,7 @@
 # 获取AppBuilder已发布的应用列表
 
 ## 简介
-该接口可以
+该接口可获取用户在 AppBuilder已发布的应用列表，包括模型名称、模型描述、模型的ID
 
 ## 基本用法
 
@@ -13,8 +13,8 @@ import appbuilder
 # 设置环境变量和初始化
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
-models = appbuilder.get_model_list(api_type_filter=["chat"], is_available=True)
-print(models)
+app_list = appbuilder.get_app_list()
+print(app_list)
 ```
 ## 参数说明
 
@@ -30,21 +30,25 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 无
 
 ### 调用参数
-|参数名称 | 参数类型         | 是否必须 |描述 | 示例值  |
-|--------|--------------|------|----|------|
-|secret_key | String       | 否    |用户鉴权token, 默认从环境变量中获取| bce-YOURTOKEN |
-|api_type_filter| List[String] | 否    |根据apiType过滤，["chat", "completions", "embeddings", "text2image"]，不填包括所有的。| chat |
-|is_available| Boolean      | 否    |是否返回可用模型列表, 默认返回所有模型。| True |
+
+`get_app_list`方法返回类型为 `list[AppOverview]`,其中 `AppOverview` 结构如下：
+
+```python
+class AppOverview(BaseModel):
+    id: str = Field("", description="应用ID")
+    name: str = Field("", description="应用名称")
+    description: str = Field("", description="应用简介")
+```
 
 
 ### 返回示例
-['ERNIE-Bot 4.0', 'ERNIE-Bot', 'ERNIE-Bot-turbo']
+[AppOverview(id='e97865e7-e1be-45d3-ab8a-ea84ca6e0b9a', name='二次元风格图片生成助手', description='生成二次元风格图片，一键生成你的专属动漫风格作品'), AppOverview(id='982aaa98-60d4-4120-b4ab-3404a95a61e1', name='智能客服机器人', description='智能回答文字问题，解析程序报错并给出建议'), AppOverview(id='c59cb95b-8c42-4102-8582-df07bde8d4cc', name='招聘海报大师', description='一键生成招聘海报，高效宣传职位需求'), AppOverview(id='42eb211a-14b9-43d2-9fae-193c8760ef26', name='地理小达人', description='提供地理知识解答，如地名由来、地形地貌等。')]
 
 
 ## 高级用法
 
-目前该模块仅提供获取千帆模型列表功能。
+目前该模块提供获取AppBuilder已发布应用的功能，获取的应用ID，可以配合`AppBuilderClient` SDK进行应用调用。
 
 
 ## 更新记录和贡献
-* 千帆模型列表获取能力 (2024-1)
+* 千帆模型列表获取能力 (2024-7)
