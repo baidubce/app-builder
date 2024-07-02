@@ -23,13 +23,11 @@ from appbuilder.utils.trace.tracer import AppBuilderTracer
 from appbuilder.utils.trace.phoenix_wrapper import runtime_main
 from appbuilder.core.console.appbuilder_client import get_app_list
 
-
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
     def setUp(self):
-        self.app_id = "aa8af334-df27-4855-b3d1-0d249c61fc08"
+        self.app_id = "2a19f6dd-de02-46d9-841d-ef5c52b00466"
     
-
     def test_appbuilder_client_trace(self):
         
         tracer=AppBuilderTracer(
@@ -43,21 +41,30 @@ class TestAppBuilderTrace(unittest.TestCase):
         conversation_id = builder.create_conversation()
         
         # test stream = True
-        builder.run(conversation_id=conversation_id, query="你可以做什么？",stream=True)
+        msg = builder.run(conversation_id=conversation_id, query="人参有什么用？",stream=True)
+        for m in msg.content:
+            print(m)
 
         # test stream = False
-        builder.run(conversation_id=conversation_id, query="你可以做什么？")
+        builder.run(conversation_id=conversation_id, query="人参有什么用？")
 
         # test get_app_list
         get_app_list()
 
+
         tracer.end_trace()
 
-    
+
+    def test_client_tool_trace_output(self):
+        from appbuilder.utils.trace._function import _client_tool_trace_output
+        class Test:
+            test = 'test'
+        _client_tool_trace_output(Test,None)
+
+
     def test_appbuilder_phoenix_run(self):
 
         runtime_main()
-
 
 
 if __name__ == '__main__':
