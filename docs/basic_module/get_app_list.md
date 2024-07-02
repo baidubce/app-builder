@@ -42,7 +42,9 @@ class AppOverview(BaseModel):
 
 
 ### 返回示例
+```shell
 [AppOverview(id='e97865e7-e1be-45d3-ab8a-ea84ca6e0b9a', name='二次元风格图片生成助手', description='生成二次元风格图片，一键生成你的专属动漫风格作品'), AppOverview(id='982aaa98-60d4-4120-b4ab-3404a95a61e1', name='智能客服机器人', description='智能回答文字问题，解析程序报错并给出建议'), AppOverview(id='c59cb95b-8c42-4102-8582-df07bde8d4cc', name='招聘海报大师', description='一键生成招聘海报，高效宣传职位需求'), AppOverview(id='42eb211a-14b9-43d2-9fae-193c8760ef26', name='地理小达人', description='提供地理知识解答，如地名由来、地形地貌等。')]
+```
 
 
 ## 高级用法
