@@ -139,6 +139,8 @@ from appbuilder.core.assistant.threads.runs import StreamRunContext
 from appbuilder.core.assistant.threads.runs import AssistantEventHandler
 from appbuilder.core.assistant.threads.runs import AssistantStreamManager
 
+from appbuilder.utils.trace.tracer import AppBuilderTracer
+
 __all__ = [
     'logger',
 
@@ -208,5 +210,7 @@ __all__ = [
     "assistant",
     "StreamRunContext",
     "AssistantEventHandler",
-    "AssistantStreamManager"
+    "AssistantStreamManager",
+
+    "AppBuilderTracer"
 ]
