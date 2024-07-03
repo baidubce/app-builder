@@ -34,3 +34,12 @@
   * 支持AppBuilder Client通过chainlit进行可视化的服务化部署
   * 优化SDK的报错信息提示，方便开发者进行debug
   * 修复文档格式转换组件的域名错误问题
+* **2024.06.11 v0.8.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.8.0)
+  * 提供功能更强大的Debug模式
+  * 支持AppBuilder Client通过chainlit进行可视化的服务化部署
+  * 多个组件进行了效果优化与说明文档更新
+* **2024.06.28 v0.9.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.0)
+  * Python/Go/Jave Console SDK 上新，支持Token用量返回，支持`get_app_list`， 支持`KnowledgeBase`功能
+  * 新增AppBuilder-SDK Depoly功能，支持用户使用SDK快速部署本地组件orAgent应用到百度智能云，并对外提供服务
+  * 更新SDK超参，支持SDK在私有化部署环境的使用
+  * 更新口语化组件，优化效果
