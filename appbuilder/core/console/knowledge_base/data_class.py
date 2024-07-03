@@ -25,7 +25,6 @@ class KnowledgeBaseUploadFileResponse(BaseModel):
 
 
 class CustomProcessRule(BaseModel):
-    # separators 强制填写
     separators: list[str] = Field(..., description="分段符号列表", example=[",", "?"])
     target_length: int = Field(..., description="分段最大长度", ge=300, le=1200)
     overlap_rate: float = Field(..., description="分段重叠最大字数占比，推荐值0.25", ge=0, le=0.3, example=0.2)
@@ -79,4 +78,4 @@ class Document(BaseModel):
 
 class KnowledgeBaseGetDocumentsListResponse(BaseModel):
     request_id: str = Field(..., description="请求ID")
-    data: list[dict] = Field([], description="文档信息列表")
+    data: list[Document] = Field([], description="文档信息列表")
