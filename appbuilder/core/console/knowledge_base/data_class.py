@@ -70,7 +70,7 @@ class DocumentMeta(BaseModel):
 class Document(BaseModel):
     id: str = Field(..., description="文档ID")
     name: str = Field(..., description="文档名称")
-    created_at: str = Field(..., description="文档创建时间")
+    created_at: int = Field(..., description="文档创建时间")
     word_count: int = Field(..., description="文档字数")
     enabled: bool = Field(True, description="文档是否可用")
     meta: Optional[DocumentMeta] = Field(..., description="文档元信息，包括source、file_id")
