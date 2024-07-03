@@ -32,7 +32,6 @@ class KnowledgeBase(Component):
         self.knowledge_name = knowledge_name
 
     @classmethod
-    @client_tool_trace
     def create_knowledge(cls, knowledge_name: str) -> 'KnowledgeBase':
         payload = json.dumps({"name": knowledge_name})
         http_client = HTTPClient()
@@ -46,7 +45,6 @@ class KnowledgeBase(Component):
         response = response.json()["result"]
         return KnowledgeBase(knowledge_id=response["id"], knowledge_name=response["name"])
 
-    @client_tool_trace
     def upload_file(self, file_path: str) -> data_class.KnowledgeBaseUploadFileResponse:
         if not os.path.exists(file_path):
             raise FileNotFoundError("File {} does not exist".format(file_path))
@@ -72,7 +70,6 @@ class KnowledgeBase(Component):
 
         return resp
 
-    @client_tool_trace
     def add_document(self,
                      content_type: str,
                      file_ids: list[str] = [],
@@ -109,7 +106,6 @@ class KnowledgeBase(Component):
         resp = data_class.KnowledgeBaseAddDocumentResponse(**data)
         return resp
 
-    @client_tool_trace
     def delete_document(self, document_id: str, knowledge_base_id: Optional[str] = None):
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -136,7 +132,6 @@ class KnowledgeBase(Component):
         resp = data_class.KnowledgeBaseDeleteDocumentResponse(**data)
         return resp
 
-    @client_tool_trace
     def get_documents_list(self, limit: int = 10, after: Optional[str] = "", before: Optional[str] = "", knowledge_base_id: Optional[str] = None):
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(

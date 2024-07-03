@@ -35,10 +35,13 @@ tracer=AppBuilderTracer(
 
 ```python
 # 启动trace 
+import os
+import appbuilder
+
 tracer.start_trace()
 
 os.environ["APPBUILDER_TOKEN"] = "YOUR_APPBUILDER_TOKEN"
-app_id = "YOUR_APPBUILDER_ID"
+app_id = "YOUR_APP_ID"
 
 builder = appbuilder.AppBuilderClient(app_id)
 conversation_id = builder.create_conversation()
