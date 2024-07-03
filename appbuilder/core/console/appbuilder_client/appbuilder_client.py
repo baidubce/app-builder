@@ -182,6 +182,7 @@ class AppBuilderClient(Component):
             url, headers=headers, json=req.model_dump(), timeout=None, stream=True)
         self.http_client.check_response_header(response)
         request_id = self.http_client.response_request_id(response)
+        print(request_id)
         if stream:
             client = SSEClient(response)
             return Message(content=self._iterate_events(request_id, client.events()))
