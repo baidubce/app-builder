@@ -131,7 +131,7 @@ class KnowledgeBase(Component):
         
         resp = data_class.KnowledgeBaseDeleteDocumentResponse(**data)
         return resp
-    
+
     def get_documents_list(self, limit: int = 10, after: Optional[str] = "", before: Optional[str] = "", knowledge_base_id: Optional[str] = None):
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
