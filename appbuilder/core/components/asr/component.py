@@ -202,7 +202,7 @@ class ASR(Component):
         raw_audios = _convert(audio_file.name, file_type)
         text = ""
         for raw_audio in raw_audios:
-            content_data = {"audio_format": "wav", "raw_audio": raw_audio, "rate": DEFAULT_FRAME_RATE}
+            content_data = {"audio_format": file_type, "raw_audio": raw_audio, "rate": DEFAULT_FRAME_RATE}
             msg = Message(content_data)
             out = self.run(msg)
             text += "".join(out.content["result"])
@@ -230,13 +230,18 @@ def _convert(path, file_type):
         audio = AudioSegment.from_mp3(path)
     elif file_type.lower() == "wav":
         audio = AudioSegment.from_wav(path)
+    # 如果是pcm格式，则直接读取并返回
+    elif file_type.lower() == "pcm":
+        with open(path, "rb") as f:
+            return [f.read()]
     else:
         # pydub自动检测音频类型
         audio = AudioSegment.from_wav(path)
     # 如果取样率为16000且时长小于60s，则直接读取音频并返回
     if (audio.frame_rate == DEFAULT_FRAME_RATE and audio.frame_count() * 1000
             / audio.frame_rate < DEFAULT_AUDIO_MAX_DURATION):
-        return [open(path, "rb").read()]
+        with open(path, "rb") as f:
+            return [f.read()]
     audio = audio.set_frame_rate(DEFAULT_FRAME_RATE)
     total_milliseconds = int(audio.frame_count() * 1000 / audio.frame_rate)
     start = 0
@@ -249,8 +254,12 @@ def _convert(path, file_type):
         audio_seg_file = tempfile.NamedTemporaryFile("wb", suffix="wav")
         try:
             audio_seg.export(audio_seg_file.name, format="wav")
-            raw_audios.append(open(audio_seg_file.name, "rb").read())
+            with open(audio_seg_file.name, "rb") as f:
+                raw_audios.append(f.read())
         finally:
             audio_seg_file.close()
         start = end
     return raw_audios
+
+
+

@@ -8,7 +8,6 @@ from appbuilder.core._exception import InvalidRequestArgumentError
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse
 import os
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestASRComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -23,6 +22,8 @@ class TestASRComponent(unittest.TestCase):
         self.audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
                               "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
                               "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
+        self.audio_speech_too_long_url = ("https://bj.bcebos.com/v1/agi-dev-platform-sdk-test/speech_too_long.wav?"
+                                          "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-07-01T03%3A41%3A00Z%2F300%2Fhost%2Febd71063a7ada87a722a6c9a801d95bd41f75f363236623882586ac9d37e7665")
         self.asr = appbuilder.ASR()
 
     def test_run(self):
@@ -142,6 +143,12 @@ class TestASRComponent(unittest.TestCase):
         with self.assertRaises(InvalidRequestArgumentError):
             result = self.asr.tool_eval(name="asr", streaming=True)
             next(result)
+
+    def test_tool_eval_speech_too_long(self):
+        """测试 tool 方法对有效请求的处理。"""
+        result = self.asr.tool_eval(name="asr", streaming=True, file_url=self.audio_speech_too_long_url)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
 
 
 if __name__ == '__main__':
