@@ -84,10 +84,10 @@ class TestAppBuilderTrace(unittest.TestCase):
             的执行情况和输出。
         
         """
-        from appbuilder.utils.trace._function import _client_tool_trace_output,_client_tool_trace_output_deep_iterate
+        from appbuilder.utils.trace._function import _output,_client_tool_trace_output_deep_iterate
         class Test:
             test = 'test'
-        _client_tool_trace_output(Test,None)
+        _output(Test,None)
 
         _client_tool_trace_output_deep_iterate({},None)
 
