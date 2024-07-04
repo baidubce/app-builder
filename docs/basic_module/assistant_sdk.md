@@ -7,9 +7,9 @@
 封装程度由高至低，提供了三种类型的SDK
 | 分类   | 场景及使用方式   | 百度云文档链接         | SDK 文档链接|
 |--------|--------|------------|------------|
-| 端到端应用 | 在 AppBuilder 产品界面上通过零代码、低代码方式创建的 AI 原生应用，支持通过应用 API/SDK 进行调用 | [应用API及SDK](https://cloud.baidu.com/doc/AppBuilder/s/Flpv3oxup) | [Agent SDK](./appbuilder_client.md) |
+| 端到端应用 | 在 AppBuilder 产品界面上通过零代码、低代码方式创建的 AI 原生应用，支持通过应用 API/SDK 进行调用 | [应用API及SDK](https://cloud.baidu.com/doc/AppBuilder/s/Plvggbuzc) | [Agent SDK](https://github.com/baidubce/app-builder/blob/master/docs/basic_module/appbuilder_client.md) |
 | 代码态智能体 | 基于 Assistants API，可通过全代码形式创建和调试专属智能体（Agent） | [AssistantAPI](https://cloud.baidu.com/doc/AppBuilder/s/nluzkdben) | *当前文档* |
-| 工具组件 | 基于组件 SDK，可调用包括大模型组件、AI能力组件等在内的多种组件 | [组件SDK](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz) | [组件列表](/appbuilder/core/components/) |
+| 工具组件 | 基于组件 SDK，可调用包括大模型组件、AI能力组件等在内的多种组件 | [组件SDK](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz) | [组件列表](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1) |
 
 Assistants API/SDK 正在内测中，敬请期待公测版本。
 
@@ -29,7 +29,7 @@ Assistant SDK允许您在自己的应用程序中，使用纯代码构建人工�
 
 ## 基本用法
 
-以下是使用SDK进行构建的代码示例，更多详细信息请参考[Assistant API文档](https://cloud.baidu.com/doc/AppBuilder/s/nluzkdben) 与 [Assistant SDK 数据类型文档](./assistant_type.md)
+以下是使用SDK进行构建的代码示例，更多详细信息请参考[Assistant API文档](https://cloud.baidu.com/doc/AppBuilder/s/nluzkdben) 与 [Assistant SDK 数据类型文档](https://cloud.baidu.com/doc/AppBuilder/s/nluzkdben)
 
 ### 总览
 一个标准的Assistant构建及使用过程如下：
@@ -291,6 +291,6 @@ msg_files = appbuilder.assistant.threads.messages.files(
 
 ## 进阶用法
 
-- [Assistant SDK 数据类型文档](./assistant_type.md)
-- [Assistant SDK 基础能力CookBook](/cookbooks/pipeline/assistant_function_call.ipynb)
+- [Assistant SDK 数据类型文档](https://cloud.baidu.com/doc/AppBuilder/s/nluzkdben)
+- [Assistant SDK 基础能力CookBook](https://github.com/baidubce/app-builder/blob/master/cookbooks/README.md)
 

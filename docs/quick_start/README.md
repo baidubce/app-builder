@@ -2,8 +2,8 @@
 
 该文档目录包含以下内容：
 
-- [SDK安装](./install.md)
-- [版本更新历史](./changelog.md)
+- [SDK安装](https://github.com/baidubce/app-builder/blob/master/docs/quick_start/install.md)
+- [版本更新历史](https://github.com/baidubce/app-builder/blob/master/docs/quick_start/changelog.md)
 
 ## 预备步骤
 在正式开始使用AppBuilder-SDK之前，可以阅读以下内容：
