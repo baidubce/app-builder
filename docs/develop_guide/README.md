@@ -2,8 +2,8 @@
 
 该文档目录包含以下内容：
 
-- [二次开发基本介绍](./README.md)
-- [AppBuilder SDK 运行环境超参配置说明](./env.md)
+- [二次开发基本介绍](https://github.com/baidubce/app-builder/blob/master/docs/develop_guide/README.md)
+- [AppBuilder SDK 运行环境超参配置说明](https://github.com/baidubce/app-builder/blob/master/docs/develop_guide/env.md)
 
 
 ## 二次开发
