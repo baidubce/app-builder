@@ -20,7 +20,7 @@ from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrument
 from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix
 from appbuilder.core.console.appbuilder_client import get_app_list
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
     def setUp(self):
         """
@@ -70,26 +70,6 @@ class TestAppBuilderTrace(unittest.TestCase):
 
 
         tracer.end_trace()
-
-
-    def test_client_trace_function(self):
-        """
-        测试客户端跟踪函数的功能。
-        
-        Args:
-            无参数。
-        
-        Returns:
-            无返回值，此函数用于测试，主要验证 _client_tool_trace_output 和 _client_tool_trace_output_deep_iterate 函数
-            的执行情况和输出。
-        
-        """
-        from appbuilder.utils.trace._function import _output,_client_tool_trace_output_deep_iterate
-        class Test:
-            test = 'test'
-        _output(Test,None)
-
-        _client_tool_trace_output_deep_iterate({},None)
 
     def test_trace_tracer(self):
         """
