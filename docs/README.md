@@ -1,23 +1,28 @@
 # AppBuilder-SDK Documentataion
 
 ## Github 文档
-- [快速开始](./quick_start/README.md)
-    - [安装说明](./quick_start/install.md)
-    - [版本说明](./quick_start/changelog.md)
-- [基础功能](./basic_module/README.md)
-    - [模型列表获取](./basic_module/get_model_list.md)
-    - [基础能力组件](./basic_module/components.md)
-    - [流程编排](./basic_module/assistant_sdk.md)
-    - [端到端应用](./basic_module/appbuilder_client.md)
-    - [知识库管理](./basic_module/dataset.md)
-- [进阶实践](./advanced_application/README.md)
-    - [CookBooks](../cookbooks/README.md)
-- [服务化部署](./service/README.md)
-    - [API调用](./service/flask.md)
-    - [交互式服务](./service/chainlit.md)
-    - [公有云部署](./service/cloud.md)
-- [二次开发](./develop_guide/README.md)
-    - [AppBuilder SDK 运行环境超参配置说明](./develop_guide/env.md)
+- [快速开始](/docs/quick_start/README.md)
+    - [安装说明](/docs/quick_start/install.md)
+    - [版本说明](/docs/quick_start/changelog.md)
+- [基础功能](/docs/basic_module/README.md)
+    - 平台功能 SDK: 支持Pyhon/Java/Go
+        - [应用管理](/docs/basic_module/get_app_list.md)
+        - [应用调用 AppBuilderClient SDK](/docs/basic_module/appbuilder_client.md) 
+        - [知识库管理 KnowledgeBase SDK](/docs/basic_module/knowledgebase.md)
+    - Assistant SDK：支持Python
+        - [Assistant SDK 快速开始](/docs/basic_module/assistant_sdk.md)
+        - [Assistant SDK API说明](/docs/basic_module/assistant_type.md)
+    - AI基础能力组件 SDK：支持Python
+        - [获取模型列表](/docs/basic_module/get_model_list.md)
+        - [基础能力组件](/docs/basic_module/components.md)
+- [进阶实践](/docs/advanced_application/README.md)
+    - [CookBooks](/cookbooks/README.md)
+- [SDK服务化部署](/docs/service/README.md)
+    - [API调用](/docs/service/flask.md)
+    - [交互式服务](/docs/service/chainlit.md)
+    - [公有云部署](/docs/service/cloud.md)
+- [二次开发](/docs/develop_guide/README.md)
+    - [AppBuilder SDK 运行环境超参配置说明](/docs/develop_guide/env.md)
 
 
 ## 平台文档

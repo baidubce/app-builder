@@ -23,8 +23,10 @@ from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._client import HTTPClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
+from appbuilder.utils.trace.tracer_wrapper import client_run_trace,client_tool_trace
 
 
+@client_tool_trace
 def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key: Optional[str] = None, gateway_v2: Optional[str] = None) -> list[data_class.AppOverview]:
     """
     该接口查询用户下状态为已发布的应用列表
@@ -97,6 +99,7 @@ class AppBuilderClient(Component):
                              " to get a valid app_id after your application is published.")
         self.app_id = app_id
 
+    @client_tool_trace
     def create_conversation(self) -> str:
         r"""创建会话并返回会话ID，会话ID在服务端用于上下文管理、绑定会话文档等，如需开始新的会话，请创建并使用新的会话ID
                 参数:
@@ -114,6 +117,7 @@ class AppBuilderClient(Component):
         resp = data_class.CreateConversationResponse(**data)
         return resp.conversation_id
 
+    @client_tool_trace
     def upload_local_file(self, conversation_id, local_file_path: str) -> str:
         r"""上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
             该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
@@ -143,6 +147,7 @@ class AppBuilderClient(Component):
         resp = data_class.FileUploadResponse(**data)
         return resp.id
 
+    @client_run_trace
     def run(self, conversation_id: str,
             query: str,
             file_ids: list = [],

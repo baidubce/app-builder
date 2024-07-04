@@ -21,6 +21,7 @@ from typing import Optional
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.console.knowledge_base import data_class
 from appbuilder.core.component import Message, Component
+from appbuilder.utils.trace.tracer_wrapper import client_tool_trace
 
 
 class KnowledgeBase(Component):
@@ -105,7 +106,7 @@ class KnowledgeBase(Component):
         resp = data_class.KnowledgeBaseAddDocumentResponse(**data)
         return resp
 
-    def delete_document(self, document_id: str, knowledge_base_id: Optional[str] = None):
+    def delete_document(self, document_id: str, knowledge_base_id: Optional[str] = None) -> data_class.KnowledgeBaseDeleteDocumentResponse:
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
                 "knowledge_base_id cannot be empty, please call `create` first or use existing one")
@@ -131,7 +132,7 @@ class KnowledgeBase(Component):
         resp = data_class.KnowledgeBaseDeleteDocumentResponse(**data)
         return resp
 
-    def get_documents_list(self, limit: int = 10, after: Optional[str] = "", before: Optional[str] = "", knowledge_base_id: Optional[str] = None):
+    def get_documents_list(self, limit: int = 10, after: Optional[str] = "", before: Optional[str] = "", knowledge_base_id: Optional[str] = None)->data_class.KnowledgeBaseGetDocumentsListResponse:
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
                 "knowledge_base_id cannot be empty, please call `create` first or use existing one")

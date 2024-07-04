@@ -18,7 +18,6 @@ import uuid
 import os
 import yaml
 import tarfile
-import logging
 import argparse
 from datetime import datetime
 
@@ -113,8 +112,8 @@ class AppbuilderSDKInstance:
             f"rm {self.tar_file_name}\\n" + \
             f"chmod a+x {self.run_script_name}\\n" + \
             "yum install -y docker\\n" + \
-            "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0\\n" + \
-            f"docker run -itd --net=host -v /root/test:{workspace} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.8.0 {workspace}/{self.run_script_name}"
+            "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.0\\n" + \
+            f"docker run -itd --net=host -v /root/test:{workspace} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.0 {workspace}/{self.run_script_name}"
 
         return user_data
 
@@ -216,6 +215,9 @@ class AppbuilderSDKInstance:
 
     def _pre_deploy(self):
         self.log = logger
+        self.log.info(
+            "The deployment to cloud feature is currently in the beta testing stage.If any issues arise, please submit an issue or contact us through our WeChat group."
+        )
         self.build_run_script()
         self.log.debug("build run script done!")
         self.create_tar()
@@ -234,9 +236,6 @@ class AppbuilderSDKInstance:
             "deployment finished! public ip: {}".format(self.public_ip))
 
     def deploy(self):
-        self.log.info(
-            "The deployment to cloud feature is currently in the beta testing stage.If any issues arise, please submit an issue or contact us through our WeChat group."
-        )
         self._pre_deploy()
         self._deploy()
         self._after_deploy()

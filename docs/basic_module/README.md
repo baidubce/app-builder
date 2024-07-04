@@ -12,14 +12,16 @@ AppBuilder面向开发者提供AI原生应用一站式开发工具，包括基�
 
 
 ## 本文档目录的内容
-
-1. [获取模型列表](./get_model_list.md)
-2. [端到端应用 - AppBuilder Client SDK](./appbuilder_client.md)
-3. [端到端应用 - Dataset知识库SDK](./dataset.md)
-4. [端到端应用 - RAG应用 SDK](./rag.md)
-5. [流程编排 - Assistant SDK](./assistant_sdk.md)
-6. [基础组件 - 组件列表](./components.md)
-
+- 平台功能 SDK: 支持Pyhon/Java/Go
+    - [应用管理](/docs/basic_module/get_app_list.md)
+    - [应用调用 AppBuilderClient SDK](/docs/basic_module/appbuilder_client.md) 
+    - [知识库管理 KnowledgeBase SDK](/docs/basic_module/knowledgebase.md)
+- Assistant SDK：支持Python
+    - [Assistant SDK 快速开始](/docs/basic_module/assistant_sdk.md)
+    - [Assistant SDK API说明](/docs/basic_module/assistant_type.md)
+- AI基础能力组件 SDK：支持Python
+    - [获取模型列表](/docs/basic_module/get_model_list.md)
+    - [基础能力组件](/docs/basic_module/components.md)
 
 ## 功能示例
 

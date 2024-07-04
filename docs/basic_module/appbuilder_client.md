@@ -17,17 +17,48 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
 
 快速、高效集成云端已发布智能体应用能力
 
-## 基本用法
+## Python基本用法
 
-### Python
 
-#### 组件初始化参数
+### `AppBuilderClient().__init__()`
+
+
+#### 方法参数
 
 | 参数名称   | 参数类型   | 描述         | 示例值       |
 |--------|--------|------------|-----------|
 | app_id | string | 线上Agent应用的ID | "正确的应用ID" |
 
-#### Run方法入参
+#### 方法返回值
+
+```AppBuilderClient```实例化对象
+
+
+### `AppBuilderClient().create_conversation()-> str`
+#### 方法参数
+无
+
+#### 方法返回值
+
+ 参数名称   | 参数类型   | 描述         | 示例值       |
+|--------|--------|------------|-----------|
+| conversation_id | string | 会话的ID | "80c5bbee-931d-4ed9-a4ff-63e1971bd071" |
+
+
+### `AppBuilderClient().upload_file(file_path: str)-> str`
+#### 方法参数
+| 参数名称   | 参数类型   | 描述         | 示例值       |
+|--------|--------|------------|-----------|
+| file_path | string | 文件路径 | "正确的文件路径" |
+#### 方法返回值
+| 参数名称   | 参数类型   | 描述         | 示例值       |
+|--------|--------|------------|-----------|
+| file_id | string | 文件ID | "80c5bbee-931d-4ed9-a4ff-63e1971bd |
+
+
+### `AppBuilderClient().run() -> Message`
+
+#### 方法参数
 
 | 参数名称            | 参数类型         | 是否必须 | 描述                                                 | 示例值        |
 |-----------------|--------------|------|----------------------------------------------------|------------|
@@ -36,7 +67,9 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
 | file_ids        | list[String] | 否    | 对话可引用的文档ID                                         |            |
 | stream          | Bool         | 否    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 | False      |
 
-#### Run方法非流式返回
+#### Run方法非流式返回值
+
+Run非流式方法返回一个`Message`对象，该对象包含以下属性：
 
 | 参数名称           | 参数类型                   | 描述         | 示例值                                                                    |
 |----------------|------------------------|------------|------------------------------------------------------------------------|
@@ -50,8 +83,44 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
 | ++event_type   | String                 | 事件类型       |                                                                        |
 | ++content_type | String                 | 内容类型       | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
 | ++detail       | Dict                   | 事件输出详情     | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                             |
+| ++usage        | Usage                  | 模型调用的token用量 |  Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K')                                                                     |
 
-#### Run方法流式返回
+`AppBuilderClientAnswer`类型定义如下：
+```python
+class AppBuilderClientAnswer(BaseModel):
+    """执行步骤的具体内容
+        属性:
+            answer(str): query回答内容
+            events( list[Event]): 事件列表
+       """
+    answer: str = ""
+    events: list[Event] = []
+```
+
+`Event`类型定义如下：
+```python
+class Event(BaseModel):
+    """执行步骤的具体内容
+        属性:
+            code (int): 响应code码
+            message (str): 错误详情
+            status (str): 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成）
+            event_type（str）: 事件类型
+            content_type（str）: 内容类型
+            detail(dict): 事件详情
+            usage(Usage): 大模型调用的token用量
+    """
+    code: int = 0
+    message: str = ""
+    status: str = ""
+    event_type: str = ""
+    content_type: str = ""
+    detail: dict = {}
+    usage: Optional[Usage] = None
+```
+
+
+#### Run方法流式返回值
 
 | 参数名称    | 参数类型             | 描述           | 示例值 |
 |---------|------------------|--------------|-----|
@@ -143,13 +212,33 @@ for content in message.content:
 print(answer)
 ```
 
-### Java
+## Java基本用法
 
-#### 组件初始化参数
+### ```new AppBuilderClient(appId)```
+
+#### 方法参数
 
 | 参数名称   | 参数类型      | 描述         | 示例值       |
 |--------|-----------|------------|-----------|
 | appID | String    | 线上Agent应用的ID | "正确的应用ID" | 
+
+
+#### 方法返回值
+
+```AppBuilderClient```实例化对象
+
+### ```AppBuilderClient().createConversation()```
+
+#### 方法参数
+无
+
+#### 方法返回值
+
+| 参数名称   | 参数类型      | 描述         | 示例值       |
+|--------|-----------|------------|-----------|
+| conversationId | String    | 创建的会话ID | "正确的会话ID" | 
+
+### ```AppBuilderClient().run()```
 
 #### Run方法入参
 
@@ -177,6 +266,8 @@ print(answer)
 | ++eventType   | string      | 事件类型       |                                                                        |
 | ++contentType | string      | 内容类型       | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
 | ++detail      | Map<String, Object> | 事件输出详情     | 代码解释器、文生图、工具组件、RAG等的详细输出内容                       |
+| ++usage        | Usage                  | 模型调用的token用量 |  Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K')                                                                     |
+
 
 #### 示例代码
 
@@ -346,15 +437,27 @@ class ReferenceDetail {
 }
 ```
 
-### Go
+## Go基本用法
 
-#### 组件初始化参数
+### ```NewAppBuilderClient()```
+
+#### 方法参数
 
 | 参数名称   | 参数类型      | 描述         | 示例值       |
 |--------|-----------|------------|-----------|
 | app_id | string    | 线上Agent应用的ID | "正确的应用ID" |
 | config | SDKConfig | SDK配置信息    |           |
 
+### ```CreateConversation()```
+#### 方法入参
+无
+#### 方法出参
+| 参数名称         | 参数类型     | 描述                   | 示例值          |
+|--------------|----------|----------------------|---------------|
+| conversation | str | 创建成功的对话对象，后续操作都基于该对象进行 |               |
+
+
+### ```Run()```
 #### Run方法入参
 
 | 参数名称           | 参数类型         | 是否必须 | 描述                                                 | 示例值         |
@@ -384,6 +487,8 @@ class ReferenceDetail {
 | ++EventType   | string      | 事件类型       |                                                                        |
 | ++ContentType | string      | 内容类型       | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
 | ++Detail      | interface{} | 事件输出详情     | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                             |
+| ++Usage        | Usage                  | 模型调用的token用量 |  Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K')                                                                     |
+
 
 #### 示例代码
 
