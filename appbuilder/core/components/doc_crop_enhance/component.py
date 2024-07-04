@@ -22,6 +22,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.doc_crop_enhance.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._exception import *
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 enhance_type_set = [0, 1, 2, 3]
 
@@ -47,6 +48,7 @@ class DocCropEnhance(Component):
 
         """
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, enhance_type: int = 0, timeout: float = None, retry: int = 0) -> Message:
         r""" 文档矫正增强
 

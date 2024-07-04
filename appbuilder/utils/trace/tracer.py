@@ -25,7 +25,16 @@ from opentelemetry.sdk.trace.export import (
 )
 from wrapt import wrap_function_wrapper
 
-from appbuilder.utils.trace._function import _post_trace, _client_run_trace, _client_tool_trace
+from appbuilder.utils.trace._function import( 
+    _post_trace, 
+    _client_run_trace, 
+    _client_tool_trace, 
+    _assistant_tool_trace, 
+    _assistant_run_trace,
+    _assistant_stream_trace,
+    _components_run_trace,
+    _components_stream_run_trace,
+    )
 from appbuilder import logger
 
 _MODULE_1 = 'appbuilder'
@@ -41,6 +50,11 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         "_original_session_post",
         '_original_client_run',
         '_original_client_tool',
+        '_original_assistant_tool',
+        '_original_assistant_run',
+        '_original_assistant_stream_run',
+        '_orignal_components_run',
+        '_original_components_stream_run',
     )
     def instrumentation_dependencies(self):
         pass
@@ -57,10 +71,24 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         # 保存原始函数的引用
 
         try:
-            from .tracer_wrapper import  session_post_func, client_run_trace_func, client_tool_trace_func
+            from .tracer_wrapper import  (
+                session_post_func, 
+                client_run_trace_func,
+                client_tool_trace_func, 
+                assistent_tool_trace_func, 
+                assistant_run_trace_func,
+                assistent_stream_run_trace_func,
+                components_run_trace_func,
+                components_run_stream_trace_func,
+                )
             self._original_session_post = session_post_func
             self._original_client_run = client_run_trace_func
             self._original_client_tool =  client_tool_trace_func
+            self._original_assistant_tool = assistent_tool_trace_func
+            self._original_assistant_run = assistant_run_trace_func
+            self._original_assistant_stream_run = assistent_stream_run_trace_func
+            self._orignal_components_run = components_run_trace_func
+            self._original_components_stream_run = components_run_stream_trace_func
         except:
             raise ImportError(
                 "Please check if the run_trace, tool_eval_streaming_trace, and assistant_trace methods are missing from the file.")
@@ -85,6 +113,21 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         def _appbuilder_client_tool_trace(wrapped, instance, args, kwargs):
             return _client_tool_trace(tracer, self._original_client_tool, *args, **kwargs)
         
+        def _appbuilder_assistant_tool_trace(wrapped, instance, args, kwargs):
+            return _assistant_tool_trace(tracer, self._original_assistant_tool, *args, **kwargs)
+        
+        def _appbuilder_assistant_run_trace(wrapped, instance, args, kwargs):
+            return _assistant_run_trace(tracer, self._original_assistant_run, *args, **kwargs)
+        
+        def _appbuilder_assistant_stream_run_trace(wrapped, instance, args, kwargs):
+            return _assistant_stream_trace(tracer, self._original_assistant_stream_run, *args, **kwargs)
+        
+        def _appbuilder_components_run_trace(wrapped, instance, args, kwargs):
+            return _components_run_trace(tracer, self._orignal_components_run, *args, **kwargs)
+
+        def _appbuilder_components_run_stream_trace(wrapped, instance, args, kwargs):
+            return _components_stream_run_trace(tracer, self._original_components_stream_run, *args, **kwargs)
+
         # 引用相关函数并替换
         if appbuilder:
             
@@ -106,16 +149,59 @@ class AppbuilderInstrumentor(BaseInstrumentor):
                 wrapper = _appbuilder_client_tool_trace
             )
 
+            wrap_function_wrapper(
+                module= _MODULE_1, 
+                name = 'utils.trace.tracer_wrapper.assistent_tool_trace_func',
+                wrapper= _appbuilder_assistant_tool_trace
+            )
+
+            wrap_function_wrapper(
+                module= _MODULE_1, 
+                name = 'utils.trace.tracer_wrapper.assistant_run_trace_func',
+                wrapper= _appbuilder_assistant_run_trace
+            )
+
+            wrap_function_wrapper(
+                module= _MODULE_1, 
+                name = 'utils.trace.tracer_wrapper.assistent_stream_run_trace_func',
+                wrapper= _appbuilder_assistant_stream_run_trace
+            )
+
+            wrap_function_wrapper(
+                module= _MODULE_1, 
+                name = 'utils.trace.tracer_wrapper.components_run_trace_func',
+                wrapper= _appbuilder_components_run_trace
+            )
+
+            wrap_function_wrapper(
+                module= _MODULE_1, 
+                name = 'utils.trace.tracer_wrapper.components_run_stream_trace_func',
+                wrapper= _appbuilder_components_run_stream_trace
+            )
+
         if not appbuilder_sdk_ext and not appbuilder:
             raise Exception("appbuilder and appbuilder-sdk-ext not found")
 
     def _uninstrument(self):
         # 恢复原始函数
         try:
-            from appbuilder.utils.trace.tracer_wrapper import session_post_func, client_run_trace_func, client_tool_trace_func
+            from appbuilder.utils.trace.tracer_wrapper import (
+                session_post_func, 
+                client_run_trace_func, 
+                client_tool_trace_func, 
+                assistent_tool_trace_func, 
+                assistant_run_trace_func,
+                components_run_trace_func,
+                components_run_stream_trace_func,
+                )
+            
             session_post_func = self._original_session_post
             client_run_trace_func = self._original_client_run
             client_tool_trace_func = self._original_client_tool
+            assistent_tool_trace_func = self._original_assistant_tool
+            assistant_run_trace_func = self._original_assistant_run
+            components_run_trace_func = self._orignal_components_run
+            components_run_stream_trace_func = self._original_components_stream_run
         except:
             print("appbuilder not found")
             

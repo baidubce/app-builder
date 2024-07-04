@@ -24,6 +24,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 import appbuilder
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 class RewriteTypeChoices(Enum):
     """"""
@@ -107,6 +108,7 @@ class QueryRewrite(CompletionBaseComponent):
         super().__init__(
                 QueryRewriteArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
+    @components_run_trace
     def run(self, message, rewrite_type="带机器人回复", stream=False, temperature=1e-10, top_p=0):
         """
         使用给定的输入运行模型并返回结果。输入列表长度不超过10，字符总长度不超过5000.

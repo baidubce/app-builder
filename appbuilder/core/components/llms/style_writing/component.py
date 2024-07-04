@@ -19,6 +19,7 @@ from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core.message import Message
 
 from appbuilder.core.component import ComponentArguments
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -160,6 +161,7 @@ class StyleWriting(CompletionBaseComponent):
             StyleWritingArgs, model=model, secret_key=secret_key, gateway=gateway,
             lazy_certification=lazy_certification)
 
+    @components_run_trace
     def run(self, message, style_query="通用", length=100, stream=False, temperature=1e-10, top_p=0, request_id=None):
         """
         使用给定的输入运行模型并返回结果。
@@ -178,6 +180,7 @@ class StyleWriting(CompletionBaseComponent):
         return super().run(message=message, style_query=style_query, length=length, stream=stream,
                            temperature=temperature, top_p=top_p, request_id=request_id)
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool = False, **kwargs):
         """
         tool_eval for function call

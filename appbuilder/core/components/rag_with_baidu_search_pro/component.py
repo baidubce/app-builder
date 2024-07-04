@@ -19,6 +19,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.utils import ModelInfo, ttl_lru_cache
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.rag_with_baidu_search_pro.parse_rag_pro_response import ParseRagProResponse
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 from pydantic import BaseModel, Field, conint, confloat
 from typing import Optional
 
@@ -67,6 +68,7 @@ class RagWithBaiduSearchPro(Component):
             secret_key=secret_key, gateway=gateway)
         self.__class__.model_info = ModelInfo(client=self.http_client)
 
+    @components_run_trace
     def run(
             self,
             message,

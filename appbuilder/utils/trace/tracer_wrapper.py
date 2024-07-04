@@ -24,6 +24,20 @@ def client_run_trace_func(func, *args, **kwargs):
 def client_tool_trace_func(func, *args, **kwargs):
     return func(*args, **kwargs)
 
+def assistent_tool_trace_func(func, *args, **kwargs):
+    return func(*args, **kwargs)
+
+def assistant_run_trace_func(func, *args, **kwargs):
+    return func(*args, **kwargs)
+     
+def assistent_stream_run_trace_func(func, *args, **kwargs):
+    return func(*args, **kwargs)
+
+def components_run_trace_func(func, *args, **kwargs):
+    return func(*args, **kwargs)
+
+def components_run_stream_trace_func(func, *args, **kwargs):
+    return func(*args, **kwargs)
 
 def session_post(func):
     @wraps(func)
@@ -50,3 +64,41 @@ def client_tool_trace(func):
         return client_tool_trace_func(func, *args, **kwargs)
     
     return wrapper 
+
+
+def assistent_tool_trace(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return assistent_tool_trace_func(func, *args, **kwargs)
+    
+    return wrapper
+
+
+def assistant_run_trace(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return assistant_run_trace_func(func, *args, **kwargs)
+    
+    return wrapper 
+
+def assistent_stream_run_trace(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return assistent_stream_run_trace_func(func, *args, **kwargs)
+    
+    return wrapper 
+
+def components_run_trace(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return components_run_trace_func(func, *args, **kwargs)
+    
+    return wrapper 
+
+def components_run_stream_trace(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return components_run_stream_trace_func(func, *args, **kwargs)
+    
+    return wrapper
+

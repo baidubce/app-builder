@@ -28,6 +28,7 @@ from appbuilder.core.components.embeddings.component import Embedding
 from appbuilder.core.constants import GATEWAY_URL
 from appbuilder.utils.logger_util import logger
 from appbuilder import get_default_header
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class BESVectorStoreIndex:
@@ -236,6 +237,7 @@ class BESRetriever(Component):
         self.bes_client = bes_client
         self.index_type = index_type
 
+    @components_run_trace
     def run(self, query: Message, top_k: int = 1):
         """
         根据query进行查询

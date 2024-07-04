@@ -22,6 +22,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings.base import EmbeddingBaseComponent
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class EmbeddingArgs(ComponentArguments):
@@ -129,6 +130,7 @@ class Embedding(EmbeddingBaseComponent):
 
         return results
 
+    @components_run_trace
     def run(self, text: Union[Message[str], str]) -> Message[List[float]]:
         """
         run

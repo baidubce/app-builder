@@ -27,6 +27,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.logger_util import logger
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class QueryTypeChoices(Enum):
@@ -220,6 +221,7 @@ class OralQueryGeneration(CompletionBaseComponent):
                                                                                       response))
         return self.gene_response(response, stream)
 
+    @components_run_trace
     def run(self, message, query_type='全部', output_format='str', stream=False, temperature=1e-10, top_p=0.0):
         """
         使用给定的输入运行模型并返回结果。
@@ -257,6 +259,7 @@ class OralQueryGeneration(CompletionBaseComponent):
 
         return result
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, stream: bool = False, **kwargs):
         """
         tool_eval for function call

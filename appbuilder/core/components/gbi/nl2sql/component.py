@@ -23,6 +23,7 @@ from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import ColumnItem
 from appbuilder.core.components.gbi.basic import NL2SqlResult
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class NL2SqlArgs(ComponentArguments):
@@ -79,6 +80,7 @@ class NL2Sql(Component):
         self.knowledge = knowledge or dict()
         self.prompt_template = prompt_template
 
+    @components_run_trace
     def run(self,
             message: Message, timeout: float = 60, retry: int = 0) -> Message[NL2SqlResult]:
         """

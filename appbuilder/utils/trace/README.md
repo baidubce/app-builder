@@ -23,7 +23,7 @@ appbuilder_trace_server
 ### 启动Appbuilder-SDK TRACE
 
 ```python
-from appbuilder.utils.trace.tracer import AppBuilderTracer
+from appbuilder import AppBuilderTracer
 tracer=AppBuilderTracer(
     enable_phoenix = True,
     enable_console = False,
