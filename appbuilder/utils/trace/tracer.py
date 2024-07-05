@@ -62,6 +62,20 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         pass
 
     def _instrument(self, **kwargs):
+        """
+        为指定模块的函数添加跟踪功能。
+        
+        Args:
+            **kwargs: 可选参数，用于提供跟踪器提供程序。
+        
+        Returns:
+            None
+        
+        Raises:
+            ImportError: 如果从文件中缺少`run_trace`、`tool_eval_streaming_trace`和`assistant_trace`方法，则引发此异常。
+            Exception: 如果未找到`appbuilder`和`appbuilder-sdk-ext`模块，则引发此异常。
+        
+        """
         if not (tracer_provider := kwargs.get("tracer_provider")):
             tracer_provider = trace.get_tracer_provider()
 
@@ -196,6 +210,19 @@ class AppbuilderInstrumentor(BaseInstrumentor):
             raise Exception("appbuilder and appbuilder-sdk-ext not found")
 
     def _uninstrument(self):
+        """
+        恢复原始函数，移除之前添加的追踪代码。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            无返回值。
+        
+        Raises:
+            无异常抛出，但如果在尝试恢复原始函数时遇到任何问题，将打印一条错误消息"appbuilder not found"。
+        
+        """
         # 恢复原始函数
         try:
             from appbuilder.utils.trace.tracer_wrapper import (
@@ -222,6 +249,20 @@ class AppbuilderInstrumentor(BaseInstrumentor):
             
 
 def create_tracer_provider(enable_phoenix: bool = True, enable_console: bool = False, host: str = "127.0.0.1", port: int = 8080, method: str = "/v1/traces"):
+    """
+    创建一个用于跟踪的TracerProvider对象，并可选择性地添加span处理器，以便将跟踪数据发送到指定的端点或控制台。
+    
+    Args:
+        enable_phoenix (bool, optional): 是否启用Phoenix，以在本地可视化界面展示trace数据。默认为True。
+        enable_console (bool, optional): 是否启用控制台输出，以在控制台展示trace数据。默认为False。
+        host (str, optional): Phoenix可视化界面的主机地址。默认为"127.0.0.1"。
+        port (int, optional): Phoenix可视化界面的端口号。默认为8080。
+        method (str, optional): Phoenix可视化界面的请求路径。默认为"/v1/traces"。
+    
+    Returns:
+        TracerProvider: 创建的TracerProvider对象，可用于创建跟踪的Span对象。
+    
+    """
     tracer_provider = TracerProvider()
 
     if enable_phoenix:  # 将trace数据在本地可视化界面展示
@@ -239,6 +280,20 @@ def create_tracer_provider(enable_phoenix: bool = True, enable_console: bool = F
 
 class AppBuilderTracer():
     def __init__(self, enable_phoenix: bool = True, enable_console: bool = False, host: str = "http://localhost", port: int = 8080, method="/v1/traces") -> None:
+        """
+        初始化函数，用于设置追踪系统相关参数。
+        
+        Args:
+            enable_phoenix (bool, optional): 是否启用Phoenix服务。默认为True。
+            enable_console (bool, optional): 是否启用控制台输出。默认为False。
+            host (str, optional): 可视化追踪系统服务的地址。默认为"http://localhost"。
+            port (int, optional): 可视化追踪系统服务的端口号。默认为8080。
+            method (str, optional): 可视化追踪系统服务的方法路径。默认为"/v1/traces"。
+        
+        Returns:
+            None: 无返回值。
+        
+        """
         self._tracer_provider = create_tracer_provider(
             enable_phoenix=enable_phoenix,
             enable_console=enable_console,
