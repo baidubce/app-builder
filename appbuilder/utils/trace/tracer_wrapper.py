@@ -29,7 +29,10 @@ def assistent_tool_trace_func(func, *args, **kwargs):
 
 def assistant_run_trace_func(func, *args, **kwargs):
     return func(*args, **kwargs)
-     
+
+def assistant_stream_run_with_handler_trace_func(func, *args, **kwargs):
+    return func(*args, **kwargs)
+
 def assistent_stream_run_trace_func(func, *args, **kwargs):
     return func(*args, **kwargs)
 
@@ -85,6 +88,13 @@ def assistent_stream_run_trace(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         return assistent_stream_run_trace_func(func, *args, **kwargs)
+    
+    return wrapper 
+
+def assistent_stream_run_with_handler_trace(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return assistant_stream_run_with_handler_trace_func(func, *args, **kwargs)
     
     return wrapper 
 

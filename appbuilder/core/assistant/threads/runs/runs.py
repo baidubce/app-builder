@@ -22,7 +22,7 @@ from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core.assistant.type import public_type
 from appbuilder.core._client import AssistantHTTPClient
 from appbuilder.utils.sse_util import SSEClient
-from appbuilder.utils.trace.tracer_wrapper import assistent_tool_trace, assistant_run_trace, assistent_stream_run_trace
+from appbuilder.utils.trace.tracer_wrapper import assistent_tool_trace, assistant_run_trace, assistent_stream_run_trace, assistent_stream_run_with_handler_trace
 
 
 
@@ -304,6 +304,7 @@ class Runs():
         sse_client = SSEClient(response)
         return self._iterate_events(sse_client.events())
 
+    @assistent_stream_run_with_handler_trace
     def stream_run_with_handler(self,
                    assistant_id: str,
                    thread_id: Optional[str] = "",

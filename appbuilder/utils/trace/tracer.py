@@ -32,6 +32,7 @@ from appbuilder.utils.trace._function import(
     _assistant_tool_trace, 
     _assistant_run_trace,
     _assistant_stream_trace,
+    _assistant_stream_run_with_handler_trace,
     _components_run_trace,
     _components_stream_run_trace,
     )
@@ -53,6 +54,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         '_original_assistant_tool',
         '_original_assistant_run',
         '_original_assistant_stream_run',
+        '_original_assistant_stream_run_with_handler',
         '_orignal_components_run',
         '_original_components_stream_run',
     )
@@ -78,6 +80,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
                 assistent_tool_trace_func, 
                 assistant_run_trace_func,
                 assistent_stream_run_trace_func,
+                assistant_stream_run_with_handler_trace_func,
                 components_run_trace_func,
                 components_run_stream_trace_func,
                 )
@@ -87,6 +90,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
             self._original_assistant_tool = assistent_tool_trace_func
             self._original_assistant_run = assistant_run_trace_func
             self._original_assistant_stream_run = assistent_stream_run_trace_func
+            self._original_assistant_stream_run_with_handler = assistant_stream_run_with_handler_trace_func
             self._orignal_components_run = components_run_trace_func
             self._original_components_stream_run = components_run_stream_trace_func
         except:
@@ -121,6 +125,9 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         
         def _appbuilder_assistant_stream_run_trace(wrapped, instance, args, kwargs):
             return _assistant_stream_trace(tracer, self._original_assistant_stream_run, *args, **kwargs)
+        
+        def _appbuilder_assistant_stream_run_with_handler_trace(wrapped, instance, args, kwargs):
+            return _assistant_stream_run_with_handler_trace(tracer, self._original_assistant_stream_run_with_handler, *args, **kwargs)
         
         def _appbuilder_components_run_trace(wrapped, instance, args, kwargs):
             return _components_run_trace(tracer, self._orignal_components_run, *args, **kwargs)
@@ -169,6 +176,12 @@ class AppbuilderInstrumentor(BaseInstrumentor):
 
             wrap_function_wrapper(
                 module= _MODULE_1, 
+                name = 'utils.trace.tracer_wrapper.assistant_stream_run_with_handler_trace_func',
+                wrapper= _appbuilder_assistant_stream_run_with_handler_trace
+            )
+
+            wrap_function_wrapper(
+                module= _MODULE_1, 
                 name = 'utils.trace.tracer_wrapper.components_run_trace_func',
                 wrapper= _appbuilder_components_run_trace
             )
@@ -191,6 +204,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
                 client_tool_trace_func, 
                 assistent_tool_trace_func, 
                 assistant_run_trace_func,
+                assistant_stream_run_with_handler_trace_func,
                 components_run_trace_func,
                 components_run_stream_trace_func,
                 )
@@ -200,6 +214,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
             client_tool_trace_func = self._original_client_tool
             assistent_tool_trace_func = self._original_assistant_tool
             assistant_run_trace_func = self._original_assistant_run
+            assistant_stream_run_with_handler_trace_func = self._original_assistant_stream_run_with_handler
             components_run_trace_func = self._orignal_components_run
             components_run_stream_trace_func = self._original_components_stream_run
         except:

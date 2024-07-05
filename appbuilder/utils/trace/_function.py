@@ -395,10 +395,7 @@ def _components_stream_output(output, span, tracer):
                 except:
                     print("message can't to be str")
             new_span.end()
-            # new_span = tracer.start_span('Components-Stream_run')
         result = "".join(run_list)   
-        # new_span.set_attribute("output.value",'流式输出结束\n输出结果为:{}'.format(result))
-        # new_span.set_attribute("openinference.span.kind",'tool')
         new_span.end()
         span.set_attribute("output.value",result)
     return generator_list
@@ -557,6 +554,30 @@ def _assistant_stream_trace(tracer, func, *args, **kwargs):
         generator_list = _assistant_stream_output(output=result, span = new_span, tracer=tracer)
         if generator_list:
             result = _return_generator(generator_list)
+    return result
+
+def _assistant_stream_run_with_handler_trace(tracer, func, *args, **kwargs):
+    """
+    为给定函数func添加分布式追踪功能，记录函数执行时间、参数、返回值等信息，并生成对应的追踪span。
+    
+    Args:
+        tracer (Tracer): 分布式追踪器对象，用于生成span。
+        func (Callable[..., Any]): 要被追踪的函数。
+        *args: 函数func的位置参数。
+        **kwargs: 函数func的关键字参数。
+    
+    Returns:
+        Any: 函数func的返回值，如果func返回的是生成器类型，则返回一个封装了生成器的对象。
+    
+    """
+    with tracer.start_as_current_span("Assistant-stream_run_with_handler") as new_span:
+        start_time = time.time()
+        result=func(*args, **kwargs)
+        end_time = time.time()
+        _time(start_time = start_time,end_time = end_time,span = new_span)
+        new_span.set_attribute("openinference.span.kind",'Agent')
+        _input(args = args, kwargs = kwargs, span=new_span)
+    
     return result
 
 def _components_run_trace(tracer, func, *args, **kwargs):
