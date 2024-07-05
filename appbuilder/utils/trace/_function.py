@@ -346,6 +346,47 @@ def _assistant_stream_output(output, span, tracer):
         span.set_attribute("output.value",result)
     return generator_list
 
+def _assistant_stream_run_with_handler_output(output,span,tracer):
+    """
+    处理带有事件处理器的输出流，并生成相关的span和输出列表。
+    
+    Args:
+        output (Any): 事件处理器的输出对象，包含_event_handler属性。
+        span (Span): 追踪的span对象。
+        tracer (Tracer): 追踪器对象。
+    
+    Returns:
+        None: 该函数没有返回值，但会修改传入的output对象的_event_handler._iterator属性。
+    
+    """
+
+    output_list = []
+    generator_list = []
+    if output:
+        new_span = tracer.start_span('Assistant-Stream_run_with_handler')
+        if hasattr(output, '_event_handler') and output._event_handler:
+            event_handler = output._event_handler
+            if hasattr(event_handler, '_iterator') and event_handler._iterator:
+                for message in event_handler._iterator:
+                    generator_list.append(message)
+                    new_span.set_attribute("openinference.span.kind",'agent')
+                    if isinstance(message, BaseModel):
+                        new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
+                    else:
+                        new_span.set_attribute("output.value", "{}".format(json.dumps(message, ensure_ascii=False)))
+                    if hasattr(message, 'content') and message.content and message.content[0]:
+                        if hasattr(message.content[0], 'text') and message.content[0].text:
+                            if hasattr(message.content[0].text, 'value') and message.content[0].text.value: 
+                                output_list.append(message.content[0].text.value)
+                    new_span.end()
+                    new_span = tracer.start_span('Assistant-Stream_run_with_handler')
+                new_span.set_attribute("output.value",'流式运行结束')
+                new_span.set_attribute("openinference.span.kind",'agent')   
+                new_span.end()
+                span.set_attribute("output.value", "".join(output_list))
+                output._event_handler._iterator = _return_generator(generator_list)
+
+    return output
 
 def _components_run_output(output, span):
     """
@@ -398,9 +439,8 @@ def _components_stream_output(output, span, tracer):
         result = "".join(run_list)   
         new_span.end()
         span.set_attribute("output.value",result)
-    return generator_list
-        
-    
+    return generator_list               
+
 def _post_trace(tracer, func, *args, **kwargs):
     """
     对指定的HTTP POST请求函数进行追踪，并生成追踪信息。
@@ -577,7 +617,7 @@ def _assistant_stream_run_with_handler_trace(tracer, func, *args, **kwargs):
         _time(start_time = start_time,end_time = end_time,span = new_span)
         new_span.set_attribute("openinference.span.kind",'Agent')
         _input(args = args, kwargs = kwargs, span=new_span)
-    
+        result = _assistant_stream_run_with_handler_output(output=result, span = new_span, tracer=tracer)
     return result
 
 def _components_run_trace(tracer, func, *args, **kwargs):
