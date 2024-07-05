@@ -80,9 +80,11 @@ def _post_input(args,kwargs,span):
         None: 该函数没有返回值，主要用于发送 POST 请求并记录相关信息。
     
     """
-
+    url = kwargs.get('url',None)
+    if not url:        
+        url = args[-1]
     curl=_build_curl_from_post(
-        url=args[-1], 
+        url=url, 
         headers=kwargs['headers'], 
         json_body=kwargs.get('json',None), 
         timeout=kwargs.get('timeout',None), 
@@ -543,33 +545,6 @@ def _assistant_stream_trace(tracer, func, *args, **kwargs):
     
     Returns:
         Any: 函数func的返回值，如果func返回的是生成器类型，则返回一个封装了生成器的对象。
-    
-    """
-    with tracer.start_as_current_span("Assistant-stream_run") as new_span:
-        start_time = time.time()
-        result=func(*args, **kwargs)
-        end_time = time.time()
-        _time(start_time = start_time,end_time = end_time,span = new_span)
-        new_span.set_attribute("openinference.span.kind",'Agent')
-        _input(args = args, kwargs = kwargs, span=new_span)
-        generator_list = _assistant_stream_output(output=result, span = new_span, tracer=tracer)
-        if generator_list:
-            result = _return_generator(generator_list)
-    return result
-
-
-def _assistant_stream_run_with_handler_trace(tracer, func, *args, **kwargs):
-    """
-    使用跟踪器(tracer)追踪函数func的执行，并处理执行过程中的输入和输出。
-    
-    Args:
-        tracer (Any): 跟踪器对象，用于开始、结束span以及设置span属性。
-        func (Callable): 需要被执行的函数。
-        *args: 可变位置参数，传递给func的参数。
-        **kwargs: 可变关键字参数，传递给func的参数。
-    
-    Returns:
-        Any: 函数func的执行结果，如果result为生成器列表，则返回_return_generator处理后的结果。
     
     """
     with tracer.start_as_current_span("Assistant-stream_run") as new_span:
