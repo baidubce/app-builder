@@ -47,6 +47,14 @@ class AppbuilderInstrumentor(BaseInstrumentor):
     Instrumentor for appbuilder and appbuilder-sdk-ext.
     """
 
+    _instance = None
+    _instrumented = False
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     __slots__ = (
         "_original_session_post",
         '_original_client_run',
@@ -76,6 +84,10 @@ class AppbuilderInstrumentor(BaseInstrumentor):
             Exception: 如果未找到`appbuilder`和`appbuilder-sdk-ext`模块，则引发此异常。
         
         """
+        if self._instrumented:
+            return
+        self._instrumented = True
+
         if not (tracer_provider := kwargs.get("tracer_provider")):
             tracer_provider = trace.get_tracer_provider()
 
@@ -279,6 +291,14 @@ def create_tracer_provider(enable_phoenix: bool = True, enable_console: bool = F
 
 
 class AppBuilderTracer():
+    _instance = None
+    _trace_start = False
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self, enable_phoenix: bool = True, enable_console: bool = False, host: str = "http://localhost", port: int = 8080, method="/v1/traces") -> None:
         """
         初始化函数，用于设置追踪系统相关参数。
@@ -315,6 +335,8 @@ class AppBuilderTracer():
         self._tracer_provider.add_span_processor(processor)
 
     def start_trace(self):
+        if self._trace_start:
+            return
         logger.info("AppBuilder Starting trace...")
         self._instrumentor._instrument(tracer_provider=self._tracer_provider)
 
