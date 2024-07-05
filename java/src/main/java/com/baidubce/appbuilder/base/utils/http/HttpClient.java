@@ -264,17 +264,26 @@ public class HttpClient {
     }
     
     private void buildCurlCommand(ClassicHttpRequest request) {
-        StringBuilder curlCmd = new StringBuilder("curl -L");
+        StringBuilder curlCmd = new StringBuilder("curl");
+
+        // Append method
+        curlCmd.append(" -X ").append(request.getMethod());
+        curlCmd.append(" -L");
         try {
-            curlCmd.append(" ").append(request.getUri()).append(" \\\n");
+            curlCmd.append(" ").append("\'").append(request.getUri()).append("\'").append(" \\\n");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Invalid URL: ", e);
         }
 
         // Append headers
         for (Header header : request.getHeaders()) {
-            curlCmd.append(" -H \"").append(header.getName()).append(": ").append(header.getValue()).append("\"");
+            curlCmd.append("-H \'").append(header.getName()).append(": ").append(header.getValue()).append("\'");
             curlCmd.append(" \\\n");
+        }
+
+        
+        if ("GET".equals(request.getMethod()) || "DELETE".equals(request.getMethod())) {
+            curlCmd = new StringBuilder(curlCmd.toString().replaceAll(" \\\\\n$", ""));
         }
 
         // Append body
