@@ -17,6 +17,7 @@ import json
 from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import session_post
 
+
 class InnerSession(requests.sessions.Session):
 
     def __init__(self, *args, **kwargs):
@@ -29,8 +30,9 @@ class InnerSession(requests.sessions.Session):
         """
         Generate cURL command from prepared request object.
         """
-        curl = "curl -L '{0}' \\\n".format(request.url)
-        headers = ["-H '{0}: {1}' \\".format(k, v) for k, v in request.headers.items() if k!= 'Content-Length']
+        curl = "curl -X {0} -L '{1}' \\\n".format(request.method, request.url)
+        headers = ["-H '{0}: {1}' \\".format(k, v)
+                   for k, v in request.headers.items() if k != 'Content-Length']
         if headers:
             headers[-1] = headers[-1].rstrip(" \\")
         curl += "\n".join(headers)
@@ -52,16 +54,16 @@ class InnerSession(requests.sessions.Session):
 
     @session_post
     def post(self, url, data=None, json=None, **kwargs):
-        return super().post(url = url, data=data, json=json, **kwargs)
-    
+        return super().post(url=url, data=data, json=json, **kwargs)
+
     @session_post
     def delete(self, url, **kwargs):
-        return super().delete(url = url, **kwargs)
-    
+        return super().delete(url=url, **kwargs)
+
     @session_post
     def get(self, url, **kwargs):
-        return super().get(url = url, **kwargs)
-    
+        return super().get(url=url, **kwargs)
+
     @session_post
     def put(self, url, data=None, **kwargs):
-        return super().put(url = url, data=data, **kwargs)
+        return super().put(url=url, data=data, **kwargs)

@@ -137,7 +137,7 @@ func (t *SDKConfig) authHeader() http.Header {
 		platform = "unknown"
 	}
 	header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
-	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"go\",\"appbuilder_sdk_platfrom\":\""+platform+"\"}")
+	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"go\",\"appbuilder_sdk_platform\":\""+platform+"\"}")
 	header.Set("X-Appbuilder-Request-Id", uuid.New().String())
 	return header
 }
@@ -169,7 +169,7 @@ func (t *SDKConfig) formatURL(absolutePath string) (*url.URL, error) {
 }
 
 func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
-	curlCmd := fmt.Sprintf("curl -L %v \\\n", req.URL.String()) // add -L flag for following redirects
+	curlCmd := fmt.Sprintf("curl -X %s -L '%v' \\\n", req.Method, req.URL.String())
 
 	for k, v := range req.Header {
 		header := fmt.Sprintf("-H '%v: %v' \\\n", k, v[0])
@@ -187,7 +187,7 @@ func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
 
 		body := fmt.Sprintf("-d '%v'", string(bodyBytes))
 		curlCmd = fmt.Sprintf("%v %v", curlCmd, body)
-	} else if req.Method == "GET" {
+	} else if req.Method == "GET" || req.Method == "DELETE" {
 		curlCmd = strings.TrimSuffix(curlCmd, " \\\n")
 	}
 	if t.logger.GetLevel() == zerolog.DebugLevel {

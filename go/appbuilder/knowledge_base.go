@@ -107,6 +107,7 @@ func (t *KnowledgeBase) DeleteDocument(req DeleteDocumentRequest) error {
 	request.Method = "DELETE"
 	header.Set("Content-Type", "application/json")
 	request.Header = header
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := http.DefaultClient.Do(&request)
 	if err != nil {
 		return err
