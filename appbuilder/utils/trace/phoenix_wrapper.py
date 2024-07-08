@@ -59,16 +59,13 @@ def runtime_main():
     timeout = args.timeout
     print(" Launching AppBuilder Tracer Server By Phoenix... ")
     print(" Arguments: ", args)
-    try:
-        session = launch_phoenix()
-        while True:
-            if timeout is not None:
-                time.sleep(timeout)
-                break
-            time.sleep(1)
-        stop_phoenix()
-    except Exception as e:
-        print(e)
+    session = launch_phoenix()
+    while True:
+        if timeout is not None:
+            time.sleep(timeout)
+            break
+        time.sleep(1)
+    stop_phoenix()
 
 
 if __name__ == "__main__":

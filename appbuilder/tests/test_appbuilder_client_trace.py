@@ -102,7 +102,9 @@ class TestAppBuilderTrace(unittest.TestCase):
         
         """
 
-        runtime_main()
+        with self.assertRaises(TypeError):
+            runtime_main()
+        
         with self.assertRaises(TypeError):
             stop_phoenix()
 
