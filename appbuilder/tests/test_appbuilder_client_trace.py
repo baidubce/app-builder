@@ -89,19 +89,18 @@ class TestAppBuilderTrace(unittest.TestCase):
 
     def test_appbuilder_phoenix_run(self):
         """
-        测试AppBuilder Phoenix的启动和停止功能。
+        测试appbuilder_phoenix_run方法
         
         Args:
-            无。
+            无参数。
         
         Returns:
             无返回值。
         
         Raises:
-            TypeError: 当尝试调用`stop_phoenix`函数而没有正确初始化Phoenix时引发。
+            TypeError: 当调用runtime_main()或stop_phoenix()函数时，预期会抛出TypeError异常。
         
         """
-
         with self.assertRaises(TypeError):
             runtime_main()
         
