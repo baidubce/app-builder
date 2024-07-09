@@ -429,21 +429,20 @@ def _components_stream_output(output, span, tracer):
     if output:
        
         for message in output:
-            new_span = tracer.start_span('Components-Stream_run')
-            generator_list.append(message)
-            new_span.set_attribute("openinference.span.kind",'tool')
-            new_span.set_attribute("output.value", "{}".format(json.dumps(message, ensure_ascii=False)))
-            if isinstance(message, dict):
-                run_list.append(message.get('text', None))
-            else:
-                try:
-                    run_list.append(str(message))
-                except:
-                    print("message can't to be str")
-            new_span.end()
+            with tracer.start_as_current_span('Component-Stream') as new_span:
+                new_span.set_attribute("openinference.span.kind",'agent')
+                generator_list.append(message)
+                new_span.set_attribute("openinference.span.kind",'tool')
+                new_span.set_attribute("output.value", "{}".format(json.dumps(message, ensure_ascii=False)))
+                if isinstance(message, dict):
+                    run_list.append(message.get('text', None))
+                else:
+                    try:
+                        run_list.append(str(message))
+                    except:
+                        print("message can't to be str")
         for item in run_list:
             result += str(item) 
-        new_span.end()
         span.set_attribute("output.value",result)
     return generator_list               
 
