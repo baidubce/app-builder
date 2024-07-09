@@ -172,7 +172,7 @@ def _client_run_trace_output(output,span,tracer):
                     new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
                 except Exception as e:
                     print(e)
-                result += message.answer
+                result += str(message.answer)
                 
                 if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'event_type') and hasattr(message.events[0], 'status'):
                     run_list.append('{}[status:{}]'.format(message.events[0].event_type,message.events[0].status))
@@ -324,6 +324,7 @@ def _assistant_stream_output(output, span, tracer):
         List[Any]: 存储所有输出消息的列表。
     
     """
+    result = ''
     run_list = []
     generator_list = []
     if output:
@@ -339,7 +340,8 @@ def _assistant_stream_output(output, span, tracer):
                     run_list.append(message.content[0].text.value)
             new_span.end()
             new_span = tracer.start_span('Client-Stream')
-        result = "".join(run_list)   
+        for item in run_list:
+            result += str(item) 
         new_span.set_attribute("output.value",'流式输出结束\n输出结果为:{}'.format(result))
         new_span.set_attribute("openinference.span.kind",'agent')
         new_span.end()
@@ -359,7 +361,7 @@ def _assistant_stream_run_with_handler_output(output,span,tracer):
         None: 该函数没有返回值，但会修改传入的output对象的_event_handler._iterator属性。
     
     """
-
+    result = ''
     output_list = []
     generator_list = []
     if output:
@@ -383,7 +385,9 @@ def _assistant_stream_run_with_handler_output(output,span,tracer):
                 new_span.set_attribute("output.value",'流式运行结束')
                 new_span.set_attribute("openinference.span.kind",'agent')   
                 new_span.end()
-                span.set_attribute("output.value", "".join(output_list))
+                for item in output_list:
+                    result += str(item)
+                span.set_attribute("output.value", result)
                 output._event_handler._iterator = _return_generator(generator_list)
 
     return output
@@ -419,6 +423,7 @@ def _components_stream_output(output, span, tracer):
         List[Any]: 组件输出流的生成器列表。
     
     """
+    result = ''
     run_list = []
     generator_list = []
     if output:
@@ -436,7 +441,8 @@ def _components_stream_output(output, span, tracer):
                 except:
                     print("message can't to be str")
             new_span.end()
-        result = "".join(run_list)   
+        for item in run_list:
+            result += str(item) 
         new_span.end()
         span.set_attribute("output.value",result)
     return generator_list               
