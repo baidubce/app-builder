@@ -427,7 +427,6 @@ def _components_stream_output(output, span, tracer):
     run_list = []
     generator_list = []
     if output:
-       
         for message in output:
             with tracer.start_as_current_span('Component-Stream') as new_span:
                 new_span.set_attribute("openinference.span.kind",'agent')
