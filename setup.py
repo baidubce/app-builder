@@ -42,6 +42,7 @@ setup(
     install_requires=requirements,
     python_requires=">=3.9",
     extras_require={
+        "asr": ["pydub"],
         "serve": ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9", "arize-phoenix==4.5.0"]
     },
     entry_points={
