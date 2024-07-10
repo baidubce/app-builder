@@ -35,6 +35,7 @@ from appbuilder.utils.trace._function import(
     _assistant_stream_run_with_handler_trace,
     _components_run_trace,
     _components_stream_run_trace,
+    _list_trace,
     )
 from appbuilder import logger
 
@@ -65,6 +66,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         '_original_assistant_stream_run_with_handler',
         '_orignal_components_run',
         '_original_components_stream_run',
+        '_original_list',
     )
     def instrumentation_dependencies(self):
         pass
@@ -109,6 +111,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
                 assistant_stream_run_with_handler_trace_func,
                 components_run_trace_func,
                 components_run_stream_trace_func,
+                list_trace_func,
                 )
             self._original_session_post = session_post_func
             self._original_client_run = client_run_trace_func
@@ -119,6 +122,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
             self._original_assistant_stream_run_with_handler = assistant_stream_run_with_handler_trace_func
             self._orignal_components_run = components_run_trace_func
             self._original_components_stream_run = components_run_stream_trace_func
+            self._original_list = list_trace_func
         except:
             raise ImportError(
                 "Please check if the run_trace, tool_eval_streaming_trace, and assistant_trace methods are missing from the file.")
@@ -129,6 +133,11 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         except:
             appbuilder = None
 
+        try:
+            appbuilder_sdk_ext = import_module(_MODULE_2)
+        except:
+            appbuilder_sdk_ext = None
+        
         def _appbuilder_session_post(wrapped, instance, args, kwargs):
             return _post_trace(tracer, self._original_session_post, *args, **kwargs)
         
@@ -155,6 +164,9 @@ class AppbuilderInstrumentor(BaseInstrumentor):
 
         def _appbuilder_components_run_stream_trace(wrapped, instance, args, kwargs):
             return _components_stream_run_trace(tracer, self._original_components_stream_run, *args, **kwargs)
+        
+        def _appbuilder_list_trace(wrapped, instance, args, kwargs):
+            return _list_trace(tracer, self._original_list, *args, **kwargs)
 
         # 引用相关函数并替换
         if appbuilder:
@@ -213,8 +225,14 @@ class AppbuilderInstrumentor(BaseInstrumentor):
                 wrapper= _appbuilder_components_run_stream_trace
             )
 
-        if  not appbuilder:
-            raise Exception("appbuilder not found")
+            wrap_function_wrapper(
+                module= _MODULE_1, 
+                name = 'utils.trace.tracer_wrapper.list_trace_func',
+                wrapper= _appbuilder_list_trace
+            )
+
+        if not appbuilder_sdk_ext and not appbuilder:
+            raise Exception("appbuilder and appbuilder-sdk-ext not found")
 
     def _uninstrument(self):
         """
@@ -241,6 +259,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
                 assistant_stream_run_with_handler_trace_func,
                 components_run_trace_func,
                 components_run_stream_trace_func,
+                list_trace_func,
                 )
             
             session_post_func = self._original_session_post
@@ -251,6 +270,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
             assistant_stream_run_with_handler_trace_func = self._original_assistant_stream_run_with_handler
             components_run_trace_func = self._orignal_components_run
             components_run_stream_trace_func = self._original_components_stream_run
+            list_trace_func = self._original_list
         except:
             print("appbuilder not found")
             

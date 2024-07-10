@@ -443,7 +443,7 @@ def _components_stream_output(output, span, tracer):
         for item in run_list:
             result += str(item) 
         span.set_attribute("output.value",result)
-    return generator_list               
+    return generator_list     
 
 def _post_trace(tracer, func, *args, **kwargs):
     """
@@ -675,5 +675,29 @@ def _components_stream_run_trace(tracer, func, *args, **kwargs):
         if generator_list:
             result = _return_generator(generator_list)
     return result
+
+def _list_trace(tracer, func, *args, **kwargs):
+    """
+    使用给定的tracer对函数func进行追踪，并记录相关信息到span中。
+    
+    Args:
+        tracer (OpenTelemetryTracer): 用于追踪的tracer对象。
+        func (Callable[..., Any]): 需要被追踪的函数。
+        *args: 传递给func的位置参数。
+        **kwargs: 传递给func的关键字参数。
+    
+    Returns:
+        Any: 调用func的返回结果。
+    
+    """
+    with tracer.start_as_current_span(_tool_name(args = args)) as new_span:      
+        start_time = time.time()
+        result=func(*args, **kwargs)
+        end_time = time.time()
+        new_span.set_attribute("openinference.span.kind",'tool')
+        new_span.set_attribute("input.value",_tool_name(args = args))
+        new_span.set_attribute("output.value",str(result))
+    return result
+
     
         

@@ -42,6 +42,9 @@ def components_run_trace_func(func, *args, **kwargs):
 def components_run_stream_trace_func(func, *args, **kwargs):
     return func(*args, **kwargs)
 
+def list_trace_func(func, *args, **kwargs):
+    return func(*args, **kwargs)
+
 def session_post(func):
     """
     对给定的函数添加 session post 请求装饰器
@@ -201,6 +204,21 @@ def components_run_stream_trace(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         return components_run_stream_trace_func(func, *args, **kwargs)
+    
+    return wrapper
+
+def list_trace(func):
+    """
+    为函数添加列表追踪的装饰器。
+    
+    Args:
+        func (Callable[..., Any]): 需要被装饰的函数，接受任意数量和类型的参数。
+    Returns:
+        Callable[..., Any]: 返回一个装饰器函数，该函数在被调用时会执行原始函数并记录相关信息。
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return list_trace_func(func, *args, **kwargs)
     
     return wrapper
 
