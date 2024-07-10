@@ -61,7 +61,10 @@ func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	serviceURL.RawQuery = params.Encode()
 
 	config.BuildCurlCommand(&request)
-	client := &http.Client{Timeout: 300 * time.Second}
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 300 * time.Second}
+	}
 	resp, err := client.Do(&request)
 	if err != nil {
 		return nil, err
