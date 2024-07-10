@@ -133,10 +133,6 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         except:
             appbuilder = None
 
-        try:
-            appbuilder_sdk_ext = import_module(_MODULE_2)
-        except:
-            appbuilder_sdk_ext = None
         
         def _appbuilder_session_post(wrapped, instance, args, kwargs):
             return _post_trace(tracer, self._original_session_post, *args, **kwargs)
@@ -231,8 +227,8 @@ class AppbuilderInstrumentor(BaseInstrumentor):
                 wrapper= _appbuilder_list_trace
             )
 
-        if not appbuilder_sdk_ext and not appbuilder:
-            raise Exception("appbuilder and appbuilder-sdk-ext not found")
+        if not appbuilder:
+            raise Exception("appbuilder not found")
 
     def _uninstrument(self):
         """
