@@ -7,7 +7,7 @@ urllib3<2.0.0
 tenacity==8.2.3
 pandas
 openpyxl
-pymochow>=1.1.2
+pymochow>=1.2.1
 parameterized
 PyYAML
 bce-python-sdk
