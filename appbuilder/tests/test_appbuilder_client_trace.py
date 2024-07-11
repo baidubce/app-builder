@@ -106,7 +106,7 @@ class TestAppBuilderTrace(unittest.TestCase):
         
         with self.assertRaises(ImportError):
             launch_phoenix()
-
+            
         with self.assertRaises(ImportError):
             stop_phoenix()
 

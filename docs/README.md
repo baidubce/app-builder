@@ -10,6 +10,7 @@
     - [流程编排](./basic_module/assistant_sdk.md)
     - [端到端应用](./basic_module/appbuilder_client.md)
     - [知识库管理](./basic_module/dataset.md)
+    - [跟踪功能](./trace/README.md)
 - [进阶实践](./advanced_application/README.md)
     - [CookBooks](../cookbooks/README.md)
 - [服务化部署](./service/README.md)
