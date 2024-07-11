@@ -54,10 +54,7 @@ public class DocumentAddResponse {
 
     @Override
     public String toString() {
-        return "FileUploadResponse{" +
-                "request_id=" + requestId +
-                ", code='" + code + '\'' +
-                ", message='" + message +
-                '}';
+        return "FileUploadResponse{" + "request_id=" + requestId + ", code='" + code + '\''
+                + ", message='" + message + '}';
     }
 }
