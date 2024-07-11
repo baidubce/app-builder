@@ -17,10 +17,10 @@ import appbuilder
 import os
 
 from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
-from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix
+from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix,launch_phoenix
 from appbuilder.core.console.appbuilder_client import get_app_list
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
     def setUp(self):
         """
@@ -101,10 +101,13 @@ class TestAppBuilderTrace(unittest.TestCase):
             TypeError: 当调用runtime_main()或stop_phoenix()函数时，预期会抛出TypeError异常。
         
         """
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ImportError):
             runtime_main()
         
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ImportError):
+            launch_phoenix()
+
+        with self.assertRaises(ImportError):
             stop_phoenix()
 
 
