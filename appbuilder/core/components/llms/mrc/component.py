@@ -18,6 +18,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from pydantic import Field
 from typing import Optional
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class MrcArgs(ComponentArguments):
@@ -122,6 +123,7 @@ class MRC(CompletionBaseComponent):
                 "cite": "使用引用标记来标注回答内容参考的搜索结果序号，例如^[1]^ (引用单个搜索结果）,^[1][2]^（引用多个搜索结果），"
                         "其中方括号中的数字是搜索结果序号。引用标记只能出现在句尾标点符号前。"}
 
+    @components_run_trace
     def run(self, message, context_list, reject=False, clarify=False,
             highlight=False, friendly=False, cite=False, stream=False, temperature=1e-10, top_p=0):
 

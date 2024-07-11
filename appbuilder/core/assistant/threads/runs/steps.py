@@ -18,11 +18,13 @@ from appbuilder.core.assistant.type import thread_type
 from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core._client import AssistantHTTPClient
 from appbuilder.utils.sse_util import SSEClient
+from appbuilder.utils.trace.tracer_wrapper import assistent_tool_trace
 
 class Steps():
     def __init__(self) -> None:
         self._http_client = AssistantHTTPClient()
 
+    @assistent_tool_trace
     def list(self, thread_id: str, run_id: str, limit: int = 20,
                    order: str = 'desc', after: str = "", before: str = "") -> thread_type.RunStepListResponse:
         """
@@ -62,6 +64,7 @@ class Steps():
         resp = thread_type.RunStepListResponse(**data)
         return resp
 
+    @assistent_tool_trace
     def query(self, thread_id: str, run_id: str, step_id: str) -> thread_type.RunStepResult:
         """
         根据thread_id，run_id和step_id，查询对应step的信息
