@@ -41,22 +41,26 @@ public class AppBuilderConfig {
     // 删除知识库文档
     public static final String KNOWLEDGEBASE_DELETE_DOCUMENT_URL = "/knowledge_base/document";
     // 创建知识库
-    public static final String KNOWLEDGEBASE_CREATE_URL = "/appbuilder?Action=CreateKnowledgeBase";
+    public static final String KNOWLEDGEBASE_CREATE_URL =
+            "/knowledgeBase?Action=CreateKnowledgeBase";
     // 获取知识库详情
     public static final String KNOWLEDGEBASE_DETAIL_URL =
-            "/appbuilder?Action=DescribeKnowledgeBase";
+            "/knowledgeBase?Action=DescribeKnowledgeBase";
     // 删除知识库
-    public static final String KNOWLEDGEBASE_DELETE_URL = "/appbuilder?Action=DeleteKnowledgeBase";
+    public static final String KNOWLEDGEBASE_DELETE_URL =
+            "/knowledgeBase?Action=DeleteKnowledgeBase";
     // 获取知识库列表
-    public static final String KNOWLEDGEBASE_LIST_URL = "/appbuilder?Action=DescribeKnowledgeBases";
+    public static final String KNOWLEDGEBASE_LIST_URL =
+            "/knowledgeBase?Action=DescribeKnowledgeBases";
     // 更新知识库
-    public static final String KNOWLEDGEBASE_MODIFY_URL = "/appbuilder?Action=ModifyKnowledgeBase";
+    public static final String KNOWLEDGEBASE_MODIFY_URL =
+            "/knowledgeBase?Action=ModifyKnowledgeBase";
     // 导入知识库
     public static final String KNOWLEDGEBASE_CREATE_DOCUMENTS_URL =
-            "/appbuilder?action=CreateDocuments";
+            "/knowledgeBase?action=CreateDocuments";
     // 上传文件到知识库
     public static final String KNOWLEDGEBASE_UPLOAD_DOCUMENTS_URL =
-            "/appbuilder?action=UploadDocuments";
+            "/knowledgeBase?action=UploadDocuments";
 
 
     // 运行rag

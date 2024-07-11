@@ -105,7 +105,7 @@ public class Knowledgebase extends Component {
         }
     }
 
-    public KnowledgeBase createKnowledgeBase(KnowledgeBase request)
+    public KnowledgeBaseDetail createKnowledgeBase(KnowledgeBaseDetail request)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.KNOWLEDGEBASE_CREATE_URL;
 
@@ -113,12 +113,12 @@ public class Knowledgebase extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<KnowledgeBase> response = httpClient.execute(postRequest, KnowledgeBase.class);
-        KnowledgeBase respBody = response.getBody();
+        HttpResponse<KnowledgeBaseDetail> response = httpClient.execute(postRequest, KnowledgeBaseDetail.class);
+        KnowledgeBaseDetail respBody = response.getBody();
         return respBody;
     }
 
-    public KnowledgeBase getKnowledgeBaseDetail(String knowledgeBaseId)
+    public KnowledgeBaseDetail getKnowledgeBaseDetail(String knowledgeBaseId)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.KNOWLEDGEBASE_DETAIL_URL;
 
@@ -128,8 +128,8 @@ public class Knowledgebase extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<KnowledgeBase> response = httpClient.execute(postRequest, KnowledgeBase.class);
-        KnowledgeBase respBody = response.getBody();
+        HttpResponse<KnowledgeBaseDetail> response = httpClient.execute(postRequest, KnowledgeBaseDetail.class);
+        KnowledgeBaseDetail respBody = response.getBody();
         return respBody;
     }
 

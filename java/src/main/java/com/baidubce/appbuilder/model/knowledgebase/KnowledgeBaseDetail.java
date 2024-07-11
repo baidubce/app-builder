@@ -1,6 +1,6 @@
 package com.baidubce.appbuilder.model.knowledgebase;
 
-public class KnowledgeBase {
+public class KnowledgeBaseDetail {
     private String id;
     private String name;
     private String description;

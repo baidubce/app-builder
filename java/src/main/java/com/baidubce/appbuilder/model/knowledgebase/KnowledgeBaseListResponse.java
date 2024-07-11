@@ -2,7 +2,7 @@ package com.baidubce.appbuilder.model.knowledgebase;
 
 public class KnowledgeBaseListResponse {
     private String requestId;
-    private KnowledgeBase[] data;
+    private KnowledgeBaseDetail[] data;
     private String marker;
     private boolean isTruncated;
     private String nextMarker;
@@ -16,11 +16,11 @@ public class KnowledgeBaseListResponse {
         this.requestId = requestId;
     }
 
-    public KnowledgeBase[] getData() {
+    public KnowledgeBaseDetail[] getData() {
         return data;
     }
 
-    public void setData(KnowledgeBase[] data) {
+    public void setData(KnowledgeBaseDetail[] data) {
         this.data = data;
     }
 
