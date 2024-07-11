@@ -38,14 +38,13 @@ public class HttpClient {
     public String ConsoleOpenAPIVersion;
     public String ConsoleOpenAPIPrefix;
 
-    
+
     private final CloseableHttpClient client;
     private static final Logger LOGGER = Logger.getLogger(Component.class.getName());
 
     public HttpClient(String secretKey, String gateway, String gatewayV2) {
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setResponseTimeout(AppBuilderConfig.HTTP_CLIENT_CONNECTION_TIMEOUT, TimeUnit.SECONDS)
-                .build();
+        RequestConfig requestConfig = RequestConfig.custom().setResponseTimeout(
+                AppBuilderConfig.HTTP_CLIENT_CONNECTION_TIMEOUT, TimeUnit.SECONDS).build();
         this.client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
         this.SecretKey = secretKey;
         this.Gateway = gateway;
@@ -53,7 +52,7 @@ public class HttpClient {
 
         ConsoleHandler handler = new ConsoleHandler();
         String systemLogLevel = System.getProperty(AppBuilderConfig.APPBUILDER_LOGLEVEL);
-        if (systemLogLevel == null || systemLogLevel.isEmpty()){
+        if (systemLogLevel == null || systemLogLevel.isEmpty()) {
             systemLogLevel = System.getenv(AppBuilderConfig.APPBUILDER_LOGLEVEL);
         }
         if (systemLogLevel == null || systemLogLevel.isEmpty()) {
@@ -91,7 +90,7 @@ public class HttpClient {
                 FileHandler fileHandler = new FileHandler(systemLogFile);
                 LOGGER.addHandler(fileHandler);
             } catch (Exception e) {
-                throw new RuntimeException("Failed to create log file: " + systemLogFile, e); 
+                throw new RuntimeException("Failed to create log file: " + systemLogFile, e);
             }
         }
     }
@@ -102,7 +101,8 @@ public class HttpClient {
         HttpPost httpPost = new HttpPost(requestURL);
         httpPost.setHeader("X-Appbuilder-Authorization", this.SecretKey);
         httpPost.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
-        String platform = System.getenv("APPBUILDER_SDK_PLATFORM") != null ? System.getenv("APPBUILDER_SDK_PLATFORM")
+        String platform = System.getenv("APPBUILDER_SDK_PLATFORM") != null
+                ? System.getenv("APPBUILDER_SDK_PLATFORM")
                 : "unknown";
         httpPost.setHeader("X-Appbuilder-Sdk-Config",
                 "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
@@ -118,8 +118,7 @@ public class HttpClient {
     }
 
     /**
-     * 创建一个用于发送 POST 请求的 ClassicHttpRequest 对象
-     * 适配OpenAPI，目前仅AgentBuilder使用
+     * 创建一个用于发送 POST 请求的 ClassicHttpRequest 对象 适配OpenAPI，目前仅AgentBuilder使用
      *
      * @param url 请求的 URL
      * @param entity 请求的实体
@@ -131,10 +130,12 @@ public class HttpClient {
         HttpPost httpPost = new HttpPost(requestURL);
         httpPost.setHeader("Authorization", this.SecretKey);
         httpPost.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
-        String platform = System.getenv("APPBUILDER_SDK_PLATFORM") != null ? System.getenv("APPBUILDER_SDK_PLATFORM")
+        String platform = System.getenv("APPBUILDER_SDK_PLATFORM") != null
+                ? System.getenv("APPBUILDER_SDK_PLATFORM")
                 : "unknown";
         httpPost.setHeader("X-Appbuilder-Sdk-Config",
-                "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\"" + platform + "\"}");
+                "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
+                        + platform + "\"}");
         httpPost.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
         httpPost.setEntity(entity);
         String headers = "headers: \n";
@@ -147,12 +148,14 @@ public class HttpClient {
 
     public ClassicHttpRequest createGetRequestV2(String url, Map<String, Object> map) {
         String urlParams = toQueryString(map);
-        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams;
+        String requestURL =
+                GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams;
         LOGGER.log(Level.FINE, "requestURL: " + requestURL);
         HttpGet httpGet = new HttpGet(requestURL);
         httpGet.setHeader("Authorization", this.SecretKey);
         httpGet.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
-        String platform = System.getenv("APPBUILDER_SDK_PLATFORM") != null ? System.getenv("APPBUILDER_SDK_PLATFORM")
+        String platform = System.getenv("APPBUILDER_SDK_PLATFORM") != null
+                ? System.getenv("APPBUILDER_SDK_PLATFORM")
                 : "unknown";
         httpGet.setHeader("X-Appbuilder-Sdk-Config",
                 "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
@@ -165,15 +168,17 @@ public class HttpClient {
         LOGGER.log(Level.FINE, "\n" + headers);
         return httpGet;
     }
-    
+
     public ClassicHttpRequest createDeleteRequestV2(String url, Map<String, Object> map) {
         String urlParams = toQueryString(map);
-        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams;
+        String requestURL =
+                GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams;
         LOGGER.log(Level.FINE, "requestURL: " + requestURL);
         HttpDelete httpDelete = new HttpDelete(requestURL);
         httpDelete.setHeader("Authorization", this.SecretKey);
         httpDelete.setHeader("X-Appbuilder-Origin", "appbuilder_sdk");
-        String platform = System.getenv("APPBUILDER_SDK_PLATFORM") != null ? System.getenv("APPBUILDER_SDK_PLATFORM")
+        String platform = System.getenv("APPBUILDER_SDK_PLATFORM") != null
+                ? System.getenv("APPBUILDER_SDK_PLATFORM")
                 : "unknown";
         httpDelete.setHeader("X-Appbuilder-Sdk-Config",
                 "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
@@ -189,7 +194,7 @@ public class HttpClient {
 
     public <T> HttpResponse<T> execute(ClassicHttpRequest request, Type bodyType)
             throws IOException, AppBuilderServerException {
-        if(LOGGER.getLevel() == Level.FINE) {
+        if (LOGGER.getLevel() == Level.FINE) {
             buildCurlCommand(request);
         }
         HttpResponse<T> httpResponse = client.execute(request, resp -> {
@@ -199,20 +204,17 @@ public class HttpClient {
             }
             String requestId = headers.get(AppBuilderConfig.APPBUILDER_REQUEST_ID);
             String stringBody = EntityUtils.toString(resp.getEntity());
-            HttpResponse<T> response = new HttpResponse<T>()
-                    .setCode(resp.getCode())
-                    .setMessage(resp.getReasonPhrase())
-                    .setRequestId(requestId)
-                    .setHeaders(headers)
-                    .setStringBody(stringBody);
-            if (resp.getCode() == 200) {
+            HttpResponse<T> response =
+                    new HttpResponse<T>().setCode(resp.getCode()).setMessage(resp.getReasonPhrase())
+                            .setRequestId(requestId).setHeaders(headers).setStringBody(stringBody);
+            if (resp.getCode() == 200 && bodyType != null) {
                 response.setBody(JsonUtils.deserialize(stringBody, bodyType));
             }
             return response;
         });
         if (httpResponse.getCode() != 200) {
-            throw new AppBuilderServerException(httpResponse.getRequestId(),
-                    httpResponse.getCode(), httpResponse.getMessage(), httpResponse.getStringBody());
+            throw new AppBuilderServerException(httpResponse.getRequestId(), httpResponse.getCode(),
+                    httpResponse.getMessage(), httpResponse.getStringBody());
         }
         return httpResponse;
     }
@@ -234,13 +236,11 @@ public class HttpClient {
                 stringBody = EntityUtils.toString(resp.getEntity());
             } catch (ParseException ignored) {
             }
-            throw new AppBuilderServerException(requestId, resp.getCode(), resp.getReasonPhrase(), stringBody);
+            throw new AppBuilderServerException(requestId, resp.getCode(), resp.getReasonPhrase(),
+                    stringBody);
         }
-        return new HttpResponse<Iterator<T>>()
-                .setCode(resp.getCode())
-                .setMessage(resp.getReasonPhrase())
-                .setRequestId(requestId)
-                .setHeaders(headers)
+        return new HttpResponse<Iterator<T>>().setCode(resp.getCode())
+                .setMessage(resp.getReasonPhrase()).setRequestId(requestId).setHeaders(headers)
                 .setBody(new StreamIterator<>(resp, bodyType));
     }
 
@@ -262,7 +262,7 @@ public class HttpClient {
         }
         return stringBuilder.toString();
     }
-    
+
     private void buildCurlCommand(ClassicHttpRequest request) {
         StringBuilder curlCmd = new StringBuilder("curl");
 
@@ -277,11 +277,12 @@ public class HttpClient {
 
         // Append headers
         for (Header header : request.getHeaders()) {
-            curlCmd.append("-H \'").append(header.getName()).append(": ").append(header.getValue()).append("\'");
+            curlCmd.append("-H \'").append(header.getName()).append(": ").append(header.getValue())
+                    .append("\'");
             curlCmd.append(" \\\n");
         }
 
-        
+
         if ("GET".equals(request.getMethod()) || "DELETE".equals(request.getMethod())) {
             curlCmd = new StringBuilder(curlCmd.toString().replaceAll(" \\\\\n$", ""));
         }
@@ -292,7 +293,8 @@ public class HttpClient {
             try {
                 String body = EntityUtils.toString(entity);
                 curlCmd.append(" -d '").append(body).append("'");
-            } catch (ParseException | IOException e) {}
+            } catch (ParseException | IOException e) {
+            }
         }
 
         LOGGER.log(Level.FINE, "Curl Command: \n" + curlCmd.toString() + "\n");

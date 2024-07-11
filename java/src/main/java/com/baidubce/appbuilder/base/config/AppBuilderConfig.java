@@ -57,10 +57,10 @@ public class AppBuilderConfig {
             "/knowledgeBase?Action=ModifyKnowledgeBase";
     // 导入知识库
     public static final String KNOWLEDGEBASE_CREATE_DOCUMENTS_URL =
-            "/knowledgeBase?action=CreateDocuments";
+            "/knowledgeBase?Action=CreateDocuments";
     // 上传文件到知识库
     public static final String KNOWLEDGEBASE_UPLOAD_DOCUMENTS_URL =
-            "/knowledgeBase?action=UploadDocuments";
+            "/knowledgeBase?Action=UploadDocuments";
 
 
     // 运行rag

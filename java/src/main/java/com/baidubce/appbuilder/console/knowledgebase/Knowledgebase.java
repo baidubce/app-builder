@@ -113,7 +113,8 @@ public class Knowledgebase extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<KnowledgeBaseDetail> response = httpClient.execute(postRequest, KnowledgeBaseDetail.class);
+        HttpResponse<KnowledgeBaseDetail> response =
+                httpClient.execute(postRequest, KnowledgeBaseDetail.class);
         KnowledgeBaseDetail respBody = response.getBody();
         return respBody;
     }
@@ -128,7 +129,8 @@ public class Knowledgebase extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<KnowledgeBaseDetail> response = httpClient.execute(postRequest, KnowledgeBaseDetail.class);
+        HttpResponse<KnowledgeBaseDetail> response =
+                httpClient.execute(postRequest, KnowledgeBaseDetail.class);
         KnowledgeBaseDetail respBody = response.getBody();
         return respBody;
     }
