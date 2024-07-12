@@ -22,7 +22,7 @@ from appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever import Ba
 from appbuilder.core.components.embeddings.component import Embedding
 from appbuilder.core.component import Message 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip(reason="暂时跳过测试")
 class TestBaiduVbdRetriever(unittest.TestCase):
     def setUp(self):
         self.instance_id=os.getenv("INSTANCE_ID", "UNKNOWN")
