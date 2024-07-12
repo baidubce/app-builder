@@ -20,7 +20,7 @@ import (
 	"testing"
 )
 
-func TestKnowledgeBase(t *testing.T) {
+func TestAddDocument(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
 	knowledgeBaseID := ""
@@ -66,5 +66,134 @@ func TestKnowledgeBase(t *testing.T) {
 		DocumentID:      createDocumentRes.DocumentsIDS[0]})
 	if err != nil {
 		t.Fatalf("delete document failed: %v", err)
+	}
+}
+
+func TestKnowledgeBase(t *testing.T) {
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	os.Setenv("APPBUILDER_TOKEN", "")
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	client, err := NewKnowledgeBase(config)
+	if err != nil {
+		t.Fatalf("new Knowledge base instance failed")
+	}
+
+	// 创建知识库
+	createKnowledgeBaseRes, err := client.CreateKnowledgeBase(KnowledgeBaseDetail{
+		Name:        "test-go",
+		Description: "test-go",
+		Config: &KnowlegeBaseConfig{
+			Index: KnowledgeBaseConfigIndex{
+				Type:     "public",
+				EsUrl:    "http://localhost:9200",
+				Password: "elastic",
+				Username: "elastic",
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("create knowledge base failed: %v", err)
+	}
+	knowledgeBaseID := createKnowledgeBaseRes.ID
+	fmt.Println(knowledgeBaseID)
+
+	// 获取知识库详情
+	getKnowledgeBaseRes, err := client.GetKnowledgeBaseDetail(knowledgeBaseID)
+	if err != nil {
+		t.Fatalf("get knowledge base failed: %v", err)
+	}
+	fmt.Println(getKnowledgeBaseRes)
+
+	// 获取知识库列表
+	knowledgeBaseListRes, err := client.GetKnowledgeBaseList(
+		GetKnowledgeBaseListRequest{
+			Marker: knowledgeBaseID,
+		},
+	)
+	if err != nil {
+		t.Fatalf("get knowledge base list failed: %v", err)
+	}
+	fmt.Println(knowledgeBaseListRes)
+
+	// 导入知识库
+	err = client.CreateDocuments(CreateDocumentsRequest{
+		ID:            knowledgeBaseID,
+		ContentFormat: "rawText",
+		Source: DocumentsSource{
+			Type:     "web",
+			Urls:     []string{"https://baijiahao.baidu.com/s?id=1802527379394162441"},
+			UrlDepth: 1,
+		},
+		ProcessOption: &DocumentsProcessOption{
+			Template: "custom",
+			Parser: &DocumentsProcessOptionParser{
+				Choices: []string{"layoutAnalysis", "ocr"},
+			},
+			Chunker: &DocumentsProcessOptionChunker{
+				Choices: []string{"separator"},
+				Separator: &DocumentsProcessOptionChunkerSeparator{
+					Separators:   []string{"。"},
+					TargetLength: 300,
+					OverlapRate:  0.25,
+				},
+				PrependInfo: []string{"title", "filename"},
+			},
+			KnowledgeAugmentation: &DocumentsProcessOptionKnowledgeAugmentation{
+				Choices: []string{"faq"},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("create documents failed: %v", err)
+	}
+
+	// 上传知识库文档
+	err = client.UploadDocuments("./files/test.pdf", CreateDocumentsRequest{
+		ID:            knowledgeBaseID,
+		ContentFormat: "rawText",
+		Source: DocumentsSource{
+			Type: "file",
+		},
+		ProcessOption: &DocumentsProcessOption{
+			Template: "custom",
+			Parser: &DocumentsProcessOptionParser{
+				Choices: []string{"layoutAnalysis", "ocr"},
+			},
+			Chunker: &DocumentsProcessOptionChunker{
+				Choices: []string{"separator"},
+				Separator: &DocumentsProcessOptionChunkerSeparator{
+					Separators:   []string{"。"},
+					TargetLength: 300,
+					OverlapRate:  0.25,
+				},
+				PrependInfo: []string{"title", "filename"},
+			},
+			KnowledgeAugmentation: &DocumentsProcessOptionKnowledgeAugmentation{
+				Choices: []string{"faq"},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("upload documents failed: %v", err)
+	}
+
+	// 修改知识库
+	err = client.ModifyKnowledgeBase(ModifyKnowlegeBaseRequest{
+		ID:          knowledgeBaseID,
+		Name:        "test-go",
+		Description: "test-go",
+	})
+	if err != nil {
+		t.Fatalf("modify knowledge base failed: %v", err)
+	}
+
+	// 删除知识库
+	err = client.DeleteKnowledgeBase(knowledgeBaseID)
+	if err != nil {
+		t.Fatalf("delete knowledge base failed: %v", err)
 	}
 }

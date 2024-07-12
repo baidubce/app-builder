@@ -81,3 +81,90 @@ type UploadFileResponse struct {
 	Code      string `json:"code"`
 	Message   string `json:"message"`
 }
+
+type KnowlegeBaseConfig struct {
+	Index KnowledgeBaseConfigIndex `json:"index"`
+}
+
+type KnowledgeBaseConfigIndex struct {
+	Type     string `json:"type"`
+	EsUrl    string `json:"esUrl"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type KnowledgeBaseDetail struct {
+	ID          string              `json:"id,omitempty"`
+	Name        string              `json:"name,omitempty"`
+	Description string              `json:"description,omitempty"`
+	Config      *KnowlegeBaseConfig `json:"config,omitempty"`
+}
+
+type ModifyKnowlegeBaseRequest struct {
+	ID          string `json:"id"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+type GetKnowledgeBaseListRequest struct {
+	Marker  string `json:"marker,omitempty"`
+	Keyword string `json:"keyword,omitempty"`
+	MaxKeys int    `json:"maxKeys,omitempty"`
+}
+
+type GetKnowledgeBaseListResponse struct {
+	RequestID   string                `json:"requestId"`
+	Data        []KnowledgeBaseDetail `json:"data"`
+	Marker      string                `json:"marker"`
+	IsTruncated bool                  `json:"isTruncated"`
+	NextMarker  string                `json:"nextMarker"`
+	MaxKeys     int                   `json:"maxKeys"`
+}
+
+type DocumentsSource struct {
+	Type     string   `json:"type"`
+	Urls     []string `json:"urls,omitempty"`
+	UrlDepth int      `json:"url_depth,omitempty"`
+}
+
+type DocumentsProcessOptionParser struct {
+	Choices []string `json:"choices"`
+}
+
+type DocumentsProcessOptionChunkerSeparator struct {
+	Separators   []string `json:"separators"`
+	TargetLength int64    `json:"targetLength"`
+	OverlapRate  float64  `json:"overlapRate"`
+}
+
+type DocumentsProcessOptionChunkerPattern struct {
+	MarkPosition string  `json:"markPosition"`
+	Regex        string  `json:"regex"`
+	TargetLength int64   `json:"targetLength"`
+	OverlapRate  float64 `json:"overlapRate"`
+}
+
+type DocumentsProcessOptionChunker struct {
+	Choices     []string                                `json:"choices"`
+	PrependInfo []string                                `json:"prependInfo"`
+	Separator   *DocumentsProcessOptionChunkerSeparator `json:"separator,omitempty"`
+	Pattern     *DocumentsProcessOptionChunkerPattern   `json:"pattern,omitempty"`
+}
+
+type DocumentsProcessOptionKnowledgeAugmentation struct {
+	Choices []string `json:"choices"`
+}
+
+type DocumentsProcessOption struct {
+	Template              string                                       `json:"template"`
+	Parser                *DocumentsProcessOptionParser                `json:"parser,omitempty"`
+	Chunker               *DocumentsProcessOptionChunker               `json:"chunker,omitempty"`
+	KnowledgeAugmentation *DocumentsProcessOptionKnowledgeAugmentation `json:"knowledgeAugmentation,omitempty"`
+}
+
+type CreateDocumentsRequest struct {
+	ID            string                  `json:"id"`
+	ContentFormat string                  `json:"contentFormat"`
+	Source        DocumentsSource         `json:"source"`
+	ProcessOption *DocumentsProcessOption `json:"processOption,omitempty"`
+}
