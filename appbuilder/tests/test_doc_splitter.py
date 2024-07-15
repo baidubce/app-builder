@@ -19,8 +19,7 @@ import os
 
 import appbuilder
 
-
-@unittest.skip(reason="暂时跳过测试")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestDocSplitter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
