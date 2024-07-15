@@ -33,7 +33,6 @@ def _time(start_time,end_time,span):
     """
     span.set_attribute('time.cost-time',str(end_time-start_time)+'s')
 
-
 def _build_curl_from_post(url, headers, json_body, timeout) -> str:
         """
         从 POST 请求参数生成 cURL 命令。
