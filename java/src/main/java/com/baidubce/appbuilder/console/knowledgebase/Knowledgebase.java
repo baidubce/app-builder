@@ -198,4 +198,74 @@ public class Knowledgebase extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, builder.build());
         httpClient.execute(postRequest, null);
     }
+
+    public String createChunk(String documentId, String content)
+            throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.CHUNK_CREATE_URL;
+
+        ChunkCreateRequest request = new ChunkCreateRequest(documentId, content);
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<ChunkCreateResponse> response =
+                httpClient.execute(postRequest, ChunkCreateResponse.class);
+        ChunkCreateResponse respBody = response.getBody();
+        return respBody.getChunkId();
+    }
+
+    public void modifyChunk(String chunkId, String content, boolean enable)
+            throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.CHUNK_MODIFY_URL;
+
+        ChunkModifyRequest request = new ChunkModifyRequest(chunkId, content, enable);
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        httpClient.execute(postRequest, ChunkCreateResponse.class);
+    }
+
+    public void deleteChunk(String chunkId) throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.CHUNK_DELETE_URL;
+        ChunkDeleteRequest request = new ChunkDeleteRequest();
+        request.setChunkId(chunkId);
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        httpClient.execute(postRequest, ChunkCreateResponse.class);
+    }
+
+    public ChunkDescribeResponse describeChunk(String chunkId)
+            throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.CHUNK_DESCRIBE_URL;
+
+        ChunkDescribeRequest request = new ChunkDescribeRequest();
+        request.setChunkId(chunkId);
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<ChunkDescribeResponse> response =
+                httpClient.execute(postRequest, ChunkDescribeResponse.class);
+        ChunkDescribeResponse respBody = response.getBody();
+        return respBody;
+    }
+
+    public ChunksDescribeResponse describeChunks(String documentId, String marker, Integer maxKeys,
+            Integer type) throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.CHUNKS_DESCRIBE_URL;
+
+        ChunksDescribeRequest request =
+                new ChunksDescribeRequest(documentId, marker, maxKeys, type);
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<ChunksDescribeResponse> response =
+                httpClient.execute(postRequest, ChunksDescribeResponse.class);
+        ChunksDescribeResponse respBody = response.getBody();
+        return respBody;
+    }
 }

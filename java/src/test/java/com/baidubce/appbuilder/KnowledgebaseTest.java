@@ -123,4 +123,20 @@ public class KnowledgebaseTest {
         // 删除知识库
         knowledgebase.deleteKnowledgeBase(knowledgeBaseId);
     }
+
+    @Test
+    public void testCreateChunk() throws IOException, AppBuilderServerException {
+        String documentId = "";
+        Knowledgebase knowledgebase = new Knowledgebase();
+        // 创建切片
+        String chunkId = knowledgebase.createChunk(documentId, "test");
+        // 修改切片
+        knowledgebase.modifyChunk(chunkId, "new test", true);
+        // 获取切片详情
+        knowledgebase.describeChunk(chunkId);
+        // 获取切片列表
+        knowledgebase.describeChunks(documentId, chunkId, 10, null);
+        // 删除切片
+        knowledgebase.deleteChunk(chunkId);
+    }
 }

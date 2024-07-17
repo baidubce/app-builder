@@ -61,6 +61,16 @@ public class AppBuilderConfig {
     // 上传文件到知识库
     public static final String KNOWLEDGEBASE_UPLOAD_DOCUMENTS_URL =
             "/knowledgeBase?Action=UploadDocuments";
+    // 创建切片
+    public static final String CHUNK_CREATE_URL = "/knowledgeBase?Action=CreateChunk";
+    // 修改切片
+    public static final String CHUNK_MODIFY_URL = "/knowledgeBase?Action=ModifyChunk";
+    // 获取切片详情
+    public static final String CHUNK_DESCRIBE_URL = "/knowledgeBase?Action=DescribeChunk";
+    // 获取切片列表
+    public static final String CHUNKS_DESCRIBE_URL = "/knowledgeBase?Action=DescribeChunks";
+    // 删除切片
+    public static final String CHUNK_DELETE_URL = "/knowledgeBase?Action=DeleteChunk";
 
 
     // 运行rag
