@@ -211,6 +211,8 @@ class KnowledgeBase(Component):
         data = response.json()
 
         resp = data_class.KnowledgeBaseDetailResponse(**data)
+        self.knowledge_id = resp.id
+        self.knowledge_name = resp.name
         return resp
 
     def get_knowledge_base_detail(
@@ -409,3 +411,133 @@ class KnowledgeBase(Component):
             data = response.json()
 
         return data
+
+    def create_chunk(
+        self,
+        documentId: str,
+        content: str,
+    ) -> data_class.CreateChunkResponse:
+        headers = self.http_client.auth_header_v2()
+        headers["content-type"] = "application/json"
+
+        url = self.http_client.service_url_v2("/knowledgeBase?Action=CreateChunk")
+
+        request = data_class.CreateChunkRequest(
+            documentId=documentId,
+            content=content,
+        )
+
+        response = self.http_client.session.post(
+            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+        )
+
+        self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
+        data = response.json()
+
+        resp = data_class.CreateChunkResponse(**data)
+        return resp
+
+    def modify_chunk(
+        self,
+        chunkId: str,
+        content: str,
+        enable: bool,
+    ):
+        headers = self.http_client.auth_header_v2()
+        headers["content-type"] = "application/json"
+
+        url = self.http_client.service_url_v2("/knowledgeBase?Action=ModifyChunk")
+
+        request = data_class.ModifyChunkRequest(
+            chunkId=chunkId,
+            content=content,
+            enable=enable,
+        )
+
+        response = self.http_client.session.post(
+            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+        )
+
+        self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
+        data = response.json()
+
+        return data
+
+    def delete_chunk(
+        self,
+        chunkId: str,
+    ):
+        headers = self.http_client.auth_header_v2()
+        headers["content-type"] = "application/json"
+
+        url = self.http_client.service_url_v2("/knowledgeBase?Action=DeleteChunk")
+
+        request = data_class.DeleteChunkRequest(
+            chunkId=chunkId,
+        )
+
+        response = self.http_client.session.post(
+            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+        )
+
+        self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
+        data = response.json()
+
+        return data
+
+    def describe_chunk(
+        self,
+        chunkId: str,
+    ) -> data_class.DescribeChunkResponse:
+        headers = self.http_client.auth_header_v2()
+        headers["content-type"] = "application/json"
+
+        url = self.http_client.service_url_v2("/knowledgeBase?Action=DescribeChunk")
+
+        request = data_class.DescribeChunkRequest(
+            chunkId=chunkId,
+        )
+
+        response = self.http_client.session.post(
+            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+        )
+
+        self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
+        data = response.json()
+
+        resp = data_class.DescribeChunkResponse(**data)
+        return resp
+
+    def describe_chunks(
+        self,
+        documentId: str,
+        marker: str,
+        maxKeys: int,
+        type: int = None,
+    ) -> data_class.DescribeChunkResponse:
+        headers = self.http_client.auth_header_v2()
+        headers["content-type"] = "application/json"
+
+        url = self.http_client.service_url_v2("/knowledgeBase?Action=DescribeChunks")
+
+        request = data_class.DescribeChunksRequest(
+            documentId=documentId,
+            marker=marker,
+            maxKeys=maxKeys,
+            type=type,
+        )
+
+        response = self.http_client.session.post(
+            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+        )
+
+        self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
+        data = response.json()
+
+        resp = data_class.DescribeChunksResponse(**data)
+        return resp

@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from pydantic import Field
 from typing import Union
 from typing import Optional
+import datetime
 
 
 class KnowledgeBaseUploadFileResponse(BaseModel):
@@ -119,7 +120,7 @@ class KnowledgeBaseGetDetailRequest(BaseModel):
 class KnowledgeBaseDetailResponse(BaseModel):
     id: str = Field(..., description="知识库ID")
     name: str = Field(..., description="知识库名称")
-    description: str = Field(..., description="知识库描述")
+    description: Optional[str] = Field(None, description="知识库描述")
     config: Optional[KnowledgeBaseConfig] = Field(..., description="知识库配置")
 
 
@@ -205,3 +206,58 @@ class KnowledgeBaseCreateDocumentsRequest(BaseModel):
     processOption: Optional[DocumentProcessOption] = Field(
         None, description="文档处理选项"
     )
+
+
+class CreateChunkRequest(BaseModel):
+    documentId: str = Field(..., description="文档ID")
+    content: str = Field(..., description="文档内容")
+
+
+class CreateChunkResponse(BaseModel):
+    id: str = Field(..., description="切片ID")
+
+
+class ModifyChunkRequest(BaseModel):
+    chunkId: str = Field(..., description="切片ID")
+    content: str = Field(..., description="文档内容")
+    enable: bool = Field(..., description="是否启用")
+
+
+class DeleteChunkRequest(BaseModel):
+    chunkId: str = Field(..., description="切片ID")
+
+
+class DescribeChunkRequest(BaseModel):
+    chunkId: str = Field(..., description="切片ID")
+
+
+class DescribeChunkResponse(BaseModel):
+    id: str = Field(..., description="切片ID")
+    type: int = Field(..., description="切片类型")
+    knowledgeBaseId: str = Field(..., description="知识库ID")
+    documentId: str = Field(..., description="文档ID")
+    content: str = Field(..., description="文档内容")
+    enabled: bool = Field(..., description="是否启用")
+    wordCount: int = Field(..., description="切片内字符数量")
+    tokenCount: int = Field(..., description="切片内token数量")
+    status: str = Field(..., description="切片状态")
+    statusMessage: str = Field(..., description="切片状态信息")
+    createdAt: int = Field(..., description="创建时间")
+    updatedAt: int = Field(..., description="更新时间")
+
+
+class DescribeChunksRequest(BaseModel):
+    documentId: str = Field(..., description="文档ID")
+    marker: str = Field(..., description="起始位置")
+    maxKeys: int = Field(..., description="返回文档数量大小，默认10，最大值100")
+    type: Optional[int] = Field(None, description="切片类型")
+
+
+class DescribeChunksResponse(BaseModel):
+    data: list[DescribeChunkResponse] = Field(..., description="切片列表")
+    marker: str = Field(..., description="起始位置")
+    isTruncated: bool = Field(
+        ..., description="true表示后面还有数据，false表示已经是最后一页"
+    )
+    nextMarker: str = Field(..., description="下一页起始位置")
+    maxKeys: int = Field(..., description="本次查询包含的最大结果集数量")
