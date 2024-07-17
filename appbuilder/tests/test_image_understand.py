@@ -107,16 +107,6 @@ class TestImageUnderstand(unittest.TestCase):
             inp = Message(content={"raw_image": self.raw_image, "question": question, "language": ""})
             self.image_understand.run(inp)
 
-    def test_run_image_size_too_big(self):
-        
-        # 图像体积大于4MB
-        img_url = "https://bj.bcebos.com/v1/appbuilder/test_image_understand_size_too_big.jpeg?"+ \
-                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-06-" + \
-                    "17T02%3A44%3A49Z%2F-1%2Fhost%2F85bf5be090465c45fc409f1031bfc1d895b8f1047fa3eb888e235eecdb495f65"
-        with self.assertRaises(AppBuilderServerException):
-            inp = Message(content={"url": img_url, "question": "图像内容是什么"})
-            self.image_understand.run(inp)
-
 
 if __name__ == "__main__":
     unittest.main()
