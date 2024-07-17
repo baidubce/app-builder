@@ -197,3 +197,62 @@ func TestKnowledgeBase(t *testing.T) {
 		t.Fatalf("delete knowledge base failed: %v", err)
 	}
 }
+
+func TestChunk(t *testing.T) {
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	os.Setenv("APPBUILDER_TOKEN", "")
+	documentID := ""
+
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	client, err := NewKnowledgeBase(config)
+	if err != nil {
+		t.Fatalf("new Knowledge base instance failed")
+	}
+	// 创建切片
+	chunkID, err := client.CreateChunk(CreateChunkRequest{
+		DocumentID: documentID,
+		Content:    "test",
+	})
+	if err != nil {
+		t.Fatalf("create chunk failed: %v", err)
+	}
+	fmt.Println(chunkID)
+
+	// 修改切片
+	err = client.ModifyChunk(ModifyChunkRequest{
+		ChunkID: chunkID,
+		Content: "new test",
+		Enable:  true,
+	})
+	if err != nil {
+		t.Fatalf("modify chunk failed: %v", err)
+	}
+
+	// 获取切片详情
+	describeChunkRes, err := client.DescribeChunk(chunkID)
+	if err != nil {
+		t.Fatalf("describe chunk failed: %v", err)
+	}
+	fmt.Println(describeChunkRes)
+
+	// 获取切片列表
+	describeChunksRes, err := client.DescribeChunks(DescribeChunksRequest{
+		DocumnetID: documentID,
+		Marker:     chunkID,
+		MaxKeys:    10,
+	})
+	if err != nil {
+		t.Fatalf("describe chunks failed: %v", err)
+	}
+	fmt.Println(describeChunksRes)
+
+	// 删除切片
+	err = client.DeleteChunk(chunkID)
+	if err != nil {
+		t.Fatalf("delete chunk failed: %v", err)
+	}
+}

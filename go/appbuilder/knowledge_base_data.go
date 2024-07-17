@@ -168,3 +168,56 @@ type CreateDocumentsRequest struct {
 	Source        DocumentsSource         `json:"source"`
 	ProcessOption *DocumentsProcessOption `json:"processOption,omitempty"`
 }
+
+type CreateChunkRequest struct {
+	DocumentID string `json:"documentId"`
+	Content    string `json:"content"`
+}
+
+type CreateChunkResponse struct {
+	ID string `json:"id"`
+}
+
+type ModifyChunkRequest struct {
+	ChunkID string `json:"chunkId"`
+	Content string `json:"content"`
+	Enable  bool   `json:"enable"`
+}
+
+type DeleteChunkRequest struct {
+	ChunkID string `json:"chunkId"`
+}
+
+type DescribeChunkRequest struct {
+	ChunkID string `json:"chunkId"`
+}
+
+type DescribeChunkResponse struct {
+	ID              string `json:"id"`
+	Type            int    `json:"type"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	DocumentID      string `json:"documentId"`
+	Content         string `json:"content"`
+	WordCount       int64  `json:"wordCount"`
+	TokenCount      int64  `json:"tokenCount"`
+	Enabled         bool   `json:"enabled"`
+	Status          string `json:"status"`
+	StatusMessage   string `json:"statusMessage"`
+	CreatedAt       int64  `json:"createdAt"`
+	UpdatedAt       int64  `json:"updatedAt"`
+}
+
+type DescribeChunksRequest struct {
+	DocumnetID string `json:"documentId"`
+	Marker     string `json:"marker"`
+	MaxKeys    int    `json:"maxKeys"`
+	Type       int    `json:"type,omitempty"`
+}
+
+type DescribeChunksResponse struct {
+	Data        []DescribeChunkResponse `json:"data"`
+	Marker      string                  `json:"marker"`
+	IsTruncated bool                    `json:"isTruncated"`
+	NextMarker  string                  `json:"nextMarker"`
+	MaxKeys     int                     `json:"maxKeys"`
+}
