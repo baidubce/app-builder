@@ -233,7 +233,7 @@ class DescribeChunkRequest(BaseModel):
 
 class DescribeChunkResponse(BaseModel):
     id: str = Field(..., description="切片ID")
-    type: int = Field(..., description="切片类型")
+    type: str = Field(..., description="切片类型")
     knowledgeBaseId: str = Field(..., description="知识库ID")
     documentId: str = Field(..., description="文档ID")
     content: str = Field(..., description="文档内容")
@@ -242,15 +242,15 @@ class DescribeChunkResponse(BaseModel):
     tokenCount: int = Field(..., description="切片内token数量")
     status: str = Field(..., description="切片状态")
     statusMessage: str = Field(..., description="切片状态信息")
-    createdAt: int = Field(..., description="创建时间")
-    updatedAt: int = Field(..., description="更新时间")
+    createTime: int = Field(..., description="创建时间")
+    updateTime: int = Field(..., description="更新时间")
 
 
 class DescribeChunksRequest(BaseModel):
     documentId: str = Field(..., description="文档ID")
     marker: str = Field(..., description="起始位置")
     maxKeys: int = Field(..., description="返回文档数量大小，默认10，最大值100")
-    type: Optional[int] = Field(None, description="切片类型")
+    type: Optional[str] = Field(None, description="切片类型")
 
 
 class DescribeChunksResponse(BaseModel):
