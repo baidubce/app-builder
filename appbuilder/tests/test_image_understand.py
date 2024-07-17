@@ -108,6 +108,7 @@ class TestImageUnderstand(unittest.TestCase):
             self.image_understand.run(inp)
 
     def test_run_image_size_too_big(self):
+        
         # 图像体积大于4MB
         img_url = "https://bj.bcebos.com/v1/appbuilder/test_image_understand_size_too_big.jpeg?"+ \
                     "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-06-" + \
