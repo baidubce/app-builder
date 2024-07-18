@@ -4,9 +4,9 @@ public class ChunksDescribeRequest {
     private String documentId;
     private String marker;
     private Integer maxKeys;
-    private Integer type;
+    private String type;
 
-    public ChunksDescribeRequest(String documentId, String marker, Integer maxKeys, Integer type) {
+    public ChunksDescribeRequest(String documentId, String marker, Integer maxKeys, String type) {
         this.documentId = documentId;
         this.marker = marker;
         this.maxKeys = maxKeys;
@@ -25,7 +25,7 @@ public class ChunksDescribeRequest {
         return maxKeys;
     }
 
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 }

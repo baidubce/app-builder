@@ -254,7 +254,7 @@ public class Knowledgebase extends Component {
     }
 
     public ChunksDescribeResponse describeChunks(String documentId, String marker, Integer maxKeys,
-            Integer type) throws IOException, AppBuilderServerException {
+            String type) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CHUNKS_DESCRIBE_URL;
 
         ChunksDescribeRequest request =
