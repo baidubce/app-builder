@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class ChunkDescribeResponse {
     @SerializedName("id")
     private String chunkId;
-    private Integer type;
+    private String type;
     private String knowledgeBaseId;
     private String documentId;
     private String content;
@@ -25,11 +25,11 @@ public class ChunkDescribeResponse {
         return chunkId;
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
