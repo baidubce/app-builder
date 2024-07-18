@@ -209,8 +209,8 @@ type DescribeChunkResponse struct {
 
 type DescribeChunksRequest struct {
 	DocumnetID string `json:"documentId"`
-	Marker     string `json:"marker"`
-	MaxKeys    int    `json:"maxKeys"`
+	Marker     string `json:"marker,omitempty"`
+	MaxKeys    int    `json:"maxKeys,omitempty"`
 	Type       string `json:"type,omitempty"`
 }
 
