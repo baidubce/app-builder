@@ -23,6 +23,7 @@ import numpy as np
 
 from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings import EmbeddingBaseComponent
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 from .base import MatchingBaseComponent, MatchingArgs
 
@@ -69,6 +70,7 @@ class Matching(MatchingBaseComponent):
         self.embedding_component = embedding_component
         super().__init__(self.meta)
 
+    @components_run_trace
     def run(
         self,
         query: Union[Message[str], str],

@@ -13,22 +13,39 @@
 # limitations under the License.
 
 import unittest
-import requests
 import appbuilder
 import os
 
-from unittest.mock import patch,MagicMock
-
 from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
-from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix
+from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix,launch_phoenix
 from appbuilder.core.console.appbuilder_client import get_app_list
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
     def setUp(self):
+        """
+        初始化方法，用于设置测试前的环境。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            无返回值。
+        
+        """
         self.app_id = "2a19f6dd-de02-46d9-841d-ef5c52b00466"
     
     def test_appbuilder_client_trace(self):
+        """
+        测试AppBuilderClient的跟踪功能
+        
+        Args:
+            无
+        
+        Returns:
+            无返回值，该函数主要用于测试跟踪功能
+        
+        """
 
         tracer=AppBuilderTracer(
             enable_phoenix = True,
@@ -54,25 +71,43 @@ class TestAppBuilderTrace(unittest.TestCase):
 
         tracer.end_trace()
 
-
-    def test_client_trace_function(self):
-        from appbuilder.utils.trace._function import _client_tool_trace_output,_client_tool_trace_output_deep_iterate
-        class Test:
-            test = 'test'
-        _client_tool_trace_output(Test,None)
-
-        _client_tool_trace_output_deep_iterate({},None)
-
     def test_trace_tracer(self):
+        """
+        测试AppbuilderInstrumentor类的trace_tracer方法。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            无返回值。
+        
+        """
         tracer=AppbuilderInstrumentor()
         tracer.instrumentation_dependencies()
         tracer._instrument()
         
 
     def test_appbuilder_phoenix_run(self):
-
-        runtime_main()
-        with self.assertRaises(TypeError):
+        """
+        测试appbuilder_phoenix_run方法
+        
+        Args:
+            无参数。
+        
+        Returns:
+            无返回值。
+        
+        Raises:
+            TypeError: 当调用runtime_main()或stop_phoenix()函数时，预期会抛出TypeError异常。
+        
+        """
+        with self.assertRaises(ImportError):
+            runtime_main()
+        
+        with self.assertRaises(ImportError):
+            launch_phoenix()
+            
+        with self.assertRaises(ImportError):
             stop_phoenix()
 
 

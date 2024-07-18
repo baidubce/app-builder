@@ -20,6 +20,7 @@ from appbuilder.core._exception import AppBuilderServerException, InvalidRequest
 from appbuilder.core.component import Component
 from appbuilder.core.components.mix_card_ocr.model import *
 from appbuilder.core.message import Message
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class MixCardOCR(Component):
@@ -69,6 +70,7 @@ class MixCardOCR(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 输入图片并识别身份证信息
 
@@ -149,6 +151,7 @@ class MixCardOCR(Component):
                 service_err_message=data.get("error_msg")
             )
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         result = {}
         traceid = kwargs.get("traceid")

@@ -23,6 +23,7 @@ from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from typing import Generator, Union
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 TOP_NUM = 1
 BAIKE_NUM = 0
@@ -81,6 +82,7 @@ class AnimalRecognition(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 动物识别
 
@@ -141,6 +143,7 @@ class AnimalRecognition(Component):
         animalRes.request_id = request_id
         return animalRes
 
+    @components_run_stream_trace
     def tool_eval(
         self,
         name: str,

@@ -18,6 +18,7 @@ from typing import Optional, MutableSequence
 
 import appbuilder
 from appbuilder.core._client import HTTPClient
+from appbuilder.utils.trace.tracer_wrapper import list_trace
 
 r"""模型名称到简称的映射.
 """
@@ -298,6 +299,7 @@ class Models:
         """
         self.http_client = client or HTTPClient(secret_key, gateway)
 
+    @list_trace
     def list(self, request: GetModelListRequest = None, timeout: float = None,
              retry: int = 0) -> GetModelListResponse:
         """

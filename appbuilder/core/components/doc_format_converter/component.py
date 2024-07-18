@@ -33,6 +33,7 @@ from appbuilder.core.components.doc_format_converter.model import DocFormatConve
                         DocFormatConverterOutMessage, \
                         DocFormatConverterSubmitRequest, DocFormatConverterSubmitResponse, \
                         DocFormatConverterQueryRequest, DocFormatConverterQueryResponse
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class DocFormatConverter(Component):
@@ -87,6 +88,7 @@ class DocFormatConverter(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0, request_id: str = None) -> Message:
         """
         将PDF、JPG、PNG、BMP等格式文件转换为Word、Excel格式，并返回转换后的文件URL。
@@ -212,6 +214,7 @@ class DocFormatConverter(Component):
         response = DocFormatConverterQueryResponse.from_json(payload=json.dumps(data))
         return response
 
+    @components_run_stream_trace
     def tool_eval(self, streaming: bool, origin_query: str, **kwargs,):
         """
         tool eval

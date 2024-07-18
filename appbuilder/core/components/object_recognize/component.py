@@ -22,7 +22,7 @@ from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.components.object_recognize.model import *
-
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 class ObjectRecognition(Component):
     r"""
@@ -79,6 +79,7 @@ class ObjectRecognition(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 通用物体识别
 
@@ -145,6 +146,7 @@ class ObjectRecognition(Component):
                 service_err_message=data.get("error_msg")
             )
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         """
         object_recognize for function call
