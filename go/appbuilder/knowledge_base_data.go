@@ -194,7 +194,7 @@ type DescribeChunkRequest struct {
 
 type DescribeChunkResponse struct {
 	ID              string `json:"id"`
-	Type            int    `json:"type"`
+	Type            string `json:"type"`
 	KnowledgeBaseID string `json:"knowledgeBaseId"`
 	DocumentID      string `json:"documentId"`
 	Content         string `json:"content"`
@@ -203,15 +203,15 @@ type DescribeChunkResponse struct {
 	Enabled         bool   `json:"enabled"`
 	Status          string `json:"status"`
 	StatusMessage   string `json:"statusMessage"`
-	CreatedAt       int64  `json:"createdAt"`
-	UpdatedAt       int64  `json:"updatedAt"`
+	CreatedAt       int64  `json:"createTime"`
+	UpdatedAt       int64  `json:"updateTime"`
 }
 
 type DescribeChunksRequest struct {
 	DocumnetID string `json:"documentId"`
 	Marker     string `json:"marker"`
 	MaxKeys    int    `json:"maxKeys"`
-	Type       int    `json:"type,omitempty"`
+	Type       string `json:"type,omitempty"`
 }
 
 type DescribeChunksResponse struct {
