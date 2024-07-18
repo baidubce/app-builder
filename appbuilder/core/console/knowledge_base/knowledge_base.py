@@ -515,8 +515,8 @@ class KnowledgeBase(Component):
     def describe_chunks(
         self,
         documentId: str,
-        marker: str,
-        maxKeys: int,
+        marker: str = None,
+        maxKeys: int = None,
         type: str = None,
     ) -> data_class.DescribeChunkResponse:
         headers = self.http_client.auth_header_v2()

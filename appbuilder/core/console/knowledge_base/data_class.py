@@ -248,8 +248,10 @@ class DescribeChunkResponse(BaseModel):
 
 class DescribeChunksRequest(BaseModel):
     documentId: str = Field(..., description="文档ID")
-    marker: str = Field(..., description="起始位置")
-    maxKeys: int = Field(..., description="返回文档数量大小，默认10，最大值100")
+    marker: Optional[str] = Field(None, description="起始位置")
+    maxKeys: Optional[int] = Field(
+        None, description="返回文档数量大小，默认10，最大值100"
+    )
     type: Optional[str] = Field(None, description="切片类型")
 
 
