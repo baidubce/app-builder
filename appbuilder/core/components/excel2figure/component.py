@@ -38,7 +38,7 @@ class Excel2FigureArgs(ComponentArguments):
     excel_file_url: AnyUrl = Field(..., description="用户的 excel 文件地址，需要是一个可被公网下载的 URL 地址")
 
 
-@deprecated(reason="组件后续不再更新, 可在AppBuilder官网创建智能体时配置代码解释器组件，可覆盖本组件的功能且效果更好", version="1.0")
+@deprecated(reason="可使用代码解释器组件替代，链接: https://console.bce.baidu.com/ai_apaas/componentCenter/code_interpreter/detail", version="1.0")
 class Excel2Figure(Component):
     meta = Excel2FigureArgs
     model_type: str = "chat"
