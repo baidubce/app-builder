@@ -87,7 +87,7 @@ class TestKnowLedge(unittest.TestCase):
         knowledge.upload_documents(
             id=knowledge_base_id,
             content_format="rawText",
-            file_path="./appbuilder/tests/data/qa_appbuilder_client_demo.pdf",
+            file_path="./data/qa_appbuilder_client_demo.pdf",
             processOption=appbuilder.DocumentProcessOption(
                 template="custom",
                 parser=appbuilder.DocumentChoices(choices=["layoutAnalysis", "ocr"]),
