@@ -110,6 +110,18 @@ class TestKnowLedge(unittest.TestCase):
         knowledge.delete_knowledge_base(knowledge_base_id)
         self.assertIsNotNone(knowledge_base_id)
 
+    def test_create_chunk(self):
+        dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+        knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
+        list_res = knowledge.get_documents_list()
+        document_id = list_res.data[0].id
+        resp = self.knowledge.create_chunk(document_id, content="test")
+        chunk_id = resp.id
+        knowledge.modify_chunk(chunk_id, content="new test", enable=True)
+        knowledge.describe_chunk(chunk_id)
+        knowledge.describe_chunks(document_id)
+        knowledge.delete_chunk(chunk_id)
+
 
 if __name__ == "__main__":
     unittest.main()
