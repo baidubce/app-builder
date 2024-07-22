@@ -338,7 +338,7 @@ def _assistant_stream_output(output, span, tracer):
                 if hasattr(message, 'content') and message.content and hasattr(message.content[0], 'text') and message.content[0].text and hasattr(message.content[0].text, 'value'):
                     run_list.append(message.content[0].text.value)
             new_span.end()
-            new_span = tracer.start_span('Client-Stream')
+            new_span = tracer.start_span('Assistant-Stream_run')
         for item in run_list:
             result += str(item) 
         new_span.set_attribute("output.value",'流式输出结束\n输出结果为:{}'.format(result))
