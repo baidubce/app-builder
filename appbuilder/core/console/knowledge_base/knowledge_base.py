@@ -21,6 +21,7 @@ from typing import Optional
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.console.knowledge_base import data_class
 from appbuilder.core.component import Message, Component
+from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.trace.tracer_wrapper import client_tool_trace
 
 
@@ -37,7 +38,11 @@ class KnowledgeBase(Component):
         self.knowledge_name = knowledge_name
 
     @classmethod
+    @deprecated
     def create_knowledge(cls, knowledge_name: str) -> "KnowledgeBase":
+        """
+        Deprecated: use create_knowledge_base instead
+        """
         payload = json.dumps({"name": knowledge_name})
         http_client = HTTPClient()
         headers = http_client.auth_header()
