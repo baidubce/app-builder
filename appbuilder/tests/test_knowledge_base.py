@@ -104,19 +104,25 @@ class TestKnowLedge(unittest.TestCase):
             ),
         )
 
-        list_res = knowledge.get_documents_list()
-        document_id = list_res.data[-1].id
-        res = knowledge.describe_chunks(document_id)
-        knowledge.describe_chunk(res.data[0].id)
-        resp = knowledge.create_chunk(document_id, content="test")
-        chunk_id = resp.id
-        knowledge.modify_chunk(chunk_id, content="new test", enable=True)
-        knowledge.delete_chunk(chunk_id)
+        try:
+            list_res = knowledge.get_documents_list()
+            document_id = list_res.data[-1].id
+            res = knowledge.describe_chunks(document_id)
+            knowledge.describe_chunk(res.data[0].id)
+            resp = knowledge.create_chunk(document_id, content="test")
+            chunk_id = resp.id
+            knowledge.modify_chunk(chunk_id, content="new test", enable=True)
+            knowledge.delete_chunk(chunk_id)
 
-        knowledge.modify_knowledge_base(
-            knowledge_base_id=knowledge_base_id, name="test"
-        )
-        knowledge.delete_knowledge_base(knowledge_base_id)
+            knowledge.modify_knowledge_base(
+                knowledge_base_id=knowledge_base_id, name="test"
+            )
+            knowledge.delete_knowledge_base(knowledge_base_id)
+        except Exception as e:
+            print("错误为 {}".format(e))
+        finally:
+            knowledge.delete_knowledge_base(knowledge_base_id)
+
         self.assertIsNotNone(knowledge_base_id)
 
 

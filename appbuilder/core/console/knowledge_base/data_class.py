@@ -76,8 +76,8 @@ class KnowledgeBaseGetDocumentsListRequest(BaseModel):
 
 
 class DocumentMeta(BaseModel):
-    source: str = Field("", description="文档来源")
-    file_id: str = Field("", description="文档对应的文件ID")
+    source: str = Field(None, description="文档来源")
+    file_id: str = Field(None, description="文档对应的文件ID")
 
 
 class Document(BaseModel):
