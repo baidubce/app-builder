@@ -124,7 +124,6 @@ class TestKnowLedge(unittest.TestCase):
             knowledge.modify_knowledge_base(
                 knowledge_base_id=knowledge_base_id, name="test"
             )
-            knowledge.delete_knowledge_base(knowledge_base_id)
         except Exception as e:
             err_msg = str(e)
             print("错误为 {}".format(e))
