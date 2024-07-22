@@ -1444,8 +1444,8 @@ class AssistantThoughtParameters(BaseModel):
     表示助理思考参数的模型。
     Attributes:
         temperature (Optional[float]): 	采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01。
-        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0。
-        penalty_score (Optional[float]): 惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。取值范围大于等于1，小于等于2，默认为1.0。
+        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较高的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0。
+        penalty_score (Optional[float]): 惩罚分数，减少重复生成的现象，值越大表示惩罚越大。取值范围大于等于1，小于等于2，默认为1.0。
     """
     temperature: Optional[float] = 0.01
     top_p: Optional[float] = 0
@@ -1457,8 +1457,8 @@ class AssistantChatParameters(BaseModel):
     表示助理聊天参数的模型。
     Attributes:
         temperature (Optional[float]): 	采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.8。
-        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0.8。
-        penalty_score (Optional[float]): 惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。
+        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较高的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0.8。
+        penalty_score (Optional[float]): 惩罚分数，减少重复生成的现象，值越大表示惩罚越大。取值范围大于等于1，小于等于2，默认为1.0。
     """
     temperature: Optional[float] = 0.8
     top_p: Optional[float] = 0.8
