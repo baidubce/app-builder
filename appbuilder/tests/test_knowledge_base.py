@@ -61,6 +61,7 @@ class TestKnowLedge(unittest.TestCase):
         knowledge.get_knowledge_base_detail(knowledge_base_id)
         knowledge.get_knowledge_base_list(knowledge_base_id, maxKeys=10)
 
+        err_msg = None
         try:
             knowledge.create_documents(
                 id=knowledge_base_id,
@@ -125,11 +126,12 @@ class TestKnowLedge(unittest.TestCase):
             )
             knowledge.delete_knowledge_base(knowledge_base_id)
         except Exception as e:
+            err_msg = str(e)
             print("错误为 {}".format(e))
         finally:
             knowledge.delete_knowledge_base(knowledge_base_id)
 
-        self.assertIsNotNone(knowledge_base_id)
+        self.assertIsNone(err_msg)
 
 
 if __name__ == "__main__":
