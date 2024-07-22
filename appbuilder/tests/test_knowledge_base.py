@@ -60,58 +60,64 @@ class TestKnowLedge(unittest.TestCase):
         knowledge_base_id = resp.id
         knowledge.get_knowledge_base_detail(knowledge_base_id)
         knowledge.get_knowledge_base_list(knowledge_base_id, maxKeys=10)
-        knowledge.create_documents(
-            id=knowledge_base_id,
-            contentFormat="rawText",
-            source=appbuilder.DocumentSource(
-                type="web",
-                urls=["https://baijiahao.baidu.com/s?id=1802527379394162441"],
-                urlDepth=1,
-            ),
-            processOption=appbuilder.DocumentProcessOption(
-                template="custom",
-                parser=appbuilder.DocumentChoices(choices=["layoutAnalysis", "ocr"]),
-                chunker=appbuilder.DocumentChunker(
-                    choices=["separator"],
-                    separator=appbuilder.DocumentSeparator(
-                        separators=["。"],
-                        targetLength=300,
-                        overlapRate=0.25,
-                    ),
-                    prependInfo=["title", "filename"],
-                ),
-                knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
-            ),
-        )
-
-        knowledge.upload_documents(
-            id=knowledge_base_id,
-            content_format="rawText",
-            file_path="./data/qa_appbuilder_client_demo.pdf",
-            processOption=appbuilder.DocumentProcessOption(
-                template="custom",
-                parser=appbuilder.DocumentChoices(choices=["layoutAnalysis", "ocr"]),
-                chunker=appbuilder.DocumentChunker(
-                    choices=["separator"],
-                    separator=appbuilder.DocumentSeparator(
-                        separators=["。"],
-                        targetLength=300,
-                        overlapRate=0.25,
-                    ),
-                    prependInfo=["title", "filename"],
-                ),
-                knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
-            ),
-        )
 
         try:
+            knowledge.create_documents(
+                id=knowledge_base_id,
+                contentFormat="rawText",
+                source=appbuilder.DocumentSource(
+                    type="web",
+                    urls=["https://baijiahao.baidu.com/s?id=1802527379394162441"],
+                    urlDepth=1,
+                ),
+                processOption=appbuilder.DocumentProcessOption(
+                    template="custom",
+                    parser=appbuilder.DocumentChoices(
+                        choices=["layoutAnalysis", "ocr"]
+                    ),
+                    chunker=appbuilder.DocumentChunker(
+                        choices=["separator"],
+                        separator=appbuilder.DocumentSeparator(
+                            separators=["。"],
+                            targetLength=300,
+                            overlapRate=0.25,
+                        ),
+                        prependInfo=["title", "filename"],
+                    ),
+                    knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+                ),
+            )
+
+            knowledge.upload_documents(
+                id=knowledge_base_id,
+                content_format="rawText",
+                file_path="./data/qa_appbuilder_client_demo.pdf",
+                processOption=appbuilder.DocumentProcessOption(
+                    template="custom",
+                    parser=appbuilder.DocumentChoices(
+                        choices=["layoutAnalysis", "ocr"]
+                    ),
+                    chunker=appbuilder.DocumentChunker(
+                        choices=["separator"],
+                        separator=appbuilder.DocumentSeparator(
+                            separators=["。"],
+                            targetLength=300,
+                            overlapRate=0.25,
+                        ),
+                        prependInfo=["title", "filename"],
+                    ),
+                    knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+                ),
+            )
+
             list_res = knowledge.get_documents_list()
             document_id = list_res.data[-1].id
             res = knowledge.describe_chunks(document_id)
-            knowledge.describe_chunk(res.data[0].id)
             resp = knowledge.create_chunk(document_id, content="test")
             chunk_id = resp.id
             knowledge.modify_chunk(chunk_id, content="new test", enable=True)
+            time.sleep(1)
+            knowledge.describe_chunk(chunk_id)
             knowledge.delete_chunk(chunk_id)
 
             knowledge.modify_knowledge_base(
