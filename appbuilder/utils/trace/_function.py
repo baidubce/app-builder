@@ -14,6 +14,7 @@
 import time
 import json
 import inspect
+from opentelemetry import trace
 from typing import Generator
 from pydantic import BaseModel
 from appbuilder import Message
@@ -128,99 +129,6 @@ def _input(args,kwargs,span):
     except Exception as e:
         print(e)
 
-
-def _client_run_trace_output(output,span,tracer):
-    """
-    根据给定的输出、span和tracer，记录并处理客户端的trace输出信息。
-    
-    Args:
-        output (Any): 客户端的输出信息，可能是一个生成器或AppBuilderClientAnswer对象。
-        span (Span): Jaeger的Span对象，用于记录trace信息。
-        tracer (Tracer): Jaeger的Tracer对象，用于创建新的Span。
-    
-    Returns:
-        list: 如果output是生成器类型，则返回生成器中的消息列表；否则返回空列表。
-    
-    """
-    if output:
-        run_list = []
-        generator_list = []
-        prompt_tokens = 0
-        completion_tokens = 0
-        total_tokens = 0
-        if output.mtype == 'generator':
-            result = ''
-            new_span = tracer.start_span('Client-Stream')
-            for message in output.content:
-                new_span.set_attribute("openinference.span.kind",'agent')
-                generator_list.append(message)
-
-                context_message_str=""
-                has_reference = False
-                if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'detail') and message.events[0].detail:
-                    context_message_list = message.events[0].detail.get('references',None)
-                if context_message_list:
-                    for context_message in context_message_list:
-                        for context_message_key,context_message_value in context_message.items():
-                            context_message_str += '{}: {}\n'.format(context_message_key, context_message_value)
-                            has_reference = True
-                        context_message_str +='\n'
-                if has_reference:
-                    new_span.set_attribute("input.value", 'Context(上下文) For RAG:\n{}'.format(context_message_str))
-                try:
-                    new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
-                except Exception as e:
-                    print(e)
-                result += str(message.answer)
-                
-                if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'event_type') and hasattr(message.events[0], 'status'):
-                    run_list.append('{}[status:{}]'.format(message.events[0].event_type,message.events[0].status))
-                
-                if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'usage') and message.events[0].usage and hasattr(message.events[0].usage, 'prompt_tokens'):   
-                    prompt_tokens = message.events[0].usage.prompt_tokens
-                    completion_tokens = message.events[0].usage.completion_tokens
-                    total_tokens = message.events[0].usage.total_tokens
-                
-                new_span.end()
-                new_span = tracer.start_span('Client-Stream')
-            
-            new_span.set_attribute("output.value",'流式输出结束:\n输出结果为:{}'.format(result))
-            new_span.set_attribute("openinference.span.kind",'agent')
-            new_span.end()
-
-            span.set_attribute("output.value",result)
-        elif output.mtype == 'AppBuilderClientAnswer':
-            span.set_attribute("output.value",output.content.answer)
-            events = output.content.events
-            for event in events:
-                run_list.append('{}[status:{}]'.format(event.event_type,event.status))
-                if hasattr(event, 'usage') and event.usage and hasattr(event.usage, 'prompt_tokens'):
-                    prompt_tokens += event.usage.prompt_tokens
-                    completion_tokens += event.usage.completion_tokens
-                    total_tokens += event.usage.total_tokens
-
-        if total_tokens:
-            span.set_attribute("llm.token_count.prompt",prompt_tokens)
-            span.set_attribute("llm.token_count.completion", completion_tokens)
-            span.set_attribute("llm.token_count.total", total_tokens)
-        span.set_attribute("Agent-Running-Process",'==>'.join(run_list))
-
-    return generator_list
-
-def _return_generator(run_list) -> Generator:
-    """
-    返回一个生成器，逐个生成并返回run_list中的元素。
-    
-    Args:
-        run_list (list): 包含要生成的元素的列表。
-    
-    Returns:
-        Generator: 返回一个生成器，用于逐个生成并返回run_list中的元素。
-    
-    """
-    for item in run_list:
-        yield item
-
 def _client_tool_trace_output_deep_iterate(output,span):
     """
     对客户端工具的输出进行深度迭代，并设置OpenTelemetry的span属性。
@@ -249,6 +157,148 @@ def _client_tool_trace_output_deep_iterate(output,span):
                 span.set_attribute("output.value",str(output))
     except Exception as e:
         print(e)
+
+def _client_trace_generator(generator, tracer, parent_context):
+    """
+    用于生成客户端跟踪信息的生成器函数。
+    
+    Args:
+        generator (Iterator): 消息生成器。
+        tracer (Tracer): OpenTelemetry 追踪器实例。
+        parent_context (SpanContext): 父级上下文。
+    
+    Returns:
+        Generator: 带有跟踪信息的消息生成器。
+    
+    """
+    with tracer.start_as_current_span('AppBuilderClient-Stream-RUN', context = parent_context) as span:
+        span.set_attribute("openinference.span.kind", 'agent')
+        result_str = ''
+        prompt_tokens = 0
+        completion_tokens = 0
+        total_tokens = 0
+        run_list = []
+        try:
+            new_span = tracer.start_span('Client-Stream')
+            for message in generator:
+                new_span.set_attribute("openinference.span.kind", 'agent')
+                context_message_str = ""
+                has_reference = False
+
+                context_message_list = None
+                if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'detail') and message.events[0].detail:
+                    context_message_list = message.events[0].detail.get('references', None)
+
+                if context_message_list:
+                    for context_message in context_message_list:
+                        for context_message_key, context_message_value in context_message.items():
+                            context_message_str += '{}: {}\n'.format(context_message_key, context_message_value)
+                            has_reference = True
+                        context_message_str += '\n'
+
+                if has_reference:
+                    new_span.set_attribute("input.value", 'Context(上下文) For RAG:\n{}'.format(context_message_str))
+
+                try:
+                    new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
+                except Exception as e:
+                    print(e)
+
+                result_str += str(message.answer)
+
+                if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'event_type') and hasattr(message.events[0], 'status'):
+                    run_list.append('{}[status:{}]'.format(message.events[0].event_type, message.events[0].status))
+
+                if hasattr(message, 'events') and message.events and hasattr(message.events[0], 'usage') and message.events[0].usage:
+                    prompt_tokens = message.events[0].usage.prompt_tokens
+                    completion_tokens = message.events[0].usage.completion_tokens
+                    total_tokens = message.events[0].usage.total_tokens
+                new_span.end()
+                new_span = tracer.start_span('Client-Stream')
+                yield message
+        except Exception as e:
+            print(e)
+        finally:
+            span.set_attribute("output.value", result_str)
+            span.set_attribute("llm.token_count.prompt", prompt_tokens)
+            span.set_attribute("llm.token_count.completion", completion_tokens)
+            span.set_attribute("llm.token_count.total", total_tokens)
+            span.set_attribute("Agent-Running-Process", '==>'.join(run_list))
+        
+        
+def _client_run_trace_stream(tracer, func, *args, **kwargs):
+    """
+    跟踪客户端运行流处理函数，并记录相关的跟踪信息。
+    
+    Args:
+        tracer (Tracer): OpenTelemetry Tracer 实例，用于生成和设置 span。
+        func (Callable[..., Any]): 客户端运行的函数，通常是一个返回流处理结果的函数。
+        *args: 可变位置参数，传递给 func 的参数。
+        **kwargs: 可变关键字参数，传递给 func 的参数。
+    
+    Returns:
+        Any: 函数的返回值，通常是一个包含流处理结果的响应对象。
+    
+    """
+    with tracer.start_as_current_span('AppBuilderClient-Stream-RUN', context=None) as parent_span:
+        parent_context = trace.set_span_in_context(parent_span)
+        parent_span.set_attribute("openinference.span.kind", 'Agent')
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        
+        _input(args=args, kwargs=kwargs, span=parent_span)
+        
+        generator = result.content
+        result.content = _client_trace_generator(generator=generator, tracer=tracer, parent_context=parent_context)
+        
+        end_time = time.time()
+        _time(start_time=start_time, end_time=end_time, span=parent_span)
+    return result
+
+def _client_run_trace_un_stream(tracer, func, *args, **kwargs):
+    """
+    执行函数func，并追踪其运行过程，同时记录相关性能指标和事件信息。
+    
+    Args:
+        tracer (Any): 追踪器对象，用于开始、结束和设置span属性。
+        func (Callable[..., Any]): 要执行的函数。
+        *args: 可变位置参数，传递给func的参数。
+        **kwargs: 可变关键字参数，传递给func的参数。
+    
+    Returns:
+        Any: 函数func的返回值。
+    
+    """
+    with tracer.start_as_current_span('AppBuilderClient-RUN') as span:
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        span.set_attribute("openinference.span.kind", 'Agent')
+        _input(args=args, kwargs=kwargs, span=span)
+        run_list = []
+        prompt_tokens = 0
+        completion_tokens = 0
+        total_tokens = 0
+
+        span.set_attribute("output.value", result.content.answer)
+        events = result.content.events
+        for event in events:
+            run_list.append('{}[status:{}]'.format(event.event_type, event.status))
+            if hasattr(event, 'usage') and event.usage and hasattr(event.usage, 'prompt_tokens'):
+                prompt_tokens = event.usage.prompt_tokens
+                completion_tokens = event.usage.completion_tokens
+                total_tokens = event.usage.total_tokens
+
+        if total_tokens:
+            span.set_attribute("llm.token_count.prompt", prompt_tokens)
+            span.set_attribute("llm.token_count.completion", completion_tokens)
+            span.set_attribute("llm.token_count.total", total_tokens)
+        span.set_attribute("Agent-Running-Process", '==>'.join(run_list))
+
+        end_time = time.time()
+        _time(start_time=start_time, end_time=end_time, span=span)
+
+        return result
+
 
 
 def _output(output, span):
@@ -310,6 +360,48 @@ def _assistant_output(output, span):
     """
     span.set_attribute("output.value", "{}".format(output.model_dump_json(indent=4)))
 
+def _assistant_stream_run_with_handler_output(generator , tracer, parent_context):
+    """
+    执行带有处理函数输出的辅助流。
+    
+    Args:
+        generator (Generator): 一个生成器，用于产生消息。
+        tracer (Tracer): OpenTelemetry 追踪器实例。
+        parent_context (Context): 父级上下文，用于追踪的上下文。
+    
+    Returns:
+        Generator: 一个生成器，产生消息并可能包含额外的输出信息。
+    
+    """
+    with tracer.start_as_current_span("Assistant-stream_run_with_handler", context=parent_context) as span:
+        span.set_attribute("openinference.span.kind",'Agent')
+        result = ''
+        output_list = []
+        try:
+            new_span = tracer.start_span('Assistant-Stream_run_with_handler')
+            for message in generator:
+                new_span.set_attribute("openinference.span.kind",'agent')
+                if isinstance(message, BaseModel):
+                    new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
+                else:
+                    new_span.set_attribute("output.value", "{}".format(json.dumps(message, ensure_ascii=False)))
+                if hasattr(message, 'content') and message.content and message.content[0]:
+                    if hasattr(message.content[0], 'text') and message.content[0].text:
+                        if hasattr(message.content[0].text, 'value') and message.content[0].text.value: 
+                            output_list.append(message.content[0].text.value)
+                new_span.end()
+                new_span = tracer.start_span('Assistant-Stream_run_with_handler')
+                yield message
+        except Exception as e:
+            print(e)
+        finally:
+            new_span.set_attribute("output.value",'流式运行结束')
+            new_span.set_attribute("openinference.span.kind",'agent')   
+            new_span.end()
+            for item in output_list:
+                result += str(item)
+            span.set_attribute("output.value", result)
+
 def _assistant_stream_output(output, span, tracer):
     """
     处理流式输出，并生成追踪信息。
@@ -347,50 +439,6 @@ def _assistant_stream_output(output, span, tracer):
         span.set_attribute("output.value",result)
     return generator_list
 
-def _assistant_stream_run_with_handler_output(output,span,tracer):
-    """
-    处理带有事件处理器的输出流，并生成相关的span和输出列表。
-    
-    Args:
-        output (Any): 事件处理器的输出对象，包含_event_handler属性。
-        span (Span): 追踪的span对象。
-        tracer (Tracer): 追踪器对象。
-    
-    Returns:
-        None: 该函数没有返回值，但会修改传入的output对象的_event_handler._iterator属性。
-    
-    """
-    result = ''
-    output_list = []
-    generator_list = []
-    if output:
-        new_span = tracer.start_span('Assistant-Stream_run_with_handler')
-        if hasattr(output, '_event_handler') and output._event_handler:
-            event_handler = output._event_handler
-            if hasattr(event_handler, '_iterator') and event_handler._iterator:
-                for message in event_handler._iterator:
-                    generator_list.append(message)
-                    new_span.set_attribute("openinference.span.kind",'agent')
-                    if isinstance(message, BaseModel):
-                        new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
-                    else:
-                        new_span.set_attribute("output.value", "{}".format(json.dumps(message, ensure_ascii=False)))
-                    if hasattr(message, 'content') and message.content and message.content[0]:
-                        if hasattr(message.content[0], 'text') and message.content[0].text:
-                            if hasattr(message.content[0].text, 'value') and message.content[0].text.value: 
-                                output_list.append(message.content[0].text.value)
-                    new_span.end()
-                    new_span = tracer.start_span('Assistant-Stream_run_with_handler')
-                new_span.set_attribute("output.value",'流式运行结束')
-                new_span.set_attribute("openinference.span.kind",'agent')   
-                new_span.end()
-                for item in output_list:
-                    result += str(item)
-                span.set_attribute("output.value", result)
-                output._event_handler._iterator = _return_generator(generator_list)
-
-    return output
-
 def _components_run_output(output, span):
     """
     设置span的属性以记录输出信息。
@@ -407,42 +455,8 @@ def _components_run_output(output, span):
         span.set_attribute("llm.token_count.prompt", output.token_usage.get('prompt_tokens', 0))
         span.set_attribute("llm.token_count.completion", output.token_usage.get('completion_tokens', 0))
         span.set_attribute("llm.token_count.total", output.token_usage.get('total_tokens', 0)) 
-    span.set_attribute("output.value", "{}".format(output.model_dump_json(indent=4)))
+    span.set_attribute("output.value", "{}".format(output.model_dump_json(indent=4)))    
 
-def _components_stream_output(output, span, tracer):
-    """
-    将组件的输出流转换为字符串并返回生成器列表。
-    
-    Args:
-        output (Iterable[Any]): 组件的输出流，可以是任何可迭代对象。
-        span (opentelemetry.trace.Span): 当前追踪的span对象。
-        tracer (opentelemetry.trace.Tracer): 追踪器对象，用于创建span。
-    
-    Returns:
-        List[Any]: 组件输出流的生成器列表。
-    
-    """
-    result = ''
-    run_list = []
-    generator_list = []
-    if output:
-        for message in output:
-            with tracer.start_as_current_span('Component-Stream') as new_span:
-                new_span.set_attribute("openinference.span.kind",'agent')
-                generator_list.append(message)
-                new_span.set_attribute("openinference.span.kind",'tool')
-                new_span.set_attribute("output.value", "{}".format(json.dumps(message, ensure_ascii=False)))
-                if isinstance(message, dict):
-                    run_list.append(message.get('text', None))
-                else:
-                    try:
-                        run_list.append(str(message))
-                    except:
-                        print("message can't to be str")
-        for item in run_list:
-            result += str(item) 
-        span.set_attribute("output.value",result)
-    return generator_list     
 
 def _post_trace(tracer, func, *args, **kwargs):
     """
@@ -473,33 +487,41 @@ def _post_trace(tracer, func, *args, **kwargs):
 
 def _client_run_trace(tracer, func, *args, **kwargs):
     """
-    跟踪客户端运行函数，并添加跟踪信息。
+    在客户端运行跟踪函数，根据参数决定是否以流模式执行
     
     Args:
-        tracer (Any): 跟踪器对象，用于生成和追踪span。
-        func (Callable[..., Any]): 需要跟踪的函数。
-        *args: 可变位置参数，func函数的输入参数。
-        **kwargs: 可变关键字参数，func函数的输入参数。
+        tracer (Any): 跟踪器实例
+        func (Callable): 需要跟踪的函数
+        *args (tuple): 函数的可变位置参数
+        **kwargs (dict): 函数的可变关键字参数
     
     Returns:
-        Any: func函数的返回结果，若函数返回结果是generator类型，则将其转换为列表后返回。
+        Any: 跟踪函数的执行结果，根据stream参数的值，返回_client_run_trace_stream或_client_run_trace_un_stream的返回值
+    
+    Raises:
+        无特定异常，但可能抛出在执行函数时发生的任何异常
     
     """
-    with tracer.start_as_current_span('AppBuilderClient-RUN') as new_span:
-        start_time = time.time()
-        result=func(*args, **kwargs)
-        end_time = time.time()
-        _time(start_time = start_time,end_time = end_time,span = new_span)
-        new_span.set_attribute("openinference.span.kind",'Agent')
-        _input(args = args, kwargs = kwargs, span=new_span)
-        generator_list = _client_run_trace_output(output=result,span = new_span,tracer=tracer)
-        
-    if generator_list:
-        result.content = _return_generator(generator_list)
-        return result
-    else:
-        return result
+    sig = inspect.signature(args[0])
+    params = sig.parameters
+    stream = False
+    try:
+        if args:
+            for idx, value in enumerate(list(args)):
+                if list(params)[idx-1] == 'stream':
+                   stream = value
+        if kwargs:
+            for key, value in dict(kwargs).items():
+                if key == 'stream':
+                    stream = value
+        if stream:
+            return _client_run_trace_stream(tracer, func, *args, **kwargs)
+        if not stream:
+            return _client_run_trace_un_stream(tracer, func, *args, **kwargs)
+    except Exception as e:
+        print(e)
 
+    
 def _client_tool_trace(tracer, func, *args, **kwargs):
     """
     追踪客户端工具函数的调用，记录相关信息到追踪器。
@@ -575,53 +597,76 @@ def _assistant_run_trace(tracer, func, *args, **kwargs):
 
 def _assistant_stream_trace(tracer, func, *args, **kwargs):
     """
-    为给定函数func添加分布式追踪功能，记录函数执行时间、参数、返回值等信息，并生成对应的追踪span。
+    为辅助流跟踪的函数提供跟踪功能。
     
     Args:
-        tracer (Tracer): 分布式追踪器对象，用于生成span。
-        func (Callable[..., Any]): 要被追踪的函数。
-        *args: 函数func的位置参数。
-        **kwargs: 函数func的关键字参数。
+        tracer (Tracer): OpenTelemetry 的 Tracer 实例，用于生成和操作跟踪数据。
+        func (Callable): 需要进行流跟踪的函数。
+        *args: 传递给 func 的位置参数。
+        **kwargs: 传递给 func 的关键字参数。
     
     Returns:
-        Any: 函数func的返回值，如果func返回的是生成器类型，则返回一个封装了生成器的对象。
+        Generator[Any, None, None]: 一个生成器，生成 func 函数的执行结果。
     
     """
-    with tracer.start_as_current_span("Assistant-stream_run") as new_span:
+    with tracer.start_as_current_span("Assistant-stream_run") as span:
         start_time = time.time()
         result=func(*args, **kwargs)
-        end_time = time.time()
-        _time(start_time = start_time,end_time = end_time,span = new_span)
-        new_span.set_attribute("openinference.span.kind",'Agent')
-        _input(args = args, kwargs = kwargs, span=new_span)
-        generator_list = _assistant_stream_output(output=result, span = new_span, tracer=tracer)
-        if generator_list:
-            result = _return_generator(generator_list)
-    return result
+        span.set_attribute("openinference.span.kind",'Agent')
+        _input(args = args, kwargs = kwargs, span=span)
+        run_list = []
+        try:
+            new_span = tracer.start_span("Assistant-stream_run")
+            for message in result:
+                new_span.set_attribute("openinference.span.kind",'agent')
+                if message.event == "status":
+                    new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
+                elif message.event == "message":
+                    new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
+                    if hasattr(message, 'content') and message.content and hasattr(message.content[0], 'text') and message.content[0].text and hasattr(message.content[0].text, 'value'):
+                        run_list.append(message.content[0].text.value)
+                new_span.end()
+                new_span = tracer.start_span('Assistant-Stream_run')
+                yield message
+        except Exception as e:
+            print(e)
+        finally:
+            end_time = time.time()  
+            _time(start_time = start_time,end_time = end_time,span = span)
+            result_str = ''.join(str(res) for res in run_list)
+            span.set_attribute("output.value",result_str)
+
 
 def _assistant_stream_run_with_handler_trace(tracer, func, *args, **kwargs):
     """
-    为给定函数func添加分布式追踪功能，记录函数执行时间、参数、返回值等信息，并生成对应的追踪span。
+    在带有追踪器的上下文中运行函数，并捕获函数执行过程中的输入和输出，以及耗时。
     
     Args:
-        tracer (Tracer): 分布式追踪器对象，用于生成span。
-        func (Callable[..., Any]): 要被追踪的函数。
-        *args: 函数func的位置参数。
-        **kwargs: 函数func的关键字参数。
+        tracer (Tracer): Jaeger等追踪器实例，用于追踪函数调用过程中的事件。
+        func (Callable): 要执行的函数。
+        *args: 可变位置参数，传递给func的参数。
+        **kwargs: 可变关键字参数，传递给func的参数。
     
     Returns:
-        Any: 函数func的返回值，如果func返回的是生成器类型，则返回一个封装了生成器的对象。
+        Any: 函数func的返回值。
     
     """
-    with tracer.start_as_current_span("Assistant-stream_run_with_handler") as new_span:
+    with tracer.start_as_current_span("Assistant-stream_run_with_handler", context=None) as span:
+        parent_context = trace.set_span_in_context(span)
+        span.set_attribute("openinference.span.kind",'Agent')
         start_time = time.time()
         result=func(*args, **kwargs)
+        _input(args = args, kwargs = kwargs, span=span)
+        if result:
+            if hasattr(result, '_event_handler') and result._event_handler:
+                event_handler = result._event_handler
+                if hasattr(event_handler, '_iterator') and event_handler._iterator:
+                    generator = event_handler._iterator
+                    event_handler._iterator = _assistant_stream_run_with_handler_output(generator = generator, tracer = tracer, parent_context=parent_context)
+            
         end_time = time.time()
-        _time(start_time = start_time,end_time = end_time,span = new_span)
-        new_span.set_attribute("openinference.span.kind",'Agent')
-        _input(args = args, kwargs = kwargs, span=new_span)
-        result = _assistant_stream_run_with_handler_output(output=result, span = new_span, tracer=tracer)
-    return result
+        _time(start_time = start_time,end_time = end_time,span = span)
+        return result
 
 def _components_run_trace(tracer, func, *args, **kwargs):
     """
@@ -637,7 +682,6 @@ def _components_run_trace(tracer, func, *args, **kwargs):
         Any: func函数执行后的结果。
     
     """
-
     with tracer.start_as_current_span(_tool_name(args=args)) as new_span:
         start_time = time.time()
         result=func(*args, **kwargs)
@@ -649,31 +693,46 @@ def _components_run_trace(tracer, func, *args, **kwargs):
 
     return result
 
-def _components_stream_run_trace(tracer, func, *args, **kwargs):
+def _components_stream_run_trace(tracer, func, *args, **kwargs):  
     """
-    跟踪组件流执行过程的装饰器函数。
+    在追踪器(tracer)的上下文中执行给定的函数，并将结果作为生成器流输出。
     
     Args:
-        tracer (Tracer): 追踪器对象，用于创建和操作追踪的span。
-        func (Callable): 需要被追踪的函数。
-        *args: 可变参数列表，传入func的参数。
-        **kwargs: 关键字参数列表，传入func的参数。
+        tracer (Any): 追踪器对象，用于追踪函数的执行。
+        func (Callable): 需要被执行的函数。
+        *args: 可变位置参数，用于调用func。
+        **kwargs: 可变关键字参数，用于调用func。
     
     Returns:
-        Any: func函数执行后的返回值，如果返回值是生成器类型，则会被转换成迭代器类型。
+        Generator: 返回一个生成器，迭代func的执行结果。
     
     """
-    with tracer.start_as_current_span(_tool_name(args=args)) as new_span:
+    with tracer.start_as_current_span(_tool_name(args = args)) as span:  
         start_time = time.time()
-        result=func(*args, **kwargs)
-        end_time = time.time()
-        _time(start_time = start_time,end_time = end_time,span = new_span)
-        new_span.set_attribute("openinference.span.kind",'tool')
-        _input(args = args, kwargs = kwargs, span=new_span)
-        generator_list = _components_stream_output(output=result, span = new_span, tracer=tracer)
-        if generator_list:
-            result = _return_generator(generator_list)
-    return result
+        span.set_attribute("openinference.span.kind",'tool')
+        _input(args = args, kwargs = kwargs, span=span)
+        run_list = [] 
+        try:   
+            for item in func(*args, **kwargs):  
+                with tracer.start_as_current_span('Component-Stream') as new_span:  
+                    new_span.set_attribute("openinference.span.kind",'tool')
+                    new_span.set_attribute("output.value", "{}".format(json.dumps(item, ensure_ascii=False)))
+                    if isinstance(item, dict):
+                        run_list.append(item.get('text', None))
+                    else:
+                        try:
+                            run_list.append(str(item))
+                        except:
+                            print("message can't to be str")
+                yield item
+        except Exception as e:  
+            print(e)
+        finally:  
+            end_time = time.time()  
+            _time(start_time = start_time,end_time = end_time,span = span)
+            result_str = ''.join(str(res) for res in run_list)
+            span.set_attribute("output.value",result_str)
+            
 
 def _list_trace(tracer, func, *args, **kwargs):
     """
@@ -697,6 +756,3 @@ def _list_trace(tracer, func, *args, **kwargs):
         new_span.set_attribute("input.value",_tool_name(args = args))
         new_span.set_attribute("output.value",str(result))
     return result
-
-    
-        

@@ -76,6 +76,9 @@ class TestAppBuilderTrace(unittest.TestCase):
             assistant_id=assistant.id
         )
 
+        for msg in generator:
+            print(msg)
+
         tracer.end_trace()
 
 if __name__ == "__main__":

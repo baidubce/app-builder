@@ -82,7 +82,9 @@ class TestAppBuilderComponentsTrace(unittest.TestCase):
         inp = appbuilder.Message(content={"raw_audio": raw_audio})
         out = self.asr.run(inp)
         result = self.asr.tool_eval(name="asr", streaming=True, file_url=self.audio_file_url)
-
+        for res in result:
+            print(res)
+            
         # test playground run
         msg = appbuilder.Message({
             "name": "小明",
