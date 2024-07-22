@@ -518,7 +518,7 @@ class KnowledgeBase(Component):
         marker: str = None,
         maxKeys: int = None,
         type: str = None,
-    ) -> data_class.DescribeChunkResponse:
+    ) -> data_class.DescribeChunksResponse:
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 

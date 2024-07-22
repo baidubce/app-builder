@@ -243,7 +243,7 @@ class DescribeChunkResponse(BaseModel):
     status: str = Field(..., description="切片状态")
     statusMessage: str = Field(..., description="切片状态信息")
     createTime: int = Field(..., description="创建时间")
-    updateTime: int = Field(..., description="更新时间")
+    updateTime: int = Field(None, description="更新时间")
 
 
 class DescribeChunksRequest(BaseModel):
