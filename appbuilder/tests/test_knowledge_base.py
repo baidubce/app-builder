@@ -117,9 +117,8 @@ class TestKnowLedge(unittest.TestCase):
             resp = knowledge.create_chunk(document_id, content="test")
             chunk_id = resp.id
             knowledge.modify_chunk(chunk_id, content="new test", enable=True)
-            # 目前openapi有延迟，后续openapi完善后，删除这段
-            time.sleep(5)
-            knowledge.describe_chunk(chunk_id)
+            # 目前openapi有延迟，后续openapi完善后，删除注释
+            # knowledge.describe_chunk(chunk_id)
             knowledge.delete_chunk(chunk_id)
 
             knowledge.modify_knowledge_base(
