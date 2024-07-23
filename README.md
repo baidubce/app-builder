@@ -19,14 +19,14 @@
 百度智能云千帆AppBuilder-SDK提供了以下AI应用开发者的必备功能：
 
 - **调用**
-    - 调用大模型，开发并调优prompt工程
-    - 调用能力组件，提供40+个源于百度生态的优质组件，赋能Agent应用
-    - 调用AI原生应用，可访问并管理在百度智能云千帆AppBuilder[网页端](https://console.bce.baidu.com/ai_apaas/app)发布的AI原生应用，并可注册本地函数执行`FunctionCall`
+    - 调用大模型，可自由调用您在[百度智能云千帆大模型平台](https://qianfan.cloud.baidu.com/)的模型，开发并调优prompt
+    - 调用能力组件，提供40+个源于百度生态的[优质组件](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)，赋能Agent应用
+    - 调用AI原生应用，通过[AppBuilderClient](/docs/basic_module/appbuilder_client.md)可访问并管理在百度智能云千帆AppBuilder[网页端](https://console.bce.baidu.com/ai_apaas/app)发布的AI原生应用，并可注册本地函数联动端云组件
 - **编排**
-    - 编排知识流，提供了`KnowledgeBase`组件，可管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
-    - 编排工作流，提供了`Message`、`Component`、`AgentRuntime`多级抽象，实现工作流编排，并可与`LangChain`、`OpenAI`等生态能力打通
+    - 编排知识流，通过[KnowledgeBase](/docs/basic_module/knowledgebase.md)管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
+    - 编排工作流，提供了`Message`、`Component`、`AgentRuntime`多级工作流抽象，实现工作流编排，并可与LangChain、OpenAI等业界生态能力打通
 - **监控**
-    - 提供了可视化Tracing、详细DebugLog等监控工具
+    - 提供了可视化Tracing、详细DebugLog等监控工具，助力开发者在生产环境应用
 - **部署**
     - `AgentRuntime`支持部署为基于`Flask`与`gunicorn`的API服务
     - `AgentRuntime`支持部署为基于`Chainlit`的对话框交互前端
