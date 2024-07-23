@@ -182,10 +182,12 @@ func TestKnowledgeBase(t *testing.T) {
 	}
 
 	// 修改知识库
+	name := "test-go"
+	description := "22"
 	err = client.ModifyKnowledgeBase(ModifyKnowlegeBaseRequest{
 		ID:          knowledgeBaseID,
-		Name:        "test-go",
-		Description: "test-go",
+		Name:        &name,
+		Description: &description,
 	})
 	if err != nil {
 		t.Fatalf("modify knowledge base failed: %v", err)
