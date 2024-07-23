@@ -107,7 +107,7 @@ print(output.model_dump_json(indent=4))
 
 ### 2. Component
 - The SDK provides over 40 high-quality components sourced from the Baidu ecosystem, as listed in [Component List](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1), Before calling, you need to apply for a [free trial quota](https://console.bce.baidu.com/ai/#/ai/apaas/overview/resource/getFree)
-- The component in the example is the `Baidu Search RAG_PRO Component`, which combines Baidu Search's search engine technology with the semantic understanding ability of ERNIE model to more accurately understand the user's search intention and provide search results with higher relevance to the search query
+- The component in the example is the `RAG with Baidu Search Pro`, which combines Baidu Search's search engine technology with the semantic understanding ability of ERNIE model to more accurately understand the user's search intention and provide search results with higher relevance to the search query
 
 #### Code Example
 ```python
