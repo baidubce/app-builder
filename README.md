@@ -94,7 +94,7 @@ print(output.model_dump_json(indent=4))
 ```
 
 ### 2. 调用能力组件
-- SDK提供了40+个源于百度生态的优质组件，列表可见[组件列表](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1), 调用前可申领[免费试用额度](https://console.bce.baidu.com/ai/#/ai/apaas/overview/resource/getFree)
+- SDK提供了40+个源于百度生态的优质组件，列表可见[组件列表](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1), 调用前需要申领[免费试用额度](https://console.bce.baidu.com/ai/#/ai/apaas/overview/resource/getFree)
 - 示例中的组件为`百度搜索RAG_PRO组件`, 结合百度搜索的搜索引擎技术和ERNIE模型的语义理解能力，可以更准确地理解用户的搜索意图，并提供与搜索查询相关性更高的搜索结果
 
 #### 代码示例
@@ -200,9 +200,10 @@ Hook:
 这首小曲儿以“上班狼狈却又追逐梦想”为主题，通过押韵的方式表达了上班族虽然生活艰辛，但依然怀揣梦想，勇往直前的精神。希望你喜欢！
 ```
 
-#### 更多代码示例
+#### 更多示例
 
-更多AI原生应用示例代码，请浏览 [CookBooks](./cookbooks/README.md)，我们有以下cookbook推荐您优先阅读：
+- 更多AI原生应用示例，请浏览[应用广场](https://console.bce.baidu.com/ai_apaas/appCenter)
+- 更多代码CookBook，请浏览 [CookBooks](./cookbooks/README.md)，我们有以下cookbook推荐您优先阅读：
 
 | 应用类型 |应用链接 | 推荐理由 |
 |--|--|--|
