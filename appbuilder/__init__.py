@@ -122,7 +122,7 @@ from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuild
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
 from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list
 from appbuilder.core.console.knowledge_base.knowledge_base import KnowledgeBase
-from appbuilder.core.console.knowledge_base.data_class import CustomProcessRule
+from appbuilder.core.console.knowledge_base.data_class import CustomProcessRule, DocumentSource, DocumentChoices, DocumentChunker, DocumentSeparator, DocumentPattern, DocumentProcessOption
 
 from .core._exception import (
     BadRequestException,
@@ -206,6 +206,12 @@ __all__ = [
 
     "KnowledgeBase",
     "CustomProcessRule",
+    "DocumentSource",
+    "DocumentChoices",
+    "DocumentChunker",
+    "DocumentSeparator",
+    "DocumentPattern",
+    "DocumentProcessOption",
 
     "assistant",
     "StreamRunContext",
