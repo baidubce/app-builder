@@ -11,17 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import unittest
-import requests
 import appbuilder
 import os
-import time
-import logging
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestKnowLedge(unittest.TestCase):
+    def setUp(self):
+        self.whether_create_knowledge_base = False
+
     def test_doc_knowledage(self):
         dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
         knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
@@ -48,19 +47,21 @@ class TestKnowLedge(unittest.TestCase):
 
     def test_create_knowledge_base(self):
         knowledge = appbuilder.KnowledgeBase()
-        resp = knowledge.create_knowledge_base(
-            name="test",
-            description="test",
-            type="public",
-            esUrl="http://localhost:9200",
-            esUserName="elastic",
-            esPassword="changeme",
-        )
-
-        knowledge_base_id = resp.id
-        knowledge.get_knowledge_base_detail(knowledge_base_id)
-        knowledge.get_knowledge_base_list(knowledge_base_id, maxKeys=10)
-
+        try:
+            resp = knowledge.create_knowledge_base(
+                name="test",
+                description="test",
+                type="public",
+                esUrl="http://localhost:9200",
+                esUserName="elastic",
+                esPassword="changeme",
+            )
+            knowledge_base_id = resp.id
+            knowledge.get_knowledge_base_detail(knowledge_base_id)
+            knowledge.get_knowledge_base_list(knowledge_base_id, maxKeys=10)
+            self.whether_create_knowledge_base = True
+        except:
+            knowledge_base_id = os.getenv('DATASET_ID', 'UNKNOWN')
         err_msg = None
         try:
             knowledge.create_documents(
@@ -111,7 +112,7 @@ class TestKnowLedge(unittest.TestCase):
                 ),
             )
 
-            list_res = knowledge.get_documents_list()
+            list_res = knowledge.get_documents_list(knowledge_base_id=knowledge_base_id)
             document_id = list_res.data[-1].id
             res = knowledge.describe_chunks(document_id)
             resp = knowledge.create_chunk(document_id, content="test")
@@ -128,7 +129,8 @@ class TestKnowLedge(unittest.TestCase):
             err_msg = str(e)
             print("错误为 {}".format(e))
         finally:
-            knowledge.delete_knowledge_base(knowledge_base_id)
+            if self.whether_create_knowledge_base:
+                knowledge.delete_knowledge_base(knowledge_base_id)
 
         self.assertIsNone(err_msg)
 
