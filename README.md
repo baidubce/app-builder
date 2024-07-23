@@ -16,11 +16,21 @@
 
 百度智能云千帆AppBuilder-SDK是[百度智能云千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发平台的客户端SDK。
 
-我们提供自底向上的：基础组件、流程编排、端到端应用 三类功能。使用百度智能云千帆AppBuilder-SDK，你可以：
+百度智能云千帆AppBuilder-SDK提供了以下AI应用开发者的必备功能：
 
-- 配合百度智能云千帆AppBuilder平台[网页端](https://console.bce.baidu.com/ai_apaas/app)，分钟级在本地搭建包含百度工业实践的`端到端的AI原生应用`
-- 配合 `基础组件` & `流程编排`，积木式搭建个性化的Assistant + FunctionCall应用
-- 提供 `API调用` & `交互式窗口` 两种服务化部署方式，支持快速上云，平滑嵌入到你的产品中
+- **调用**
+    - 调用大模型，开发并调优prompt工程
+    - 调用能力组件，提供40+个源于百度生态的优质组件，赋能Agent应用
+    - 调用AI原生应用，可访问并管理在百度智能云千帆AppBuilder[网页端](https://console.bce.baidu.com/ai_apaas/app)发布的AI原生应用，并可注册本地函数执行`FunctionCall`
+- **编排**
+    - 编排知识流，提供了`KnowledgeBase`组件，可管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
+    - 编排工作流，提供了`Message`、`Component`、`AgentRuntime`多级抽象，实现工作流编排，并可与`LangChain`、`OpenAI`等生态能力打通
+- **监控**
+    - 提供了可视化Tracing、详细DebugLog等监控工具
+- **部署**
+    - `AgentRuntime`支持部署为基于`Flask`与`gunicorn`的API服务
+    - `AgentRuntime`支持部署为基于`Chainlit`的对话框交互前端
+    - 提供了`appbuilder_bce_deploy`工具，可快速部署程序到百度云，提供公网API服务，联动AppBuilder工作流
 
 
 ##  如何安装
@@ -37,11 +47,13 @@ python3 -m pip install --upgrade appbuilder-sdk
 - `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明](/docs/quick_start/install.md)
 
 
-## 快速开始你的第一个AI原生应用
+## 快速开始你的AI原生应用开发之旅
+> - 请在`>=3.9`的Python环境安装`appbuilder-sdk`后使用该端到端应用示例
+> - 示例中提供了试用Token，访问和QPS受限，正式使用请替换为您的个人Token
 
-- 请在`>=3.9`的Python环境安装`appbuilder-sdk`后使用该端到端应用示例
-- 示例中提供了试用Token，访问和QPS受限，正式使用请替换为您的个人Token
-- 示例中的应用为：[地理小达人](https://appbuilder.baidu.com/s/x1tSF)，点击该连接在网页端试用
+
+### 1. 调用大模型
+- 使用`Playground`组件可自由调用，您在百度智能云千帆大模型平台有权限的任何模型，并可自定义`prompt`模板 与 模型参数
 
 #### 代码示例
 
@@ -52,28 +64,141 @@ import os
 # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-# 从AppBuilder网页获取并传入应用ID，以下为地理小达人应用ID
-app_id = "42eb211a-14b9-43d2-9fae-193c8760ef26"
+# 定义prompt模板
+template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
+
+# 定义输入，调用playground组件
+input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
+
+playground = appbuilder.Playground(prompt_template=template_str, model="ERNIE Speed-AppBuilder")
+
+output = playground(input, stream=False, temperature=1e-10)
+print(output.model_dump_json(indent=4))
+
+```
+#### 回答展示
+
+```shell
+{
+    "content": "Java语言的内存回收机制是垃圾回收（Garbage Collection，GC）。垃圾回收是Java虚拟机（JVM）提供的一种自动内存管理机制。它负责自动检测并回收不再使用的对象，以释放内存空间。在Java中，当对象不再被引用或显式地设置为null时，垃圾回收器会将其标记为可回收对象，并在适当的时候进行回收。",
+    "name": "msg",
+    "mtype": "dict",
+    "id": "749b0d23-0032-443e-b48a-83dcf50044e1",
+    "extra": {},
+    "token_usage": {
+        "prompt_tokens": 25,
+        "completion_tokens": 76,
+        "total_tokens": 101
+    }
+}
+```
+
+### 2. 调用能力组件
+- SDK提供了40+个源于百度生态的优质组件，列表可见[组件列表](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1), 调用前可申领[免费试用额度](https://console.bce.baidu.com/ai/#/ai/apaas/overview/resource/getFree)
+- 示例中的组件为`百度搜索RAG_PRO组件`, 结合百度搜索的搜索引擎技术和ERNIE模型的语义理解能力，可以更准确地理解用户的搜索意图，并提供与搜索查询相关性更高的搜索结果
+
+#### 代码示例
+```python
+import appbuilder
+import os
+
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE Speed-AppBuilder")
+
+input = appbuilder.Message("9.11和9.8哪个大")
+result = rag_with_baidu_search_pro.run(
+    message=input,
+    instruction=appbuilder.Message("你是专业知识助手"))
+
+# 输出运行结果
+print(result.model_dump_json(indent=4))
+```
+
+#### 回答展示
+```
+{
+    "content": "9.11小于9.8。在比较两个小数的大小时，需要逐位比较它们的数值，包括整数部分和小数部分。对于9.11和9.8，整数部分都是9，所以需要在小数部分进行比较。小数点后的第一位是1和8，显然1小于8，所以9.11小于9.8。",
+    "name": "msg",
+    "mtype": "dict",
+    "id": "eb31b7de-dd6a-485f-adb9-1f7921a6f4bf",
+    "extra": {
+        "search_baidu": [
+            {
+                "content": "大模型‘智商’受质疑:9.11 vs 9...",
+                "icon": "https://appbuilder.bj.bcebos.com/baidu-search-rag-pro/icon/souhu.ico",
+                "url": "https://m.sohu.com/a/793754123_121924584/",
+                "ref_id": "2",
+                "site_name": "搜狐网",
+                "title": "大模型‘智商’受质疑:9.11 vs 9.8的比较揭示AI理解能力的..."
+            },
+            {
+                "content": "究竟|9.11比9.8大?大模型们为何会...",
+                "icon": "https://appbuilder.bj.bcebos.com/baidu-search-rag-pro/icon/tencent.svg.png",
+                "url": "https://new.qq.com/rain/a/20240717A07JLV00",
+                "ref_id": "4",
+                "site_name": "腾讯网",
+                "title": "究竟|9.11比9.8大?大模型们为何会在小学数学题上集体..."
+            },
+            ...
+        ]
+    },
+    "token_usage": {
+        "completion_tokens": 77,
+        "prompt_tokens": 2008,
+        "total_tokens": 2085
+    }
+}
+```
+
+
+### 3. 调用AI原生应用
+- 示例中的应用为：[说唱导师](https://appbuilder.baidu.com/s/3qfjXy7k)，点击该连接在网页端试用
+
+#### 代码示例
+
+```python
+import appbuilder
+import os
+
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+
+# 从AppBuilder网页获取并传入应用ID，以下为说唱导师应用ID
+app_id = "4678492a-5864-472e-810a-654538d3503c"
 
 app_builder_client = appbuilder.AppBuilderClient(app_id)
 conversation_id = app_builder_client.create_conversation()
 
-answer = app_builder_client.run(conversation_id, "中国的首都在哪里？春季天气怎么样？有什么适合玩的景点？")
-print(answer.content)
+answer = app_builder_client.run(conversation_id, "以“上班狼狈却又追逐梦想“为主题进行一首说唱创作，保持押韵, 控制在200字以内")
+print(answer.content.answer)
 ```
 
 #### 回答展示
+```shell
+好的，我们来以“上班狼狈却又追逐梦想”为主题，进行一段简短的说唱创作。这里是一个简单的示例，你可以根据自己的感觉进行调整：
 
-> 中国的首都是**北京**^[2]^。
-> 
-> 春季的北京天气多变，早晚温差较大，出门还是要多带件外套。但是，这个季节是北京逛公园的好季节，玉兰花、桃花与迎春花等花卉盛开，为北京的春天增添了美丽的色彩^[1]^。
-> 
-> 适合玩的景点有：
-> 1. **天坛公园**。天坛公园是明清两代的皇家祭祀场所，也是世界上现存规模最大的古代祭祀建筑群。
-> 2. **故宫博物院**。故宫是中国古代建筑和文化的重要遗产，也是北京的一大旅游景点。
-> 3. **长城**。长城是中国古代的一项伟大工程，也是北京周边的重要景点。
-> 4. **颐和园**。颐和园是中国古代皇家园林，也是北京的一大旅游景点^[1]^。
+Intro:
+朝九晚五，生活重压，
+狼狈上班，却心怀梦想，
+每一天，都是新的挑战，
+为了那未来，我奋发向前。
 
+Verse 1:
+穿上西装，打好领带，
+步入人群，去追逐名利，
+虽然狼狈，却不曾言败，
+因为心中，有梦想在激励。
+
+Hook:
+上班狼狈，却不曾放弃，
+追逐梦想，是我心中的火炬，
+照亮前路，指引我前行，
+无论多难，我都要坚持到底。
+
+这首小曲儿以“上班狼狈却又追逐梦想”为主题，通过押韵的方式表达了上班族虽然生活艰辛，但依然怀揣梦想，勇往直前的精神。希望你喜欢！
+```
 
 #### 更多代码示例
 
@@ -87,18 +212,9 @@ print(answer.content)
 | 端到端应用 |  [AppBuilder Client SDK](/cookbooks/agent_builder.ipynb) | 使用AppBuilder网页端创建并发布一个Agent应用后，通过AppBuilderClient SDK集成到你的系统中 |
 | 端到端应用 |  [简历筛选小助手](/cookbooks/end2end_application/rag/rag.ipynb) | 通过对本地简历库的简历进行解析、切片、创建索引，实现基于JD进行简历筛选，并对筛选的Top1简历进行总结 |
 | 端到端应用 |  [企业级问答系统](/cookbooks/end2end_application/rag/qa_system_2_dialogue.ipynb) | 学习如何通过SDK与网页平台搭配，实现离线知识库生产与在线问答 |
+| 进阶应用 |  [使用appbuilder_bce_deploy部署公有云服务](/cookbooks/advanced_application/cloud_deploy.ipynb) | 一键将自己的服务部署到百度智能云，部署后可以自动生成公网ip，联动工作流的API节点 |
+| 进阶应用 |  [使用appbuilder_trace_server实现对使用状态的跟踪](/cookbooks/appbuilder_trace/trace.ipynb) | 使用Appbuilder-SDK Trace功能实现对组件、应用调用情况的追踪|
 
-#### 更多应用示例
-
-更多AI原生应用示例，请浏览 [AppBuilder 应用广场](https://console.bce.baidu.com/ai_apaas/appCenter) ，我们有以下热门应用推荐您优先尝试：
-
-| 应用Icon  | 应用链接 | 推荐理由 |
-|--|:--| :--|
-| <img src='docs/image/app-mbti.png' alt='app icon' width='80'> |  [MBTI人格测试](https://console.bce.baidu.com/ai_apaas/examplePage/6f6f1fb4-c03c-4ef4-8bb2-e2a06732786d)| 5道题揭秘你的MBTI人格类型，快来测试吧！|
-| <img src='docs/image/app-paper.png' alt='app icon' width='80'> |  [论文帮手](https://console.bce.baidu.com/ai_apaas/examplePage/62a84f93-c8e0-4aad-b2e7-bb97893387b7)| 提供方向与关键词，我能为你推荐相关论文、提供论文的框架模板，并根据推荐的论文撰写综述。|
-| <img src='docs/image/app-auto.png' alt='app icon' width='80'> |  [汽车专家](https://console.bce.baidu.com/ai_apaas/examplePage/7f7e8c41-057d-4e5b-85de-2137ba03b982)| 为你提供各种汽车相关的信息，包括品牌、型号、配置、价格等方面的信息。|
-| <img src='docs/image/app-travel.png' alt='app icon' width='80'> |   [旅行规划专家](https://console.bce.baidu.com/ai_apaas/examplePage/af495e21-505f-48be-911b-f8b7450c5f71)| 无论你是想探索未知的远方，还是寻找身边的美丽风景，我都会为你提供贴心的旅行建议和信息。|
-| <img src='docs/image/app-aiyinstan.png' alt='app icon' width='80'> |  [爱因斯坦](https://console.bce.baidu.com/ai_apaas/examplePage/1058ade8-a030-406b-bdf3-674aabd5bdf8)| 你好，我是爱因斯坦，让我们一起探索奇妙的科学世界吧！|
 
 ## 百度智能云千帆AppBuilder-SDK 能力全景图
 <div align="center">
@@ -117,6 +233,7 @@ print(answer.content)
     - [端到端应用](/docs/basic_module/appbuilder_client.md)
 - [进阶实践](/docs/advanced_application/README.md)
     - [CookBooks](/cookbooks/README.md)
+    - [AppBuilder Trace](https://github.com/baidubce/app-builder/blob/master/docs/trace/READED.md)
 - [服务化部署](/docs/service/README.md)
     - [API调用](/docs/service/flask.md)
     - [交互式前端](/docs/service/chainlit.md)
