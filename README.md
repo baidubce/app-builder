@@ -23,7 +23,7 @@
     - 调用能力组件，提供40+个源于百度生态的[优质组件](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)，赋能Agent应用
     - 调用AI原生应用，通过[AppBuilderClient](/docs/basic_module/appbuilder_client.md)可访问并管理在百度智能云千帆AppBuilder[网页端](https://console.bce.baidu.com/ai_apaas/app)发布的AI原生应用，并可注册本地函数联动端云组件
 - **编排**
-    - 编排知识流，通过[KnowledgeBase](/docs/basic_module/knowledgebase.md)管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
+    - 配置知识库，通过[KnowledgeBase](/docs/basic_module/knowledgebase.md)管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
     - 编排工作流，提供了`Message`、`Component`、`AgentRuntime`多级工作流抽象，实现工作流编排，并可与LangChain、OpenAI等业界生态能力打通
 - **监控**
     - 提供了可视化Tracing、详细DebugLog等监控工具，助力开发者在生产环境应用
@@ -95,7 +95,7 @@ print(output.model_dump_json(indent=4))
 
 ### 2. 调用能力组件
 - SDK提供了40+个源于百度生态的优质组件，列表可见[组件列表](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1), 调用前需要申领[免费试用额度](https://console.bce.baidu.com/ai/#/ai/apaas/overview/resource/getFree)
-- 示例中的组件为`百度搜索RAG_PRO组件`, 结合百度搜索的搜索引擎技术和ERNIE模型的语义理解能力，可以更准确地理解用户的搜索意图，并提供与搜索查询相关性更高的搜索结果
+- 示例中的组件为`RAG with Baidu Search增强版`, 结合百度搜索的搜索引擎技术和ERNIE模型的语义理解能力，可以更准确地理解用户的搜索意图，并提供与搜索查询相关性更高的搜索结果
 
 #### 代码示例
 ```python
