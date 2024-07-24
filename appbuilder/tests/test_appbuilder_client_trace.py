@@ -111,28 +111,28 @@ class TestAppBuilderTrace(unittest.TestCase):
         tracer._instrument()
         
 
-    # def test_appbuilder_phoenix_run(self):
-    #     """
-    #     测试appbuilder_phoenix_run方法
+    def test_appbuilder_phoenix_run(self):
+        """
+        测试appbuilder_phoenix_run方法
         
-    #     Args:
-    #         无参数。
+        Args:
+            无参数。
         
-    #     Returns:
-    #         无返回值。
+        Returns:
+            无返回值。
         
-    #     Raises:
-    #         TypeError: 当调用runtime_main()或stop_phoenix()函数时，预期会抛出TypeError异常。
+        Raises:
+            TypeError: 当调用runtime_main()或stop_phoenix()函数时，预期会抛出TypeError异常。
         
-    #     """
-    #     with self.assertRaises(ImportError):
-    #         runtime_main()
+        """
+        with self.assertRaises(ImportError):
+            runtime_main()
         
-    #     with self.assertRaises(ImportError):
-    #         launch_phoenix()
+        with self.assertRaises(ImportError):
+            launch_phoenix()
             
-    #     with self.assertRaises(ImportError):
-    #         stop_phoenix()
+        with self.assertRaises(ImportError):
+            stop_phoenix()
 
 
 if __name__ == '__main__':
