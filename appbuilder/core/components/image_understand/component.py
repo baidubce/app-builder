@@ -22,6 +22,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.image_understand.model import *
 from typing import Generator, Union
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class ImageUnderstand(Component):
@@ -80,6 +81,7 @@ class ImageUnderstand(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         r""" 执行图像内容理解
 
@@ -161,6 +163,7 @@ class ImageUnderstand(Component):
                 # 避免触发限流（>1QPS），等待1.1秒
                 time.sleep(1.1)
 
+    @components_run_stream_trace
     def tool_eval(
         self,
         name: str,

@@ -22,6 +22,7 @@ from appbuilder.core.assistant.type import assistant_type
 from appbuilder.core.assistant.type import public_type
 from appbuilder.core._client import AssistantHTTPClient
 from appbuilder.utils.sse_util import SSEClient
+from appbuilder.utils.trace.tracer_wrapper import assistent_tool_trace, assistant_run_trace, assistent_stream_run_trace, assistent_stream_run_with_handler_trace
 
 
 
@@ -32,7 +33,8 @@ class Runs():
     @property
     def steps(self) -> Steps:
         return Steps()
-
+    
+    @assistant_run_trace
     def run(self,
             assistant_id: str,
             thread_id: Optional[str] = "",
@@ -234,9 +236,9 @@ class Runs():
             stream=True,
             timeout=None
         )
-
         return response
 
+    @assistent_stream_run_trace
     def stream_run(self,
                    assistant_id: str,
                    thread_id: Optional[str] = "",
@@ -302,6 +304,7 @@ class Runs():
         sse_client = SSEClient(response)
         return self._iterate_events(sse_client.events())
 
+    @assistent_stream_run_with_handler_trace
     def stream_run_with_handler(self,
                    assistant_id: str,
                    thread_id: Optional[str] = "",
@@ -375,6 +378,8 @@ class Runs():
 
             yield result
 
+
+    @assistent_tool_trace
     def submit_tool_outputs(self,
                             run_id: str,
                             thread_id: str,
@@ -416,6 +421,7 @@ class Runs():
         resp = thread_type.RunResult(**data)
         return resp
 
+    @assistent_tool_trace
     def cancel(self, run_id: str, thread_id: str) -> thread_type.RunResult:
         """
         取消指定线程的运行
@@ -451,6 +457,7 @@ class Runs():
         resp = thread_type.RunResult(**data)
         return resp
 
+    @assistent_tool_trace
     def list(self, thread_id: str, limit: int = 20,
              order: str = 'desc', after: str = "", before: str = "") -> thread_type.RunListResponse:
         """
@@ -495,6 +502,7 @@ class Runs():
         resp = thread_type.RunListResponse(**data)
         return resp
 
+    @assistent_tool_trace
     def query(self, thread_id: str, run_id: str) -> thread_type.RunResult:
         """
         根据thread_id和run_id，查询run的详情

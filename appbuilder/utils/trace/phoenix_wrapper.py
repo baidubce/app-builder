@@ -30,8 +30,8 @@ def launch_phoenix(host: Optional[str] = "127.0.0.1", port: Optional[int] = 8080
     """
     try:
         import phoenix
-    except ImportError:
-        raise (
+    except ModuleNotFoundError:
+        raise ImportError(
             "尚未安装phoenix组件，尝试使用 python3 -m pip install arize-phoenix==4.5.0 -i https://pypi.tuna.tsinghua.edu.cn/simple 安装该组件")
     session = phoenix.launch_app(**kwargs)
     return session
@@ -43,8 +43,8 @@ def stop_phoenix(delete_data:bool=False):
     """
     try:
         import phoenix
-    except ImportError:
-        raise (
+    except ModuleNotFoundError:
+        raise ImportError(
             "尚未安装phoenix组件，尝试使用 python3 -m pip install arize-phoenix==4.5.0 -i https://pypi.tuna.tsinghua.edu.cn/simple 安装该组件")
     phoenix.stop_app(delete_data)
 
@@ -59,16 +59,13 @@ def runtime_main():
     timeout = args.timeout
     print(" Launching AppBuilder Tracer Server By Phoenix... ")
     print(" Arguments: ", args)
-    try:
-        session = launch_phoenix()
-        while True:
-            if timeout is not None:
-                time.sleep(timeout)
-                break
-            time.sleep(1)
-        stop_phoenix()
-    except Exception as e:
-        print(e)
+    session = launch_phoenix()
+    while True:
+        if timeout is not None:
+            time.sleep(timeout)
+            break
+        time.sleep(1)
+    stop_phoenix()
 
 
 if __name__ == "__main__":

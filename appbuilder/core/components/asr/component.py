@@ -28,6 +28,7 @@ from appbuilder.core._exception import AppBuilderServerException, InvalidRequest
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse, \
     ASRInMsg, ASROutMsg
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 DEFAULT_AUDIO_MAX_DURATION = 55 * 1000  # 55s
 # 参考短语音极速版API(https://ai.baidu.com/ai-doc/SPEECH/Jlbxdezuf)
@@ -94,6 +95,7 @@ class ASR(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, audio_format: str = "pcm", rate: int = 16000,
             timeout: float = None, retry: int = 0, **kwargs) -> Message:
         """
@@ -176,6 +178,7 @@ class ASR(Component):
                     service_err_message=data["err_msg"]
                 )
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         """
         asr for function call

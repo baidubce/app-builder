@@ -23,6 +23,7 @@ from appbuilder.core.components.qrcode_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class QRcodeOCR(Component):
@@ -72,6 +73,7 @@ class QRcodeOCR(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, location: str = "true", timeout: float = None, retry: int = 0) -> Message:
         r""" 二维码识别
 
@@ -149,6 +151,7 @@ class QRcodeOCR(Component):
                 service_err_message=data.get("error_msg")
             )
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         result = {}
         traceid = kwargs.get("traceid")

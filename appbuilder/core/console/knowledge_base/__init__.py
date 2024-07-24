@@ -13,4 +13,12 @@
 # limitations under the License.
 
 from .knowledge_base import KnowledgeBase
-from .data_class import CustomProcessRule
+from .data_class import (
+    CustomProcessRule,
+    DocumentSource,
+    DocumentProcessOption,
+    DocumentChoices,
+    DocumentSeparator,
+    DocumentPattern,
+    DocumentChunker,
+)
