@@ -58,12 +58,11 @@ class TestFilesCreate(unittest.TestCase):
         with self.assertRaises(ValueError):
             appbuilder.assistant.assistants.files.download(file_id='', file_path="./data/")
         with self.assertRaises(FileNotFoundError):
-            appbuilder.assistant.assistants.files.download(file_id='un_file_id', file_path="./data/data/")
+            appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/data/")
         with self.assertRaises(ValueError):
             appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/test")
         appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/")
 
-        
         # test delete
         files_delete = appbuilder.assistant.assistants.files.delete(file_id=file.id)
         self.assertIsInstance(files_delete, assistant_type.AssistantFilesDeleteResponse)
