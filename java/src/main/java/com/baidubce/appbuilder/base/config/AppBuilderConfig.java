@@ -20,7 +20,7 @@ public class AppBuilderConfig {
 
     // http client请求超时时间，秒
     public static final int HTTP_CLIENT_CONNECTION_TIMEOUT = 300;
-    
+
     // appbuilderclient
     // 应用列表
     public static final String APP_LIST_URL = "/apps";
@@ -40,22 +40,59 @@ public class AppBuilderConfig {
     public static final String KNOWLEDGEBASE_DOCUMENT_LIST_URL = "/knowledge_base/documents";
     // 删除知识库文档
     public static final String KNOWLEDGEBASE_DELETE_DOCUMENT_URL = "/knowledge_base/document";
+    // 创建知识库
+    public static final String KNOWLEDGEBASE_CREATE_URL =
+            "/knowledgeBase?Action=CreateKnowledgeBase";
+    // 获取知识库详情
+    public static final String KNOWLEDGEBASE_DETAIL_URL =
+            "/knowledgeBase?Action=DescribeKnowledgeBase";
+    // 删除知识库
+    public static final String KNOWLEDGEBASE_DELETE_URL =
+            "/knowledgeBase?Action=DeleteKnowledgeBase";
+    // 获取知识库列表
+    public static final String KNOWLEDGEBASE_LIST_URL =
+            "/knowledgeBase?Action=DescribeKnowledgeBases";
+    // 更新知识库
+    public static final String KNOWLEDGEBASE_MODIFY_URL =
+            "/knowledgeBase?Action=ModifyKnowledgeBase";
+    // 导入知识库
+    public static final String KNOWLEDGEBASE_CREATE_DOCUMENTS_URL =
+            "/knowledgeBase?Action=CreateDocuments";
+    // 上传文件到知识库
+    public static final String KNOWLEDGEBASE_UPLOAD_DOCUMENTS_URL =
+            "/knowledgeBase?Action=UploadDocuments";
+    // 创建切片
+    public static final String CHUNK_CREATE_URL = "/knowledgeBase?Action=CreateChunk";
+    // 修改切片
+    public static final String CHUNK_MODIFY_URL = "/knowledgeBase?Action=ModifyChunk";
+    // 获取切片详情
+    public static final String CHUNK_DESCRIBE_URL = "/knowledgeBase?Action=DescribeChunk";
+    // 获取切片列表
+    public static final String CHUNKS_DESCRIBE_URL = "/knowledgeBase?Action=DescribeChunks";
+    // 删除切片
+    public static final String CHUNK_DELETE_URL = "/knowledgeBase?Action=DeleteChunk";
+
 
     // 运行rag
-    public static final String RAG_RUN_URL = "/api/v1/ai_engine/agi_platform/v1/instance/integrated";
+    public static final String RAG_RUN_URL =
+            "/api/v1/ai_engine/agi_platform/v1/instance/integrated";
 
     // dataset
     // 创建数据集
-    public static final String DATASET_CREATE_URL = "/api/v1/ai_engine/agi_platform/v1/datasets/create";
+    public static final String DATASET_CREATE_URL =
+            "/api/v1/ai_engine/agi_platform/v1/datasets/create";
     // 新增文档
-    public static final String DATASET_ADD_FILE_URL = "/api/v1/ai_engine/agi_platform/v1/datasets/documents";
+    public static final String DATASET_ADD_FILE_URL =
+            "/api/v1/ai_engine/agi_platform/v1/datasets/documents";
     // 获取文档列表
-    public static final String DATASET_GET_FILE_LIST_URL = "/api/v1/ai_engine/agi_platform/v1/datasets/documents/list_page";
+    public static final String DATASET_GET_FILE_LIST_URL =
+            "/api/v1/ai_engine/agi_platform/v1/datasets/documents/list_page";
     // 删除文档
-    public static final String DATASET_DELETE_FILE_URL = "/api/v1/ai_engine/agi_platform/v1/datasets/document/delete";
+    public static final String DATASET_DELETE_FILE_URL =
+            "/api/v1/ai_engine/agi_platform/v1/datasets/document/delete";
     // 上传文件
-    public static final String DATASET_UPLOAD_FILE_URL = "/api/v1/ai_engine/agi_platform/v1/datasets/files/upload";
+    public static final String DATASET_UPLOAD_FILE_URL =
+            "/api/v1/ai_engine/agi_platform/v1/datasets/files/upload";
 
-    private AppBuilderConfig() {
-    }
+    private AppBuilderConfig() {}
 }
