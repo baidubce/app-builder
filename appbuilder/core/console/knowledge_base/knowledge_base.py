@@ -38,7 +38,7 @@ class KnowledgeBase(Component):
         self.knowledge_name = knowledge_name
 
     @classmethod
-    @deprecated
+    @deprecated()
     def create_knowledge(cls, knowledge_name: str) -> "KnowledgeBase":
         """
         Deprecated: use create_knowledge_base instead

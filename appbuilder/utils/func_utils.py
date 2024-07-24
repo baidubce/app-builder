@@ -13,18 +13,30 @@
 # limitations under the License.
 
 import warnings
-import functools
+from functools import wraps
 
-def deprecated(func):
+def deprecated(reason=None, version=None):
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
     when the function is used."""
-    @functools.wraps(func)
-    def new_func(*args, **kwargs):
-        warnings.simplefilter('always', DeprecationWarning)  # turn off filter
-        warnings.warn("Call to deprecated function",
-                      category=DeprecationWarning,
-                      stacklevel=2)
-        warnings.simplefilter('default', DeprecationWarning)  # reset filter
-        return func(*args, **kwargs)
-    return new_func
+
+    def decorator(func):
+        @wraps(func)
+        def new_func(*args, **kwargs):
+            warnings.simplefilter('always', DeprecationWarning)  # turn off filter
+            messages = "Call deprecated API {}().".format(func.__qualname__)
+            if reason is not None:
+                messages += " Deprecated because {}.".format(reason)
+            
+            if version is not None:
+                messages += " This API will be removed after version {}.".format(version)
+            
+            messages += "\nDetailed information: "
+
+            warnings.warn(messages,
+                        category=DeprecationWarning,
+                        stacklevel=2)
+            warnings.simplefilter('default', DeprecationWarning)  # reset filter
+            return func(*args, **kwargs)
+        return new_func
+    return decorator
