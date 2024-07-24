@@ -71,7 +71,6 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 all_apps = appbuilder.get_all_apps()
 for i in range(len(all_apps)):
     print("第{}个App,App信息:{}".format(i+1,all_apps[i]))
-print("创建的app数目",app_number)
 ```
 
 ## Java基本用法
