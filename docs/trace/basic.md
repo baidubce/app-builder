@@ -56,4 +56,4 @@ tracer.end_trace()
 
 - Phoenix可视化效果
 
-![Phoenix可视化效果](https://bj.bcebos.com/v1/appbuilder-sdk-components/Phoenix%E5%8F%AF%E8%A7%86%E5%8C%96%E7%95%8C%E9%9D%A2%EF%BC%883%EF%BC%89.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-07-03T03%3A19%3A12Z%2F-1%2Fhost%2Fe79bcd6c9edbae95c98d789464621986fbb74b2f5a10936a555a1fe89f435624)
+![Phoenix可视化效果](https://bj.bcebos.com/v1/appbuilder-sdk-components/Phoenix%E5%8F%AF%E8%A7%86%E5%8C%96%E7%95%8C%E9%9D%A2%EF%BC%883%EF%BC%89.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-07-22T04%3A40%3A02Z%2F-1%2Fhost%2F07d2cbfb7dca01972b0f8521418669745ef6987c667747e8cedf0102caa27182)
