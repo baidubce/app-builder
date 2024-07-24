@@ -48,8 +48,8 @@ class TestApps(unittest.TestCase):
         self.assertRaises(ValueError, appbuilder.get_app_list, limit="a")
 
     def test_get_app_number(self):
-        number = appbuilder.get_app_number()
-        self.assertIsInstance(number, int)
+        app_list = appbuilder.get_all_apps()
+        self.assertIsInstance(app_list, list)
 
 if __name__ == '__main__':
     unittest.main()
