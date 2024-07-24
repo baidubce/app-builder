@@ -146,17 +146,15 @@ def _client_tool_trace_output_deep_iterate(output,span):
     """
     input_dict={}
     type_name = (bool,str,bytes,int,float,list)
-    try:    
-        if isinstance(output, dict):
-            for key, value in dict(output).items():
-                if isinstance(value, type_name):
-                    input_dict[key] = str(value)
-            span.set_attribute("output.value",json.dumps(input_dict, ensure_ascii=False))
-        else:
-            if isinstance(output, type_name):
-                span.set_attribute("output.value",str(output))
-    except Exception as e:
-        print(e)
+   
+    if isinstance(output, dict):
+        for key, value in output.items():
+            if isinstance(value, type_name):
+                input_dict[key] = str(value)
+        span.set_attribute("output.value",json.dumps(input_dict, ensure_ascii=False))
+    else:
+        if isinstance(output, type_name):
+            span.set_attribute("output.value",str(output))
 
 def _client_trace_generator(generator, tracer, parent_context):
     """
