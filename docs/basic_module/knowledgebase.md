@@ -247,6 +247,31 @@ print("文档列表: ", list_res)
 # 文档列表: request_id='f66c2193-6035-4022-811b-c4cd7743xxxx' data=[{'id': '8f388b10-5e6a-423f-8acc-dd5fdc2fxxxx', 'name': 'test.txt', 'created_at': 1719988868, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '0ebb03fb-ea48-4c49-b494-cf0cec11xxxx'}}, {'id': '5e0eb279-7688-4100-95d1-241f3d19xxxx', 'name': 'test.txt', 'created_at': 1719987921, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '059e2ae2-1e3c-43ea-8b42-5d988f93xxxx'}}]
 ```
 
+### 7、获取知识库的文档数`KnowledgeBase().get_documents_number()->int`
+
+#### 方法参数
+| 参数名称       | 参数类型   | 描述      | 示例值        |
+|------------|--------|---------|------------|
+| knowledge_base_id | string | 线上知识库ID | "正确的数据库ID" |
+
+#### 方法返回值
+
+int 数据类型
+
+#### 方法示例
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+my_knowledge_base_id = "your_knowledge_base_id"
+my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
+print("知识库ID: ", my_knowledge.knowledge_id)
+
+doc_number = my_knowledge.get_documents_number()
+print("知识库文档数: ", doc_number)
+```
+
 ### Java基本用法
 
 #### 方法及各方法入参/出参

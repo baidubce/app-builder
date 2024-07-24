@@ -65,6 +65,29 @@ def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key:
     out = resp.data
     return out
 
+@client_tool_trace
+def get_app_number():
+    """
+    获取应用总数。
+    
+    Args:
+        该函数不接受任何参数。
+    
+    Returns:
+        int: 应用的总数。
+    
+    """
+    app_number = 0
+    response_per_time = get_app_list(limit=100)
+    list_len_per_time = len(response_per_time)  
+    app_number += list_len_per_time
+    while list_len_per_time == 100:
+        after_id = response_per_time[-1].id 
+        response_per_time = get_app_list(after=after_id, limit=100)
+        list_len_per_time = len(response_per_time)
+        app_number += list_len_per_time
+
+    return app_number
 
 class AppBuilderClient(Component):
     r"""

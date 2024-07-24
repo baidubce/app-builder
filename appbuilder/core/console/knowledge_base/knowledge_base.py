@@ -546,3 +546,32 @@ class KnowledgeBase(Component):
 
         resp = data_class.DescribeChunksResponse(**data)
         return resp
+
+
+    def get_documents_number(self, knowledge_base_id: Optional[str] = None) -> int:
+        """
+        获取知识库中文档的总数。
+
+        Args:
+            knowledge_base_id (Optional[str], optional): 知识库的ID。默认为None，表示获取当前实例所关联的知识库中的文档数量。
+
+        Returns:
+            int: 文档中的总数。
+
+        """
+        if self.knowledge_id == None and knowledge_base_id == None:
+            raise ValueError(
+                "knowledge_base_id cannot be empty, please call `create` first or use existing one"
+            )
+        knowledge_base_id = knowledge_base_id or self.knowledge_id
+        knowledge_documents_number = 0
+        response_per_time = self.get_documents_list(knowledge_base_id=knowledge_base_id, limit=100)
+        list_len_per_time = len(response_per_time.data)  
+        knowledge_documents_number += list_len_per_time
+        while list_len_per_time == 100:
+            after_id = response_per_time.data[-1].id  
+            response_per_time = self.get_documents_list(knowledge_base_id=knowledge_base_id, after=after_id, limit=100)
+            list_len_per_time = len(response_per_time.data)
+            knowledge_documents_number += list_len_per_time
+
+        return knowledge_documents_number

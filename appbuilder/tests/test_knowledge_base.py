@@ -36,6 +36,12 @@ class TestKnowLedge(unittest.TestCase):
         )
         list_res = knowledge.get_documents_list()
         delete_res = knowledge.delete_document(document_id=add_res.document_ids[0])
+        doc_number = knowledge.get_documents_number(knowledge_base_id=dataset_id)
+        self.assertIsInstance(doc_number, int)
+    def test_get_documents_number_raise(self):
+        knowledge = appbuilder.KnowledgeBase()
+        with self.assertRaises(ValueError):
+            knowledge.get_documents_number()
 
     def test_xlsx_knowledage(self):
         dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
