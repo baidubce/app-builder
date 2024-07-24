@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/google/uuid"
@@ -143,28 +144,33 @@ func (t *SDKConfig) authHeader() http.Header {
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
-	absolutePath, err := url.JoinPath(t.GatewayURL, suffix)
+	absolutePath, err := url.JoinPath(t.GatewayURL)
 	if err != nil {
 		return nil, err
 	}
-	return t.formatURL(absolutePath)
+	return t.formatURL(absolutePath, suffix)
 }
 
 // ServiceURLV2 适配OpenAPI，当前仅AppbuilderClient使用
 func (t *SDKConfig) ServiceURLV2(suffix string) (*url.URL, error) {
-	absolutePath, err := url.JoinPath(t.GatewayURLV2, t.ConsoleOpenAPIPrefix, t.ConsoleOpenAPIVersion, suffix)
-	if err != nil {
-		return nil, err
-	}
-	return t.formatURL(absolutePath)
+	suffix = path.Join(t.ConsoleOpenAPIPrefix, t.ConsoleOpenAPIVersion, suffix)
+	return t.formatURL(t.GatewayURLV2, suffix)
 }
 
-func (t *SDKConfig) formatURL(absolutePath string) (*url.URL, error) {
+func (t *SDKConfig) formatURL(absolutePath, suffix string) (*url.URL, error) {
 	t.logger.Debug().Msgf("Service URL %s", absolutePath)
 	url, err := url.Parse(absolutePath)
 	if err != nil {
 		return nil, err
 	}
+
+	endpoint, err := url.Parse(suffix)
+	if err != nil {
+		return nil, err
+	}
+
+	url = url.ResolveReference(endpoint)
+
 	return url, nil
 }
 

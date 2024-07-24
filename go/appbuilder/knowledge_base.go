@@ -226,3 +226,445 @@ func (t *KnowledgeBase) UploadFile(localFilePath string) (string, error) {
 	fileID := rsp.FileID
 	return fileID, nil
 }
+
+func (t *KnowledgeBase) CreateKnowledgeBase(req KnowledgeBaseDetail) (KnowledgeBaseDetail, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateKnowledgeBase")
+	if err != nil {
+		return KnowledgeBaseDetail{}, err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return KnowledgeBaseDetail{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := KnowledgeBaseDetail{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp, nil
+}
+
+func (t *KnowledgeBase) GetKnowledgeBaseDetail(knowledgeBaseID string) (KnowledgeBaseDetail, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DescribeKnowledgeBase")
+	if err != nil {
+		return KnowledgeBaseDetail{}, err
+	}
+	req := KnowledgeBaseDetail{}
+	req.ID = knowledgeBaseID
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return KnowledgeBaseDetail{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := KnowledgeBaseDetail{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp, nil
+}
+
+func (t *KnowledgeBase) GetKnowledgeBaseList(req GetKnowledgeBaseListRequest) (GetKnowledgeBaseListResponse, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DescribeKnowledgeBases")
+	if err != nil {
+		return GetKnowledgeBaseListResponse{}, err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return GetKnowledgeBaseListResponse{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return GetKnowledgeBaseListResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return GetKnowledgeBaseListResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := GetKnowledgeBaseListResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return GetKnowledgeBaseListResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp, nil
+}
+
+func (t *KnowledgeBase) ModifyKnowledgeBase(req ModifyKnowlegeBaseRequest) error {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=ModifyKnowledgeBase")
+	if err != nil {
+		return err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	_, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return nil
+}
+
+func (t *KnowledgeBase) DeleteKnowledgeBase(knowledgeBaseID string) error {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DeleteKnowledgeBase")
+	if err != nil {
+		return err
+	}
+	req := KnowledgeBaseDetail{}
+	req.ID = knowledgeBaseID
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	_, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return nil
+}
+
+func (t *KnowledgeBase) CreateDocuments(req CreateDocumentsRequest) error {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateDocuments")
+	if err != nil {
+		return err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	_, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return nil
+}
+
+func (t *KnowledgeBase) UploadDocuments(localFilePath string, req CreateDocumentsRequest) error {
+	var data bytes.Buffer
+	w := multipart.NewWriter(&data)
+	file, err := os.Open(localFilePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	filePart, _ := w.CreateFormFile("file", filepath.Base(file.Name()))
+	if _, err := io.Copy(filePart, file); err != nil {
+		return err
+	}
+
+	jsonData, err := json.Marshal(req)
+	if err != nil {
+		return fmt.Errorf("failed to marshal request: %w", err)
+	}
+	jsonPart, err := w.CreateFormField("payload")
+	if err != nil {
+		return fmt.Errorf("failed to create form field: %w", err)
+	}
+	if _, err := jsonPart.Write(jsonData); err != nil {
+		return fmt.Errorf("failed to write JSON data: %w", err)
+	}
+	w.Close()
+
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=UploadDocuments")
+	if err != nil {
+		return err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	request.Header = header
+	header.Set("Content-Type", w.FormDataContentType())
+	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	_, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return nil
+}
+
+func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateChunk")
+	if err != nil {
+		return "", err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	rsp := CreateChunkResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp.ID, nil
+}
+
+func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=ModifyChunk")
+	if err != nil {
+		return err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	rsp := CreateChunkResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return nil
+}
+
+func (t *KnowledgeBase) DeleteChunk(chunkID string) error {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DeleteChunk")
+	if err != nil {
+		return err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	req := DeleteChunkRequest{
+		ChunkID: chunkID,
+	}
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	rsp := CreateChunkResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return nil
+}
+
+func (t *KnowledgeBase) DescribeChunk(chunkID string) (DescribeChunkResponse, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DescribeChunk")
+	if err != nil {
+		return DescribeChunkResponse{}, err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	req := DescribeChunkRequest{
+		ChunkID: chunkID,
+	}
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return DescribeChunkResponse{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	rsp := DescribeChunkResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp, nil
+}
+
+func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunksResponse, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DescribeChunks")
+	if err != nil {
+		return DescribeChunksResponse{}, err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return DescribeChunksResponse{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	rsp := DescribeChunksResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp, nil
+}
