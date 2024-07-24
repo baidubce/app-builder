@@ -59,7 +59,7 @@ class TestAppBuilderTrace(unittest.TestCase):
         
         # test stream = True
         msg = builder.run(conversation_id=conversation_id, query="人参有什么用？",stream=False)
-        
+
         tracer.end_trace()
 
     def test_appbuilder_client_trace_stream(self):
@@ -88,9 +88,6 @@ class TestAppBuilderTrace(unittest.TestCase):
         msg = builder.run(conversation_id=conversation_id, query="人参有什么用？",stream=True)
         for m in msg.content:
             print(m)
-
-        # test stream = False
-        builder.run(conversation_id=conversation_id, query="人参有什么用？")
 
         # test get_app_list
         get_app_list()
