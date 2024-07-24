@@ -16,12 +16,14 @@ import os
 from appbuilder.core.assistant.type import thread_type
 from appbuilder.core._client import AssistantHTTPClient
 from typing import Optional
+from appbuilder.utils.trace.tracer_wrapper import assistent_tool_trace
 
 
 class Messages(object):
     def __init__(self):
         self._http_client = AssistantHTTPClient()
 
+    @assistent_tool_trace
     def create(self, 
                thread_id: str,
                content: str,
@@ -67,6 +69,7 @@ class Messages(object):
         response = thread_type.AssistantMessageCreateResponse(**data)
         return response
     
+    @assistent_tool_trace
     def update(self,
                thread_id: str,
                message_id: str,
@@ -107,6 +110,7 @@ class Messages(object):
         response = thread_type.AssistantMessageUpdateResponse(**data)
         return response  
 
+    @assistent_tool_trace
     def list(self,
             thread_id: str,
             limit: int = 20,
@@ -152,7 +156,7 @@ class Messages(object):
         response = thread_type.AssistantMessageListResponse(**data)
         return response 
     
-    
+    @assistent_tool_trace
     def query(self,
             thread_id:str,
             message_id:str) -> thread_type.AssistantMessageQueryResponse:
@@ -189,7 +193,7 @@ class Messages(object):
         response = thread_type.AssistantMessageQueryResponse(**data)
         return response  
     
-    
+    @assistent_tool_trace
     def files(self,
               thread_id:str,
               message_id:str,

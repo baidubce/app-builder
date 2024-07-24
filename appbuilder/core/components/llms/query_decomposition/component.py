@@ -20,6 +20,7 @@ from typing import Optional
 from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core.components.llms.base import CompletionBaseComponent
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class QueryDecompositionMeta(ComponentArguments):
@@ -76,6 +77,7 @@ class QueryDecomposition(CompletionBaseComponent):
         super().__init__(
                 QueryDecompositionMeta, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
+    @components_run_trace
     def run(self, message, stream=False, temperature=1e-10, top_p=0.0):
         """
         给定输入（message）到模型运行，同时指定运行参数，并返回结果。

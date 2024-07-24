@@ -23,6 +23,7 @@ from appbuilder.core.component import ComponentArguments
 from pydantic import BaseModel, Field
 from enum import Enum
 from typing import Optional
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class StyleChoices(Enum):
@@ -132,6 +133,7 @@ class StyleRewrite(CompletionBaseComponent):
             StyleRewriteArgs, model=model, secret_key=secret_key, gateway=gateway,
             lazy_certification=lazy_certification)
 
+    @components_run_trace
     def run(self, message, style="营销话术", stream=False, temperature=1e-10, top_p=0.0, request_id=None):
         """
         使用给定的输入运行模型并返回结果。
@@ -149,6 +151,7 @@ class StyleRewrite(CompletionBaseComponent):
         """
         return super().run(message=message, style=style, stream=stream, temperature=temperature, top_p=top_p, request_id=request_id)
 
+    @components_run_stream_trace 
     def tool_eval(self, name: str, streaming: bool = False, **kwargs):
         """
         tool_eval for function call

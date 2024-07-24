@@ -26,6 +26,7 @@ from appbuilder.core._exception import AppBuilderServerException, ModelNotSuppor
 from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
 from appbuilder.core.utils import ModelInfo, ttl_lru_cache
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class Excel2FigureArgs(ComponentArguments):
@@ -96,6 +97,7 @@ class Excel2Figure(Component):
         model_url = self.model_info.get_model_url(model)
         return model_url
 
+    @components_run_trace
     def run(self, message: Message) -> Message:
         """
         执行 excel2figure
@@ -191,6 +193,7 @@ class Excel2Figure(Component):
                     f"failed to generate figure for query={query}, excel_file_url={excel_file_url}")
         return Message(figure_url)
 
+    @components_run_stream_trace
     def tool_eval(
         self,
         streaming: bool,

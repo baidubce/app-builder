@@ -31,8 +31,13 @@ class InnerSession(requests.sessions.Session):
         Generate cURL command from prepared request object.
         """
         curl = "curl -X {0} -L '{1}' \\\n".format(request.method, request.url)
-        headers = ["-H '{0}: {1}' \\".format(k, v)
-                   for k, v in request.headers.items() if k != 'Content-Length']
+
+        headers = [
+            "-H '{0}: {1}' \\".format(k, v)
+            for k, v in request.headers.items()
+            if k != "Content-Length"
+        ]
+
         if headers:
             headers[-1] = headers[-1].rstrip(" \\")
         curl += "\n".join(headers)

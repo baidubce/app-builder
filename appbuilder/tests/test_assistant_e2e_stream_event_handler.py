@@ -61,7 +61,14 @@ class TestFunctionCall(unittest.TestCase):
     def setUp(self):
         os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_V2"]
 
-    def test_end_to_end(self):
+    def test_end_to_end_trace(self):
+        from appbuilder.utils.trace.tracer import AppBuilderTracer
+        tracer=AppBuilderTracer(
+            enable_phoenix = True,
+            enable_console = False,
+            )
+
+        tracer.start_trace()
         assistant = appbuilder.assistant.assistants.create(
             name="test_function",
             description="你是一个热心的朋友",
@@ -78,6 +85,30 @@ class TestFunctionCall(unittest.TestCase):
             content="今天北京的天气怎么样？",
         )
 
+        with appbuilder.assistant.threads.runs.stream_run_with_handler(
+            thread_id=thread.id,
+            assistant_id=assistant.id,
+            event_handler=MyEventHandler(),
+        ) as stream:
+            stream.until_done()
+
+        tracer.end_trace()  
+
+    def test_end_to_end(self):
+        assistant = appbuilder.assistant.assistants.create(
+            name="test_function",
+            description="你是一个热心的朋友",
+            instructions="请用友善的语气回答问题",
+            tools=[
+                {'type': 'function', 'function': check_tool}
+            ]
+        )
+        
+        thread = appbuilder.assistant.threads.create()
+        appbuilder.assistant.threads.messages.create(
+            thread_id=thread.id,
+            content="今天北京的天气怎么样？",
+        )
         with appbuilder.assistant.threads.runs.stream_run_with_handler(
             thread_id=thread.id,
             assistant_id=assistant.id,

@@ -17,6 +17,7 @@ from enum import Enum
 from typing import Union
 from typing import Optional
 
+
 class AssistantFunctionCall(BaseModel):
     """
     表示助理功能调用的模型。
@@ -25,6 +26,7 @@ class AssistantFunctionCall(BaseModel):
         name (str): 函数调用的名称。
         arguments (str): 函数调用的参数列表。
     """
+
     name: str
     arguments: str
 
@@ -38,6 +40,7 @@ class AssistantExample(BaseModel):
         content (str): 示例的内容。
         function_call (AssistantFunctionCall): 函数调用的实例。
     """
+
     role: str = "user"
     content: str
     function_call: AssistantFunctionCall
@@ -52,7 +55,8 @@ class AssistantFunctionJsonSchema(BaseModel):
         properties (Union[dict, None]): JSON对象的属性，默认为None。
         required (Union[list[str], None]): 必需的属性列表，默认为None。
     """
-    type: str = 'object'
+
+    type: str = "object"
     properties: Union[dict, None] = None
     required: Union[list[str], None] = None
 
@@ -68,10 +72,11 @@ class AssistantFunction(BaseModel):
         responses (Union[AssistantFunctionJsonSchema, None]): 功能的响应Schema，默认为None。
         examples (Union[list[list[AssistantExample]], None]): 功能的示例列表，默认为None。
     """
+
     name: str
     description: str
     parameters: Union[AssistantFunctionJsonSchema, None] = None
-    responses:  Union[AssistantFunctionJsonSchema, None] = None
+    responses: Union[AssistantFunctionJsonSchema, None] = None
     examples: Union[list[list[AssistantExample]], None] = None
 
 
@@ -83,7 +88,8 @@ class AssistantTool(BaseModel):
         type (str): 工具的类型，默认为 'function'。
         function (AssistantFunction): 功能的实例。
     """
-    type: str = 'function'
+
+    type: str = "function"
     function: AssistantFunction = None
 
 
@@ -95,8 +101,9 @@ class ResponseFormat(str, Enum):
         TEXT: 文本格式。
         JSON_OBJECT: JSON对象格式。
     """
-    TEXT = 'text'
-    JSON_OBJECT = 'json_object'
+
+    TEXT = "text"
+    JSON_OBJECT = "json_object"
 
 
 class AssistantText(BaseModel):
@@ -107,6 +114,7 @@ class AssistantText(BaseModel):
         value (str): 文本的值。
         annotations (Optional[list[str]]): 文本的注解列表，默认为None。
     """
+
     value: str = ""
     annotations: Optional[list[str]] = None
 
@@ -119,6 +127,7 @@ class AssistantContent(BaseModel):
         type (str): 内容类型，默认为 "text"。
         text (Optional[AssistantText]): 文本内容的实例，默认为None。
     """
+
     type: str = "text"
     text: Optional[AssistantText] = None
 
@@ -128,9 +137,10 @@ class AssistantChatParameters(BaseModel):
     表示助理聊天参数的模型。
     Attributes:
         temperature (Optional[float]): 	采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.8。
-        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0.8。
-        penalty_score (Optional[float]): 惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。
+        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较高的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0.8。
+        penalty_score (Optional[float]): 惩罚分数，减少重复生成的现象，值越大表示惩罚越大。取值范围大于等于1，小于等于2，默认为1.0。
     """
+
     temperature: Optional[float] = 0.8
     top_p: Optional[float] = 0.8
     penalty_score: Optional[float] = 1.0
@@ -141,13 +151,14 @@ class AssistantThoughtParameters(BaseModel):
     表示助理思考参数的模型。
     Attributes:
         temperature (Optional[float]): 	采样温度，较高的数值会使输出更随机。取值范围严格大于0，小于等于1，默认为0.01。
-        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较低的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0。
-        penalty_score (Optional[float]): 惩罚分数，影响输出文本的多样性和质量，较高的数值使输出的文本更加多样性。取值范围大于等于1，小于等于2，默认为1.0。
+        top_p (Optional[float]): top_p，核采样方法的概率阈值，影响输出文本的多样性，较高的数值会使输出的文本更加多样性。取值范围大于等于0，小于等于1，默认为0。
+        penalty_score (Optional[float]): 惩罚分数，减少重复生成的现象，值越大表示惩罚越大取值范围大于等于1，小于等于2，默认为1.0。
     """
+
     temperature: Optional[float] = 0.01
     top_p: Optional[float] = 0
     penalty_score: Optional[float] = 1.0
-    
+
 
 class AssistantModelParameters(BaseModel):
     """
@@ -156,8 +167,11 @@ class AssistantModelParameters(BaseModel):
         chat_parameters (Optional[AssistantChatParameters]): 聊天参数的实例，默认为None。
         thought_parameters (Optional[AssistantThoughtParameters]): 思考参数的实例，默认为None。
     """
+
     chat_parameters: Optional[AssistantChatParameters] = AssistantChatParameters()
-    thought_parameters: Optional[AssistantThoughtParameters] = AssistantThoughtParameters()
+    thought_parameters: Optional[AssistantThoughtParameters] = (
+        AssistantThoughtParameters()
+    )
 
 
 class AssistantUserInfo(BaseModel):
@@ -171,12 +185,13 @@ class AssistantUserInfo(BaseModel):
         intro (Optional[str]): 用户简介，默认为None。
         baidu_id (Optional[str]): 用户百度ID，默认为None。
     """
-    id:Optional[str] = None
-    name:Optional[str] = None
-    nickname:Optional[str] = None
-    watermark:Optional[str] = None
-    intro:Optional[str] = None
-    baidu_id: Optional[str] = None 
+
+    id: Optional[str] = None
+    name: Optional[str] = None
+    nickname: Optional[str] = None
+    watermark: Optional[str] = None
+    intro: Optional[str] = None
+    baidu_id: Optional[str] = None
 
 
 class AssistantUserLoc(BaseModel):
@@ -187,9 +202,7 @@ class AssistantUserLoc(BaseModel):
         uip (Optional[str]): 用户的ipv4地址
         uipv6 (Optional[str]): 用户的ipv6地址
     """
-    loc:Optional[str] = None
-    uip:Optional[str] = None
-    uipv6:Optional[str] = None
 
-
-    
+    loc: Optional[str] = None
+    uip: Optional[str] = None
+    uipv6: Optional[str] = None

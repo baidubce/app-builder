@@ -18,6 +18,7 @@ import re
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core.message import Message
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class PlaygroundArgs(ComponentArguments):
@@ -82,6 +83,7 @@ class Playground(CompletionBaseComponent):
 
         self.variable_names = self.__parse__(prompt_template)
 
+    @components_run_trace
     def run(self, message, stream=False, temperature=1e-10, top_p=0.0):
         """
         使用给定的输入运行模型并返回结果。

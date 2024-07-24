@@ -22,6 +22,7 @@ from typing import Optional
 from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core.components.llms.base import CompletionBaseComponent
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class SimilarQuestionMeta(ComponentArguments):
@@ -95,6 +96,7 @@ class SimilarQuestion(CompletionBaseComponent):
         super().__init__(
                 SimilarQuestionMeta, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
+    @components_run_trace
     def run(self, message, stream=False, temperature=1e-10, top_p=0.0, request_id=None):
         """
         给定输入（message）到模型运行，同时指定运行参数，并返回结果。
@@ -110,6 +112,7 @@ class SimilarQuestion(CompletionBaseComponent):
         """
         return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p, request_id=request_id)
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool = False, **kwargs):
         """
         tool_eval for function call

@@ -22,6 +22,7 @@ import json
 
 from appbuilder.core.component import Component, Message, ComponentArguments
 from appbuilder.utils.logger_util import logger
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class ExtractTableFromDoc(Component):
@@ -96,6 +97,7 @@ class ExtractTableFromDoc(Component):
             data.append(tmp)
         return data
 
+    @components_run_trace
     def run(self, message: Message, table_max_size: int = 800, doc_node_num_before_table: int = 1):
         """
         将文档原始解析结果，请求云端进行表格抽取，返回表格列表。

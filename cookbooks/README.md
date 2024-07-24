@@ -32,3 +32,6 @@
 
 ### 进阶应用
 - [公有云部署](/cookbooks/advanced_application/cloud_deploy.ipynb)
+
+### 辅助工具
+- [Appbuilder-Trace工具](/cookbooks/appbuilder_trace/trace.ipynb)

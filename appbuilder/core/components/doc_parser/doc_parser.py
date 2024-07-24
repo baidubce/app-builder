@@ -26,6 +26,7 @@ from appbuilder.core.component import Component, Message
 from appbuilder.utils.logger_util import logger
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.doc_parser.base import ParserConfig, ParseResult
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class DocParser(Component):
@@ -100,6 +101,7 @@ class DocParser(Component):
         return parse_result
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, input_message: Message, return_raw=False) -> Message:
         """
         对传入的文件进行解析
