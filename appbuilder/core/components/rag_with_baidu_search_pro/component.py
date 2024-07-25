@@ -84,7 +84,7 @@ class RagWithBaiduSearchPro(Component):
         if len(message.content) > 300:
             raise AppBuilderServerException(service_err_message="query is too long, expected <= 300, got {}"
                                             .format(len(message.content)))
-        if len(instruction.content) > 1024:
+        if instruction is not None and len(instruction.content) > 1024:
             raise AppBuilderServerException(service_err_message="instruction is too long, expected <= 1024, got {}"
                                             .format(len(instruction)))
 
