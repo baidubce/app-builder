@@ -57,7 +57,7 @@ print(app_list)
 
 #### 返回参数
 
-`get_app_number`方法返回类型为 `list`
+`get_all_apps`方法返回类型为 `list`
 
 #### 代码示例
 下面是模型列表获取功能的代码示例：
