@@ -105,7 +105,7 @@ public class HttpClient {
                 ? System.getenv("APPBUILDER_SDK_PLATFORM")
                 : "unknown";
         httpPost.setHeader("X-Appbuilder-Sdk-Config",
-                "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
+                "{\"appbuilder_sdk_version\":\"0.9.1\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
                         + platform + "\"}");
         httpPost.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
         httpPost.setEntity(entity);
@@ -134,7 +134,7 @@ public class HttpClient {
                 ? System.getenv("APPBUILDER_SDK_PLATFORM")
                 : "unknown";
         httpPost.setHeader("X-Appbuilder-Sdk-Config",
-                "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
+                "{\"appbuilder_sdk_version\":\"0.9.1\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
                         + platform + "\"}");
         httpPost.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
         httpPost.setEntity(entity);
@@ -158,7 +158,7 @@ public class HttpClient {
                 ? System.getenv("APPBUILDER_SDK_PLATFORM")
                 : "unknown";
         httpGet.setHeader("X-Appbuilder-Sdk-Config",
-                "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
+                "{\"appbuilder_sdk_version\":\"0.9.1\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
                         + platform + "\"}");
         httpGet.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
         String headers = "headers: \n";
@@ -181,7 +181,7 @@ public class HttpClient {
                 ? System.getenv("APPBUILDER_SDK_PLATFORM")
                 : "unknown";
         httpDelete.setHeader("X-Appbuilder-Sdk-Config",
-                "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
+                "{\"appbuilder_sdk_version\":\"0.9.1\",\"appbuilder_sdk_language\":\"java\",\"appbuilder_sdk_platform\":\""
                         + platform + "\"}");
         httpDelete.setHeader("X-Appbuilder-Request-Id", java.util.UUID.randomUUID().toString());
         String headers = "headers: \n";
