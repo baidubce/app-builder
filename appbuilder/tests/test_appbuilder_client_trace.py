@@ -20,7 +20,7 @@ from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrument
 from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix,launch_phoenix
 from appbuilder.core.console.appbuilder_client import get_app_list
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
     def setUp(self):
         """
@@ -35,7 +35,7 @@ class TestAppBuilderTrace(unittest.TestCase):
         """
         self.app_id = "2a19f6dd-de02-46d9-841d-ef5c52b00466"
     
-    def test_appbuilder_client_trace(self):
+    def test_appbuilder_client_trace_un_stream(self):
         """
         测试AppBuilderClient的跟踪功能
         
@@ -49,7 +49,34 @@ class TestAppBuilderTrace(unittest.TestCase):
 
         tracer=AppBuilderTracer(
             enable_phoenix = True,
-            enable_console = True,
+            enable_console = False,
+            )
+        
+        tracer.start_trace()
+
+        builder = appbuilder.AppBuilderClient(self.app_id)
+        conversation_id = builder.create_conversation()
+        
+        # test stream = True
+        msg = builder.run(conversation_id=conversation_id, query="人参有什么用？",stream=False)
+        print(msg)
+        tracer.end_trace()
+
+    def test_appbuilder_client_trace_stream(self):
+        """
+        测试AppBuilderClient的跟踪功能
+        
+        Args:
+            无
+        
+        Returns:
+            无返回值，该函数主要用于测试跟踪功能
+        
+        """
+
+        tracer=AppBuilderTracer(
+            enable_phoenix = True,
+            enable_console = False,
             )
         
         tracer.start_trace()
@@ -60,10 +87,7 @@ class TestAppBuilderTrace(unittest.TestCase):
         # test stream = True
         msg = builder.run(conversation_id=conversation_id, query="人参有什么用？",stream=True)
         for m in msg.content:
-            print(m)
-
-        # test stream = False
-        builder.run(conversation_id=conversation_id, query="人参有什么用？")
+            pass
 
         # test get_app_list
         get_app_list()

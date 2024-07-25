@@ -71,8 +71,8 @@ class TestAppBuilderComponentsTrace(unittest.TestCase):
         
         """
         tracer=AppBuilderTracer(
-        enable_phoenix = True,
-        enable_console = True,
+            enable_phoenix = True,
+            enable_console = True,
         )
 
         tracer.start_trace()
@@ -82,6 +82,8 @@ class TestAppBuilderComponentsTrace(unittest.TestCase):
         inp = appbuilder.Message(content={"raw_audio": raw_audio})
         out = self.asr.run(inp)
         result = self.asr.tool_eval(name="asr", streaming=True, file_url=self.audio_file_url)
+        for res in result:
+            print(res)
 
         # test playground run
         msg = appbuilder.Message({
@@ -106,6 +108,10 @@ class TestAppBuilderComponentsTrace(unittest.TestCase):
                                                 context=context,
                                                 answer=answer,
                                                 model_configs=model_configs)
+        for res in answer:
+            print(res)
+            
+        tracer.end_trace()
         
 if __name__ == '__main__':
     unittest.main()
