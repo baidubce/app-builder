@@ -15,6 +15,7 @@ import unittest
 import appbuilder
 import os
 
+from appbuilder.core._exception import BadRequestException
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestKnowLedge(unittest.TestCase):
@@ -60,7 +61,8 @@ class TestKnowLedge(unittest.TestCase):
             knowledge.get_knowledge_base_detail(knowledge_base_id)
             knowledge.get_knowledge_base_list(knowledge_base_id, maxKeys=10)
             self.whether_create_knowledge_base = True
-        except:
+        except BadRequestException as e:
+            print("create_knowledge_base函数运行失败{},将调用本地DATASET_ID".format(e))
             knowledge_base_id = os.getenv('DATASET_ID', 'UNKNOWN')
         err_msg = None
         try:

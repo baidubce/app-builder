@@ -220,7 +220,7 @@ class AppBuilderClient(Component):
 
 
 class AgentBuilder(AppBuilderClient):
-    @deprecated
+    @deprecated(reason="AgentBuilder is deprecated, please use AppBuilderClient instead", version="1.0.0")
     def __init__(self, app_id: str):
         """
         初始化方法，用于创建一个新的实例对象。
@@ -234,8 +234,6 @@ class AgentBuilder(AppBuilderClient):
             None
 
         """
-        logger.info(
-            "AgentBuilder is deprecated, please use AppBuilderClient instead")
         super().__init__(app_id)
 
 

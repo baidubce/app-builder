@@ -70,7 +70,7 @@ class Dataset:
         response = response.json()["result"]
         return Dataset(dataset_id=response["id"], dataset_name=response["name"])
 
-    @deprecated
+    @deprecated()
     def add_documents(self, file_path_list: List[str], is_custom_process_rule: bool = False,
                       custom_process_rule: Dict = None, is_enhanced: bool = False) -> AddDocumentsResponse:
         """
@@ -133,7 +133,7 @@ class Dataset:
             res = response.json()["result"]
         return res
 
-    @deprecated
+    @deprecated()
     def delete_documents(self, document_ids: List[str]):
         """
         删除知识库中的文档
@@ -159,7 +159,7 @@ class Dataset:
         self.http_client.check_response_header(response)
         self.http_client.check_console_response(response)
 
-    @deprecated
+    @deprecated()
     def get_documents(self, page: int, limit: int, keyword: str = "") -> DocumentListResponse:
         """
         获取知识库中的文档列表
