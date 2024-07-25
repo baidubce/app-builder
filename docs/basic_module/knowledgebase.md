@@ -18,17 +18,46 @@
 
 ## Python基本用法
 
-### 1、新建知识库`KnowledgeBase().create_knowledge(knowledge_name: str) -> KnowledgeBase()`
+### 1、新建知识库`KnowledgeBase().create_knowledge(name: str, description: str, type: str, esUrl: str, esUserName: str, esPassword: str) -> KnowledgeBaseDetailResponse()`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
 |------------|--------|---------|------------|
-| knowledge_name | string | 希望创建的知识库名称 | "我的知识库" |
+| name | string | 希望创建的知识库名称 | "我的知识库" |
+| description | string | 知识库描述 | "我的知识库" |
+| type | string | 知识库索引存储配置 (public、bes、vdb) | "public" |
+| esUrl | string | bes 访问地址，type填bes时填写 | "http://test/test" |
+| esUserName | string | bes 用户名，type填bes时填写 | "username" |
+| esPassword | string | bes密码，type填bes时填写 | "password" |
 
 #### 方法返回值
-| 参数名称       | 参数类型   | 描述      | 示例值        |
-|------------|--------|---------|------------|
-| KnowledgeBase | class KnowledgeBase | 实例化的知识库类 | - |
+
+`KnowledgeBaseDetailResponse` 类定义如下：
+
+```python
+class KnowledgeBaseDetailResponse(BaseModel):
+    id: str = Field(..., description="知识库ID")
+    name: str = Field(..., description="知识库名称")
+    description: Optional[str] = Field(None, description="知识库描述")
+    config: Optional[KnowledgeBaseConfig] = Field(..., description="知识库配置")
+```
+
+衍生类`KnowledgeBaseConfig`定义如下：
+
+```python
+class KnowledgeBaseConfig(BaseModel):
+    index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+```
+
+衍生类`KnowledgeBaseConfigIndex`定义如下：
+
+```python
+class KnowledgeBaseConfigIndex(BaseModel):
+    type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
+    esUrl: Optional[str] = Field(..., description="ES地址")
+    username: Optional[str] = Field(None, description="ES用户名")
+    password: Optional[str] = Field(None, description="ES密码")
+```
 
 #### 方法示例
 
@@ -37,9 +66,14 @@ import os
 import appbuilder
 os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 
-my_knowledge = appbuilder.KnowledgeBase().create_knowledge("my_knowledge")
-print("新建的知识库ID: ", my_knowledge.knowledge_id)
-print("新建的知识库名称: ", my_knowledge.knowledge_name)
+knowledge = appbuilder.KnowledgeBase()
+resp = knowledge.create_knowledge_base(
+        name="my_knowledge",
+        description="my_knowledge",
+        type="public",
+    )
+print("新建的知识库ID: ", resp.id)
+print("新建的知识库名称: ", resp.name)
 
 # 新建的知识库ID:  da51a988-cbe7-4b24-aa5b-768985e8xxxx
 # 新建的知识库名称:  my_knowledge
@@ -80,6 +114,7 @@ print("知识库ID: ", my_knowledge.knowledge_id)
 
 #### 方法返回值
 `KnowledgeBaseUploadFileResponse` 类定义如下
+
 ```python
 class KnowledgeBaseUploadFileResponse(BaseModel):
     request_id: str = Field(..., description="请求ID")
@@ -339,6 +374,92 @@ public class KnowledgebaseTest {
         deleteRequest.setDocumentId(documentsRes[0]);
         knowledgebase.deleteDocument(deleteRequest);
     }
+  
+    @Test
+    public void testCreateKnowledgebase() throws IOException, AppBuilderServerException {
+        Knowledgebase knowledgebase = new Knowledgebase();
+        KnowledgeBaseDetail request = new KnowledgeBaseDetail();
+        request.setName("test_knowledgebase");
+        request.setDescription("test_knowledgebase");
+
+        // 创建知识库
+        KnowledgeBaseConfig.Index index = new KnowledgeBaseConfig.Index("public",
+                "http://localhost:9200", "elastic", "changeme");
+        KnowledgeBaseConfig config = new KnowledgeBaseConfig(index);
+        request.setConfig(config);
+        KnowledgeBaseDetail response = knowledgebase.createKnowledgeBase(request);
+        String knowledgeBaseId = response.getId();
+        System.out.println(knowledgeBaseId);
+        assertNotNull(response.getId());
+
+        // 获取知识库详情
+        KnowledgeBaseDetail detail = knowledgebase.getKnowledgeBaseDetail(knowledgeBaseId);
+        System.out.println(detail.getId());
+        assertNotNull(detail.getId());
+
+        // 获取知识库列表
+        KnowledgeBaseListRequest listRequest =
+                new KnowledgeBaseListRequest(knowledgeBaseId, 10, null);
+        KnowledgeBaseListResponse knowledgeBases = knowledgebase.getKnowledgeBaseList(listRequest);
+        System.out.println(knowledgeBases.getMarker());
+        assertNotNull(knowledgeBases.getMarker());
+
+        // 更新知识库
+        KnowledgeBaseModifyRequest modifyRequest = new KnowledgeBaseModifyRequest();
+        modifyRequest.setKnowledgeBaseId(knowledgeBaseId);
+        modifyRequest.setName("test_knowledgebase2");
+        modifyRequest.setDescription(knowledgeBaseId);
+        knowledgebase.modifyKnowledgeBase(modifyRequest);
+
+        // 导入知识库
+        DocumentsCreateRequest.Source source = new DocumentsCreateRequest.Source("web",
+                new String[] {"https://baijiahao.baidu.com/s?id=1802527379394162441"}, 1);
+        DocumentsCreateRequest.ProcessOption.Parser parser =
+                new DocumentsCreateRequest.ProcessOption.Parser(
+                        new String[] {"layoutAnalysis", "ocr"});
+        DocumentsCreateRequest.ProcessOption.Chunker.Separator separator =
+                new DocumentsCreateRequest.ProcessOption.Chunker.Separator(new String[] {"。"}, 300,
+                        0.25);
+        DocumentsCreateRequest.ProcessOption.Chunker chunker =
+                new DocumentsCreateRequest.ProcessOption.Chunker(new String[] {"separator"},
+                        separator, null, new String[] {"title", "filename"});
+        DocumentsCreateRequest.ProcessOption.KnowledgeAugmentation knowledgeAugmentation =
+                new DocumentsCreateRequest.ProcessOption.KnowledgeAugmentation(
+                        new String[] {"faq"});
+        DocumentsCreateRequest.ProcessOption processOption =
+                new DocumentsCreateRequest.ProcessOption("custom", parser, chunker,
+                        knowledgeAugmentation);
+        DocumentsCreateRequest documentsCreateRequest =
+                new DocumentsCreateRequest(knowledgeBaseId, "rawText", source, processOption);
+        knowledgebase.createDocuments(documentsCreateRequest);
+
+        // 上传文档
+        String filePath = "src/test/java/com/baidubce/appbuilder/files/test.pdf";
+        DocumentsCreateRequest.Source source2 =
+                new DocumentsCreateRequest.Source("file", null, null);
+        DocumentsCreateRequest documentsCreateRequest2 =
+                new DocumentsCreateRequest(knowledgeBaseId, "rawText", source2, processOption);
+        knowledgebase.uploadDocuments(filePath, documentsCreateRequest2);
+
+        // 删除知识库
+        knowledgebase.deleteKnowledgeBase(knowledgeBaseId);
+    }
+  
+    @Test
+    public void testCreateChunk() throws IOException, AppBuilderServerException {
+        String documentId = "";
+        Knowledgebase knowledgebase = new Knowledgebase();
+        // 创建切片
+        String chunkId = knowledgebase.createChunk(documentId, "test");
+        // 修改切片
+        knowledgebase.modifyChunk(chunkId, "new test", true);
+        // 获取切片详情
+        knowledgebase.describeChunk(chunkId);
+        // 获取切片列表
+        knowledgebase.describeChunks(documentId, chunkId, 10, null);
+        // 删除切片
+        knowledgebase.deleteChunk(chunkId);
+    }
 }
 ```
 
@@ -414,6 +535,196 @@ func TestKnowledgeBase(t *testing.T) {
 		DocumentID:      createDocumentRes.DocumentsIDS[0]})
 	if err != nil {
 		t.Fatalf("delete document failed: %v", err)
+	}
+}
+
+func TestCreateKnowledgeBase(t *testing.T) {
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	os.Setenv("APPBUILDER_TOKEN", "")
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	client, err := NewKnowledgeBase(config)
+	if err != nil {
+		t.Fatalf("new Knowledge base instance failed")
+	}
+
+	// 创建知识库
+	createKnowledgeBaseRes, err := client.CreateKnowledgeBase(KnowledgeBaseDetail{
+		Name:        "test-go",
+		Description: "test-go",
+		Config: &KnowlegeBaseConfig{
+			Index: KnowledgeBaseConfigIndex{
+				Type:     "public",
+				EsUrl:    "http://localhost:9200",
+				Password: "elastic",
+				Username: "elastic",
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("create knowledge base failed: %v", err)
+	}
+	knowledgeBaseID := createKnowledgeBaseRes.ID
+	fmt.Println(knowledgeBaseID)
+
+	// 获取知识库详情
+	getKnowledgeBaseRes, err := client.GetKnowledgeBaseDetail(knowledgeBaseID)
+	if err != nil {
+		t.Fatalf("get knowledge base failed: %v", err)
+	}
+	fmt.Println(getKnowledgeBaseRes)
+
+	// 获取知识库列表
+	knowledgeBaseListRes, err := client.GetKnowledgeBaseList(
+		GetKnowledgeBaseListRequest{
+			Marker: knowledgeBaseID,
+		},
+	)
+	if err != nil {
+		t.Fatalf("get knowledge base list failed: %v", err)
+	}
+	fmt.Println(knowledgeBaseListRes)
+
+	// 导入知识库
+	err = client.CreateDocuments(CreateDocumentsRequest{
+		ID:            knowledgeBaseID,
+		ContentFormat: "rawText",
+		Source: DocumentsSource{
+			Type:     "web",
+			Urls:     []string{"https://baijiahao.baidu.com/s?id=1802527379394162441"},
+			UrlDepth: 1,
+		},
+		ProcessOption: &DocumentsProcessOption{
+			Template: "custom",
+			Parser: &DocumentsProcessOptionParser{
+				Choices: []string{"layoutAnalysis", "ocr"},
+			},
+			Chunker: &DocumentsProcessOptionChunker{
+				Choices: []string{"separator"},
+				Separator: &DocumentsProcessOptionChunkerSeparator{
+					Separators:   []string{"。"},
+					TargetLength: 300,
+					OverlapRate:  0.25,
+				},
+				PrependInfo: []string{"title", "filename"},
+			},
+			KnowledgeAugmentation: &DocumentsProcessOptionKnowledgeAugmentation{
+				Choices: []string{"faq"},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("create documents failed: %v", err)
+	}
+
+	// 上传知识库文档
+	err = client.UploadDocuments("./files/test.pdf", CreateDocumentsRequest{
+		ID:            knowledgeBaseID,
+		ContentFormat: "rawText",
+		Source: DocumentsSource{
+			Type: "file",
+		},
+		ProcessOption: &DocumentsProcessOption{
+			Template: "custom",
+			Parser: &DocumentsProcessOptionParser{
+				Choices: []string{"layoutAnalysis", "ocr"},
+			},
+			Chunker: &DocumentsProcessOptionChunker{
+				Choices: []string{"separator"},
+				Separator: &DocumentsProcessOptionChunkerSeparator{
+					Separators:   []string{"。"},
+					TargetLength: 300,
+					OverlapRate:  0.25,
+				},
+				PrependInfo: []string{"title", "filename"},
+			},
+			KnowledgeAugmentation: &DocumentsProcessOptionKnowledgeAugmentation{
+				Choices: []string{"faq"},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("upload documents failed: %v", err)
+	}
+
+	// 修改知识库
+	name := "test-go"
+	description := "22"
+	err = client.ModifyKnowledgeBase(ModifyKnowlegeBaseRequest{
+		ID:          knowledgeBaseID,
+		Name:        &name,
+		Description: &description,
+	})
+	if err != nil {
+		t.Fatalf("modify knowledge base failed: %v", err)
+	}
+
+	// 删除知识库
+	err = client.DeleteKnowledgeBase(knowledgeBaseID)
+	if err != nil {
+		t.Fatalf("delete knowledge base failed: %v", err)
+	}
+}
+
+func TestChunk(t *testing.T) {
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	os.Setenv("APPBUILDER_TOKEN", "")
+	documentID := ""
+
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	client, err := NewKnowledgeBase(config)
+	if err != nil {
+		t.Fatalf("new Knowledge base instance failed")
+	}
+	// 创建切片
+	chunkID, err := client.CreateChunk(CreateChunkRequest{
+		DocumentID: documentID,
+		Content:    "test",
+	})
+	if err != nil {
+		t.Fatalf("create chunk failed: %v", err)
+	}
+	fmt.Println(chunkID)
+
+	// 修改切片
+	err = client.ModifyChunk(ModifyChunkRequest{
+		ChunkID: chunkID,
+		Content: "new test",
+		Enable:  true,
+	})
+	if err != nil {
+		t.Fatalf("modify chunk failed: %v", err)
+	}
+
+	// 获取切片详情
+	describeChunkRes, err := client.DescribeChunk(chunkID)
+	if err != nil {
+		t.Fatalf("describe chunk failed: %v", err)
+	}
+	fmt.Println(describeChunkRes)
+
+	// 获取切片列表
+	describeChunksRes, err := client.DescribeChunks(DescribeChunksRequest{
+		DocumnetID: documentID,
+		Marker:     chunkID,
+		MaxKeys:    10,
+	})
+	if err != nil {
+		t.Fatalf("describe chunks failed: %v", err)
+	}
+	fmt.Println(describeChunksRes)
+
+	// 删除切片
+	err = client.DeleteChunk(chunkID)
+	if err != nil {
+		t.Fatalf("delete chunk failed: %v", err)
 	}
 }
 ```

@@ -69,7 +69,7 @@ func TestAddDocument(t *testing.T) {
 	}
 }
 
-func TestKnowledgeBase(t *testing.T) {
+func TestCreateKnowledgeBase(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_TOKEN", "")
 	config, err := NewSDKConfig("", "")
