@@ -18,7 +18,7 @@
 
 ## Python基本用法
 
-### 1、新建知识库`KnowledgeBase().create_knowledge(name: str, description: str, type: str, esUrl: str, esUserName: str, esPassword: str) -> KnowledgeBaseDetailResponse()`
+### 1、新建知识库`KnowledgeBase().create_knowledge_base(name: str, description: str, type: str, esUrl: str, esUserName: str, esPassword: str) -> KnowledgeBaseDetailResponse`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -105,7 +105,60 @@ print("知识库ID: ", my_knowledge.knowledge_id)
 # 知识库ID:  your_knowledge_base_id
 ```
 
-### 3、上传通用文档 `KnowledgeBase().upload_file(file_path: str)->KnowledgeBaseUploadFileResponse`
+### 3、获取知识库详情`get_knowledge_base_detail(knowledge_base_id: Optional[str] = None) -> KnowledgeBaseDetailResponse`
+
+#### 方法参数
+
+| 参数名称     | 参数类型 | 描述         | 示例值           |
+| ------------ | -------- | ------------ | ---------------- |
+| knowledge_id | string   | 线上知识库ID | "正确的数据集ID" |
+
+#### 方法返回值
+
+`KnowledgeBaseDetailResponse` 类定义如下：
+
+```python
+class KnowledgeBaseDetailResponse(BaseModel):
+    id: str = Field(..., description="知识库ID")
+    name: str = Field(..., description="知识库名称")
+    description: Optional[str] = Field(None, description="知识库描述")
+    config: Optional[KnowledgeBaseConfig] = Field(..., description="知识库配置")
+```
+
+衍生类`KnowledgeBaseConfig`定义如下：
+
+```python
+class KnowledgeBaseConfig(BaseModel):
+    index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+```
+
+衍生类`KnowledgeBaseConfigIndex`定义如下：
+
+```python
+class KnowledgeBaseConfigIndex(BaseModel):
+    type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
+    esUrl: Optional[str] = Field(..., description="ES地址")
+    username: Optional[str] = Field(None, description="ES用户名")
+    password: Optional[str] = Field(None, description="ES密码")
+```
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+knowledge = appbuilder.KnowledgeBase()
+resp = knowledge.get_knowledge_base_detail("da51a988-cbe7-4b24-aa5b-768985e8xxxx")
+print("新建的知识库ID: ", resp.id)
+print("新建的知识库名称: ", resp.name)
+
+# 新建的知识库ID:  da51a988-cbe7-4b24-aa5b-768985e8xxxx
+# 新建的知识库名称:  my_knowledge
+```
+
+### 4、上传通用文档 `KnowledgeBase().upload_file(file_path: str)->KnowledgeBaseUploadFileResponse`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -139,7 +192,7 @@ print(upload_res)
 # 知识库ID:  da51a988-cbe7-4b24-aa5b-768985e8xxxx
 # request_id='255eec22-ec87-4564-bdeb-3e5623eaxxxx' id='ef12119b-d5be-492a-997c-77f8e84axxxx' name='test.txt'
 ```
-### 4、向知识库添加文档 `KnowledgeBase().add_document()->KnowledgeBaseAddDocumentResponse`
+### 5、向知识库添加文档 `KnowledgeBase().add_document()->KnowledgeBaseAddDocumentResponse`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -190,7 +243,7 @@ print("添加文档结果: ",add_res)
 # 添加文档结果: request_id='412e1630-b570-47c9-a042-caf3cd9dxxxx' knowledge_base_id='da51a988-cbe7-4b24-aa5b-768985e8xxxx' document_ids=['5e0eb279-7688-4100-95d1-241f3d19xxxx']
 ```
 
-### 5、从知识库删除文档 `KnowledgeBase().delete_document()->KnowledgeBaseDeleteDocumentResponse`
+### 6、从知识库删除文档 `KnowledgeBase().delete_document()->KnowledgeBaseDeleteDocumentResponse`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -231,7 +284,7 @@ print("删除文档结果: ",delete_res)
 # 删除文档结果: request_id='ba0e8bc0-b799-45b5-bdac-0d4c50e2xxxx'
 ```
 
-### 6、获取知识库的文档列表`KnowledgeBase().get_documents_list()->KnowledgeBaseGetDocumentsListResponse` 
+### 7、获取知识库的文档列表`KnowledgeBase().get_documents_list()->KnowledgeBaseGetDocumentsListResponse` 
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -282,7 +335,7 @@ print("文档列表: ", list_res)
 # 文档列表: request_id='f66c2193-6035-4022-811b-c4cd7743xxxx' data=[{'id': '8f388b10-5e6a-423f-8acc-dd5fdc2fxxxx', 'name': 'test.txt', 'created_at': 1719988868, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '0ebb03fb-ea48-4c49-b494-cf0cec11xxxx'}}, {'id': '5e0eb279-7688-4100-95d1-241f3d19xxxx', 'name': 'test.txt', 'created_at': 1719987921, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '059e2ae2-1e3c-43ea-8b42-5d988f93xxxx'}}]
 ```
 
-### 7、获取知识库全部文档`KnowledgeBase().get_all_documents()->list`
+### 8、获取知识库全部文档`KnowledgeBase().get_all_documents()->list`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
