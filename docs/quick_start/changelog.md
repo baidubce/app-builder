@@ -43,3 +43,6 @@
   * 新增AppBuilder-SDK Depoly功能，支持用户使用SDK快速部署本地组件orAgent应用到百度智能云，并对外提供服务
   * 更新SDK超参，支持SDK在私有化部署环境的使用
   * 更新口语化组件，优化效果
+* **2024.07.25 v0.9.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.1)
+  * KnowledgeBase组件完整支持`知识库`、`知识库文档`及`文档切片`的增删改查
+  * 新增appbuilder_trace_server与AppBuilderTracer功能，支持组件、AppBuilderClient、Assistant的链路追踪
