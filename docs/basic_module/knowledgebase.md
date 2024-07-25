@@ -259,9 +259,186 @@ knowledge = appbuilder.KnowledgeBase()
 knowledge.delete_knowledge_base("da51a988-cbe7-4b24-aa5b-768985e8xxxx")
 ```
 
-### 7、 导入知识库
+### 7、 导入知识库`create_documents(id: Optional[str] = None, contentFormat: str = "", source: DocumentSource = None, processOption: DocumentProcessOption = None)`
 
-### 8、 上传文档到知识库
+#### 方法参数
+
+| 参数名称      | 参数类型              | 描述                                                         | 示例值           |
+| ------------- | --------------------- | ------------------------------------------------------------ | ---------------- |
+| id            | string                | 知识库文档id                                                 | "正确的知识库ID" |
+| contentFormat | string                | 文档格式：rawText (允许配置后续分割策略), qa(不支持配置后续分割策略) | "rawText"        |
+| source        | DocumentSource        | 数据来源                                                     |                  |
+| processOption | DocumentProcessOption | 文档处理策略                                                 |                  |
+
+`DocumentSource`类定义如下：
+
+```python
+class DocumentSource(BaseModel):
+    type: str = Field(..., description="数据来源类型", enum=["bos", "web"])
+    urls: list[str] = Field(None, description="文档URL")
+    urlDepth: int = Field(None, description="url下钻深度，1时不下钻")
+```
+
+`DocumentProcessOption`类及衍生类定义如下：
+
+```python
+class DocumentProcessOption(BaseModel):
+    template: str = Field(
+        ...,
+        description="模板类型",
+        enum=["ppt", "paper", "qaPair", "resume", " custom", "default"],
+    )
+    parser: Optional[DocumentChoices] = Field(None, description="解析器类型")
+    knowledgeAugmentation: Optional[DocumentChoices] = Field(
+        None, description="知识增强类型"
+    )
+    chunker: Optional[DocumentChunker] = Field(None, description="分段器类型")
+
+class DocumentChoices(BaseModel):
+    choices: list[str] = Field(..., description="选择项")
+
+class DocumentChunker(BaseModel):
+    choices: list[str] = Field(..., description="选择项")
+    prependInfo: list[str] = Field(
+        ...,
+        description="chunker关联元数据，可选值为title (增加标题), filename(增加文件名)",
+    )
+    separator: Optional[DocumentSeparator] = Field(..., description="分段符号")
+    pattern: Optional[DocumentPattern] = Field(None, description="正则表达式")
+
+class DocumentSeparator(BaseModel):
+    separators: list[str] = Field(..., description="分段符号")
+    targetLength: int = Field(..., description="分段最大长度")
+    overlapRate: float = Field(..., description="分段重叠最大字数占比，推荐值0.25")
+
+class DocumentPattern(BaseModel):
+    markPosition: str = Field(
+        ..., description="命中内容放置策略", enum=["head", "tail", "drop"]
+    )
+    regex: str = Field(..., description="正则表达式")
+    targetLength: int = Field(..., description="分段最大长度")
+    overlapRate: float = Field(..., description="分段重叠最大字数占比，推荐值0.25")
+```
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+knowledge_base_id = "your_knowledge_base_id"
+knowledge = appbuilder.KnowledgeBase()
+knowledge.create_documents(
+	id=knowledge_base_id,
+	contentFormat="rawText",
+	source=appbuilder.DocumentSource(
+		type="web",
+		urls=["https://baijiahao.baidu.com/s?id=1802527379394162441"],
+    urlDepth=1,
+  ),
+	processOption=appbuilder.DocumentProcessOption(
+		template="custom",
+		parser=appbuilder.DocumentChoices(
+			choices=["layoutAnalysis", "ocr"]
+		),
+		chunker=appbuilder.DocumentChunker(
+			choices=["separator"],
+			separator=appbuilder.DocumentSeparator(
+				separators=["。"],
+				targetLength=300,
+				overlapRate=0.25,
+      ),
+			prependInfo=["title", "filename"],
+		),
+		knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+	),
+)
+```
+
+### 8、 上传文档到知识库`upload_documents(file_path: str, content_format: str = "rawText", id: Optional[str] = None, processOption: DocumentProcessOption = None)`
+
+#### 方法参数
+
+| 参数名称      | 参数类型              | 描述                                                         | 示例值           |
+| ------------- | --------------------- | ------------------------------------------------------------ | ---------------- |
+| file_path     | string                | 文件路径                                                     | "正确的文件路径" |
+| contentFormat | string                | 文档格式：rawText (允许配置后续分割策略), qa(不支持配置后续分割策略) | "rawText"        |
+| id            | string                | 知识库ID                                                     | "正确的知识库ID" |
+| processOption | DocumentProcessOption | 文档处理策略                                                 |                  |
+
+`DocumentProcessOption`类及衍生类定义如下：
+
+```python
+class DocumentProcessOption(BaseModel):
+    template: str = Field(
+        ...,
+        description="模板类型",
+        enum=["ppt", "paper", "qaPair", "resume", " custom", "default"],
+    )
+    parser: Optional[DocumentChoices] = Field(None, description="解析器类型")
+    knowledgeAugmentation: Optional[DocumentChoices] = Field(
+        None, description="知识增强类型"
+    )
+    chunker: Optional[DocumentChunker] = Field(None, description="分段器类型")
+
+class DocumentChoices(BaseModel):
+    choices: list[str] = Field(..., description="选择项")
+
+class DocumentChunker(BaseModel):
+    choices: list[str] = Field(..., description="选择项")
+    prependInfo: list[str] = Field(
+        ...,
+        description="chunker关联元数据，可选值为title (增加标题), filename(增加文件名)",
+    )
+    separator: Optional[DocumentSeparator] = Field(..., description="分段符号")
+    pattern: Optional[DocumentPattern] = Field(None, description="正则表达式")
+
+class DocumentSeparator(BaseModel):
+    separators: list[str] = Field(..., description="分段符号")
+    targetLength: int = Field(..., description="分段最大长度")
+    overlapRate: float = Field(..., description="分段重叠最大字数占比，推荐值0.25")
+
+class DocumentPattern(BaseModel):
+    markPosition: str = Field(
+        ..., description="命中内容放置策略", enum=["head", "tail", "drop"]
+    )
+    regex: str = Field(..., description="正则表达式")
+    targetLength: int = Field(..., description="分段最大长度")
+    overlapRate: float = Field(..., description="分段重叠最大字数占比，推荐值0.25")
+```
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+knowledge_base_id = "your_knowledge_base_id"
+knowledge = appbuilder.KnowledgeBase()
+knowledge.create_documents(
+	id=knowledge_base_id,
+	contentFormat="rawText",
+	file_path="./appbuilder/tests/data/qa_appbuilder_client_demo.pdf",
+	processOption=appbuilder.DocumentProcessOption(
+		template="custom",
+		parser=appbuilder.DocumentChoices(
+			choices=["layoutAnalysis", "ocr"]
+		),
+		chunker=appbuilder.DocumentChunker(
+			choices=["separator"],
+			separator=appbuilder.DocumentSeparator(
+				separators=["。"],
+				targetLength=300,
+				overlapRate=0.25,
+      ),
+			prependInfo=["title", "filename"],
+		),
+		knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+	),
+)
+```
 
 ### 9、上传通用文档 `KnowledgeBase().upload_file(file_path: str)->KnowledgeBaseUploadFileResponse`
 
@@ -557,9 +734,107 @@ print("知识库ID: ", my_knowledge.knowledge_id)
 my_knowlege.delete_chunk("your_chunk_id")
 ```
 
-### 17. 获取切片信息
+### 17. 获取切片信息`describe_chunk(chunkId: str)`
 
-### 18. 获取切片列表
+#### 方法参数
+
+| 参数名称 | 参数类型 | 描述   | 示例值         |
+| -------- | -------- | ------ | -------------- |
+| chunkId  | string   | 文档ID | "正确的切片ID" |
+
+#### 方法返回值
+
+`DescribeChunkResponse`类定义如下:
+
+```python
+class DescribeChunkResponse(BaseModel):
+    id: str = Field(..., description="切片ID")
+    type: str = Field(..., description="切片类型")
+    knowledgeBaseId: str = Field(..., description="知识库ID")
+    documentId: str = Field(..., description="文档ID")
+    content: str = Field(..., description="文档内容")
+    enabled: bool = Field(..., description="是否启用")
+    wordCount: int = Field(..., description="切片内字符数量")
+    tokenCount: int = Field(..., description="切片内token数量")
+    status: str = Field(..., description="切片状态")
+    statusMessage: str = Field(..., description="切片状态信息")
+    createTime: int = Field(..., description="创建时间")
+    updateTime: int = Field(None, description="更新时间")
+```
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+my_knowledge_base_id = "your_knowledge_base_id"
+my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
+print("知识库ID: ", my_knowledge.knowledge_id)
+resp = my_knowlege.describe_chunk("your_chunk_id")
+print("切片详情：")
+print(resp)
+```
+
+### 18. 获取切片列表`describe_chunks(documentId: str, marker: str = None, maxKeys: int = None, type: str = None) -> DescribeChunksResponse`
+
+#### 方法参数
+
+| 参数名称   | 参数类型 | 描述                                                         | 示例值         |
+| ---------- | -------- | ------------------------------------------------------------ | -------------- |
+| documentId | string   | 文档ID                                                       | "正确的文档ID" |
+| marker     | string   | 起始位置，切片ID                                             | "正确的切片ID" |
+| maxKeys    | string   | 返回文档数量大小，默认10，最大值100                          | 10             |
+| type       | string   | 根据类型获取切片列表(RAW、NEW、COPY)，RAW：原文切片，NEW：新增切片，COPY：复制切片 | "RAW"          |
+
+#### 方法返回值
+
+`DescribeChunksResponse` 类定义如下：
+
+```python
+class DescribeChunksResponse(BaseModel):
+    data: list[DescribeChunkResponse] = Field(..., description="切片列表")
+    marker: str = Field(..., description="起始位置")
+    isTruncated: bool = Field(
+        ..., description="true表示后面还有数据，false表示已经是最后一页"
+    )
+    nextMarker: str = Field(..., description="下一页起始位置")
+    maxKeys: int = Field(..., description="本次查询包含的最大结果集数量")
+```
+
+衍生类`DescribeChunkResponse`定义如下：
+
+```python
+class DescribeChunkResponse(BaseModel):
+    id: str = Field(..., description="切片ID")
+    type: str = Field(..., description="切片类型")
+    knowledgeBaseId: str = Field(..., description="知识库ID")
+    documentId: str = Field(..., description="文档ID")
+    content: str = Field(..., description="文档内容")
+    enabled: bool = Field(..., description="是否启用")
+    wordCount: int = Field(..., description="切片内字符数量")
+    tokenCount: int = Field(..., description="切片内token数量")
+    status: str = Field(..., description="切片状态")
+    statusMessage: str = Field(..., description="切片状态信息")
+    createTime: int = Field(..., description="创建时间")
+    updateTime: int = Field(None, description="更新时间")
+```
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+my_knowledge_base_id = "your_knowledge_base_id"
+my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
+print("知识库ID: ", my_knowledge.knowledge_id)
+resp = my_knowlege.describe_chunks("your_document_id")
+print("切片列表：")
+print(resp)
+```
 
 ### Java基本用法
 
