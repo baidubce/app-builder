@@ -17,7 +17,7 @@
         - [基础能力组件](https://github.com/baidubce/app-builder/blob/master/docs/basic_module/components.md)
 - [进阶实践](https://github.com/baidubce/app-builder/blob/master/docs/advanced_application/README.md)
     - [CookBooks](https://github.com/baidubce/app-builder/blob/master/cookbooks/README.md)
-    - [Appbuilder-SDK Trace跟踪功能](https://github.com/baidubce/app-builder/blob/master/docs/trace/READED.md)
+    - [Appbuilder-SDK Trace跟踪功能](https://github.com/baidubce/app-builder/blob/master/docs/trace/README.md)
       - [Appbuilder-SDK Trace基础用法](https://github.com/baidubce/app-builder/blob/master/docs/trace/basic.md)
       - [Appbuilder-SDK Trace进阶用法](https://github.com/baidubce/app-builder/blob/master/docs/trace/phoenix_method.md)
 - [SDK服务化部署](https://github.com/baidubce/app-builder/blob/master/docs/service/README.md)
