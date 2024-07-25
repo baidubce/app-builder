@@ -546,3 +546,38 @@ class KnowledgeBase(Component):
 
         resp = data_class.DescribeChunksResponse(**data)
         return resp
+
+
+    def get_all_documents(self, knowledge_base_id: Optional[str] = None) -> dict:
+        """
+        获取知识库中所有文档。
+        
+        Args:
+            knowledge_base_id (Optional[str], optional): 知识库的ID。如果为None，则使用当前实例的knowledge_id。默认为None。
+        
+        Returns:
+            dict: 包含所有文档的列表。
+        
+        Raises:
+            ValueError: 如果knowledge_base_id为空，且当前实例没有已创建的knowledge_id时抛出。
+        
+        """
+
+        if self.knowledge_id == None and knowledge_base_id == None:
+            raise ValueError(
+                "knowledge_base_id cannot be empty, please call `create` first or use existing one"
+            )
+        knowledge_base_id = knowledge_base_id or self.knowledge_id
+        doc_list = []
+        response_per_time = self.get_documents_list(knowledge_base_id=knowledge_base_id, limit=100)
+        list_len_per_time = len(response_per_time.data) 
+        if list_len_per_time != 0:
+            doc_list.extend(response_per_time.data)
+        while list_len_per_time == 100:
+            after_id = response_per_time.data[-1].id  
+            response_per_time = self.get_documents_list(knowledge_base_id=knowledge_base_id, after=after_id, limit=100)
+            list_len_per_time = len(response_per_time.data) 
+            if list_len_per_time != 0:
+                doc_list.extend(response_per_time.data)     
+
+        return doc_list

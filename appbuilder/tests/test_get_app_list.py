@@ -47,5 +47,9 @@ class TestApps(unittest.TestCase):
     def test_get_app_list_v4(self):
         self.assertRaises(ValueError, appbuilder.get_app_list, limit="a")
 
+    def test_get_app_number(self):
+        app_list = appbuilder.get_all_apps()
+        self.assertIsInstance(app_list, list)
+
 if __name__ == '__main__':
     unittest.main()

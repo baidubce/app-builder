@@ -65,6 +65,32 @@ def get_app_list(limit: int = 10, after: str = "", before: str = "", secret_key:
     out = resp.data
     return out
 
+@client_tool_trace
+def get_all_apps():
+    """
+    获取所有应用列表。
+    
+    Args:
+        无参数。
+    
+    Returns:
+        List[App]: 包含所有应用信息的列表，每个元素为一个App对象，
+        其中App对象的结构取决于get_app_list函数的返回结果。
+    
+    """
+    app_list =[]
+    response_per_time = get_app_list(limit=100)
+    list_len_per_time = len(response_per_time)  
+    if list_len_per_time != 0:
+        app_list.extend(response_per_time)
+    while list_len_per_time == 100:
+        after_id = response_per_time[-1].id 
+        response_per_time = get_app_list(after=after_id, limit=100)
+        list_len_per_time = len(response_per_time)
+        if list_len_per_time != 0:
+            app_list.extend(response_per_time) 
+
+    return app_list
 
 class AppBuilderClient(Component):
     r"""
