@@ -158,7 +158,112 @@ print("新建的知识库名称: ", resp.name)
 # 新建的知识库名称:  my_knowledge
 ```
 
-### 4、上传通用文档 `KnowledgeBase().upload_file(file_path: str)->KnowledgeBaseUploadFileResponse`
+### 4、 获取知识库列表`get_knowledge_base_list(knowledge_base_id: Optional[str] = None, maxKeys: int = 10, keyword: Optional[str] = None) -> KnowledgeBaseGetListResponse`
+
+#### 方法参数
+
+| 参数名称          | 参数类型 | 描述                        | 示例值           |
+| ----------------- | -------- | --------------------------- | ---------------- |
+| knowledge_base_id | string   | 起始位置，知识库文档id      | "正确的数据集ID" |
+| maxKeys           | int      | 数据大小，默认10，最大值100 | 10               |
+| keyword           | string   | 搜索关键字                  | "测试"           |
+
+#### 方法返回值
+
+`KnowledgeBaseGetListResponse` 类定义如下：
+
+```python
+class KnowledgeBaseGetListResponse(BaseModel):
+    requestId: str = Field(..., description="请求ID")
+    data: list[KnowledgeBaseDetailResponse] = Field([], description="知识库详情列表")
+    marker: str = Field(..., description="起始位置")
+    nextMarker: str = Field(..., description="下一页起始位置")
+    maxKeys: int = Field(10, description="返回文档数量大小，默认10，最大值100")
+    isTruncated: bool = Field(..., description="是否有更多结果")
+```
+
+衍生类`KnowledgeBaseDetailResponse` 定义如下：
+
+```python
+class KnowledgeBaseDetailResponse(BaseModel):
+    id: str = Field(..., description="知识库ID")
+    name: str = Field(..., description="知识库名称")
+    description: Optional[str] = Field(None, description="知识库描述")
+    config: Optional[KnowledgeBaseConfig] = Field(..., description="知识库配置")
+```
+
+衍生类`KnowledgeBaseConfig`定义如下：
+
+```python
+class KnowledgeBaseConfig(BaseModel):
+    index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+```
+
+衍生类`KnowledgeBaseConfigIndex`定义如下：
+
+```python
+class KnowledgeBaseConfigIndex(BaseModel):
+    type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
+    esUrl: Optional[str] = Field(..., description="ES地址")
+    username: Optional[str] = Field(None, description="ES用户名")
+    password: Optional[str] = Field(None, description="ES密码")
+```
+
+#### 方法示例：
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+knowledge = appbuilder.KnowledgeBase()
+resp = knowledge.get_knowledge_base_list("da51a988-cbe7-4b24-aa5b-768985e8xxxx",10)
+print("获取到的知识库列表: ", resp)
+```
+
+### 5、修改知识库`modify_knowledge_base(knowledge_base_id: Optional[str] = None, name: Optional[str] = None, description: Optional[str] = None)`
+
+#### 方法参数
+
+| 参数名称          | 参数类型 | 描述                   | 示例值           |
+| ----------------- | -------- | ---------------------- | ---------------- |
+| knowledge_base_id | string   | 起始位置，知识库文档id | "正确的数据集ID" |
+| name              | string   | 修改后的知识库名称     | "new_name"       |
+| description       | string   | 修改后的知识库描述     | "测试"           |
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+knowledge = appbuilder.KnowledgeBase()
+knowledge.modify_knowledge_base("da51a988-cbe7-4b24-aa5b-768985e8xxxx", name="new_name", description="测试")
+```
+
+### 6、 删除知识库`delete_knowledge_base(knowledge_base_id: Optional[str] = None)`
+
+#### 方法参数
+
+| 参数名称          | 参数类型 | 描述                   | 示例值           |
+| ----------------- | -------- | ---------------------- | ---------------- |
+| knowledge_base_id | string   | 起始位置，知识库文档id | "正确的数据集ID" |
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+knowledge = appbuilder.KnowledgeBase()
+knowledge.delete_knowledge_base("da51a988-cbe7-4b24-aa5b-768985e8xxxx")
+```
+
+### 7、 导入知识库
+
+### 8、 上传文档到知识库
+
+### 9、上传通用文档 `KnowledgeBase().upload_file(file_path: str)->KnowledgeBaseUploadFileResponse`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -192,7 +297,7 @@ print(upload_res)
 # 知识库ID:  da51a988-cbe7-4b24-aa5b-768985e8xxxx
 # request_id='255eec22-ec87-4564-bdeb-3e5623eaxxxx' id='ef12119b-d5be-492a-997c-77f8e84axxxx' name='test.txt'
 ```
-### 5、向知识库添加文档 `KnowledgeBase().add_document()->KnowledgeBaseAddDocumentResponse`
+### 10、向知识库添加文档 `KnowledgeBase().add_document()->KnowledgeBaseAddDocumentResponse`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -243,7 +348,7 @@ print("添加文档结果: ",add_res)
 # 添加文档结果: request_id='412e1630-b570-47c9-a042-caf3cd9dxxxx' knowledge_base_id='da51a988-cbe7-4b24-aa5b-768985e8xxxx' document_ids=['5e0eb279-7688-4100-95d1-241f3d19xxxx']
 ```
 
-### 6、从知识库删除文档 `KnowledgeBase().delete_document()->KnowledgeBaseDeleteDocumentResponse`
+### 11、从知识库删除文档 `KnowledgeBase().delete_document()->KnowledgeBaseDeleteDocumentResponse`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -284,7 +389,7 @@ print("删除文档结果: ",delete_res)
 # 删除文档结果: request_id='ba0e8bc0-b799-45b5-bdac-0d4c50e2xxxx'
 ```
 
-### 7、获取知识库的文档列表`KnowledgeBase().get_documents_list()->KnowledgeBaseGetDocumentsListResponse` 
+### 12、获取知识库的文档列表`KnowledgeBase().get_documents_list()->KnowledgeBaseGetDocumentsListResponse` 
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -335,7 +440,7 @@ print("文档列表: ", list_res)
 # 文档列表: request_id='f66c2193-6035-4022-811b-c4cd7743xxxx' data=[{'id': '8f388b10-5e6a-423f-8acc-dd5fdc2fxxxx', 'name': 'test.txt', 'created_at': 1719988868, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '0ebb03fb-ea48-4c49-b494-cf0cec11xxxx'}}, {'id': '5e0eb279-7688-4100-95d1-241f3d19xxxx', 'name': 'test.txt', 'created_at': 1719987921, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '059e2ae2-1e3c-43ea-8b42-5d988f93xxxx'}}]
 ```
 
-### 8、获取知识库全部文档`KnowledgeBase().get_all_documents()->list`
+### 13、获取知识库全部文档`KnowledgeBase().get_all_documents()->list`
 
 #### 方法参数
 | 参数名称       | 参数类型   | 描述      | 示例值        |
@@ -375,6 +480,86 @@ doc_list = knowledge.get_all_documents()
 for message in doc_list:
     print(message)
 ```
+
+### 14. 创建切片`create_chunk(documentId: str, content: str) -> CreateChunkResponse`
+
+#### 方法参数
+
+| 参数名称   | 参数类型 | 描述     | 示例值         |
+| ---------- | -------- | -------- | -------------- |
+| documentId | string   | 文档ID   | "正确的文档ID" |
+| content    | string   | 切片内容 | "内容"         |
+
+#### 方法返回值
+
+`CreateChunkResponse`类定义如下：
+
+```python
+class CreateChunkResponse(BaseModel):
+    id: str = Field(..., description="切片ID")
+```
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+my_knowledge_base_id = "your_knowledge_base_id"
+my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
+print("知识库ID: ", my_knowledge.knowledge_id)
+resp = my_knowlege.create_chunk("your_document_id", "content")
+print("切片ID: ", resp.id)
+```
+
+### 15. 修改切片信息`modify_chunk(chunkId: str, content: str, enable: bool)`
+
+#### 方法参数
+
+| 参数名称   | 参数类型 | 描述         | 示例值         |
+| ---------- | -------- | ------------ | -------------- |
+| documentId | string   | 文档ID       | "正确的文档ID" |
+| content    | string   | 切片内容     | "内容"         |
+| enable     | bool     | 是否用该切片 | true           |
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+my_knowledge_base_id = "your_knowledge_base_id"
+my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
+print("知识库ID: ", my_knowledge.knowledge_id)
+my_knowlege.modify_chunk("your_chunk_id", "content", True)
+```
+
+### 16. 删除切片`delete_chunk(chunkId: str)`
+
+#### 方法参数
+
+| 参数名称 | 参数类型 | 描述   | 示例值         |
+| -------- | -------- | ------ | -------------- |
+| chunkId  | string   | 文档ID | "正确的切片ID" |
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+my_knowledge_base_id = "your_knowledge_base_id"
+my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
+print("知识库ID: ", my_knowledge.knowledge_id)
+my_knowlege.delete_chunk("your_chunk_id")
+```
+
+### 17. 获取切片信息
+
+### 18. 获取切片列表
 
 ### Java基本用法
 
