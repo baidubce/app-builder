@@ -35,7 +35,11 @@ public class StreamIterator<T> implements Iterator<T>, AutoCloseable {
             close();
             return false;
         }
-        return this.nextLine != null;
+        if (this.nextLine == null) {
+            close();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -57,11 +61,16 @@ public class StreamIterator<T> implements Iterator<T>, AutoCloseable {
             if (reader != null) {
                 reader.close();
             }
-            if (this.resp != null) {
-                this.resp.close();
-            }
         } catch (Exception ignored) {
             // ignore
+        } finally {
+            try {
+                if (resp != null) {
+                    resp.close();
+                }
+            } catch (Exception ignored) {
+                // ignore
+            }
         }
     }
 }
