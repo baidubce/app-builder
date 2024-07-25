@@ -57,7 +57,14 @@ print(app_list)
 
 #### 返回参数
 
-`get_all_apps`方法返回类型为 `list`
+`get_all_apps`方法返回类型为 `list[AppOverview]`,,其中 `AppOverview` 结构如下：
+
+```python
+class AppOverview(BaseModel):
+    id: str = Field("", description="应用ID")
+    name: str = Field("", description="应用名称")
+    description: str = Field("", description="应用简介")
+```
 
 #### 代码示例
 下面是模型列表获取功能的代码示例：
@@ -71,6 +78,8 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 all_apps = appbuilder.get_all_apps()
 for i in range(len(all_apps)):
     print("第{}个App,App信息:{}".format(i+1,all_apps[i]))
+
+print("创建的app总数为:{}".format(len(all_apps)))
 ```
 
 ## Java基本用法
