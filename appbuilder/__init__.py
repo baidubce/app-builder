@@ -90,6 +90,9 @@ from .core.components.retriever.bes.bes_retriever import BESVectorStoreIndex
 from .core.components.retriever.baidu_vdb.baiduvdb_retriever import BaiduVDBVectorStoreIndex
 from .core.components.retriever.baidu_vdb.baiduvdb_retriever import BaiduVDBRetriever
 from .core.components.retriever.baidu_vdb.baiduvdb_retriever import TableParams
+from .core.components.ppt_generation.component import PPTGeneration
+from .core.components.ppt_generation_from_paper.component import PPTGenerationFromPaper
+from .core.components.ppt_generation_from_file.component import PPTGenerationFromFile
 
 from .core.components.dish_recognize.component import DishRecognition
 from .core.components.translate.component import Translation
@@ -197,6 +200,10 @@ __all__ = [
     "HandwriteOCR",
     "ImageUnderstand",
     "MixCardOCR",
+
+    'PPTGeneration',
+    'PPTGenerationFromPaper',
+    'PPTGenerationFromFile',
 
     "get_model_list",
 
