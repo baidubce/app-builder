@@ -21,14 +21,14 @@
 ### 1、新建知识库`KnowledgeBase().create_knowledge_base(name: str, description: str, type: str, esUrl: str, esUserName: str, esPassword: str) -> KnowledgeBaseDetailResponse`
 
 #### 方法参数
-| 参数名称       | 参数类型   | 描述      | 示例值        |
-|------------|--------|---------|------------|
-| name | string | 希望创建的知识库名称 | "我的知识库" |
-| description | string | 知识库描述 | "我的知识库" |
-| type | string | 知识库索引存储配置 (public、bes、vdb) | "public" |
-| esUrl | string | bes 访问地址，type填bes时填写 | "http://test/test" |
-| esUserName | string | bes 用户名，type填bes时填写 | "username" |
-| esPassword | string | bes密码，type填bes时填写 | "password" |
+| 参数名称    | 参数类型 | 描述                                  | 示例值             |
+| ----------- | -------- | ------------------------------------- | ------------------ |
+| name        | string   | 希望创建的知识库名称                  | "我的知识库"       |
+| description | string   | 知识库描述                            | "我的知识库"       |
+| type        | string   | 知识库索引存储配置 (public、bes、vdb) | "public"           |
+| esUrl       | string   | bes 访问地址，type填bes时填写         | "http://test/test" |
+| esUserName  | string   | bes 用户名，type填bes时填写           | "username"         |
+| esPassword  | string   | bes密码，type填bes时填写              | "password"         |
 
 #### 方法返回值
 
@@ -83,14 +83,14 @@ print("新建的知识库名称: ", resp.name)
 
 #### 方法参数
 
-| 参数名称       | 参数类型   | 描述      | 示例值        |
-|------------|--------|---------|------------|
-| knowledge_id | string | 线上知识库ID | "正确的数据集ID" |
+| 参数名称     | 参数类型 | 描述         | 示例值           |
+| ------------ | -------- | ------------ | ---------------- |
+| knowledge_id | string   | 线上知识库ID | "正确的数据集ID" |
 
 #### 方法返回值
-| 参数名称       | 参数类型   | 描述      | 示例值        |
-|------------|--------|---------|------------|
-| KnowledgeBase | class KnowledgeBase | 实例化的知识库类 | - |
+| 参数名称      | 参数类型            | 描述             | 示例值 |
+| ------------- | ------------------- | ---------------- | ------ |
+| KnowledgeBase | class KnowledgeBase | 实例化的知识库类 | -      |
 
 #### 方法示例
 ```python
@@ -263,12 +263,12 @@ knowledge.delete_knowledge_base("da51a988-cbe7-4b24-aa5b-768985e8xxxx")
 
 #### 方法参数
 
-| 参数名称      | 参数类型              | 描述                                                         | 示例值           |
-| ------------- | --------------------- | ------------------------------------------------------------ | ---------------- |
-| id            | string                | 知识库文档id                                                 | "正确的知识库ID" |
+| 参数名称      | 参数类型              | 描述                                                                 | 示例值           |
+| ------------- | --------------------- | -------------------------------------------------------------------- | ---------------- |
+| id            | string                | 知识库文档id                                                         | "正确的知识库ID" |
 | contentFormat | string                | 文档格式：rawText (允许配置后续分割策略), qa(不支持配置后续分割策略) | "rawText"        |
-| source        | DocumentSource        | 数据来源                                                     |                  |
-| processOption | DocumentProcessOption | 文档处理策略                                                 |                  |
+| source        | DocumentSource        | 数据来源                                                             |                  |
+| processOption | DocumentProcessOption | 文档处理策略                                                         |                  |
 
 `DocumentSource`类定义如下：
 
@@ -360,12 +360,12 @@ knowledge.create_documents(
 
 #### 方法参数
 
-| 参数名称      | 参数类型              | 描述                                                         | 示例值           |
-| ------------- | --------------------- | ------------------------------------------------------------ | ---------------- |
-| file_path     | string                | 文件路径                                                     | "正确的文件路径" |
+| 参数名称      | 参数类型              | 描述                                                                 | 示例值           |
+| ------------- | --------------------- | -------------------------------------------------------------------- | ---------------- |
+| file_path     | string                | 文件路径                                                             | "正确的文件路径" |
 | contentFormat | string                | 文档格式：rawText (允许配置后续分割策略), qa(不支持配置后续分割策略) | "rawText"        |
-| id            | string                | 知识库ID                                                     | "正确的知识库ID" |
-| processOption | DocumentProcessOption | 文档处理策略                                                 |                  |
+| id            | string                | 知识库ID                                                             | "正确的知识库ID" |
+| processOption | DocumentProcessOption | 文档处理策略                                                         |                  |
 
 `DocumentProcessOption`类及衍生类定义如下：
 
@@ -443,9 +443,9 @@ knowledge.create_documents(
 ### 9、上传通用文档 `KnowledgeBase().upload_file(file_path: str)->KnowledgeBaseUploadFileResponse`
 
 #### 方法参数
-| 参数名称       | 参数类型   | 描述      | 示例值        |
-|------------|--------|---------|------------|
-| file_path | string | 本地的文件路径 | "/home/my_doc" |
+| 参数名称  | 参数类型 | 描述           | 示例值         |
+| --------- | -------- | -------------- | -------------- |
+| file_path | string   | 本地的文件路径 | "/home/my_doc" |
 
 #### 方法返回值
 `KnowledgeBaseUploadFileResponse` 类定义如下
@@ -477,12 +477,12 @@ print(upload_res)
 ### 10、向知识库添加文档 `KnowledgeBase().add_document()->KnowledgeBaseAddDocumentResponse`
 
 #### 方法参数
-| 参数名称       | 参数类型   | 描述      | 示例值        |
-|------------|--------|---------|------------|
-| content_type | enum[str] | 知识库文档类型，有raw_text和qa两种可选，分别对应文本文档 和 结构化的excel问答对 | "raw_text" |
-| file_ids | list[str] | 文件ID列表，文件ID通过`upload_file`接口获得 | ['ef12119b-d5be-492a-997c-77f8e84axxxx'] |
-| is_enhanced | bool | 文档是否开启基于大模型的知识增强 | False |
-| custom_process_rule | CustomProcessRule | 文档的自定义切分逻辑 | `appbuilder.CustomProcessRule(separators=["?"], target_length=400,overlap_rate=0.2)` |
+| 参数名称            | 参数类型          | 描述                                                                            | 示例值                                                                               |
+| ------------------- | ----------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| content_type        | enum[str]         | 知识库文档类型，有raw_text和qa两种可选，分别对应文本文档 和 结构化的excel问答对 | "raw_text"                                                                           |
+| file_ids            | list[str]         | 文件ID列表，文件ID通过`upload_file`接口获得                                     | ['ef12119b-d5be-492a-997c-77f8e84axxxx']                                             |
+| is_enhanced         | bool              | 文档是否开启基于大模型的知识增强                                                | False                                                                                |
+| custom_process_rule | CustomProcessRule | 文档的自定义切分逻辑                                                            | `appbuilder.CustomProcessRule(separators=["?"], target_length=400,overlap_rate=0.2)` |
 
 
 `CustomProcessRule` 类定义如下：
@@ -528,9 +528,9 @@ print("添加文档结果: ",add_res)
 ### 11、从知识库删除文档 `KnowledgeBase().delete_document()->KnowledgeBaseDeleteDocumentResponse`
 
 #### 方法参数
-| 参数名称       | 参数类型   | 描述      | 示例值        |
-|------------|--------|---------|------------|
-| document_id | string | 待删除的文档ID | '5e0eb279-7688-4100-95d1-241f3d19xxxx' |
+| 参数名称    | 参数类型 | 描述           | 示例值                                 |
+| ----------- | -------- | -------------- | -------------------------------------- |
+| document_id | string   | 待删除的文档ID | '5e0eb279-7688-4100-95d1-241f3d19xxxx' |
 
 #### 方法返回值
 
@@ -569,11 +569,11 @@ print("删除文档结果: ",delete_res)
 ### 12、获取知识库的文档列表`KnowledgeBase().get_documents_list()->KnowledgeBaseGetDocumentsListResponse` 
 
 #### 方法参数
-| 参数名称       | 参数类型   | 描述      | 示例值        |
-|------------|--------|---------|------------|
-| limit | int | 单次请求列表获得的文档数量,最大100  | 10 |
-| after | str | 用于分页的游标。after 是一个文档的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 结束，那么你后续的调用可以包含 after=app_id_123 以获取列表的下一页数据。默认为空  | '5e0eb279-7688-4100-95d1-241f3d19xxxx' |
-| before | str | 用于分页的游标。与after相反，填写它将获取前一页数据,如果和after都传，两个参数都会起到分页效果，默认为空  | '5e0eb279-7688-4100-95d1-241f3d19xxxx' |
+| 参数名称 | 参数类型 | 描述                                                                                                                                                                                                      | 示例值                                 |
+| -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| limit    | int      | 单次请求列表获得的文档数量,最大100                                                                                                                                                                        | 10                                     |
+| after    | str      | 用于分页的游标。after 是一个文档的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 结束，那么你后续的调用可以包含 after=app_id_123 以获取列表的下一页数据。默认为空 | '5e0eb279-7688-4100-95d1-241f3d19xxxx' |
+| before   | str      | 用于分页的游标。与after相反，填写它将获取前一页数据,如果和after都传，两个参数都会起到分页效果，默认为空                                                                                                   | '5e0eb279-7688-4100-95d1-241f3d19xxxx' |
 
 #### 方法返回值
 
@@ -620,9 +620,9 @@ print("文档列表: ", list_res)
 ### 13、获取知识库全部文档`KnowledgeBase().get_all_documents()->list`
 
 #### 方法参数
-| 参数名称       | 参数类型   | 描述      | 示例值        |
-|------------|--------|---------|------------|
-| knowledge_base_id | string | 线上知识库ID | "正确的数据库ID" |
+| 参数名称          | 参数类型 | 描述         | 示例值           |
+| ----------------- | -------- | ------------ | ---------------- |
+| knowledge_base_id | string   | 线上知识库ID | "正确的数据库ID" |
 
 #### 方法返回值
 
@@ -686,7 +686,7 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-resp = my_knowlege.create_chunk("your_document_id", "content")
+resp = my_knowledge.create_chunk("your_document_id", "content")
 print("切片ID: ", resp.id)
 ```
 
@@ -710,7 +710,7 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-my_knowlege.modify_chunk("your_chunk_id", "content", True)
+my_knowledge.modify_chunk("your_chunk_id", "content", True)
 ```
 
 ### 16. 删除切片`delete_chunk(chunkId: str)`
@@ -731,7 +731,7 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-my_knowlege.delete_chunk("your_chunk_id")
+my_knowledge.delete_chunk("your_chunk_id")
 ```
 
 ### 17. 获取切片信息`describe_chunk(chunkId: str)`
@@ -772,7 +772,7 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-resp = my_knowlege.describe_chunk("your_chunk_id")
+resp = my_knowledge.describe_chunk("your_chunk_id")
 print("切片详情：")
 print(resp)
 ```
@@ -781,11 +781,11 @@ print(resp)
 
 #### 方法参数
 
-| 参数名称   | 参数类型 | 描述                                                         | 示例值         |
-| ---------- | -------- | ------------------------------------------------------------ | -------------- |
-| documentId | string   | 文档ID                                                       | "正确的文档ID" |
-| marker     | string   | 起始位置，切片ID                                             | "正确的切片ID" |
-| maxKeys    | string   | 返回文档数量大小，默认10，最大值100                          | 10             |
+| 参数名称   | 参数类型 | 描述                                                                               | 示例值         |
+| ---------- | -------- | ---------------------------------------------------------------------------------- | -------------- |
+| documentId | string   | 文档ID                                                                             | "正确的文档ID" |
+| marker     | string   | 起始位置，切片ID                                                                   | "正确的切片ID" |
+| maxKeys    | string   | 返回文档数量大小，默认10，最大值100                                                | 10             |
 | type       | string   | 根据类型获取切片列表(RAW、NEW、COPY)，RAW：原文切片，NEW：新增切片，COPY：复制切片 | "RAW"          |
 
 #### 方法返回值
@@ -831,7 +831,7 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-resp = my_knowlege.describe_chunks("your_document_id")
+resp = my_knowledge.describe_chunks("your_document_id")
 print("切片列表：")
 print(resp)
 ```
