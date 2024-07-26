@@ -276,7 +276,7 @@ class PPTGeneration(Component):
 
         return Message(ppt_download_link)
 
-    def tool_eval(self, **kwargs):
+    def tool_eval(self, stream: bool = False, **kwargs):
         """用于function call
         """
         text = kwargs.get('text', '')
@@ -291,5 +291,9 @@ class PPTGeneration(Component):
         result = self.run(message,
                           poll_request_times=120,
                           poll_request_interval=5)
+        ppt_download_link = result.content
 
-        return result.content
+        if stream:
+            yield ppt_download_link
+        else:
+            return ppt_download_link

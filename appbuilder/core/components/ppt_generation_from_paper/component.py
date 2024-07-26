@@ -273,7 +273,7 @@ class PPTGenerationFromPaper(Component):
 
         return Message(ppt_download_link)
 
-    def tool_eval(self, **kwargs):
+    def tool_eval(self, stream: bool = False, **kwargs):
         """用于function call
         """
         file_key = kwargs.get('file_key', '')
@@ -288,4 +288,9 @@ class PPTGenerationFromPaper(Component):
                           poll_request_times=120,
                           poll_request_interval=5)
 
-        return result.content
+        ppt_download_link = result.content
+
+        if stream:
+            yield ppt_download_link
+        else:
+            return ppt_download_link

@@ -54,10 +54,9 @@ class TestPPTGenerationComponent(unittest.TestCase):
     def test_tool_eval_with_default_params(self):
         """测试 tool_eval 方法使用默认参数
         """
-        ppt_download_link = self.ppt_generator.tool_eval(**TEST_INPUT)
-        # print(ppt_download_link)
-        self.assertIsNotNone(ppt_download_link)
-        print(f'\n[result]\n{ppt_download_link}\n')
+        print(f'\n[result]\n')
+        for chunk_data in self.ppt_generator.tool_eval(stream=True, **TEST_INPUT):
+            print(chunk_data)
 
 
 if __name__ == '__main__':
