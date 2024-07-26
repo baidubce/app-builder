@@ -234,7 +234,7 @@ Hook:
     - [端到端应用](/docs/basic_module/appbuilder_client.md)
 - [进阶实践](/docs/advanced_application/README.md)
     - [CookBooks](/cookbooks/README.md)
-    - [AppBuilder Trace](https://github.com/baidubce/app-builder/blob/master/docs/trace/READED.md)
+    - [AppBuilder Trace](https://github.com/baidubce/app-builder/blob/master/docs/trace/README.md)
 - [服务化部署](/docs/service/README.md)
     - [API调用](/docs/service/flask.md)
     - [交互式前端](/docs/service/chainlit.md)
