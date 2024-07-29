@@ -44,7 +44,7 @@ AppBuilder-SDK提供多类型组件，覆盖以下构建产业级`RAG`应用的�
 - 切片向量化（Embedding）
 - 索引构建（Indexing）
 - 切片召回（Retrieval）
-- 语义理解（Semantic Understanding）
+- 答案生成（Answer Generation）
 
 AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时提供经过深度优化的大模型高级能力组件，可以组合下表提供的原子能力组件，构建个性化的RAG应用[RAG 原子能力 CookBook](./cookbooks/end2end_application/rag/rag.ipynb)：
 
@@ -60,14 +60,14 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 | 切片向量化 | 向量计算（Embedding） | 基础能力组件 | [链接](./appbuilder/core/components/embeddings/README.md) |
 | 索引构建及切片召回 | 向量检索-VectorDB（BaiduVectorDBRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/baidu_vdb/README.md) |
 | 索引构建及切片召回 | 向量检索-BES（BaiduElasticSearchRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/bes/README.md) |
-| 语义理解| 标签抽取（TagExtraction）| 高级能力组件 | [链接](./appbuilder/core/components/llms/tag_extraction/README.md) |
-| 语义理解 | 阅读理解问答（MRC）| 高级能力组件 | [链接](./appbuilder/core/components/llms/mrc/README.md) |
-| 语义理解 | 复杂Query判定（IsComplexQuery）| 高级能力组件 | [链接](./appbuilder/core/components/llms/is_complex_query/README.md) |
-| 语义理解 | 复杂Query分解（QueryDecomposition）| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_decomposition/README.md) |
-| 语义理解 | 多轮改写 (QueryRewrite)| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_rewrite/README.md) |
-| 语义理解 | 问答对挖掘（QAPairMining）| 高级能力组件 | [链接](./appbuilder/core/components/llms/qa_pair_mining/README.md) |
-| 语义理解 | 相似问生成（SimilarQuestion）| 高级能力组件 | [链接](./appbuilder/core/components/llms/similar_question/README.md) |
-| 语义理解 | 幻觉检测（Hallucination Detection）| 高级能力组件 | [链接](./appbuilder/core/components/llms/hallucination_detection/README.md) |
+| 文档切片及答案生成 | 问答对挖掘（QAPairMining）| 高级能力组件 | [链接](./appbuilder/core/components/llms/qa_pair_mining/README.md) |
+| 文档切片及答案生成 | 相似问生成（SimilarQuestion）| 高级能力组件 | [链接](./appbuilder/core/components/llms/similar_question/README.md) |
+| 答案生成| 标签抽取（TagExtraction）| 高级能力组件 | [链接](./appbuilder/core/components/llms/tag_extraction/README.md) |
+| 答案生成 | 复杂Query判定（IsComplexQuery）| 高级能力组件 | [链接](./appbuilder/core/components/llms/is_complex_query/README.md) |
+| 答案生成 | 复杂Query分解（QueryDecomposition）| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_decomposition/README.md) |
+| 答案生成 | 多轮改写 (QueryRewrite)| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_rewrite/README.md) |
+| 答案生成 | 阅读理解问答（MRC）| 高级能力组件 | [链接](./appbuilder/core/components/llms/mrc/README.md) |
+| 答案生成 | 幻觉检测（Hallucination Detection）| 高级能力组件 | [链接](./appbuilder/core/components/llms/hallucination_detection/README.md) |
 
 
 > 功能预告：在AppBuiler-SDK 1.0.0版本中，AppBuilder-SDK可联动AppBuilder平台，自定义离线与在线处理的能力及Pipeline，构建更加灵活、可沉淀、可复用的产业级`RAG`应用，敬请期待
