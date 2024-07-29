@@ -163,6 +163,42 @@ class AgentRuntime(BaseModel):
                     "stream": false
                 }'
 
+    ** Session 信息查看 **: 查看本地user_session.db数据库内部信息，下面是一个例子
+                
+    Examples:
+
+        .. code-block:: python
+
+            import sqlite3  
+            import json  
+            
+            # 连接到 SQLite 数据库  
+            # 如果文件不存在，会自动在当前目录创建:  
+            user_session_path = '/Users/yinjiaqi/workspace/user_session.db'  
+            conn = sqlite3.connect(user_session_path)  
+            cursor = conn.cursor()  
+            
+            # 执行一条 SQL 语句，列出所有表  
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")  
+            print(cursor.fetchall())  
+
+            # 查询appbuilder_session_messages表的列信息  
+            cursor.execute("PRAGMA table_info(appbuilder_session_messages);")  
+            columns_info = cursor.fetchall()  
+
+            column_names = [info[1] for info in columns_info]  # info[1]是列名的位置  
+            for column_name in column_names:  
+                print(column_name)   
+
+            # 查询特定表中的数据  
+            cursor.execute("SELECT message_value FROM appbuilder_session_messages;")  
+            for row in cursor.fetchall():  
+                print(json.loads(row[0]))
+            
+            # 关闭 Connection:  
+            conn.close()
+
+
     """
     component: Component
     user_session_config: Optional[Union[sqlalchemy.engine.URL, str]] = None
