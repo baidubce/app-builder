@@ -34,9 +34,9 @@
     - `AgentRuntime`支持部署为基于`Chainlit`的对话框交互前端
     - 提供了`appbuilder_bce_deploy`工具，可快速部署程序到百度云，提供公网API服务，联动AppBuilder工作流
 
-### 使用 AppBuilder-SDK 可以构建什么产业级应用？
+### 使用 AppBuilder-SDK 可以构建什么应用？
 
-#### **RAG应用**
+#### **产业级RAG应用**
 
 AppBuilder-SDK提供多类型组件，覆盖以下构建产业级`RAG`应用的完整步骤：
 - 文档解析（Parser）
@@ -46,7 +46,7 @@ AppBuilder-SDK提供多类型组件，覆盖以下构建产业级`RAG`应用的�
 - 切片召回（Retrieval）
 - 语义理解（Semantic Understanding）
 
-不仅提供了百度智能云提供的基础能力组件，同时提供经过深度优化的大模型高级能力组件，可以组合下表提供的原子能力组件，构建个性化的RAG应用[RAG 原子能力 CookBook](./cookbooks/end2end_application/rag/rag.ipynb)：
+AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时提供经过深度优化的大模型高级能力组件，可以组合下表提供的原子能力组件，构建个性化的RAG应用[RAG 原子能力 CookBook](./cookbooks/end2end_application/rag/rag.ipynb)：
 
 
 | 阶段 |组件名称 | 组件类型 |组件链接 |
