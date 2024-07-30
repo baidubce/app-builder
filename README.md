@@ -16,6 +16,8 @@
 
 百度智能云千帆AppBuilder-SDK是[百度智能云千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发平台的客户端SDK。
 
+### AppBuilder-SDK 有哪些功能？
+
 百度智能云千帆AppBuilder-SDK提供了以下AI应用开发者的必备功能：
 
 - **调用**
@@ -32,8 +34,47 @@
     - `AgentRuntime`支持部署为基于`Chainlit`的对话框交互前端
     - 提供了`appbuilder_bce_deploy`工具，可快速部署程序到百度云，提供公网API服务，联动AppBuilder工作流
 
+### 使用 AppBuilder-SDK 可以构建什么应用？
 
-##  如何安装
+#### **产业级RAG应用**
+
+AppBuilder-SDK提供多类型组件，覆盖以下构建产业级`RAG`应用的完整步骤：
+- 文档解析（Parser）
+- 文档切片（Chunker）
+- 切片向量化（Embedding）
+- 索引构建（Indexing）
+- 切片召回（Retrieval）
+- 答案生成（Answer Generation）
+
+AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时提供经过深度优化的大模型高级能力组件，可以组合下表提供的原子能力组件，构建个性化的RAG应用[RAG 原子能力 CookBook](./cookbooks/end2end_application/rag/rag.ipynb)：
+
+
+| 阶段 |组件名称 | 组件类型 |组件链接 |
+|--------|--------|--------|---|
+| 文档解析 | 文档矫正增强 (DocCropEnhance) | 基础能力组件 | [链接](./appbuilder/core/components/doc_crop_enhance/README.md) |
+| 文档解析 | 文档格式转换 (DocFormatConverter) | 基础能力组件 | [链接](./appbuilder/core/components/doc_format_converter/README.md)|
+| 文档解析 | 文档解析（DocParser）| 基础能力组件 | [链接](./appbuilder/core/components/doc_parser/README.md) |
+| 文档解析 | 表格抽取组件（ExtractTableFromDoc）| 基础能力组件 | [链接](./appbuilder/core/components/extract_table/README.md) |
+| 文档解析 | 通用文字识别-高精度版（GeneralOCR）| 基础能力组件 | [链接](./appbuilder/core/components/general_ocr/README.md) |
+| 文档切片 | 文档切分（DocSplitter）| 基础能力组件 | [链接](./appbuilder/core/components/doc_splitter/README.md) |
+| 切片向量化 | 向量计算（Embedding） | 基础能力组件 | [链接](./appbuilder/core/components/embeddings/README.md) |
+| 索引构建及切片召回 | 向量检索-VectorDB（BaiduVectorDBRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/baidu_vdb/README.md) |
+| 索引构建及切片召回 | 向量检索-BES（BaiduElasticSearchRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/bes/README.md) |
+| 文档切片及答案生成 | 问答对挖掘（QAPairMining）| 高级能力组件 | [链接](./appbuilder/core/components/llms/qa_pair_mining/README.md) |
+| 文档切片及答案生成 | 相似问生成（SimilarQuestion）| 高级能力组件 | [链接](./appbuilder/core/components/llms/similar_question/README.md) |
+| 答案生成| 标签抽取（TagExtraction）| 高级能力组件 | [链接](./appbuilder/core/components/llms/tag_extraction/README.md) |
+| 答案生成 | 复杂Query判定（IsComplexQuery）| 高级能力组件 | [链接](./appbuilder/core/components/llms/is_complex_query/README.md) |
+| 答案生成 | 复杂Query分解（QueryDecomposition）| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_decomposition/README.md) |
+| 答案生成 | 多轮改写 (QueryRewrite)| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_rewrite/README.md) |
+| 答案生成 | 阅读理解问答（MRC）| 高级能力组件 | [链接](./appbuilder/core/components/llms/mrc/README.md) |
+| 答案生成 | 幻觉检测（Hallucination Detection）| 高级能力组件 | [链接](./appbuilder/core/components/llms/hallucination_detection/README.md) |
+
+
+> 功能预告：在AppBuiler-SDK 1.0.0版本中，AppBuilder-SDK可联动AppBuilder平台，自定义离线与在线处理的能力及Pipeline，构建更加灵活、可沉淀、可复用的产业级`RAG`应用，敬请期待
+
+
+
+##  如何安装AppBuilder-SDK
 
 #### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.1 (2024-07-25)
 
