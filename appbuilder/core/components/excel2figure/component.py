@@ -26,6 +26,7 @@ from appbuilder.core._exception import AppBuilderServerException, ModelNotSuppor
 from appbuilder.core.component import Component, ComponentArguments
 from appbuilder.core.message import Message
 from appbuilder.core.utils import ModelInfo, ttl_lru_cache
+from deprecated import deprecated
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
@@ -37,6 +38,7 @@ class Excel2FigureArgs(ComponentArguments):
     excel_file_url: AnyUrl = Field(..., description="用户的 excel 文件地址，需要是一个可被公网下载的 URL 地址")
 
 
+@deprecated(reason="可使用代码解释器组件替代，链接: https://console.bce.baidu.com/ai_apaas/componentCenter/code_interpreter/detail", version="1.0")
 class Excel2Figure(Component):
     meta = Excel2FigureArgs
     model_type: str = "chat"
