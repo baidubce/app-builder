@@ -112,100 +112,49 @@ pip install chainlit
 ```
 而后，使用AppBuilder的Agent服务化功能，即可快速部署服务
 
-#### 运行Agent服务化功能
-
-```python
-import os
-import appbuilder
-os.environ["APPBUILDER_TOKEN"] = '...'
-component = appbuilder.Playground(
-    prompt_template="{query}",
-    model="eb-4"
-)
-agent = appbuilder.AgentRuntime(component=component)
-message = appbuilder.Message({"query": "你好"})
-print(agent.chat(message, stream=False))
-```
-
-#### 快速启动Chainlit的交互式前端页面
-
-```python
-import os
-import logging
-from appbuilder.core.component import Component
-from appbuilder import (
-    AgentRuntime, UserSession, Message, QueryRewrite, Playground,
-)
-os.environ["APPBUILDER_TOKEN"] = 'YOUR_APPBUILDER_TOKEN'
-class PlaygroundWithHistory(Component):
-    def __init__(self):
-        super().__init__()
-        self.query_rewrite = QueryRewrite(model="ERNIE Speed-AppBuilder")
-        self.play = Playground(
-            prompt_template="{query}",
-            model="eb-4"
-        )
-    def run(self, message: Message, stream: bool=False):
-        user_session = UserSession()
-        # 获取 Session 历史数据
-        history_queries = user_session.get_history("query", limit=1)
-        history_answers = user_session.get_history("answer", limit=1)
-        if history_queries and history_answers:
-            history = []
-            for query, answer in zip(history_queries, history_answers):
-                history.extend([query.content, answer.content])
-            logging.info(f"history: {history}")
-            message = self.query_rewrite(
-                Message(history + [message.content]), rewrite_type="带机器人回复")
-        logging.info(f"message: {message}") 
-        answer = self.play.run(message, stream)
-        # 保存本轮数据
-        user_session.append({
-            "query": message,
-            "answer": answer,
-        }) 
-        return answer
-    
-agent = AgentRuntime(component=PlaygroundWithHistory())
-agent.chainlit_demo(port=8091)
-```
-
-#### 通过user_session.db数据库查看历史对话信息
-
-```python
-import sqlite3  
-import json  
-  
-# 连接到 SQLite 数据库  
-# 如果文件不存在，会自动在当前目录创建:  
-user_session_path = 'your_user_session.db地址'  
-conn = sqlite3.connect(user_session_path)  
-cursor = conn.cursor()  
-  
-# 执行一条 SQL 语句，列出所有表  
-cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")  
-print(cursor.fetchall())  
-
-# 查询appbuilder_session_messages表的列信息  
-cursor.execute("PRAGMA table_info(appbuilder_session_messages);")  
-columns_info = cursor.fetchall()  
-
-column_names = [info[1] for info in columns_info]  # info[1]是列名的位置  
-for column_name in column_names:  
-    print(column_name)   
-
-# 查询特定表中的数据  
-cursor.execute("SELECT message_value FROM appbuilder_session_messages;")  
-for row in cursor.fetchall():  
-    print(json.loads(row[0]))
-  
-# 关闭 Connection:  
-conn.close()
-```
-
 ### 打印DEBUG日志
 
 开启DEBUG日志，可以打印出更多的日志信息，方便调试，包括且不限于：请求URL、请求头、请求参数等。
+
+```python
+import appbuilder
+
+# 空模版组件
+playground = appbuilder.Playground(
+    prompt_template="{query}",
+    model="ERNIE Speed-AppBuilder"
+)
+
+# 使用 AgentRuntime 来服务化playground组件
+agent = appbuilder.AgentRuntime(component=playground)
+
+# 启动chainlit demo，会自动在浏览器打开体验对话框页面
+agent.chainlit_demo(port=8091)
+```
+
+也可以对AppBuilderClient进行服务化，快速部署
+
+```python
+import os
+from appbuilder.core.component import Component
+from appbuilder import (
+    AgentRuntime,
+    AppBuilderClient,
+)
+
+
+if __name__ == "__main__":
+    # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+
+    # 此处填写线上Agent应用ID，可在【AppBuilder网页端-我的应用界面】查看
+    # 本示例提供的Agent应用为：地理小达人
+    # 网页已部署的应用链接为「地理小达人」：https://appbuilder.baidu.com/s/x1tSF
+    app_id = "42eb211a-14b9-43d2-9fae-193c8760ef26"
+    agent_builder = AppBuilderClient(app_id)
+    agent = AgentRuntime(component=agent_builder)
+    agent.chainlit_agent(port=8091)
+```
 
 ```bash
 # 可以设置环境变量开启
