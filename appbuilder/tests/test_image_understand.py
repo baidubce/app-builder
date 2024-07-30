@@ -16,11 +16,12 @@ import os
 import unittest
 import requests
 import appbuilder
+import time 
 
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestImageUnderstand(unittest.TestCase):
     def setUp(self):
         """
@@ -52,6 +53,7 @@ class TestImageUnderstand(unittest.TestCase):
         inp = Message(content={"url": self.image_url, "question": "图像内容是什么？"})
         msg = self.image_understand.run(inp)
         self.assertIsNotNone(msg.content)
+        time.sleep(1)
 
     def test_run_with_raw_image(self):
         """
@@ -68,6 +70,7 @@ class TestImageUnderstand(unittest.TestCase):
         inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？"})
         msg = self.image_understand.run(inp)
         self.assertIsNotNone(msg.content)
+        time.sleep(1)
 
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
@@ -82,6 +85,7 @@ class TestImageUnderstand(unittest.TestCase):
                                                  img_name=img_name, file_urls=file_urls, origin_query="")
         res = [item for item in result]
         self.assertNotEqual(len(res), 0)
+        time.sleep(1)
 
     def test_tool_eval_invalid(self):
         """测试 tool 方法对无效请求的处理。"""
@@ -89,11 +93,13 @@ class TestImageUnderstand(unittest.TestCase):
             result = self.image_understand.tool_eval(name="image_understand", streaming=True,
                                                      origin_query="")
             next(result)
+            time.sleep(1)
 
     def test_run_language_en(self):
         """测试 tool 方法对无效请求的处理。"""
         inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？", "language": "en"})
         self.image_understand.run(inp)
+        time.sleep(1) 
     
     def test_run_raise(self):
         # question is empty
