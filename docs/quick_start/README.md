@@ -112,10 +112,6 @@ pip install chainlit
 ```
 而后，使用AppBuilder的Agent服务化功能，即可快速部署服务
 
-### 打印DEBUG日志
-
-开启DEBUG日志，可以打印出更多的日志信息，方便调试，包括且不限于：请求URL、请求头、请求参数等。
-
 ```python
 import appbuilder
 
@@ -155,6 +151,10 @@ if __name__ == "__main__":
     agent = AgentRuntime(component=agent_builder)
     agent.chainlit_agent(port=8091)
 ```
+
+### 打印DEBUG日志
+
+开启DEBUG日志，可以打印出更多的日志信息，方便调试，包括且不限于：请求URL、请求头、请求参数等。
 
 ```bash
 # 可以设置环境变量开启
