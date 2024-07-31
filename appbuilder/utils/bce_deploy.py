@@ -35,8 +35,7 @@ class AppbuilderSDKInstance:
         self.config_path = config_path
         self.load_config()
 
-        self.credentials = BceCredentials(
-            self.bce_config["ak"], self.bce_config["sk"])
+        self.credentials = BceCredentials(self.bce_config["ak"], self.bce_config["sk"])
         self.bos_client = self.create_bos_client()
         self.bcc_client = self.create_bce_client()
 
@@ -55,12 +54,13 @@ class AppbuilderSDKInstance:
 
     def save_config(self, config):
         self.config["bce_config"]["security_group_id"] = self.security_group_id
-        with open(self.config_path, 'w') as f:
+        with open(self.config_path, "w") as f:
             yaml.dump(config, f, indent=4)
 
     def create_bce_client(self):
         bce_config = BceClientConfiguration(
-            self.credentials, endpoint=self.bce_config["host"])
+            self.credentials, endpoint=self.bce_config["host"]
+        )
         return InnerBccClient(bce_config)
 
     def create_bos_client(self):
@@ -86,7 +86,8 @@ class AppbuilderSDKInstance:
             self.bos_client.create_bucket(bucket_name)
 
         self.bos_client.put_object_from_file(
-            bucket_name, self.tar_file_name, self.tar_file_name)
+            bucket_name, self.tar_file_name, self.tar_file_name
+        )
         timestamp = int(time.time())
         url = self.bos_client.generate_pre_signed_url(
             bucket_name, self.tar_file_name, timestamp, expiration_in_seconds=3600
@@ -94,8 +95,7 @@ class AppbuilderSDKInstance:
         self.tar_bos_url = url.decode("utf-8")
         if self.tar_bos_url == None:
             raise Exception("upload to bos failed")
-        self.log.debug(
-            "upload to bos successfully! url: {}".format(self.tar_bos_url))
+        self.log.debug("upload to bos successfully! url: {}".format(self.tar_bos_url))
 
     def clear_local(self):
         os.remove(self.run_script)
@@ -103,17 +103,19 @@ class AppbuilderSDKInstance:
 
     def build_user_data(self):
         workspace = self.appbuilder_config["workspace"]
-        user_data = "#!/bin/bash\\n" + \
-            "mkdir /root/test\\n" + \
-            "chmod 777 /root/test\\n" + \
-            "cd /root/test\\n" + \
-            f"wget -O {self.tar_file_name} {self.tar_bos_url}\\n" + \
-            f"tar -xvf {self.tar_file_name}\\n" + \
-            f"rm {self.tar_file_name}\\n" + \
-            f"chmod a+x {self.run_script_name}\\n" + \
-            "yum install -y docker\\n" + \
-            "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.0\\n" + \
-            f"docker run -itd --net=host -v /root/test:{workspace} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.0 {workspace}/{self.run_script_name}"
+        user_data = (
+            "#!/bin/bash\\n"
+            + "mkdir /root/test\\n"
+            + "chmod 777 /root/test\\n"
+            + "cd /root/test\\n"
+            + f"wget -O {self.tar_file_name} {self.tar_bos_url}\\n"
+            + f"tar -xvf {self.tar_file_name}\\n"
+            + f"rm {self.tar_file_name}\\n"
+            + f"chmod a+x {self.run_script_name}\\n"
+            + "yum install -y docker\\n"
+            + "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.1\\n"
+            + f"docker run -itd --net=host -v /root/test:{workspace} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.1 {workspace}/{self.run_script_name}"
+        )
 
         return user_data
 
@@ -121,18 +123,18 @@ class AppbuilderSDKInstance:
         timestamp = int(time.time())
         self.run_script_name = "start_" + str(timestamp) + ".sh"
         self.run_script = os.path.join(
-            self.appbuilder_config["local_dir"], self.run_script_name)
+            self.appbuilder_config["local_dir"], self.run_script_name
+        )
 
         commands = []
         workspace = self.appbuilder_config["workspace"]
         for key, value in self.env.items():
             commands.append(f'export {key}="{value}"')
-        run_cmd = " && ".join(commands) + " && " + \
-            self.appbuilder_config["run_cmd"]
+        run_cmd = " && ".join(commands) + " && " + self.appbuilder_config["run_cmd"]
 
-        with open(self.run_script, 'w') as file:
-            file.write('#!/bin/sh\n')
-            file.write(f'cd {workspace}\n')
+        with open(self.run_script, "w") as file:
+            file.write("#!/bin/sh\n")
+            file.write(f"cd {workspace}\n")
             file.write(run_cmd)
 
     def create_instance(self):
@@ -156,8 +158,7 @@ class AppbuilderSDKInstance:
         self.get_instance_id(instance)
         if self.instance_id == None:
             raise Exception("create instance failed")
-        self.log.info(
-            "instance create successfully! id: {}".format(self.instance_id))
+        self.log.info("instance create successfully! id: {}".format(self.instance_id))
 
     def get_instance_id(self, instance):
         self.instance_id = instance.instance_ids[0]
@@ -204,13 +205,15 @@ class AppbuilderSDKInstance:
         if self.security_group_id == None:
             raise Exception("create security group failed")
 
-        self.log.info("security group create successfully！id: {}".format(
-            self.security_group_id))
+        self.log.info(
+            "security group create successfully！id: {}".format(self.security_group_id)
+        )
         self.save_config(self.config)
 
     def bind_security_group(self):
         response = self.bcc_client.bind_instance_to_security_group(
-            self.instance_id, self.security_group_id)
+            self.instance_id, self.security_group_id
+        )
         self.log.debug("bind instance to security group: {}".format(response))
 
     def _pre_deploy(self):
@@ -232,8 +235,7 @@ class AppbuilderSDKInstance:
     def _after_deploy(self):
         self.get_public_ip()
         self.bind_security_group()
-        self.log.info(
-            "deployment finished! public ip: {}".format(self.public_ip))
+        self.log.info("deployment finished! public ip: {}".format(self.public_ip))
 
     def deploy(self):
         self._pre_deploy()
@@ -250,5 +252,5 @@ def deploy():
     instance.deploy()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     deploy()
