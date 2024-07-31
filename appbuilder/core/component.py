@@ -219,8 +219,8 @@ class Component:
     def _langchain_tool_eval_implement(self, **kwargs):
         # NOTE(chengmo): 调用tool_eval方法，并设置 stream=True, 封装成Message返回
         kwargs["stream"] = True
-        kwargs["name"] = ""
         kwargs["streaming"] = True
+        kwargs["name"] = ""
         res = self.tool_eval(**kwargs)
 
         final_result = ""
