@@ -388,7 +388,7 @@ class CompletionBaseComponent(Component):
 
         return query, inputs, response_mode, user_id
 
-    def get_model_config(self, model_config_inputs: ModelArgsConfig, other_params: dict):
+    def get_model_config(self, model_config_inputs: ModelArgsConfig, other_params: dict = {}):
         """获取模型配置信息"""
         self.model_config["model"]["name"] = self.model_name
 
