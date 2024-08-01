@@ -20,6 +20,8 @@
     - [Appbuilder-SDK Trace跟踪功能](https://github.com/baidubce/app-builder/blob/master/docs/trace/README.md)
       - [Appbuilder-SDK Trace基础用法](https://github.com/baidubce/app-builder/blob/master/docs/trace/basic.md)
       - [Appbuilder-SDK Trace进阶用法](https://github.com/baidubce/app-builder/blob/master/docs/trace/phoenix_method.md)
+    - [组件调用的服务化封装](https://github.com/baidubce/app-builder/blob/master/docs/basic_module/agentruntime.md)
+    - [会话数据管理工具](https://github.com/baidubce/app-builder/blob/master/docs/basic_module/userseesion.md)
 - [SDK服务化部署](https://github.com/baidubce/app-builder/blob/master/docs/service/README.md)
     - [API调用](https://github.com/baidubce/app-builder/blob/master/docs/service/flask.md)
     - [交互式服务](https://github.com/baidubce/app-builder/blob/master/docs/service/chainlit.md)
