@@ -288,9 +288,9 @@ class DocumentProcessOption(BaseModel):
         description="模板类型",
         enum=["ppt", "paper", "qaPair", "resume", " custom", "default"],
     )
-    parser: Optional[DocumentChoices] = Field(None, description="解析器类型")
+    parser: Optional[DocumentChoices] = Field(None, description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr按需增加)")
     knowledgeAugmentation: Optional[DocumentChoices] = Field(
-        None, description="知识增强类型"
+        None, description="数据增强策略, faq、spokenQuery、spo、shortSummary按需增加"
     )
     chunker: Optional[DocumentChunker] = Field(None, description="分段器类型")
 
@@ -298,16 +298,16 @@ class DocumentChoices(BaseModel):
     choices: list[str] = Field(..., description="选择项")
 
 class DocumentChunker(BaseModel):
-    choices: list[str] = Field(..., description="选择项")
+    choices: list[str] = Field(..., description="使用哪些chunker方法 (separator | pattern | onePage)")
     prependInfo: list[str] = Field(
         ...,
         description="chunker关联元数据，可选值为title (增加标题), filename(增加文件名)",
     )
-    separator: Optional[DocumentSeparator] = Field(..., description="分段符号")
+    separator: Optional[DocumentSeparator] = Field(..., description="分隔符配置")
     pattern: Optional[DocumentPattern] = Field(None, description="正则表达式")
 
 class DocumentSeparator(BaseModel):
-    separators: list[str] = Field(..., description="分段符号")
+    separators: list[str] = Field(..., description="分隔符列表，可以使用分页符")
     targetLength: int = Field(..., description="分段最大长度")
     overlapRate: float = Field(..., description="分段重叠最大字数占比，推荐值0.25")
 
@@ -378,7 +378,7 @@ class DocumentProcessOption(BaseModel):
     )
     parser: Optional[DocumentChoices] = Field(None, description="解析器类型")
     knowledgeAugmentation: Optional[DocumentChoices] = Field(
-        None, description="知识增强类型"
+        None, description="数据增强策略, faq、spokenQuery、spo、shortSummary按需增加"
     )
     chunker: Optional[DocumentChunker] = Field(None, description="分段器类型")
 
@@ -386,7 +386,7 @@ class DocumentChoices(BaseModel):
     choices: list[str] = Field(..., description="选择项")
 
 class DocumentChunker(BaseModel):
-    choices: list[str] = Field(..., description="选择项")
+    choices: list[str] = Field(..., description="使用哪些chunker方法 (separator | pattern | onePage)")
     prependInfo: list[str] = Field(
         ...,
         description="chunker关联元数据，可选值为title (增加标题), filename(增加文件名)",
@@ -501,7 +501,6 @@ class KnowledgeBaseAddDocumentResponse(BaseModel):
     request_id: str = Field(..., description="请求ID")
     knowledge_base_id: str = Field(..., description="知识库ID")
     document_ids: list[str] = Field(..., description="成功新建的文档id集合")
-
 ```
 
 #### 方法示例

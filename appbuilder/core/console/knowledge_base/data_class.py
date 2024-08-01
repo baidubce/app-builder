@@ -98,9 +98,9 @@ class KnowledgeBaseGetDocumentsListResponse(BaseModel):
 
 class KnowledgeBaseConfigIndex(BaseModel):
     type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
-    esUrl: Optional[str] = Field(..., description="ES地址")
-    username: Optional[str] = Field(None, description="ES用户名")
-    password: Optional[str] = Field(None, description="ES密码")
+    esUrl: Optional[str] = Field(..., description="bes地址")
+    username: Optional[str] = Field(None, description="bes用户名")
+    password: Optional[str] = Field(None, description="bes密码")
 
 
 class KnowledgeBaseConfig(BaseModel):
@@ -177,7 +177,9 @@ class DocumentPattern(BaseModel):
 
 
 class DocumentChunker(BaseModel):
-    choices: list[str] = Field(..., description="选择项")
+    choices: list[str] = Field(
+        ..., description="使用哪些chunker方法 (separator | pattern | onePage)"
+    )
     prependInfo: list[str] = Field(
         ...,
         description="chunker关联元数据，可选值为title (增加标题), filename(增加文件名)",
@@ -192,9 +194,12 @@ class DocumentProcessOption(BaseModel):
         description="模板类型",
         enum=["ppt", "paper", "qaPair", "resume", " custom", "default"],
     )
-    parser: Optional[DocumentChoices] = Field(None, description="解析器类型")
+    parser: Optional[DocumentChoices] = Field(
+        None,
+        description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr按需增加)",
+    )
     knowledgeAugmentation: Optional[DocumentChoices] = Field(
-        None, description="知识增强类型"
+        None, description="数据增强策略，faq、spokenQuery、spo、shortSummary按需增加"
     )
     chunker: Optional[DocumentChunker] = Field(None, description="分段器类型")
 
@@ -202,7 +207,11 @@ class DocumentProcessOption(BaseModel):
 class KnowledgeBaseCreateDocumentsRequest(BaseModel):
     id: str = Field(..., description="知识库ID")
     source: DocumentSource = Field(..., description="文档来源")
-    contentFormat: str = Field(..., description="文档内容格式")
+    contentFormat: str = Field(
+        ...,
+        description="文档内容格式, (rawText 普通文件上传 | qa 问答对)",
+        enum=["rawText", "qa"],
+    )
     processOption: Optional[DocumentProcessOption] = Field(
         None, description="文档处理选项"
     )
