@@ -63,6 +63,34 @@ class TestPlayground(unittest.TestCase):
         for ans in answer.content:
             self.assertIsNotNone(ans)
 
+    def test_run_with_max_output_tokens(self):
+        """测试运行时使用参数 max_output_tokens 和 disable_search"""
+        msg = appbuilder.Message({
+            "name": "小明",
+            "bot_name": "机器人",
+            "bot_type": "聊天机器人",
+            "bot_function": "聊天",
+            "bot_question": "2023年北京昌平线地铁出轨事件发生在哪一天？"
+        })
+
+        answer = self.play.run(message=msg, stream=False, temperature=1, max_output_tokens=20, disable_search=False)
+        print(answer)
+        token_usage = answer.token_usage.get("completion_tokens",100)
+        self.assertLessEqual(token_usage, 20)
+    
+    def test_run_with_extra_params(self):
+        """测试运行时使用额外的参数"""
+        msg = appbuilder.Message({
+            "name": "小明",
+            "bot_name": "机器人",
+            "bot_type": "聊天机器人",
+            "bot_function": "聊天",
+            "bot_question": "2023年北京昌平线地铁出轨事件发生在哪一天？"
+        })
+        answer = self.play.run(message=msg, stream=False, temperature=1,system="你是北京市公安局刑事侦查支队的一名警员" )
+        for ans in answer.content:
+            self.assertIsNotNone(ans)
+
 
 if __name__ == '__main__':
     unittest.main()

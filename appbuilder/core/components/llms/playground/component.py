@@ -54,10 +54,10 @@ class Playground(CompletionBaseComponent):
     variable_names = {}
 
     def __init__(
-        self, 
-        prompt_template=None, 
+        self,
+        prompt_template=None,
         model=None,
-        secret_key: Optional[str] = None, 
+        secret_key: Optional[str] = None,
         gateway: str = "",
         lazy_certification: bool = False,
     ):
@@ -75,7 +75,7 @@ class Playground(CompletionBaseComponent):
 
         """
         super().__init__(
-                PlaygroundArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
+            PlaygroundArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
         if prompt_template is None:
             prompt_template = "{query}"
@@ -84,7 +84,7 @@ class Playground(CompletionBaseComponent):
         self.variable_names = self.__parse__(prompt_template)
 
     @components_run_trace
-    def run(self, message, stream=False, temperature=1e-10, top_p=0.0):
+    def run(self, message, stream=False, temperature=1e-10, top_p=0.0, max_output_tokens=1024, disable_search=True, response_format='text', stop=[], **kwargs):
         """
         使用给定的输入运行模型并返回结果。
 
@@ -93,6 +93,10 @@ class Playground(CompletionBaseComponent):
             stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
             temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
             top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
+            max_output_tokens (int, optional): 指定生成的文本的最大长度，默认最大输出token数为1024, 最小为2， 最大输出token与选择的模型有关
+            disable_search (bool, optional): 是否强制关闭实时搜索功能，默认true，表示关闭
+            response_format (str, optional): 指定返回的消息格式，默认为text，以文本模式返回。可选 json_object：以json格式返回，可能出现不满足效果情况
+            stop (list[str], optional): 生成停止标识，当模型生成结果以stop中某个元素结尾时，停止文本生成。每个元素长度不超过20字符,最多4个元素.
 
         返回:
             obj:`Message`: 模型运行后的输出消息。
@@ -109,11 +113,13 @@ class Playground(CompletionBaseComponent):
 
         for key in self.variable_names:
             if key not in inputs:
-                raise ValueError(f"Missing input variable {key} in message {message.content}")
+                raise ValueError(
+                    f"Missing input variable {key} in message {message.content}")
 
         prompt = self.prompt_template.format(**inputs)
         query_message = Message(prompt)
-        return super().run(message=query_message, stream=stream, temperature=temperature, top_p=top_p)
+        return super().run(message=query_message, stream=stream, temperature=temperature, top_p=top_p,
+                           max_output_tokens=max_output_tokens, disable_search=disable_search, response_format=response_format, stop=stop, **kwargs)
 
     def __parse__(self, prompt_template):
         last_end = 0
@@ -134,5 +140,3 @@ class Playground(CompletionBaseComponent):
         input_variables = [v for _, v, _, _ in results if v is not None]
 
         return input_variables
-
-

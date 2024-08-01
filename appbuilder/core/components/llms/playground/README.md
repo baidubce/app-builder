@@ -46,6 +46,11 @@ play(appbuilder.Message({"name": "小明", "bot_name": "小红", "bot_type": "�
 | message   | obj:`Message` | 输入消息，必需参数。              | 无    |
 | stream    | bool          | 是否以流式形式返回响应。           | False |
 | temperature | float        | 模型配置的温度参数。              | 1e-10 |
+| max_output_tokens | int        |  指定生成的文本的最大长度，默认最大输出token数为1024, 最小为2， 最大输出token与选择的模型有关           | 1024  |
+|disable_search| bool         | 是否关闭搜索功能，默认关闭          | True  |
+|response_format| str         | 指定返回的响应格式，可选值有：`text`, `json_object`| text  |
+|stop| str                   | 生成停止标识，当模型生成结果以stop中某个元素结尾时，停止文本生成。每个元素长度不超过20字符,最多4个元素.         | []  |
+
 
 ### 响应参数
 
@@ -74,3 +79,4 @@ play(appbuilder.Message({"name": "小明", "bot_name": "小红", "bot_type": "�
 
 ## 更新记录和贡献
 - 2024年01月24日 更新Readme格式，调整请求参数样式，新增特色优势
+- 2024年08月01日 更新playground组件的入参，并且前向兼容，支持未来的大模型对话参数
