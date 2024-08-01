@@ -68,8 +68,12 @@ class CompletionRequest(object):
 
 class ModelArgsConfig(BaseModel):
     stream: bool = Field(default=False, description="是否流式响应。默认为 False。")
-    temperature: confloat(gt=0.0, le=1.0) = Field(default=1e-10, description="模型的温度参数，范围从 0.0 到 1.0。")
-    top_p: confloat(ge=0.0, le=1.0) = Field(default=1e-10, description="模型的top_p参数，范围从 0.0 到 1.0。")
+    temperature: float = Field(default=1e-10,gt=0.0, le=1.0 ,description="模型的温度参数，范围从 0.0 到 1.0。")
+    top_p: float= Field(default=1e-10, ge=0.0, le=1.0, description="模型的top_p参数，范围从 0.0 到 1.0。")
+    max_output_tokens: int = Field(default=1024, ge=2, description="最大输出token数。")
+    disable_search: bool = Field(default=True, description="是否禁用搜索。默认为 True")
+    response_format: str = Field(default="text", description="响应格式，可选项有text、json_object")
+    stop: list[str] = Field(default=[], description="停止词列表。", max_length=4)
 
 
 class CompletionResponse(object):
@@ -257,8 +261,6 @@ class CompletionBaseComponent(Component):
             "completion_params": {
                 "temperature": 1e-10,
                 "top_p": 0,
-                "presence_penalty": 0,
-                "frequency_penalty": 0
             }
         }
     }
@@ -392,6 +394,10 @@ class CompletionBaseComponent(Component):
 
         self.model_config["model"]["completion_params"]["temperature"] = model_config_inputs.temperature
         self.model_config["model"]["completion_params"]["top_p"] = model_config_inputs.top_p
+        self.model_config["model"]["completion_params"]["max_output_tokens"] = model_config_inputs.max_output_tokens
+        self.model_config["model"]["completion_params"]["disable_search"] = model_config_inputs.disable_search
+        self.model_config["model"]["completion_params"]["response_format"] = model_config_inputs.response_format
+        self.model_config["model"]["completion_params"]["stop"] = model_config_inputs.stop
         return self.model_config
 
     def completion(
