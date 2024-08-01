@@ -169,7 +169,9 @@ class DocumentSeparator(BaseModel):
 
 class DocumentPattern(BaseModel):
     markPosition: str = Field(
-        ..., description="命中内容放置策略", enum=["head", "tail", "drop"]
+        ...,
+        description="命中内容放置策略, head：前序切片, tail：后序切片, drop：匹配后丢弃",
+        enum=["head", "tail", "drop"],
     )
     regex: str = Field(..., description="正则表达式")
     targetLength: int = Field(..., description="分段最大长度")
@@ -178,7 +180,8 @@ class DocumentPattern(BaseModel):
 
 class DocumentChunker(BaseModel):
     choices: list[str] = Field(
-        ..., description="使用哪些chunker方法 (separator | pattern | onePage)"
+        ...,
+        description="使用哪些chunker方法 (separator | pattern | onePage)，separator：自定义切片—标识符，pattern：自定义切片—标识符中选择正则表达式，onePage：整文件切片",
     )
     prependInfo: list[str] = Field(
         ...,
@@ -191,7 +194,7 @@ class DocumentChunker(BaseModel):
 class DocumentProcessOption(BaseModel):
     template: str = Field(
         ...,
-        description="模板类型",
+        description="模板类型，ppt: 模版配置—ppt幻灯片, resume：模版配置—简历文档, paper：模版配置—论文文档, custom：自定义配置—自定义切片, default：自定义配置—默认切分",
         enum=["ppt", "paper", "qaPair", "resume", " custom", "default"],
     )
     parser: Optional[DocumentChoices] = Field(
@@ -199,7 +202,8 @@ class DocumentProcessOption(BaseModel):
         description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr按需增加)",
     )
     knowledgeAugmentation: Optional[DocumentChoices] = Field(
-        None, description="数据增强策略，faq、spokenQuery、spo、shortSummary按需增加"
+        None,
+        description="知识增强，faq、spokenQuery、spo、shortSummary按需增加。问题生成:faq、spokenQuery，段落摘要:shortSummary，三元组知识抽取:spo",
     )
     chunker: Optional[DocumentChunker] = Field(None, description="分段器类型")
 
