@@ -1,13 +1,13 @@
 # 文件生成PPT（PPTGenerationFromFile）
 
 ## 简介
-文件生成PPT组件（PPTGenerationFromFile）可以根据上传的**中文**文件生成PPT。
+文件生成PPT组件（PPTGenerationFromFile）可以根据上传的文件（支持**中英文**）生成PPT。
 
 ### 功能介绍
-根据上传的**中文**文件生成PPT。
+根据上传的文件（支持**中英文**）生成PPT。
 
 ### 特色优势
-可根据**中文**文件生成高质量PPT。
+可根据文件（支持**中英文**）生成高质量PPT。
 
 ### 应用场景
 PPT生成。
@@ -77,7 +77,7 @@ https://download.yoojober.com/chatppt_business/2024-07/d1a1ab518ebcfbba7908a6734
 ## 高级用法
 
 ## 更新记录和贡献
-### 2024.7.25
+### 2024.8.1
 #### [Added]
 - 增加文件生成PPT组件。
 - 增加文件生成PPT组件单元测试。

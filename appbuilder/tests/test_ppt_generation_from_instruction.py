@@ -28,7 +28,7 @@ TEST_INPUT = {
 }
 
 
-@unittest.skipUnless(os.getenv('TEST_CASE', 'UNKNOWN') == 'CPU_SERIAL', '')
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestPPTGenerationComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -40,7 +40,8 @@ class TestPPTGenerationComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.ppt_generator = appbuilder.PPTGeneration()
+        # os.environ['APPBUILDER_TOKEN'] = os.environ['APPBUILDER_TOKEN_PPT_GENERATION']
+        self.ppt_generator = appbuilder.PPTGenerationFromInstruction()
     
     def test_run_with_default_params(self):
         """测试 run 方法使用默认参数

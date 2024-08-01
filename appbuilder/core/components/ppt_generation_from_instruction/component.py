@@ -20,7 +20,7 @@ import time
 
 from typing import Optional
 
-from .base import PPTGenerationArgs
+from .base import PPTGenerationFromInstructionArgs
 
 from appbuilder.core.message import Message
 from appbuilder.core.component import Component
@@ -30,9 +30,9 @@ from appbuilder.utils.logger_util import logger
 DEFAULT_AUTHOR = '百度千帆AppBuilder'
 
 
-class PPTGeneration(Component):
+class PPTGenerationFromInstruction(Component):
     """
-    PPT生成，可通过传入对PPT的描述或者自定义参数进行生成。
+    指令生成PPT，可通过传入对PPT的描述或者自定义参数进行生成。
 
     Examples:
 
@@ -43,7 +43,7 @@ class PPTGeneration(Component):
 
             os.environ["APPBUILDER_TOKEN"] = '...'
 
-            ppt_generator = appbuilder.PPTGeneration()
+            ppt_generator = appbuilder.PPTGenerationFromInstruction()
             input_data = {
                 'text': '生成一个介绍北京的PPT。',
                 'custom_data': {},
@@ -53,27 +53,26 @@ class PPTGeneration(Component):
             answer = ppt_generator(appbuilder.Message(input_data))
             print(answer.content)
     """
-    uniform_prefix = '/rpc/2.0/cloud_hub/v2/component'
-    ppt_generation_url = '/SFo4BKBD0TDm/%E5%A4%A7%E7%BA%B2%E7%94%9F%E6%88%90PPT/ppt_structure_to_ppt'
-    get_ppt_generation_status_url = '/QAnL7Rs6lbTz/%E8%8E%B7%E5%8F%96PPT%E7%94%9F%E6%88%90%E4%BB%BB%E5%8A%A1%E7%8A%B6' \
-                                    '%E6%80%81/get_ppt_generation_status'
-    get_ppt_download_link_url = '/69qG8laITJUX/%E8%8E%B7%E5%8F%96PPT%E4%B8%8B%E8%BD%BD%E9%93%BE%E6%8E%A5/get_ppt_down' \
-                                'load_link'
+    uniform_prefix = '/api/v1/component/component'
+    ppt_generation_url = '/ppt/text2ppt/apps/ppt-create'
+    get_ppt_generation_status_url = '/ppt/text2ppt/apps/ppt-result'
+    get_ppt_download_link_url = '/ppt/text2ppt/apps/ppt-download'
 
-    name = 'ppt_generation'
+    name = 'ppt_generation_from_instruction'
     version: str
-    meta = PPTGenerationArgs
+    meta = PPTGenerationFromInstructionArgs
 
     manifests = [
         {
-            "name": "ppt_generation",
-            "description": "根据用户描述生成PPT。",
+            "name": "ppt_generation_from_instruction",
+            "description": "根据输入指令生成PPT。",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "text": {
                         "text": "string",
-                        "description": "用户对想要生成的PPT的描述。"
+                        "description": "用户请求生成PPT的指令。",
+                        "example": "生成一个介绍北京的PPT。"
                     }
                 },
                 "required": [
@@ -86,7 +85,7 @@ class PPTGeneration(Component):
     def __init__(
         self, 
         secret_key: Optional[str] = None,
-        gateway: str = "",
+        gateway: str = '',
         lazy_certification: bool = False,
     ):
         """初始化PPT生成组件。
@@ -99,7 +98,7 @@ class PPTGeneration(Component):
         Returns:
             None
         """
-        super().__init__(PPTGenerationArgs,
+        super().__init__(PPTGenerationFromInstructionArgs,
                          secret_key=secret_key,
                          gateway=gateway,
                          lazy_certification=lazy_certification)
@@ -250,11 +249,13 @@ class PPTGeneration(Component):
         for key in ['text', 'custom_data']:
             if key not in user_input:
                 raise Exception(f'[PPTGeneration] Missing key: {key}')
-        if user_input['custom_data'] and not user_input['custom_data'].get('author', '').strip():
-            user_input['custom_data']['author'] = DEFAULT_AUTHOR
-        if not user_input.get('user_name', '').strip():
+        if user_input['custom_data']:
+            author = user_input['custom_data'].get('author', '')
+            if author is None or not author.strip():
+                user_input['custom_data']['author'] = DEFAULT_AUTHOR
+        if user_input.get('user_name', '') is None or not user_input.get('user_name', '').strip():
             user_input['user_name'] = DEFAULT_AUTHOR
-        user_input = self.meta(**user_input)
+        user_input = self.meta(**{k: v for k, v in user_input.items() if v is not None})
         user_input = user_input.convert_params_to_dict()
         
         # 创建PPT生成任务
@@ -289,7 +290,7 @@ class PPTGeneration(Component):
 
         message = Message(user_input)
         result = self.run(message,
-                          poll_request_times=120,
+                          poll_request_times=60,
                           poll_request_interval=5)
         ppt_download_link = result.content
 

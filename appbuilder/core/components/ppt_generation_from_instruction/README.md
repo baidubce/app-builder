@@ -1,10 +1,10 @@
-# 描述生成PPT（PPTGeneration）
+# 指令生成PPT（PPTGenerationFromInstruction）
 
 ## 简介
-描述生成PPT组件（PPTGeneration）可以基于对PPT的描述或者自定义信息生成PPT。
+指令生成PPT组件（PPTGenerationFromInstruction）可以基于指令或者自定义信息生成PPT。
 
 ### 功能介绍
-基于对PPT的描述或者自定义信息生成PPT。
+基于指令或者自定义信息生成PPT。
 
 ### 特色优势
 - 可生成高质量PPT。
@@ -24,7 +24,7 @@ import appbuilder
 os.environ['APPBUILDER_TOKEN'] = '...'
 
 
-ppt_generator = appbuilder.PPTGeneration()
+ppt_generator = appbuilder.PPTGenerationFromInstruction()
 
 user_input = {
     'text': '生成一个介绍北京的PPT。',
@@ -84,7 +84,7 @@ https://download.yoojober.com/chatppt_business/2024-07/bf2af50285e52261507abdd73
 ## 高级用法
 
 ## 更新记录和贡献
-### 2024.7.25
+### 2024.8.1
 #### [Added]
-- 增加描述生成PPT组件。
-- 增加描述生成PPT组件单元测试。
+- 增加指令生成PPT组件。
+- 增加指令生成PPT组件单元测试。

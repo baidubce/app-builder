@@ -50,12 +50,10 @@ class PPTGenerationFromPaper(Component):
             answer = ppt_generator(appbuilder.Message(user_input))
             print(answer.content)
     """
-    uniform_prefix = '/rpc/2.0/cloud_hub/v2/component'
-    ppt_generation_url = '/UZA8FlRr990m/%E8%AE%BA%E6%96%87%E7%94%9F%E6%88%90PPT/paper_to_ppt'
-    get_ppt_generation_status_url = '/QAnL7Rs6lbTz/%E8%8E%B7%E5%8F%96PPT%E7%94%9F%E6%88%90%E4%BB%BB%E5%8A%A1%E7%8A%B6' \
-                                    '%E6%80%81/get_ppt_generation_status'
-    get_ppt_download_link_url = '/69qG8laITJUX/%E8%8E%B7%E5%8F%96PPT%E4%B8%8B%E8%BD%BD%E9%93%BE%E6%8E%A5/get_ppt_down' \
-                                'load_link'
+    uniform_prefix = '/api/v1/component/component'
+    ppt_generation_url = '/ppt/text2ppt/apps/ppt-create-thesis'
+    get_ppt_generation_status_url = '/ppt/text2ppt/apps/ppt-result'
+    get_ppt_download_link_url = '/ppt/text2ppt/apps/ppt-download'
 
     name = 'ppt_generation_from_paper'
     version: str
@@ -247,11 +245,11 @@ class PPTGenerationFromPaper(Component):
         for key in ['file_key']:
             if key not in user_input:
                 raise Exception(f'[PPTGenerationFromPaper] Missing key: {key}')
-        if not user_input.get('pleader', '').strip():
+        if user_input.get('pleader', '') is None or not user_input.get('pleader', '').strip():
             user_input['pleader'] = DEFAULT_AUTHOR
-        if not user_input.get('advisor', '').strip():
+        if user_input.get('advisor', '') is None or not user_input.get('advisor', '').strip():
             user_input['advisor'] = DEFAULT_AUTHOR
-        user_input = self.meta(**user_input)
+        user_input = self.meta(**{k: v for k, v in user_input.items() if v is not None})
         user_input = user_input.convert_params_to_dict()
         
         # 创建PPT生成任务
@@ -285,7 +283,7 @@ class PPTGenerationFromPaper(Component):
 
         message = Message(user_input)
         result = self.run(message,
-                          poll_request_times=120,
+                          poll_request_times=60,
                           poll_request_interval=5)
 
         ppt_download_link = result.content

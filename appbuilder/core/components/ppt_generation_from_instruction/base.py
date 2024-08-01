@@ -36,7 +36,7 @@ class FontNameChoices(Enum):
     LiShu = '隶书'
 
 
-class PPTGenerationArgs(ComponentArguments):
+class PPTGenerationFromInstructionArgs(ComponentArguments):
     """PPT生成组件配置
     """
     text: str = Field(...,

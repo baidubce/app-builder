@@ -1,13 +1,13 @@
 # 论文生成PPT（PPTGenerationFromPaper）
 
 ## 简介
-论文生成PPT组件（PPTGenerationFromPaper）可以根据上传的**中文**论文生成PPT。
+论文生成PPT组件（PPTGenerationFromPaper）可以根据上传的论文（支持**中英文**）生成PPT。
 
 ### 功能介绍
-根据上传的**中文**论文生成PPT。
+根据上传的论文（支持**中英文**）生成PPT。
 
 ### 特色优势
-可根据**中文**论文生成高质量PPT。
+可根据论文（支持**中英文**）生成高质量PPT。
 
 ### 应用场景
 PPT生成。
@@ -91,7 +91,7 @@ https://download.yoojober.com/chatppt_business/2024-07/6f472b65ee324d2da7849b600
 ## 高级用法
 
 ## 更新记录和贡献
-### 2024.7.25
+### 2024.8.1
 #### [Added]
 - 增加论文生成PPT组件。
 - 增加论文生成PPT组件单元测试。

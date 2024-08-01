@@ -50,12 +50,10 @@ class PPTGenerationFromFile(Component):
             answer = ppt_generator(appbuilder.Message(user_input))
             print(answer.content)
     """
-    uniform_prefix = '/rpc/2.0/cloud_hub/v2/component'
-    ppt_generation_url = '/wZ8XQKjCCZQp/%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90PPT/file_to_ppt'
-    get_ppt_generation_status_url = '/QAnL7Rs6lbTz/%E8%8E%B7%E5%8F%96PPT%E7%94%9F%E6%88%90%E4%BB%BB%E5%8A%A1%E7%8A%B6' \
-                                    '%E6%80%81/get_ppt_generation_status'
-    get_ppt_download_link_url = '/69qG8laITJUX/%E8%8E%B7%E5%8F%96PPT%E4%B8%8B%E8%BD%BD%E9%93%BE%E6%8E%A5/get_ppt_down' \
-                                'load_link'
+    uniform_prefix = '/api/v1/component/component'
+    ppt_generation_url = '/ppt/text2ppt/apps/ppt-create-file'
+    get_ppt_generation_status_url = '/ppt/text2ppt/apps/ppt-result'
+    get_ppt_download_link_url = '/ppt/text2ppt/apps/ppt-download'
 
     name = 'ppt_generation_from_file'
     version: str
@@ -247,9 +245,9 @@ class PPTGenerationFromFile(Component):
         for key in ['file_url']:
             if key not in user_input:
                 raise Exception(f'[PPTGenerationFromFile] Missing key: {key}')
-        if not user_input.get('user_name', '').strip():
+        if user_input.get('user_name', '') is None or not user_input.get('user_name', '').strip():
             user_input['user_name'] = DEFAULT_AUTHOR
-        user_input = self.meta(**user_input)
+        user_input = self.meta(**{k: v for k, v in user_input.items() if v is not None})
         user_input = user_input.convert_params_to_dict()
         
         # 创建PPT生成任务
@@ -283,7 +281,7 @@ class PPTGenerationFromFile(Component):
 
         message = Message(user_input)
         result = self.run(message,
-                          poll_request_times=120,
+                          poll_request_times=60,
                           poll_request_interval=5)
 
         ppt_download_link = result.content
