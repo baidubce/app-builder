@@ -174,7 +174,7 @@ class AgentRuntime(BaseModel):
             
             # 连接到 SQLite 数据库  
             # 如果文件不存在，会自动在当前目录创建:  
-            user_session_path = '/Users/yinjiaqi/workspace/user_session.db'  
+            user_session_path = 'your_user_session.db地址'  
             conn = sqlite3.connect(user_session_path)  
             cursor = conn.cursor()  
             
@@ -197,7 +197,6 @@ class AgentRuntime(BaseModel):
             
             # 关闭 Connection:  
             conn.close()
-
 
     """
     component: Component

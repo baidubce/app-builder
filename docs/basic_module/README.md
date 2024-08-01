@@ -22,6 +22,8 @@ AppBuilder面向开发者提供AI原生应用一站式开发工具，包括基�
 - AI基础能力组件 SDK：支持Python
     - [获取模型列表](/docs/basic_module/get_model_list.md)
     - [基础能力组件](/docs/basic_module/components.md)
+    - [组件调用的服务化封装](/docs/basic_module/agentruntime.md)
+    - [会话数据管理工具](/docs/basic_module/userseesion.md)
 
 ## 功能示例
 
