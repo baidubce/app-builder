@@ -84,7 +84,7 @@ class Playground(CompletionBaseComponent):
         self.variable_names = self.__parse__(prompt_template)
 
     @components_run_trace
-    def run(self, message, stream=False, temperature=1e-10, top_p=0.0, max_output_tokens=1024, disable_search=True, response_format='text', stop=[]):
+    def run(self, message, stream=False, temperature=1e-10, top_p=0.0, max_output_tokens=1024, disable_search=True, response_format='text', stop=[], **kwargs):
         """
         使用给定的输入运行模型并返回结果。
 
@@ -119,7 +119,7 @@ class Playground(CompletionBaseComponent):
         prompt = self.prompt_template.format(**inputs)
         query_message = Message(prompt)
         return super().run(message=query_message, stream=stream, temperature=temperature, top_p=top_p,
-                           max_output_tokens=max_output_tokens, disable_search=disable_search, response_format=response_format, stop=stop)
+                           max_output_tokens=max_output_tokens, disable_search=disable_search, response_format=response_format, stop=stop, **kwargs)
 
     def __parse__(self, prompt_template):
         last_end = 0

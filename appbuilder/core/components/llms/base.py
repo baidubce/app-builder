@@ -346,6 +346,10 @@ class CompletionBaseComponent(Component):
         request_id = kwargs.get('request_id')
         specific_params = {k: v for k, v in kwargs.items() if k in self.meta.model_fields}
         model_config_params = {k: v for k, v in kwargs.items() if k in ModelArgsConfig.model_fields}
+        
+        # 不在timeout、retry、request_id、specific_params、model_config_params中的参数
+        other_params = {k: v for k, v in kwargs.items() if k not in [
+            'timeout', 'retry', 'request_id' ] + list(specific_params.keys()) + list(model_config_params.keys()) }
 
         try:
             specific_inputs = self.meta(**specific_params)
@@ -354,7 +358,7 @@ class CompletionBaseComponent(Component):
             raise ValueError(e)
 
         query, inputs, response_mode, user_id = self.get_compeliton_params(specific_inputs, model_config_inputs)
-        model_config = self.get_model_config(model_config_inputs)
+        model_config = self.get_model_config(model_config_inputs, other_params)
         request = self.gene_request(query, inputs, response_mode, user_id, model_config)
         response = self.completion(
             version=self.version,
@@ -384,7 +388,7 @@ class CompletionBaseComponent(Component):
 
         return query, inputs, response_mode, user_id
 
-    def get_model_config(self, model_config_inputs):
+    def get_model_config(self, model_config_inputs: ModelArgsConfig, other_params: dict):
         """获取模型配置信息"""
         self.model_config["model"]["name"] = self.model_name
 
@@ -398,6 +402,14 @@ class CompletionBaseComponent(Component):
         self.model_config["model"]["completion_params"]["disable_search"] = model_config_inputs.disable_search
         self.model_config["model"]["completion_params"]["response_format"] = model_config_inputs.response_format
         self.model_config["model"]["completion_params"]["stop"] = model_config_inputs.stop
+
+        if len(other_params) > 0:
+            logger.info("Some paramters are not expected by the model configuration, we assume they will be used in llm completion api")
+
+            for k, v in other_params.items():
+                self.model_config["model"]["completion_params"][k] = v
+                logger.info("Add parameter: {}, value: {} in completion_params.".format(k, v))
+            
         return self.model_config
 
     def completion(
