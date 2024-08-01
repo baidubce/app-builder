@@ -98,9 +98,9 @@ class KnowledgeBaseGetDocumentsListResponse(BaseModel):
 
 class KnowledgeBaseConfigIndex(BaseModel):
     type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
-    esUrl: Optional[str] = Field(..., description="ES地址")
-    username: Optional[str] = Field(None, description="ES用户名")
-    password: Optional[str] = Field(None, description="ES密码")
+    esUrl: Optional[str] = Field(..., description="bes地址")
+    username: Optional[str] = Field(None, description="bes用户名")
+    password: Optional[str] = Field(None, description="bes密码")
 
 
 class KnowledgeBaseConfig(BaseModel):
@@ -169,7 +169,9 @@ class DocumentSeparator(BaseModel):
 
 class DocumentPattern(BaseModel):
     markPosition: str = Field(
-        ..., description="命中内容放置策略", enum=["head", "tail", "drop"]
+        ...,
+        description="命中内容放置策略, head：前序切片, tail：后序切片, drop：匹配后丢弃",
+        enum=["head", "tail", "drop"],
     )
     regex: str = Field(..., description="正则表达式")
     targetLength: int = Field(..., description="分段最大长度")
@@ -177,7 +179,10 @@ class DocumentPattern(BaseModel):
 
 
 class DocumentChunker(BaseModel):
-    choices: list[str] = Field(..., description="选择项")
+    choices: list[str] = Field(
+        ...,
+        description="使用哪些chunker方法 (separator | pattern | onePage)，separator：自定义切片—标识符，pattern：自定义切片—标识符中选择正则表达式，onePage：整文件切片",
+    )
     prependInfo: list[str] = Field(
         ...,
         description="chunker关联元数据，可选值为title (增加标题), filename(增加文件名)",
@@ -189,12 +194,16 @@ class DocumentChunker(BaseModel):
 class DocumentProcessOption(BaseModel):
     template: str = Field(
         ...,
-        description="模板类型",
+        description="模板类型，ppt: 模版配置—ppt幻灯片, resume：模版配置—简历文档, paper：模版配置—论文文档, custom：自定义配置—自定义切片, default：自定义配置—默认切分",
         enum=["ppt", "paper", "qaPair", "resume", " custom", "default"],
     )
-    parser: Optional[DocumentChoices] = Field(None, description="解析器类型")
+    parser: Optional[DocumentChoices] = Field(
+        None,
+        description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr按需增加)",
+    )
     knowledgeAugmentation: Optional[DocumentChoices] = Field(
-        None, description="知识增强类型"
+        None,
+        description="知识增强，faq、spokenQuery、spo、shortSummary按需增加。问题生成:faq、spokenQuery，段落摘要:shortSummary，三元组知识抽取:spo",
     )
     chunker: Optional[DocumentChunker] = Field(None, description="分段器类型")
 
@@ -202,7 +211,11 @@ class DocumentProcessOption(BaseModel):
 class KnowledgeBaseCreateDocumentsRequest(BaseModel):
     id: str = Field(..., description="知识库ID")
     source: DocumentSource = Field(..., description="文档来源")
-    contentFormat: str = Field(..., description="文档内容格式")
+    contentFormat: str = Field(
+        ...,
+        description="文档内容格式, (rawText 普通文件上传 | qa 问答对)",
+        enum=["rawText", "qa"],
+    )
     processOption: Optional[DocumentProcessOption] = Field(
         None, description="文档处理选项"
     )
