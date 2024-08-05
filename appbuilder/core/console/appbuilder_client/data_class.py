@@ -18,6 +18,19 @@ from typing import Union
 from typing import Optional
 
 
+class Function(BaseModel):
+    name: str = Field(..., description="工具名称")
+    description: str = Field(..., description="工具描述")
+    parameters: dict = Field(..., description="工具参数, json_schema格式")
+    
+class Tool(BaseModel):
+    type: str = "function"
+    function: Function = Field(..., description="工具信息")
+
+class ToolOutput(BaseModel):
+    tool_call_id: str = Field(..., description="工具调用ID")
+    output: str = Field(..., description="工具输出")
+
 class AppBuilderClientRequest(BaseModel):
     """会话请求参数
         属性:
@@ -27,11 +40,13 @@ class AppBuilderClientRequest(BaseModel):
             file_ids(list[str]): 文件ID
             app_id：应用ID
     """
-    query: str = ""
-    stream: bool
+    query: Optional[str] = None
+    stream: Optional[bool] = False
     conversation_id: str
-    file_ids: list[str] = []
+    file_ids: Optional[list[str]] = None
     app_id: str
+    tools: Optional[list[Tool]] = None
+    tool_outputs: Optional[list[ToolOutput]] = None
 
 
 class Usage(BaseModel):

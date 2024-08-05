@@ -187,20 +187,23 @@ class AppBuilderClient(Component):
         return resp.id
 
     @client_run_trace
-    def run(
-        self,
-        conversation_id: str,
-        query: str,
-        file_ids: list = [],
-        stream: bool = False,
-    ) -> Message:
-        r"""动物识别
-        参数:
-            query (str: 必须): query内容
-            conversation_id (str, 必须): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
-            file_ids(list[str], 可选):
-            stream (bool, 可选): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
-        返回: message (obj: `Message`): 对话结果.
+    def run(self, conversation_id: str,
+            query: str,
+            file_ids: list = [],
+            stream: bool = False,
+            tools: list[data_class.Tools] = None,
+            tool_outputs: list[data_class.ToolOutput] = None,
+            **kwargs
+            ) -> Message:
+        r"""
+            参数:
+                query (str: 必须): query内容
+                conversation_id (str, 必须): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+                file_ids(list[str], 可选):
+                stream (bool, 可选): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
+                tools(list[data_class.Tools], 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
+                tool_outputs(list[data_class.ToolOutput], 可选): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
+            返回: message (obj: `Message`): 对话结果.
         """
 
         if len(conversation_id) == 0:
@@ -214,6 +217,8 @@ class AppBuilderClient(Component):
             query=query,
             stream=True if stream else False,
             file_ids=file_ids,
+            tools=tools,
+            tool_outputs=tool_outputs
         )
 
         headers = self.http_client.auth_header_v2()
