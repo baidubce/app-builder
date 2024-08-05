@@ -73,34 +73,45 @@ python3 -m pip install --upgrade appbuilder-sdk
 import appbuilder
 import os
 
-# Set the TOKENs in the environment. The following TOKENs are trial TOKENs with restricted access and QPS. Please replace them with your personal TOKENs for official use
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
 # 定义prompt模板
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
 
 # 定义输入，调用playground组件
-input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
+input = appbuilder.Message({"role": "java工程师", "question": "请简要回答java语言的内存回收机制是什么，要求100字以内"})
 
 playground = appbuilder.Playground(prompt_template=template_str, model="ERNIE Speed-AppBuilder")
 
-output = playground(input, stream=False, temperature=1e-10)
+# 以打字机的方式，流式展示大模型回答内容
+output = playground(input, stream=True, temperature=1e-10)
+for stream_message in output.content:
+    print(stream_message)
+
+# 流式输出结束后，可再次打印完整的大模型对话结果，除回答内容外，还包括token的用量情况
 print(output.model_dump_json(indent=4))
 
 ```
 #### Answer display
 
 ```shell
+Java语言的
+内存回收机制是通过垃圾回收器（Garbage Collector）来实现的。
+垃圾回收器会自动检测不再使用的对象，并释放其占用的内存空间，从而确保系统的内存不会被耗尽。
+Java提供了多种垃圾回收器，如串行回收器、并行回收器、CMS回收器和G1回收器等，以满足不同场景下的性能需求
+。
+
 {
-    "content": "Java语言的内存回收机制是垃圾回收（Garbage Collection，GC）。垃圾回收是Java虚拟机（JVM）提供的一种自动内存管理机制。它负责自动检测并回收不再使用的对象，以释放内存空间。在Java中，当对象不再被引用或显式地设置为null时，垃圾回收器会将其标记为可回收对象，并在适当的时候进行回收。",
+    "content": "Java语言的内存回收机制是通过垃圾回收器（Garbage Collector）来实现的。垃圾回收器会自动检测不再使用的对象，并释放其占用的内存空间，从而确保系统的内存不会被耗尽。Java提供了多种垃圾回收器，如串行回收器、并行回收器、CMS回收器和G1回收器等，以满足不同场景下的性能需求。",
     "name": "msg",
     "mtype": "dict",
-    "id": "749b0d23-0032-443e-b48a-83dcf50044e1",
+    "id": "2bbee989-40e3-45e4-9802-e144cdc829a9",
     "extra": {},
     "token_usage": {
-        "prompt_tokens": 25,
-        "completion_tokens": 76,
-        "total_tokens": 101
+        "prompt_tokens": 35,
+        "completion_tokens": 70,
+        "total_tokens": 105
     }
 }
 ```
