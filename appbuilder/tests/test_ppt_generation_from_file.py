@@ -21,12 +21,16 @@ import appbuilder
 
 
 TEST_INPUT = {
-    'file_url':'http://image.yoojober.com/users/chatppt/temp/2024-06/6672a92c87e6f.doc',
+    'file_url':'https://fsh.bcebos.com/v1/chenqingyang/data/PPT%E7%94%9F%E6%88%90%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE/'
+               '%E6%A0%B7%E4%BE%8B%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6/%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90PPT_%E5%8A%'
+               '9F%E8%83%BD%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6.doc?authorization=bce-auth-v1%2F2ea5034b154145dc8962ca'
+               'e2393d71a6%2F2024-08-01T12%3A15%3A17Z%2F-1%2Fhost%2F9ceed45f60a852d3ef56f405d21916af3596b2988b8f9166fa'
+               '6533bd79bf0f45',
     'user_name':'百度千帆AppBuilder'
 }
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPPTGenerationFromFileComponent(unittest.TestCase):
     def setUp(self):
         """

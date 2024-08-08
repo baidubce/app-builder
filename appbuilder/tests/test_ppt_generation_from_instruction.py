@@ -28,7 +28,7 @@ TEST_INPUT = {
 }
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPPTGenerationComponent(unittest.TestCase):
     def setUp(self):
         """
