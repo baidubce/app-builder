@@ -241,7 +241,7 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	return &AppBuilderClientOnceIterator{body: resp.Body}, nil
 }
 
-func (t *AppBuilderClient) RunWithFunction(req AppBuilderClientRunRequest) (AppBuilderClientIterator, error) {
+func (t *AppBuilderClient) RunWithFunctionCall(req AppBuilderClientRunRequest) (AppBuilderClientIterator, error) {
 	if len(req.ConversationID) == 0 {
 		return nil, errors.New("conversationID mustn't be empty")
 	}
