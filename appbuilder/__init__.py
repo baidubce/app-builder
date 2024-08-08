@@ -113,6 +113,8 @@ from .core.components.handwrite_ocr.component import HandwriteOCR
 from .core.components.image_understand.component import ImageUnderstand
 from .core.components.mix_card_ocr.component import MixCardOCR
 
+from .core.components.componenttest import AppbuilderTestToolEval
+
 from appbuilder.core.message import Message
 from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
@@ -204,6 +206,8 @@ __all__ = [
     'PPTGenerationFromInstruction',
     'PPTGenerationFromPaper',
     'PPTGenerationFromFile',
+
+    'AppbuilderTestToolEval'
 
     "get_model_list",
 

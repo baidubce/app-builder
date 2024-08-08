@@ -75,6 +75,7 @@ def find_tool_eval_components():
 
     return components
 
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
     def setUp(self) -> None:
         self.tool_eval_components = find_tool_eval_components()
