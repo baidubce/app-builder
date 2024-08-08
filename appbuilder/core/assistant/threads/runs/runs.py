@@ -262,7 +262,7 @@ class Runs():
             assistant_id (str): 助理ID。
             thread_id (Optional[str], optional): 线程ID，用于恢复历史对话。默认为空字符串。
             thread (Optional[thread_type.AssistantThread], optional): 线程对象，用于恢复历史对话。默认为None。
-            model (Optional[str], optional): 使用的模型名称。默认为"ERNIE-4.0-8K"。
+            model (Optional[str], optional): 使用的模型名称。默认为""。
             response_format (Optional[str], optional): 响应格式，支持"text"和"json"两种格式。默认为"text"。
             instructions (Optional[str], optional): 指令文本。默认为空字符串。
             thought_instructions (Optional[str], optional): 思考指令文本。默认为空字符串。
