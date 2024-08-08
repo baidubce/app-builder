@@ -100,7 +100,8 @@ public class AppBuilderClient extends Component {
      * @throws IOException               如果在 I/O 操作过程中发生错误
      * @throws AppBuilderServerException 如果 AppBuilder 服务器返回错误
      */
-    public AppBuilderClientIterator run(String query, String conversationId, String[] fileIds, boolean stream) throws IOException, AppBuilderServerException {
+    public AppBuilderClientIterator run(String query, String conversationId, String[] fileIds, boolean stream)
+            throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.AGENTBUILDER_RUN_URL;
         if (this.appID == null || this.appID.isEmpty()) {
             throw new RuntimeException("Param 'appID' is required!");
@@ -111,6 +112,21 @@ public class AppBuilderClient extends Component {
         requestBody.put("conversation_id", conversationId);
         requestBody.put("file_ids", fileIds);
         requestBody.put("stream", stream);
+        String jsonBody = JsonUtils.serialize(requestBody);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<Iterator<AppBuilderClientResponse>> response = httpClient.executeSSE(postRequest,
+                AppBuilderClientResponse.class);
+        return new AppBuilderClientIterator(response.getBody());
+    }
+    
+    public AppBuilderClientIterator run(AppBuilderClientRunRequest requestBody) throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.AGENTBUILDER_RUN_URL;
+        if (this.appID == null || this.appID.isEmpty()) {
+            throw new RuntimeException("Param 'appID' is required!");
+        }
+
         String jsonBody = JsonUtils.serialize(requestBody);
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");

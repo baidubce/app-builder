@@ -45,6 +45,31 @@ var TypeToStruct = map[string]reflect.Type{
 	StatusContentType:       reflect.TypeOf(StatusDetail{}),
 }
 
+type AppBuilderClientRunRequest struct {
+	AppID          string       `json:"app_id"`
+	Query          string       `json:"query"`
+	Stream         bool         `json:"stream"`
+	ConversationID string       `json:"conversation_id"`
+	Tools          []Tool       `json:"tools"`
+	ToolOutputs    []ToolOutput `json:"tool_outputs"`
+}
+
+type Tool struct {
+	Type     string   `json:"type"`
+	Function Function `json:"function"`
+}
+
+type Function struct {
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Parameters  map[string]interface{} `json:"parameters"`
+}
+
+type ToolOutput struct {
+	ToolCallID string `json:"tool_call_id" description:"工具调用ID"`
+	Output     string `json:"output" description:"工具输出"`
+}
+
 type AgentBuilderRawResponse struct {
 	RequestID      string           `json:"request_id"`
 	Date           string           `json:"date"`
