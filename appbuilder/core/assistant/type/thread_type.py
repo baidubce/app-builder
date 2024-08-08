@@ -328,10 +328,14 @@ class ToolOutput(BaseModel):
     output: str = ""
     run_id: str = ""
 
+class AssistantRunModel(str,Enum):
+    NONE = ""
+    ERNIE_4_0_8K = "ERNIE-4.0-8K"
+    ERNIE_3_5_8K = "ERNIE-3.5-8K"
 
 class AssistantRunRequest(BaseModel):
     thread_id: Optional[str] = Field(default="")
-    model: str = Field(default="ERNIE-4.0-8K")
+    model: AssistantRunModel = Field(default=AssistantRunModel.NONE)
     assistant_id: Optional[str] = Field(default="")
     metadata: Optional[dict] =  Field(default={}, max_length=16)
     response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)
