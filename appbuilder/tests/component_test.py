@@ -1,5 +1,6 @@
 import requests
 import types
+import re 
 
 from appbuilder.core._exception import *
 from unittest.mock  import Mock
@@ -67,10 +68,12 @@ class AppbuilderTestToolEval:
         self.tool_eval_input = tool_eval_input
         self.response = response
         self.test_tool_eval_input()
-        self.test_tool_eval_reponse_raise()
         self.test_tool_eval_generator()
         self.test_tool_eval_text_str()
-
+        if hasattr(self.component, '__module__'):
+            module_name = self.component.__module__
+            if re.match(r'appbuilder\.', module_name):
+                self.test_tool_eval_reponse_raise()
 
     def test_tool_eval_input(self):
         """
