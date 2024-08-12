@@ -19,7 +19,7 @@ import unittest
 import appbuilder
 from appbuilder.core._client import HTTPClient
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDataset(unittest.TestCase):
     def setUp(self):
         self.dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
