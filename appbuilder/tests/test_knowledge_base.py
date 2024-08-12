@@ -17,7 +17,7 @@ import os
 
 from appbuilder.core._exception import BadRequestException
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestKnowLedge(unittest.TestCase):
     def setUp(self):
         self.whether_create_knowledge_base = False
