@@ -17,7 +17,7 @@ import os
 
 from appbuilder.core._exception import BadRequestException
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestKnowLedge(unittest.TestCase):
     def setUp(self):
         self.whether_create_knowledge_base = False
@@ -72,76 +72,72 @@ class TestKnowLedge(unittest.TestCase):
             print("create_knowledge_base函数运行失败{},将调用本地DATASET_ID".format(e))
             knowledge_base_id = os.getenv('DATASET_ID', 'UNKNOWN')
         err_msg = None
-        try:
-            knowledge.create_documents(
-                id=knowledge_base_id,
-                contentFormat="rawText",
-                source=appbuilder.DocumentSource(
-                    type="web",
-                    urls=["https://baijiahao.baidu.com/s?id=1802527379394162441"],
-                    urlDepth=1,
+
+        knowledge.create_documents(
+            id=knowledge_base_id,
+            contentFormat="rawText",
+            source=appbuilder.DocumentSource(
+                type="web",
+                urls=["https://baijiahao.baidu.com/s?id=1802527379394162441"],
+                urlDepth=1,
+            ),
+            processOption=appbuilder.DocumentProcessOption(
+                template="custom",
+                parser=appbuilder.DocumentChoices(
+                    choices=["layoutAnalysis", "ocr"]
                 ),
-                processOption=appbuilder.DocumentProcessOption(
-                    template="custom",
-                    parser=appbuilder.DocumentChoices(
-                        choices=["layoutAnalysis", "ocr"]
+                chunker=appbuilder.DocumentChunker(
+                    choices=["separator"],
+                    separator=appbuilder.DocumentSeparator(
+                        separators=["。"],
+                        targetLength=300,
+                        overlapRate=0.25,
                     ),
-                    chunker=appbuilder.DocumentChunker(
-                        choices=["separator"],
-                        separator=appbuilder.DocumentSeparator(
-                            separators=["。"],
-                            targetLength=300,
-                            overlapRate=0.25,
-                        ),
-                        prependInfo=["title", "filename"],
-                    ),
-                    knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+                    prependInfo=["title", "filename"],
                 ),
-            )
+                knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+            ),
+        )
 
-            knowledge.upload_documents(
-                id=knowledge_base_id,
-                content_format="rawText",
-                file_path="./data/qa_appbuilder_client_demo.pdf",
-                processOption=appbuilder.DocumentProcessOption(
-                    template="custom",
-                    parser=appbuilder.DocumentChoices(
-                        choices=["layoutAnalysis", "ocr"]
-                    ),
-                    chunker=appbuilder.DocumentChunker(
-                        choices=["separator"],
-                        separator=appbuilder.DocumentSeparator(
-                            separators=["。"],
-                            targetLength=300,
-                            overlapRate=0.25,
-                        ),
-                        prependInfo=["title", "filename"],
-                    ),
-                    knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+        knowledge.upload_documents(
+            id=knowledge_base_id,
+            content_format="rawText",
+            file_path="./data/qa_appbuilder_client_demo.pdf",
+            processOption=appbuilder.DocumentProcessOption(
+                template="custom",
+                parser=appbuilder.DocumentChoices(
+                    choices=["layoutAnalysis", "ocr"]
                 ),
-            )
+                chunker=appbuilder.DocumentChunker(
+                    choices=["separator"],
+                    separator=appbuilder.DocumentSeparator(
+                        separators=["。"],
+                        targetLength=300,
+                        overlapRate=0.25,
+                    ),
+                    prependInfo=["title", "filename"],
+                ),
+                knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+            ),
+        )
 
-            list_res = knowledge.get_documents_list(knowledge_base_id=knowledge_base_id)
-            document_id = list_res.data[-1].id
-            res = knowledge.describe_chunks(document_id)
-            resp = knowledge.create_chunk(document_id, content="test")
-            chunk_id = resp.id
-            knowledge.modify_chunk(chunk_id, content="new test", enable=True)
-            # 目前openapi有延迟，后续openapi完善后，删除注释
-            # knowledge.describe_chunk(chunk_id)
-            knowledge.delete_chunk(chunk_id)
+        list_res = knowledge.get_documents_list(knowledge_base_id=knowledge_base_id)
+        document_id = list_res.data[-1].id
+        res = knowledge.describe_chunks(document_id)
+        resp = knowledge.create_chunk(document_id, content="test")
+        chunk_id = resp.id
+        knowledge.modify_chunk(chunk_id, content="new test", enable=True)
+        # 目前openapi有延迟，后续openapi完善后，删除注释
+        # knowledge.describe_chunk(chunk_id)
+        knowledge.delete_chunk(chunk_id)
 
-            knowledge.modify_knowledge_base(
-                knowledge_base_id=knowledge_base_id, name="test"
-            )
-        except Exception as e:
-            err_msg = str(e)
-            print("错误为 {}".format(e))
-        finally:
-            if self.whether_create_knowledge_base:
-                knowledge.delete_knowledge_base(knowledge_base_id)
+        knowledge.modify_knowledge_base(
+            knowledge_base_id=knowledge_base_id, name="test"
+        )
 
-        self.assertIsNone(err_msg)
+        if self.whether_create_knowledge_base:
+            knowledge.delete_knowledge_base(knowledge_base_id)
+
 
 
 if __name__ == "__main__":
