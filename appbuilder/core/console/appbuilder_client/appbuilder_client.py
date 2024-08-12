@@ -188,7 +188,7 @@ class AppBuilderClient(Component):
 
     @client_run_trace
     def run(self, conversation_id: str,
-            query: str,
+            query: str = "",
             file_ids: list = [],
             stream: bool = False,
             tools: list[data_class.Tool] = None,
@@ -210,6 +210,9 @@ class AppBuilderClient(Component):
             raise ValueError(
                 "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
             )
+        
+        if query == "" and (tool_outputs is None or len(tool_outputs) == 0):
+            raise ValueError("AppBuilderClient Run API: query and tool_outputs cannot both be empty")
 
         req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
@@ -234,7 +237,6 @@ class AppBuilderClient(Component):
             return Message(content=self._iterate_events(request_id, client.events()))
         else:
             data = response.json()
-            print(data)
             resp = data_class.AppBuilderClientResponse(**data)
             out = data_class.AppBuilderClientAnswer()
             _transform(resp, out)
@@ -302,5 +304,6 @@ def _transform(
             content_type=ev.content_type,
             detail=ev.outputs,
             usage=ev.usage,
+            tool_calls=ev.tool_calls,
         )
         out.events.append(event)

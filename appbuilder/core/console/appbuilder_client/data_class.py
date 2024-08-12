@@ -235,6 +235,7 @@ class Event(BaseModel):
     content_type: str = ""
     detail: dict = {}
     usage: Optional[Usage] = None
+    tool_calls: Optional[list[ToolCall]] = None
 
 
 class AppBuilderClientAnswer(BaseModel):

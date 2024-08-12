@@ -7,6 +7,58 @@ import os
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-vGrDN4BvjP15rDrXBI9OC/6d435ece62ed09b396e1b051bd87869c11861332"
 os.environ["GATEWAY_URL_V2"] = "https://apaas-api-sandbox.baidu-int.com"
 
+tools = {
+    "name": "get_weather",
+    "description": "这是一个获得指定地点天气的工具",
+    "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "省，市名，例如：河北省"
+                },
+                "unit": {
+                    "type": "string",
+                    "enum": [
+                        "摄氏度",
+                        "华氏度"
+                    ]
+                }
+            },
+        "required": [
+                "location"
+            ]
+    }
+}
+
+from appbuilder.core.console.appbuilder_client.run_helper import (
+    AppBuilderEventHandler,
+    AppBuilderRunManager
+)
+
+class MyEventHandler(AppBuilderEventHandler):
+    def get_weather(self, location: str, unit: str):
+        return "{} 的当前温度是30 {}".format(location, unit)
+    
+    def messages(self, event):
+        info = ""
+        print("\n\033[1;31m","-> Agent 回答: ", info, "\033[0m")
+
+    def tool_calls(self, event):
+        current_tool_calls = None
+        for tool_call in current_tool_calls:
+            tool_call_id = tool_call.id
+            func_name = tool_call.function.name
+            arguments = tool_call.function.arguments
+
+            result = ""
+            if func_name == "get_weather":
+                result = self.get_weather(**arguments)
+            
+        return [result]
+                
+
+
 # @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
@@ -20,6 +72,7 @@ class TestAgentRuntime(unittest.TestCase):
             无返回值，方法中执行了环境变量的赋值操作。
         """
         self.app_id = "4d4b1b27-d607-4d2a-9002-206134217a9f"
+
 
     def test_appbuilder_client_tool_call(self):
         # 如果app_id为空，则跳过单测执行, 避免单测因配置无效而失败

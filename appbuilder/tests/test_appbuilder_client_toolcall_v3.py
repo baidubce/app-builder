@@ -56,26 +56,32 @@ class TestAgentRuntime(unittest.TestCase):
             }
         ]
 
+        cities = ["北京", "上海"]
+        query = "下面这些城市的天气怎么样：{}".format(",".join(cities))
         msg = builder.run(
             conversation_id=conversation_id,
-            query="今天北京天气怎么样？",
+            query=query,
             tools=tools)
         print(msg.model_dump_json(indent=4))
-
         event = msg.content.events[-1]
-        assert event.status == "interrupt"
-        assert event.event_type == "Interrupt"
 
-        msg_2 = builder.run(
-            conversation_id=conversation_id,
-            tool_outputs=[
-                {
-                    "tool_call_id": event.tool_calls[-1].id,
-                    "output": "北京今天35度"
-                }
-            ]
-        )
-        print(msg_2.model_dump_json(indent=4))
+        idx = 0
+        while True:
+            if event.status == "success":
+                break
+
+            msg_2 = builder.run(
+                conversation_id=conversation_id,
+                tool_outputs=[
+                    {
+                        "tool_call_id": event.tool_calls[-1].id,
+                        "output": "{}今天的温度是35度".format(cities[idx])
+                    }
+                ]
+            )
+            idx += 1
+            print(msg_2.model_dump_json(indent=4))
+            event = msg_2.content.events[-1]
 
         
         

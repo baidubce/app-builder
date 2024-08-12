@@ -40,14 +40,11 @@ class TestAgentRuntime(unittest.TestCase):
                 "type": "function",
                 "function": {
                     "name": "get_current_weather",
-                    "description": "仅支持中国城市的天气查询，参数location为中国城市名称，其他国家城市不支持天气查询",
+                    "description": "支持多个中国城市的天气查询，参数location为一个list，包含多个中国城市名称",
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "城市名，举例：北京",
-                            },
+                            "location": {'items': {'type': 'string'}, 'title': 'Location', 'type': 'array'},
                             "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
                         },
                         "required": ["location", "unit"],
@@ -58,7 +55,7 @@ class TestAgentRuntime(unittest.TestCase):
 
         msg = builder.run(
             conversation_id=conversation_id,
-            query="今天北京天气怎么样？",
+            query="今天北京和上海天气怎么样？",
             tools=tools)
         print(msg.model_dump_json(indent=4))
 
@@ -71,7 +68,7 @@ class TestAgentRuntime(unittest.TestCase):
             tool_outputs=[
                 {
                     "tool_call_id": event.tool_calls[-1].id,
-                    "output": "北京今天35度"
+                    "output": "北京和上海今天都是35度"
                 }
             ]
         )

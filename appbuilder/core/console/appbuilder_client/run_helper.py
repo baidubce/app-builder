@@ -20,8 +20,12 @@ class AppBuilderClientStreamRunContext(object):
         self._current_event = None
         self._current_tool_calls = None
         self._current_request_id = None
-        self._status = None
-    pass
+        self._current_status = None
+        self._need_tool_submit = False
+    
+
+    def update_step_context(self):
+        pass
 
 class AppBuilderEventHandler(object):
     def __init__(self, response) -> None:
@@ -30,6 +34,7 @@ class AppBuilderEventHandler(object):
         self._event_stream = self._sse_client.events()
         self._iterator = self.__stream__()
         self.stream_run_context = AppBuilderClientStreamRunContext()
+        self._is_complete = False
 
     def __stream__(self):
         try:
@@ -69,6 +74,9 @@ class AppBuilderEventHandler(object):
         pass
 
     def run_end(self):
+        pass
+
+    def answers(self):
         pass
 
 
