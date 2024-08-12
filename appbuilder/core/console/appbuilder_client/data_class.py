@@ -31,6 +31,15 @@ class ToolOutput(BaseModel):
     tool_call_id: str = Field(..., description="工具调用ID")
     output: str = Field(..., description="工具输出")
 
+class FunctionCallDetail(BaseModel):
+    name: str = Field(..., description="函数的名称")
+    arguments: dict = Field(..., description="模型希望您传递给函数的参数")
+
+class ToolCall(BaseModel):
+    id: str = Field(..., description="工具调用ID")
+    type: str = Field("function", description="需要输出的工具调用的类型。就目前而言，这始终是function")
+    function: FunctionCallDetail = Field(..., description="函数定义")
+
 class AppBuilderClientRequest(BaseModel):
     """会话请求参数
         属性:
@@ -77,6 +86,7 @@ class OriginalEvent(BaseModel):
     content_type: str = ""
     outputs: dict = {}
     usage: Optional[Usage] = None
+    tool_calls: Optional[list[ToolCall]] = None
 
 
 class AppBuilderClientResponse(BaseModel):
@@ -97,7 +107,7 @@ class AppBuilderClientResponse(BaseModel):
     message_id: str = ""
     is_completion: Optional[bool] = False
     content: list[OriginalEvent] = []
-
+    
 
 class TextDetail(BaseModel):
     """content_type=text，详情内容

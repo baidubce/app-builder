@@ -191,7 +191,7 @@ class AppBuilderClient(Component):
             query: str,
             file_ids: list = [],
             stream: bool = False,
-            tools: list[data_class.Tools] = None,
+            tools: list[data_class.Tool] = None,
             tool_outputs: list[data_class.ToolOutput] = None,
             **kwargs
             ) -> Message:
@@ -234,6 +234,7 @@ class AppBuilderClient(Component):
             return Message(content=self._iterate_events(request_id, client.events()))
         else:
             data = response.json()
+            print(data)
             resp = data_class.AppBuilderClientResponse(**data)
             out = data_class.AppBuilderClientAnswer()
             _transform(resp, out)
