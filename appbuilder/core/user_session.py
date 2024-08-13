@@ -16,43 +16,19 @@ import uuid
 import json
 import os
 import logging
-from typing import Union, List, Dict, Optional
-import sqlalchemy
-from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Boolean
-from sqlalchemy.orm import declarative_base, sessionmaker
+from typing import Union, List, Dict, Optional, Any
+
 from appbuilder.core.message import Message
 from appbuilder.core.context import get_context, _LOCAL_KEY
 
 
-_db = declarative_base()
-
-
-class SessionMessage(_db):
-    """
-    会话 Message 数据模型，用于在数据库中存储和管理会话消息。
-
-    以下是每个字段的注释：
-    __tablename__：数据库表名为 appbuilder_session_messages，这是该类对应的数据库表名。
-    id：主键字段，使用UUID作为默认值，确保每条记录的唯一性。
-    session_id：会话ID字段，不允许为空，用于标识会话。
-    request_id：请求ID字段，不允许为空，用于标识请求。
-    message_key：Message 键字段，不允许为空，用于标识 Message 的关键字。
-    message_value：Message 值字段，不允许为空，用于存储 Message 的具体内容，使用JSON格式存储。
-    created_at：创建时间字段，使用当前时间作为默认值，不允许为空。
-    updated_at：更新时间字段，使用当前时间作为默认值，不允许为空。
-    deleted：删除标记字段，使用False作为默认值，不允许为空。当该字段为True时，表示该条记录已被删除。
-    """
-    __tablename__ = 'appbuilder_session_messages'
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
-    session_id = Column(String(36), nullable=False)
-    request_id = Column(String(36), nullable=False)
-    message_key = Column(String(128), nullable=False)
-    message_value = Column(JSON, nullable=False)
-    created_at = Column(DateTime, default=datetime.datetime.now, nullable=False)
-    updated_at = Column(DateTime, default=datetime.datetime.now, nullable=False)
-    deleted = Column(Boolean, default=False, nullable=False)
-
+def lazy_import_sqlalchemy():
+    try:
+        import sqlalchemy
+        from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Boolean
+        from sqlalchemy.orm import declarative_base, sessionmaker
+    except ImportError as e:
+        raise ImportError("Please install SQLAlchemy first: python3 -m pip install SQLAlchemy==2.0.31")
 
 class UserSession(object):
     """
@@ -66,11 +42,13 @@ class UserSession(object):
         """
         单例模式
         """
+        lazy_import_sqlalchemy()
+
         if cls._instance is None:
             cls._instance = object.__new__(cls)
         return cls._instance
 
-    def __init__(self, user_session_config: Optional[Union[sqlalchemy.engine.URL, str]] = None):
+    def __init__(self, user_session_config: Optional[Union[Any, str]] = None):
         """
         初始化 UserSession
         
@@ -84,6 +62,15 @@ class UserSession(object):
         if self._initialized:
             return
         self._initialized = True
+
+        import sqlalchemy
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy.orm import declarative_base
+        from sqlalchemy import create_engine
+        from appbuilder.core. session_message import get_db_base_class
+        
+        _db = get_db_base_class()
+
         if user_session_config is None:
             user_session_config = "sqlite:///user_session.db"
         if not isinstance(user_session_config, (sqlalchemy.engine.URL, str)):
@@ -93,6 +80,7 @@ class UserSession(object):
         _db.metadata.create_all(engine) # 创建表
         Session = sessionmaker(engine)
         self._db_session = Session()
+    
 
     def get_history(self, key: str, limit: int=10) -> List[Message]:
         """
@@ -106,6 +94,7 @@ class UserSession(object):
         Returns:
             List[Message]
         """
+        from appbuilder.core.session_message import SessionMessage
         ctx = get_context()
         if ctx.session_id.startswith(_LOCAL_KEY):
             # 非服务化版本使用内存存储
@@ -163,6 +152,7 @@ class UserSession(object):
         Returns:
             None
         """
+        from appbuilder.core.session_message import SessionMessage
         ctx = get_context()
         try:
             for key, message_value in ctx.session_vars_dict.items():
