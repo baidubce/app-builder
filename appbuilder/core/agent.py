@@ -23,7 +23,6 @@ from pydantic import BaseModel, model_validator, Extra
 from typing import Optional, Dict, Any, Union
 import appbuilder
 from appbuilder.core.context import init_context
-from appbuilder.core.user_session import UserSession
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.utils.logger_util import logger
@@ -197,9 +196,10 @@ class AgentRuntime(BaseModel):
             conn.close()
 
     """
+    
     component: Component
     user_session_config: Optional[Union[Any, str]] = None
-    user_session: Optional[UserSession] = None
+    user_session: Optional[Any] = None
 
     class Config:
         """
@@ -220,6 +220,7 @@ class AgentRuntime(BaseModel):
             None
         """
         # 初始化 UserSession
+        from appbuilder.core.user_session import UserSession
         values.update({
             "user_session": UserSession(values.get("user_session_config"))
         })
