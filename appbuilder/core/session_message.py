@@ -15,12 +15,20 @@
 import datetime
 import uuid
 
+db = None
+
 def get_db_base_class():
     try:
         from sqlalchemy.orm import declarative_base
     except ImportError as e:
         raise ImportError("Please install SQLAlchemy first: python3 -m pip install SQLAlchemy==2.0.31")
-    return declarative_base()
+    
+    global db
+
+    if not db:
+        db = declarative_base()
+
+    return db
 
 class SessionMessage(get_db_base_class()):
         """

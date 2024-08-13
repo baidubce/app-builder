@@ -67,8 +67,9 @@ class UserSession(object):
         from sqlalchemy.orm import sessionmaker
         from sqlalchemy.orm import declarative_base
         from sqlalchemy import create_engine
+        from appbuilder.core. session_message import get_db_base_class
         
-        _db = declarative_base()
+        _db = get_db_base_class()
 
         if user_session_config is None:
             user_session_config = "sqlite:///user_session.db"
