@@ -15,7 +15,8 @@ import unittest
 import os
 import uuid
 
-from appbuilder.core.user_session import UserSession,SessionMessage
+from appbuilder.core.user_session import UserSession
+from appbuilder.core.session_message import SessionMessage
 from appbuilder.core.context import init_context,_LOCAL_KEY,get_context,context_var
 from appbuilder.core.message import Message 
 
