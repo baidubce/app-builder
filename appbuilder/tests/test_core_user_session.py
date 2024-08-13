@@ -21,19 +21,19 @@ from appbuilder.core.context import init_context,_LOCAL_KEY,get_context,context_
 from appbuilder.core.message import Message 
 
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestCoreUserSession(unittest.TestCase):      
-    # def test_usersession_init(self):
-    #     UserSession._instance = None 
-    #     UserSession._initialized = False 
-    #     with self.assertRaises(ValueError):
-    #         user_session=UserSession(user_session_config=1234)
-    #     UserSession._instance = None 
-    #     UserSession._initialized = False  
+    def test_usersession_init(self):
+        UserSession._instance = None 
+        UserSession._initialized = False 
+        with self.assertRaises(ValueError):
+            user_session=UserSession(user_session_config=1234)
+        UserSession._instance = None 
+        UserSession._initialized = False  
     
-    # def test_get_context(self):
-    #     context_var=0
-    #     ctx=get_context() 
+    def test_get_context(self):
+        context_var=0
+        ctx=get_context() 
         
 # 测试not ctx.session_id.startswith(_LOCAL_KEY)     
     def test_not_startswith_LOCAL_KEY(self): 
@@ -59,26 +59,26 @@ class TestCoreUserSession(unittest.TestCase):
  
  
 # 测试ctx.session_id.startswith(_LOCAL_KEY)   
-    # def test_startswith_LOCAL_KEY(self):
-    #     user_session = UserSession()
-    #     init_context(
-    #         session_id=_LOCAL_KEY+str(uuid.uuid4()),
-    #         request_id=_LOCAL_KEY+str(uuid.uuid4())               
-    #     )
-    #     key = "test_key"
-    #     message_dict = {key: Message(content={"key": "value"})}
-    #     # if key not in ctx.session_vars_dict
-    #     user_session.append(message_dict)
-    #     history = user_session.get_history("test")
-    #     self.assertEqual(len(history), 0) 
-    #     history = user_session.get_history(key)
-    #     self.assertEqual(len(history), 1)
-    #     # if not isinstance(message, Message)
-    #     with self.assertRaises(ValueError):
-    #         user_session.append({key: "test"})
-    #     # 测试_post_append(self)的异常 
-    #     with self.assertRaises(Exception):
-    #         user_session._post_append()  
+    def test_startswith_LOCAL_KEY(self):
+        user_session = UserSession()
+        init_context(
+            session_id=_LOCAL_KEY+str(uuid.uuid4()),
+            request_id=_LOCAL_KEY+str(uuid.uuid4())               
+        )
+        key = "test_key"
+        message_dict = {key: Message(content={"key": "value"})}
+        # if key not in ctx.session_vars_dict
+        user_session.append(message_dict)
+        history = user_session.get_history("test")
+        self.assertEqual(len(history), 0) 
+        history = user_session.get_history(key)
+        self.assertEqual(len(history), 1)
+        # if not isinstance(message, Message)
+        with self.assertRaises(ValueError):
+            user_session.append({key: "test"})
+        # 测试_post_append(self)的异常 
+        with self.assertRaises(Exception):
+            user_session._post_append()  
           
 if __name__ == '__main__':
     unittest.main()
