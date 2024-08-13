@@ -70,11 +70,11 @@ class AppbuilderTestToolEval:
         self.test_manifests()
         self.test_tool_eval_input()
         self.test_tool_eval_generator()
-        self.test_tool_eval_text_str()
         if hasattr(self.component, '__module__'):
             module_name = self.component.__module__
             if re.match(r'appbuilder\.', module_name):
                 self.test_tool_eval_reponse_raise()
+                self.test_tool_eval_text_str()
 
     def test_manifests(self):
         """
@@ -88,7 +88,7 @@ class AppbuilderTestToolEval:
         Raises:
             AppbuilderBuildexException: 校验不通过时抛出异常。
         """
-        manifests = self.appbuilder_components.manifests
+        manifests = self.component.manifests
         try:
             assert isinstance(manifests, list)
             assert len(manifests) > 0
@@ -115,8 +115,11 @@ class AppbuilderTestToolEval:
         """
         if not self.tool_eval_input.get('streaming',None):
             raise AppbuilderBuildexException(f'请检查{self.component}组件tool_eval的传入参数是否定义streaming')
-        if not self.tool_eval_input.get('traceid',None):
-            raise AppbuilderBuildexException(f'请检查{self.component}组件tool_eval的传入参数是否有traceid')
+        if hasattr(self.component, '__module__'):
+            module_name = self.component.__module__
+            if re.match(r'appbuilder\.', module_name):
+                if not self.tool_eval_input.get('traceid',None):
+                    raise AppbuilderBuildexException(f'请检查{self.component}组件tool_eval的传入参数是否有traceid')
         try:
             manifests = self.component.manifests[0]
             parameters = manifests['parameters']
