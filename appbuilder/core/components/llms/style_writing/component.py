@@ -112,7 +112,7 @@ class StyleWriting(CompletionBaseComponent):
     manifests = [
         {
             "name": "style_writing",
-            "description": "能够根据用户的输入内容和风格要求，利用大语言模型的生成能力，自动生成符合特定风格的文案。",
+            "description": "根据用户输入的文案要求和文案风格，生成符合特定风格的产品介绍或宣传文案。目前支持生成小红书风格、B站风格或通用风格的文案。",
             "parameters": {
                 "type": "object",
                 "properties": {
