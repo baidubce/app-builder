@@ -67,6 +67,7 @@ class AppbuilderTestToolEval:
         self.component = appbuilder_components
         self.tool_eval_input = tool_eval_input
         self.response = response
+        self.test_manifests()
         self.test_tool_eval_input()
         self.test_tool_eval_generator()
         self.test_tool_eval_text_str()
@@ -74,6 +75,29 @@ class AppbuilderTestToolEval:
             module_name = self.component.__module__
             if re.match(r'appbuilder\.', module_name):
                 self.test_tool_eval_reponse_raise()
+
+    def test_manifests(self):
+        """
+        校验组件成员变量manifests是否符合规范。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            无返回值。
+        Raises:
+            AppbuilderBuildexException: 校验不通过时抛出异常。
+        """
+        manifests = self.appbuilder_components.manifests
+        try:
+            assert isinstance(manifests, list)
+            assert len(manifests) > 0
+            assert isinstance(manifests[0],dict)
+            assert isinstance(manifests[0]['name'], str)
+            assert isinstance(manifests[0]['description'], str)
+            assert isinstance(manifests[0]['parameters'], dict)
+        except Exception as e:
+            raise AppbuilderBuildexException(f'请检查{self.component}组件是否存在成员变量manifests或manifests成员变量定义规范, 错误信息：{e}')
 
     def test_tool_eval_input(self):
         """
