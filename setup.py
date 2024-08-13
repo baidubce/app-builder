@@ -42,7 +42,8 @@ setup(
     install_requires=requirements,
     python_requires=">=3.9",
     extras_require={
-        "serve": ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9", "arize-phoenix==4.5.0"]
+        "serve": ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9", "arize-phoenix==4.5.0"],
+        "trace": ["SQLAlchemy==2.0.31"]
     },
     entry_points={
         "console_scripts": [
