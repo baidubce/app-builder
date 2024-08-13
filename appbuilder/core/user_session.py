@@ -16,18 +16,26 @@ import uuid
 import json
 import os
 import logging
-from typing import Union, List, Dict, Optional
-import sqlalchemy
-from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Boolean
-from sqlalchemy.orm import declarative_base, sessionmaker
+from typing import Union, List, Dict, Optional, Any
+
 from appbuilder.core.message import Message
 from appbuilder.core.context import get_context, _LOCAL_KEY
 
 
-_db = declarative_base()
+def lazy_import_sqlalchemy():
+    try:
+        import sqlalchemy
+        from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Boolean
+        from sqlalchemy.orm import declarative_base, sessionmaker
+    except ImportError as e:
+        raise ImportError('Please install SQLAlchemy first')
 
+def get_db_base_class():
+    lazy_import_sqlalchemy()
+    from sqlalchemy.orm import declarative_base
+    return declarative_base()
 
-class SessionMessage(_db):
+class SessionMessage(get_db_base_class()):
     """
     会话 Message 数据模型，用于在数据库中存储和管理会话消息。
 
@@ -66,11 +74,13 @@ class UserSession(object):
         """
         单例模式
         """
+        lazy_import_sqlalchemy()
+
         if cls._instance is None:
             cls._instance = object.__new__(cls)
         return cls._instance
 
-    def __init__(self, user_session_config: Optional[Union[sqlalchemy.engine.URL, str]] = None):
+    def __init__(self, user_session_config: Optional[Union[Any, str]] = None):
         """
         初始化 UserSession
         

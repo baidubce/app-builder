@@ -20,9 +20,7 @@ import json
 import shutil
 import inspect
 from pydantic import BaseModel, model_validator, Extra
-from typing import Optional, Dict, List, Any, Union
-import sqlalchemy
-
+from typing import Optional, Dict, Any, Union
 import appbuilder
 from appbuilder.core.context import init_context
 from appbuilder.core.user_session import UserSession
@@ -200,7 +198,7 @@ class AgentRuntime(BaseModel):
 
     """
     component: Component
-    user_session_config: Optional[Union[sqlalchemy.engine.URL, str]] = None
+    user_session_config: Optional[Union[Any, str]] = None
     user_session: Optional[UserSession] = None
 
     class Config:
