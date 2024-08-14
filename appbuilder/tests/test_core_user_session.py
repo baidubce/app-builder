@@ -14,13 +14,14 @@
 import unittest
 import os
 import uuid
+import sqlite3
 
-from appbuilder.core.user_session import UserSession,SessionMessage
+from appbuilder.core.user_session import UserSession
 from appbuilder.core.context import init_context,_LOCAL_KEY,get_context,context_var
 from appbuilder.core.message import Message 
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestCoreUserSession(unittest.TestCase):      
     def test_usersession_init(self):
         UserSession._instance = None 
@@ -31,10 +32,8 @@ class TestCoreUserSession(unittest.TestCase):
         UserSession._initialized = False  
     
     def test_get_context(self):
-        context_var=0
-        ctx=get_context() 
-        
-# 测试not ctx.session_id.startswith(_LOCAL_KEY)     
+        get_context() 
+          
     def test_not_startswith_LOCAL_KEY(self): 
         user_session = UserSession()
         init_context(
@@ -55,9 +54,7 @@ class TestCoreUserSession(unittest.TestCase):
             user_session.append(message_dict)       
         # 测试_post_append(self)的try
         user_session._post_append()
- 
- 
-# 测试ctx.session_id.startswith(_LOCAL_KEY)   
+
     def test_startswith_LOCAL_KEY(self):
         user_session = UserSession()
         init_context(
@@ -78,6 +75,27 @@ class TestCoreUserSession(unittest.TestCase):
         # 测试_post_append(self)的异常 
         with self.assertRaises(Exception):
             user_session._post_append()  
+
+        # 验证user_session.db文件是否创建,并验证文件内容
+        user_session_path = 'user_session.db' 
+        conn = sqlite3.connect(user_session_path)  
+        cursor = conn.cursor()  
+
+        # 执行一条 SQL 语句，列出所有表  
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")  
+        sql = cursor.fetchall()
+        print('sql:{}'.format(sql))  
+        assert sql[0][0] == 'appbuilder_session_messages'  
+        # 执行一条 SQL 语句，列出表所有列  
+        cursor.execute("PRAGMA table_info(appbuilder_session_messages);")  
+        
+        columns_info = cursor.fetchall()  
+
+        column_names = [info[1] for info in columns_info]  # info[1]是列名的位置  
+        for column_name in column_names:  
+            print(column_name)
+        assert 'id' in column_names   
+        
           
 if __name__ == '__main__':
     unittest.main()
