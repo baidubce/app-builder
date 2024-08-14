@@ -1,6 +1,5 @@
 package com.baidubce.appbuilder.console.appbuilderclient;
 
-
 import com.baidubce.appbuilder.base.component.Component;
 import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
@@ -36,7 +35,6 @@ public class AppBuilderClient extends Component {
         this.appID = appID;
     }
 
-
     /**
      * 创建会话
      *
@@ -45,6 +43,14 @@ public class AppBuilderClient extends Component {
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
     public String createConversation() throws IOException, AppBuilderServerException {
+        return innerCreateConversation(java.util.UUID.randomUUID().toString());
+    }
+
+    public String createConversation(String clientToken) throws IOException, AppBuilderServerException {
+        return innerCreateConversation(clientToken);
+    }
+
+    private String innerCreateConversation(String clientToken) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CREATE_CONVERSATION_URL;
         if (this.appID == null || this.appID.isEmpty()) {
             throw new RuntimeException("Param 'appID' is required!");
@@ -52,11 +58,13 @@ public class AppBuilderClient extends Component {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("app_id", this.appID);
         String jsonBody = JsonUtils.serialize(requestBody);
-        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        url = url + "?clientToken=" + clientToken;
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         HttpResponse<ConversationResponse> response = httpClient.execute(postRequest, ConversationResponse.class);
         ConversationResponse respBody = response.getBody();
-        
+
         return respBody.getConversationId();
     }
 
@@ -69,7 +77,18 @@ public class AppBuilderClient extends Component {
      * @throws IOException               当请求失败时抛出IOException
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
-    public String uploadLocalFile(String conversationId, String filePath) throws IOException, AppBuilderServerException {
+    public String uploadLocalFile(String conversationId, String filePath)
+            throws IOException, AppBuilderServerException {
+        return innerUploadLocalFile(conversationId, filePath, java.util.UUID.randomUUID().toString());
+    }
+
+    public String uploadLocalFile(String conversationId, String filePath, String clientToken)
+            throws IOException, AppBuilderServerException {
+        return innerUploadLocalFile(conversationId, filePath, clientToken);
+    }
+
+    private String innerUploadLocalFile(String conversationId, String filePath, String clientToken)
+            throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.UPLOAD_FILE_URL;
         if (this.appID == null || this.appID.isEmpty()) {
             throw new RuntimeException("Param 'appID' is required!");
@@ -82,6 +101,7 @@ public class AppBuilderClient extends Component {
         builder.addTextBody("conversation_id", conversationId);
         builder.addTextBody("scenario", "assistant");
 
+        url = url + "?clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, builder.build());
         HttpResponse<FileUploadResponse> response = httpClient.execute(postRequest, FileUploadResponse.class);
 
@@ -100,7 +120,8 @@ public class AppBuilderClient extends Component {
      * @throws IOException               如果在 I/O 操作过程中发生错误
      * @throws AppBuilderServerException 如果 AppBuilder 服务器返回错误
      */
-    public AppBuilderClientIterator run(String query, String conversationId, String[] fileIds, boolean stream) throws IOException, AppBuilderServerException {
+    public AppBuilderClientIterator run(String query, String conversationId, String[] fileIds, boolean stream)
+            throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.AGENTBUILDER_RUN_URL;
         if (this.appID == null || this.appID.isEmpty()) {
             throw new RuntimeException("Param 'appID' is required!");
@@ -112,9 +133,11 @@ public class AppBuilderClient extends Component {
         requestBody.put("file_ids", fileIds);
         requestBody.put("stream", stream);
         String jsonBody = JsonUtils.serialize(requestBody);
-        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<Iterator<AppBuilderClientResponse>> response = httpClient.executeSSE(postRequest, AppBuilderClientResponse.class);
+        HttpResponse<Iterator<AppBuilderClientResponse>> response = httpClient.executeSSE(postRequest,
+                AppBuilderClientResponse.class);
         return new AppBuilderClientIterator(response.getBody());
     }
 }
