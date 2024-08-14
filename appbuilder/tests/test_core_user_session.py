@@ -22,7 +22,6 @@ from appbuilder.core.context import init_context,_LOCAL_KEY,get_context,context_
 from appbuilder.core.message import Message 
 
 
-
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestCoreUserSession(unittest.TestCase):      
     def test_usersession_init(self):
