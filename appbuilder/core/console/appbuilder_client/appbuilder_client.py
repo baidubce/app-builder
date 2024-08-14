@@ -137,7 +137,7 @@ class AppBuilderClient(Component):
         self.app_id = app_id
 
     @client_tool_trace
-    def create_conversation(self, client_token=None) -> str:
+    def create_conversation(self) -> str:
         r"""创建会话并返回会话ID，会话ID在服务端用于上下文管理、绑定会话文档等，如需开始新的会话，请创建并使用新的会话ID
         参数:
             无
@@ -146,11 +146,7 @@ class AppBuilderClient(Component):
         """
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
-        if not client_token:
-            client_token = str(uuid.uuid4())
-        url = self.http_client.service_url_v2(
-            "/app/conversation", client_token=client_token
-        )
+        url = self.http_client.service_url_v2("/app/conversation")
         response = self.http_client.session.post(
             url, headers=headers, json={"app_id": self.app_id}, timeout=None
         )
@@ -160,9 +156,7 @@ class AppBuilderClient(Component):
         return resp.conversation_id
 
     @client_tool_trace
-    def upload_local_file(
-        self, conversation_id, local_file_path: str, client_token: str = None
-    ) -> str:
+    def upload_local_file(self, conversation_id, local_file_path: str) -> str:
         r"""上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
         该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
 
@@ -183,11 +177,7 @@ class AppBuilderClient(Component):
             "conversation_id": (None, conversation_id),
         }
         headers = self.http_client.auth_header_v2()
-        if not client_token:
-            client_token = str(uuid.uuid4())
-        url = self.http_client.service_url_v2(
-            "/app/conversation/file/upload", client_token=client_token
-        )
+        url = self.http_client.service_url_v2("/app/conversation/file/upload")
         response = self.http_client.session.post(
             url, files=multipart_form_data, headers=headers
         )

@@ -43,14 +43,10 @@ public class AppBuilderClient extends Component {
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
     public String createConversation() throws IOException, AppBuilderServerException {
-        return innerCreateConversation(java.util.UUID.randomUUID().toString());
+        return innerCreateConversation();
     }
 
-    public String createConversation(String clientToken) throws IOException, AppBuilderServerException {
-        return innerCreateConversation(clientToken);
-    }
-
-    private String innerCreateConversation(String clientToken) throws IOException, AppBuilderServerException {
+    private String innerCreateConversation() throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CREATE_CONVERSATION_URL;
         if (this.appID == null || this.appID.isEmpty()) {
             throw new RuntimeException("Param 'appID' is required!");
@@ -58,7 +54,6 @@ public class AppBuilderClient extends Component {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("app_id", this.appID);
         String jsonBody = JsonUtils.serialize(requestBody);
-        url = url + "?clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
@@ -79,15 +74,10 @@ public class AppBuilderClient extends Component {
      */
     public String uploadLocalFile(String conversationId, String filePath)
             throws IOException, AppBuilderServerException {
-        return innerUploadLocalFile(conversationId, filePath, java.util.UUID.randomUUID().toString());
+        return innerUploadLocalFile(conversationId, filePath);
     }
 
-    public String uploadLocalFile(String conversationId, String filePath, String clientToken)
-            throws IOException, AppBuilderServerException {
-        return innerUploadLocalFile(conversationId, filePath, clientToken);
-    }
-
-    private String innerUploadLocalFile(String conversationId, String filePath, String clientToken)
+    private String innerUploadLocalFile(String conversationId, String filePath)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.UPLOAD_FILE_URL;
         if (this.appID == null || this.appID.isEmpty()) {
@@ -101,7 +91,6 @@ public class AppBuilderClient extends Component {
         builder.addTextBody("conversation_id", conversationId);
         builder.addTextBody("scenario", "assistant");
 
-        url = url + "?clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, builder.build());
         HttpResponse<FileUploadResponse> response = httpClient.execute(postRequest, FileUploadResponse.class);
 
