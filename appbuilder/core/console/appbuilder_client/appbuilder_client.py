@@ -241,6 +241,27 @@ class AppBuilderClient(Component):
             out = data_class.AppBuilderClientAnswer()
             _transform(resp, out)
             return Message(content=out)
+        
+    def run_with_handler(self,
+                        conversation_id: str,
+                        query: str = "",
+                        file_ids: list = [],
+                        tools: list[data_class.Tool] = None,
+                        stream: bool = False,
+                        event_handler = None,
+                        **kwargs):
+        assert event_handler is not None, "event_handler is None"
+        event_handler.init(
+            appbuilder_client=self,
+            conversation_id=conversation_id,
+            query=query,
+            file_ids=file_ids,
+            tools=tools,
+            stream=stream,
+            **kwargs
+        )
+        
+        return event_handler
 
     @staticmethod
     def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:

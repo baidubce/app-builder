@@ -4,6 +4,7 @@ import requests
 import tempfile
 import os
 
+appbuilder.logger.setLoglevel("DEBUG")
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-vGrDN4BvjP15rDrXBI9OC/6d435ece62ed09b396e1b051bd87869c11861332"
 os.environ["GATEWAY_URL_V2"] = "https://apaas-api-sandbox.baidu-int.com"
 
@@ -56,13 +57,15 @@ class TestAgentRuntime(unittest.TestCase):
             }
         ]
 
-        cities = ["北京", "上海"]
+        cities = ["北京", "上海", "广州", "深圳", "杭州"]
         query = "下面这些城市的天气怎么样：{}".format(",".join(cities))
         msg = builder.run(
             conversation_id=conversation_id,
             query=query,
             tools=tools)
+        print("------ Response: --------\n")
         print(msg.model_dump_json(indent=4))
+        print("------ End of response--------\n")
         event = msg.content.events[-1]
 
         idx = 0
@@ -80,8 +83,12 @@ class TestAgentRuntime(unittest.TestCase):
                 ]
             )
             idx += 1
+            print("------ Response: --------\n")
             print(msg_2.model_dump_json(indent=4))
+            print("------ End of response--------\n")
             event = msg_2.content.events[-1]
+        
+        print(msg.content.answer)
 
         
         
