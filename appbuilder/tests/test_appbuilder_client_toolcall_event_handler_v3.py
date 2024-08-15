@@ -28,10 +28,10 @@ class MyEventHandler(AppBuilderEventHandler):
                 }
             )
         return tool_output
-    
-    def success(self, run_context, run_response):
-        print("\n\033[1;31m","-> Agent 非流式回答: ", run_response.answer, "\033[0m")
-        
+
+    def running(self, run_context, run_response):
+        print("\n\033[1;31m","-> Agent 流式回答: \n", run_response.answer, "\033[0m")
+  
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestAgentRuntime(unittest.TestCase):
@@ -82,16 +82,27 @@ class TestAgentRuntime(unittest.TestCase):
             }
         ]
 
-        cities = ["北京", "上海", "广州"]
-        query = "下面这些城市的天气怎么样：{}".format(",".join(cities))
+        query = "北京的天气怎么样"
 
         with builder.run_with_handler(
             conversation_id = conversation_id,
             query = query,
             tools = tools,
+            stream = True,
             event_handler = MyEventHandler(),
         ) as run:
             run.until_done()
+
+        query = "上海的天气怎么样"
+        run = builder.run_with_handler(
+            conversation_id = conversation_id,
+            query = query,
+            tools = tools,
+            stream= True,
+            event_handler = MyEventHandler(),
+        )
+        for res in run:
+            print(res)
 
         
 if __name__ == '__main__':

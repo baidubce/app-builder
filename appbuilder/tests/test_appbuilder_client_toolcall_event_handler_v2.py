@@ -82,8 +82,7 @@ class TestAgentRuntime(unittest.TestCase):
             }
         ]
 
-        cities = ["北京", "上海", "广州"]
-        query = "下面这些城市的天气怎么样：{}".format(",".join(cities))
+        query = "北京的天气怎么样"
 
         with builder.run_with_handler(
             conversation_id = conversation_id,
@@ -92,6 +91,16 @@ class TestAgentRuntime(unittest.TestCase):
             event_handler = MyEventHandler(),
         ) as run:
             run.until_done()
+
+        query = "上海的天气怎么样"
+        run = builder.run_with_handler(
+            conversation_id = conversation_id,
+            query = query,
+            tools = tools,
+            event_handler = MyEventHandler(),
+        )
+        for res in run:
+            print(res)
 
         
 if __name__ == '__main__':

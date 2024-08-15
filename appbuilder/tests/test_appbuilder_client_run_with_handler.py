@@ -4,9 +4,6 @@ import requests
 import tempfile
 import os
 
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-vGrDN4BvjP15rDrXBI9OC/6d435ece62ed09b396e1b051bd87869c11861332"
-os.environ["GATEWAY_URL_V2"] = "https://apaas-api-sandbox.baidu-int.com"
-
 tools = {
     "name": "get_weather",
     "description": "这是一个获得指定地点天气的工具",
@@ -31,9 +28,8 @@ tools = {
     }
 }
 
-from appbuilder.core.console.appbuilder_client.run_helper import (
+from appbuilder.core.console.appbuilder_client.event_handler import (
     AppBuilderEventHandler,
-    AppBuilderRunManager
 )
 
 class MyEventHandler(AppBuilderEventHandler):
@@ -59,7 +55,7 @@ class MyEventHandler(AppBuilderEventHandler):
                 
 
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
@@ -71,7 +67,7 @@ class TestAgentRuntime(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.app_id = "4d4b1b27-d607-4d2a-9002-206134217a9f"
+        self.app_id = "b2a972c5-e082-46e5-b313-acbf51792422"
 
 
     def test_appbuilder_client_tool_call(self):

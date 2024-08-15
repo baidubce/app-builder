@@ -19,6 +19,16 @@ from appbuilder.core.console.appbuilder_client import data_class
 
 class AppBuilderClientRunContext(object):
     def __init__(self) -> None:
+        """
+        初始化方法。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            None
+        
+        """
         self.current_event = None
         self.current_tool_calls = None
         self.current_status = None
@@ -40,6 +50,23 @@ class AppBuilderEventHandler(object):
                  stream: bool = False,
                  event_handler=None,
                  **kwargs):
+        """
+        初始化类实例并设置相关参数。
+        
+        Args:
+            appbuilder_client (object): AppBuilder客户端实例对象。
+            conversation_id (str): 对话ID。
+            query (str): 用户输入的查询语句。
+            file_ids (list, optional): 文件ID列表，默认为None。
+            tools (list, optional): 工具列表，默认为None。
+            stream (bool, optional): 是否使用流式处理，默认为False。
+            event_handler (callable, optional): 事件处理函数，默认为None。
+            **kwargs: 其他可选参数。
+        
+        Returns:
+            None
+        
+        """
         self._appbuilder_client = appbuilder_client
         self._conversation_id = conversation_id
         self._query = query
@@ -55,6 +82,16 @@ class AppBuilderEventHandler(object):
         self._iterator = self.__run_process__() if not self._stream else self.__stream_run_process__()
 
     def __run_process__(self):
+        """
+        运行进程，并在每次执行后生成结果。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            Generator: 生成器，每次执行后返回结果。
+        
+        """
         while not self._is_complete:
             if not self._need_tool_call:
                 res = self._run()
@@ -63,8 +100,22 @@ class AppBuilderEventHandler(object):
                 res = self._submit_tool_output()
                 self.__event_process__(res)
             yield res
+        
+        self.reset_state()
 
     def __event_process__(self, run_response):
+        """
+        处理事件响应。
+        
+        Args:
+            run_response (RunResponse): 运行时响应对象。
+        
+        Returns:
+            None
+        
+        Raises:
+            ValueError: 当解析事件时发生异常或工具输出为空时。
+        """
         try:
             event = run_response.content.events[-1]
         except Exception as e:
@@ -109,16 +160,37 @@ class AppBuilderEventHandler(object):
                 "Unknown status: {}, response data: {}".format(event_status, run_response))
 
     def __stream_run_process__(self):
+        """
+        流式运行处理函数
+        
+        Args:
+            无参数。
+        
+        Returns:
+            Generator[Any, None, None]: 返回处理结果的生成器。
+        
+        """
         while not self._is_complete:
             if not self._need_tool_call:
                 res = self._run()
-                self.__stream_event_process__(res)
             else:
                 res = self._submit_tool_output()
-                self.__stream_event_process__(res)
-            yield res
+            for msg in self.__stream_event_process__(res):
+                yield msg    
 
     def __stream_event_process__(self, run_response):
+        """
+        处理流事件，并调用对应的方法
+        
+        Args:
+            run_response: 包含流事件信息的响应对象
+        
+        Returns:
+            None
+        
+        Raises:
+            ValueError: 当处理事件时发生异常或中断时工具输出为空时
+        """
         for msg in run_response.content:
             if len(msg.events) == 0:
                 continue
@@ -164,8 +236,21 @@ class AppBuilderEventHandler(object):
             else:
                 logger.warning(
                     "Unknown status: {}, response data: {}".format(event_status, run_response))
+            
+            yield msg
 
     def _update_run_context(self, run_context, run_response):
+        """
+        更新运行上下文。
+        
+        Args:
+            run_context (dict): 运行上下文字典。
+            run_response (object): 运行响应对象。
+        
+        Returns:
+            None
+        
+        """
         run_context.current_event = run_response.events[-1]
         run_context.current_tool_calls = run_context.current_event.tool_calls
         run_context.current_status =  run_context.current_event.status
@@ -212,26 +297,67 @@ class AppBuilderEventHandler(object):
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         if exc_type is not None:
             raise exc_val
+        
         return
 
+    def reset_state(self):
+        """
+        重置该对象的状态，将所有实例变量设置为默认值。
+        
+        Args:
+            无
+        
+        Returns:
+            无
+        
+        """
+        self._appbuilder_client = None
+        self._conversation_id = None
+        self._query = None
+        self._file_ids = None
+        self._tools = None
+        self._stream = False
+        self._event_handler = None
+        self._kwargs = None
+        self._last_tool_output = None
+        self._is_complete = False
+        self._need_tool_call = False
+        self._iterator = None
+
     def until_done(self):
+        """
+        迭代并遍历内部迭代器中的所有元素，直到迭代器耗尽。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            无返回值。
+        
+        """
         for _ in self._iterator:
             pass
 
     def interrupt(self, run_context, run_response):
-        return self.tool_calls(run_context, run_response)
+        # 用户可重载该方法，当event_status为interrupt时，会调用该方法
+        pass
 
     def preparing(self, run_context, run_response):
+        # 用户可重载该方法，当event_status为preparing时，会调用该方法
         pass
 
     def running(self, run_context, run_response):
+        # 用户可重载该方法，当event_status为running时，会调用该方法
         pass
     
     def error(self, run_context, run_response):
+        # 用户可重载该方法，当event_status为error时，会调用该方法
         pass
 
     def done(self, run_context, run_response):
+        # 用户可重载该方法，当event_status为done时，会调用该方法
         pass
 
     def success(self, run_context, run_response):
+        # 用户可重载该方法，当event_status为success时，会调用该方法
         pass
