@@ -13,6 +13,9 @@
 # limitations under the License.
 import os
 from importlib import import_module
+from typing import Collection
+
+from appbuilder.utils.trace.package import _instruments
 
 from opentelemetry import trace
 from opentelemetry.instrumentation.instrumentor import BaseInstrumentor
@@ -40,8 +43,6 @@ from appbuilder.utils.trace._function import(
 from appbuilder import logger
 
 _MODULE_1 = 'appbuilder'
-_MODULE_2 = 'appbuilder-sdk-ext'
-
 
 class AppbuilderInstrumentor(BaseInstrumentor):
     """
@@ -68,8 +69,8 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         '_original_components_stream_run',
         '_original_list',
     )
-    def instrumentation_dependencies(self):
-        pass
+    def instrumentation_dependencies(self) -> Collection[str]:
+        return _instruments
 
     def _instrument(self, **kwargs):
         """
