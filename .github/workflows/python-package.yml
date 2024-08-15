@@ -11,31 +11,31 @@ on:
     branches: [ "master" ]
 
 jobs:
-  # Pylint:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       python-version: ["3.12"]
+  Pylint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
 
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Set up Python ${{ matrix.python-version }}
-  #     uses: actions/setup-python@v3
-  #     with:
-  #       python-version: ${{ matrix.python-version }}
-  #   - name: Install dependencies
-  #     run: |
-  #       python -m pip install --upgrade pip
-  #       python -m pip install flake8 pytest
-  #       python -m pip install chainlit~=1.0.200 flask~=2.3.2 flask-restful==0.3.9
-  #       if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-  #   - name: Lint with flake8
-  #     run: |
-  #       # stop the build if there are Python syntax errors or undefined names
-  #       flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-  #       # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-  #       flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        python -m pip install chainlit~=1.0.200 flask~=2.3.2 flask-restful==0.3.9
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
   Linux-CI-Tests:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
       APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
       BAIDU_VDB_API_KEY: apaasTest1
       INSTANCE_ID: vdb-bj-vuzmppgqrnhv
-      DATASET_ID: c4652b26-3f2b-4cd1-9ca2-98cd26adc36f
+      DATASET_ID: 2626a842-132f-45ce-977f-f701d18fd104
       APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-bcKsgHd39g0Aaq3nCYUUQ/b06384229df1462c6fb011383d09230346a20ac4
     strategy:
       fail-fast: false
@@ -89,8 +89,9 @@ jobs:
         python3 -m pip install coverage
         python3 -m pip install diff-cover
         python3 -m pip install pydub
+        python3 -m pip install SQLAlchemy==2.0.31
         python3 -m pip install chainlit~=1.0.200 flask~=2.3.2 flask-restful==0.3.9
-        python3 -m pip install opentelemetry-exporter-otlp==1.25.0 opentelemetry-instrumentation==0.46b0 opentelemetry-sdk==1.25.0 opentelemetry-api==1.25.0
+        python3 -m pip install opentelemetry-exporter-otlp==1.23.0 opentelemetry-instrumentation==0.44b0 opentelemetry-sdk==1.23.0 opentelemetry-api==1.23.0
     - name: Build whl
       run: |
         cd cicd/app-builder     
