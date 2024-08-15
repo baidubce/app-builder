@@ -24,11 +24,7 @@ class AppBuilderClientRunContext(object):
         self.current_status = None
         self.need_tool_submit = False
         self.is_complete = False
-
-    def update_step_context(self):
-        pass
-
-
+        self.current_thought = ""
 
 
 class AppBuilderEventHandler(object):
@@ -67,21 +63,12 @@ class AppBuilderEventHandler(object):
                 res = self._submit_tool_output()
                 self.__event_process__(res)
             yield res
-        
-    def _update_run_context(self, run_context, run_response):
-        run_context.current_event = run_response.content.events[-1]
-        run_context.current_tool_calls = run_context.current_event.tool_calls
-        run_context.current_status =  run_context.current_event.status
-        run_context.need_tool_submit = run_context.current_status == 'interrupt'
-        run_context.is_complete = run_context.current_status == 'success'
 
     def __event_process__(self, run_response):
         try:
             event = run_response.content.events[-1]
         except Exception as e:
             raise ValueError(e)
-        
-        print(event.model_dump_json(indent=4) + "\n\n")
         
         event_status = event.status
         
@@ -91,15 +78,19 @@ class AppBuilderEventHandler(object):
             self._need_tool_call = True
 
         context_func_map = {
-            "interrupt": self.tool_calls,
-            "success": self.run_end 
+            "preparing": self.preparing,
+            "running": self.running,
+            "error": self.error,
+            "done": self.done,
+            "interrupt": self.interrupt,
+            "success": self.success,
         }
         
         run_context = AppBuilderClientRunContext()
-        self._update_run_context(run_context, run_response)
+        self._update_run_context(run_context, run_response.content)
         if event_status in context_func_map:
             func = context_func_map[event_status]
-            func_res = func(run_context, run_response)
+            func_res = func(run_context, run_response.content)
 
             if event_status == "interrupt":
                 assert isinstance(func_res, list)
@@ -117,6 +108,76 @@ class AppBuilderEventHandler(object):
             logger.warning(
                 "Unknown status: {}, response data: {}".format(event_status, run_response))
 
+    def __stream_run_process__(self):
+        while not self._is_complete:
+            if not self._need_tool_call:
+                res = self._run()
+                self.__stream_event_process__(res)
+            else:
+                res = self._submit_tool_output()
+                self.__stream_event_process__(res)
+            yield res
+
+    def __stream_event_process__(self, run_response):
+        for msg in run_response.content:
+            if len(msg.events) == 0:
+                continue
+            try:
+                event = msg.events[-1]
+            except Exception as e:
+                raise ValueError(e)
+            
+            event_status = event.status
+            
+            if event.status == 'success':
+                self._is_complete = True
+            elif event.status == 'interrupt':
+                self._need_tool_call = True
+
+            context_func_map = {
+                "preparing": self.preparing,
+                "running": self.running,
+                "error": self.error,
+                "done": self.done,
+                "interrupt": self.interrupt,
+                "success": self.success,
+            }
+            
+            run_context = AppBuilderClientRunContext()
+            self._update_run_context(run_context, msg)
+            if event_status in context_func_map:
+                func = context_func_map[event_status]
+                func_res = func(run_context, msg)
+
+                if event_status == "interrupt":
+                    assert isinstance(func_res, list)
+                    if len(func_res) == 0:
+                        raise ValueError("Tool output is empty")
+                    else:
+                        if not isinstance(func_res[0], data_class.ToolOutput):
+                            try:
+                                check_tool_output = data_class.ToolOutput(**func_res[0])
+                            except Exception as e:
+                                logger.info("func tool_calls's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]")
+                                raise ValueError(e)
+                    self._last_tool_output =func_res
+            else:
+                logger.warning(
+                    "Unknown status: {}, response data: {}".format(event_status, run_response))
+
+    def _update_run_context(self, run_context, run_response):
+        run_context.current_event = run_response.events[-1]
+        run_context.current_tool_calls = run_context.current_event.tool_calls
+        run_context.current_status =  run_context.current_event.status
+        run_context.need_tool_submit = run_context.current_status == 'interrupt'
+        run_context.is_complete = run_context.current_status == 'success'
+        try:
+            run_context.current_thought = run_context.current_event.detail.get(
+                "text", {}).get(
+                    "function_call", {}).get(
+                        "thought", "")
+        except Exception as e:
+            pass
 
     def _run(self):
         res = self._appbuilder_client.run(
@@ -137,15 +198,6 @@ class AppBuilderEventHandler(object):
             tool_outputs=self._last_tool_output
         )
         return res
-    
-    def __stream_run_process__(self):
-        pass
-
-    def __stream_event_process__(self, event):
-        pass
-
-    def __timeout_process__(self, event):
-        pass
 
     def __next__(self):
         return self._iterator.__next__()
@@ -166,17 +218,20 @@ class AppBuilderEventHandler(object):
         for _ in self._iterator:
             pass
 
-    # def befor_tool_calls(self, stream_run_context):
-    #     pass
+    def interrupt(self, run_context, run_response):
+        return self.tool_calls(run_context, run_response)
 
-    def tool_calls(self, run_context, run_response):
+    def preparing(self, run_context, run_response):
         pass
 
-    def run_begin(self, run_context, run_response):
+    def running(self, run_context, run_response):
+        pass
+    
+    def error(self, run_context, run_response):
         pass
 
-    def run_end(self, run_context, run_response):
+    def done(self, run_context, run_response):
         pass
 
-    # def answers(self):
-    #     pass
+    def success(self, run_context, run_response):
+        pass

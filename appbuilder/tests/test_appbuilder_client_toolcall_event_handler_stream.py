@@ -6,15 +6,21 @@ import os
 from appbuilder.core.console.appbuilder_client.event_handler import AppBuilderEventHandler
 
 class MyEventHandler(AppBuilderEventHandler):
-    def get_current_weather(self, location=None, unit="celsius"):
+    def get_current_weather(self, location=None, unit="摄氏度"):
         return "{} 的温度是 {} {}".format(location, 20, unit)
     
-    def tool_calls(self, run_context, run_response):
+    def interrupt(self, run_context, run_response):
+        thought = run_context.current_thought
+        # 绿色打印
+        print("\033[1;32m", "-> Agent 中间思考: ", thought, "\033[0m")
+
         tool_output = []
         for tool_call in run_context.current_tool_calls:
             tool_call_id = tool_call.id
             tool_res = self.get_current_weather(
                 **tool_call.function.arguments)
+            # 蓝色打印
+            print("\033[1;34m", "-> 本地ToolCall结果: ", tool_res, "\033[0m\n")
             tool_output.append(
                 {
                     "tool_call_id": tool_call_id,
@@ -23,8 +29,8 @@ class MyEventHandler(AppBuilderEventHandler):
             )
         return tool_output
     
-    def run_end(self, run_context, run_response):
-        print(run_response.content.answer)
+    def running(self, run_context, run_response):
+        print("\n\033[1;31m","-> Agent 流式回答: \n", run_response.answer, "\033[0m")
         
 
 
@@ -73,7 +79,7 @@ class TestAgentRuntime(unittest.TestCase):
                                 "type": "string",
                                 "description": "城市名，举例：北京",
                             },
-                            "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
+                            "unit": {"type": "string", "enum": ["摄氏度", "华氏度"]},
                         },
                         "required": ["location", "unit"],
                     },
@@ -88,6 +94,7 @@ class TestAgentRuntime(unittest.TestCase):
             conversation_id = conversation_id,
             query = query,
             tools = tools,
+            stream = True,
             event_handler = MyEventHandler(),
         ) as run:
             run.until_done()
