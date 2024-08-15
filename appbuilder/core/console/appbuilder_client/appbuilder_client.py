@@ -187,26 +187,32 @@ class AppBuilderClient(Component):
         return resp.id
 
     @client_run_trace
-    def run(
-        self,
-        conversation_id: str,
-        query: str,
-        file_ids: list = [],
-        stream: bool = False,
-    ) -> Message:
-        r"""动物识别
-        参数:
-            query (str: 必须): query内容
-            conversation_id (str, 必须): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
-            file_ids(list[str], 可选):
-            stream (bool, 可选): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
-        返回: message (obj: `Message`): 对话结果.
+    def run(self, conversation_id: str,
+            query: str = "",
+            file_ids: list = [],
+            stream: bool = False,
+            tools: list[data_class.Tool] = None,
+            tool_outputs: list[data_class.ToolOutput] = None,
+            **kwargs
+            ) -> Message:
+        r"""
+            参数:
+                query (str: 必须): query内容
+                conversation_id (str, 必须): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+                file_ids(list[str], 可选):
+                stream (bool, 可选): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
+                tools(list[data_class.Tools], 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
+                tool_outputs(list[data_class.ToolOutput], 可选): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
+            返回: message (obj: `Message`): 对话结果.
         """
 
         if len(conversation_id) == 0:
             raise ValueError(
                 "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
             )
+        
+        if query == "" and (tool_outputs is None or len(tool_outputs) == 0):
+            raise ValueError("AppBuilderClient Run API: query and tool_outputs cannot both be empty")
 
         req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
@@ -214,6 +220,8 @@ class AppBuilderClient(Component):
             query=query,
             stream=True if stream else False,
             file_ids=file_ids,
+            tools=tools,
+            tool_outputs=tool_outputs
         )
 
         headers = self.http_client.auth_header_v2()
@@ -233,6 +241,27 @@ class AppBuilderClient(Component):
             out = data_class.AppBuilderClientAnswer()
             _transform(resp, out)
             return Message(content=out)
+        
+    def run_with_handler(self,
+                        conversation_id: str,
+                        query: str = "",
+                        file_ids: list = [],
+                        tools: list[data_class.Tool] = None,
+                        stream: bool = False,
+                        event_handler = None,
+                        **kwargs):
+        assert event_handler is not None, "event_handler is None"
+        event_handler.init(
+            appbuilder_client=self,
+            conversation_id=conversation_id,
+            query=query,
+            file_ids=file_ids,
+            tools=tools,
+            stream=stream,
+            **kwargs
+        )
+        
+        return event_handler
 
     @staticmethod
     def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:
@@ -296,5 +325,6 @@ def _transform(
             content_type=ev.content_type,
             detail=ev.outputs,
             usage=ev.usage,
+            tool_calls=ev.tool_calls,
         )
         out.events.append(event)
