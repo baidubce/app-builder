@@ -14,6 +14,7 @@
 
 import os
 import json
+import uuid
 from pydantic import BaseModel
 from pydantic import Field
 from typing import Union
@@ -58,12 +59,16 @@ class KnowledgeBase(Component):
             knowledge_id=response["id"], knowledge_name=response["name"]
         )
 
-    def upload_file(self, file_path: str) -> data_class.KnowledgeBaseUploadFileResponse:
+    def upload_file(
+        self, file_path: str, client_token: str = None
+    ) -> data_class.KnowledgeBaseUploadFileResponse:
         if not os.path.exists(file_path):
             raise FileNotFoundError("File {} does not exist".format(file_path))
 
         headers = self.http_client.auth_header_v2()
-        url = self.http_client.service_url_v2("/file")
+        if not client_token:
+            client_token = str(uuid.uuid4())
+        url = self.http_client.service_url_v2("/file", client_token=client_token)
 
         with open(file_path, "rb") as f:
             multipart_form_data = {"file": (os.path.basename(file_path), f)}
@@ -88,6 +93,7 @@ class KnowledgeBase(Component):
         is_enhanced: bool = False,
         custom_process_rule: Optional[data_class.CustomProcessRule] = None,
         knowledge_base_id: Optional[str] = None,
+        client_token: str = None,
     ) -> data_class.KnowledgeBaseAddDocumentResponse:
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -97,7 +103,11 @@ class KnowledgeBase(Component):
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
-        url = self.http_client.service_url_v2("/knowledge_base/document")
+        if not client_token:
+            client_token = str(uuid.uuid4())
+        url = self.http_client.service_url_v2(
+            "/knowledge_base/document", client_token=client_token
+        )
 
         request = data_class.KnowledgeBaseAddDocumentRequest(
             knowledge_base_id=knowledge_base_id or self.knowledge_id,
@@ -119,7 +129,10 @@ class KnowledgeBase(Component):
         return resp
 
     def delete_document(
-        self, document_id: str, knowledge_base_id: Optional[str] = None
+        self,
+        document_id: str,
+        knowledge_base_id: Optional[str] = None,
+        client_token: str = None,
     ) -> data_class.KnowledgeBaseDeleteDocumentResponse:
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -129,7 +142,11 @@ class KnowledgeBase(Component):
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
-        url = self.http_client.service_url_v2("/knowledge_base/document")
+        if not client_token:
+            client_token = str(uuid.uuid4())
+        url = self.http_client.service_url_v2(
+            "/knowledge_base/document", client_token=client_token
+        )
         request = data_class.KnowledgeBaseDeleteDocumentRequest(
             knowledge_base_id=knowledge_base_id or self.knowledge_id,
             document_id=document_id,
@@ -186,12 +203,15 @@ class KnowledgeBase(Component):
         esUrl: str = None,
         esUserName: str = None,
         esPassword: str = None,
+        client_token: str = None,
     ) -> data_class.KnowledgeBaseDetailResponse:
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
+        if not client_token:
+            client_token = str(uuid.uuid4())
         url = self.http_client.service_url_v2(
-            "/knowledgeBase?Action=CreateKnowledgeBase"
+            "/knowledgeBase?Action=CreateKnowledgeBase", client_token=client_token
         )
 
         request = data_class.KnowledgeBaseCreateKnowledgeBaseRequest(
@@ -255,6 +275,7 @@ class KnowledgeBase(Component):
         knowledge_base_id: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
+        client_token: str = None,
     ):
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -269,8 +290,10 @@ class KnowledgeBase(Component):
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
+        if not client_token:
+            client_token = str(uuid.uuid4())
         url = self.http_client.service_url_v2(
-            "/knowledgeBase?Action=ModifyKnowledgeBase"
+            "/knowledgeBase?Action=ModifyKnowledgeBase", client_token=client_token
         )
 
         response = self.http_client.session.post(
@@ -283,7 +306,9 @@ class KnowledgeBase(Component):
 
         return data
 
-    def delete_knowledge_base(self, knowledge_base_id: Optional[str] = None):
+    def delete_knowledge_base(
+        self, knowledge_base_id: Optional[str] = None, client_token: str = None
+    ):
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
                 "knowledge_base_id cannot be empty, please call `create` first or use existing one"
@@ -295,8 +320,10 @@ class KnowledgeBase(Component):
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
+        if not client_token:
+            client_token = str(uuid.uuid4())
         url = self.http_client.service_url_v2(
-            "/knowledgeBase?Action=DeleteKnowledgeBase"
+            "/knowledgeBase?Action=DeleteKnowledgeBase", client_token=client_token
         )
 
         response = self.http_client.session.post(
@@ -315,6 +342,7 @@ class KnowledgeBase(Component):
         contentFormat: str = "",
         source: data_class.DocumentSource = None,
         processOption: data_class.DocumentProcessOption = None,
+        client_token: str = None,
     ):
         if self.knowledge_id == None and id == None:
             raise ValueError(
@@ -323,8 +351,11 @@ class KnowledgeBase(Component):
 
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
-
-        url = self.http_client.service_url_v2("/knowledgeBase?Action=CreateDocuments")
+        if not client_token:
+            client_token = str(uuid.uuid4())
+        url = self.http_client.service_url_v2(
+            "/knowledgeBase?Action=CreateDocuments", client_token=client_token
+        )
 
         request = data_class.KnowledgeBaseCreateDocumentsRequest(
             id=id or self.knowledge_id,
@@ -383,12 +414,17 @@ class KnowledgeBase(Component):
         content_format: str = "rawText",
         id: Optional[str] = None,
         processOption: data_class.DocumentProcessOption = None,
+        client_token: str = None,
     ):
         if not os.path.exists(file_path):
             raise FileNotFoundError("File {} does not exist".format(file_path))
 
         headers = self.http_client.auth_header_v2()
-        url = self.http_client.service_url_v2("/knowledgeBase?Action=UploadDocuments")
+        if not client_token:
+            client_token = str(uuid.uuid4())
+        url = self.http_client.service_url_v2(
+            "/knowledgeBase?Action=UploadDocuments", client_token=client_token
+        )
 
         with open(file_path, "rb") as f:
             multipart_form_data = {"file": (os.path.basename(file_path), f)}
@@ -421,11 +457,16 @@ class KnowledgeBase(Component):
         self,
         documentId: str,
         content: str,
+        client_token: str = None,
     ) -> data_class.CreateChunkResponse:
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
-        url = self.http_client.service_url_v2("/knowledgeBase?Action=CreateChunk")
+        if not client_token:
+            client_token = str(uuid.uuid4())
+        url = self.http_client.service_url_v2(
+            "/knowledgeBase?Action=CreateChunk", client_token=client_token
+        )
 
         request = data_class.CreateChunkRequest(
             documentId=documentId,
@@ -448,11 +489,16 @@ class KnowledgeBase(Component):
         chunkId: str,
         content: str,
         enable: bool,
+        client_token: str = None,
     ):
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
-        url = self.http_client.service_url_v2("/knowledgeBase?Action=ModifyChunk")
+        if not client_token:
+            client_token = str(uuid.uuid4())
+        url = self.http_client.service_url_v2(
+            "/knowledgeBase?Action=ModifyChunk", client_token=client_token
+        )
 
         request = data_class.ModifyChunkRequest(
             chunkId=chunkId,
@@ -473,11 +519,16 @@ class KnowledgeBase(Component):
     def delete_chunk(
         self,
         chunkId: str,
+        client_token: str = None,
     ):
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
-        url = self.http_client.service_url_v2("/knowledgeBase?Action=DeleteChunk")
+        if not client_token:
+            client_token = str(uuid.uuid4())
+        url = self.http_client.service_url_v2(
+            "/knowledgeBase?Action=DeleteChunk", client_token=client_token
+        )
 
         request = data_class.DeleteChunkRequest(
             chunkId=chunkId,
@@ -547,20 +598,19 @@ class KnowledgeBase(Component):
         resp = data_class.DescribeChunksResponse(**data)
         return resp
 
-
     def get_all_documents(self, knowledge_base_id: Optional[str] = None) -> dict:
         """
         获取知识库中所有文档。
-        
+
         Args:
             knowledge_base_id (Optional[str], optional): 知识库的ID。如果为None，则使用当前实例的knowledge_id。默认为None。
-        
+
         Returns:
             dict: 包含所有文档的列表。
-        
+
         Raises:
             ValueError: 如果knowledge_base_id为空，且当前实例没有已创建的knowledge_id时抛出。
-        
+
         """
 
         if self.knowledge_id == None and knowledge_base_id == None:
@@ -569,15 +619,19 @@ class KnowledgeBase(Component):
             )
         knowledge_base_id = knowledge_base_id or self.knowledge_id
         doc_list = []
-        response_per_time = self.get_documents_list(knowledge_base_id=knowledge_base_id, limit=100)
-        list_len_per_time = len(response_per_time.data) 
+        response_per_time = self.get_documents_list(
+            knowledge_base_id=knowledge_base_id, limit=100
+        )
+        list_len_per_time = len(response_per_time.data)
         if list_len_per_time != 0:
             doc_list.extend(response_per_time.data)
         while list_len_per_time == 100:
-            after_id = response_per_time.data[-1].id  
-            response_per_time = self.get_documents_list(knowledge_base_id=knowledge_base_id, after=after_id, limit=100)
-            list_len_per_time = len(response_per_time.data) 
+            after_id = response_per_time.data[-1].id
+            response_per_time = self.get_documents_list(
+                knowledge_base_id=knowledge_base_id, after=after_id, limit=100
+            )
+            list_len_per_time = len(response_per_time.data)
             if list_len_per_time != 0:
-                doc_list.extend(response_per_time.data)     
+                doc_list.extend(response_per_time.data)
 
         return doc_list

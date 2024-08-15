@@ -25,11 +25,13 @@ type CreateDocumentRequest struct {
 	IsEnhanced        bool               `json:"is_enhanced"`
 	FileIDS           []string           `json:"file_ids,omitempty"`
 	CustomProcessRule *CustomProcessRule `json:"custom_process_rule,omitempty"`
+	ClientToken       string             `json:"client_token,omitempty"`
 }
 
 type DeleteDocumentRequest struct {
 	KnowledgeBaseID string `json:"knowledge_base_id"`
 	DocumentID      string `json:"document_id"`
+	ClientToken     string `json:"client_token,omitempty"`
 }
 
 type GetDocumentListRequest struct {
@@ -98,12 +100,19 @@ type KnowledgeBaseDetail struct {
 	Name        string              `json:"name,omitempty"`
 	Description string              `json:"description,omitempty"`
 	Config      *KnowlegeBaseConfig `json:"config,omitempty"`
+	ClientToken string              `json:"client_token,omitempty"`
 }
 
 type ModifyKnowlegeBaseRequest struct {
-	ID          string `json:"id"`
+	ID          string  `json:"id"`
 	Name        *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
+	ClientToken string  `json:"client_token,omitempty"`
+}
+
+type DeleteKnowlegeBaseRequest struct {
+	ID          string `json:"id"`
+	ClientToken string `json:"client_token,omitempty"`
 }
 
 type GetKnowledgeBaseListRequest struct {
@@ -167,11 +176,13 @@ type CreateDocumentsRequest struct {
 	ContentFormat string                  `json:"contentFormat"`
 	Source        DocumentsSource         `json:"source"`
 	ProcessOption *DocumentsProcessOption `json:"processOption,omitempty"`
+	ClientToken   string                  `json:"client_token,omitempty"`
 }
 
 type CreateChunkRequest struct {
-	DocumentID string `json:"documentId"`
-	Content    string `json:"content"`
+	DocumentID  string `json:"documentId"`
+	Content     string `json:"content"`
+	ClientToken string `json:"client_token,omitempty"`
 }
 
 type CreateChunkResponse struct {
@@ -179,13 +190,15 @@ type CreateChunkResponse struct {
 }
 
 type ModifyChunkRequest struct {
-	ChunkID string `json:"chunkId"`
-	Content string `json:"content"`
-	Enable  bool   `json:"enable"`
+	ChunkID     string `json:"chunkId"`
+	Content     string `json:"content"`
+	Enable      bool   `json:"enable"`
+	ClientToken string `json:"client_token,omitempty"`
 }
 
 type DeleteChunkRequest struct {
-	ChunkID string `json:"chunkId"`
+	ChunkID     string `json:"chunkId"`
+	ClientToken string `json:"client_token,omitempty"`
 }
 
 type DescribeChunkRequest struct {

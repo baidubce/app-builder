@@ -31,7 +31,7 @@ from appbuilder.core.constants import (
     GATEWAY_URL_V2,
     CONSOLE_OPENAPI_VERSION,
     CONSOLE_OPENAPI_PREFIX,
-    SECRET_KEY_PREFIX
+    SECRET_KEY_PREFIX,
 )
 from appbuilder.utils.logger_util import logger
 
@@ -39,11 +39,9 @@ from appbuilder.utils.logger_util import logger
 class HTTPClient:
     r"""HTTPClient类,实现与后端服务交互的公共方法"""
 
-    def __init__(self,
-                 secret_key: Optional[str] = None,
-                 gateway: str = "",
-                 gateway_v2: str = ""
-                 ):
+    def __init__(
+        self, secret_key: Optional[str] = None, gateway: str = "", gateway_v2: str = ""
+    ):
         r"""HTTPClient初始化方法.
 
         参数:
@@ -54,7 +52,7 @@ class HTTPClient:
             无
         """
         self._init_secret_key(secret_key)
-        
+
         # Component
         self._init_gateway_url(gateway)
 
@@ -84,13 +82,16 @@ class HTTPClient:
             self.gateway_v2 = "https://" + self.gateway_v2
 
         self.console_openapi_verion = os.getenv(
-            "CONSOLE_OPENAPI_VERSION", CONSOLE_OPENAPI_VERSION)
+            "CONSOLE_OPENAPI_VERSION", CONSOLE_OPENAPI_VERSION
+        )
         self.console_openapi_prefix = os.getenv(
-            "CONSOLE_OPENAPI_PREFIX", CONSOLE_OPENAPI_PREFIX)
+            "CONSOLE_OPENAPI_PREFIX", CONSOLE_OPENAPI_PREFIX
+        )
 
     def _init_secret_key(self, secret_key: str):
-        self.secret_key = secret_key if secret_key else os.getenv(
-            "APPBUILDER_TOKEN", "")
+        self.secret_key = (
+            secret_key if secret_key else os.getenv("APPBUILDER_TOKEN", "")
+        )
         if not self.secret_key:
             raise ValueError(
                 "secret_key is empty, please pass a nonempty secret_key "
@@ -99,22 +100,22 @@ class HTTPClient:
         secret_key_prefix = os.getenv("SECRET_KEY_PREFIX", SECRET_KEY_PREFIX)
 
         if not self.secret_key.startswith(secret_key_prefix):
-            self.secret_key = "{} {}".format(
-                secret_key_prefix, self.secret_key)
+            self.secret_key = "{} {}".format(secret_key_prefix, self.secret_key)
 
         logger.debug("AppBuilder Secret key: {}\n".format(self.secret_key))
 
     @staticmethod
     def check_response_header(response: requests.Response):
         r"""check_response_header is a helper method for check head status .
-            :param response: requests.Response.
-            :rtype:
+        :param response: requests.Response.
+        :rtype:
         """
         status_code = response.status_code
         if status_code == requests.codes.ok:
             return
         message = "request_id={} , http status code is {}, body is {}".format(
-            __class__.response_request_id(response), status_code, response.text)
+            __class__.response_request_id(response), status_code, response.text
+        )
         if status_code == requests.codes.bad_request:
             raise BadRequestException(message)
         elif status_code == requests.codes.forbidden:
@@ -130,9 +131,9 @@ class HTTPClient:
 
     def service_url(self, sub_path: str, prefix: str = None):
         r"""service_url is a helper method for concatenate service url.
-            :param sub_path: service unique sub path.
-            :param prefix: service prefix.
-            :rtype: str.
+        :param sub_path: service unique sub path.
+        :param prefix: service prefix.
+        :rtype: str.
         """
         # host + fix prefix + sub service path
         prefix = prefix if prefix else "/rpc/2.0/cloud_hub"
@@ -140,44 +141,55 @@ class HTTPClient:
         logger.debug("Service url: {}\n".format(final_url))
         return final_url
 
-    def service_url_v2(self, sub_path: str):
+    def service_url_v2(self, sub_path: str, client_token: str = None):
         r"""service_url is a helper method for concatenate service url for OpenAPI, only used by AppBuilderClient.
         :param sub_path: service unique sub path.
         :rtype: str.
         """
         # console_prefix =
-        final_url = self.gateway_v2 + self.console_openapi_prefix + \
-            self.console_openapi_verion+sub_path
+        final_url = (
+            self.gateway_v2
+            + self.console_openapi_prefix
+            + self.console_openapi_verion
+            + sub_path
+        )
+        if client_token:
+            if "?" in final_url:
+                final_url += "&clientToken=" + client_token
+            else:
+                final_url += "?clientToken=" + client_token
         logger.debug("Service url: {}\n".format(final_url))
         return final_url
 
     @staticmethod
     def check_response_json(data: dict):
         r"""check_response_json is a helper method for check backend server response.
-            :param: dict, body response data.
-            :rtype: str.
+        :param: dict, body response data.
+        :rtype: str.
         """
         if "code" in data and "message" in data and "requestId" in data:
             raise AppBuilderServerException(
-                data["requestId"], data["code"], data["message"])
+                data["requestId"], data["code"], data["message"]
+            )
 
     @staticmethod
     def check_console_response(response: requests.Response):
         r"""check_console_response is a helper method for console check backend server response.
-            :param: dict, body response data.
-            :rtype: str.
+        :param: dict, body response data.
+        :rtype: str.
         """
         data = response.json()
         if "code" in data and data.get("code") != 0:
             requestId = __class__.response_request_id(response)
-            raise AppBuilderServerException(
-                requestId, data["code"], data["message"])
+            raise AppBuilderServerException(requestId, data["code"], data["message"])
 
     def auth_header(self, request_id: Optional[str] = None):
         r"""auth_header is a helper method return auth info"""
         auth_header = get_default_header()
         new_request_id = str(uuid.uuid4())
-        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else new_request_id
+        auth_header["X-Appbuilder-Request-Id"] = (
+            request_id if request_id else new_request_id
+        )
         auth_header["X-Bce-Request-Id"] = request_id if request_id else new_request_id
         auth_header["X-Appbuilder-Authorization"] = self.secret_key
         logger.debug("Request header: {}\n".format(auth_header))
@@ -187,7 +199,9 @@ class HTTPClient:
         r"""auth_header_v2 is a helper method return auth info for OpenAPI, only used by AppBuilderClient"""
         auth_header = get_default_header()
         new_request_id = str(uuid.uuid4())
-        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else new_request_id
+        auth_header["X-Appbuilder-Request-Id"] = (
+            request_id if request_id else new_request_id
+        )
         auth_header["X-Bce-Request-Id"] = request_id if request_id else new_request_id
         auth_header["Authorization"] = self.secret_key
         logger.debug("Request header: {}\n".format(auth_header))
@@ -209,9 +223,11 @@ class HTTPClient:
                     )
                 )
             timeout = kwargs.get("timeout", None)
-            if timeout and not (isinstance(timeout, float) or isinstance(timeout, tuple)):
+            if timeout and not (
+                isinstance(timeout, float) or isinstance(timeout, tuple)
+            ):
                 raise InvalidRequestArgumentError(
-                    "Request argument \"timeout\" format error, Expected timeout be float or tuple of float"
+                    'Request argument "timeout" format error, Expected timeout be float or tuple of float'
                 )
             return func(*args, **kwargs)
 
@@ -244,7 +260,9 @@ class AssistantHTTPClient(HTTPClient):
         auth_header = get_default_header()
         auth_header["Authorization"] = self.secret_key
         new_request_id = str(uuid.uuid4())
-        auth_header["X-Appbuilder-Request-Id"] = request_id if request_id else new_request_id
+        auth_header["X-Appbuilder-Request-Id"] = (
+            request_id if request_id else new_request_id
+        )
         auth_header["X-Bce-Request-Id"] = request_id if request_id else new_request_id
         auth_header["X-Appbuilder-Authorization"] = self.secret_key
         auth_header["Content-Type"] = "application/json"
@@ -267,11 +285,15 @@ class AssistantHTTPClient(HTTPClient):
             AssistantServerException: 如果助手返回了错误信息，则抛出该异常。
 
         """
-        if 'error' in data:
+        if "error" in data:
             raise AssistantServerException(
                 request_id=request_id,
-                code=data['error']['code'],
-                message=data['error']['message'],
-                type=data['error']['type'],
-                params=data['error']['param'] if 'param' in data['error'] else data['error']['params'],
+                code=data["error"]["code"],
+                message=data["error"]["message"],
+                type=data["error"]["type"],
+                params=(
+                    data["error"]["param"]
+                    if "param" in data["error"]
+                    else data["error"]["params"]
+                ),
             )
