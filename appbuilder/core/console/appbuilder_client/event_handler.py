@@ -152,7 +152,7 @@ class AppBuilderEventHandler(object):
                         try:
                             check_tool_output = data_class.ToolOutput(**func_res[0])
                         except Exception as e:
-                            logger.info("func tool_calls's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]")
+                            logger.error("func interrupt's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]")
                             raise ValueError(e)
                 self._last_tool_output =func_res
         else:
@@ -230,7 +230,7 @@ class AppBuilderEventHandler(object):
                             try:
                                 check_tool_output = data_class.ToolOutput(**func_res[0])
                             except Exception as e:
-                                logger.info("func tool_calls's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]")
+                                logger.info("func interrupt's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]")
                                 raise ValueError(e)
                     self._last_tool_output =func_res
             else:
