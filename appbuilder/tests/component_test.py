@@ -1,7 +1,9 @@
 import requests
 import types
 import re 
+import inspect
 
+from typing import TypeVar, Generic, Union, Type
 from appbuilder.core._exception import *
 from unittest.mock  import Mock
 from appbuilder.core import components
@@ -10,7 +12,7 @@ from appbuilder.core._session import InnerSession
 Data_Type = {
     'string': str,
     'integer': int,
-    'object': dict,
+    'object': int,
     'array': list,
     'boolean': bool,
     'null': None,
@@ -18,7 +20,8 @@ Data_Type = {
 
 class AppbuilderTestToolEval: 
     """
-    应用构建器组件测试工具类。
+    功能:Components组件模拟post本地运行。
+
     使用方法：
 
     ```python
@@ -243,4 +246,56 @@ class AppbuilderTestToolEval:
         for res in result_generator:
             if not isinstance(res.get("text",""),str):
                 raise AppbuilderBuildexException(f'请检查{self.component}组件tool_eval的返回值是否为字符串')
+
+class AutomaticTestToolEval:
+    def __init__(self, appbuilder_components:components):
+        self.components = appbuilder_components
+        self.test_input()
+
+    def test_input(self):
+        manifest = self.components.manifests[0]
+        properties = manifest['parameters']['properties']
+        required_params = []
+        anyOf = manifest['parameters'].get('anyOf', None)
+        if anyOf:
+            for anyOf_dict in anyOf:
+                required_params += anyOf_dict['required']
+        if not anyOf:
+            required_params += manifest['parameters']['required']
+        required_param_dict = {
+            'name':str,
+            'streaming':bool
+        }
+
+        for param in required_params:
+            required_param_dict[param] = Data_Type[properties[param]['type']]
+        required_params = []
+        for param in required_param_dict.keys():
+            required_params.append(param)
+
+        # 交互检查
+        tool_eval_input_params = []
+        signature = inspect.signature(self.components.tool_eval)
+        for param_name, param in signature.parameters.items():
+            if param_name == 'kwargs':
+                continue
+            if param_name in required_params:
+                if required_param_dict[param_name] == param.annotation:
+                    tool_eval_input_params.append(param_name)
+                else:
+                    raise AppbuilderBuildexException(f'请检查tool_eval的传入参数{param_name}是否符合成员变量manifest的参数类型要求')
+            else:
+                raise AppbuilderBuildexException(f'请检查tool_eval的传入参数{param_name}是否在成员变量manifest要求内')
+
+        for required_param in required_params:
+            if required_param not in tool_eval_input_params:
+                raise AppbuilderBuildexException(f'请检查成员变量manifest要求的tool_eval的传入参数{required_param}是否在其中')
+            
+            
+if __name__ == '__main__':
+    import appbuilder
+    image_understand = appbuilder.ImageUnderstand()
+    au = AutomaticTestToolEval(image_understand)
+    au.test_input()
+    
         

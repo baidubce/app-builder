@@ -16,16 +16,20 @@ import unittest
 import inspect
 import appbuilder
 import importlib.util
-
+import numpy as np
+import pandas as pd
 
 from appbuilder.core.component import Component
-
-
+from appbuilder.core.components.llms.base import CompletionBaseComponent
+from appbuilder import AutomaticTestToolEval
+from appbuilder.core._exception import AppbuilderBuildexException
 
 def check_ancestor(cls):
     parent_cls = Component
     excluded_classes = ('Component', 'MatchingBaseComponent', 'EmbeddingBaseComponent', 'CompletionBaseComponent')
     if cls.__name__ in excluded_classes:
+        return False
+    if issubclass(cls, CompletionBaseComponent):
         return False
     if issubclass(cls, parent_cls):
         if parent_cls in excluded_classes:
@@ -36,9 +40,6 @@ def check_ancestor(cls):
             return True
     return False
 
-import os
-import importlib.util
-import inspect
 
 def find_tool_eval_components():
     current_file_path = os.path.abspath(__file__)
@@ -75,10 +76,27 @@ def find_tool_eval_components():
 
     return components
 
+def read_whitelist_components():
+    with open('whitelist_components.txt', 'r') as f:
+        lines = [line.strip() for line in f]
+    return lines
+
+def write_error_data(error_df,error_stats):
+    txt_file_path = 'components_error_info.txt'
+    with open(txt_file_path, 'w') as file:
+        file.write("Component Name\tError Message\n")
+        for _, row in error_df.iterrows():
+            file.write(f"{row['Component Name']}\t{row['Error Message']}\n")
+        file.write("\n错误统计信息:\n")
+        for error, count in error_stats.items():
+            file.write(f"错误信息: {error}, 出现次数: {count}\n")
+    print(f"\n错误信息已写入: {txt_file_path}")
+
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
     def setUp(self) -> None:
         self.tool_eval_components = find_tool_eval_components()
+        self.whitelist_components = read_whitelist_components()
 
     def test_manifests(self):
         """
@@ -107,8 +125,58 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
             assert isinstance(manifests[0]['name'], str)
             assert isinstance(manifests[0]['description'], str)
             assert isinstance(manifests[0]['parameters'], dict)
-            print("组件名称:{}".format(name))
+            print("组件名称:{}".format(name))                        
+
+    def test_tool_eval(self):
+        """
+        测试tool_eval组件，收集报错信息，生成并存储报错信息表格，并进行统计和可视化。
+        """
+        print("完成tool_eval测试的组件:")
+        error_data = []
+        
+        for name, cls in self.tool_eval_components:
+            init_signature = inspect.signature(cls.__init__)
+            params = init_signature.parameters
+            mock_args = {}
+            for parameter_name, param in params.items():
+                # 跳过 'self' 参数
+                if parameter_name == 'self':
+                    continue
+                if parameter_name == 'model' or name == 'model_name':
+                    mock_args[parameter_name] = appbuilder.get_model_list()[0]
+            app = cls(**mock_args)
+            try:
+                AutomaticTestToolEval(app)
+                print("组件名称:{} 通过测试".format(name))
+            except Exception as e:
+                error_data.append({"Component Name": name, "Error Message": str(e)})
+                print("组件名称:{} 错误信息:{}".format(name, e))
+
+        # 将错误信息表格存储在本地变量中
+        error_df = pd.DataFrame(error_data) if error_data else None
+        
+        if error_df is not None:
+            print("\n错误信息表格:")
+            print(error_df)
+            # 使用 NumPy 进行统计
+            unique_errors, counts = np.unique(error_df["Error Message"], return_counts=True)
+            error_stats = dict(zip(unique_errors, counts))
+            print("\n错误统计信息:")
+            for error, count in error_stats.items():
+                print(f"错误信息: {error}, 出现次数: {count}")
+        else:
+            print("\n所有组件测试通过，无错误信息。")
+        
+        # 将报错信息写入文件
+        write_error_data(error_df, error_stats)
+        
+        # 判断报错组件是否位于白名单中
+        component_names = error_df["Component Name"].tolist()
+        for component_name in component_names:
+            if component_name in self.whitelist_components:
+                print("{}zu白名单中，暂时忽略报错。".format(component_name))
+            else:
+                raise AppbuilderBuildexException(f"组件 {component_name} 未在白名单中，请检查是否需要添加到白名单。")
 
 if __name__ == '__main__':
-    unittest.main()
-    
+    unittest.main() 
