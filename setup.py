@@ -34,7 +34,7 @@ for package in packages:
 setup(
     name="appbuilder-sdk",
     # NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
-    version="0.9.1",
+    version="0.9.2",
     author="dongdaxiang",
     author_email="dongdaxiang@baidu.com",
     packages=packages,
@@ -42,8 +42,8 @@ setup(
     install_requires=requirements,
     python_requires=">=3.9",
     extras_require={
-        "asr": ["pydub"],
-        "serve": ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9", "arize-phoenix==4.5.0"]
+        "serve": ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9", "arize-phoenix==4.5.0"],
+        "trace": ["SQLAlchemy==2.0.31"]
     },
     entry_points={
         "console_scripts": [

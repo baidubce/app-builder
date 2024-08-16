@@ -1,6 +1,7 @@
 package com.baidubce.appbuilder.model.appbuilderclient;
 
 import java.util.Map;
+import com.google.gson.annotations.SerializedName;
 
 public class Event {
     private String code;
@@ -10,6 +11,8 @@ public class Event {
     private String contentType;
     private Map<String, Object> detail;
     private Map<String, Object> usage;
+    @SerializedName("tool_calls")
+    private ToolCall[] toolCalls;
 
     public String getCode() {
         return code;
@@ -74,16 +77,20 @@ public class Event {
         return this;
     }
 
+    public ToolCall[] getToolCalls() {
+        return toolCalls;
+    }
+
+    public Event setToolCalls(ToolCall[] toolCalls) {
+        this.toolCalls = toolCalls;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return "Event{" +
-                "code='" + code + '\'' +
-                ", message='" + message + '\'' +
-                ", eventType='" + eventType + '\'' +
-                ", status='" + status + '\'' +
-                ", contentType='" + contentType + '\'' +
-                ", detail=" + detail + '\'' +
-                ", usage=" + usage +
-                '}';
+        return "Event{" + "code='" + code + '\'' + ", message='" + message + '\'' + ", eventType='"
+                + eventType + '\'' + ", status='" + status + '\'' + ", contentType='" + contentType
+                + '\'' + ", detail=" + detail + '\'' + ", usage=" + usage + '\'' + ", toolCalls="
+                + toolCalls + '}';
     }
 }

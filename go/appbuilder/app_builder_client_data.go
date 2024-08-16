@@ -45,6 +45,31 @@ var TypeToStruct = map[string]reflect.Type{
 	StatusContentType:       reflect.TypeOf(StatusDetail{}),
 }
 
+type AppBuilderClientRunRequest struct {
+	AppID          string       `json:"app_id"`
+	Query          string       `json:"query"`
+	Stream         bool         `json:"stream"`
+	ConversationID string       `json:"conversation_id"`
+	Tools          []Tool       `json:"tools"`
+	ToolOutputs    []ToolOutput `json:"tool_outputs"`
+}
+
+type Tool struct {
+	Type     string   `json:"type"`
+	Function Function `json:"function"`
+}
+
+type Function struct {
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Parameters  map[string]interface{} `json:"parameters"`
+}
+
+type ToolOutput struct {
+	ToolCallID string `json:"tool_call_id" description:"工具调用ID"`
+	Output     string `json:"output" description:"工具输出"`
+}
+
 type AgentBuilderRawResponse struct {
 	RequestID      string           `json:"request_id"`
 	Date           string           `json:"date"`
@@ -64,6 +89,7 @@ type RawEventDetail struct {
 	ContentType  string          `json:"content_type"`
 	Outputs      json.RawMessage `json:"outputs"`
 	Usage        Usage           `json:"usage"`
+	ToolCalls    []ToolCall      `json:"tool_calls"`
 }
 
 type Usage struct {
@@ -86,6 +112,18 @@ type Event struct {
 	ContentType string
 	Usage       Usage
 	Detail      any
+	ToolCalls   []ToolCall
+}
+
+type ToolCall struct {
+	ID       string             `json:"id"`       // 工具调用ID
+	Type     string             `json:"type"`     // 需要输出的工具调用的类型。就目前而言，这始终是function
+	Function FunctionCallOption `json:"function"` // 函数定义
+}
+
+type FunctionCallOption struct {
+	Name      string         `json:"name"`
+	Arguments map[string]any `json:"arguments"`
 }
 
 type TextDetail struct {
@@ -186,7 +224,8 @@ func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 			EventType:   c.EventType,
 			ContentType: c.ContentType,
 			Usage:       c.Usage,
-			Detail:      c.Outputs}
+			Detail:      c.Outputs,
+			ToolCalls:   c.ToolCalls}
 		tp, ok := TypeToStruct[ev.ContentType]
 		if !ok {
 			tp = reflect.TypeOf(DefaultDetail{})

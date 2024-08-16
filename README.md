@@ -7,7 +7,7 @@
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
 </div>
 
-简体中文 | [English](./README_en.md)
+简体中文 | [English](./README_en.md) | [日本語](./README_ja.md)
 
 <br>
 
@@ -76,7 +76,7 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 
 ##  如何安装AppBuilder-SDK
 
-#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.1 (2024-07-25)
+#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.2 (2024-08-16)
 
 百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/quick_start/changelog.md)
 
