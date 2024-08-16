@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import javax.tools.Tool;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
@@ -26,7 +26,6 @@ public class AppBuilderClientTest {
     public void setUp() {
         System.setProperty("APPBUILDER_TOKEN", "");
         System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
-        System.setProperty("APPBUILDER_LOGFILE", "");
         appId = "";
     }
 
@@ -43,9 +42,11 @@ public class AppBuilderClientTest {
         AppBuilderClient builder = new AppBuilderClient(appId);
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
-        String fileId = builder.uploadLocalFile(conversationId, "src/test/java/com/baidubce/appbuilder/files/test.pdf");
+        String fileId = builder.uploadLocalFile(conversationId,
+                "src/test/java/com/baidubce/appbuilder/files/test.pdf");
         assertNotNull(fileId);
-        AppBuilderClientIterator itor = builder.run("北京有多少小学生", conversationId, new String[] { fileId }, true);
+        AppBuilderClientIterator itor =
+                builder.run("北京有多少小学生", conversationId, new String[] {fileId}, true);
         assertTrue(itor.hasNext());
         while (itor.hasNext()) {
             AppBuilderClientResult result = itor.next();
@@ -54,7 +55,8 @@ public class AppBuilderClientTest {
     }
 
     @Test(expected = AppBuilderServerException.class)
-    public void testCreateConversation_AppBuilderServerException() throws IOException, AppBuilderServerException {
+    public void testCreateConversation_AppBuilderServerException()
+            throws IOException, AppBuilderServerException {
         AppBuilderClient builder = new AppBuilderClient("appId");
         builder.createConversation();
     }
@@ -64,13 +66,13 @@ public class AppBuilderClientTest {
         AppBuilderClient builder = new AppBuilderClient(appId);
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
-        String fileId = builder.uploadLocalFile(conversationId, "src/test/java/com/baidubce/appbuilder/files/test.pdf");
+        String fileId = builder.uploadLocalFile(conversationId,
+                "src/test/java/com/baidubce/appbuilder/files/test.pdf");
         assertNotNull(fileId);
         AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
         request.setAppId(appId);
         request.setConversationID(conversationId);
-        request.setQuery(
-                "今天北京的天气怎么样?");
+        request.setQuery("今天北京的天气怎么样?");
         request.setStream(false);
 
         String name = "get_cur_whether";
@@ -98,15 +100,32 @@ public class AppBuilderClientTest {
         required.add("location");
         parameters.put("required", required);
 
-        AppBuilderClientRunRequest.Tool.Function func = new AppBuilderClientRunRequest.Tool.Function(name, desc,
-                parameters);
-        AppBuilderClientRunRequest.Tool tool = new AppBuilderClientRunRequest.Tool("function", func);
-        request.setTools(new AppBuilderClientRunRequest.Tool[] { tool });
+        AppBuilderClientRunRequest.Tool.Function func =
+                new AppBuilderClientRunRequest.Tool.Function(name, desc, parameters);
+        AppBuilderClientRunRequest.Tool tool =
+                new AppBuilderClientRunRequest.Tool("function", func);
+        request.setTools(new AppBuilderClientRunRequest.Tool[] {tool});
 
         AppBuilderClientIterator itor = builder.run(request);
         assertTrue(itor.hasNext());
+        String ToolCallID = "";
         while (itor.hasNext()) {
             AppBuilderClientResult result = itor.next();
+            ToolCallID = result.getEvents()[0].getToolCalls()[0].getId();
+            System.out.println(result);
+        }
+
+        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest();
+        request2.setAppId(appId);
+        request2.setConversationID(conversationId);
+
+        AppBuilderClientRunRequest.ToolOutput output =
+                new AppBuilderClientRunRequest.ToolOutput(ToolCallID, "北京今天35度");
+        request2.setToolOutputs(new AppBuilderClientRunRequest.ToolOutput[] {output});
+        AppBuilderClientIterator itor2 = builder.run(request2);
+        assertTrue(itor2.hasNext());
+        while (itor2.hasNext()) {
+            AppBuilderClientResult result = itor2.next();
             System.out.println(result);
         }
     }

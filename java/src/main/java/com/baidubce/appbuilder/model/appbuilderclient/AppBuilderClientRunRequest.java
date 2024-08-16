@@ -57,7 +57,7 @@ public class AppBuilderClientRunRequest {
     public ToolOutput[] getToolOutputs() {
         return ToolOutputs;
     }
-    
+
     public void setToolOutputs(ToolOutput[] toolOutputs) {
         this.ToolOutputs = toolOutputs;
     }
@@ -117,10 +117,9 @@ public class AppBuilderClientRunRequest {
         public String getToolCallID() {
             return toolCallID;
         }
+
         public String getOutput() {
             return output;
         }
     }
 }
-
-
