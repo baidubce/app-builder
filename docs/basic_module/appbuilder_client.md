@@ -60,12 +60,23 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
 
 #### 方法参数
 
-| 参数名称            | 参数类型         | 是否必须 | 描述                                                 | 示例值        |
-|-----------------|--------------|------|----------------------------------------------------|------------|
-| conversation_id | String       | 是    | 会话ID                                               |            |
-| query           | String       | 否    | query问题内容                                          | "今天天气怎么样?" |
-| file_ids        | list[String] | 否    | 对话可引用的文档ID                                         |            |
-| stream          | Bool         | 否    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 | False      |
+| 参数名称        | 参数类型         | 是否必须 | 描述                                                         | 示例值            |
+| --------------- | ---------------- | -------- | ------------------------------------------------------------ | ----------------- |
+| conversation_id | String           | 是       | 会话ID                                                       |                   |
+| query           | String           | 否       | query问题内容                                                | "今天天气怎么样?" |
+| file_ids        | list[String]     | 否       | 对话可引用的文档ID                                           |                   |
+| stream          | Bool             | 否       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 | False             |
+| tools           | List[Tool]       | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                   |
+| tools[0]        | Tool             | 否       | 工具配置                                                     |                   |
+| +type           | String           | 否       | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 |                   |
+| +function       | Function         | 否       | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写 |                   |
+| ++name          | String           | 否       | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。 |                   |
+| ++description   | String           | 否       | 工具描述                                                     |                   |
+| ++parameters    | Dict             | 否       | 工具参数, json_schema格式                                    |                   |
+| tool_outputs    | List[ToolOutput] | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                   |
+| tool_outputs[0] | ToolOutput       | 否       | 工具执行结果                                                 |                   |
+| +tool_call_id   | String           | 否       | 工具调用ID                                                   |                   |
+| +output         | String           | 否       | 工具输出                                                     |                   |
 
 #### Run方法非流式返回值
 
@@ -210,6 +221,56 @@ for content in message.content:
 
 # 打印完整的answer结果
 print(answer)
+```
+
+#### Run方法带FunctionCall调用示例
+
+```python
+import appbuilder
+from appbuilder.core.console.appbuilder_client import data_class
+import os
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+# 设置环境变量
+os.environ["APPBUILDER_TOKEN"] = "..."
+app_id = "..."  # 已发布AppBuilder应用的ID
+# 初始化智能体
+client = appbuilder.AppBuilderClient(app_id)
+# 创建会话
+conversation_id = client.create_conversation()
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_weather",
+            "description": "仅支持中国城市的天气查询，参数location为中国城市名称，其他国家城市不支持天气查询",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "城市名，举例：北京",
+                    },
+                    "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
+                },
+                "required": ["location", "unit"],
+            },
+        },
+    }
+]
+
+msg = client.run(
+    conversation_id=conversation_id, query="今天北京天气怎么样？", tools=tools
+)
+print(msg.model_dump_json(indent=4))
+
+event = msg.content.events[-1]
+
+msg_2 = client.run(
+    conversation_id=conversation_id,
+    tool_outputs=[{"tool_call_id": event.tool_calls[-1].id, "output": "北京今天35度"}],
+)
+print(msg_2.model_dump_json(indent=4))
 ```
 
 ## Java基本用法
@@ -436,6 +497,8 @@ class ReferenceDetail {
     }
 }
 ```
+
+
 
 ## Go基本用法
 
