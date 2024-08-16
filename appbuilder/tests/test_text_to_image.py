@@ -6,7 +6,7 @@ from appbuilder.core.components.text_to_image.model import (Text2ImageSubmitRequ
 
 from appbuilder.core._exception import RiskInputException 
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestText2ImageComponent(unittest.TestCase):
     def setUp(self):
         """
