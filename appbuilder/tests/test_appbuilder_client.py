@@ -3,6 +3,8 @@ import appbuilder
 import requests
 import tempfile
 import os
+from tests.pytest_utils import Utils
+
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestAgentRuntime(unittest.TestCase):
@@ -33,6 +35,8 @@ class TestAgentRuntime(unittest.TestCase):
             None: 如果app_id不为空，则不会引发任何异常
             unittest.SkipTest (optional): 如果app_id为空，则跳过单测执行
         """
+        import tests.pytest_utils as pu
+
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
     
@@ -40,7 +44,8 @@ class TestAgentRuntime(unittest.TestCase):
         conversation_id = builder.create_conversation()
         msg = builder.run(conversation_id, "你可以做什么？")
         print(msg)
-        respid = builder.upload_local_file(conversation_id, "./data/qa_appbuilder_client_demo.pdf")
+        file_path = Utils.get_data_file("qa_doc_parser_extract_table_from_doc.png")
+        respid = builder.upload_local_file(conversation_id, file_path)
         print(respid)
         
     def test_upload_local_file_raise(self):

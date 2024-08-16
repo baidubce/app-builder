@@ -126,3 +126,7 @@ FETCH_HEAD
 # vscode
 .vscode
 ./ppdiffusers/ppdiffusers/version.py
+
+
+# chainlit
+.chainlit
