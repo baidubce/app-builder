@@ -223,7 +223,7 @@ for content in message.content:
 print(answer)
 ```
 
-#### Run方法带FunctionCall调用示例
+#### Run方法带ToolCall调用示例
 
 ```python
 import appbuilder
@@ -614,34 +614,8 @@ func main() {
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
 		completedAnswer = completedAnswer + answer.Answer
 		for _, ev := range answer.Events {
-			if ev.ContentType == appbuilder.TextContentType {
-				detail := ev.Detail.(appbuilder.TextDetail)
-				fmt.Println(detail.Text)
-			} else if ev.ContentType == appbuilder.CodeContentType {
-				detail := ev.Detail.(appbuilder.CodeDetail)
-				fmt.Println(detail.Code)
-			} else if ev.ContentType == appbuilder.ImageContentType {
-				detail := ev.Detail.(appbuilder.ImageDetail)
-				fmt.Println(detail.Image)
-			} else if ev.ContentType == appbuilder.RAGContentType {
-				detail := ev.Detail.(appbuilder.RAGDetail)
-				if len(detail.References) > 0 {
-				    fmt.Println(detail.References)
-				}
-			} else if ev.ContentType == appbuilder.FunctionCallContentType {
-				detail := ev.Detail.(appbuilder.FunctionCallDetail)
-				fmt.Println(detail)
-			} else if ev.ContentType == appbuilder.AudioContentType {
-				detail := ev.Detail.(appbuilder.AudioDetail)
-				fmt.Println(detail.Audio)
-			} else if ev.ContentType == appbuilder.VideoContentType {
-				detail := ev.Detail.(appbuilder.VideoDetail)
-				fmt.Println(detail)
-			} else if ev.ContentType == appbuilder.StatusContentType {
-			} else { // 默认detail
-				detail := ev.Detail.(appbuilder.DefaultDetail)
-				fmt.Println(detail)
-			}
+			evJSON, _ := json.Marshal(ev)
+			fmt.Println(string(evJSON))
 		}
 	}
 	// 迭代正常结束err应为io.EOF
@@ -653,3 +627,174 @@ func main() {
 	}
 }
 ```
+
+### ```RunWithToolCall()```
+
+#### Run方法入参`AppBuilderClientRunRequest`
+
+| 参数名称       | 参数类型   | 是否必须 | 描述                                                         | 示例值               |
+| -------------- | ---------- | -------- | ------------------------------------------------------------ | -------------------- |
+| ConversationID | string     | 是       | 对话ID，可以通过CreateConversation()获取                     |                      |
+| Query          | string     | 是       | query内容                                                    | "汽车性能参数怎么样" |
+| Stream         | bool       | 是       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |                      |
+| AppID          | string     | 是       | 应用ID，线上Agent应用的ID                                    |                      |
+| Tools          | []Tool     | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                      |
+| ToolOuptus     | []ToolOupt | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                      |
+
+`Tool`、`ToolOutput`定义如下：
+
+```go
+type Tool struct {
+	Type     string   `json:"type"`
+	Function Function `json:"function"`
+}
+
+type Function struct {
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Parameters  map[string]interface{} `json:"parameters"`
+}
+
+type ToolOutput struct {
+	ToolCallID string `json:"tool_call_id" description:"工具调用ID"`
+	Output     string `json:"output" description:"工具输出"`
+}
+```
+
+#### Run方法出参
+
+| 参数名称                 | 参数类型                 | 描述                                    | 示例值 |
+| ------------------------ | ------------------------ | --------------------------------------- | ------ |
+| AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型 |        |
+| error                    | error                    | 存在错误时error不为nil，反之            |        |
+
+#### 迭代AgentBuilderIterator
+
+| 参数名称      | 参数类型    | 描述                 | 示例值                                                       |
+| ------------- | ----------- | -------------------- | ------------------------------------------------------------ |
+| +Answer       | string      | 智能体应用返回的回答 |                                                              |
+| +Events       | []Event     | 事件列表             |                                                              |
+| +Events[0]    | Event       | 具体事件内容         |                                                              |
+| ++Code        | string      | 错误码               |                                                              |
+| ++Message     | string      | 错误具体消息         |                                                              |
+| ++Status      | string      | 事件状态             | 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成） |
+| ++EventType   | string      | 事件类型             |                                                              |
+| ++ContentType | string      | 内容类型             | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
+| ++Detail      | interface{} | 事件输出详情         | 代码解释器、文生图、工具组件、RAG等的详细输出内容            |
+| ++Usage       | Usage       | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K') |
+
+#### 示例代码
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"io"
+	"os"
+
+	"github.com/baidubce/app-builder/go/appbuilder"
+)
+
+func main() {
+	// 设置APPBUILDER_TOKEN、GATEWAY_URL_V2环境变量
+	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
+	// 默认可不填，默认值是 https://qianfan.baidubce.com
+	os.Setenv("GATEWAY_URL_V2", "")
+	config, err := appbuilder.NewSDKConfig("", "")
+	if err != nil {
+		fmt.Println("new config failed: ", err)
+		return
+	}
+	// 初始化实例
+	appID := "请填写正确的应用ID"
+	builder, err := appbuilder.NewAppBuilderClient(appID, config)
+	if err != nil {
+		fmt.Println("new agent builder failed: ", err)
+		return
+	}
+	// 创建对话ID
+	conversationID, err := builder.CreateConversation()
+	if err != nil {
+		fmt.Println("create conversation failed: ", err)
+		return
+	}
+
+	parameters := make(map[string]interface{})
+
+	location := make(map[string]interface{})
+	location["type"] = "string"
+	location["description"] = "省，市名，例如：河北省"
+
+	unit := make(map[string]interface{})
+	unit["type"] = "string"
+	unit["enum"] = []string{"摄氏度", "华氏度"}
+
+	properties := make(map[string]interface{})
+	properties["location"] = location
+	properties["unit"] = unit
+
+	parameters["type"] = "object"
+	parameters["properties"] = properties
+	parameters["required"] = []string{"location"}
+
+	i, err := client.RunWithFunctionCall(appbuilder.AppBuilderClientRunRequest{
+		AppID:          appID,
+		Query:          "今天北京的天气怎么样?",
+		ConversationID: conversationID,
+		Stream:         true,
+		Tools: []appbuilder.Tool{
+			{
+				Type: "function",
+				Function: appbuilder.Function{
+					Name:        "get_cur_whether",
+					Description: "这是一个获得指定地点天气的工具",
+					Parameters:  parameters,
+				},
+			},
+		},
+	})
+	if err != nil {
+		fmt.Println("run failed:", err)
+	}
+	totalAnswer := ""
+	toolCallID := ""
+	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
+		totalAnswer = totalAnswer + answer.Answer
+		for _, ev := range answer.Events {
+			toolCallID = ev.ToolCalls[0].ID
+			evJSON, _ := json.Marshal(ev)
+			fmt.Println(string(evJSON))
+		}
+	}
+
+	i2, err := client.RunWithFunctionCall(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		ToolOutputs: []appbuilder.ToolOutput{
+			{
+				ToolCallID: toolCallID,
+				Output:     "北京今天35度",
+			},
+		},
+		Stream: true,
+	})
+
+	if err != nil {
+		fmt.Println("run failed: ", err)
+	}
+
+	for answer, err := i2.Next(); err == nil; answer, err = i2.Next() {
+		totalAnswer = totalAnswer + answer.Answer
+		for _, ev := range answer.Events {
+			evJSON, _ := json.Marshal(ev)
+			fmt.Println(string(evJSON))
+		}
+	}
+
+	fmt.Println("----------------answer-------------------")
+	fmt.Println(totalAnswer)
+}
+```
+
