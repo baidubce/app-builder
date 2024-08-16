@@ -58,53 +58,15 @@ func TestNewAppBuilderClient(t *testing.T) {
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		totalAnswer = totalAnswer + answer.Answer
 		for _, ev := range answer.Events {
-			fmt.Println("------------usage------------")
-			usageJson, _ := json.Marshal(ev.Usage)
-			fmt.Printf("%s\n", usageJson)
-			if ev.ContentType == TextContentType {
-				detail := ev.Detail.(TextDetail)
-				fmt.Println("---------------TextDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == CodeContentType {
-				detail := ev.Detail.(CodeDetail)
-				fmt.Println("---------------CodeDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == ImageContentType {
-				detail := ev.Detail.(ImageDetail)
-				fmt.Println("---------------ImageDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == RAGContentType {
-				detail := ev.Detail.(RAGDetail)
-				fmt.Println("---------------RAGDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == FunctionCallContentType {
-				detail := ev.Detail.(FunctionCallDetail)
-				fmt.Println("---------------FunctionCallDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == AudioContentType {
-				fmt.Println("---------------AudioDetail------------")
-				detail := ev.Detail.(AudioDetail)
-				fmt.Println(detail.Audio)
-			} else if ev.ContentType == VideoContentType {
-				fmt.Println("---------------VideoDetail------------")
-				detail := ev.Detail.(VideoDetail)
-				fmt.Println(detail)
-			} else if ev.ContentType == StatusContentType {
-			} else { // 默认是json.RawMessage
-				detail, ok := ev.Detail.(json.RawMessage)
-				if !ok {
-					t.Fatalf("unknown detail type")
-				}
-				fmt.Println("---------------rawMessage------------")
-				fmt.Println(string(detail))
-			}
+			evJSON, _ := json.Marshal(ev)
+			fmt.Println(string(evJSON))
 		}
 	}
 	fmt.Println("----------------answer-------------------")
 	fmt.Println(totalAnswer)
 }
 
-func TestAppBuilderClientRunWithFunctionCall(t *testing.T) {
+func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
 	os.Setenv("GATEWAY_URL_V2", "https://apaas-api-sandbox.baidu-int.com/")
@@ -142,7 +104,7 @@ func TestAppBuilderClientRunWithFunctionCall(t *testing.T) {
 	parameters["properties"] = properties
 	parameters["required"] = []string{"location"}
 
-	i, err := client.RunWithFunctionCall(AppBuilderClientRunRequest{
+	i, err := client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
 		ConversationID: conversationID,
@@ -172,7 +134,7 @@ func TestAppBuilderClientRunWithFunctionCall(t *testing.T) {
 		}
 	}
 
-	i2, err := client.RunWithFunctionCall(AppBuilderClientRunRequest{
+	i2, err := client.RunWithToolCall(AppBuilderClientRunRequest{
 		ConversationID: conversationID,
 		AppID:          appID,
 		ToolOutputs: []ToolOutput{
