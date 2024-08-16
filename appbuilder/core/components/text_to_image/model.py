@@ -186,7 +186,7 @@ class Text2ImageQueryData(proto.Message):
                 任务 ID.
             task_status(str):
                 计算总状态。有 INIT（初始化），WAIT（排队中）, RUNNING（生成中）, FAILED（失败）, SUCCESS（成功）四种状态，只有 SUCCESS 为成功状态。
-            task_progress(int):
+            task_progress(float):
                 图片生成总进度，进度包含2种，0为未处理完，1为处理完成。
             sub_task_result_list(Text2ImageSubTaskResultList):
                 子任务生成结果列表。
@@ -216,7 +216,7 @@ class Text2ImageSubTaskResultList(proto.Message):
          参数:
             sub_task_status(int):
                 单风格图片状态。有 INIT（初始化），WAIT（排队中）, RUNNING（生成中）, FAILED（失败）, SUCCESS（成功）四种状态，只有 SUCCESS 为成功状态。
-            sub_task_progress(int):
+            sub_task_progress(float):
                 单任务图片生成进度，进度包含2种，0为未处理完，1为处理完成。
             sub_task_error_code(str):
                 单风格任务错误码。0:正常；501:文本黄反拦截；201:模型生图失败。
