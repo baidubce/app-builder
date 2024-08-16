@@ -301,14 +301,24 @@ print(msg_2.model_dump_json(indent=4))
 
 ### ```AppBuilderClient().run()```
 
-#### Run方法入参
+#### Run方法入参`AppBuilderCientRunRequest`
 
 | 参数名称   | 参数类型  | 是否必须 | 描述    | 示例值      |
 |--------|-------|------|-------|---------|
 | query          | String       | 是    | query内容                                            | "汽车性能参数怎么样" |
 | conversationId | String          | 是    | 对话id，可以通过createConversation()获取                |             |
-| fileIds       | String[] | 否    | 对话可引用的文档ID                                         |             |
 | stream         | boolean       | 是    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |     |
+| tools | List[Tool] | 否 | 一个列表，其中每个字典对应一个工具的配置 | |
+| tools[0] | Tool | 否 | 工具配置 | |
+| +type | String | 否 | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 | |
+| +function | Function | 否 | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写 | |
+| ++name | String | 否 | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。 | |
+| ++description | String | 否 | 工具描述 | |
+| ++parameters | Dict | 否 | 工具参数, json_schema格式 | |
+| tool_outputs | List[ToolOutput] | 否 | 内容为本地的工具执行结果，以自然语言/json dump str描述 | |
+| tool_outputs[0] | ToolOutput | 否 | 工具执行结果 | |
+| +tool_call_id | String | 否 | 工具调用ID | |
+| +output | String | 否 | 工具输出 | |
 
 #### Run方法出参
 | 参数名称                 | 参数类型         | 描述                   | 示例值 |
@@ -498,7 +508,94 @@ class ReferenceDetail {
 }
 ```
 
+#### Run方法带ToolCall调用示例
 
+```java
+package org.example;
+
+import java.io.IOException;
+import java.util.*;
+
+import com.google.gson.annotations.SerializedName;
+
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
+import com.baidubce.appbuilder.model.appbuilderclient.Event;
+import com.baidubce.appbuilder.base.utils.json.JsonUtils;
+
+class AppBuilderClientDemo {
+
+    public static void main(String[] args) throws IOException, AppBuilderServerException {
+        System.setProperty("APPBUILDER_TOKEN", "请设置正确的应用密钥");
+        String appId = "请设置正确的应用ID";
+        AppBuilderClient builder = new AppBuilderClient(appId);
+        String conversationId = builder.createConversation();
+       
+       	AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
+        request.setAppId(appId);
+        request.setConversationID(conversationId);
+        request.setQuery("今天北京的天气怎么样?");
+        request.setStream(false);
+
+        String name = "get_cur_whether";
+        String desc = "这是一个获得指定地点天气的工具";
+        Map<String, Object> parameters = new HashMap<>();
+
+        Map<String, Object> location = new HashMap<>();
+        location.put("type", "string");
+        location.put("description", "省，市名，例如：河北省");
+
+        Map<String, Object> unit = new HashMap<>();
+        unit.put("type", "string");
+        List<String> enumValues = new ArrayList<>();
+        enumValues.add("摄氏度");
+        enumValues.add("华氏度");
+        unit.put("enum", enumValues);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("location", location);
+        properties.put("unit", unit);
+
+        parameters.put("type", "object");
+        parameters.put("properties", properties);
+        List<String> required = new ArrayList<>();
+        required.add("location");
+        parameters.put("required", required);
+
+        AppBuilderClientRunRequest.Tool.Function func =
+                new AppBuilderClientRunRequest.Tool.Function(name, desc, parameters);
+        AppBuilderClientRunRequest.Tool tool =
+                new AppBuilderClientRunRequest.Tool("function", func);
+        request.setTools(new AppBuilderClientRunRequest.Tool[] {tool});
+
+        AppBuilderClientIterator itor = builder.run(request);
+        assertTrue(itor.hasNext());
+        String ToolCallID = "";
+        while (itor.hasNext()) {
+            AppBuilderClientResult result = itor.next();
+            ToolCallID = result.getEvents()[0].getToolCalls()[0].getId();
+            System.out.println(result);
+        }
+
+        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest();
+        request2.setAppId(appId);
+        request2.setConversationID(conversationId);
+
+        AppBuilderClientRunRequest.ToolOutput output =
+                new AppBuilderClientRunRequest.ToolOutput(ToolCallID, "北京今天35度");
+        request2.setToolOutputs(new AppBuilderClientRunRequest.ToolOutput[] {output});
+        AppBuilderClientIterator itor2 = builder.run(request2);
+        assertTrue(itor2.hasNext());
+        while (itor2.hasNext()) {
+            AppBuilderClientResult result = itor2.next();
+            System.out.println(result);
+        }
+    }
+}
+
+```
 
 ## Go基本用法
 
