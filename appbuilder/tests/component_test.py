@@ -291,11 +291,5 @@ class AutomaticTestToolEval:
             if required_param not in tool_eval_input_params:
                 raise AppbuilderBuildexException(f'请检查成员变量manifest要求的tool_eval的传入参数{required_param}是否在其中')
             
-            
-if __name__ == '__main__':
-    import appbuilder
-    image_understand = appbuilder.ImageUnderstand()
-    au = AutomaticTestToolEval(image_understand)
-    au.test_input()
     
         
