@@ -199,8 +199,8 @@ class Text2ImageQueryData(proto.Message):
         proto.STRING,
         number=2,
     )
-    task_progress: int = proto.Field(
-        proto.INT64,
+    task_progress: float = proto.Field(
+        proto.FLOAT,
         number=3,
     )
 
@@ -227,8 +227,8 @@ class Text2ImageSubTaskResultList(proto.Message):
         proto.STRING,
         number=1,
     )
-    sub_task_progress: int = proto.Field(
-        proto.INT32,
+    sub_task_progress: float = proto.Field(
+        proto.FLOAT,
         number=2,
     )
     sub_task_error_code: int = proto.Field(
