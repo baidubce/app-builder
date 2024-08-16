@@ -19,6 +19,8 @@ public class EventContent {
     private String contentType;
     private Map<String, Object> outputs;
     private Map<String, Object> usage;
+    @SerializedName("tool_calls")
+    private ToolCall[] toolCalls;
 
     public String getEventCode() {
         return eventCode;
@@ -84,17 +86,20 @@ public class EventContent {
         this.usage = usage;
     }
 
+    public ToolCall[] getToolCalls() {
+        return toolCalls;
+    }
+
+    public void setToolCalls(ToolCall[] toolCalls) {
+        this.toolCalls = toolCalls;
+    }
+
     @Override
     public String toString() {
-        return "EventContent{" +
-                "eventCode='" + eventCode + '\'' +
-                ", enentMessage='" + enentMessage + '\'' +
-                ", eventType='" + eventType + '\'' +
-                ", eventId='" + eventId + '\'' +
-                ", eventStatus='" + eventStatus + '\'' +
-                ", contentType='" + contentType + '\'' +
-                ", outputs=" + outputs + '\'' +
-                "usage=" + usage + 
-                '}';
+        return "EventContent{" + "eventCode='" + eventCode + '\'' + ", eventMessage='"
+                + enentMessage + '\'' + ", eventType='" + eventType + '\'' + ", eventId='" + eventId
+                + '\'' + ", eventStatus='" + eventStatus + '\'' + ", contentType='" + contentType
+                + '\'' + ", outputs=" + outputs + '\'' + "usage=" + usage + '\'' + ", toolCalls="
+                + toolCalls + '}';
     }
 }
