@@ -27,6 +27,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func NewKnowledgeBase(config *SDKConfig) (*KnowledgeBase, error) {
@@ -48,7 +50,11 @@ type KnowledgeBase struct {
 func (t *KnowledgeBase) CreateDocument(req CreateDocumentRequest) (CreateDocumentResponse, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledge_base/document")
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledge_base/document?clientToken=" + req.ClientToken)
 	if err != nil {
 		return CreateDocumentResponse{}, err
 	}
@@ -84,7 +90,10 @@ func (t *KnowledgeBase) CreateDocument(req CreateDocumentRequest) (CreateDocumen
 
 func (t *KnowledgeBase) DeleteDocument(req DeleteDocumentRequest) error {
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledge_base/document")
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledge_base/document?clientToken=" + req.ClientToken)
 	if err != nil {
 		return err
 	}
@@ -230,7 +239,10 @@ func (t *KnowledgeBase) UploadFile(localFilePath string) (string, error) {
 func (t *KnowledgeBase) CreateKnowledgeBase(req KnowledgeBaseDetail) (KnowledgeBaseDetail, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateKnowledgeBase")
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateKnowledgeBase&clientToken=" + req.ClientToken)
 	if err != nil {
 		return KnowledgeBaseDetail{}, err
 	}
@@ -337,7 +349,10 @@ func (t *KnowledgeBase) GetKnowledgeBaseList(req GetKnowledgeBaseListRequest) (G
 func (t *KnowledgeBase) ModifyKnowledgeBase(req ModifyKnowlegeBaseRequest) error {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=ModifyKnowledgeBase")
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=ModifyKnowledgeBase&clientToken=" + req.ClientToken)
 	if err != nil {
 		return err
 	}
@@ -366,9 +381,20 @@ func (t *KnowledgeBase) ModifyKnowledgeBase(req ModifyKnowlegeBaseRequest) error
 }
 
 func (t *KnowledgeBase) DeleteKnowledgeBase(knowledgeBaseID string) error {
+	return t.deleteKnowledgeBase(knowledgeBaseID, "")
+}
+
+func (t *KnowledgeBase) DeleteKnowledgeBaseWithReq(req DeleteKnowlegeBaseRequest) error {
+	return t.deleteKnowledgeBase(req.ID, req.ClientToken)
+}
+
+func (t *KnowledgeBase) deleteKnowledgeBase(knowledgeBaseID string, clientToken string) error {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DeleteKnowledgeBase")
+	if clientToken == "" {
+		clientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DeleteKnowledgeBase&clientToken=" + clientToken)
 	if err != nil {
 		return err
 	}
@@ -401,7 +427,10 @@ func (t *KnowledgeBase) DeleteKnowledgeBase(knowledgeBaseID string) error {
 func (t *KnowledgeBase) CreateDocuments(req CreateDocumentsRequest) error {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateDocuments")
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateDocuments?clientToken=" + req.ClientToken)
 	if err != nil {
 		return err
 	}
@@ -457,7 +486,10 @@ func (t *KnowledgeBase) UploadDocuments(localFilePath string, req CreateDocument
 
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=UploadDocuments")
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=UploadDocuments&clientToken=" + req.ClientToken)
 	if err != nil {
 		return err
 	}
@@ -486,7 +518,10 @@ func (t *KnowledgeBase) UploadDocuments(localFilePath string, req CreateDocument
 func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateChunk")
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateChunk&clientToken=" + req.ClientToken)
 	if err != nil {
 		return "", err
 	}
@@ -522,7 +557,10 @@ func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=ModifyChunk")
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=ModifyChunk&clientToken=" + req.ClientToken)
 	if err != nil {
 		return err
 	}
@@ -556,9 +594,20 @@ func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
 }
 
 func (t *KnowledgeBase) DeleteChunk(chunkID string) error {
+	return t.deleteChunk(chunkID, "")
+}
+
+func (t *KnowledgeBase) DeleteChunkWithReq(req DeleteChunkRequest) error {
+	return t.deleteChunk(req.ChunkID, req.ClientToken)
+}
+
+func (t *KnowledgeBase) deleteChunk(chunkID string, clientToken string) error {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DeleteChunk")
+	if clientToken == "" {
+		clientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DeleteChunk&clientToken=" + clientToken)
 	if err != nil {
 		return err
 	}
