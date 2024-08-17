@@ -174,8 +174,6 @@ class AppBuilderClient(Component):
         if not os.path.exists(filepath):
             raise FileNotFoundError(f"{filepath} does not exist")
 
-        
->>>>>>>>> Temporary merge branch 2
         multipart_form_data = {
             "file": (os.path.basename(local_file_path), open(local_file_path, "rb")),
             "app_id": (None, self.app_id),
