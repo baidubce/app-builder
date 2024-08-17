@@ -20,10 +20,10 @@ import requests
 from parameterized import parameterized, param
 import appbuilder
 from appbuilder import Message
-from pytest_config import LoadConfig
+from tests.pytest_config import LoadConfig
 conf = LoadConfig()
 
-from pytest_utils import Utils
+from tests.pytest_utils import Utils
 util = Utils()
 
 from appbuilder.utils.logger_util import get_logger

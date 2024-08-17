@@ -3,6 +3,7 @@ import os
 import appbuilder
 
 from appbuilder.core._exception import AssistantServerException
+from tests.pytest_utils import Utils
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestFilesCreate(unittest.TestCase):
@@ -11,7 +12,7 @@ class TestFilesCreate(unittest.TestCase):
         
     def test_create_files_v1(self):
         from appbuilder.core.assistant.type import assistant_type
-        file_path = "./data/qa_doc_parser_extract_table_from_doc.png"
+        file_path = Utils.get_data_file("qa_doc_parser_extract_table_from_doc.png")
         file = appbuilder.assistant.assistants.files.create(file_path=file_path)
         self.assertIsInstance(file, assistant_type.AssistantFilesCreateResponse)
         
@@ -23,7 +24,10 @@ class TestFilesCreate(unittest.TestCase):
 
     def test_files(self):
         from appbuilder.core.assistant.type import assistant_type
-        file_path = "./data/qa_doc_parser_extract_table_from_doc.png"
+
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        data_dir = os.path.join(current_dir, "data")
+        file_path = os.path.join(data_dir, "qa_doc_parser_extract_table_from_doc.png")
         file = appbuilder.assistant.assistants.files.create(file_path=file_path)
         self.assertIsInstance(file, assistant_type.AssistantFilesCreateResponse)
         
@@ -52,16 +56,22 @@ class TestFilesCreate(unittest.TestCase):
         with self.assertRaises(TypeError):
             appbuilder.assistant.assistants.files.download(file_id='test', file_path=123)
         with self.assertRaises(TypeError):
-            appbuilder.assistant.assistants.files.download(file_id=123, file_path="./data/")
+            appbuilder.assistant.assistants.files.download(file_id=123, file_path=data_dir)
         with self.assertRaises(FileNotFoundError):
-            appbuilder.assistant.assistants.files.download(file_id='test_not_exist', file_path="./data/")
+            appbuilder.assistant.assistants.files.download(file_id='test_not_exist', file_path=data_dir)
         with self.assertRaises(ValueError):
-            appbuilder.assistant.assistants.files.download(file_id='', file_path="./data/")
+            appbuilder.assistant.assistants.files.download(file_id='', file_path=data_dir)
         with self.assertRaises(FileNotFoundError):
-            appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/data/")
+            appbuilder.assistant.assistants.files.download(file_id=file.id, file_path=os.path.join(data_dir, 'data/'))
         with self.assertRaises(ValueError):
-            appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/test")
-        appbuilder.assistant.assistants.files.download(file_id=file.id, file_path="./data/")
+            try:
+                with open(os.path.join(data_dir, 'test'), 'wb') as f:
+                    f.write(b'test')
+                appbuilder.assistant.assistants.files.download(file_id=file.id, file_path=os.path.join(data_dir, 'test'))
+            finally:
+                os.remove(os.path.join(data_dir, 'test'))
+        
+        appbuilder.assistant.assistants.files.download(file_id=file.id, file_path=data_dir)
 
         # test delete
         files_delete = appbuilder.assistant.assistants.files.delete(file_id=file.id)

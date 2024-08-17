@@ -1,6 +1,7 @@
 import unittest
 import os
 import appbuilder
+from tests.pytest_utils import Utils
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAssistant(unittest.TestCase):
@@ -90,7 +91,7 @@ class TestAssistant(unittest.TestCase):
         
         # test assistant mount_files
         # create file
-        file_path = "./data/qa_doc_parser_extract_table_from_doc.png"
+        file_path = Utils.get_data_file("qa_doc_parser_extract_table_from_doc.png")
         file = appbuilder.assistant.assistants.files.create(file_path=file_path)
         with self.assertRaises(FileNotFoundError):
             appbuilder.assistant.assistants.mount_files(
