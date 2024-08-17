@@ -60,12 +60,23 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
 
 #### 方法参数
 
-| 参数名称            | 参数类型         | 是否必须 | 描述                                                 | 示例值        |
-|-----------------|--------------|------|----------------------------------------------------|------------|
-| conversation_id | String       | 是    | 会话ID                                               |            |
-| query           | String       | 否    | query问题内容                                          | "今天天气怎么样?" |
-| file_ids        | list[String] | 否    | 对话可引用的文档ID                                         |            |
-| stream          | Bool         | 否    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 | False      |
+| 参数名称        | 参数类型         | 是否必须 | 描述                                                         | 示例值            |
+| --------------- | ---------------- | -------- | ------------------------------------------------------------ | ----------------- |
+| conversation_id | String           | 是       | 会话ID                                                       |                   |
+| query           | String           | 否       | query问题内容                                                | "今天天气怎么样?" |
+| file_ids        | list[String]     | 否       | 对话可引用的文档ID                                           |                   |
+| stream          | Bool             | 否       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 | False             |
+| tools           | List[Tool]       | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                   |
+| tools[0]        | Tool             | 否       | 工具配置                                                     |                   |
+| +type           | String           | 否       | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 |                   |
+| +function       | Function         | 否       | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写 |                   |
+| ++name          | String           | 否       | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。 |                   |
+| ++description   | String           | 否       | 工具描述                                                     |                   |
+| ++parameters    | Dict             | 否       | 工具参数, json_schema格式                                    |                   |
+| tool_outputs    | List[ToolOutput] | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                   |
+| tool_outputs[0] | ToolOutput       | 否       | 工具执行结果                                                 |                   |
+| +tool_call_id   | String           | 否       | 工具调用ID                                                   |                   |
+| +output         | String           | 否       | 工具输出                                                     |                   |
 
 #### Run方法非流式返回值
 
@@ -212,6 +223,56 @@ for content in message.content:
 print(answer)
 ```
 
+#### Run方法带ToolCall调用示例
+
+```python
+import appbuilder
+from appbuilder.core.console.appbuilder_client import data_class
+import os
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+# 设置环境变量
+os.environ["APPBUILDER_TOKEN"] = "..."
+app_id = "..."  # 已发布AppBuilder应用的ID
+# 初始化智能体
+client = appbuilder.AppBuilderClient(app_id)
+# 创建会话
+conversation_id = client.create_conversation()
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_weather",
+            "description": "仅支持中国城市的天气查询，参数location为中国城市名称，其他国家城市不支持天气查询",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "城市名，举例：北京",
+                    },
+                    "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
+                },
+                "required": ["location", "unit"],
+            },
+        },
+    }
+]
+
+msg = client.run(
+    conversation_id=conversation_id, query="今天北京天气怎么样？", tools=tools
+)
+print(msg.model_dump_json(indent=4))
+
+event = msg.content.events[-1]
+
+msg_2 = client.run(
+    conversation_id=conversation_id,
+    tool_outputs=[{"tool_call_id": event.tool_calls[-1].id, "output": "北京今天35度"}],
+)
+print(msg_2.model_dump_json(indent=4))
+```
+
 ## Java基本用法
 
 ### ```new AppBuilderClient(appId)```
@@ -240,14 +301,24 @@ print(answer)
 
 ### ```AppBuilderClient().run()```
 
-#### Run方法入参
+#### Run方法入参`AppBuilderCientRunRequest`
 
 | 参数名称   | 参数类型  | 是否必须 | 描述    | 示例值      |
 |--------|-------|------|-------|---------|
 | query          | String       | 是    | query内容                                            | "汽车性能参数怎么样" |
 | conversationId | String          | 是    | 对话id，可以通过createConversation()获取                |             |
-| fileIds       | String[] | 否    | 对话可引用的文档ID                                         |             |
 | stream         | boolean       | 是    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |     |
+| tools | List[Tool] | 否 | 一个列表，其中每个字典对应一个工具的配置 | |
+| tools[0] | Tool | 否 | 工具配置 | |
+| +type | String | 否 | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 | |
+| +function | Function | 否 | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写 | |
+| ++name | String | 否 | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。 | |
+| ++description | String | 否 | 工具描述 | |
+| ++parameters | Dict | 否 | 工具参数, json_schema格式 | |
+| tool_outputs | List[ToolOutput] | 否 | 内容为本地的工具执行结果，以自然语言/json dump str描述 | |
+| tool_outputs[0] | ToolOutput | 否 | 工具执行结果 | |
+| +tool_call_id | String | 否 | 工具调用ID | |
+| +output | String | 否 | 工具输出 | |
 
 #### Run方法出参
 | 参数名称                 | 参数类型         | 描述                   | 示例值 |
@@ -437,6 +508,95 @@ class ReferenceDetail {
 }
 ```
 
+#### Run方法带ToolCall调用示例
+
+```java
+package org.example;
+
+import java.io.IOException;
+import java.util.*;
+
+import com.google.gson.annotations.SerializedName;
+
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
+import com.baidubce.appbuilder.model.appbuilderclient.Event;
+import com.baidubce.appbuilder.base.utils.json.JsonUtils;
+
+class AppBuilderClientDemo {
+
+    public static void main(String[] args) throws IOException, AppBuilderServerException {
+        System.setProperty("APPBUILDER_TOKEN", "请设置正确的应用密钥");
+        String appId = "请设置正确的应用ID";
+        AppBuilderClient builder = new AppBuilderClient(appId);
+        String conversationId = builder.createConversation();
+       
+       	AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
+        request.setAppId(appId);
+        request.setConversationID(conversationId);
+        request.setQuery("今天北京的天气怎么样?");
+        request.setStream(false);
+
+        String name = "get_cur_whether";
+        String desc = "这是一个获得指定地点天气的工具";
+        Map<String, Object> parameters = new HashMap<>();
+
+        Map<String, Object> location = new HashMap<>();
+        location.put("type", "string");
+        location.put("description", "省，市名，例如：河北省");
+
+        Map<String, Object> unit = new HashMap<>();
+        unit.put("type", "string");
+        List<String> enumValues = new ArrayList<>();
+        enumValues.add("摄氏度");
+        enumValues.add("华氏度");
+        unit.put("enum", enumValues);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("location", location);
+        properties.put("unit", unit);
+
+        parameters.put("type", "object");
+        parameters.put("properties", properties);
+        List<String> required = new ArrayList<>();
+        required.add("location");
+        parameters.put("required", required);
+
+        AppBuilderClientRunRequest.Tool.Function func =
+                new AppBuilderClientRunRequest.Tool.Function(name, desc, parameters);
+        AppBuilderClientRunRequest.Tool tool =
+                new AppBuilderClientRunRequest.Tool("function", func);
+        request.setTools(new AppBuilderClientRunRequest.Tool[] {tool});
+
+        AppBuilderClientIterator itor = builder.run(request);
+        assertTrue(itor.hasNext());
+        String ToolCallID = "";
+        while (itor.hasNext()) {
+            AppBuilderClientResult result = itor.next();
+            ToolCallID = result.getEvents()[0].getToolCalls()[0].getId();
+            System.out.println(result);
+        }
+
+        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest();
+        request2.setAppId(appId);
+        request2.setConversationID(conversationId);
+
+        AppBuilderClientRunRequest.ToolOutput output =
+                new AppBuilderClientRunRequest.ToolOutput(ToolCallID, "北京今天35度");
+        request2.setToolOutputs(new AppBuilderClientRunRequest.ToolOutput[] {output});
+        AppBuilderClientIterator itor2 = builder.run(request2);
+        assertTrue(itor2.hasNext());
+        while (itor2.hasNext()) {
+            AppBuilderClientResult result = itor2.next();
+            System.out.println(result);
+        }
+    }
+}
+
+```
+
 ## Go基本用法
 
 ### ```NewAppBuilderClient()```
@@ -551,34 +711,8 @@ func main() {
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
 		completedAnswer = completedAnswer + answer.Answer
 		for _, ev := range answer.Events {
-			if ev.ContentType == appbuilder.TextContentType {
-				detail := ev.Detail.(appbuilder.TextDetail)
-				fmt.Println(detail.Text)
-			} else if ev.ContentType == appbuilder.CodeContentType {
-				detail := ev.Detail.(appbuilder.CodeDetail)
-				fmt.Println(detail.Code)
-			} else if ev.ContentType == appbuilder.ImageContentType {
-				detail := ev.Detail.(appbuilder.ImageDetail)
-				fmt.Println(detail.Image)
-			} else if ev.ContentType == appbuilder.RAGContentType {
-				detail := ev.Detail.(appbuilder.RAGDetail)
-				if len(detail.References) > 0 {
-				    fmt.Println(detail.References)
-				}
-			} else if ev.ContentType == appbuilder.FunctionCallContentType {
-				detail := ev.Detail.(appbuilder.FunctionCallDetail)
-				fmt.Println(detail)
-			} else if ev.ContentType == appbuilder.AudioContentType {
-				detail := ev.Detail.(appbuilder.AudioDetail)
-				fmt.Println(detail.Audio)
-			} else if ev.ContentType == appbuilder.VideoContentType {
-				detail := ev.Detail.(appbuilder.VideoDetail)
-				fmt.Println(detail)
-			} else if ev.ContentType == appbuilder.StatusContentType {
-			} else { // 默认detail
-				detail := ev.Detail.(appbuilder.DefaultDetail)
-				fmt.Println(detail)
-			}
+			evJSON, _ := json.Marshal(ev)
+			fmt.Println(string(evJSON))
 		}
 	}
 	// 迭代正常结束err应为io.EOF
@@ -590,3 +724,174 @@ func main() {
 	}
 }
 ```
+
+### ```RunWithToolCall()```
+
+#### Run方法入参`AppBuilderClientRunRequest`
+
+| 参数名称       | 参数类型   | 是否必须 | 描述                                                         | 示例值               |
+| -------------- | ---------- | -------- | ------------------------------------------------------------ | -------------------- |
+| ConversationID | string     | 是       | 对话ID，可以通过CreateConversation()获取                     |                      |
+| Query          | string     | 是       | query内容                                                    | "汽车性能参数怎么样" |
+| Stream         | bool       | 是       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |                      |
+| AppID          | string     | 是       | 应用ID，线上Agent应用的ID                                    |                      |
+| Tools          | []Tool     | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                      |
+| ToolOuptus     | []ToolOupt | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                      |
+
+`Tool`、`ToolOutput`定义如下：
+
+```go
+type Tool struct {
+	Type     string   `json:"type"`
+	Function Function `json:"function"`
+}
+
+type Function struct {
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Parameters  map[string]interface{} `json:"parameters"`
+}
+
+type ToolOutput struct {
+	ToolCallID string `json:"tool_call_id" description:"工具调用ID"`
+	Output     string `json:"output" description:"工具输出"`
+}
+```
+
+#### Run方法出参
+
+| 参数名称                 | 参数类型                 | 描述                                    | 示例值 |
+| ------------------------ | ------------------------ | --------------------------------------- | ------ |
+| AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型 |        |
+| error                    | error                    | 存在错误时error不为nil，反之            |        |
+
+#### 迭代AgentBuilderIterator
+
+| 参数名称      | 参数类型    | 描述                 | 示例值                                                       |
+| ------------- | ----------- | -------------------- | ------------------------------------------------------------ |
+| +Answer       | string      | 智能体应用返回的回答 |                                                              |
+| +Events       | []Event     | 事件列表             |                                                              |
+| +Events[0]    | Event       | 具体事件内容         |                                                              |
+| ++Code        | string      | 错误码               |                                                              |
+| ++Message     | string      | 错误具体消息         |                                                              |
+| ++Status      | string      | 事件状态             | 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成） |
+| ++EventType   | string      | 事件类型             |                                                              |
+| ++ContentType | string      | 内容类型             | 可选值包括：code text, image, status,image, function_call, rag, audio、video等 |
+| ++Detail      | interface{} | 事件输出详情         | 代码解释器、文生图、工具组件、RAG等的详细输出内容            |
+| ++Usage       | Usage       | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K') |
+
+#### 示例代码
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"io"
+	"os"
+
+	"github.com/baidubce/app-builder/go/appbuilder"
+)
+
+func main() {
+	// 设置APPBUILDER_TOKEN、GATEWAY_URL_V2环境变量
+	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
+	// 默认可不填，默认值是 https://qianfan.baidubce.com
+	os.Setenv("GATEWAY_URL_V2", "")
+	config, err := appbuilder.NewSDKConfig("", "")
+	if err != nil {
+		fmt.Println("new config failed: ", err)
+		return
+	}
+	// 初始化实例
+	appID := "请填写正确的应用ID"
+	builder, err := appbuilder.NewAppBuilderClient(appID, config)
+	if err != nil {
+		fmt.Println("new agent builder failed: ", err)
+		return
+	}
+	// 创建对话ID
+	conversationID, err := builder.CreateConversation()
+	if err != nil {
+		fmt.Println("create conversation failed: ", err)
+		return
+	}
+
+	parameters := make(map[string]interface{})
+
+	location := make(map[string]interface{})
+	location["type"] = "string"
+	location["description"] = "省，市名，例如：河北省"
+
+	unit := make(map[string]interface{})
+	unit["type"] = "string"
+	unit["enum"] = []string{"摄氏度", "华氏度"}
+
+	properties := make(map[string]interface{})
+	properties["location"] = location
+	properties["unit"] = unit
+
+	parameters["type"] = "object"
+	parameters["properties"] = properties
+	parameters["required"] = []string{"location"}
+
+	i, err := client.RunWithFunctionCall(appbuilder.AppBuilderClientRunRequest{
+		AppID:          appID,
+		Query:          "今天北京的天气怎么样?",
+		ConversationID: conversationID,
+		Stream:         true,
+		Tools: []appbuilder.Tool{
+			{
+				Type: "function",
+				Function: appbuilder.Function{
+					Name:        "get_cur_whether",
+					Description: "这是一个获得指定地点天气的工具",
+					Parameters:  parameters,
+				},
+			},
+		},
+	})
+	if err != nil {
+		fmt.Println("run failed:", err)
+	}
+	totalAnswer := ""
+	toolCallID := ""
+	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
+		totalAnswer = totalAnswer + answer.Answer
+		for _, ev := range answer.Events {
+			toolCallID = ev.ToolCalls[0].ID
+			evJSON, _ := json.Marshal(ev)
+			fmt.Println(string(evJSON))
+		}
+	}
+
+	i2, err := client.RunWithFunctionCall(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		ToolOutputs: []appbuilder.ToolOutput{
+			{
+				ToolCallID: toolCallID,
+				Output:     "北京今天35度",
+			},
+		},
+		Stream: true,
+	})
+
+	if err != nil {
+		fmt.Println("run failed: ", err)
+	}
+
+	for answer, err := i2.Next(); err == nil; answer, err = i2.Next() {
+		totalAnswer = totalAnswer + answer.Answer
+		for _, ev := range answer.Events {
+			evJSON, _ := json.Marshal(ev)
+			fmt.Println(string(evJSON))
+		}
+	}
+
+	fmt.Println("----------------answer-------------------")
+	fmt.Println(totalAnswer)
+}
+```
+

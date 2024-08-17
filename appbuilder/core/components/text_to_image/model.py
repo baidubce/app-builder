@@ -186,8 +186,8 @@ class Text2ImageQueryData(proto.Message):
                 任务 ID.
             task_status(str):
                 计算总状态。有 INIT（初始化），WAIT（排队中）, RUNNING（生成中）, FAILED（失败）, SUCCESS（成功）四种状态，只有 SUCCESS 为成功状态。
-            task_progress(int):
-                图片生成总进度，进度包含2种，0为未处理完，1为处理完成。
+            task_progress(float):
+                图片生成总进度，0到1之间的浮点数表示进度，0为未处理完，1为处理完成。
             sub_task_result_list(Text2ImageSubTaskResultList):
                 子任务生成结果列表。
          """
@@ -199,8 +199,8 @@ class Text2ImageQueryData(proto.Message):
         proto.STRING,
         number=2,
     )
-    task_progress: int = proto.Field(
-        proto.INT64,
+    task_progress: float = proto.Field(
+        proto.FLOAT,
         number=3,
     )
 
@@ -216,8 +216,8 @@ class Text2ImageSubTaskResultList(proto.Message):
          参数:
             sub_task_status(int):
                 单风格图片状态。有 INIT（初始化），WAIT（排队中）, RUNNING（生成中）, FAILED（失败）, SUCCESS（成功）四种状态，只有 SUCCESS 为成功状态。
-            sub_task_progress(int):
-                单任务图片生成进度，进度包含2种，0为未处理完，1为处理完成。
+            sub_task_progress(float):
+                单任务图片生成进度，0到1之间的浮点数表示进度，0为未处理完，1为处理完成。
             sub_task_error_code(str):
                 单风格任务错误码。0:正常；501:文本黄反拦截；201:模型生图失败。
             final_image_list(Text2ImageFinalImageList):
@@ -227,8 +227,8 @@ class Text2ImageSubTaskResultList(proto.Message):
         proto.STRING,
         number=1,
     )
-    sub_task_progress: int = proto.Field(
-        proto.INT32,
+    sub_task_progress: float = proto.Field(
+        proto.FLOAT,
         number=2,
     )
     sub_task_error_code: int = proto.Field(
