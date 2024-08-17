@@ -20,16 +20,16 @@ from parameterized import parameterized, param
 import appbuilder
 from appbuilder.core.message import Message
 
-from pytest_config import LoadConfig
+from tests.pytest_config import LoadConfig
 conf = LoadConfig()
 
-from pytest_utils import Utils
+from tests.pytest_utils import Utils
 util = Utils()
 
 from appbuilder.utils.logger_util import get_logger
 log = get_logger(__name__)
 
-png_path = "./data/qa_doc_parser_extract_table_from_doc.png"
+png_path = Utils.get_data_file("qa_doc_parser_extract_table_from_doc.png")
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestDocParserExtractTableFromDoc(unittest.TestCase):

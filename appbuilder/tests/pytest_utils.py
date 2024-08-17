@@ -14,7 +14,7 @@
 
 import random
 import string
-
+import os
 
 class Utils(object):
     """
@@ -33,3 +33,10 @@ class Utils(object):
         else:
             name = gen_name
         return name
+
+    @staticmethod
+    def get_data_file(filename):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        full_file_path = os.path.join(current_dir, "data", filename)
+        return full_file_path
+
