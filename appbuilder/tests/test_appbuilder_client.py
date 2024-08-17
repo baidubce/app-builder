@@ -56,6 +56,10 @@ class TestAgentRuntime(unittest.TestCase):
         with self.assertRaises(ValueError):
             builder.run(conversation_id='', query='')
 
+        conversation_id = builder.create_conversation()
+        with self.assertRaises(FileNotFoundError):
+            builder.upload_local_file(conversation_id=conversation_id, local_file_path='not_exist')
+
 
 if __name__ == '__main__':
     unittest.main()
