@@ -85,7 +85,7 @@ class TestText2ImageComponent(unittest.TestCase):
 
         """
         response = Text2ImageQueryResponse()
-        response.data.task_progress = 1
+        response.data.task_progress = 1.0
         response.data.sub_task_result_list = [{'final_image_list': [{'img_url': 'http://example.com'}]}]
         img_urls = self.text2Image.extract_img_urls(response)
         self.assertEqual(img_urls, ['http://example.com'])
