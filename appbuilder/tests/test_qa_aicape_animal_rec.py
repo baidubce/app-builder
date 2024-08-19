@@ -16,7 +16,6 @@ import unittest
 import appbuilder
 import appbuilder
 
-
 class TestAnimalRecognition(unittest.TestCase):
     
     def test_run(self):

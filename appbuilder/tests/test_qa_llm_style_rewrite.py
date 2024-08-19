@@ -15,7 +15,6 @@
 import unittest
 import appbuilder
 
-
 class TestStyleRewrite(unittest.TestCase):
     def test_normal_case(self):
         text = "文心大模型发布新版"

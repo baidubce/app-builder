@@ -15,7 +15,6 @@
 import unittest
 import appbuilder
 
-
 class TestHandwritingOcr(unittest.TestCase):
     def test_run(self):
         image_url=("https://bj.bcebos.com/v1/appbuilder/test_handwrite_ocr.jpg?"

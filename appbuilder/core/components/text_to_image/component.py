@@ -16,6 +16,7 @@ r"""Text2Image component.
 """
 import time
 import json
+import math
 
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
@@ -105,9 +106,10 @@ class Text2Image(Component):
                 request.task_id = taskId
                 text2ImageQueryResponse = self.queryText2ImageData(request, request_id=request_id)
                 if text2ImageQueryResponse.data.task_progress is not None:
-                    task_progress = text2ImageQueryResponse.data.task_progress
-                    if task_progress == 1:
+                    task_progress = float(text2ImageQueryResponse.data.task_progress)
+                    if math.isclose(1.0, task_progress, rel_tol=1e-9, abs_tol=0.0):
                         break
+                    
                     # NOTE(chengmo)：文生图组件的返回时间在10s以上，查询过于频繁会被限流，导致异常报错
                     # 此处采用 yangyongzhen老师提供的方案，前三次查询间隔3s，后三次查询间隔逐渐增大
                     if task_request_time <= 3:

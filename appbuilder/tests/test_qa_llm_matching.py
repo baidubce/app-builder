@@ -15,7 +15,6 @@
 import unittest
 import appbuilder
 
-
 class TestSemanticRankComponent(unittest.TestCase):
     def test_normal_case(self):
         query = "合同中展期利率与罚息利率分别是什么？"

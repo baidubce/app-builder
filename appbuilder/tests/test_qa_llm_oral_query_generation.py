@@ -15,7 +15,6 @@
 import unittest
 import appbuilder
 
-
 class TestOralQueryGeneration(unittest.TestCase):
     def test_normal_case(self):
         model_name = "ERNIE-3.5-8K"

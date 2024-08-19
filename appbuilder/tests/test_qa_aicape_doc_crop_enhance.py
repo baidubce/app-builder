@@ -15,7 +15,6 @@
 import unittest
 import appbuilder
 
-
 class TestDocCropEnhance(unittest.TestCase):
 
     def test_run(self):

@@ -7,7 +7,7 @@
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
 </div>
 
-[简体中文](./README.md) | English
+[简体中文](./README.md) | English | [日本語](./README_ja.md)
 
 <br>
 
@@ -47,7 +47,7 @@ Baidu AI Cloud Qianfan AppBuilder-SDK offers the following essential features fo
 
 ##  How to install？
 
-#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.1 (2024-07-25)
+#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.2 (2024-08-16)
 
 Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/quick_start/changelog.md)
 

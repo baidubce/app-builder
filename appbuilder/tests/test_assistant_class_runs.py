@@ -1,7 +1,7 @@
 import unittest
 import os
 import appbuilder
-
+from tests.pytest_utils import Utils
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
@@ -21,9 +21,8 @@ class TestFunctionCall(unittest.TestCase):
             instructions="每句话回复前都加上我是秦始皇"
         )
 
-        file = appbuilder.assistant.assistants.files.create(
-            "./data/qa_doc_parser_extract_table_from_doc.png"
-        )
+        file_path = Utils.get_data_file("qa_doc_parser_extract_table_from_doc.png")
+        file = appbuilder.assistant.assistants.files.create(file_path)
 
         self.assertIsInstance(file, appbuilder.assistant.type.AssistantFilesCreateResponse)
 

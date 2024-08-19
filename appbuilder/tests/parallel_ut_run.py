@@ -31,6 +31,7 @@ handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(handler)
 logger.propagate = False
 current_path = os.path.dirname(os.path.abspath(__file__))
+parent_path = os.path.dirname(current_path)
 
 """
 将Unittest Case分为以下几类
@@ -159,6 +160,7 @@ def run_sync_unittest(test_file):
     """
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
+    current_env["PYTHONPATH"] = parent_path + os.pathsep + current_env.get("PYTHONPATH", "")
     cmd = COVERAGE_CMD + [test_file]
     log = open("{}/ut_logs/{}_run.log".format(current_path, test_file), "w")
     begin_time = time.time()
@@ -182,6 +184,7 @@ def run_async_unittest(test_file, case_idx, case_num, timeout=1200):
     """
     default_env = os.environ.copy()
     current_env = copy.copy(default_env)
+    current_env["PYTHONPATH"] = parent_path + os.pathsep + current_env.get("PYTHONPATH", "")
     cmd = COVERAGE_CMD + [test_file]
     log_file = "{}/ut_logs/{}_run.log".format(current_path, test_file)
     log = open(log_file, "w")
