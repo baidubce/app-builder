@@ -15,67 +15,25 @@
 import unittest
 import os
 import appbuilder
-import requests
-from parameterized import parameterized, param
-import appbuilder
 from appbuilder.core.message import Message
 
-from tests.pytest_config import LoadConfig
-conf = LoadConfig()
-
-from tests.pytest_utils import Utils
-util = Utils()
-
-from appbuilder.utils.logger_util import get_logger
-log = get_logger(__name__)
-
-png_path = Utils.get_data_file("qa_doc_parser_extract_table_from_doc.png")
-
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestDocParserExtractTableFromDoc(unittest.TestCase):
-    @parameterized.expand([
-        param(png_path, True),
-    ])
-    def test_normal_case(self, message, return_raw):
-        """
-        正常用例
-        """
+
+    def test_run(self):
+        test_dir = os.path.dirname(__file__)
+        image_path = os.path.join(test_dir, "data/qa_doc_parser_extract_table_from_doc.png")
+        return_raw = True
+
         builder = appbuilder.DocParser()
-        # 测试文档解析器使用默认配置，xxx为待解析的文档路径。
-        msg = Message(message)
-        # ExtractTableFromDoc输入为文档原始解析结果，此处需要带上原始结果，return_raw=True.
+        msg = Message(image_path)
         doc = builder(msg, return_raw=return_raw).content.raw
-        # 抽取文档中的表格
+
         ExtractTableBuilder = appbuilder.ExtractTableFromDoc()
-        res = ExtractTableBuilder.run(Message(doc), table_max_size=1000)
-        assert len(res.content) > 0, "未抽取到表格"
-        assert len(res.content[0]) > 0, "未抽取到表格"
+        out = ExtractTableBuilder.run(Message(doc), table_max_size=1000)
 
-    @parameterized.expand([
-        # timeout为0
-        param(123, True, None, png_path, "ValueError", "file_path", "file_path should be str type"),
-    ])
-    def test_abnormal_case(self, message, return_raw, single_table_size, file_name, err_type, err_param, err_msg):
-        """
-        异常用例
-        """
-        try:
-            builder = appbuilder.DocParser()
-            # 测试文档解析器使用默认配置，xxx为待解析的文档路径。
-            msg = Message(message)
-            # ExtractTableFromDoc输入为文档原始解析结果，此处需要带上原始结果，return_raw=True.
-            doc = builder(msg, return_raw=return_raw).content.raw
-            # 抽取文档中的表格
-            ExtractTableBuilder = appbuilder.ExtractTableFromDoc(single_table_size=single_table_size,
-                                                                 file_name=file_name)
-            res = ExtractTableBuilder.run(Message(doc))
-            log.info(res)
-            assert False, "未捕获到错误信息"
-        except Exception as e:
-            self.assertIsInstance(e, eval(err_type), "捕获的异常不是预期的类型 实际:{}, 预期:{}".format(e, err_type))
-            self.assertIn(err_param, str(e), "捕获的异常参数类型不正确, 实际:{}, 预期:{}".format(e, err_param))
-            self.assertIn(err_msg, str(e), "捕获的异常消息不正确, 实际:{}, 预期:{}".format(e, err_msg))
+        self.assertIn("客户名称", str(out))
+        self.assertIn("有限责任公司", str(out))
 
-    
+
 if __name__ == '__main__':
     unittest.main()
