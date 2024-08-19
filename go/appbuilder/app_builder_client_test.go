@@ -39,7 +39,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 	appID := ""
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
-		t.Fatalf("new AgentBuidler instance failed")
+		t.Fatalf("new AppBuilderClient instance failed")
 	}
 
 	conversationID, err := client.CreateConversation()
