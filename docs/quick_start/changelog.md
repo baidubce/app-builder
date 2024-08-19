@@ -46,3 +46,6 @@
 * **2024.07.25 v0.9.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.1)
   * KnowledgeBase组件完整支持`知识库`、`知识库文档`及`文档切片`的增删改查
   * 新增appbuilder_trace_server与AppBuilderTracer功能，支持组件、AppBuilderClient、Assistant的链路追踪
+* **2024.08.16 v0.9.2版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.2)
+  * AppBuilderClient 新增ToolCall功能，支持开发者注册本地函数为组件，扩展Agent能力边界
+  * 新增`PPTGenerationFromFile`、`PPTGenerationFromInstruction`、`PPTGenerationFromPaper`三个组件
