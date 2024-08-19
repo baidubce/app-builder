@@ -292,5 +292,5 @@ msg_files = appbuilder.assistant.threads.messages.files(
 ## 进阶用法
 
 - [Assistant SDK 数据类型文档](https://cloud.baidu.com/doc/AppBuilder/s/nluzkdben)
-- [Assistant SDK 基础能力CookBook](https://github.com/baidubce/app-builder/blob/master/cookbooks/README.md)
+- [Assistant SDK 基础能力Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/README.md)
 
