@@ -270,7 +270,7 @@ def run_cpu_parallel_unittest():
 
     logger.info("\n CPU_PARALLEL 单测并行运行总计耗时 {} s".format(
         end_time - begin_time))
-    logger.info("\n CPU_PARALLEL 单测串行运行总计耗时 {} s".format(
+    logger.info("\n CPU_SERIAL 单测串行运行总计耗时 {} s".format(
         total_case_time))
 
     return success_cases, failed_cases, end_time - begin_time
