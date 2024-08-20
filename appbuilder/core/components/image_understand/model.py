@@ -45,6 +45,14 @@ class ImageUnderstandRequest(proto.Message):
         proto.BOOL,
         number=4
     )
+    subject_detect: bool = proto.Field(
+        proto.BOOL,
+        number=5
+    )
+    llm_switch: bool = proto.Field(
+        proto.BOOL,
+        number=6
+    )
 
 
 class ImageUnderstandTask(proto.Message):
