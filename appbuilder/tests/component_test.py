@@ -9,6 +9,7 @@ from unittest.mock  import Mock
 from appbuilder.core import components
 from appbuilder.core._session import InnerSession
 
+
 Data_Type = {
     'string': str,
     'integer': int,
