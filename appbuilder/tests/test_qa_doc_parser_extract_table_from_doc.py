@@ -17,6 +17,7 @@ import os
 import appbuilder
 from appbuilder.core.message import Message
 
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDocParserExtractTableFromDoc(unittest.TestCase):
 
     def test_run(self):
