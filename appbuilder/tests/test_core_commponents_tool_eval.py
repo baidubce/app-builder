@@ -76,10 +76,12 @@ def find_tool_eval_components():
 
     return components
 
+
 def read_whitelist_components():
     with open('whitelist_components.txt', 'r') as f:
         lines = [line.strip() for line in f]
     return lines
+
 
 def write_error_data(error_df,error_stats):
     txt_file_path = 'components_error_info.txt'
