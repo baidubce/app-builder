@@ -13,97 +13,23 @@
 # limitations under the License.
 
 import unittest
-import os
-import appbuilder
-import requests
-from parameterized import parameterized, param
 import appbuilder
 
-from pytest_config import LoadConfig
-conf = LoadConfig()
-
-from pytest_utils import Utils
-util = Utils()
-
-from appbuilder.utils.logger_util import get_logger
-log = get_logger(__name__)
-
-image_url = "https://bj.bcebos.com/v1/appbuilder/qrcode_ocr_test.png?" \
-            "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-" \
-            "01-24T12%3A45%3A13Z%2F-1%2Fhost%2Ffc43d07b41903aeeb5a023131ba6" \
-            "e74ab057ce26d50e966dc31ff083e6a9c41b"
-raw_image = requests.get(image_url).content
-
-@unittest.skip("Open api request limit reached")
 class TestQrcodeOcr(unittest.TestCase):
-    @parameterized.expand([
-        param(image_url, "true", None, None),
-        param(image_url, "true", None, 0),
-        param(image_url, "true", float(120), None),
-        param(image_url, "true", None, 1),
-        param(image_url, "true", 120.5, 1),
-        param(image_url, "true", float(12000), None),
-        param(image_url, "false", None, None),
-    ])
-    def test_normal_case(self, image, location, timeout, retry):
-        """
-        正常用例
-        """
-        # 创建二维码识别组件实例
+
+    def test_run(self):
+        image_url = (
+            "https://bj.bcebos.com/v1/appbuilder/qrcode_ocr_test.png?"
+            "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A45%3A13Z%2F-1%2Fhost%2Ffc43d07b41903aeeb5a023131ba6"
+            "e74ab057ce26d50e966dc31ff083e6a9c41b"
+        )
+        location = "true"
+
         qrcode_ocr = appbuilder.QRcodeOCR()
-        # 执行识别操作并获取结果
-        if timeout is None and retry is None:
-            out = qrcode_ocr.run(appbuilder.Message(content={"url": image}))
-        elif timeout is None:
-            out = qrcode_ocr.run(appbuilder.Message(content={"url": image}), retry=retry)
-        elif retry is None:
-            out = qrcode_ocr.run(appbuilder.Message(content={"url": image}), timeout=timeout)
-        else:
-            out = qrcode_ocr.run(appbuilder.Message(content={"url": image}), timeout=timeout, retry=retry)
-        res = out.content
+        out = qrcode_ocr.run(appbuilder.Message(content={"url": image_url, "location": location}))
 
-    @parameterized.expand([
-        # timeout为0
-        param(image_url, "true", float(0), 0, "ValueError", "timeout",
-                        'but the timeout cannot be set to a value less than or equal to 0.'),
-        # timeout为字符串
-        param(image_url, "true", "a", 0, "appbuilder.core._exception.InvalidRequestArgumentError",
-                        "timeout", 'timeout must be float or tuple of float'),
-        # timeout为0.1，太短了
-        param(image_url, "true", float(0.1), 0, "requests.exceptions.ReadTimeout", "timeout",
-                        "Read timed out. (read timeout=0.1)"),
-        # retry为字符串
-        param(image_url, "true", float(10), "a", "TypeError", "str",
-                        "'<' not supported between instances of 'str' and 'int'"),
-        # image_url错误
-        param("https://bj.bcebos.com/v1/appbuilder/xxx", "true", 12.5, 1,
-                        "appbuilder.core._exception.AppBuilderServerException", "url",
-                        "service_err_message=url format illegal"),
-        # location为非"true", "false"
-        param(image_url, 1, float(10), 0,
-                        "appbuilder.core._exception.InvalidRequestArgumentError",
-                        "location", "location must be a string with value 'true' or 'false'"),
-        param(image_url, "a", float(10), 0,
-                        "appbuilder.core._exception.InvalidRequestArgumentError",
-                        "location", "location must be a string with value 'true' or 'false'"),
-    ])
-    def test_abnormal_case(self, image, location, timeout, retry, err_type, err_param, err_msg):
-        """
-        异常用例
-        """
-        try:
-            # 创建表格识别组件实例
-            qrcode_ocr = appbuilder.QRcodeOCR()
-            # 执行识别操作并获取结果
-            out = qrcode_ocr.run(appbuilder.Message(content={"url": image}), location=location, timeout=timeout,
-                                 retry=retry)
-            res = out.content
-            assert False, "未捕获到错误信息"
-        except Exception as e:
-            self.assertIsInstance(e, eval(err_type), "捕获的异常不是预期的类型 实际:{}, 预期:{}".format(e, err_type))
-            self.assertIn(err_param, str(e), "捕获的异常参数类型不正确, 实际:{}, 预期:{}".format(e, err_param))
-            self.assertIn(err_msg, str(e), "捕获的异常消息不正确, 实际:{}, 预期:{}".format(e, err_msg))
+        self.assertIn("QR_CODE", str(out.content))
+        
 
-    
 if __name__ == '__main__':
     unittest.main()

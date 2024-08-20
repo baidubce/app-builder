@@ -254,7 +254,7 @@ Hook:
     - [Process orchestration](/docs/basic_module/assistant_sdk.md)
     - [End-to-end applications](/docs/basic_module/appbuilder_client.md)
 - [Advanced Practice](/docs/advanced_application/README.md)
-    - [CookBooks](/cookbooks/README.md)
+    - [Cookbooks](/cookbooks/README.md)
 - [Service deployment](/docs/service/README.md)
     - [API calls](/docs/service/flask.md)
     - [Interactive front-end](/docs/service/chainlit.md)

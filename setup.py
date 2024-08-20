@@ -31,6 +31,11 @@ for package in packages:
     if package.startswith('appbuilder.utils'):
         package_data[package] = ["*.md"]
 
+serve_require = ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9", "arize-phoenix==4.5.0"]
+trace_require = ["SQLAlchemy==2.0.31"]
+test_require = ["python-dotenv"]
+all_require = serve_require + trace_require + test_require
+
 setup(
     name="appbuilder-sdk",
     # NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
@@ -42,8 +47,10 @@ setup(
     install_requires=requirements,
     python_requires=">=3.9",
     extras_require={
-        "serve": ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9", "arize-phoenix==4.5.0"],
-        "trace": ["SQLAlchemy==2.0.31"]
+        "serve": serve_require,
+        "trace": trace_require,
+        "test": test_require,
+        "all": all_require
     },
     entry_points={
         "console_scripts": [

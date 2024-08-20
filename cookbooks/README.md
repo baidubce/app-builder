@@ -1,6 +1,6 @@
-# AppBuilder-SDK CookBooks
+# AppBuilder-SDK Cookbook
 
-## CookBook目录
+## Cookbook目录
 
 ### 基础组件
 - [短语音识别组件-asr](/cookbooks/components/asr.ipynb)

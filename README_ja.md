@@ -219,7 +219,7 @@ print(answer.content.answer)
 この小曲は「上班狼狈却又追逐梦想」をテーマに、押韻を通じて上班族が生活の苦しさにもかかわらず、夢を抱いて前進する精神を表現しています。気に入っていただけると幸いです！
 ```
 
-**AIネイティブアプリケーションのコード例については、[CookBooks](./cookbooks/README.md)をご覧ください。以下のクックブックを優先的にお勧めします：**
+**AIネイティブアプリケーションのコード例については、[Cookbooks](./cookbooks/README.md)をご覧ください。以下のクックブックを優先的にお勧めします：**
 - 基本機能コンポーネント
     - [一般的なテキスト認識コンポーネント](/cookbooks/components/general_ocr.ipynb)
     - [基本コンポーネントのサービス指向デプロイメント](/cookbooks/components/agent_runtime.ipynb)
@@ -250,7 +250,7 @@ print(answer.content.answer)
     - [プロセスオーケストレーション](/docs/basic_module/assistant_sdk.md)
     - [エンドツーエンドアプリケーション](/docs/basic_module/appbuilder_client.md)
 - [高度な実践](/docs/advanced_application/README.md)
-    - [CookBooks](/cookbooks/README.md)
+    - [Cookbooks](/cookbooks/README.md)
 - [サービスデプロイメント](/docs/service/README.md)
     - [API呼び出し](/docs/service/flask.md)
     - [インタラクティブフロントエンド](/docs/service/chainlit.md)

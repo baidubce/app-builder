@@ -16,9 +16,9 @@
 * **2024.03.13 v0.4.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.4.1)
   * 支持以下功能进行FunctionCall调用：动植物识别、表格文字识别、条形码及二维码识别、身份证混贴识别、手写文字识别、text2image、excel2figure
 * **2024.03.20 v0.5.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.0)
-  * AgentBuilder ConsoleSDK发布 [Agent调用CookBook](/cookbooks/end2end_application/agent/appbuilder_client.ipynb)
+  * AgentBuilder ConsoleSDK发布 [Agent调用Cookbook](/cookbooks/end2end_application/agent/appbuilder_client.ipynb)
   * AI能力引擎组件新增：向量检索-VDB
-  * 支持以下功能进行FunctionCall调用并新增[CookBook](/cookbooks/components/general_ocr.ipynb)：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
+  * 支持以下功能进行FunctionCall调用并新增[Cookbook](/cookbooks/components/general_ocr.ipynb)：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
 * **2024.03.21 v0.5.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.1)
   * 问题修复：修复了在Python 3.8 及以下环境无法使用AgentBuilder ConsoleSDK的问题。同时，在即将发布的0.6.0版本中，将不再提供对Python 3.8及以下环境的支持，请升级Python版本到3.9
 * **2024.04.12 v0.6.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.6.0)
@@ -26,7 +26,7 @@
   * AppBuilder Console SDK 支持 GO 语言 [AppBuilder GO ConsoleSDK](/go/)
   * 首页README更新，提供免费的公共试用TOKEN，方便开发者快速体验
 * **2024.04.30 v0.7.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.7.0)
-  * 提供Assistant SDK 功能，新增 [CookBook](/cookbooks/pipeline/assistant_function_call.ipynb)，包含流程编排与FunctionCall，搭建个性化Agent应用
+  * 提供Assistant SDK 功能，新增 [Cookbook](/cookbooks/pipeline/assistant_function_call.ipynb)，包含流程编排与FunctionCall，搭建个性化Agent应用
   * AgentBuilder组件更名为 AppBuilderClient, 后续版本将放弃对 `AgentBuilder` 的后向兼容支持
   * 首页Readme与文档结构优化
 * **2024.05.21 v0.7.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.7.1)
@@ -46,3 +46,6 @@
 * **2024.07.25 v0.9.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.1)
   * KnowledgeBase组件完整支持`知识库`、`知识库文档`及`文档切片`的增删改查
   * 新增appbuilder_trace_server与AppBuilderTracer功能，支持组件、AppBuilderClient、Assistant的链路追踪
+* **2024.08.16 v0.9.2版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.2)
+  * AppBuilderClient 新增ToolCall功能，支持开发者注册本地函数为组件，扩展Agent能力边界
+  * 新增`PPTGenerationFromFile`、`PPTGenerationFromInstruction`、`PPTGenerationFromPaper`三个组件

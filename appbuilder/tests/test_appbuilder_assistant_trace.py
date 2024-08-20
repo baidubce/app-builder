@@ -16,6 +16,7 @@ import unittest
 import appbuilder
 from appbuilder import AppBuilderTracer
 from appbuilder import AssistantEventHandler
+from tests.pytest_utils import Utils
 
 check_tool = {
     "name": "get_cur_whether",
@@ -113,9 +114,8 @@ class TestAppBuilderTrace(unittest.TestCase):
             instructions="每句话回复前都加上我是秦始皇"
         )
 
-        file = appbuilder.assistant.assistants.files.create(
-            "./data/qa_doc_parser_extract_table_from_doc.png"
-        )
+        file_path = Utils.get_data_file("qa_doc_parser_extract_table_from_doc.png")
+        file = appbuilder.assistant.assistants.files.create(file_path)
 
         thread = appbuilder.assistant.threads.create()
         appbuilder.assistant.threads.messages.create(
@@ -146,9 +146,8 @@ class TestAppBuilderTrace(unittest.TestCase):
             instructions="每句话回复前都加上我是秦始皇"
         )
 
-        file = appbuilder.assistant.assistants.files.create(
-            "./data/qa_doc_parser_extract_table_from_doc.png"
-        )
+        file_path = Utils.get_data_file("qa_doc_parser_extract_table_from_doc.png")
+        file = appbuilder.assistant.assistants.files.create(file_path)
 
         thread = appbuilder.assistant.threads.create()
         appbuilder.assistant.threads.messages.create(

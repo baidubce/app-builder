@@ -226,13 +226,6 @@ func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 			Usage:       c.Usage,
 			Detail:      c.Outputs,
 			ToolCalls:   c.ToolCalls}
-		tp, ok := TypeToStruct[ev.ContentType]
-		if !ok {
-			tp = reflect.TypeOf(DefaultDetail{})
-		}
-		v := reflect.New(tp)
-		_ = json.Unmarshal(c.Outputs, v.Interface())
-		ev.Detail = v.Elem().Interface()
 		t.Events = append(t.Events, ev)
 	}
 }
