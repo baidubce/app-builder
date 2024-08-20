@@ -103,9 +103,10 @@ class Text2Image(Component):
         response = self.http_client.session.post(url, data=req.model_dump(), headers=headers, timeout=None)
         self._http_client.check_response_header(response)
         data = response.json()
+        print(data)
         resp= Text2ImageSubmitResponse(**data)
 
-        taskId = resp.task_id
+        taskId = resp.data.task_id
         if taskId is not None:
             task_request_time = 1
 
