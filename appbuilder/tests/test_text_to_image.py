@@ -2,7 +2,7 @@ import unittest
 import os
 import appbuilder
 from appbuilder.core.components.text_to_image.model import (Text2ImageSubmitRequest, Text2ImageSubmitResponse,
-                                                            Text2ImageQueryRequest, Text2ImageQueryResponse)
+                                                            Text2ImageQueryRequest, Text2ImageQueryResponse, SubTaskResult)
 
 from appbuilder.core._exception import RiskInputException 
 
@@ -33,6 +33,7 @@ class TestText2ImageComponent(unittest.TestCase):
         """
         inp = appbuilder.Message(content={"prompt": "上海的经典风景"})
         out = self.text2Image.run(inp)
+        print(out)
         self.assertIsNotNone(out)
         self.assertIsInstance(out, appbuilder.Message)
 
@@ -67,8 +68,9 @@ class TestText2ImageComponent(unittest.TestCase):
             None
 
         """
-        request = Text2ImageQueryRequest()
-        request.task_id = '123456'
+        request = Text2ImageQueryRequest(
+            task_id = "123456",
+        )
         response = self.text2Image.queryText2ImageData(request)
         self.assertIsNotNone(response)
         self.assertIsInstance(response, Text2ImageQueryResponse)
@@ -86,7 +88,8 @@ class TestText2ImageComponent(unittest.TestCase):
         """
         response = Text2ImageQueryResponse()
         response.data.task_progress = 1.0
-        response.data.sub_task_result_list = [{'final_image_list': [{'img_url': 'http://example.com'}]}]
+        response.data.task_progress_detail = 0.5
+        response.data.sub_task_result_list = [SubTaskResult(**{'sub_task_progress_detail':0.8, 'final_image_list': [{'img_url': 'http://example.com'}]})]
         img_urls = self.text2Image.extract_img_urls(response)
         self.assertEqual(img_urls, ['http://example.com'])
 
