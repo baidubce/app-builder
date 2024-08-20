@@ -57,22 +57,27 @@ class Text2ImageSubmitResponse(BaseModel):
 class Text2ImageQueryRequest(BaseModel):
     task_id: Optional[str]
 
-
-class Text2ImageQueryResponseData(BaseModel):
-    task_id: Optional[str] = None
-    task_status: Optional[str] = None
-    task_progress_detail: Union[float, int, None] = None
-    task_progress: Union[float, int, None] = None
-    sub_task_result_list: Optional[list[object]] = None
-    sub_task_status: Optional[str] = None
-    sub_task_progress_detail: Union[int, float, None] = None
-    sub_task_progress: Union[float, int, None] = None
-    sub_task_error_code: Optional[str] = None
-    final_image_list: Optional[list[object]] = None
+class FinalImage(BaseModel):
     img_url: Optional[str] = None
     height: Optional[int] = None
     width: Optional[int] = None
     img_approve_conclusion: Optional[str] = None
+
+class SubTaskResult(BaseModel):
+    sub_task_status: Optional[str] = None
+    sub_task_progress_detail: Union[int, float, None] = None
+    sub_task_progress: Union[float, int, None] = None
+    sub_task_error_code: Optional[int] = None
+    final_image_list: Optional[list[FinalImage]] = None
+
+class Text2ImageQueryResponseData(BaseModel):
+    task_id: Optional[int] = None
+    task_status: Optional[str] = None
+    task_progress_detail: Union[float, int, None] = None
+    task_progress: Union[float, int, None] = None
+    sub_task_result_list: Optional[list[SubTaskResult]] = None
+    
+    
 
 
 class Text2ImageQueryResponse(BaseModel):

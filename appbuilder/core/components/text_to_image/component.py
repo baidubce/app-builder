@@ -84,7 +84,8 @@ class Text2Image(Component):
         request_id: Optional[str] = None
     ):
         headers = self._http_client.auth_header()
-        url = self._http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
+        headers["Content-Type"] = "application/json"
+        api_url = self._http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
 
         req = Text2ImageSubmitRequest(
             prompt=message.content["prompt"],  
@@ -100,10 +101,9 @@ class Text2Image(Component):
             task_time_out=task_time_out,
             text_check=text_check
         )
-        response = self.http_client.session.post(url, data=req.model_dump(), headers=headers, timeout=None)
+        response = self.http_client.session.post(api_url, json=req.model_dump(), headers=headers, timeout=None)
         self._http_client.check_response_header(response)
         data = response.json()
-        print(data)
         resp= Text2ImageSubmitResponse(**data)
 
         taskId = resp.data.task_id
@@ -151,12 +151,12 @@ class Text2Image(Component):
             obj:`Text2ImageSubmitResponse`: 接口返回的输出消息。
         """
         url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
-        data = Text2ImageSubmitRequest.to_json(request)
+        data = request.model_dump()
         headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/json'
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
-        response = self.http_client.session.post(url, data=data, headers=headers, timeout=timeout)
+        response = self.http_client.session.post(url, json=data, headers=headers, timeout=timeout)
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
