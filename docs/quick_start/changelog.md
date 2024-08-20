@@ -49,3 +49,6 @@
 * **2024.08.16 v0.9.2版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.2)
   * AppBuilderClient 新增ToolCall功能，支持开发者注册本地函数为组件，扩展Agent能力边界
   * 新增`PPTGenerationFromFile`、`PPTGenerationFromInstruction`、`PPTGenerationFromPaper`三个组件
+* **2024.08.20 v0.9.3版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.3)
+  * Text2Image组件接口及效果更新
+  * ImageUnderstand组件接口及效果更新
