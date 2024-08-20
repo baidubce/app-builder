@@ -95,6 +95,9 @@ class ImageUnderstand(Component):
         """
         inp = ImageUnderstandInMsg(**message.content)
         request = ImageUnderstandRequest()
+        # 兼容新参数，确保输出结果一致
+        request.subject_detect = False
+        request.llm_switch = False
         if inp.raw_image:
             request.image = base64.b64encode(inp.raw_image)
         if inp.url:
@@ -219,6 +222,9 @@ class ImageUnderstand(Component):
                 str: 图片内容理解结果
         """
         req = ImageUnderstandRequest()
+        # 兼容新参数，确保输出结果一致
+        req.subject_detect = False
+        req.llm_switch = False
         req.question = question
         if img_name in file_urls:
             req.url = file_urls[img_name]
@@ -264,5 +270,8 @@ class ImageUnderstand(Component):
                 service_err_code=data.get("error_code", ""),
                 service_err_message=data.get("error_msg", "")
             )
+
+
+
 
 
