@@ -7,5 +7,12 @@
         "test*.py"
     ],
     "python.testing.unittestEnabled": true,
-    "python.envFile": "${workspaceFolder}/.env"
+    "python.envFile": "${workspaceFolder}/.env",
+    "go.testFlags": [
+        "-v"
+      ],
+      "go.testEnvFile": "${workspaceFolder}/.env",
+      "go.toolsEnvVars": {
+        "GOPATH": "${workspaceFolder}/go",
+      }
 }
