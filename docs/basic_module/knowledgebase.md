@@ -609,7 +609,7 @@ my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
 
-list_res = my_knowledge.get_documents_list()
+list_res = my_knowledge.get_documents_list(my_knowledge_base_id)
 print("文档列表: ", list_res)
 
 # 知识库ID:  da51a988-cbe7-4b24-aa5b-768985e8xxxx
