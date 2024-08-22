@@ -7,7 +7,7 @@
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
 </div>
 
-[简体中文](./README.md) | English
+[简体中文](./README.md) | English | [日本語](./README_ja.md)
 
 <br>
 
@@ -47,7 +47,7 @@ Baidu AI Cloud Qianfan AppBuilder-SDK offers the following essential features fo
 
 ##  How to install？
 
-#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.1 (2024-07-25)
+#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.3 (2024-08-20)
 
 Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/quick_start/changelog.md)
 
@@ -254,7 +254,7 @@ Hook:
     - [Process orchestration](/docs/basic_module/assistant_sdk.md)
     - [End-to-end applications](/docs/basic_module/appbuilder_client.md)
 - [Advanced Practice](/docs/advanced_application/README.md)
-    - [CookBooks](/cookbooks/README.md)
+    - [Cookbooks](/cookbooks/README.md)
 - [Service deployment](/docs/service/README.md)
     - [API calls](/docs/service/flask.md)
     - [Interactive front-end](/docs/service/chainlit.md)

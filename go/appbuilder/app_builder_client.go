@@ -240,3 +240,38 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	}
 	return &AppBuilderClientOnceIterator{body: resp.Body}, nil
 }
+
+func (t *AppBuilderClient) RunWithToolCall(req AppBuilderClientRunRequest) (AppBuilderClientIterator, error) {
+	if len(req.ConversationID) == 0 {
+		return nil, errors.New("conversationID mustn't be empty")
+	}
+
+	request := http.Request{}
+
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/runs")
+	if err != nil {
+		return nil, err
+	}
+
+	header := t.sdkConfig.AuthHeaderV2()
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = io.NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return nil, err
+	}
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
+	if req.Stream {
+		return &AppBuilderClientStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
+	}
+	return &AppBuilderClientOnceIterator{body: resp.Body}, nil
+}

@@ -116,7 +116,6 @@ class ParseRagProResponse(CompletionResponse):
                         message.extra = {
                             "search_baidu": search_baidu_list
                         }
-                        print(f"message.extra: {message.extra}")
                     else:
                         message.extra = {}
                     if "token_usage" in answer_message:

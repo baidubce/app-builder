@@ -19,17 +19,14 @@ public class AppBuilderClientIterator {
         Event[] events = new Event[response.getContent().length];
         EventContent[] contents = response.getContent();
         IntStream.range(0, contents.length).forEach(i -> {
-            events[i] = new Event()
-                    .setCode(contents[i].getEventCode())
+            events[i] = new Event().setCode(contents[i].getEventCode())
                     .setMessage(contents[i].getEnentMessage())
                     .setStatus(contents[i].getEventStatus())
                     .setEventType(contents[i].getEventType())
                     .setContentType(contents[i].getContentType())
-                    .setDetail(contents[i].getOutputs())
-                    .setUsage(contents[i].getUsage());
+                    .setDetail(contents[i].getOutputs()).setUsage(contents[i].getUsage())
+                    .setToolCalls(contents[i].getToolCalls());
         });
-        return new AppBuilderClientResult()
-                .setAnswer(response.getAnswer())
-                .setEvents(events);
+        return new AppBuilderClientResult().setAnswer(response.getAnswer()).setEvents(events);
     }
 }

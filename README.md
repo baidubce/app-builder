@@ -7,7 +7,7 @@
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
 </div>
 
-简体中文 | [English](./README_en.md)
+简体中文 | [English](./README_en.md) | [日本語](./README_ja.md)
 
 <br>
 
@@ -76,7 +76,7 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 
 ##  如何安装AppBuilder-SDK
 
-#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.1 (2024-07-25)
+#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.3 (2024-08-20)
 
 百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/quick_start/changelog.md)
 
@@ -255,7 +255,7 @@ Hook:
 #### 更多示例
 
 - 更多AI原生应用示例，请浏览[应用广场](https://console.bce.baidu.com/ai_apaas/appCenter)
-- 更多代码CookBook，请浏览 [CookBooks](./cookbooks/README.md)，我们有以下cookbook推荐您优先阅读：
+- 更多代码Cookbook，请浏览 [Cookbooks](./cookbooks/README.md)，我们有以下cookbook推荐您优先阅读：
 
 | 应用类型 |应用链接 | 推荐理由 |
 |--|--|--|
@@ -285,7 +285,7 @@ Hook:
     - [流程编排](/docs/basic_module/assistant_sdk.md)
     - [端到端应用](/docs/basic_module/appbuilder_client.md)
 - [进阶实践](/docs/advanced_application/README.md)
-    - [CookBooks](/cookbooks/README.md)
+    - [Cookbooks](/cookbooks/README.md)
     - [AppBuilder Trace](https://github.com/baidubce/app-builder/blob/master/docs/trace/README.md)
 - [服务化部署](/docs/service/README.md)
     - [API调用](/docs/service/flask.md)

@@ -218,7 +218,9 @@ class Files(object):
             self.query(file_id)
         except:
             raise FileNotFoundError("file_id {} not found".format(file_id))
-        if file_path != "" and not file_path.endswith('/'):
+        if file_path != "" and not os.path.exists(file_path):
+            raise FileNotFoundError("file_path {} not found".format(file_path))
+        if file_path != "" and not os.path.isdir(file_path):
             raise ValueError("file_path must be a file directory")
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/storage/files/download")
