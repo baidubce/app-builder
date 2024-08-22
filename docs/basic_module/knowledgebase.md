@@ -609,7 +609,7 @@ my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
 
-list_res = my_knowledge.get_documents_list()
+list_res = my_knowledge.get_documents_list(my_knowledge_base_id)
 print("文档列表: ", list_res)
 
 # 知识库ID:  da51a988-cbe7-4b24-aa5b-768985e8xxxx
@@ -652,7 +652,7 @@ my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
 
-doc_list = knowledge.get_all_documents()
+doc_list = knowledge.get_all_documents(my_knowledge_base_id)
 for message in doc_list:
     print(message)
 ```
@@ -687,6 +687,7 @@ my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
 resp = my_knowledge.create_chunk("your_document_id", "content")
 print("切片ID: ", resp.id)
+chunk_id = resp.id
 ```
 
 ### 15. 修改切片信息`modify_chunk(chunkId: str, content: str, enable: bool)`
@@ -695,7 +696,7 @@ print("切片ID: ", resp.id)
 
 | 参数名称   | 参数类型 | 描述         | 示例值         |
 | ---------- | -------- | ------------ | -------------- |
-| documentId | string   | 文档ID       | "正确的文档ID" |
+| chunkId | string   | 文档ID       | "正确的切片ID" |
 | content    | string   | 切片内容     | "内容"         |
 | enable     | bool     | 是否用该切片 | true           |
 
