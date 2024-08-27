@@ -417,9 +417,9 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 
 knowledge_base_id = "your_knowledge_base_id"
 knowledge = appbuilder.KnowledgeBase()
-knowledge.create_documents(
+knowledge.upload_documents(
 	id=knowledge_base_id,
-	contentFormat="rawText",
+	content_format="rawText",
 	file_path="./appbuilder/tests/data/qa_appbuilder_client_demo.pdf",
 	processOption=appbuilder.DocumentProcessOption(
 		template="custom",
