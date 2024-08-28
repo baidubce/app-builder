@@ -21,6 +21,7 @@
 ### 1、新建知识库`KnowledgeBase().create_knowledge_base(name: str, description: str, type: str, esUrl: str, esUserName: str, esPassword: str) -> KnowledgeBaseDetailResponse`
 
 #### 方法参数
+
 | 参数名称    | 参数类型 | 是否必传 | 描述                                  | 示例值             |
 | ----------- | -------- | -------- | ------------------------------------- | ------------------ |
 | name        | string   | 是       | 希望创建的知识库名称                  | "我的知识库"       |
