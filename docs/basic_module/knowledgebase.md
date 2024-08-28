@@ -21,14 +21,14 @@
 ### 1、新建知识库`KnowledgeBase().create_knowledge_base(name: str, description: str, type: str, esUrl: str, esUserName: str, esPassword: str) -> KnowledgeBaseDetailResponse`
 
 #### 方法参数
-| 参数名称    | 参数类型 | 描述                                  | 示例值             |
-| ----------- | -------- | ------------------------------------- | ------------------ |
-| name        | string   | 希望创建的知识库名称                  | "我的知识库"       |
-| description | string   | 知识库描述                            | "我的知识库"       |
-| type        | string   | 知识库索引存储配置 (public、bes、vdb) | "public"           |
-| esUrl       | string   | bes 访问地址，type填bes时填写         | "http://test/test" |
-| esUserName  | string   | bes 用户名，type填bes时填写           | "username"         |
-| esPassword  | string   | bes密码，type填bes时填写              | "password"         |
+| 参数名称    | 参数类型 | 描述                                  | 示例值             | Required |
+| ----------- | -------- | ------------------------------------- | ------------------ | -------- |
+| name        | string   | 希望创建的知识库名称                  | "我的知识库"       | True     |
+| description | string   | 知识库描述                            | "我的知识库"       |          |
+| type        | string   | 知识库索引存储配置 (public、bes、vdb) | "public"           |          |
+| esUrl       | string   | bes 访问地址，type填bes时填写         | "http://test/test" |          |
+| esUserName  | string   | bes 用户名，type填bes时填写           | "username"         |          |
+| esPassword  | string   | bes密码，type填bes时填写              | "password"         |          |
 
 #### 方法返回值
 
