@@ -406,6 +406,7 @@ class DocumentPattern(BaseModel):
     regex: str = Field(..., description="正则表达式")
     targetLength: int = Field(..., description="分段最大长度")
     overlapRate: float = Field(..., description="分段重叠最大字数占比，推荐值0.25")
+
 ```
 
 #### 方法示例
