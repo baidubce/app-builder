@@ -21,15 +21,14 @@
 ### 1、新建知识库`KnowledgeBase().create_knowledge_base(name: str, description: str, type: str, esUrl: str, esUserName: str, esPassword: str) -> KnowledgeBaseDetailResponse`
 
 #### 方法参数
-
-| 参数名称    | 参数类型 | 是否必传 | 描述                                  | 示例值             |
-| ----------- | -------- | -------- | ------------------------------------- | ------------------ |
-| name        | string   | 是       | 希望创建的知识库名称                  | "我的知识库"       |
-| description | string   | 否       | 知识库描述                            | "我的知识库"       |
-| type        | string   | 是       | 知识库索引存储配置 (public、bes、vdb) | "public"           |
-| esUrl       | string   | 否       | bes 访问地址，type填bes时填写         | "http://test/test" |
-| esUserName  | string   | 否       | bes 用户名，type填bes时填写           | "username"         |
-| esPassword  | string   | 否       | bes密码，type填bes时填写              | "password"         |
+| 参数名称    | 参数类型 | 描述                                  | 示例值             | Required |
+| ----------- | -------- | ------------------------------------- | ------------------ | -------- |
+| name        | string   | 希望创建的知识库名称                  | "我的知识库"       | True     |
+| description | string   | 知识库描述                            | "我的知识库"       |          |
+| type        | string   | 知识库索引存储配置 (public、bes、vdb) | "public"           |          |
+| esUrl       | string   | bes 访问地址，type填bes时填写         | "http://test/test" |          |
+| esUserName  | string   | bes 用户名，type填bes时填写           | "username"         |          |
+| esPassword  | string   | bes密码，type填bes时填写              | "password"         |          |
 
 #### 方法返回值
 
@@ -163,11 +162,11 @@ print("新建的知识库名称: ", resp.name)
 
 #### 方法参数
 
-| 参数名称          | 参数类型 | 是否必传 | 描述                        | 示例值           |
-| ----------------- | -------- | -------- | --------------------------- | ---------------- |
-| knowledge_base_id | string   | 是       | 起始位置，知识库文档id      | "正确的知识库ID" |
-| maxKeys           | int      | 否       | 数据大小，默认10，最大值100 | 10               |
-| keyword           | string   | 否       | 搜索关键字                  | "测试"           |
+| 参数名称          | 参数类型 | 描述                        | 示例值           |
+| ----------------- | -------- | --------------------------- | ---------------- |
+| knowledge_base_id | string   | 起始位置，知识库文档id      | "正确的数据集ID" |
+| maxKeys           | int      | 数据大小，默认10，最大值100 | 10               |
+| keyword           | string   | 搜索关键字                  | "测试"           |
 
 #### 方法返回值
 
@@ -226,11 +225,11 @@ print("获取到的知识库列表: ", resp)
 
 #### 方法参数
 
-| 参数名称          | 参数类型 | 是否必传 | 描述                   | 示例值           |
-| ----------------- | -------- | -------- | ---------------------- | ---------------- |
-| knowledge_base_id | string   | 是       | 起始位置，知识库文档id | "正确的知识库ID" |
-| name              | string   | 否       | 修改后的知识库名称     | "new_name"       |
-| description       | string   | 否       | 修改后的知识库描述     | "测试"           |
+| 参数名称          | 参数类型 | 描述                   | 示例值           |
+| ----------------- | -------- | ---------------------- | ---------------- |
+| knowledge_base_id | string   | 起始位置，知识库文档id | "正确的数据集ID" |
+| name              | string   | 修改后的知识库名称     | "new_name"       |
+| description       | string   | 修改后的知识库描述     | "测试"           |
 
 #### 方法示例
 
@@ -264,12 +263,12 @@ knowledge.delete_knowledge_base("da51a988-cbe7-4b24-aa5b-768985e8xxxx")
 
 #### 方法参数
 
-| 参数名称      | 参数类型              | 是否必传                               | 描述                                                         | 示例值           |
-| ------------- | --------------------- | -------------------------------------- | ------------------------------------------------------------ | ---------------- |
-| id            | string                | 是                                     | 知识库文档id                                                 | "正确的知识库ID" |
-| contentFormat | string                | 是                                     | 文档格式：rawText (允许配置后续分割策略), qa(不支持配置后续分割策略) | "rawText"        |
-| source        | DocumentSource        | 是                                     | 数据来源                                                     |                  |
-| processOption | DocumentProcessOption | 当contentFormat参数配置为rawText时必传 | 文档处理策略                                                 |                  |
+| 参数名称      | 参数类型              | 描述                                                                 | 示例值           |
+| ------------- | --------------------- | -------------------------------------------------------------------- | ---------------- |
+| id            | string                | 知识库文档id                                                         | "正确的知识库ID" |
+| contentFormat | string                | 文档格式：rawText (允许配置后续分割策略), qa(不支持配置后续分割策略) | "rawText"        |
+| source        | DocumentSource        | 数据来源                                                             |                  |
+| processOption | DocumentProcessOption | 文档处理策略                                                         |                  |
 
 `DocumentSource`类定义如下：
 
