@@ -27,6 +27,9 @@ from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.utils.logger_util import logger
 
+# 流式场景首包超时时，最大重试次数
+MAX_RETRY_COUNT = 3
+
 
 class AgentRuntime(BaseModel):
     """
@@ -321,10 +324,12 @@ class AgentRuntime(BaseModel):
             init_context(session_id=session_id, request_id=request_id, user_id=user_id)
             logging.debug(
                 f"[request_id={request_id}, session_id={session_id}] message={message}, stream={stream}, data={data}")
+
             def gen_sse_resp():
                 with app.app_context():
                     received_first_packet = False
-                    for i in range(3):
+                    retry_count = 0
+                    while retry_count < MAX_RETRY_COUNT:
                         try:
                             answer = self.chat(message, stream, **data)
                             content_iterator = iter(answer.content)
@@ -343,6 +348,7 @@ class AgentRuntime(BaseModel):
                                     }, ensure_ascii=False) + "\n\n"
                                     received_first_packet = True
                             except Exception as e:
+                                retry_count += 1
                                 if not received_first_packet:
                                     continue
                                 else:
