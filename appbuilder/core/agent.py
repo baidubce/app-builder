@@ -368,7 +368,7 @@ class AgentRuntime(BaseModel):
                             code = 500 if not hasattr(
                                 e, "code") else e.code
                             err_resp = {"code": code,
-                                        "message": "内部错误", "result": None}
+                                        "message": "InternalServerError", "result": None}
                             logging.error(
                                 f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
                             yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
