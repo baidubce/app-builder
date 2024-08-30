@@ -197,7 +197,7 @@ class AppBuilderClient(Component):
             tools: list[data_class.Tool] = None,
             tool_outputs: list[data_class.ToolOutput] = None,
             tool_choice: data_class.ToolChoice = None,
-            end_user_id: str = "",
+            end_user_id: str = None,
             **kwargs
             ) -> Message:
         r"""
