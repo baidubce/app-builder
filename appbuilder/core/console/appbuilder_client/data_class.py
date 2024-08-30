@@ -48,7 +48,7 @@ class ToolChoiceFunction(BaseModel):
     )
     input: dict = Field(
         ...,
-        "当组件没有入参或者必填的入参只有一个时可省略，必填的入参只有一个且省略时，使用query字段的值作为入参",
+        description="当组件没有入参或者必填的入参只有一个时可省略，必填的入参只有一个且省略时，使用query字段的值作为入参",
     )
 
 
