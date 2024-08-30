@@ -73,7 +73,8 @@ type ToolOutput struct {
 }
 
 type ToolChoice struct {
-	Type string `json:"type"`
+	Type     string             `json:"type"`
+	Function ToolChoiceFunction `json:"function"`
 }
 
 type ToolChoiceFunction struct {
