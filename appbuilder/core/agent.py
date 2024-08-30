@@ -255,6 +255,8 @@ class AgentRuntime(BaseModel):
             from flask import Flask, current_app, request, Response
             from flask_restful import reqparse, Resource
             from werkzeug.exceptions import BadRequest
+            from flask import stream_with_context
+
         except ImportError:
             raise ImportError("Flask module is not installed. Please install it using 'pip install "
                               "flask~=2.3.2 flask-restful==0.3.9'.")
@@ -317,21 +319,20 @@ class AgentRuntime(BaseModel):
             user_id = request.headers.get("X-Appbuilder-User-Id", None)
 
             init_context(session_id=session_id, request_id=request_id, user_id=user_id)
-            logging.info(
+            logging.debug(
                 f"[request_id={request_id}, session_id={session_id}] message={message}, stream={stream}, data={data}")
-            try:
-                answer = self.chat(message, stream, **data)
-                if stream:
-                    def gen_sse_resp(stream_message):
-                        with app.app_context():
+            def gen_sse_resp():
+                with app.app_context():
+                    received_first_packet = False
+                    for i in range(3):
+                        try:
+                            answer = self.chat(message, stream, **data)
+                            content_iterator = iter(answer.content)
+                            result = None
                             try:
-                                content_iterator = iter(stream_message.content)
-                                result = None
                                 for sub_content in content_iterator:
-                                    result = copy.deepcopy(stream_message)
+                                    result = copy.deepcopy(answer)
                                     result.content = sub_content
-                                    logging.info(
-                                        f"[request_id={request_id}, session_id={session_id}] streaming_result={result}")
                                     yield "data: " + json.dumps({
                                         "code": 0, "message": "",
                                         "result": {
@@ -340,29 +341,39 @@ class AgentRuntime(BaseModel):
                                             "answer_message": json.loads(result.json(exclude_none=True))
                                         }
                                     }, ensure_ascii=False) + "\n\n"
-                                result.content = ""
-                                yield "data: " + json.dumps({
-                                    "code": 0, "message": "",
-                                    "result": {
-                                        "session_id": session_id,
-                                        "is_completion": True,
-                                        "answer_message": json.loads(result.json(exclude_none=True))
-                                    }
-                                }, ensure_ascii=False) + "\n\n"
-                                self.user_session._post_append()
+                                    received_first_packet = True
                             except Exception as e:
-                                code = 500 if not hasattr(
-                                    e, "code") else e.code
-                                err_resp = {"code": code,
-                                            "message": str(e), "result": None}
-                                logging.error(
-                                    f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
-                                yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
-                    return Response(
-                        gen_sse_resp(answer), 200,
+                                if not received_first_packet:
+                                    continue
+                                else:
+                                    raise e
+                            result.content = ""
+                            yield "data: " + json.dumps({
+                                "code": 0, "message": "",
+                                "result": {
+                                    "session_id": session_id,
+                                    "is_completion": True,
+                                    "answer_message": json.loads(result.json(exclude_none=True))
+                                }
+                            }, ensure_ascii=False) + "\n\n"
+                            self.user_session._post_append()
+                            break
+                        except Exception as e:
+                            code = 500 if not hasattr(
+                                e, "code") else e.code
+                            err_resp = {"code": code,
+                                        "message": "内部错误", "result": None}
+                            logging.error(
+                                f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
+                            yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
+
+            try:
+                if stream:
+                    return Response(stream_with_context(gen_sse_resp()), 200,
                         {'Content-Type': 'text/event-stream; charset=utf-8'},
                     )
                 else:
+                    answer = self.chat(message, stream, **data)
                     blocking_result = json.loads(
                         copy.deepcopy(answer).json(exclude_none=True))
                     logging.info(
@@ -372,6 +383,10 @@ class AgentRuntime(BaseModel):
                         "code": 0, "message": "",
                         "result": {"session_id": session_id, "answer_message": blocking_result}
                     }
+            except Exception as e:
+                logging.error(
+                    f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
+                raise e
             except Exception as e:
                 logging.error(
                     f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
