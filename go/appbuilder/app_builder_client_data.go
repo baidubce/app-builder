@@ -49,6 +49,7 @@ type AppBuilderClientRunRequest struct {
 	AppID          string       `json:"app_id"`
 	Query          string       `json:"query"`
 	Stream         bool         `json:"stream"`
+	EndUserID      string       `json:"end_user_id"`
 	ConversationID string       `json:"conversation_id"`
 	Tools          []Tool       `json:"tools"`
 	ToolOutputs    []ToolOutput `json:"tool_outputs"`

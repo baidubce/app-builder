@@ -197,6 +197,7 @@ class AppBuilderClient(Component):
             tools: list[data_class.Tool] = None,
             tool_outputs: list[data_class.ToolOutput] = None,
             tool_choice: data_class.ToolChoice = None,
+            end_user_id: str = None,
             **kwargs
             ) -> Message:
         r"""
@@ -208,6 +209,7 @@ class AppBuilderClient(Component):
             tools(list[data_class.Tools], 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
             tool_outputs(list[data_class.ToolOutput], 可选): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
             tool_choice(data_class.ToolChoice, 可选): 控制大模型使用组件的方式，默认为None
+            end_user_id (str, 可选): 用户ID，用于区分不同用户，默认为None
         返回: message (obj: `Message`): 对话结果.
         """
 
@@ -228,6 +230,7 @@ class AppBuilderClient(Component):
             tools=tools,
             tool_outputs=tool_outputs,
             tool_choice=tool_choice,
+            end_user_id=end_user_id,
         )
 
         headers = self.http_client.auth_header_v2()

@@ -10,6 +10,8 @@ public class AppBuilderClientRunRequest {
     private boolean stream;
     @SerializedName("conversation_id")
     private String conversationID;
+    @SerializedName("end_user_id")
+    private String endUserId;
     private Tool[] tools;
     @SerializedName("tool_outputs")
     private ToolOutput[] ToolOutputs;
@@ -46,6 +48,14 @@ public class AppBuilderClientRunRequest {
 
     public void setConversationID(String conversationID) {
         this.conversationID = conversationID;
+    }
+
+    public String getEndUserId() {
+        return endUserId;
+    }
+
+    public void setEndUserId(String endUserId) {
+        this.endUserId = endUserId;
     }
 
     public Tool[] getTools() {
@@ -88,6 +98,7 @@ public class AppBuilderClientRunRequest {
         public Function getFunction() {
             return function;
         }
+
 
         public static class Function {
             private String name;
