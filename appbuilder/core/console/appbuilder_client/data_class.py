@@ -79,7 +79,7 @@ class AppBuilderClientRequest(BaseModel):
     tools: Optional[list[Tool]] = None
     tool_outputs: Optional[list[ToolOutput]] = None
     tool_choice: Optional[ToolChoice] = None
-    end_user_id: str = None
+    end_user_id: str = ""
 
 
 class Usage(BaseModel):
