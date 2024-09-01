@@ -11,63 +11,139 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
 import os
 import unittest
-import json
-import subprocess
-import asyncio
+import random
 
+from appbuilder.core.components.llms.style_writing import StyleWriting
 from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.component import Component
+from appbuilder.core.message import Message
+from appbuilder.utils.sse_util import SSEClient
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+
+def generate_event(case):
+    # 模拟正常事件
+    if case == "normal":
+        yield "event1"
+        yield "event2"
+        yield "event3"
+    # 模拟首包一定概率出错
+    elif case == "head_may_failed":
+        num = random.randint(1, 100)
+        if num < 20:
+            raise Exception("事件生成报错")
+        else:
+            yield "event1"
+    # 模型中包出错
+    elif case == "middle_failed":
+        yield "event1"
+        raise Exception("事件生成报错")
+    # 模拟首包总是报错
+    elif case == "head_always_failed":
+        raise Exception("事件生成报错")
+
+
+# 模拟流式事件生成报错
+class FakeComponent1(Component):
+    def run(self, message, stream, **kwargs):
+        # 模拟流式调用
+        if stream:
+            case = kwargs["case"]
+            return Message(content=generate_event(case))
+        else:
+            return Message(content="result")
+
+
+# 模拟组件内部执行报错
+class FakeComponent2(Component):
+    def run(self, message, stream, **kwargs):
+        # 内部执行报错
+        raise Exception("内部执行报错")
+
+
 class TestCoreAgent(unittest.TestCase):
     def setUp(self):
-        self.appbuilder_run_chainlit=os.getenv('APPBUILDER_RUN_CHAINLIT')
-        
-    def tearDown(self):
-        if self.appbuilder_run_chainlit is None:
-            os.unsetenv('APPBUILDER_RUN_CHAINLIT')
-        else:
-            os.environ['APPBUILDER_RUN_CHAINLIT'] = self.appbuilder_run_chainlit
-    
-    def test_core_agent_create_flask(self):
-        # test_core_agent_create_flask_app
-        component = Component()       
+        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-jGnPHjj8Bua3Z2AIpAltc/051c65f30f7cea0ac96c0e48f2eabdb659a238ce"
+
+    def test_core_agent_create_flask1(self):
+        component = FakeComponent1()
+        # agent = AgentRuntime(component=StyleWriting(model="eb"))
         agent = AgentRuntime(component=component)
-        subprocess.check_call(['pip', 'uninstall', 'flask', '-y'])
-        with self.assertRaises(ImportError):
-            agent.create_flask_app()
-        subprocess.check_call(['pip', 'install', 'flask==2.3.2'])
-        subprocess.check_call(['pip', 'install', 'flask-restful==0.3.9'])
-        subprocess.check_call(['pip', 'install', 'werkzeug'])
+
         app = agent.create_flask_app()
-              
-    # 附加测试core/component,相关代码还未编写
-    def test_core_component(self):
-        component = Component()
-        component.http_client
-        with self.assertRaises(NotImplementedError):
-            component.run()
-        component.batch()
-        component._trace()
-        component._debug()
-        component.tool_desc()
-        component.tool_name()
-        component.tool_eval()
-        # 运行asyncio
-        asyncio.run(component.arun())
-        asyncio.run(component.abatch())
-        # test_tool_eval
-        component.manifests=[1,2,3]
-        with self.assertRaises(NotImplementedError):
-            component.tool_eval()
-        # test self._http_client is None
-        component._http_client = None
-        component.http_client
-        
-        
-        
+        client = app.test_client()
+        payload = {
+            "stream": False,
+            "message": "message",
+        }
+        # 非流式请求
+        rsp = client.post("http://127.0.0.1:8080/chat", json=payload)
+        assert (rsp.json["code"] == 0)
+
+        # 流式请求
+        for case in ["normal", "head_may_failed", "middle_failed", "head_always_failed"]:
+            payload = {
+                "stream": True,
+                "message": "message",
+                "case": case
+            }
+            if case == "normal":
+                rsp = client.post("http://127.0.0.1:8080/chat", json=payload)
+                data_chunks = rsp.data.splitlines(keepends=True)
+                for event in SSEClient(data_chunks).events():
+                    d = json.loads(event.data)
+                    self.assertEqual(d["code"], 0)
+            if case == "head_may_failed":
+                for i in range(5):
+                    rsp = client.post("http://127.0.0.1:8080/chat", json=payload)
+                    data_chunks = rsp.data.splitlines(keepends=True)
+                    for event in SSEClient(data_chunks).events():
+                        d = json.loads(event.data)
+                        self.assertEqual(d["code"], 0)
+            if case == "middle_failed":
+                rsp = client.post("http://127.0.0.1:8080/chat", json=payload)
+                data_chunks = rsp.data.splitlines(keepends=True)
+                i = 0
+                for event in SSEClient(data_chunks).events():
+                    d = json.loads(event.data)
+                    if i == 0:
+                        self.assertEqual(d["code"], 0)
+                    if i == 1:
+                        self.assertNotEqual(d["code"], 0)
+                    i += 1
+
+            if case == "head_always_failed":
+                rsp = client.post("http://127.0.0.1:8080/chat", json=payload)
+                data_chunks = rsp.data.splitlines(keepends=True)
+                for event in SSEClient(data_chunks).events():
+                    self.assertNotEqual(d["code"], 0)
+
+    def test_core_agent_create_flask2(self):
+        component = FakeComponent2()
+        agent = AgentRuntime(component=component)
+        app = agent.create_flask_app()
+        client = app.test_client()
+        payload = {
+            "stream": False,
+            "message": "message",
+        }
+        # 非流式请求
+        rsp = client.post("http://127.0.0.1:8080/chat", json=payload)
+        assert (rsp.json["code"] != 0)
+
+        payload = {
+            "stream": True,
+            "message": "message",
+        }
+        # 流式请求
+        rsp = client.post("http://127.0.0.1:8080/chat", json=payload)
+        data_chunks = rsp.data.splitlines(keepends=True)
+        for event in SSEClient(data_chunks).events():
+            d = json.loads(event.data)
+            self.assertNotEqual(d["code"], 0)
+
+
 if __name__ == '__main__':
     unittest.main()
-        
