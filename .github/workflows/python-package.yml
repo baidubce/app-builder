@@ -94,7 +94,7 @@ jobs:
         python3 -m pip install opentelemetry-exporter-otlp==1.23.0 opentelemetry-instrumentation==0.44b0 opentelemetry-sdk==1.23.0 opentelemetry-api==1.23.0
         python3 -m pip install pandas==2.2.2
         python3 -m pip uninstall numpy -y
-        python3 -m pip install 'numpy<2'
+        python3 -m pip install numpy==1.26.4
     - name: Build whl
       run: |
         cd cicd/app-builder     
