@@ -65,7 +65,7 @@ class FakeComponent2(Component):
 
 class TestCoreAgent(unittest.TestCase):
     def setUp(self):
-        os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-jGnPHjj8Bua3Z2AIpAltc/051c65f30f7cea0ac96c0e48f2eabdb659a238ce"
+        pass
 
     def test_core_agent_create_flask1(self):
         component = FakeComponent1()
