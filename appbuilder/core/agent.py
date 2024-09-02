@@ -338,7 +338,7 @@ class AgentRuntime(BaseModel):
                             err_resp = {"code": code, "message": "InternalServerError", "result": None}
                             logging.error(
                                 f"request_id={request_id}, session_id={session_id}, err={e}, execute self.chat failed", exc_info=True)
-                            yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
+                            yield "data: " + json.dumps(err_resp, ensure_ascii=False) +  "\n\n"
                             return
                         else:  # 调用chat方法成功，开始生成流式事件
                             content_iterator = iter(answer.content)
