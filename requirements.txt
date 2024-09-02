@@ -1,7 +1,7 @@
 requests
 proto-plus==1.22.3
 pydantic==2.6.4
-numpy
+numpy<2
 urllib3<2.0.0
 tenacity==8.2.3
 pandas
