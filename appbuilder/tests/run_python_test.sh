@@ -50,6 +50,8 @@ python3 -m pip install diff-cover
 
 python3 setup.py bdist_wheel
 python3 -m pip install --force-reinstall dist/*.whl
+python3 -m pip uninstall numpy -y
+python3 -m pip install numpy==1.26.4
 cd appbuilder/tests/
 
 
