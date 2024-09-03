@@ -16,11 +16,11 @@ package appbuilder
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"reflect"
 	"strings"
+	"io/ioutil"
 )
 
 const (
@@ -111,7 +111,7 @@ type Event struct {
 	EventType   string
 	ContentType string
 	Usage       Usage
-	Detail      any
+	Detail      interface{}  // 将any替换为interface{}
 	ToolCalls   []ToolCall
 }
 
@@ -123,7 +123,7 @@ type ToolCall struct {
 
 type FunctionCallOption struct {
 	Name      string         `json:"name"`
-	Arguments map[string]any `json:"arguments"`
+	Arguments map[string]interface{} `json:"arguments"`
 }
 
 type TextDetail struct {
@@ -153,7 +153,7 @@ type Reference struct {
 }
 
 type FunctionCallDetail struct {
-	Text  any    `json:"text"`
+	Text  interface{}    `json:"text"`
 	Image string `json:"image"`
 	Audio string `json:"audio"`
 	Video string `json:"video"`
@@ -226,6 +226,15 @@ func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 			Usage:       c.Usage,
 			Detail:      c.Outputs,
 			ToolCalls:   c.ToolCalls}
+		//这部分新改的
+		tp, ok := TypeToStruct[ev.ContentType]
+		if !ok {
+			tp = reflect.TypeOf(DefaultDetail{})
+		}
+		v := reflect.New(tp)
+		_ = json.Unmarshal(c.Outputs, v.Interface())
+		ev.Detail = v.Elem().Interface()
+		//这部分新改的
 		t.Events = append(t.Events, ev)
 	}
 }
@@ -246,11 +255,11 @@ type AppBuilderClientStreamIterator struct {
 
 func (t *AppBuilderClientStreamIterator) Next() (*AppBuilderClientAnswer, error) {
 	data, err := t.r.ReadMessageLine()
-	if err != nil && !errors.Is(err, io.EOF) {
+	if err != nil && !(err == io.EOF) {
 		t.body.Close()
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	if err != nil && errors.Is(err, io.EOF) {
+	if err != nil && err == io.EOF {
 		t.body.Close()
 		return nil, err
 	}
@@ -276,7 +285,7 @@ type AppBuilderClientOnceIterator struct {
 }
 
 func (t *AppBuilderClientOnceIterator) Next() (*AppBuilderClientAnswer, error) {
-	data, err := io.ReadAll(t.body)
+	data, err := ioutil.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
