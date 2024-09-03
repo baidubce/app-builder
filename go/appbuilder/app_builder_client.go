@@ -28,6 +28,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+	"io/ioutil"
 )
 
 func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
@@ -43,7 +44,7 @@ func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 
-	reqMap := make(map[string]any)
+	reqMap := make(map[string]interface{})
 	reqJson, _ := json.Marshal(req)
 	json.Unmarshal(reqJson, &reqMap)
 	params := url.Values{}
@@ -74,7 +75,7 @@ func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -106,48 +107,66 @@ type AppBuilderClient struct {
 	client    HTTPClient
 }
 
+// 在 AppBuilderClient 结构体中添加 Getter 方法
+func (t *AppBuilderClient) GetSdkConfig() *SDKConfig {
+    return t.sdkConfig
+}
+
+func (t *AppBuilderClient) GetClient() HTTPClient {
+    return t.client
+}
+
 type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
 func (t *AppBuilderClient) CreateConversation() (string, error) {
-	request := http.Request{}
-	header := t.sdkConfig.AuthHeaderV2()
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation")
-	if err != nil {
-		return "", err
-	}
-	request.URL = serviceURL
-	request.Method = "POST"
-	header.Set("Content-Type", "application/json")
-	request.Header = header
-	req := map[string]string{"app_id": t.appID}
-	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
-	t.sdkConfig.BuildCurlCommand(&request)
-	resp, err := t.client.Do(&request)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	requestID, err := checkHTTPResponse(resp)
-	if err != nil {
-		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
-	}
-	data, err = io.ReadAll(resp.Body)
-	if err != nil {
-		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
-	}
-	rsp := make(map[string]any)
-	if err := json.Unmarshal(data, &rsp); err != nil {
-		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
-	}
-	val, ok := rsp["conversation_id"]
-	if !ok {
-		return "", fmt.Errorf("requestID=%s, body=%s", requestID, string(data))
-	}
-	return val.(string), nil
+    serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation")
+    if err != nil {
+        return "", err
+    }
+
+    reqBody := map[string]string{"app_id": t.appID}
+    data, err := json.Marshal(reqBody)
+    if err != nil {
+        return "", fmt.Errorf("failed to marshal request body: %v", err)
+    }
+
+    req, err := http.NewRequest("POST", serviceURL.String(), NopCloser(bytes.NewReader(data)))
+    if err != nil {
+        return "", fmt.Errorf("failed to create HTTP request: %v", err)
+    }
+    req.Header = t.sdkConfig.AuthHeaderV2()
+    req.Header.Set("Content-Type", "application/json")
+    t.sdkConfig.BuildCurlCommand(req)
+
+    resp, err := t.client.Do(req)
+    if err != nil {
+        return "", fmt.Errorf("failed to execute HTTP request: %v", err)
+    }
+    defer resp.Body.Close()
+
+    requestID, err := checkHTTPResponse(resp)
+    if err != nil {
+        return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+    }
+
+    data, err = ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+    }
+
+    rsp := make(map[string]interface{})
+    if err := json.Unmarshal(data, &rsp); err != nil {
+        return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+    }
+    val, ok := rsp["conversation_id"]
+    if !ok {
+        return "", fmt.Errorf("requestID=%s, body=%s", requestID, string(data))
+    }
+    return val.(string), nil
 }
+
 
 func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath string) (string, error) {
 	var data bytes.Buffer
@@ -176,7 +195,7 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 	header := t.sdkConfig.AuthHeaderV2()
 	header.Set("Content-Type", w.FormDataContentType())
 	request.Header = header
-	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
+	request.Body = NopCloser(bytes.NewReader(data.Bytes()))
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
@@ -186,11 +205,11 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	body, err := io.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]any)
+	rsp := make(map[string]interface{})
 	if err := json.Unmarshal(body, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -205,11 +224,12 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	if len(conversationID) == 0 {
 		return nil, errors.New("conversationID mustn't be empty")
 	}
-	m := map[string]any{"app_id": t.appID,
-		"conversation_id": conversationID,
-		"query":           query,
-		"file_ids":        fileIDS,
-		"stream":          stream,
+	m := map[string]interface{}{
+		"app_id": 			t.appID,
+		"conversation_id": 	conversationID,
+		"query":           	query,
+		"file_ids":        	fileIDS,
+		"stream":          	stream,
 	}
 	request := http.Request{}
 
@@ -224,14 +244,19 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(m)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
+	request.ContentLength = int64(len(data)) //手动设置长度
+
 	t.sdkConfig.BuildCurlCommand(&request)
+
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
 	}
+
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
+
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
@@ -259,7 +284,9 @@ func (t *AppBuilderClient) RunWithToolCall(req AppBuilderClientRunRequest) (AppB
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
+	request.ContentLength = int64(len(data)) //手动设置长度
+	
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {

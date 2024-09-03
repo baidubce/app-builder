@@ -27,6 +27,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+	"io/ioutil"
 
 	"github.com/google/uuid"
 )
@@ -63,7 +64,7 @@ func (t *KnowledgeBase) CreateDocument(req CreateDocumentRequest) (CreateDocumen
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -74,7 +75,7 @@ func (t *KnowledgeBase) CreateDocument(req CreateDocumentRequest) (CreateDocumen
 	if err != nil {
 		return CreateDocumentResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return CreateDocumentResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -98,7 +99,7 @@ func (t *KnowledgeBase) DeleteDocument(req DeleteDocumentRequest) error {
 		return err
 	}
 
-	reqMap := make(map[string]any)
+	reqMap := make(map[string]interface{})
 	reqJson, _ := json.Marshal(req)
 	json.Unmarshal(reqJson, &reqMap)
 	params := url.Values{}
@@ -140,7 +141,7 @@ func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumen
 		return nil, err
 	}
 
-	reqMap := make(map[string]any)
+	reqMap := make(map[string]interface{})
 	reqJson, _ := json.Marshal(req)
 	json.Unmarshal(reqJson, &reqMap)
 	params := url.Values{}
@@ -163,7 +164,7 @@ func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumen
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -174,7 +175,7 @@ func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumen
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	respData, err := io.ReadAll(resp.Body)
+	respData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -212,7 +213,7 @@ func (t *KnowledgeBase) UploadFile(localFilePath string) (string, error) {
 	request.Method = "POST"
 	header.Set("Content-Type", w.FormDataContentType())
 	request.Header = header
-	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
+	request.Body = NopCloser(bytes.NewReader(data.Bytes()))
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
@@ -221,7 +222,7 @@ func (t *KnowledgeBase) UploadFile(localFilePath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	respData, err := io.ReadAll(resp.Body)
+	respData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -251,7 +252,7 @@ func (t *KnowledgeBase) CreateKnowledgeBase(req KnowledgeBaseDetail) (KnowledgeB
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -262,7 +263,7 @@ func (t *KnowledgeBase) CreateKnowledgeBase(req KnowledgeBaseDetail) (KnowledgeB
 	if err != nil {
 		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -288,7 +289,7 @@ func (t *KnowledgeBase) GetKnowledgeBaseDetail(knowledgeBaseID string) (Knowledg
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -299,7 +300,7 @@ func (t *KnowledgeBase) GetKnowledgeBaseDetail(knowledgeBaseID string) (Knowledg
 	if err != nil {
 		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -323,7 +324,7 @@ func (t *KnowledgeBase) GetKnowledgeBaseList(req GetKnowledgeBaseListRequest) (G
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -334,7 +335,7 @@ func (t *KnowledgeBase) GetKnowledgeBaseList(req GetKnowledgeBaseListRequest) (G
 	if err != nil {
 		return GetKnowledgeBaseListResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return GetKnowledgeBaseListResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -361,7 +362,7 @@ func (t *KnowledgeBase) ModifyKnowledgeBase(req ModifyKnowlegeBaseRequest) error
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -372,7 +373,7 @@ func (t *KnowledgeBase) ModifyKnowledgeBase(req ModifyKnowlegeBaseRequest) error
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	_, err = io.ReadAll(resp.Body)
+	_, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -405,7 +406,7 @@ func (t *KnowledgeBase) deleteKnowledgeBase(knowledgeBaseID string, clientToken 
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -416,7 +417,7 @@ func (t *KnowledgeBase) deleteKnowledgeBase(knowledgeBaseID string, clientToken 
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	_, err = io.ReadAll(resp.Body)
+	_, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -439,7 +440,7 @@ func (t *KnowledgeBase) CreateDocuments(req CreateDocumentsRequest) error {
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -450,7 +451,7 @@ func (t *KnowledgeBase) CreateDocuments(req CreateDocumentsRequest) error {
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	_, err = io.ReadAll(resp.Body)
+	_, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -497,7 +498,7 @@ func (t *KnowledgeBase) UploadDocuments(localFilePath string, req CreateDocument
 	request.Method = "POST"
 	request.Header = header
 	header.Set("Content-Type", w.FormDataContentType())
-	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
+	request.Body = NopCloser(bytes.NewReader(data.Bytes()))
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return err
@@ -507,7 +508,7 @@ func (t *KnowledgeBase) UploadDocuments(localFilePath string, req CreateDocument
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	_, err = io.ReadAll(resp.Body)
+	_, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -530,7 +531,7 @@ func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -541,7 +542,7 @@ func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -569,7 +570,7 @@ func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -580,7 +581,7 @@ func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -619,7 +620,7 @@ func (t *KnowledgeBase) deleteChunk(chunkID string, clientToken string) error {
 		ChunkID: chunkID,
 	}
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -630,7 +631,7 @@ func (t *KnowledgeBase) deleteChunk(chunkID string, clientToken string) error {
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -658,7 +659,7 @@ func (t *KnowledgeBase) DescribeChunk(chunkID string) (DescribeChunkResponse, er
 		ChunkID: chunkID,
 	}
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -669,7 +670,7 @@ func (t *KnowledgeBase) DescribeChunk(chunkID string) (DescribeChunkResponse, er
 	if err != nil {
 		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -694,7 +695,7 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -705,7 +706,7 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 	if err != nil {
 		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
