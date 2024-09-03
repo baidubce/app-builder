@@ -16,10 +16,10 @@ package appbuilder
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"strings"
+	"io/ioutil"
 )
 
 type RAGRunResponse struct {
@@ -70,11 +70,11 @@ type RAGStreamIterator struct {
 
 func (t *RAGStreamIterator) Next() (*RAGAnswer, error) {
 	data, err := t.r.ReadMessageLine()
-	if err != nil && !errors.Is(err, io.EOF) {
+	if err != nil && !(err == io.EOF) {
 		t.body.Close()
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	if err != nil && errors.Is(err, io.EOF) {
+	if err != nil && err == io.EOF {
 		t.body.Close()
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func (t *RAGOnceIterator) Next() (*RAGAnswer, error) {
 	if t.eoi {
 		return nil, io.EOF
 	}
-	data, err := io.ReadAll(t.body)
+	data, err := ioutil.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
