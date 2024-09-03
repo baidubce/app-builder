@@ -1,14 +1,14 @@
 def pretty_print_dict(kv_dict, header=["Key", "Value"]):
     spacing = 2
-    max_k = 40
-    max_v = 100
+    max_k = 25
+    max_v = 80
 
     for k, v in kv_dict.items():
         max_k = max(max_k, len(k))
 
     h_format = "    " + "{{:^{}s}}{}{{:^{}s}}\n".format(max_k, " " * spacing,
                                                           max_v)
-    l_format = "    " + "{{:^{}s}}{{}}{{:^{}s}}\n".format(max_k, max_v)
+    l_format = "    " + "{{:^{}s}}{{}}{{:<{}s}}\n".format(max_k, max_v)
     length = max_k + max_v + spacing
 
     front_border = "    ╔" + "".join(["═"] * length) + "╗"
