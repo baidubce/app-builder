@@ -26,6 +26,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+	"io/ioutil"
 )
 
 // Deprecated: 请使用AppBuilderClient 代替 AgentBuilder
@@ -62,7 +63,7 @@ func (t *AgentBuilder) CreateConversation() (string, error) {
 	request.Header = header
 	req := map[string]string{"app_id": t.appID}
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -73,11 +74,11 @@ func (t *AgentBuilder) CreateConversation() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]any)
+	rsp := make(map[string]interface{})
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -115,7 +116,7 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 	header := t.sdkConfig.AuthHeaderV2()
 	header.Set("Content-Type", w.FormDataContentType())
 	request.Header = header
-	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
+	request.Body = NopCloser(bytes.NewReader(data.Bytes()))
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
@@ -125,11 +126,11 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	body, err := io.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]any)
+	rsp := make(map[string]interface{})
 	if err := json.Unmarshal(body, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -144,7 +145,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	if len(conversationID) == 0 {
 		return nil, errors.New("conversationID mustn't be empty")
 	}
-	m := map[string]any{"app_id": t.appID,
+	m := map[string]interface{}{"app_id": t.appID,
 		"conversation_id": conversationID,
 		"query":           query,
 		"file_ids":        fileIDS,
@@ -163,7 +164,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 	data, _ := json.Marshal(m)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
