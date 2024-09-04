@@ -35,9 +35,5 @@ jobs:
 
     - name: Run tests
       run: |
-        go test ./go/appbuilder/agent_builder_test.go -cover
-        go test ./go/appbuilder/app_builder_client_test.go -cover
-        go test ./go/appbuilder/dataset_test.go -cover
-        go test ./go/appbuilder/knowledge_base_test.go -cover
-        go test ./go/appbuilder/rag_test.go -cover
-        # 运行指定的单元测试文件,并显示覆盖率
+        go test ./go/appbuilder/... -cover
+        # 运行所有测试文件，并显示覆盖率
