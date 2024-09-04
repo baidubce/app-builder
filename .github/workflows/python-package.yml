@@ -77,9 +77,11 @@ jobs:
         git remote -v
         git status
         changed_files=$(git diff --name-only --diff-filter=ACMRT -- "**/*.{py,sh}")
-        export APPBUILDER_PYTHON_TESTS="$changed_files"
+        echo "APPBUILDER_PYTHON_TESTS=$changed_files" >> .env
         pwd
     - name: Install dependencies
+      env:
+        APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
       run: |
         if [ -z "$APPBUILDER_PYTHON_TESTS" ]; then
           echo "环境变量APPBUILDER_PYTHON_TESTS为空,没有检测到Python或Shell文件被更改,跳过单元测试Install dependencies部分。"
@@ -101,6 +103,8 @@ jobs:
           python3 -m pip install pandas==2.2.2
         fi
     - name: Build whl
+      env:
+        APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
       run: |
         if [ -z "$APPBUILDER_PYTHON_TESTS" ]; then
           echo "环境变量APPBUILDER_PYTHON_TESTS为空,没有检测到Python或Shell文件被更改,跳过单元测试Build whl部分。"
@@ -113,6 +117,8 @@ jobs:
           python3 -m pip install dist/*.whl
         fi
     - name: Test with unittest
+      env:
+        APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
       run: |
         if [ -z "$APPBUILDER_PYTHON_TESTS" ]; then
           echo "环境变量APPBUILDER_PYTHON_TESTS为空,没有检测到Python或Shell文件被更改,跳过单元测试Test with unittest部分。"
