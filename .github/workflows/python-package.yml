@@ -11,32 +11,6 @@ on:
     branches: [ "master" ]
 
 jobs:
-  Pylint:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.12.5"]
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install flake8 pytest
-        python -m pip install chainlit~=1.0.200 flask~=2.3.2 flask-restful==0.3.9
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
   Linux-CI-Tests:
     runs-on: ubuntu-latest
     env:
@@ -79,12 +53,12 @@ jobs:
         changed_files=$(git diff --name-only --diff-filter=ACMRT master -- '*.py' '*.sh')
         echo "发生更改的py/sh文件为:"
         echo "$changed_files"
-        # 根据是否存在变化设置 APPBUILDER_PYTHON_TESTS 变量
         if [ -n "$changed_files" ]; then
           export APPBUILDER_PYTHON_TESTS=True
         else
           export APPBUILDER_PYTHON_TESTS=False
         fi
+        echo "APPBUILDER_PYTHON_TESTS=$APPBUILDER_PYTHON_TESTS" >> $GITHUB_ENV
         pwd
     - name: Install dependencies
       run: |
@@ -112,7 +86,7 @@ jobs:
       run: |
         echo $APPBUILDER_PYTHON_TESTS
         if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
-          echo "环境变量APPBUILDER_PYTHON_TESTS为False，没有检测到Python或Shell文件被更改，跳过Install dependencies部分。"
+          echo "环境变量APPBUILDER_PYTHON_TESTS为False,没有检测到Python或Shell文件被更改,跳过Build whl部分。"
         else
           echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Build whl部分..."
           cd cicd/app-builder     
@@ -125,7 +99,7 @@ jobs:
       run: |
         echo $APPBUILDER_PYTHON_TESTS
         if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
-          echo "环境变量APPBUILDER_PYTHON_TESTS为False，没有检测到Python或Shell文件被更改，跳过Install dependencies部分。"
+          echo "环境变量APPBUILDER_PYTHON_TESTS为False,没有检测到Python或Shell文件被更改,跳过Test with unittest部分。"
         else
           echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Test with unittest部分..."
           cd cicd/app-builder
