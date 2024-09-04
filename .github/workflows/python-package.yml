@@ -81,14 +81,12 @@ jobs:
         echo "$changed_files"
         # 根据是否存在变化设置 APPBUILDER_PYTHON_TESTS 变量
         if [ -n "$changed_files" ]; then
-          echo "APPBUILDER_PYTHON_TESTS=True" >> .env
+          export APPBUILDER_PYTHON_TESTS=True
         else
-          echo "APPBUILDER_PYTHON_TESTS=False" >> .env
+          export APPBUILDER_PYTHON_TESTS=False
         fi
         pwd
     - name: Install dependencies
-      env:
-        APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
       run: |
         echo $APPBUILDER_PYTHON_TESTS
         if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
@@ -111,8 +109,6 @@ jobs:
           python3 -m pip install pandas==2.2.2
         fi
     - name: Build whl
-      env:
-        APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
       run: |
         echo $APPBUILDER_PYTHON_TESTS
         if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
@@ -126,8 +122,6 @@ jobs:
           python3 -m pip install dist/*.whl
         fi
     - name: Test with unittest
-      env:
-        APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
       run: |
         echo $APPBUILDER_PYTHON_TESTS
         if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
