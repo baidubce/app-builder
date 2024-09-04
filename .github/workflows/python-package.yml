@@ -76,17 +76,24 @@ jobs:
         git fetch upstream
         git remote -v
         git status
-        changed_files=$(git diff --name-only --diff-filter=ACMRT master -- '**/*.py' -- '**/*.sh')
+        changed_files=$(git diff --name-only --diff-filter=ACMRT master -- '*.py' '*.sh')
         echo "发生更改的py/sh文件为:"
-        echo $changed_file
-        echo "APPBUILDER_PYTHON_TESTS=$changed_files" >> .env
+        echo "$changed_files"
+        # 根据是否存在变化设置 APPBUILDER_PYTHON_TESTS 变量
+        if [ -n "$changed_files" ]; then
+          echo "APPBUILDER_PYTHON_TESTS=True" >> .env
+        else
+          echo "APPBUILDER_PYTHON_TESTS=False" >> .env
+        fi
         pwd
+        ls
     - name: Install dependencies
       env:
         APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
       run: |
-        if [ -z "$APPBUILDER_PYTHON_TESTS" ]; then
-          echo "环境变量APPBUILDER_PYTHON_TESTS为空,没有检测到Python或Shell文件被更改,跳过单元测试Install dependencies部分。"
+        echo $APPBUILDER_PYTHON_TESTS
+        if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_PYTHON_TESTS为False,没有检测到Python或Shell文件被更改,跳过Install dependencies部分。"
         else
           echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Install dependencies部分..."
           cd cicd/app-builder
@@ -108,8 +115,9 @@ jobs:
       env:
         APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
       run: |
-        if [ -z "$APPBUILDER_PYTHON_TESTS" ]; then
-          echo "环境变量APPBUILDER_PYTHON_TESTS为空,没有检测到Python或Shell文件被更改,跳过单元测试Build whl部分。"
+        echo $APPBUILDER_PYTHON_TESTS
+        if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_PYTHON_TESTS为False，没有检测到Python或Shell文件被更改，跳过Install dependencies部分。"
         else
           echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Build whl部分..."
           cd cicd/app-builder     
@@ -122,8 +130,9 @@ jobs:
       env:
         APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
       run: |
-        if [ -z "$APPBUILDER_PYTHON_TESTS" ]; then
-          echo "环境变量APPBUILDER_PYTHON_TESTS为空,没有检测到Python或Shell文件被更改,跳过单元测试Test with unittest部分。"
+        echo $APPBUILDER_PYTHON_TESTS
+        if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_PYTHON_TESTS为False，没有检测到Python或Shell文件被更改，跳过Install dependencies部分。"
         else
           echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Test with unittest部分..."
           cd cicd/app-builder
