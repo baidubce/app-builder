@@ -76,32 +76,46 @@ jobs:
         git fetch upstream
         git remote -v
         git status
+        changed_files=$(git diff --name-only --diff-filter=ACMRT -- "**/*.{py,sh}")
+        export APPBUILDER_PYTHON_TESTS="$changed_files"
         pwd
     - name: Install dependencies
       run: |
-        cd cicd/app-builder
-        pwd
-        sudo apt-get install ffmpeg libavcodec-extra
-        python3 -m ensurepip --upgrade
-        python3 -m pip install --upgrade pip
-        python3 -m pip install --upgrade setuptools
-        python3 -m pip install wheel
-        python3 -m pip install coverage
-        python3 -m pip install diff-cover
-        python3 -m pip install pydub
-        python3 -m pip install SQLAlchemy==2.0.31
-        python3 -m pip install chainlit~=1.0.200 flask~=2.3.2 flask-restful==0.3.9
-        python3 -m pip install opentelemetry-exporter-otlp==1.23.0 opentelemetry-instrumentation==0.44b0 opentelemetry-sdk==1.23.0 opentelemetry-api==1.23.0
-        python3 -m pip install pandas==2.2.2
+        if [ -z "$APPBUILDER_PYTHON_TESTS" ]; then
+          echo "环境变量APPBUILDER_PYTHON_TESTS为空,没有检测到Python或Shell文件被更改,跳过单元测试Install dependencies部分。"
+        else
+          echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Install dependencies部分..."
+          cd cicd/app-builder
+          pwd
+          sudo apt-get install ffmpeg libavcodec-extra
+          python3 -m ensurepip --upgrade
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade setuptools
+          python3 -m pip install wheel
+          python3 -m pip install coverage
+          python3 -m pip install diff-cover
+          python3 -m pip install pydub
+          python3 -m pip install SQLAlchemy==2.0.31
+          python3 -m pip install chainlit~=1.0.200 flask~=2.3.2 flask-restful==0.3.9
+          python3 -m pip install opentelemetry-exporter-otlp==1.23.0 opentelemetry-instrumentation==0.44b0 opentelemetry-sdk==1.23.0 opentelemetry-api==1.23.0
+          python3 -m pip install pandas==2.2.2
     - name: Build whl
       run: |
-        cd cicd/app-builder     
-        pwd
-        python3 setup.py bdist_wheel
-        python3 -m pip uninstall -y appbuilder-sdk
-        python3 -m pip install dist/*.whl
+        if [ -z "$APPBUILDER_PYTHON_TESTS" ]; then
+          echo "环境变量APPBUILDER_PYTHON_TESTS为空,没有检测到Python或Shell文件被更改,跳过单元测试Build whl部分。"
+        else
+          echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Build whl部分..."
+          cd cicd/app-builder     
+          pwd
+          python3 setup.py bdist_wheel
+          python3 -m pip uninstall -y appbuilder-sdk
+          python3 -m pip install dist/*.whl
     - name: Test with unittest
       run: |
-        cd cicd/app-builder
-        pwd
-        sh appbuilder/tests/run_python_test.sh
+        if [ -z "$APPBUILDER_PYTHON_TESTS" ]; then
+          echo "环境变量APPBUILDER_PYTHON_TESTS为空,没有检测到Python或Shell文件被更改,跳过单元测试Test with unittest部分。"
+        else
+          echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Test with unittest部分..."
+          cd cicd/app-builder
+          pwd
+          sh appbuilder/tests/run_python_test.sh
