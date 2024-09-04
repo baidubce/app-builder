@@ -52,3 +52,6 @@
 * **2024.08.20 v0.9.3版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.3)
   * Text2Image组件接口及效果更新
   * ImageUnderstand组件接口及效果更新
+* **2024.09.04 v0.9.4版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.4)
+  * AppBuilderClient新增tool_choice / end_user_id功能
+  * 增加VScode setting，优化开发者使用体验
