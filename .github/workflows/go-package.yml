@@ -36,5 +36,6 @@ jobs:
 
     - name: Run tests
       run: |
-        go test ./go/appbuilder/... -cover
+        cd go/appbuilder
+        go test ./... -cover
         # 运行所有测试文件，并显示覆盖率
