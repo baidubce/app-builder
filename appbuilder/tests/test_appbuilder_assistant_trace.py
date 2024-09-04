@@ -75,7 +75,7 @@ class MyEventHandler(AssistantEventHandler):
                     ]
                 )
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
     def setUp(self):
         """

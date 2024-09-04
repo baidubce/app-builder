@@ -25,6 +25,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+	"io/ioutil"
 )
 
 // Deprecated: 已废弃，请使用 NewKnowledgeBase
@@ -57,7 +58,7 @@ func (t *Dataset) Create(name string) (string, error) {
 	request.Header = header
 	req := map[string]string{"name": name}
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -68,7 +69,7 @@ func (t *Dataset) Create(name string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -134,7 +135,7 @@ func (t *Dataset) uploadLocalFile(localFilePath string) (string, error) {
 	request.Method = "POST"
 	header.Set("Content-Type", w.FormDataContentType())
 	request.Header = header
-	request.Body = io.NopCloser(bytes.NewReader(data.Bytes()))
+	request.Body = NopCloser(bytes.NewReader(data.Bytes()))
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
@@ -143,7 +144,7 @@ func (t *Dataset) uploadLocalFile(localFilePath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	respData, err := io.ReadAll(resp.Body)
+	respData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -169,11 +170,11 @@ func (t *Dataset) addFileToDataset(datasetID string, fileID []string) ([]string,
 	request.Method = "POST"
 	header.Set("Content-Type", "application/json")
 	request.Header = header
-	m := map[string]any{
+	m := map[string]interface{}{
 		"file_ids":   fileID,
 		"dataset_id": datasetID}
 	data, _ := json.Marshal(m)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -183,7 +184,7 @@ func (t *Dataset) addFileToDataset(datasetID string, fileID []string) ([]string,
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	respData, err := io.ReadAll(resp.Body)
+	respData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -208,14 +209,14 @@ func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword st
 	request.Method = "POST"
 	header.Set("Content-Type", "application/json")
 	request.Header = header
-	m := map[string]any{
+	m := map[string]interface{}{
 		"dataset_id": datasetID,
 		"page":       page,
 		"limit":      limit,
 		"keyword":    keyword,
 	}
 	data, _ := json.Marshal(m)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -226,7 +227,7 @@ func (t *Dataset) ListDocument(datasetID string, page int, limit int, keyword st
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	respData, err := io.ReadAll(resp.Body)
+	respData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -257,7 +258,7 @@ func (t *Dataset) DeleteDocument(datasetID, documentID string) error {
 		"document_id": documentID,
 	}
 	data, _ := json.Marshal(m)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
 	resp, err := http.DefaultClient.Do(&request)
 	if err != nil {
 		return err

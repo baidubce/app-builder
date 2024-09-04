@@ -21,7 +21,7 @@ class MyEventHandler(AppBuilderEventHandler):
         print("\n\033[1;31m","-> Agent 非流式回答: ", run_response.answer, "\033[0m")
         
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """

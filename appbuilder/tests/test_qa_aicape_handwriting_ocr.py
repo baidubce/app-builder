@@ -11,10 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import os
 import unittest
 import appbuilder
 
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestHandwritingOcr(unittest.TestCase):
     def test_run(self):
         image_url=("https://bj.bcebos.com/v1/appbuilder/test_handwrite_ocr.jpg?"
