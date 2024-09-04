@@ -76,7 +76,7 @@ jobs:
         git fetch upstream
         git remote -v
         git status
-        changed_files=$(git diff --name-only --diff-filter=ACMRT -- "**/*.{py,sh}")
+        changed_files=$(git diff --name-only --diff-filter=ACMRT master -- '**/*.py' -- '**/*.sh')
         echo "发生更改的py/sh文件为:"
         echo $changed_file
         echo "APPBUILDER_PYTHON_TESTS=$changed_files" >> .env
