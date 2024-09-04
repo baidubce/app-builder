@@ -30,8 +30,9 @@ jobs:
 
     - name: Install dependencies
       run: |
+        cd go/appbuilder
         go mod tidy
-        # 安装项目依赖
+        # 切换到 go/appbuilder 目录并安装项目依赖
 
     - name: Run tests
       run: |
