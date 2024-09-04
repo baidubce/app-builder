@@ -34,6 +34,7 @@ const (
     ConsoleOpenAPIVersion = "CONSOLE_OPENAPI_VERSION"
     ConsoleOpenAPIPrefix  = "CONSOLE_OPENAPI_PREFIX"
     SecretKeyPrefix       = "SECRET_KEY_PREFIX"
+    DatasetID             = "DATASET_ID"
 
     DefaultSecretKeyPrefix       = "Bearer"
     DefaultGatewayURL            = "https://appbuilder.baidu.com"
@@ -48,6 +49,7 @@ type SDKConfig struct {
     ConsoleOpenAPIVersion string
     ConsoleOpenAPIPrefix  string
     SecretKey             string
+
     HTTPClient            HTTPClient // custom HTTP Client, optional
     logger                *log.Logger
 }
@@ -73,6 +75,7 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
         ConsoleOpenAPIVersion: openAPIVersion,
         ConsoleOpenAPIPrefix:  openAPIPrefix,
         SecretKey:             secretKey,
+
     }
 
     logFile := os.Getenv("APPBUILDER_LOGFILE")
