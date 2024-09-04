@@ -69,13 +69,12 @@ func TestNewAppBuilderClient(t *testing.T) {
 func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
-	os.Setenv("GATEWAY_URL_V2", "https://apaas-api-sandbox.baidu-int.com/")
-	config, err := NewSDKConfig("", "bce-v3/ALTAK-vGrDN4BvjP15rDrXBI9OC/6d435ece62ed09b396e1b051bd87869c11861332")
+	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
-	appID := "4d4b1b27-d607-4d2a-9002-206134217a9f"
+	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Fatalf("new AgentBuidler instance failed")
