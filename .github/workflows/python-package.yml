@@ -86,7 +86,6 @@ jobs:
           echo "APPBUILDER_PYTHON_TESTS=False" >> .env
         fi
         pwd
-        ls
     - name: Install dependencies
       env:
         APPBUILDER_PYTHON_TESTS: ${{ env.APPBUILDER_PYTHON_TESTS }}
