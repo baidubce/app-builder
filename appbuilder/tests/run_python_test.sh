@@ -55,6 +55,7 @@ python3 -m pip install numpy==1.26.4
 cd appbuilder/tests/
 
 
+
 # 5、执行parallel_ut_run.py，运行python单元测试
 python3 parallel_ut_run.py
 
