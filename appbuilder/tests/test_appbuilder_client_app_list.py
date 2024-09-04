@@ -18,7 +18,7 @@ import appbuilder
 import os
 import logging
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestGetAppList(unittest.TestCase):
     def test_get_app_list_v1(self):
         app_list = appbuilder.get_app_list()

@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import os
 import unittest
 import appbuilder
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPaddleSpeechTTS(unittest.TestCase):
     def test_normal_case(self):
         text = "吸塑包装盒在工业化生产和物流运输中分别有什么重要性"

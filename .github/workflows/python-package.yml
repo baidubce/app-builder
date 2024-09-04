@@ -44,7 +44,7 @@ jobs:
       APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
       BAIDU_VDB_API_KEY: apaasTest1
       INSTANCE_ID: vdb-bj-vuzmppgqrnhv
-      DATASET_ID: 2626a842-132f-45ce-977f-f701d18fd104
+      DATASET_ID: 56e82915-9642-4a03-bb02-74744c17863e
       APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-bcKsgHd39g0Aaq3nCYUUQ/b06384229df1462c6fb011383d09230346a20ac4
     strategy:
       fail-fast: false
@@ -92,6 +92,7 @@ jobs:
         python3 -m pip install SQLAlchemy==2.0.31
         python3 -m pip install chainlit~=1.0.200 flask~=2.3.2 flask-restful==0.3.9
         python3 -m pip install opentelemetry-exporter-otlp==1.23.0 opentelemetry-instrumentation==0.44b0 opentelemetry-sdk==1.23.0 opentelemetry-api==1.23.0
+        python3 -m pip install pandas==2.2.2
     - name: Build whl
       run: |
         cd cicd/app-builder     
