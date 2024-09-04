@@ -26,6 +26,7 @@ from opentelemetry.sdk.trace.export import (
     SimpleSpanProcessor,
     ConsoleSpanExporter
 )
+from opentelemetry.sdk.resources import Resource
 from wrapt import wrap_function_wrapper
 
 from appbuilder.utils.trace._function import( 
@@ -287,7 +288,7 @@ def create_tracer_provider(enable_phoenix: bool = True, enable_console: bool = F
         TracerProvider: 创建的TracerProvider对象，可用于创建跟踪的Span对象。
     
     """
-    tracer_provider = TracerProvider()
+    tracer_provider = TracerProvider(resource=Resource.create({"service.name": "appbuilder-sdk"}))
 
     if enable_phoenix:  # 将trace数据在本地可视化界面展示
         endpoint = f"{host}:{port}{method}"
