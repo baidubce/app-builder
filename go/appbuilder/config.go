@@ -194,7 +194,7 @@ func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
             return
         }
         req.Body.Close()
-        req.Body = NopCloser(strings.NewReader(string(bodyBytes)))
+        req.Body = io.NopCloser(strings.NewReader(string(bodyBytes)))
 
         body := fmt.Sprintf("-d '%v'", string(bodyBytes))
         curlCmd = fmt.Sprintf("%v %v", curlCmd, body)
