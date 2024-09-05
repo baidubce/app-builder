@@ -46,40 +46,60 @@ type Dataset struct {
 }
 
 func (t *Dataset) Create(name string) (string, error) {
-	request := http.Request{}
+	request := &http.Request{}
 	header := t.sdkConfig.AuthHeader()
 	serviceURL, err := t.sdkConfig.ServiceURL("/api/v1/ai_engine/agi_platform/v1/datasets/create")
 	if err != nil {
 		return "", err
 	}
-	request.URL = serviceURL
-	request.Method = "POST"
+	
+	// 使用 http.NewRequest 构造请求对象
+	request, err = http.NewRequest("POST", serviceURL.String(), nil)
+	if err != nil {
+		return "", err
+	}
+
+	// 设置请求头
 	header.Set("Content-Type", "application/json")
 	request.Header = header
+	
+	// 构造请求体
 	req := map[string]string{"name": name}
 	data, _ := json.Marshal(req)
 	request.Body = io.NopCloser(bytes.NewReader(data))
-	t.sdkConfig.BuildCurlCommand(&request)
-	resp, err := t.client.Do(&request)
+
+	// 构建并打印 Curl 命令
+	t.sdkConfig.BuildCurlCommand(request)
+	
+	// 发送请求
+	resp, err := t.client.Do(request)
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
+
+	// 检查 HTTP 响应
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
+
+	// 读取响应体
 	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
+
+	// 解析响应
 	rsp := DatasetResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
+
 	if rsp.Code != 0 {
 		return "", fmt.Errorf("requestID=%s, content=%v", requestID, string(data))
 	}
+
 	return rsp.Result["id"].(string), nil
 }
 

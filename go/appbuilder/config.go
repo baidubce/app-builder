@@ -180,26 +180,32 @@ func NopCloser(r io.Reader) io.ReadCloser {
 }
 
 func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
-    curlCmd := fmt.Sprintf("curl -X %s -L '%v' \\\n", req.Method, req.URL.String())
+    var curlCmd strings.Builder
+    curlCmd.WriteString(fmt.Sprintf("curl -X %s -L '%v' \\\n", req.Method, req.URL.String()))
 
     for k, v := range req.Header {
         header := fmt.Sprintf("-H '%v: %v' \\\n", k, v[0])
-        curlCmd = fmt.Sprintf("%v %v", curlCmd, header)
+        curlCmd.WriteString(header)
     }
 
     if req.Method == "POST" {
-        bodyBytes, err := ioutil.ReadAll(req.Body)
+        bodyBytes, err := io.ReadAll(req.Body)
         if err != nil {
             t.logger.Println("Failed to read request body:", err)
             return
         }
-        req.Body.Close()
-        req.Body = io.NopCloser(strings.NewReader(string(bodyBytes)))
+
+        // 重置 req.Body 以便请求可以再次使用
+        req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
         body := fmt.Sprintf("-d '%v'", string(bodyBytes))
-        curlCmd = fmt.Sprintf("%v %v", curlCmd, body)
+        curlCmd.WriteString(body)
     } else if req.Method == "GET" || req.Method == "DELETE" {
-        curlCmd = strings.TrimSuffix(curlCmd, " \\\n")
+        // 去掉末尾多余的字符
+        cmdStr := curlCmd.String()
+        curlCmd.Reset()
+        curlCmd.WriteString(strings.TrimSuffix(cmdStr, " \\\n"))
     }
-    fmt.Println("\n" + curlCmd + "\n")
+
+    fmt.Println("\n" + curlCmd.String() + "\n")
 }
