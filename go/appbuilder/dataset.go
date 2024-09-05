@@ -58,7 +58,7 @@ func (t *Dataset) Create(name string) (string, error) {
 	request.Header = header
 	req := map[string]string{"name": name}
 	data, _ := json.Marshal(req)
-	request.Body = NopCloser(bytes.NewReader(data))
+	request.Body = io.NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
@@ -69,7 +69,7 @@ func (t *Dataset) Create(name string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
