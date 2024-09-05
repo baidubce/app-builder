@@ -17,13 +17,13 @@ package appbuilder
 import (
     "fmt"
     "io"
+    "bytes"      
     "log"
     "net/http"
     "net/url"
     "os"
     "path"
     "strings"
-	"io/ioutil"
     "github.com/google/uuid"
 )
 
