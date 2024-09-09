@@ -133,16 +133,11 @@ func (t *SDKConfig) authHeader() http.Header {
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
-    absolutePath := t.GatewayURL
-    if !strings.HasSuffix(absolutePath, "/") {
-        absolutePath += "/"
-    }
-    if strings.HasPrefix(suffix, "/") {
-        suffix = strings.TrimPrefix(suffix, "/")
-    }
-    absolutePath += suffix
-
-    return t.formatURL(absolutePath, suffix)
+	absolutePath, err := url.JoinPath(t.GatewayURL)
+	if err != nil {
+		return nil, err
+	}
+	return t.formatURL(absolutePath, suffix)
 }
 
 
