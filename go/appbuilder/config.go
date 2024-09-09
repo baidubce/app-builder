@@ -130,16 +130,26 @@ func (t *SDKConfig) authHeader() http.Header {
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
-    absolutePath := t.GatewayURL
-    if !strings.HasSuffix(absolutePath, "/") {
-        absolutePath += "/"
+    // 解析 GatewayURL
+    parsedURL, err := url.Parse(t.GatewayURL)
+    if err != nil {
+        return nil, err
     }
-    if strings.HasPrefix(suffix, "/") {
-        suffix = strings.TrimPrefix(suffix, "/")
-    }
-    absolutePath += suffix
+    
+    // 使用 path.Join 拼接路径
+    parsedURL.Path = path.Join(parsedURL.Path, suffix)
 
-    return t.formatURL(absolutePath, suffix)
+    // 将路径直接解析为最终 URL
+    endpoint, err := url.Parse(suffix)
+    if err != nil {
+        return nil, err
+    }
+
+    // 解析相对路径
+    parsedURL = parsedURL.ResolveReference(endpoint)
+
+    // 返回拼接后的 URL
+    return parsedURL, nil
 }
 
 
