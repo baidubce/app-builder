@@ -89,12 +89,13 @@ jobs:
         echo "$changed_files"
 
         echo "发生更改的py/sh文件为:"
-        echo "$changed_files_py_sh"
 
         if [ -n "$changed_files_py_sh" ]; then
           export APPBUILDER_PYTHON_TESTS=True
+          echo "$changed_files_py_sh"
         else
           export APPBUILDER_PYTHON_TESTS=False
+          echo "没有检测到Python或Shell文件被更改"
         fi
 
         echo "APPBUILDER_PYTHON_TESTS=$APPBUILDER_PYTHON_TESTS" >> $GITHUB_ENV
