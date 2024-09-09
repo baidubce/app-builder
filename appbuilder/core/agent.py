@@ -322,8 +322,9 @@ class AgentRuntime(BaseModel):
             user_id = request.headers.get("X-Appbuilder-User-Id", None)
 
             init_context(session_id=session_id, request_id=request_id, user_id=user_id)
-            logging.debug(
-                f"[request_id={request_id}, session_id={session_id}] message={message}, stream={stream}, data={data}")
+            logging.info(
+                f"request_id={request_id}, session_id={session_id}] message={message},"
+                f" stream={stream}, data={data}, start run...")
 
             def gen_sse_resp():
                 with app.app_context():
@@ -332,7 +333,16 @@ class AgentRuntime(BaseModel):
                     while retry_count < MAX_RETRY_COUNT:
                         try:
                             answer = self.chat(message, stream, **data)
+                        except Exception as e:  # 调用chat方法报错，直接返回
+                            code = 500 if not hasattr(e, "code") else e.code
+                            err_resp = {"code": code, "message": "InternalServerError", "result": None}
+                            logging.error(
+                                f"request_id={request_id}, session_id={session_id}, err={e}, execute self.chat failed", exc_info=True)
+                            yield "data: " + json.dumps(err_resp, ensure_ascii=False) +  "\n\n"
+                            return
+                        else:  # 调用chat方法成功，开始生成流式事件
                             content_iterator = iter(answer.content)
+                            answer.content = None
                             result = None
                             try:
                                 for sub_content in content_iterator:
@@ -349,10 +359,21 @@ class AgentRuntime(BaseModel):
                                     received_first_packet = True
                             except Exception as e:
                                 retry_count += 1
-                                if not received_first_packet:
+                                logging.error(
+                                    f"[request_id={request_id}, session_id={session_id}] err={e}, "
+                                    f"retry_count={retry_count}", exc_info=True)
+                                # 如果未收到首包且重试次数小于最大重试次数，则尝试重新执行一次chat方法
+                                if not received_first_packet and retry_count < MAX_RETRY_COUNT:
                                     continue
-                                else:
-                                    raise e
+                                else:  # 其它情况返回
+                                    logging.error(
+                                        f"[request_id={request_id}, session_id={session_id}] err={e}, "
+                                        f"retry_count={retry_count}, received_first_packet={received_first_packet}"
+                                        , exc_info=True)
+                                    code = 500 if not hasattr(e, "code") else e.code
+                                    err_resp = {"code": code, "message": "InternalServerError", "result": None}
+                                    yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
+                                    return
                             result.content = ""
                             yield "data: " + json.dumps({
                                 "code": 0, "message": "",
@@ -362,41 +383,30 @@ class AgentRuntime(BaseModel):
                                     "answer_message": json.loads(result.json(exclude_none=True))
                                 }
                             }, ensure_ascii=False) + "\n\n"
+                            logging.info(
+                                f"request_id={request_id}, session_id={session_id}]"
+                                f"retry_count={retry_count}, success response", exc_info=True)
                             self.user_session._post_append()
-                            break
-                        except Exception as e:
-                            code = 500 if not hasattr(
-                                e, "code") else e.code
-                            err_resp = {"code": code,
-                                        "message": "InternalServerError", "result": None}
-                            logging.error(
-                                f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
-                            yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
+                            return  # 正常返回
 
-            try:
-                if stream:
-                    return Response(stream_with_context(gen_sse_resp()), 200,
-                        {'Content-Type': 'text/event-stream; charset=utf-8'},
-                    )
-                else:
+            if stream:  # 流式
+                return Response(stream_with_context(gen_sse_resp()), 200,
+                        {'Content-Type': 'text/event-stream; charset=utf-8'})
+            if not stream:  # 非流式
+                try:
                     answer = self.chat(message, stream, **data)
-                    blocking_result = json.loads(
-                        copy.deepcopy(answer).json(exclude_none=True))
-                    logging.info(
-                        f"[request_id={request_id}, session_id={session_id}] blocking_result={blocking_result}")
+                    blocking_result = json.loads(copy.deepcopy(answer).json(exclude_none=True))
+                    logging.debug(f"[request_id={request_id}, session_id={session_id}] blocking_result={blocking_result}")
                     self.user_session._post_append()
                     return {
                         "code": 0, "message": "",
                         "result": {"session_id": session_id, "answer_message": blocking_result}
                     }
-            except Exception as e:
-                logging.error(
-                    f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
-                raise e
-            except Exception as e:
-                logging.error(
-                    f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
-                raise e
+                except Exception as e:
+                    logging.error(
+                        f"[request_id={request_id}, session_id={session_id}] err={e}", exc_info=True)
+                    code = 500 if not hasattr(e, "code") else e.code
+                    return {"code": code, "message": "InternalServerError", "result": None}
 
         app.add_url_rule(url_rule, 'chat', warp, methods=['POST'])
         return app
