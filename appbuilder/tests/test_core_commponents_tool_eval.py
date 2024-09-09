@@ -25,6 +25,16 @@ from appbuilder import AutomaticTestToolEval
 from appbuilder.core._exception import AppbuilderBuildexException
 
 def check_ancestor(cls):
+    """
+    判断传入的类cls是否直接或间接继承自Component类，但排除一些特定类。
+    
+    Args:
+        cls: 待判断的类。
+    
+    Returns:
+        bool: 若cls直接或间接继承自Component类且不属于排除类，则返回True；否则返回False。
+    
+    """
     parent_cls = Component
     excluded_classes = ('Component', 'MatchingBaseComponent', 'EmbeddingBaseComponent', 'CompletionBaseComponent')
     if cls.__name__ in excluded_classes:
@@ -42,6 +52,16 @@ def check_ancestor(cls):
 
 
 def find_tool_eval_components():
+    """
+    查找所有继承自 Component 类并且具有 tool_eval 方法的类
+    
+    Args:
+        无
+    
+    Returns:
+        List[Tuple[str, type]]: 包含类名和类对象的元组列表
+    
+    """
     current_file_path = os.path.abspath(__file__)
     print(current_file_path)
     components = []
@@ -78,12 +98,33 @@ def find_tool_eval_components():
 
 
 def read_whitelist_components():
+    """
+    读取白名单组件列表文件，返回列表形式。
+    
+    Args:
+        无。
+    
+    Returns:
+        list: 包含白名单组件名称的列表。
+    
+    """
     with open('whitelist_components.txt', 'r') as f:
         lines = [line.strip() for line in f]
     return lines
 
 
 def write_error_data(error_df,error_stats):
+    """
+    将错误信息和错误统计信息写入到txt文件中。
+    
+    Args:
+        error_df (pandas.DataFrame): 包含错误信息的DataFrame，必须包含'Component Name'和'Error Message'两列。
+        error_stats (dict): 包含错误统计信息的字典，键为错误信息，值为出现次数。
+    
+    Returns:
+        None
+    
+    """
     txt_file_path = 'components_error_info.txt'
     with open(txt_file_path, 'w') as file:
         file.write("Component Name\tError Message\n")
@@ -97,10 +138,33 @@ def write_error_data(error_df,error_stats):
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
     def setUp(self) -> None:
+        """
+        初始化测试环境，包括获取工具评估组件和白名单组件。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            None
+        
+        """
         self.tool_eval_components = find_tool_eval_components()
         self.whitelist_components = read_whitelist_components()
 
     def test_manifests(self):
+        """
+        测试manifests是否符合规范。
+        
+        Args:
+            无
+        
+        Returns:
+            无返回值，该函数主要用于测试组件的manifests是否符合规范。
+        
+        Raises:
+            无
+        
+        """
         """
         要求必填，格式:  list[dict]，dict字段为
         * "name"：str，要求不重复
@@ -132,6 +196,15 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
     def test_tool_eval(self):
         """
         测试tool_eval组件，收集报错信息，生成并存储报错信息表格，并进行统计和可视化。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            无返回值。
+        
+        Raises:
+            AppbuilderBuildexException: 如果报错组件不在白名单中，则抛出异常。
         """
         print("完成tool_eval测试的组件:")
         error_data = []

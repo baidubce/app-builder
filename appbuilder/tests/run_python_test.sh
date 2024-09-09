@@ -18,6 +18,9 @@
 # 3、执行setup.sh，生产whl包，并更新当前环境的python库
 # 4、执行parallel_ut_run.py，运行python单元测试
 # 5、基于测试结果计算单测覆盖率
+# 6、基于coverage 测试结果计算全量单测覆盖率
+# 7、计算增量代码的单测覆盖率
+# 8、检查Components组件规范性
 
 
 # # 1、克隆git仓库
@@ -92,13 +95,13 @@ echo "单测运行结果: $run_result"
 echo "单测覆盖率结果: $cover_result"
 echo "--------------------------"
 
-# 若单测失败，则退出
-if [ $run_result -ne 0 ]; then echo "单测运行失败，请检查错误日志，修复单测后重试" && exit 1; fi
-
-if [ $cover_result -ne 0 ]; then echo "增量代码的单元测试覆盖率低于90%，请完善单元测试后重试" && exit 1; fi
-
-
+# 8、检查Components组件规范性
 echo "--------------------------"
 echo "Components组件检查规范性检测结果: "
 python3 print_components_error_info.py
 echo "--------------------------"
+
+# 若单测失败，则退出
+if [ $run_result -ne 0 ]; then echo "单测运行失败，请检查错误日志，修复单测后重试" && exit 1; fi
+
+if [ $cover_result -ne 0 ]; then echo "增量代码的单元测试覆盖率低于90%，请完善单元测试后重试" && exit 1; fi
