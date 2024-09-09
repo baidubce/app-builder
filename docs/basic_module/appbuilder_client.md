@@ -1,6 +1,5 @@
 # AppBuilderClient组件
 
-
 ## 简介
 
 AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)
