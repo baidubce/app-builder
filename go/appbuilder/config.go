@@ -139,11 +139,20 @@ func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
 		return nil, err
 	}
 	
-	// 使用 path.Join 进行路径拼接
+	// 使用 path.Join 拼接路径
 	parsedURL.Path = path.Join(parsedURL.Path, suffix)
 
-	// 调用 formatURL 进行进一步处理
-	return t.formatURL(parsedURL, suffix)
+	// 将路径直接解析为最终 URL
+	endpoint, err := url.Parse(suffix)
+	if err != nil {
+		return nil, err
+	}
+
+	// 解析相对路径
+	parsedURL = parsedURL.ResolveReference(endpoint)
+
+	// 返回拼接后的 URL
+	return parsedURL, nil
 }
 
 
