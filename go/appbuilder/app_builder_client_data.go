@@ -20,7 +20,6 @@ import (
 	"io"
 	"reflect"
 	"strings"
-	"io/ioutil"
 )
 
 const (
@@ -60,9 +59,9 @@ type Tool struct {
 }
 
 type Function struct {
-	Name        string                 `json:"name"`
-	Description string                 `json:"description"`
-	Parameters  map[string]interface{} `json:"parameters"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	Parameters  map[string]any `json:"parameters"`
 }
 
 type ToolOutput struct {
@@ -111,7 +110,7 @@ type Event struct {
 	EventType   string
 	ContentType string
 	Usage       Usage
-	Detail      interface{}  // 将any替换为interface{}
+	Detail      any // 将any替换为interface{}
 	ToolCalls   []ToolCall
 }
 
@@ -123,7 +122,7 @@ type ToolCall struct {
 
 type FunctionCallOption struct {
 	Name      string         `json:"name"`
-	Arguments map[string]interface{} `json:"arguments"`
+	Arguments map[string]any `json:"arguments"`
 }
 
 type TextDetail struct {
@@ -153,7 +152,7 @@ type Reference struct {
 }
 
 type FunctionCallDetail struct {
-	Text  interface{}    `json:"text"`
+	Text  any    `json:"text"`
 	Image string `json:"image"`
 	Audio string `json:"audio"`
 	Video string `json:"video"`
@@ -226,7 +225,7 @@ func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 			Usage:       c.Usage,
 			Detail:      c.Outputs,
 			ToolCalls:   c.ToolCalls}
-		//这部分新改的
+		// 这部分新改的
 		tp, ok := TypeToStruct[ev.ContentType]
 		if !ok {
 			tp = reflect.TypeOf(DefaultDetail{})
@@ -234,7 +233,7 @@ func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 		v := reflect.New(tp)
 		_ = json.Unmarshal(c.Outputs, v.Interface())
 		ev.Detail = v.Elem().Interface()
-		//这部分新改的
+		// 这部分新改的
 		t.Events = append(t.Events, ev)
 	}
 }
@@ -285,7 +284,7 @@ type AppBuilderClientOnceIterator struct {
 }
 
 func (t *AppBuilderClientOnceIterator) Next() (*AppBuilderClientAnswer, error) {
-	data, err := ioutil.ReadAll(t.body)
+	data, err := io.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}

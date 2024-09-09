@@ -26,7 +26,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"io/ioutil"
 )
 
 // Deprecated: 请使用AppBuilderClient 代替 AgentBuilder
@@ -74,11 +73,11 @@ func (t *AgentBuilder) CreateConversation() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]interface{})
+	rsp := make(map[string]any)
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -126,11 +125,11 @@ func (t *AgentBuilder) UploadLocalFile(conversationID string, filePath string) (
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]interface{})
+	rsp := make(map[string]any)
 	if err := json.Unmarshal(body, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -145,7 +144,7 @@ func (t *AgentBuilder) Run(conversationID string, query string, fileIDS []string
 	if len(conversationID) == 0 {
 		return nil, errors.New("conversationID mustn't be empty")
 	}
-	m := map[string]interface{}{"app_id": t.appID,
+	m := map[string]any{"app_id": t.appID,
 		"conversation_id": conversationID,
 		"query":           query,
 		"file_ids":        fileIDS,

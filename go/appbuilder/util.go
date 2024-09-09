@@ -18,8 +18,8 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
-	"io/ioutil"
 )
 
 type SSEEvent struct {
@@ -34,7 +34,7 @@ func checkHTTPResponse(rsp *http.Response) (string, error) {
 		return requestID, nil
 	}
 
-	data, err := ioutil.ReadAll(rsp.Body)
+	data, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return requestID, err
 	}

@@ -65,7 +65,7 @@ type GetDocumentListResponse struct {
 type Document struct {
 	ID        string       `json:"id"`
 	Name      string       `json:"name"`
-	CreatedAt interface{}          `json:"created_at"`
+	CreatedAt any          `json:"created_at"`
 	WordCount int64        `json:"word_count"`
 	Enabled   bool         `json:"enabled"`
 	Meta      DocumentMeta `json:"meta"`

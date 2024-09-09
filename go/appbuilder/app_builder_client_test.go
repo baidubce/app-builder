@@ -86,17 +86,17 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 		t.Fatalf("create conversation failed: %v", err)
 	}
 
-	parameters := make(map[string]interface{})
+	parameters := make(map[string]any)
 
-	location := make(map[string]interface{})
+	location := make(map[string]any)
 	location["type"] = "string"
 	location["description"] = "省，市名，例如：河北省"
 
-	unit := make(map[string]interface{})
+	unit := make(map[string]any)
 	unit["type"] = "string"
 	unit["enum"] = []string{"摄氏度", "华氏度"}
 
-	properties := make(map[string]interface{})
+	properties := make(map[string]any)
 	properties["location"] = location
 	properties["unit"] = unit
 
