@@ -102,3 +102,4 @@ if __name__ == "__main__":
     print(pretty_print_dict(kv_dict_1, header=header_1))
     print("缺失tool_eval方法或manifest的增量Components组件如下:\n")
     print(pretty_print_dict(kv_dict_2, header=["Components[增量]", "Error Info"]))
+    print("Components组件开发规范详见:\nhttps://github.com/baidubce/app-builder/blob/master/docs/contribution_guidelines/components_guidelines.md")

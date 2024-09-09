@@ -29,7 +29,6 @@
 - [二次开发](https://github.com/baidubce/app-builder/blob/master/docs/develop_guide/README.md)
     - [AppBuilder SDK 运行环境超参配置说明](https://github.com/baidubce/app-builder/blob/master/docs/develop_guide/env.md)
 
-
 ## 平台文档
 - [产品文档](https://cloud.baidu.com/doc/AppBuilder/s/6lq7s8lli)
 - [平台资源](https://cloud.baidu.com/doc/AppBuilder/s/llq6grh7e)
@@ -38,4 +37,5 @@
     - [SDK](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz)
     - [OpenAPI](https://cloud.baidu.com/doc/AppBuilder/s/klv2eywua)
     - [Assistant API](https://cloud.baidu.com/doc/AppBuilder/s/nluzkdben)
+    - [AppBuilder SDK Components组件开发规范](https://github.com/baidubce/app-builder/blob/master/docs/contribution_guidelines/components_guidelines.md)
 - [常见问题](https://cloud.baidu.com/doc/AppBuilder/s/qlq7sdj9z)
