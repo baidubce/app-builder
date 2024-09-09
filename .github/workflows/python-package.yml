@@ -76,14 +76,22 @@ jobs:
         git fetch upstream
         git remote -v
         git status
-        changed_files=$(git diff --name-only --diff-filter=ACMRT master -- '*.py' '*.sh')
+
+        # 找到当前分支与 upstream/master 的共同祖先提交
+        merge_base=$(git merge-base HEAD upstream/master)
+
+        # 比较当前分支与 merge_base 之间的差异
+        changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base -- '*.py' '*.sh')
+
         echo "发生更改的py/sh文件为:"
         echo "$changed_files"
+
         if [ -n "$changed_files" ]; then
           export APPBUILDER_PYTHON_TESTS=True
         else
           export APPBUILDER_PYTHON_TESTS=False
         fi
+
         echo "APPBUILDER_PYTHON_TESTS=$APPBUILDER_PYTHON_TESTS" >> $GITHUB_ENV
         pwd
     - name: Install dependencies
