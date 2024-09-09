@@ -133,11 +133,17 @@ func (t *SDKConfig) authHeader() http.Header {
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
-	absolutePath, err := url.JoinPath(t.GatewayURL)
+	// 解析 GatewayURL
+	parsedURL, err := url.Parse(t.GatewayURL)
 	if err != nil {
 		return nil, err
 	}
-	return t.formatURL(absolutePath, suffix)
+	
+	// 使用 path.Join 进行路径拼接
+	parsedURL.Path = path.Join(parsedURL.Path, suffix)
+
+	// 调用 formatURL 进行进一步处理
+	return t.formatURL(parsedURL, suffix)
 }
 
 
