@@ -110,3 +110,9 @@ class RiskInputException(BaseRPCException):
     r"""RiskInputException
     """
     pass
+
+
+class AppbuilderBuildexException(BaseRPCException):
+    r"""AppbuilderBuildxException
+    """
+    pass

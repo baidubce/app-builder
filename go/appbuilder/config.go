@@ -15,6 +15,16 @@
 package appbuilder
 
 import (
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"path"
+	"strings"
+
+	"github.com/google/uuid"
     "fmt"
     "io"
     "bytes"      
@@ -44,14 +54,13 @@ const (
 )
 
 type SDKConfig struct {
-    GatewayURL            string
-    GatewayURLV2          string
-    ConsoleOpenAPIVersion string
-    ConsoleOpenAPIPrefix  string
-    SecretKey             string
-
-    HTTPClient            HTTPClient // custom HTTP Client, optional
-    logger                *log.Logger
+	GatewayURL            string
+	GatewayURLV2          string
+	ConsoleOpenAPIVersion string
+	ConsoleOpenAPIPrefix  string
+	SecretKey             string
+	HTTPClient            HTTPClient // custom HTTP Client, optional
+	logger                *log.Logger
 }
 
 func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
@@ -60,14 +69,14 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
     openAPIVersion := getEnvWithDefault(ConsoleOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
     openAPIPrefix := getEnvWithDefault(ConsoleOpenAPIPrefix, "", DefaultConsoleOpenAPIPrefix)
 
-    secretKey = getEnvWithDefault(SecretKey, secretKey, "")
-    if len(secretKey) == 0 {
-        log.Println("Error: secret key is empty")
-    }
-    secretKeyPrefix := getEnvWithDefault(SecretKeyPrefix, "", DefaultSecretKeyPrefix)
-    if !strings.HasPrefix(secretKey, secretKeyPrefix) {
-        secretKey = secretKeyPrefix + " " + secretKey
-    }
+	secretKey = getEnvWithDefault(SecretKey, secretKey, "")
+	if len(secretKey) == 0 {
+		log.Println("Error: secret key is empty")
+	}
+	secretKeyPrefix := getEnvWithDefault(SecretKeyPrefix, "", DefaultSecretKeyPrefix)
+	if !strings.HasPrefix(secretKey, secretKeyPrefix) {
+		secretKey = secretKeyPrefix + " " + secretKey
+	}
 
     sdkConfig := &SDKConfig{
         GatewayURL:            gatewayURL,
@@ -76,19 +85,17 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
         ConsoleOpenAPIPrefix:  openAPIPrefix,
         SecretKey:             secretKey,
 
-    }
-
-    logFile := os.Getenv("APPBUILDER_LOGFILE")
-    if len(logFile) > 0 {
-        f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-        if err != nil {
-            sdkConfig.logger = log.New(os.Stdout, "", log.LstdFlags)
-        } else {
-            sdkConfig.logger = log.New(f, "", log.LstdFlags)
-        }
-    } else {
-        sdkConfig.logger = log.New(os.Stdout, "", log.LstdFlags)
-    }
+	logFile := os.Getenv("APPBUILDER_LOGFILE")
+	if len(logFile) > 0 {
+		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err != nil {
+			sdkConfig.logger = log.New(os.Stdout, "", log.LstdFlags)
+		} else {
+			sdkConfig.logger = log.New(f, "", log.LstdFlags)
+		}
+	} else {
+		sdkConfig.logger = log.New(os.Stdout, "", log.LstdFlags)
+	}
 
     return sdkConfig, nil
 }
@@ -106,10 +113,10 @@ func getEnvWithDefault(key, paramValue, defaultValue string) string {
 }
 
 func (t *SDKConfig) AuthHeader() http.Header {
-    header := t.authHeader()
-    header.Set("X-Appbuilder-Authorization", t.SecretKey)
-    t.logger.Printf("Auth Header %v", header)
-    return header
+	header := t.authHeader()
+	header.Set("X-Appbuilder-Authorization", t.SecretKey)
+	t.logger.Printf("Auth Header %v", header)
+	return header
 }
 
 // AuthHeaderV2 适配OpenAPI，当前仅AgentBuilder使用
@@ -189,6 +196,16 @@ func NopCloser(r io.Reader) io.ReadCloser {
     return nopCloser{r}
 }
 
+type nopCloser struct {
+	io.Reader
+}
+
+func (nopCloser) Close() error { return nil }
+
+func NopCloser(r io.Reader) io.ReadCloser {
+	return nopCloser{Reader: r}
+}
+
 func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
     var curlCmd strings.Builder
     curlCmd.WriteString(fmt.Sprintf("curl -X %s -L '%v' \\\n", req.Method, req.URL.String()))
@@ -198,24 +215,19 @@ func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
         curlCmd.WriteString(header)
     }
 
-    if req.Method == "POST" {
-        bodyBytes, err := io.ReadAll(req.Body)
-        if err != nil {
-            t.logger.Println("Failed to read request body:", err)
-            return
-        }
+	if req.Method == "POST" {
+		bodyBytes, err := io.ReadAll(req.Body)
+		if err != nil {
+			t.logger.Println("Failed to read request body:", err)
+			return
+		}
+		req.Body.Close()
+		req.Body = NopCloser(strings.NewReader(string(bodyBytes)))
 
-        // 重置 req.Body 以便请求可以再次使用
-        req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-
-        body := fmt.Sprintf("-d '%v'", string(bodyBytes))
-        curlCmd.WriteString(body)
-    } else if req.Method == "GET" || req.Method == "DELETE" {
-        // 去掉末尾多余的字符
-        cmdStr := curlCmd.String()
-        curlCmd.Reset()
-        curlCmd.WriteString(strings.TrimSuffix(cmdStr, " \\\n"))
-    }
-
-    fmt.Println("\n" + curlCmd.String() + "\n")
+		body := fmt.Sprintf("-d '%v'", string(bodyBytes))
+		curlCmd = fmt.Sprintf("%v %v", curlCmd, body)
+	} else if req.Method == "GET" || req.Method == "DELETE" {
+		curlCmd = strings.TrimSuffix(curlCmd, " \\\n")
+	}
+	fmt.Println("\n" + curlCmd + "\n")
 }

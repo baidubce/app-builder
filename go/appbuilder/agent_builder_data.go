@@ -59,11 +59,11 @@ type AgentBuilderStreamIterator struct {
 
 func (t *AgentBuilderStreamIterator) Next() (*AgentBuilderAnswer, error) {
 	data, err := t.r.ReadMessageLine()
-	if err != nil && !(err ==io.EOF) {
+	if err != nil && !(err == io.EOF) {
 		t.body.Close()
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	if err != nil && err ==io.EOF {
+	if err != nil && err == io.EOF {
 		t.body.Close()
 		return nil, err
 	}

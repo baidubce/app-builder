@@ -109,11 +109,11 @@ type AppBuilderClient struct {
 
 // 在 AppBuilderClient 结构体中添加 Getter 方法
 func (t *AppBuilderClient) GetSdkConfig() *SDKConfig {
-    return t.sdkConfig
+	return t.sdkConfig
 }
 
 func (t *AppBuilderClient) GetClient() HTTPClient {
-    return t.client
+	return t.client
 }
 
 type HTTPClient interface {
@@ -237,7 +237,7 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	request.Header = header
 	data, _ := json.Marshal(m)
 	request.Body = NopCloser(bytes.NewReader(data))
-	request.ContentLength = int64(len(data)) //手动设置长度
+	request.ContentLength = int64(len(data)) // 手动设置长度
 
 	t.sdkConfig.BuildCurlCommand(&request)
 
@@ -276,8 +276,8 @@ func (t *AppBuilderClient) RunWithToolCall(req AppBuilderClientRunRequest) (AppB
 	request.Header = header
 	data, _ := json.Marshal(req)
 	request.Body = NopCloser(bytes.NewReader(data))
-	request.ContentLength = int64(len(data)) //手动设置长度
-	
+	request.ContentLength = int64(len(data)) // 手动设置长度
+
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {

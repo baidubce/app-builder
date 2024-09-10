@@ -66,13 +66,9 @@ func (t *Dataset) Create(name string) (string, error) {
 	// 构造请求体
 	req := map[string]string{"name": name}
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
-
-	// 构建并打印 Curl 命令
-	t.sdkConfig.BuildCurlCommand(request)
-	
-	// 发送请求
-	resp, err := t.client.Do(request)
+	request.Body = NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
 	if err != nil {
 		return "", err
 	}

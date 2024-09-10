@@ -50,6 +50,8 @@ python3 -m pip install diff-cover
 
 python3 setup.py bdist_wheel
 python3 -m pip install --force-reinstall dist/*.whl
+python3 -m pip uninstall numpy -y
+python3 -m pip install numpy==1.26.4
 cd appbuilder/tests/
 
 
@@ -95,3 +97,8 @@ if [ $run_result -ne 0 ]; then echo "单测运行失败，请检查错误日志�
 
 if [ $cover_result -ne 0 ]; then echo "增量代码的单元测试覆盖率低于90%，请完善单元测试后重试" && exit 1; fi
 
+
+echo "--------------------------"
+echo "Components组件检查规范性检测结果: "
+python3 print_components_error_info.py
+echo "--------------------------"

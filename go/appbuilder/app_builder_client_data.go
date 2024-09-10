@@ -60,9 +60,9 @@ type Tool struct {
 }
 
 type Function struct {
-	Name        string                 `json:"name"`
-	Description string                 `json:"description"`
-	Parameters  map[string]interface{} `json:"parameters"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	Parameters  map[string]any `json:"parameters"`
 }
 
 type ToolOutput struct {
@@ -226,7 +226,7 @@ func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 			Usage:       c.Usage,
 			Detail:      c.Outputs,
 			ToolCalls:   c.ToolCalls}
-		//这部分新改的
+		// 这部分新改的
 		tp, ok := TypeToStruct[ev.ContentType]
 		if !ok {
 			tp = reflect.TypeOf(DefaultDetail{})
@@ -234,7 +234,7 @@ func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 		v := reflect.New(tp)
 		_ = json.Unmarshal(c.Outputs, v.Interface())
 		ev.Detail = v.Elem().Interface()
-		//这部分新改的
+		// 这部分新改的
 		t.Events = append(t.Events, ev)
 	}
 }
