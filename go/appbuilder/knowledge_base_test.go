@@ -23,7 +23,7 @@ import (
 func TestAddDocument(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
-	knowledgeBaseID := DatasetID
+	knowledgeBaseID := "75ba2c4e-15fa-490f-85f0-35ccd1038f32"
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
@@ -72,7 +72,7 @@ func TestAddDocument(t *testing.T) {
 func TestCreateKnowledgeBase(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_TOKEN", "")
-	config, err := NewSDKConfig("", "")
+	config, err := NewSDKConfig("", "bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
@@ -203,9 +203,9 @@ func TestCreateKnowledgeBase(t *testing.T) {
 func TestChunk(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_TOKEN", "")
-	documentID := ""
+	documentID := "015e7cc7-9a22-4bc5-a28c-89b36496507a"
 
-	config, err := NewSDKConfig("", "")
+	config, err := NewSDKConfig("", "bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}

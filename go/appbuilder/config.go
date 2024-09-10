@@ -15,19 +15,8 @@
 package appbuilder
 
 import (
-	"fmt"
-	"io"
-	"log"
-	"net/http"
-	"net/url"
-	"os"
-	"path"
-	"strings"
-
-	"github.com/google/uuid"
     "fmt"
-    "io"
-    "bytes"      
+    "io"    
     "log"
     "net/http"
     "net/url"
@@ -84,7 +73,7 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
         ConsoleOpenAPIVersion: openAPIVersion,
         ConsoleOpenAPIPrefix:  openAPIPrefix,
         SecretKey:             secretKey,
-
+    }
 	logFile := os.Getenv("APPBUILDER_LOGFILE")
 	if len(logFile) > 0 {
 		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
@@ -196,24 +185,13 @@ func NopCloser(r io.Reader) io.ReadCloser {
     return nopCloser{r}
 }
 
-type nopCloser struct {
-	io.Reader
-}
-
-func (nopCloser) Close() error { return nil }
-
-func NopCloser(r io.Reader) io.ReadCloser {
-	return nopCloser{Reader: r}
-}
-
 func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
-    var curlCmd strings.Builder
-    curlCmd.WriteString(fmt.Sprintf("curl -X %s -L '%v' \\\n", req.Method, req.URL.String()))
+	curlCmd := fmt.Sprintf("curl -X %s -L '%v' \\\n", req.Method, req.URL.String())
 
-    for k, v := range req.Header {
-        header := fmt.Sprintf("-H '%v: %v' \\\n", k, v[0])
-        curlCmd.WriteString(header)
-    }
+	for k, v := range req.Header {
+		header := fmt.Sprintf("-H '%v: %v' \\\n", k, v[0])
+		curlCmd = fmt.Sprintf("%v %v", curlCmd, header)
+	}
 
 	if req.Method == "POST" {
 		bodyBytes, err := io.ReadAll(req.Body)

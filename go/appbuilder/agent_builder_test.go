@@ -23,7 +23,7 @@ import (
 
 func TestNewAgentBuilder(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
-	config, err := NewSDKConfig("", "")
+	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}

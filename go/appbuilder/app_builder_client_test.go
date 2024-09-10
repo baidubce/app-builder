@@ -24,7 +24,7 @@ import (
 func TestNewAppBuilderClient(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
-	config, err := NewSDKConfig("", "")
+	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
@@ -69,7 +69,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
-	config, err := NewSDKConfig("", "")
+	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}

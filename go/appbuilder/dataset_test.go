@@ -28,7 +28,8 @@ func TestDataset(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create dataset failed: %v", err)
 	}
-	documentID, err := dataset.UploadLocalFile(datasetID, "/path/to/cv.pdf")
+
+	documentID, err := dataset.UploadLocalFile(datasetID, "/Users/daijun04/app-builder/go/appbuilder/files/test.pdf")
 	if err != nil {
 		t.Fatalf("upload file failed: %v", err)
 	}

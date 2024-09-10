@@ -20,18 +20,30 @@ import (
 	"fmt"
 	"io"
 	"testing"
+	"os"
 )
 
 func TestNewRAG(t *testing.T) {
-	config, err := NewSDKConfig("", "")
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	rag, err := NewRAG("", config)
+	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
+	agentBuilder, err := NewAgentBuilder(appID, config)
+	if err != nil {
+		t.Fatalf("new AgentBuidler instance failed")
+	}
+	conversationID, err := agentBuilder.CreateConversation()
+	if err != nil {
+		t.Fatalf("create conversation failed: %v", err)
+	}
+
+	rag, err := NewRAG("aa8af334-df27-4855-b3d1-0d249c61fc08", config)
 	if err != nil {
 		t.Fatalf("new RAG instance failed")
 	}
-	i, err := rag.Run("", "北京有多少小学生", true)
+	i, err := rag.Run(conversationID, "北京有多少小学生", true)
 	var answer *RAGAnswer
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
 		data, _ := json.Marshal(answer)
