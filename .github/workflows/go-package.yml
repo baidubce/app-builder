@@ -1,0 +1,47 @@
+name: Go package
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      APPBUILDER_TOKEN: bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5
+      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5
+      BAIDU_VDB_API_KEY: apaasTest1
+      INSTANCE_ID: vdb-bj-vuzmppgqrnhv
+      DATASET_ID: 0e99a1c4-70df-4f3c-913f-d6adea7d7c10
+      APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5
+    strategy:
+      fail-fast: false
+      # 如果作业失败，是否立即停止其他作业的运行。设置为 false 意味着即使一个任务失败了，其他任务也会继续运行
+      matrix:
+        go-version: ['1.18', '1.19', '1.20', '1.21.0', '1.22.0', '1.23.0']
+      max-parallel: 2
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      # 拉取代码
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go-version }}
+        # 使用矩阵中的 Go 版本
+
+    - name: Install dependencies
+      run: |
+        cd go/appbuilder
+        go mod tidy
+        # 切换到 go/appbuilder 目录并安装项目依赖
+
+    - name: Run tests
+      run: |
+        cd go/appbuilder
+        go test ./... -cover
+        # 运行所有测试文件，并显示覆盖率
