@@ -28,7 +28,8 @@
 - [RAG应用-问答助手](/cookbooks/end2end_application/rag/console_rag.ipynb)
 - [RAG应用-企业问答系统-离线知识生产](/cookbooks/end2end_application/rag/qa_system_1_dataset.ipynb)
 - [RAG应用-企业问答系统-在线问答流程](/cookbooks/end2end_application/rag/qa_system_2_dialogue.ipynb)
-- [知识库操作助手](/cookbooks/end2end_application/console_dataset.ipynb)
+- [知识库操作助手](/cookbooks/end2end_application/rag/console_dataset.ipynb)
+- [通过AppBuilder-ToolCall功能实现端云组件联动的Agent](/cookbooks/end2end_application/agent/tool_call.ipynb) 
 
 ### 进阶应用
 - [公有云部署](/cookbooks/advanced_application/cloud_deploy.ipynb)
