@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"io/ioutil"
 )
 
 type RAGRunResponse struct {
@@ -109,7 +108,7 @@ func (t *RAGOnceIterator) Next() (*RAGAnswer, error) {
 	if t.eoi {
 		return nil, io.EOF
 	}
-	data, err := ioutil.ReadAll(t.body)
+	data, err := io.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
