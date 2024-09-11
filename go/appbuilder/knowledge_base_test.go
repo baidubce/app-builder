@@ -258,4 +258,5 @@ func TestChunk(t *testing.T) {
 	if err != nil {
 		t.Fatalf("delete chunk failed: %v", err)
 	}
+	fmt.Println("切片测试结束")
 }
