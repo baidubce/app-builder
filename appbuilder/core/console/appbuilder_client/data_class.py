@@ -22,7 +22,7 @@ class Function(BaseModel):
     name: str = Field(..., description="工具名称")
     description: str = Field(..., description="工具描述")
     parameters: dict = Field(..., description="工具参数, json_schema格式")
-    
+
 class Tool(BaseModel):
     type: str = "function"
     function: Function = Field(..., description="工具信息")
@@ -40,6 +40,28 @@ class ToolCall(BaseModel):
     type: str = Field("function", description="需要输出的工具调用的类型。就目前而言，这始终是function")
     function: FunctionCallDetail = Field(..., description="函数定义")
 
+
+class ToolChoiceFunction(BaseModel):
+    name: str = Field(
+        ...,
+        description="组件的英文名称（唯一标识），用户通过工作流完成自定义组件后，可在个人空间-组件下查看组件英文名称",
+    )
+    input: dict = Field(
+        ...,
+        description="当组件没有入参或者必填的入参只有一个时可省略，必填的入参只有一个且省略时，使用query字段的值作为入参",
+    )
+
+
+class ToolChoice(BaseModel):
+    type: str = Field(
+        ...,
+        description="auto/function，auto表示由LLM自动判断调什么组件；function表示由用户指定调用哪个组件",
+    )
+    function: Optional[ToolChoiceFunction] = Field(
+        ..., description="当type为function时，需要指定调用哪个组件"
+    )
+
+
 class AppBuilderClientRequest(BaseModel):
     """会话请求参数
         属性:
@@ -56,6 +78,8 @@ class AppBuilderClientRequest(BaseModel):
     app_id: str
     tools: Optional[list[Tool]] = None
     tool_outputs: Optional[list[ToolOutput]] = None
+    tool_choice: Optional[ToolChoice] = None
+    end_user_id: Optional[str] = None
 
 
 class Usage(BaseModel):
@@ -107,7 +131,7 @@ class AppBuilderClientResponse(BaseModel):
     message_id: str = ""
     is_completion: Optional[bool] = False
     content: list[OriginalEvent] = []
-    
+
 
 class TextDetail(BaseModel):
     """content_type=text，详情内容
@@ -286,4 +310,3 @@ class AppBuilderClientAppListResponse(BaseModel):
     request_id: str = Field("", description="请求ID")
     data: Optional[list[AppOverview]] = Field(
         [], description="应用概览列表")
-    

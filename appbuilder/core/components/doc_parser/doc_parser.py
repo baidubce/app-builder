@@ -26,7 +26,9 @@ from appbuilder.core.component import Component, Message
 from appbuilder.utils.logger_util import logger
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.doc_parser.base import ParserConfig, ParseResult
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
+from appbuilder.utils.trace.tracer_wrapper import (
+    components_run_trace,
+)
 
 
 class DocParser(Component):
@@ -46,6 +48,7 @@ class DocParser(Component):
             parse_result = parser(msg)
 
     """
+
     name: str = "doc_parser"
     tool_desc: Dict[str, Any] = {"description": "parse document content"}
     base_url: str = "/v1/bce/xmind/parser"
@@ -61,16 +64,24 @@ class DocParser(Component):
         """
         将解析结果的内容转化成ParseResult的结构
         """
-        para_nodes = response["para_nodes"] if response["para_nodes"] is not None else []
+        para_nodes = (
+            response["para_nodes"] if response["para_nodes"] is not None else []
+        )
         catalog = response["catalog"] if response["catalog"] is not None else []
         pdf_data = response["pdf_data"]
         title_node_ids = [title["node_id"] for title in catalog] if catalog else []
         page_contents = []
         for content in response["file_content"]:
-            page_content = {"page_num": content["page_num"], "page_width": int(content["page_size"]["width"]),
-                            "page_height": int(content["page_size"]["height"]), "page_angle": int(content["page_angle"]),
-                            "page_type": content["page_content"]["type"], "page_layouts": [], "page_titles": [],
-                            "page_tables": []}
+            page_content = {
+                "page_num": content["page_num"],
+                "page_width": int(content["page_size"]["width"]),
+                "page_height": int(content["page_size"]["height"]),
+                "page_angle": int(content["page_angle"]),
+                "page_type": content["page_content"]["type"],
+                "page_layouts": [],
+                "page_titles": [],
+                "page_tables": [],
+            }
             for layout_item in content["page_content"]["layout"]:
                 if layout_item["node_id"] in title_node_ids:
                     continue
@@ -81,8 +92,16 @@ class DocParser(Component):
                         table_row = []
                         for i in range(len(layout_item["matrix"])):
                             cell_index = layout_item["matrix"][i]
-                            row_markdown = "|" + "|".join(
-                                [layout_item["children"][index]["text"] for index in set(cell_index)]) + "|"
+                            row_markdown = (
+                                "|"
+                                + "|".join(
+                                    [
+                                        layout_item["children"][index]["text"]
+                                        for index in set(cell_index)
+                                    ]
+                                )
+                                + "|"
+                            )
                             if i != len(layout_item["matrix"]) - 1:
                                 row_markdown += "\n"
                             table_row.append(row_markdown)
@@ -94,9 +113,18 @@ class DocParser(Component):
         for title in catalog:
             page_num = title["position"][0]["pageno"]
             page_contents[page_num]["page_titles"].append(
-                {"text": title["text"], "type": title["level"], "box": title["position"][0]["box"],
-                 "node_id": title["node_id"]})
-        parse_result = {"para_node_tree": para_nodes, "page_contents": page_contents, "pdf_data": pdf_data}
+                {
+                    "text": title["text"],
+                    "type": title["level"],
+                    "box": title["position"][0]["box"],
+                    "node_id": title["node_id"],
+                }
+            )
+        parse_result = {
+            "para_node_tree": para_nodes,
+            "page_contents": page_contents,
+            "pdf_data": pdf_data,
+        }
         # parse_result = ParseResult.parse_obj(parse_result)
         return parse_result
 
@@ -123,13 +151,26 @@ class DocParser(Component):
             payload = json.dumps({"file_list": [param]})
             headers = self.http_client.auth_header()
             headers["Content-Type"] = "application/json"
-            response = self.http_client.session.post(url=self.http_client.service_url(self.base_url), headers=headers, data=payload)
+            response = self.http_client.session.post(
+                url=self.http_client.service_url(self.base_url),
+                headers=headers,
+                data=payload,
+            )
             self.http_client.check_response_header(response)
             self.http_client.check_response_json(response.json())
+            request_id = self.http_client.response_request_id(response)
             response = response.json()
             if response["error_code"] != 0:
-                logger.error("doc parser service log_id {} err {}".format(response["log_id"], response["error_msg"]))
-                raise AppBuilderServerException(response["error_msg"])
+                logger.error(
+                    "doc parser service log_id {} err {}".format(
+                        response["log_id"], response["error_msg"]
+                    )
+                )
+                raise AppBuilderServerException(
+                    request_id=request_id,
+                    service_err_code=response["error_code"],
+                    service_err_message=response["error_msg"],
+                )
             parse_result = self.make_parse_result(response["result"]["result_list"][0])
             if return_raw:
                 parse_result["raw"] = response

@@ -169,7 +169,7 @@ class AppBuilderClient(Component):
 
         if len(conversation_id) == 0:
             raise ValueError("conversation_id is empty, you can run self.create_conversation to get a conversation_id")
-        
+
         filepath = os.path.abspath(local_file_path)
         if not os.path.exists(filepath):
             raise FileNotFoundError(f"{filepath} does not exist")
@@ -196,24 +196,28 @@ class AppBuilderClient(Component):
             stream: bool = False,
             tools: list[data_class.Tool] = None,
             tool_outputs: list[data_class.ToolOutput] = None,
+            tool_choice: data_class.ToolChoice = None,
+            end_user_id: str = None,
             **kwargs
             ) -> Message:
         r"""
-            参数:
-                query (str: 必须): query内容
-                conversation_id (str, 必须): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
-                file_ids(list[str], 可选):
-                stream (bool, 可选): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
-                tools(list[data_class.Tools], 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
-                tool_outputs(list[data_class.ToolOutput], 可选): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
-            返回: message (obj: `Message`): 对话结果.
+        参数:
+            query (str: 必须): query内容
+            conversation_id (str, 必须): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+            file_ids(list[str], 可选):
+            stream (bool, 可选): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
+            tools(list[data_class.Tools], 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
+            tool_outputs(list[data_class.ToolOutput], 可选): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
+            tool_choice(data_class.ToolChoice, 可选): 控制大模型使用组件的方式，默认为None
+            end_user_id (str, 可选): 用户ID，用于区分不同用户
+        返回: message (obj: `Message`): 对话结果.
         """
 
         if len(conversation_id) == 0:
             raise ValueError(
                 "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
             )
-        
+
         if query == "" and (tool_outputs is None or len(tool_outputs) == 0):
             raise ValueError("AppBuilderClient Run API: query and tool_outputs cannot both be empty")
 
@@ -224,7 +228,9 @@ class AppBuilderClient(Component):
             stream=True if stream else False,
             file_ids=file_ids,
             tools=tools,
-            tool_outputs=tool_outputs
+            tool_outputs=tool_outputs,
+            tool_choice=tool_choice,
+            end_user_id=end_user_id,
         )
 
         headers = self.http_client.auth_header_v2()
@@ -244,7 +250,7 @@ class AppBuilderClient(Component):
             out = data_class.AppBuilderClientAnswer()
             _transform(resp, out)
             return Message(content=out)
-        
+
     def run_with_handler(self,
                         conversation_id: str,
                         query: str = "",
@@ -263,7 +269,7 @@ class AppBuilderClient(Component):
             stream=stream,
             **kwargs
         )
-        
+
         return event_handler
 
     @staticmethod

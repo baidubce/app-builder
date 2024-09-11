@@ -48,9 +48,11 @@ type AppBuilderClientRunRequest struct {
 	AppID          string       `json:"app_id"`
 	Query          string       `json:"query"`
 	Stream         bool         `json:"stream"`
+	EndUserID      *string      `json:"end_user_id"`
 	ConversationID string       `json:"conversation_id"`
 	Tools          []Tool       `json:"tools"`
 	ToolOutputs    []ToolOutput `json:"tool_outputs"`
+	ToolChoice     *ToolChoice  `json:"tool_choice"`
 }
 
 type Tool struct {
@@ -67,6 +69,16 @@ type Function struct {
 type ToolOutput struct {
 	ToolCallID string `json:"tool_call_id" description:"工具调用ID"`
 	Output     string `json:"output" description:"工具输出"`
+}
+
+type ToolChoice struct {
+	Type     string             `json:"type"`
+	Function ToolChoiceFunction `json:"function"`
+}
+
+type ToolChoiceFunction struct {
+	Name  string                 `json:"name"`
+	Input map[string]interface{} `json:"input"`
 }
 
 type AgentBuilderRawResponse struct {

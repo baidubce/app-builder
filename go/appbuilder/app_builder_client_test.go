@@ -159,3 +159,52 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	fmt.Println("----------------answer-------------------")
 	fmt.Println(totalAnswer)
 }
+
+func TestAppBuilderClientRunToolChoice(t *testing.T) {
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	os.Setenv("APPBUILDER_LOGFILE", "")
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	appID := ""
+	client, err := NewAppBuilderClient(appID, config)
+	if err != nil {
+		t.Fatalf("new AgentBuidler instance failed")
+	}
+
+	conversationID, err := client.CreateConversation()
+	if err != nil {
+		t.Fatalf("create conversation failed: %v", err)
+	}
+
+	input := make(map[string]interface{})
+	input["city"] = "北京"
+	end_user_id := "go_user_id_0"
+	i, err := client.RunWithToolCall(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "你能干什么",
+		EndUserID:      &end_user_id,
+		Stream:         false,
+		ToolChoice: &ToolChoice{
+			Type: "function",
+			Function: ToolChoiceFunction{
+				Name:  "WeatherQuery",
+				Input: input,
+			},
+		},
+	})
+
+	if err != nil {
+		fmt.Println("run failed: ", err)
+	}
+
+	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
+		for _, ev := range answer.Events {
+			evJSON, _ := json.Marshal(ev)
+			fmt.Println(string(evJSON))
+		}
+	}
+}
