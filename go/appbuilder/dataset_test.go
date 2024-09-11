@@ -16,10 +16,11 @@ package appbuilder
 
 import (
 	"testing"
+	"os"
 )
 
 func TestDataset(t *testing.T) {
-	config, err := NewSDKConfig("", "bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5")
+	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}

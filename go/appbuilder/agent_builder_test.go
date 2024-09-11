@@ -23,11 +23,11 @@ import (
 
 func TestNewAgentBuilder(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
-	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
+	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
+	appID := os.Getenv(AppID)
 	agentBuilder, err := NewAgentBuilder(appID, config)
 	if err != nil {
 		t.Fatalf("new AgentBuidler instance failed")
