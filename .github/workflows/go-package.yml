@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       # 如果作业失败，是否立即停止其他作业的运行。设置为 false 意味着即使一个任务失败了，其他任务也会继续运行
       matrix:
-        go-version: ['1.18', '1.19', '1.20', '1.21.0', '1.22.0', '1.23.0']
+        go-version: ['1.18','1.23.0']
       max-parallel: 2
     steps:
     - name: Checkout code

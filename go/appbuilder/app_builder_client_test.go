@@ -168,7 +168,7 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
-	appID := ""
+	appID := os.Getenv(AppID)
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Fatalf("new AgentBuidler instance failed")
