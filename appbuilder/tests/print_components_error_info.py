@@ -34,6 +34,8 @@ def pretty_print_dict(kv_dict, header=["Key", "Value"]):
     draws += line + "\n"
 
     for k, v in kv_dict.items():
+        if k == "Component Name":
+            continue
         if isinstance(v, str) and len(v) >= max_v:
             str_v = "... " + v[-46:]
         else:
@@ -63,43 +65,20 @@ def read_error_file(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         lines = file.readlines()
         header = lines[0].strip().split('\t')
-        for line in lines[1:-3]: 
+        for line in lines[1:]: 
             components = line.strip().split('\t')
             if len(components) == 2:
                 kv_dict[components[0]] = components[1]
     return kv_dict, header
 
-
-def read_components_test(filename):
-    """
-    读取错误文件，返回键值对字典。
-
-    Args:
-        filename (str): 错误文件路径。
-
-    Returns:
-        dict: 以文件中的key作为键，value作为值的字典。
-    """
-    kv_dict = {}
-    with open(filename, 'r', encoding='utf-8') as file:
-        lines = file.readlines()
-        for line in lines:
-            components = line.strip().split('\t')
-            if len(components) == 2:
-                if kv_dict.get(components[0], None):
-                    kv_dict[components[0]] = "方法tool_eval与成员变量manifest均不存在"
-                else:
-                    kv_dict[components[0]] = components[1]
-    return kv_dict
-
-
 if __name__ == "__main__":
     filename = 'components_error_info.txt' 
-    components_test_txt = 'components_test.txt'
+    components_test_txt = 'new_add_components_error_info.txt'
     kv_dict_1, header_1 = read_error_file(filename)
-    kv_dict_2 = read_components_test(components_test_txt)
-    print("不符合规范的Components组件如下:\n")
+    kv_dict_2, header_2 = read_error_file(components_test_txt)
+    print("存在tool_eval方法与manifest成员变量但是不符合规范的Components组件如下[全量检测，包含白名单]:\n")
     print(pretty_print_dict(kv_dict_1, header=header_1))
-    print("缺失tool_eval方法或manifest的增量Components组件如下:\n")
-    print(pretty_print_dict(kv_dict_2, header=["Components[增量]", "Error Info"]))
+    print("新增的Components组件tool_eval方法与manifest成员变量检测[增量检测，排除白名单]\n")
+    header_2[0] += '[增量]'
+    print(pretty_print_dict(kv_dict_2, header=header_2))
     print("Components组件开发规范详见:\nhttps://github.com/baidubce/app-builder/blob/master/docs/develop_guide/components_guidelines.md")

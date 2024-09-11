@@ -1,28 +1,50 @@
-# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 import os
 import unittest
 import inspect
+import subprocess
 import appbuilder
 import importlib.util
-import numpy as np
 import pandas as pd
 
 from appbuilder.core.component import Component
-from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder import AutomaticTestToolEval
+from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core._exception import AppbuilderBuildexException
+
+def test_add_components():
+    """
+    获取自上一个与upstream/master合并的commit以来新增的Python文件名列表。
+    
+    Args:
+        无参数。
+    
+    Returns:
+        List[str]: 自上一个与origin/master合并的commit以来新增的Python文件名列表。
+    
+    Raises:
+        无异常。
+    """
+    try:
+        merge_base = subprocess.run(
+            ["git", "merge-base", "HEAD", "origin/master"],  # PR中改为upstream/master
+            capture_output=True, text=True, check=True
+        )
+        base_commit = merge_base.stdout.strip()
+        print("Merge base commit:", base_commit)
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "--diff-filter=A", base_commit, "--", "*.py"],
+            capture_output=True, text=True, check=True
+        )
+
+        new_files = result.stdout.splitlines()
+        print("新增的 Python 文件:", new_files)
+
+    except subprocess.CalledProcessError as e:
+        print(f"命令执行失败，错误信息: {e.stderr}")
+        return []
+
+    return new_files
+
 
 def check_ancestor(cls):
     """
@@ -45,49 +67,87 @@ def check_ancestor(cls):
     return False
 
 
-def find_tool_eval_components():
+def find_tool_eval_components(new_files):
     """
-    查找所有继承自 Component 类并且具有 tool_eval 方法的类
+    查找所有继承自 Component 的类，并返回类名和类对象。
     
     Args:
-        无
+        new_files: 需要检查的文件列表。
     
     Returns:
-        List[Tuple[str, type]]: 包含类名和类对象的元组列表
-    
+        一个包含类名和类对象的元组列表。
     """
-    current_file_path = os.path.abspath(__file__)
-    print(current_file_path)
     components = []
-    added_components = set()
-    base_path = current_file_path.split('/')
-    base_path = base_path[:-2]+['core', 'components']
-    base_path = '/'.join(base_path)
-    print(base_path)
+    for file_path in new_files:
+        if file_path.endswith(".py"):
+            abs_file_path = os.path.abspath(file_path)
+            print(f"正在检查文件: {abs_file_path}")
 
-    for root, _, files in os.walk(base_path):
-        for file in files:
-            if file.endswith(".py"):
-                module_path = os.path.join(root, file)
-                module_name = module_path.replace(base_path, '').replace('/', '.').replace('\\', '.').strip('.')
-                
-                # 动态加载模块
-                spec = importlib.util.spec_from_file_location(module_name, module_path)
+            module_name = os.path.splitext(os.path.basename(abs_file_path))[0]
+            try:
+                spec = importlib.util.spec_from_file_location(module_name, abs_file_path)
                 if spec is None:
                     continue
                 module = importlib.util.module_from_spec(spec)
-                try:
-                    spec.loader.exec_module(module)
-                except Exception as e:
-                    continue
+                spec.loader.exec_module(module)
+            except Exception as e:
+                print(f"加载模块时出错: {e}")
+                continue
 
-                # 查找继承自 Component 的类
-                for name, obj in inspect.getmembers(module, inspect.isclass):
-                    if check_ancestor(obj):
-                        components.append((name, obj))
+            for name, obj in inspect.getmembers(module, inspect.isclass):
+                if check_ancestor(obj):
+                    components.append((name, obj))
 
     return components
 
+def read_static_whitelist():
+    """
+    读取static_whitelist.txt文件，返回一个包含文件中所有非空行的集合。
+    
+    Args:
+        无参数。
+    
+    Returns:
+        一个包含static_whitelist.txt文件中所有非空行的集合（set）。
+    
+    """
+    with open("static_whitelist.txt", 'r') as f:
+        return set(line.strip() for line in f if line.strip())
+
+def has_tool_eval_method(cls):
+    """
+    判断给定的类是否具有 'tool_eval' 方法。
+    
+    Args:
+        cls (type): 需要判断的类。
+    
+    Returns:
+        bool: 如果类具有 'tool_eval' 方法，则返回 True；否则返回 False。
+    
+    """
+    return callable(getattr(cls, 'tool_eval', None))
+
+def write_error_data(error_df):
+    """
+    将错误信息和错误统计信息写入到txt文件中。
+    
+    Args:
+        error_df (pandas.DataFrame): 包含错误信息的DataFrame，必须包含'Component Name'和'Error Message'两列。
+        error_stats (dict): 包含错误统计信息的字典，键为错误信息，值为出现次数。
+    
+    Returns:
+        None
+    
+    """
+    txt_file_path = 'new_add_components_error_info.txt'
+    with open(txt_file_path, 'w') as file:
+        file.write("Component Name\tError Message\n")
+        if not error_df:
+            file.write(f"None\tNone\n")
+        else:   
+            for _, row in error_df.iterrows():
+                file.write(f"{row['Component Name']}\t{row['Error Message']}\n")
+    print(f"\n错误信息已写入: {txt_file_path}")
 
 def read_whitelist_components():
     """
@@ -104,44 +164,71 @@ def read_whitelist_components():
         lines = [line.strip() for line in f]
     return lines
 
-
-def write_error_data(error_df):
-    """
-    将错误信息和错误统计信息写入到txt文件中。
-    
-    Args:
-        error_df (pandas.DataFrame): 包含错误信息的DataFrame，必须包含'Component Name'和'Error Message'两列。
-        error_stats (dict): 包含错误统计信息的字典，键为错误信息，值为出现次数。
-    
-    Returns:
-        None
-    
-    """
-    txt_file_path = 'components_error_info.txt'
-    with open(txt_file_path, 'a') as file:
-        file.write("Component Name\tError Message\n")
-        try:  
-            for _, row in error_df.iterrows():
-                file.write(f"{row['Component Name']}\t{row['Error Message']}\n")
-        except:
-            file.write(f"None\tNone\n")
-    print(f"\n错误信息已写入: {txt_file_path}")
-
 # @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
-class TestComponentManifestsAndToolEval(unittest.TestCase):
-    def setUp(self) -> None:
+class TestAddComponent(unittest.TestCase):
+    def setUp(self):
+        self.tool_eval_components = find_tool_eval_components(test_add_components())
+        self.whitelist_components = read_whitelist_components()
+
+    def test_exist_tool_eval_manifest(self):
         """
-        初始化测试环境，包括获取工具评估组件和白名单组件。
+        测试组件是否包含manifests和tool_eval属性或方法
         
         Args:
-            无参数。
+            无
         
         Returns:
-            None
+            无返回值
+        
+        Raises:
+            AppbuilderBuildexException: 当同一个组件中既不存在manifests属性，也不存在tool_eval方法时抛出
         
         """
-        self.tool_eval_components = find_tool_eval_components()
-        self.whitelist_components = read_whitelist_components()
+        manifests_test =[]
+        tool_eval_test = []
+        print("============================================================")
+        print("开始测试组件manifests和tool_eval是否存在")
+        for name, obj in self.tool_eval_components:
+            static_whitelist = read_static_whitelist()
+            if name in static_whitelist:
+                continue
+            try:
+                self.assertTrue(hasattr(obj, 'manifests'), f"{name} does not have 'manifests'")
+                print(f"{name} has 'manifests'")
+            except:
+                manifests_test.append(name)
+
+            try:
+                self.assertTrue(has_tool_eval_method(obj), f"{name} does not have 'tool_eval' method")
+                print(f"{name} has 'tool_eval' method")
+            except:
+                    
+                tool_eval_test.append(name)
+            
+        if len(manifests_test) > 0:
+            print("以下组件成员变量manifests不存在：")
+            for i in manifests_test:
+                print(i)
+        
+        if len(tool_eval_test) > 0:
+            print("以下组件方法tool_eval不存在：")
+            for i in tool_eval_test:
+                print(i)
+        print("============================================================")
+        with open("components_test.txt", 'w') as f:
+            if len(manifests_test) > 0:
+                for name in manifests_test:
+                    f.write(name+'\t'+"成员变量manifests不存在\n")
+            if len(tool_eval_test) > 0:
+                for name in tool_eval_test:
+                    f.write(name+'\t'+"方法tool_eval不存在\n")
+
+
+        if len(manifests_test) == 0 and len(tool_eval_test) == 0:
+            with open("components_test.txt", 'a') as f:
+                f.write('None'+'\t'+"None\n")
+        if len(manifests_test) > 0 and len(tool_eval_test) > 0:
+            raise AppbuilderBuildexException("manifests and tool_eval not exist in the same component")
 
     def test_manifests(self):
         """
@@ -221,7 +308,7 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
                 else:
                     raise AppbuilderBuildexException(f"组件 {component_name} 未在白名单中，请检查是否需要添加到白名单。")
         else:
-            print("所有组件测试通过")
+            print("所有组件测试通过")   
 
     def test_tool_eval(self):
         """
@@ -282,5 +369,6 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
         else:
             print("所有组件测试通过")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main() 
