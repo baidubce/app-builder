@@ -127,7 +127,7 @@ def write_error_data(error_df):
             file.write(f"None\tNone\n")
     print(f"\n错误信息已写入: {txt_file_path}")
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
     def setUp(self) -> None:
         """

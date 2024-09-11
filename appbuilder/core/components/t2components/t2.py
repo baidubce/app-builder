@@ -29,23 +29,6 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class T2components(Component):
-    r"""
-    文生图组件，即对于输入的文本，输出生成的图片url。
-
-    Examples:
-
-    .. code-block:: python
-
-        import appbuilder
-        text_to_image = appbuilder.Text2Image()
-        os.environ["APPBUILDER_TOKEN"] = '...'
-        content_data = {"prompt": "上海的经典风景", "width": 1024, "height": 1024, "image_num": 1}
-        msg = appbuilder.Message(content_data)
-        out = text_to_image.run(inp)
-        # 打印生成结果
-        print(out.content) # eg: {"img_urls": ["xxx"]}
-    """
-
     manifests = [
         {
             "name": "text_to_image",
@@ -65,5 +48,5 @@ class T2components(Component):
         }
     ]
 
-    def tool_eval():
+    def tool_eval(self):
         pass

@@ -1,4 +1,4 @@
-def pretty_print_dict(kv_dict, header=["Key", "Value"]):
+def pretty_print_dict(kv_dict, header=["新增Components Name", "Error Message"]):
     """
     格式化打印字典，生成一个带边框的表格字符串。
     
@@ -36,6 +36,8 @@ def pretty_print_dict(kv_dict, header=["Key", "Value"]):
     for k, v in kv_dict.items():
         if k == "Component Name":
             continue
+        if k == "None":
+            continue
         if isinstance(v, str) and len(v) >= max_v:
             str_v = "... " + v[-46:]
         else:
@@ -46,7 +48,6 @@ def pretty_print_dict(kv_dict, header=["Key", "Value"]):
 
     _str = "\n{}\n".format(draws)
     return _str
-
 
 def read_error_file(filename):
     """
@@ -71,14 +72,35 @@ def read_error_file(filename):
                 kv_dict[components[0]] = components[1]
     return kv_dict, header
 
+def read_error_file_new(filename):
+    """
+    读取指定格式的错误文件，并返回键值对字典和表头信息
+    
+    Args:
+        filename (str): 错误文件路径
+    
+    Returns:
+        Tuple[Dict[str, str], List[str]]: 返回一个包含键值对字典和表头信息的元组
+            - 键值对字典（Dict[str, str]）：以文件中第二列作为键，第一列作为值构建的字典
+            - 表头信息（List[str]）：文件中的第一行数据，经过去除首尾空格和按制表符分割后的列表
+    
+    """
+    kv_dict = {}
+    with open(filename, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+        for line in lines: 
+            components = line.strip().split('\t')
+            if len(components) == 2:
+                kv_dict[components[0]] = components[1]
+    return kv_dict
+
 if __name__ == "__main__":
     filename = 'components_error_info.txt' 
     components_test_txt = 'new_add_components_error_info.txt'
     kv_dict_1, header_1 = read_error_file(filename)
-    kv_dict_2, header_2 = read_error_file(components_test_txt)
+    kv_dict_2 = read_error_file_new(components_test_txt)
     print("存在tool_eval方法与manifest成员变量但是不符合规范的Components组件如下[全量检测，包含白名单]:\n")
     print(pretty_print_dict(kv_dict_1, header=header_1))
     print("新增的Components组件tool_eval方法与manifest成员变量检测[增量检测，排除白名单]\n")
-    header_2[0] += '[增量]'
-    print(pretty_print_dict(kv_dict_2, header=header_2))
+    print(pretty_print_dict(kv_dict_2))
     print("Components组件开发规范详见:\nhttps://github.com/baidubce/app-builder/blob/master/docs/develop_guide/components_guidelines.md")
