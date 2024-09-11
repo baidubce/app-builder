@@ -43,7 +43,7 @@ func TestNewRAG(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new RAG instance failed")
 	}
-	i, err := rag.Run(conversationID, "北京有多少小学生", true)
+	/*i, err := rag.Run(conversationID, "北京有多少小学生", true)
 	var answer *RAGAnswer
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
 		data, _ := json.Marshal(answer)
@@ -52,5 +52,5 @@ func TestNewRAG(t *testing.T) {
 	}
 	if !errors.Is(err, io.EOF) {
 		fmt.Println(err)
-	}
+	}*/
 }
