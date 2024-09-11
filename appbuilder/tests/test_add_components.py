@@ -26,7 +26,7 @@ def test_add_components():
     """
     try:
         merge_base = subprocess.run(
-            ["git", "merge-base", "HEAD", "origin/master"],  # PR中改为upstream/master
+            ["git", "merge-base", "HEAD", "upstream/master"],  # PR中改为upstream/master
             capture_output=True, text=True, check=True
         )
         base_commit = merge_base.stdout.strip()
