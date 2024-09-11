@@ -15,13 +15,12 @@
 package appbuilder
 
 import (
+	"os"
 	/*"encoding/json"
 	"errors"
-	"fmt"	
+	"fmt"
 	"io"*/
-
 	"testing"
-	"os"
 )
 
 func TestNewRAG(t *testing.T) {
@@ -45,7 +44,7 @@ func TestNewRAG(t *testing.T) {
 		t.Fatalf("new RAG instance failed")
 	}
 	fmt.Println("问题出现在这里2")
-	
+
 	i, err := rag.Run(conversationID, "北京有多少小学生", true)
 	var answer *RAGAnswer
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {

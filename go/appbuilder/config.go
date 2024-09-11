@@ -15,35 +15,36 @@
 package appbuilder
 
 import (
-    "fmt"
-    "io"    
-    "log"
-    "net/http"
-    "net/url"
-    "os"
-    "path"
-    "strings"
-    "github.com/google/uuid"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"path"
+	"strings"
+
+	"github.com/google/uuid"
 )
 
 const (
-    GatewayURL            = "GATEWAY_URL"
-    GatewayURLV2          = "GATEWAY_URL_V2"
-    SecretKey             = "APPBUILDER_TOKEN"
-    ConsoleOpenAPIVersion = "CONSOLE_OPENAPI_VERSION"
-    ConsoleOpenAPIPrefix  = "CONSOLE_OPENAPI_PREFIX"
-    SecretKeyPrefix       = "SECRET_KEY_PREFIX"
-    DatasetID             = "DATASET_ID"
-    AppID                 = "APP_ID"
-    SecretKeyV3           = "APPBUILDER_TOKEN_V3"
-    DatasetIDV3           = "DATASET_ID_V3"
-    DocumentIDV3          = "DOCUMENT_ID"
+	GatewayURL            = "GATEWAY_URL"
+	GatewayURLV2          = "GATEWAY_URL_V2"
+	SecretKey             = "APPBUILDER_TOKEN"
+	ConsoleOpenAPIVersion = "CONSOLE_OPENAPI_VERSION"
+	ConsoleOpenAPIPrefix  = "CONSOLE_OPENAPI_PREFIX"
+	SecretKeyPrefix       = "SECRET_KEY_PREFIX"
+	DatasetID             = "DATASET_ID"
+	AppID                 = "APP_ID"
+	SecretKeyV3           = "APPBUILDER_TOKEN_V3"
+	DatasetIDV3           = "DATASET_ID_V3"
+	DocumentIDV3          = "DOCUMENT_ID"
 
-    DefaultSecretKeyPrefix       = "Bearer"
-    DefaultGatewayURL            = "https://appbuilder.baidu.com"
-    DefaultGatewayURLV2          = "https://qianfan.baidubce.com"
-    DefaultConsoleOpenAPIVersion = "/v2"
-    DefaultConsoleOpenAPIPrefix  = ""
+	DefaultSecretKeyPrefix       = "Bearer"
+	DefaultGatewayURL            = "https://appbuilder.baidu.com"
+	DefaultGatewayURLV2          = "https://qianfan.baidubce.com"
+	DefaultConsoleOpenAPIVersion = "/v2"
+	DefaultConsoleOpenAPIPrefix  = ""
 )
 
 type SDKConfig struct {
@@ -57,10 +58,10 @@ type SDKConfig struct {
 }
 
 func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
-    gatewayURL = getEnvWithDefault(GatewayURL, gatewayURL, DefaultGatewayURL)
-    gatewayURLV2 := getEnvWithDefault(GatewayURLV2, "", DefaultGatewayURLV2)
-    openAPIVersion := getEnvWithDefault(ConsoleOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
-    openAPIPrefix := getEnvWithDefault(ConsoleOpenAPIPrefix, "", DefaultConsoleOpenAPIPrefix)
+	gatewayURL = getEnvWithDefault(GatewayURL, gatewayURL, DefaultGatewayURL)
+	gatewayURLV2 := getEnvWithDefault(GatewayURLV2, "", DefaultGatewayURLV2)
+	openAPIVersion := getEnvWithDefault(ConsoleOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
+	openAPIPrefix := getEnvWithDefault(ConsoleOpenAPIPrefix, "", DefaultConsoleOpenAPIPrefix)
 
 	secretKey = getEnvWithDefault(SecretKey, secretKey, "")
 	if len(secretKey) == 0 {
@@ -71,13 +72,13 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 		secretKey = secretKeyPrefix + " " + secretKey
 	}
 
-    sdkConfig := &SDKConfig{
-        GatewayURL:            gatewayURL,
-        GatewayURLV2:          gatewayURLV2,
-        ConsoleOpenAPIVersion: openAPIVersion,
-        ConsoleOpenAPIPrefix:  openAPIPrefix,
-        SecretKey:             secretKey,
-    }
+	sdkConfig := &SDKConfig{
+		GatewayURL:            gatewayURL,
+		GatewayURLV2:          gatewayURLV2,
+		ConsoleOpenAPIVersion: openAPIVersion,
+		ConsoleOpenAPIPrefix:  openAPIPrefix,
+		SecretKey:             secretKey,
+	}
 	logFile := os.Getenv("APPBUILDER_LOGFILE")
 	if len(logFile) > 0 {
 		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
@@ -90,19 +91,19 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 		sdkConfig.logger = log.New(os.Stdout, "", log.LstdFlags)
 	}
 
-    return sdkConfig, nil
+	return sdkConfig, nil
 }
 
 func getEnvWithDefault(key, paramValue, defaultValue string) string {
-    if paramValue != "" {
-        return paramValue
-    }
+	if paramValue != "" {
+		return paramValue
+	}
 
-    v := os.Getenv(key)
-    if v == "" {
-        return defaultValue
-    }
-    return v
+	v := os.Getenv(key)
+	if v == "" {
+		return defaultValue
+	}
+	return v
 }
 
 func (t *SDKConfig) AuthHeader() http.Header {
@@ -114,22 +115,22 @@ func (t *SDKConfig) AuthHeader() http.Header {
 
 // AuthHeaderV2 适配OpenAPI，当前仅AgentBuilder使用
 func (t *SDKConfig) AuthHeaderV2() http.Header {
-    header := t.authHeader()
-    header.Set("Authorization", t.SecretKey)
-    t.logger.Printf("Auth Header %v", header)
-    return header
+	header := t.authHeader()
+	header.Set("Authorization", t.SecretKey)
+	t.logger.Printf("Auth Header %v", header)
+	return header
 }
 
 func (t *SDKConfig) authHeader() http.Header {
-    header := make(http.Header)
-    platform := os.Getenv("APPBUILDER_SDK_PLATFORM")
-    if platform == "" {
-        platform = "unknown"
-    }
-    header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
-    header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"go\",\"appbuilder_sdk_platform\":\""+platform+"\"}")
-    header.Set("X-Appbuilder-Request-Id", uuid.New().String())
-    return header
+	header := make(http.Header)
+	platform := os.Getenv("APPBUILDER_SDK_PLATFORM")
+	if platform == "" {
+		platform = "unknown"
+	}
+	header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
+	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"go\",\"appbuilder_sdk_platform\":\""+platform+"\"}")
+	header.Set("X-Appbuilder-Request-Id", uuid.New().String())
+	return header
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
@@ -138,7 +139,7 @@ func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// 使用 path.Join 拼接路径
 	parsedURL.Path = path.Join(parsedURL.Path, suffix)
 
@@ -155,38 +156,37 @@ func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
 	return parsedURL, nil
 }
 
-
 // ServiceURLV2 适配OpenAPI，当前仅AppbuilderClient使用
 func (t *SDKConfig) ServiceURLV2(suffix string) (*url.URL, error) {
-    suffix = path.Join(t.ConsoleOpenAPIPrefix, t.ConsoleOpenAPIVersion, suffix)
-    return t.formatURL(t.GatewayURLV2, suffix)
+	suffix = path.Join(t.ConsoleOpenAPIPrefix, t.ConsoleOpenAPIVersion, suffix)
+	return t.formatURL(t.GatewayURLV2, suffix)
 }
 
 func (t *SDKConfig) formatURL(absolutePath, suffix string) (*url.URL, error) {
-    t.logger.Printf("Service URL %s", absolutePath)
-    url, err := url.Parse(absolutePath)
-    if err != nil {
-        return nil, err
-    }
+	t.logger.Printf("Service URL %s", absolutePath)
+	url, err := url.Parse(absolutePath)
+	if err != nil {
+		return nil, err
+	}
 
-    endpoint, err := url.Parse(suffix)
-    if err != nil {
-        return nil, err
-    }
+	endpoint, err := url.Parse(suffix)
+	if err != nil {
+		return nil, err
+	}
 
-    url = url.ResolveReference(endpoint)
+	url = url.ResolveReference(endpoint)
 
-    return url, nil
+	return url, nil
 }
 
 type nopCloser struct {
-    io.Reader
+	io.Reader
 }
 
 func (nopCloser) Close() error { return nil }
 
 func NopCloser(r io.Reader) io.ReadCloser {
-    return nopCloser{r}
+	return nopCloser{Reader: r}
 }
 
 func (t *SDKConfig) BuildCurlCommand(req *http.Request) {

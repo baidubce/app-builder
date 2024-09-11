@@ -28,7 +28,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
-	"io/ioutil"
 )
 
 func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
@@ -44,7 +43,7 @@ func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	header.Set("Content-Type", "application/json")
 	request.Header = header
 
-	reqMap := make(map[string]interface{})
+	reqMap := make(map[string]any)
 	reqJson, _ := json.Marshal(req)
 	json.Unmarshal(reqJson, &reqMap)
 	params := url.Values{}
@@ -75,7 +74,7 @@ func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -148,7 +147,7 @@ func (t *AppBuilderClient) CreateConversation() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]interface{})
+	rsp := make(map[string]any)
 	if err := json.Unmarshal(data, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -158,7 +157,6 @@ func (t *AppBuilderClient) CreateConversation() (string, error) {
 	}
 	return val.(string), nil
 }
-
 
 func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath string) (string, error) {
 	var data bytes.Buffer
@@ -197,11 +195,11 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	rsp := make(map[string]interface{})
+	rsp := make(map[string]any)
 	if err := json.Unmarshal(body, &rsp); err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -216,12 +214,12 @@ func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []st
 	if len(conversationID) == 0 {
 		return nil, errors.New("conversationID mustn't be empty")
 	}
-	m := map[string]interface{}{
-		"app_id": 			t.appID,
-		"conversation_id": 	conversationID,
-		"query":           	query,
-		"file_ids":        	fileIDS,
-		"stream":          	stream,
+	m := map[string]any{
+		"app_id":          t.appID,
+		"conversation_id": conversationID,
+		"query":           query,
+		"file_ids":        fileIDS,
+		"stream":          stream,
 	}
 	request := http.Request{}
 

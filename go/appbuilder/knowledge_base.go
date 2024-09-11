@@ -27,7 +27,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
-	"io/ioutil"
 
 	"github.com/google/uuid"
 )
@@ -75,7 +74,7 @@ func (t *KnowledgeBase) CreateDocument(req CreateDocumentRequest) (CreateDocumen
 	if err != nil {
 		return CreateDocumentResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return CreateDocumentResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -99,7 +98,7 @@ func (t *KnowledgeBase) DeleteDocument(req DeleteDocumentRequest) error {
 		return err
 	}
 
-	reqMap := make(map[string]interface{})
+	reqMap := make(map[string]any)
 	reqJson, _ := json.Marshal(req)
 	json.Unmarshal(reqJson, &reqMap)
 	params := url.Values{}
@@ -141,7 +140,7 @@ func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumen
 		return nil, err
 	}
 
-	reqMap := make(map[string]interface{})
+	reqMap := make(map[string]any)
 	reqJson, _ := json.Marshal(req)
 	json.Unmarshal(reqJson, &reqMap)
 	params := url.Values{}
@@ -175,7 +174,7 @@ func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumen
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	respData, err := ioutil.ReadAll(resp.Body)
+	respData, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -222,7 +221,7 @@ func (t *KnowledgeBase) UploadFile(localFilePath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	respData, err := ioutil.ReadAll(resp.Body)
+	respData, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -263,7 +262,7 @@ func (t *KnowledgeBase) CreateKnowledgeBase(req KnowledgeBaseDetail) (KnowledgeB
 	if err != nil {
 		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -300,7 +299,7 @@ func (t *KnowledgeBase) GetKnowledgeBaseDetail(knowledgeBaseID string) (Knowledg
 	if err != nil {
 		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return KnowledgeBaseDetail{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -335,7 +334,7 @@ func (t *KnowledgeBase) GetKnowledgeBaseList(req GetKnowledgeBaseListRequest) (G
 	if err != nil {
 		return GetKnowledgeBaseListResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return GetKnowledgeBaseListResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -373,7 +372,7 @@ func (t *KnowledgeBase) ModifyKnowledgeBase(req ModifyKnowlegeBaseRequest) error
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	_, err = ioutil.ReadAll(resp.Body)
+	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -417,7 +416,7 @@ func (t *KnowledgeBase) deleteKnowledgeBase(knowledgeBaseID string, clientToken 
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	_, err = ioutil.ReadAll(resp.Body)
+	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -451,7 +450,7 @@ func (t *KnowledgeBase) CreateDocuments(req CreateDocumentsRequest) error {
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	_, err = ioutil.ReadAll(resp.Body)
+	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -508,7 +507,7 @@ func (t *KnowledgeBase) UploadDocuments(localFilePath string, req CreateDocument
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	_, err = ioutil.ReadAll(resp.Body)
+	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -542,7 +541,7 @@ func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -581,7 +580,7 @@ func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -631,7 +630,7 @@ func (t *KnowledgeBase) deleteChunk(chunkID string, clientToken string) error {
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -670,7 +669,7 @@ func (t *KnowledgeBase) DescribeChunk(chunkID string) (DescribeChunkResponse, er
 	if err != nil {
 		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
@@ -706,7 +705,7 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 	if err != nil {
 		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
