@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestAddDocument(t *testing.T) {
@@ -203,7 +204,7 @@ func TestCreateKnowledgeBase(t *testing.T) {
 func TestChunk(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_TOKEN", "")
-	documentID := "8e370180-91af-4b08-8a31-bee5e3792902"
+	documentID := "120619f2-1b85-4e09-a36d-fc682168d09c"
 
 	config, err := NewSDKConfig("", "bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5")
 	if err != nil {
@@ -251,7 +252,7 @@ func TestChunk(t *testing.T) {
 		t.Fatalf("describe chunks failed: %v", err)
 	}
 	fmt.Println(describeChunksRes)
-
+	time.Sleep(10 * time.Second)
 	// 删除切片
 	err = client.DeleteChunk(chunkID)
 	if err != nil {
