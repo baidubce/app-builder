@@ -6,9 +6,9 @@ name: Python package
 on:
   workflow_dispatch:
   push:
-    branches: [ "dj-go-version-branch" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "dj-go-version-branch" ]
+    branches: [ "master" ]
 
 jobs:
   Pylint:
@@ -183,24 +183,19 @@ jobs:
         cd app-builder
         echo "github_head的值为："
         echo $GITHUB_HEAD_REF
-        git checkout dj-go-version-branch
+        git checkout $GITHUB_HEAD_REF
         git remote add upstream https://github.com/baidubce/app-builder.git 
         git fetch upstream
-
-        if ! git remote | grep -q origin; then
-          git remote add origin https://github.com/$GITHUB_ACTOR/app-builder.git
-        fi
-
         git remote -v
         git status
 
-        merge_base=$(git merge-base HEAD origin/dj-go-version-branch)
+        # 找到当前分支与 upstream/master 的共同祖先提交
+        merge_base=$(git merge-base HEAD upstream/master)
         echo "merge_base=$merge_base"
 
-        # 获取上次提交与当前分支的差异
-        changed_files=$(git diff --name-only --diff-filter=ACMRT HEAD^ HEAD)
-        # 检测是否有 Go 文件被更改
-        changed_files_go=$(git diff --name-only --diff-filter=ACMRT HEAD^ HEAD -- 'go/**')
+        # 比较当前分支与 merge_base 之间的差异
+        changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
+        changed_files_go=$(git diff --name-only --diff-filter=ACMRT $merge_base -- 'go/**')
 
         echo "发生更改的文件为:"
         echo "$changed_files"
