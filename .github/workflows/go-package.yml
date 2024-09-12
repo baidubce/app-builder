@@ -13,14 +13,14 @@ jobs:
     env:
       APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
       APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
-      APPBUILDER_TOKEN_V3: bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5
       BAIDU_VDB_API_KEY: apaasTest1
       INSTANCE_ID: vdb-bj-vuzmppgqrnhv
       DATASET_ID: 2626a842-132f-45ce-977f-f701d18fd104
       APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-bcKsgHd39g0Aaq3nCYUUQ/b06384229df1462c6fb011383d09230346a20ac4
-      APP_ID: aa8af334-df27-4855-b3d1-0d249c61fc08
+ 
+      APPBUILDER_TOKEN_V3: bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5
       DATASET_ID_V3: 4b2357ff-b7d5-4573-9187-ee29af2f8373
-      DOCUMENT_ID: 120619f2-1b85-4e09-a36d-fc682168d09c
+      DOCUMENT_ID_V3: 120619f2-1b85-4e09-a36d-fc682168d09c
     strategy:
       fail-fast: false
       matrix:
@@ -32,10 +32,19 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: ${{ github.event.pull_request.head.sha }}
-
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go-version }}
     - name: Git Clone And Checkout Branch
       run: |
-        git remote add upstream https://github.com/baidubce/app-builder.git
+        fork_repo="https://github.com/$GITHUB_ACTOR/app-builder.git"
+        mkdir cicd
+        cd cicd
+        git clone $fork_repo
+        cd app-builder
+        git checkout $GITHUB_HEAD_REF
+        git remote add upstream https://github.com/baidubce/app-builder.git 
         git fetch upstream
         git remote -v
         git status
@@ -62,12 +71,6 @@ jobs:
         fi
 
         echo "APPBUILDER_GO_TESTS=$APPBUILDER_GO_TESTS" >> $GITHUB_ENV
-
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: ${{ matrix.go-version }}
-
     - name: Install dependencies
       run: |
         echo $APPBUILDER_GO_TESTS
