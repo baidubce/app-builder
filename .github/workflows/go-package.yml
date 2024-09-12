@@ -43,7 +43,8 @@ jobs:
         cd cicd
         git clone $fork_repo
         cd app-builder
-        git checkout $GITHUB_HEAD_REF
+        echo $GITHUB_HEAD_REF
+        git checkout dj-go-version-branch
         git remote add upstream https://github.com/baidubce/app-builder.git 
         git fetch upstream
 
