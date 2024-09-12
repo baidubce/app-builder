@@ -68,9 +68,9 @@ jobs:
         echo "$changed_files"
         echo "发生更改的Go或Shell文件为:"
 
-        if [ -n "$changed_files_go_sh" ]; then
+        if [ -n "$changed_files_go" ]; then
           export APPBUILDER_GO_TESTS=True
-          echo "$changed_files_go_sh"
+          echo "$changed_files_go"
         else
           export APPBUILDER_GO_TESTS=False
           echo "没有检测到Go或Shell文件被更改"
