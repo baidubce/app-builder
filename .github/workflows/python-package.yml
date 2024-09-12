@@ -6,9 +6,9 @@ name: Python package
 on:
   workflow_dispatch:
   push:
-    branches: [ "dj-go-verison-branch" ]
+    branches: [ "dj-go-version-branch" ]
   pull_request:
-    branches: [ "dj-go-verison-branch" ]
+    branches: [ "dj-go-version-branch" ]
 
 jobs:
   Pylint:
