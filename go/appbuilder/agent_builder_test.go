@@ -27,7 +27,7 @@ func TestNewAgentBuilder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	appID := os.Getenv(AppID)
+	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	agentBuilder, err := NewAgentBuilder(appID, config)
 	if err != nil {
 		t.Fatalf("new AgentBuidler instance failed")

@@ -35,7 +35,6 @@ const (
 	ConsoleOpenAPIPrefix  = "CONSOLE_OPENAPI_PREFIX"
 	SecretKeyPrefix       = "SECRET_KEY_PREFIX"
 	DatasetID             = "DATASET_ID"
-	AppID                 = "APP_ID"
 	SecretKeyV3           = "APPBUILDER_TOKEN_V3"
 	DatasetIDV3           = "DATASET_ID_V3"
 	DocumentIDV3          = "DOCUMENT_ID"

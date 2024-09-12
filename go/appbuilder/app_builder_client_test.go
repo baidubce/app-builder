@@ -36,7 +36,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 	}
 	fmt.Println(len(apps))
 
-	appID := os.Getenv(AppID)
+	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Fatalf("new AppBuilderClient instance failed")
@@ -168,7 +168,7 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
-	appID := os.Getenv(AppID)
+	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Fatalf("new AgentBuidler instance failed")
@@ -179,7 +179,7 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 		t.Fatalf("create conversation failed: %v", err)
 	}
 
-	input := make(map[string]interface{})
+	input := make(map[string]any)
 	input["city"] = "北京"
 	end_user_id := "go_user_id_0"
 	i, err := client.RunWithToolCall(AppBuilderClientRunRequest{
