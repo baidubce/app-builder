@@ -37,6 +37,7 @@ func NewDataset(config *SDKConfig) (*Dataset, error) {
 		client = &http.Client{Timeout: 60 * time.Second}
 	}
 	return &Dataset{sdkConfig: config, client: client}, nil
+	
 }
 
 type Dataset struct {
