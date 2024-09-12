@@ -62,7 +62,7 @@ jobs:
         # 获取上次提交与当前分支的差异
         changed_files=$(git diff --name-only --diff-filter=ACMRT HEAD^ HEAD)
         # 检测是否有 Go 文件被更改
-        changed_files_go=$(git diff --name-only --diff-filter=ACMRT HEAD^ HEAD -- '*.go')
+        changed_files_go=$(git diff --name-only --diff-filter=ACMRT HEAD^ HEAD -- 'go/**')
 
         echo "发生更改的文件为:"
         echo "$changed_files"
