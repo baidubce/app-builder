@@ -3,9 +3,9 @@ name: Go package
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: [ "dj-go-version-branch" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "dj-go-version-branch" ]
 
 jobs:
   test:
