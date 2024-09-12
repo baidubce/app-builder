@@ -38,51 +38,34 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Git Clone And Checkout Branch
       run: |
-        # 配置仓库地址，确保 fork 仓库的地址正确
         fork_repo="https://github.com/$GITHUB_ACTOR/app-builder.git"
         mkdir cicd
         cd cicd
-
-        # 克隆 fork 仓库
         git clone $fork_repo
         cd app-builder
-
-        # 切换到当前的 pull request 分支
         git checkout $GITHUB_HEAD_REF
-
-        # 添加上游仓库（upstream）并获取最新更新
         git remote add upstream https://github.com/baidubce/app-builder.git 
         git fetch upstream
 
-        # 确保远程 origin 不重复添加
-        if git remote | grep -q origin; then
-          echo "remote origin already exists"
-        else
+        if ! git remote | grep -q origin; then
           git remote add origin https://github.com/$GITHUB_ACTOR/app-builder.git
         fi
 
-
-        # 显示远程仓库的配置
         git remote -v
-
-        # 显示当前分支的状态
         git status
 
-        # 找到当前分支与 origin/dj-go-version-branch 的共同祖先提交
         merge_base=$(git merge-base HEAD origin/dj-go-version-branch)
         echo "merge_base=$merge_base"
 
-        # 比较当前分支与 merge_base 之间的差异
-        changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
-        changed_files_go_sh=$(git diff --name-only --diff-filter=ACMRT $merge_base -- '*.go' '*.mod' '*.sum')
+        # 获取上次提交与当前分支的差异
+        changed_files=$(git diff --name-only --diff-filter=ACMRT HEAD^ HEAD)
+        # 检测是否有 Go 文件被更改
+        changed_files_go=$(git diff --name-only --diff-filter=ACMRT HEAD^ HEAD -- '*.go')
 
-        # 输出检测到的更改文件
         echo "发生更改的文件为:"
         echo "$changed_files"
-
         echo "发生更改的Go或Shell文件为:"
 
-        # 如果检测到 .go, .mod, .sum 文件有变化，则设置环境变量
         if [ -n "$changed_files_go_sh" ]; then
           export APPBUILDER_GO_TESTS=True
           echo "$changed_files_go_sh"
@@ -91,7 +74,6 @@ jobs:
           echo "没有检测到Go或Shell文件被更改"
         fi
 
-        # 将 APPBUILDER_GO_TESTS 环境变量写入到 GitHub Actions 的环境
         echo "APPBUILDER_GO_TESTS=$APPBUILDER_GO_TESTS" >> $GITHUB_ENV
     - name: Install dependencies
       run: |
