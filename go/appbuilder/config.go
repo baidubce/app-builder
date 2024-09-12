@@ -37,7 +37,7 @@ const (
 	DatasetID             = "DATASET_ID"
 	SecretKeyV3           = "APPBUILDER_TOKEN_V3"
 	DatasetIDV3           = "DATASET_ID_V3"
-	DocumentIDV3          = "DOCUMENT_ID"
+	DocumentIDV3          = "DOCUMENT_ID_V3"
 
 	DefaultSecretKeyPrefix       = "Bearer"
 	DefaultGatewayURL            = "https://appbuilder.baidu.com"
