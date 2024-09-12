@@ -54,9 +54,13 @@ jobs:
         git remote add upstream https://github.com/baidubce/app-builder.git 
         git fetch upstream
 
-        # 确保拉取最新的 origin 分支
-        git remote add origin https://github.com/$GITHUB_ACTOR/app-builder.git
-        git fetch origin
+        # 确保远程 origin 不重复添加
+        if git remote | grep -q origin; then
+          echo "remote origin already exists"
+        else
+          git remote add origin https://github.com/$GITHUB_ACTOR/app-builder.git
+        fi
+
 
         # 显示远程仓库的配置
         git remote -v
