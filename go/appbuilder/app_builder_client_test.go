@@ -74,7 +74,6 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
-	
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
