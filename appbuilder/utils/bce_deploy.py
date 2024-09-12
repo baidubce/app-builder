@@ -113,8 +113,8 @@ class AppbuilderSDKInstance:
             + f"rm {self.tar_file_name}\\n"
             + f"chmod a+x {self.run_script_name}\\n"
             + "yum install -y docker\\n"
-            + "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.2\\n"
-            + f"docker run -itd --net=host -v /root/test:{workspace} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.2 {workspace}/{self.run_script_name}"
+            + "docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.4\\n"
+            + f"docker run -itd --net=host -v /root/test:{workspace} --name appbuilder-sdk registry.baidubce.com/appbuilder/appbuilder-sdk-cloud:0.9.4{workspace}/{self.run_script_name}"
         )
 
         return user_data
