@@ -30,7 +30,6 @@ func TestDataset(t *testing.T) {
 		t.Fatalf("create dataset failed: %v", err)
 	}
 	
-
 	documentID, err := dataset.UploadLocalFile(datasetID, "./files/test.pdf")
 	if err != nil {
 		t.Fatalf("upload file failed: %v", err)
