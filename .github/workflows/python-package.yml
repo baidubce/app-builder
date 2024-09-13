@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
-      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
+      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-xKvnRD8ybhsGkN88XxZ6Z/34adbccbc144e9677f8d244ee83271f9a11a70f7
       BAIDU_VDB_API_KEY: apaasTest1
       INSTANCE_ID: vdb-bj-vuzmppgqrnhv
       DATASET_ID: 56e82915-9642-4a03-bb02-74744c17863e
