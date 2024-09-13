@@ -76,7 +76,7 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 
 ##  如何安装AppBuilder-SDK
 
-#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.3 (2024-08-20)
+#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.4 (2024-09-10)
 
 百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/quick_start/changelog.md)
 
@@ -263,6 +263,7 @@ Hook:
 | 基础能力组件 | [基础组件服务化](/cookbooks/components/agent_runtime.ipynb) | 基础组件可通过flask实现服务化部署 或 通过chainlit实现可交互的前端部署，集成到您的系统中 |
 | 流程编排 |  [Assistant SDK](/cookbooks/pipeline/assistant_function_call.ipynb) | 学习如何纯代码态搭建一个Agent应用，并实现自定义工作流程及FunctionCall |
 | 端到端应用 |  [AppBuilder Client SDK](/cookbooks/agent_builder.ipynb) | 使用AppBuilder网页端创建并发布一个Agent应用后，通过AppBuilderClient SDK集成到你的系统中 |
+| 端到端应用 |  [通过AppBuilder-ToolCall功能实现端云组件联动的Agent](/cookbooks/end2end_application/agent/tool_call.ipynb) | 学习Agent、FunctionCall的知识，并构造调用本地组件的Agent |
 | 端到端应用 |  [简历筛选小助手](/cookbooks/end2end_application/rag/rag.ipynb) | 通过对本地简历库的简历进行解析、切片、创建索引，实现基于JD进行简历筛选，并对筛选的Top1简历进行总结 |
 | 端到端应用 |  [企业级问答系统](/cookbooks/end2end_application/rag/qa_system_2_dialogue.ipynb) | 学习如何通过SDK与网页平台搭配，实现离线知识库生产与在线问答 |
 | 进阶应用 |  [使用appbuilder_bce_deploy部署公有云服务](/cookbooks/advanced_application/cloud_deploy.ipynb) | 一键将自己的服务部署到百度智能云，部署后可以自动生成公网ip，联动工作流的API节点 |
