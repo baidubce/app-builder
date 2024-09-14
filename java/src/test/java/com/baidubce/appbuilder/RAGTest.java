@@ -19,7 +19,7 @@ public class RAGTest {
 
     @Before
     public void setUp() {
-        System.setProperty("APPBUILDER_TOKEN", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd");
+        System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN_V3"));
 
         appId = "aa8af334-df27-4855-b3d1-0d249c61fc08";
     }

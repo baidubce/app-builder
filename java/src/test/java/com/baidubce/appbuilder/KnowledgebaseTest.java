@@ -18,13 +18,13 @@ import java.util.Arrays;
 public class KnowledgebaseTest {
     @Before
     public void setUp() {
-        System.setProperty("APPBUILDER_TOKEN", "bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5");
+        System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN_V3"));
         System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
     }
 
     @Test
     public void testAddDocument() throws IOException, AppBuilderServerException {
-        String knowledgeBaseId = "8c8497e6-08b7-47e8-9c2e-ec763c7ace3a";
+        String knowledgeBaseId = System.getenv("DATASET_ID_V3");
         Knowledgebase knowledgebase = new Knowledgebase();
 
         DocumentListRequest listRequest = new DocumentListRequest();
@@ -134,7 +134,7 @@ public class KnowledgebaseTest {
     
     @Test
     public void testCreateChunk() throws IOException, AppBuilderServerException {
-        String documentId = "78ecd051-b19f-469b-98e0-a18f21481664";
+        String documentId = System.getenv("DOCUMENT_ID_V3");
         Knowledgebase knowledgebase = new Knowledgebase();
         // 创建切片
         String chunkId = knowledgebase.createChunk(documentId, "test");

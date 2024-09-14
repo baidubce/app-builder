@@ -16,7 +16,7 @@ public class DatasetTest {
 
     @Before
     public void setUp()  {
-        System.setProperty("APPBUILDER_TOKEN", "bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5");
+        System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN_V3"));
 
     }
 
