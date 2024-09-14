@@ -69,7 +69,7 @@ def replace_last_match(text, pattern, repl):
 def sed_pydantic_str(pydantic_models_as_str:str, title: str):
     # 在 "from pydantic import BaseModel, Field" 这行后，添加 "from pydantic import RootModel"
     new_pydantic_models_as_str = re.sub(r'from pydantic import BaseModel, Field',
-                                        'from pydantic.v1 import BaseModel; from pydantic import Field, RootModel',
+                                        'from pydantic import BaseModel; from pydantic import Field, RootModel',
                                         pydantic_models_as_str)
     # 判断字符串中是否存在"__root__"
     has_root = "__root__" in new_pydantic_models_as_str
@@ -139,9 +139,4 @@ if __name__ == '__main__':
     schema['title'] = "general_ocr"
     model = json_schema_to_pydantic_model(json_schema=schema, name_override="GeneralOcr")
     print(model)
-    print(model.schema())
-    data = {
-        "img_url": "https://a.jpg",
-        "img_name": "b.jpg"
-    }
-    print(model(data))
+    print(model.schema_json())

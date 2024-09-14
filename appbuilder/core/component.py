@@ -147,13 +147,13 @@ class Component:
         
         # NOTE(chengmo): 可以支持LangChain的组件，必须要求具备mainfest
         if self.manifests == []:
-            raise ValueError("Compnent {} No manifest found. Cannot convert it into LangChain Tool".format(type(self)))
+            raise ValueError("Compnent {} No manifests found. Cannot convert it into LangChain Tool".format(type(self)))
 
         langchain_tool_json_schema = {}
         # NOTE(chengmo): 虽然现阶段，组件的mainfest列表中最多只有一个元素，但是需要兼容后期可能的多Tool的情况
         if len(self.manifests) > 1:
             if tool_name == "":
-                raise ValueError("Multiple tools found, please specify which one to use.")
+                raise ValueError("Multiple tools found, please use 'tool_name' specify which one to use.")
 
             for manifest in self.manifests:
                 if manifest["name"] == tool_name:
@@ -168,7 +168,7 @@ class Component:
         # NOTE(chengmo): 当前AB-SDK的Tool有两种情况
         # 1、存在tool_eval方法，则直接调用tool_eval方法，并设置stream=True, 汇总结果，封装成Message返回
         # 2、不存在tool_eval方法，则调用run方法，并设置 stream=False, 封装成Message返回
-        has_tool_eval = True #self._has_implemented_tool_eval()
+        has_tool_eval = self._has_implemented_tool_eval()
         langchain_tool_func = None
         if has_tool_eval:
             langchain_tool_func = self._langchain_tool_eval_implement
@@ -220,20 +220,17 @@ class Component:
         # NOTE(chengmo): 调用tool_eval方法，并设置 stream=True, 封装成Message返回
         kwargs["stream"] = True
         kwargs["streaming"] = True
-        kwargs["name"] = ""
         res = self.tool_eval(**kwargs)
 
         final_result = ""
         
+        # TODO(chengmo): 在组件标准化管理前，复用DTE对流式组件的处理逻辑
         for step in res:
             if isinstance(step, str):
                 final_result += step
             else:
-                visible_scope = step.pop('visible_scope', 'all')
-                if visible_scope in ['llm', 'all']:
-                    final_result += step.get("text", "")
-        
-        return Message(content=final_result)
+                final_result += step.get("text", "")
+        return final_result
 
         
         
