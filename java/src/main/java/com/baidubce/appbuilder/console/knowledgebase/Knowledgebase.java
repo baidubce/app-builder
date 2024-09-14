@@ -120,7 +120,7 @@ public class Knowledgebase extends Component {
     private void innerDeleteDocument(DocumentDeleteRequest request, String clientToken)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.KNOWLEDGEBASE_DELETE_DOCUMENT_URL;
-        url = url + "&clientToken=" + clientToken;
+        url = url + "?clientToken=" + clientToken;
         ClassicHttpRequest getRequest = httpClient.createDeleteRequestV2(url, request.toMap());
         getRequest.setHeader("Content-Type", "application/json");
         HttpResponse<DocumentDeleteResponse> response = httpClient.execute(getRequest, DocumentDeleteResponse.class);

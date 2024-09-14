@@ -34,7 +34,6 @@ public class KnowledgebaseTest {
         assertTrue(documents.length > 0);
         assertNotNull(documents[0].getId());
 
-
         String fileId = knowledgebase.uploadFile("src/test/java/com/baidubce/appbuilder/files/test.pdf");
         System.out.println(fileId);
         assertNotNull(fileId);
@@ -56,17 +55,10 @@ public class KnowledgebaseTest {
         assertTrue(documentsRes.length > 0);
         assertNotNull(documentsRes);
 
-
         DocumentDeleteRequest deleteRequest = new DocumentDeleteRequest();
         deleteRequest.setKonwledgeBaseId(knowledgeBaseId);
         deleteRequest.setDocumentId(documentsRes[0]);
 
-        try {
-            // 延时 
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         knowledgebase.deleteDocument(deleteRequest);
     }
 
@@ -146,12 +138,6 @@ public class KnowledgebaseTest {
         Knowledgebase knowledgebase = new Knowledgebase();
         // 创建切片
         String chunkId = knowledgebase.createChunk(documentId, "test");
-        try {
-            // 延时 
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         // 修改切片
         knowledgebase.modifyChunk(chunkId, "new test", true);
         // 获取切片详情
@@ -160,7 +146,7 @@ public class KnowledgebaseTest {
         knowledgebase.describeChunks(documentId, chunkId, 10, null);
         try {
             // 延时 
-            Thread.sleep(20000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
