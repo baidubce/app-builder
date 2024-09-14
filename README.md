@@ -7,7 +7,7 @@
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
 </div>
 
-简体中文 | [English](./README_en.md) | [日本語](./README_ja.md)
+简体中文 | [English](./docs/README_en.md) | [日本語](./docs/README_ja.md)
 
 <br>
 
