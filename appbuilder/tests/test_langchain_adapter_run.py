@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 import unittest
 import appbuilder
 from appbuilder.core.message import Message
@@ -37,7 +38,7 @@ class HelloWorldComponent(Component):
         return "hello world from {}".format(name)
 
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestLandmarkRecognition(unittest.TestCase):
     def setUp(self):
         self.component = HelloWorldComponent()
@@ -59,11 +60,13 @@ class TestLandmarkRecognition(unittest.TestCase):
     def test_langchin_tool_elements(self):
         tool = self.component.create_langchain_tool()
         name = tool.name
-        print("name", name)
+        self.assertEqual(name, "hello_world")
+
         desc = tool.description
-        print("desc", desc)
+        self.assertEqual(desc, "向使用这个工具的人打招呼")
+
         args = tool.args
-        print("args", args)
+        self.assertEqual(args, {'name': {'anyOf': [{'type': 'string'}, {'type': 'null'}], 'default': None, 'description': '使用者的名字', 'title': 'Name'}})
 
 
 
