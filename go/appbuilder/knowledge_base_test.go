@@ -23,8 +23,8 @@ import (
 func TestAddDocument(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
-	knowledgeBaseID := ""
-	config, err := NewSDKConfig("", "")
+	knowledgeBaseID := "8c8497e6-08b7-47e8-9c2e-ec763c7ace3a"
+	config, err := NewSDKConfig("", "bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
