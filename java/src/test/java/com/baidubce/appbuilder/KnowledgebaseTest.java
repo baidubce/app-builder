@@ -10,28 +10,31 @@ import org.junit.Test;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.console.knowledgebase.Knowledgebase;
 import com.baidubce.appbuilder.model.knowledgebase.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import java.util.Arrays;
+
 
 public class KnowledgebaseTest {
     @Before
     public void setUp() {
-        System.setProperty("APPBUILDER_TOKEN", "");
+        System.setProperty("APPBUILDER_TOKEN", "bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5");
         System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
     }
 
     @Test
     public void testAddDocument() throws IOException, AppBuilderServerException {
-        String knowledgeBaseId = "";
+        String knowledgeBaseId = "8c8497e6-08b7-47e8-9c2e-ec763c7ace3a";
         Knowledgebase knowledgebase = new Knowledgebase();
 
         DocumentListRequest listRequest = new DocumentListRequest();
         listRequest.setKonwledgeBaseId(knowledgeBaseId);
         listRequest.setLimit(10);
         Document[] documents = knowledgebase.getDocumentList(listRequest);
+        assertTrue(documents.length > 0);
         assertNotNull(documents[0].getId());
 
-
-        String fileId =
-                knowledgebase.uploadFile("src/test/java/com/baidubce/appbuilder/files/test.pdf");
+        String fileId = knowledgebase.uploadFile("src/test/java/com/baidubce/appbuilder/files/test.pdf");
         System.out.println(fileId);
         assertNotNull(fileId);
 
@@ -45,12 +48,17 @@ public class KnowledgebaseTest {
         customProcessRule.setTargetLength(300);
         customProcessRule.setOverlapRate(0.25);
         request.setCustomProcessRule(customProcessRule);
+
         String[] documentsRes = knowledgebase.addDocument(request);
+
+        // Ensure that documentsRes array is not empty
+        assertTrue(documentsRes.length > 0);
         assertNotNull(documentsRes);
 
         DocumentDeleteRequest deleteRequest = new DocumentDeleteRequest();
         deleteRequest.setKonwledgeBaseId(knowledgeBaseId);
         deleteRequest.setDocumentId(documentsRes[0]);
+
         knowledgebase.deleteDocument(deleteRequest);
     }
 
@@ -123,10 +131,10 @@ public class KnowledgebaseTest {
         // 删除知识库
         knowledgebase.deleteKnowledgeBase(knowledgeBaseId);
     }
-
+    
     @Test
     public void testCreateChunk() throws IOException, AppBuilderServerException {
-        String documentId = "";
+        String documentId = "78ecd051-b19f-469b-98e0-a18f21481664";
         Knowledgebase knowledgebase = new Knowledgebase();
         // 创建切片
         String chunkId = knowledgebase.createChunk(documentId, "test");
@@ -136,6 +144,12 @@ public class KnowledgebaseTest {
         knowledgebase.describeChunk(chunkId);
         // 获取切片列表
         knowledgebase.describeChunks(documentId, chunkId, 10, null);
+        try {
+            // 延时 
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // 删除切片
         knowledgebase.deleteChunk(chunkId);
     }

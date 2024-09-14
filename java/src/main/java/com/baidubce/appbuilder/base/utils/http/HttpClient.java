@@ -169,10 +169,13 @@ public class HttpClient {
         return httpGet;
     }
 
-    public ClassicHttpRequest createDeleteRequestV2(String url, Map<String, Object> map) {
+    public ClassicHttpRequest createDeleteRequestV2(String url, Map<String, Object> map) {       
+        // 处理查询参数
         String urlParams = toQueryString(map);
-        String requestURL =
-                GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url + "?" + urlParams;
+        // 如果 URL 已经包含 '?', 不需要再添加
+        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url 
+                    + (url.contains("?") ? "&" : "?") + urlParams;
+
         LOGGER.log(Level.FINE, "requestURL: " + requestURL);
         HttpDelete httpDelete = new HttpDelete(requestURL);
         httpDelete.setHeader("Authorization", this.SecretKey);
