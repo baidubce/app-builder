@@ -1,32 +1,28 @@
 #!/bin/bash
 
+# Check and add necessary paths
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
 
-# 检查 diff-cover 是否可用
+# Set up a Python virtual environment to avoid conflicts with system Python
+echo "Setting up Python virtual environment..."
+python3 -m venv venv
+source venv/bin/activate
+
+# Upgrade pip to the latest version
+pip install --upgrade pip
+
+# Install diff-cover in the virtual environment
+echo "Installing diff-cover in the virtual environment..."
+pip install diff-cover
+
+# Check if diff-cover is installed
 if ! command -v diff-cover &> /dev/null; then
-    echo "diff-cover could not be found. Installing..."
-    # 使用 pip 安装 diff-cover
-    python3 -m ensurepip --upgrade
-    python3 -m pip install --user diff-cover
-    # 检查安装是否成功
-    if ! command -v diff-cover &> /dev/null; then
-        echo "Installation of diff-cover failed. Please check your Python and pip installation."
-        exit 1
-    fi
+    echo "diff-cover installation failed. Please check your Python and pip installation."
+    exit 1
 fi
 
-# 检查 gocov 和 gocov-xml 是否可用
-if ! command -v gocov &> /dev/null; then
-    echo "gocov could not be found. Installing..."
-    go install github.com/axw/gocov/gocov@latest
-fi
-
-if ! command -v gocov-xml &> /dev/null; then
-    echo "gocov-xml could not be found. Installing..."
-    go install github.com/AlekSi/gocov-xml@latest
-fi
-
-echo "All required tools are installed."
+echo "diff-cover is installed."
 
 # 初始化计数器
 total_tests=0

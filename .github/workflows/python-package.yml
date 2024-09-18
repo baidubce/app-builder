@@ -226,11 +226,6 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.53.3
           echo "$GOPATH/bin" >> $GITHUB_PATH
 
-          # 安装 diff-cover via pip
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          python3 -m pip install --upgrade pip --user
-          python3 -m pip install --user diff-cover
         fi
 
     - name: Run tests and calculate incremental coverage
