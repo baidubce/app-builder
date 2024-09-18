@@ -219,14 +219,17 @@ jobs:
           echo "检测到Go文件被更改，准备启动Install dependencies and tools部分..."
           cd cicd/app-builder/go/appbuilder
           go mod tidy
-          # 安装必要的工具
-          go install github.com/axw/gocov/gocov@v1.1.0
-          go install github.com/matm/gocov-html@latest
-          go install github.com/Bachmann1234/diff-cover@latest
+
+          go get github.com/axw/gocov/gocov  # 安装增量覆盖率工具
+          
           # 安装 golangci-lint
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.53.3
-          # 将 golangci-lint 添加到 PATH
           echo "$GOPATH/bin" >> $GITHUB_PATH
+
+          # 安装 diff-cover via pip
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install diff-cover
         fi
 
     - name: Run tests and calculate incremental coverage
