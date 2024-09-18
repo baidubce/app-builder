@@ -32,3 +32,4 @@ RagWithBaiduSearchPro
 QRcodeOCR
 DocCropEnhance
 ImageUnderstand
+Reranker
