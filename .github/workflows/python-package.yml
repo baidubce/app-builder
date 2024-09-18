@@ -346,7 +346,9 @@ jobs:
           echo "全量代码覆盖率报告生成完成。"
 
           echo "增量代码覆盖率："
-          git diff --name-only --diff-filter=ACMRT upstream/master | grep '.java' | xargs mvn test jacoco:report
+          pip install diff-cover
+          diff-cover target/site/jacoco/jacoco.xml --compare-branch=upstream/master --html-report coverage_diff.html --fail-under=90
+          echo "增量代码覆盖率报告生成完成。"
         fi
 
     - name: Check code style
