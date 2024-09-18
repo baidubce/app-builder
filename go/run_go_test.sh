@@ -26,6 +26,35 @@ fi
 
 echo "diff-cover is installed."
 
+# Install gocov and gocov-xml if they are not already installed
+if ! command -v gocov &> /dev/null; then
+    echo "gocov not found, installing..."
+    go install github.com/axw/gocov/gocov@latest
+fi
+
+if ! command -v gocov-xml &> /dev/null; then
+    echo "gocov-xml not found, installing..."
+    go install github.com/AlekSi/gocov-xml@latest
+fi
+
+# Add GOPATH/bin to PATH after installing gocov and gocov-xml
+export PATH="$PATH:$(go env GOPATH)/bin"
+
+# Verify that gocov and gocov-xml are installed
+if ! command -v gocov &> /dev/null; then
+    echo "gocov installation failed."
+    deactivate
+    exit 1
+fi
+
+if ! command -v gocov-xml &> /dev/null; then
+    echo "gocov-xml installation failed."
+    deactivate
+    exit 1
+fi
+
+echo "gocov and gocov-xml are installed."
+
 # 初始化计数器
 total_tests=0
 skipped_tests=0
