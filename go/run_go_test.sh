@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# 启用错误检测和管道失败检测
+set -e
+set -o pipefail
+
 # 检查并添加必要的路径
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
@@ -9,7 +13,7 @@ echo "Setting up Python virtual environment..."
 python3 -m venv venv
 
 # 激活虚拟环境
-. venv/bin/activate
+source venv/bin/activate
 
 # 升级 pip 到最新版本
 pip install --upgrade pip
@@ -21,12 +25,13 @@ pip install diff-cover
 # 检查 diff-cover 是否已安装
 if ! command -v diff-cover &> /dev/null; then
     echo "diff-cover installation failed. Please check your Python and pip installation."
+    deactivate
     exit 1
 fi
 
 echo "diff-cover is installed."
 
-# Install gocov and gocov-xml if they are not already installed
+# 安装 gocov 和 gocov-xml，如果未安装
 if ! command -v gocov &> /dev/null; then
     echo "gocov not found, installing..."
     go install github.com/axw/gocov/gocov@latest
@@ -37,10 +42,10 @@ if ! command -v gocov-xml &> /dev/null; then
     go install github.com/AlekSi/gocov-xml@latest
 fi
 
-# Add GOPATH/bin to PATH after installing gocov and gocov-xml
+# 添加 GOPATH/bin 到 PATH，以便找到 gocov 和 gocov-xml
 export PATH="$PATH:$(go env GOPATH)/bin"
 
-# Verify that gocov and gocov-xml are installed
+# 验证 gocov 和 gocov-xml 是否安装成功
 if ! command -v gocov &> /dev/null; then
     echo "gocov installation failed."
     deactivate
@@ -67,7 +72,7 @@ failed_list=()
 
 # 创建一个覆盖率输出文件
 coverage_file="coverage.out"
-echo "mode: set" > $coverage_file
+echo "mode: atomic" > $coverage_file
 
 # 用于存储后台任务的 PIDs
 pids=()
@@ -154,9 +159,16 @@ fi
 echo "Skipped tests: $skipped_tests"
 if [ $skipped_tests -gt 0 ]; then
     echo "Skipped test functions:"
-    for skipped in "${skipped_list[@]}"; do
+        for skipped in "${skipped_list[@]}"; do
         echo "  $skipped"
     done
+fi
+
+# 如果有测试失败，退出并返回状态码 1
+if [ $failed_tests -gt 0 ]; then
+    echo "Some tests failed. Exiting with error."
+    deactivate
+    exit 1
 fi
 
 # 输出覆盖率摘要
@@ -166,7 +178,18 @@ go tool cover -func=$coverage_file
 
 # 将覆盖率数据转换为 XML 格式
 echo "Converting coverage data to XML format..."
-gocov convert coverage.out | gocov-xml > coverage.xml
+if ! gocov convert $coverage_file | gocov-xml > coverage.xml; then
+    echo "Failed to convert coverage data to XML format."
+    deactivate
+    exit 1
+fi
+
+# 检查 coverage.xml 是否非空
+if [ ! -s coverage.xml ]; then
+    echo "Coverage XML file is empty or invalid."
+    deactivate
+    exit 1
+fi
 
 # 生成包含所有文件的差异文件
 echo "Generating full diff..."
@@ -174,7 +197,11 @@ git diff $(git hash-object -t tree /dev/null) HEAD > full_diff.patch
 
 # 使用 diff-cover 生成全量覆盖率报告
 echo "Generating full coverage report..."
-diff-cover coverage.xml --diff-file full_diff.patch --html-report coverage_full.html
+if ! diff-cover coverage.xml --diff-file full_diff.patch --html-report coverage_full.html; then
+    echo "Failed to generate full coverage report."
+    deactivate
+    exit 1
+fi
 
 echo "Full coverage report generated at coverage_full.html"
 
@@ -189,10 +216,12 @@ git diff $base_branch --name-only -- '*.go' > diff_files.txt
 
 # 检查是否有修改的 go 文件
 if [ -s diff_files.txt ]; then
-    # 转换为 LCOV 格式
-    gocov convert coverage.out | gocov-xml > coverage.xml
     # 生成增量覆盖率报告
-    diff-cover coverage.xml --compare-branch=$base_branch --html-report coverage_diff.html
+    if ! diff-cover coverage.xml --compare-branch=$base_branch --html-report coverage_diff.html; then
+        echo "Failed to generate incremental coverage report."
+        deactivate
+        exit 1
+    fi
     echo "Incremental coverage report generated at coverage_diff.html"
 else
     echo "No Go files changed relative to $base_branch. Incremental coverage not generated."
@@ -201,6 +230,7 @@ fi
 # 清理
 rm diff_files.txt
 rm "$test_results_log"
+rm full_diff.patch
 
 # 退出虚拟环境
 deactivate
