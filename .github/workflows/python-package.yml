@@ -340,9 +340,13 @@ jobs:
         echo "检测到Java文件被更改(根据环境变量APPBUILDER_JAVA_TESTS),准备启动Run Java tests with Jacoco部分..."
         cd cicd/app-builder/java
         mvn test jacoco:report
+        echo "全量代码覆盖率报告生成完成。"
+
+        # 安装 xmlstarlet
+        sudo apt-get install -y xmlstarlet
 
         echo "全量代码覆盖率："
-        # 使用 XMLStarlet 来解析 jacoco.xml 提取覆盖率信息
+        # 使用 xmlstarlet 解析 jacoco.xml 提取覆盖率信息
         xmlstarlet sel -t -m "//report/counter[@type='INSTRUCTION']" -v "@covered" -o "/" -v "@missed" target/site/jacoco/jacoco.xml
 
         echo "增量代码覆盖率："
