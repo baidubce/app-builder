@@ -382,6 +382,11 @@ def create_unittest_report():
         无返回值。
     
     """
+
+    appbuilder_token = os.getenv("APPBUILDER_TOKEN", "empty")
+    logger.info("appbuilder_token: {}".format(appbuilder_token))
+
+
     # 创建日志目录
     if not os.path.exists("./ut_logs"):
         os.mkdir("./ut_logs")
