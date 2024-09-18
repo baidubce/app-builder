@@ -72,13 +72,25 @@ class AppbuilderTestToolEval:
         self.tool_eval_input = tool_eval_input
         self.response = response
         self.test_manifests()
+        self.test_run_input()
+        self.test_run_output()
         self.test_tool_eval_input()
+        self.test_tool_eval_output()
         self.test_tool_eval_generator()
         if hasattr(self.component, '__module__'):
             module_name = self.component.__module__
             if re.match(r'appbuilder\.', module_name):
                 self.test_tool_eval_reponse_raise()
                 self.test_tool_eval_text_str()
+
+    def test_run_input(self):
+        pass
+
+    def test_run_output(self):
+        pass
+
+    def test_tool_eval_output(self):
+        pass
 
     def test_manifests(self):
         """
