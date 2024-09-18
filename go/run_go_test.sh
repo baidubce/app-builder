@@ -1,8 +1,13 @@
 #!/bin/bash
 
 # 启用错误检测和管道失败检测
-set -e
 set -o pipefail
+
+# 初始化错误标志
+error_flag=0
+
+# 用于存储错误消息
+error_messages=()
 
 # 检查并添加必要的路径
 export PATH="$HOME/.local/bin:$PATH"
@@ -20,13 +25,12 @@ pip install --upgrade pip
 
 # 安装 diff-cover 在虚拟环境中
 echo "Installing diff-cover in the virtual environment..."
-pip install diff-cover
+pip install diff-cover || { error_flag=1; error_messages+=("Failed to install diff-cover."); }
 
 # 检查 diff-cover 是否已安装
 if ! command -v diff-cover &> /dev/null; then
-    echo "diff-cover installation failed. Please check your Python and pip installation."
-    deactivate
-    exit 1
+    error_flag=1
+    error_messages+=("diff-cover installation failed. Please check your Python and pip installation.")
 fi
 
 echo "diff-cover is installed."
@@ -34,12 +38,12 @@ echo "diff-cover is installed."
 # 安装 gocov 和 gocov-xml，如果未安装
 if ! command -v gocov &> /dev/null; then
     echo "gocov not found, installing..."
-    go install github.com/axw/gocov/gocov@latest
+    go install github.com/axw/gocov/gocov@latest || { error_flag=1; error_messages+=("Failed to install gocov."); }
 fi
 
 if ! command -v gocov-xml &> /dev/null; then
     echo "gocov-xml not found, installing..."
-    go install github.com/AlekSi/gocov-xml@latest
+    go install github.com/AlekSi/gocov-xml@latest || { error_flag=1; error_messages+=("Failed to install gocov-xml."); }
 fi
 
 # 添加 GOPATH/bin 到 PATH，以便找到 gocov 和 gocov-xml
@@ -47,15 +51,13 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 
 # 验证 gocov 和 gocov-xml 是否安装成功
 if ! command -v gocov &> /dev/null; then
-    echo "gocov installation failed."
-    deactivate
-    exit 1
+    error_flag=1
+    error_messages+=("gocov installation failed.")
 fi
 
 if ! command -v gocov-xml &> /dev/null; then
-    echo "gocov-xml installation failed."
-    deactivate
-    exit 1
+    error_flag=1
+    error_messages+=("gocov-xml installation failed.")
 fi
 
 echo "gocov and gocov-xml are installed."
@@ -124,7 +126,7 @@ done
 
 # 等待所有后台任务完成
 for pid in "${pids[@]}"; do
-    wait $pid
+    wait $pid || true # 避免因为某个测试失败而终止所有测试
 done
 
 # 读取测试结果
@@ -155,20 +157,15 @@ if [ $failed_tests -gt 0 ]; then
     for failed in "${failed_list[@]}"; do
         echo "  $failed"
     done
+    error_flag=1
+    error_messages+=("Some tests failed.")
 fi
 echo "Skipped tests: $skipped_tests"
 if [ $skipped_tests -gt 0 ]; then
     echo "Skipped test functions:"
-        for skipped in "${skipped_list[@]}"; do
+    for skipped in "${skipped_list[@]}"; do
         echo "  $skipped"
     done
-fi
-
-# 如果有测试失败，退出并返回状态码 1
-if [ $failed_tests -gt 0 ]; then
-    echo "Some tests failed. Exiting with error."
-    deactivate
-    exit 1
 fi
 
 # 输出覆盖率摘要
@@ -179,34 +176,33 @@ go tool cover -func=$coverage_file
 # 将覆盖率数据转换为 XML 格式
 echo "Converting coverage data to XML format..."
 if ! gocov convert $coverage_file | gocov-xml > coverage.xml; then
-    echo "Failed to convert coverage data to XML format."
-    deactivate
-    exit 1
+    error_flag=1
+    error_messages+=("Failed to convert coverage data to XML format.")
 fi
 
 # 检查 coverage.xml 是否非空
 if [ ! -s coverage.xml ]; then
-    echo "Coverage XML file is empty or invalid."
-    deactivate
-    exit 1
+    error_flag=1
+    error_messages+=("Coverage XML file is empty or invalid.")
 fi
 
 # 生成包含所有文件的差异文件
 echo "Generating full diff..."
-git diff $(git hash-object -t tree /dev/null) HEAD > full_diff.patch
+if ! git diff $(git hash-object -t tree /dev/null) HEAD > full_diff.patch; then
+    error_flag=1
+    error_messages+=("Failed to generate full diff.")
+fi
 
 # 使用 diff-cover 生成全量覆盖率报告
 echo "Generating full coverage report..."
 if ! diff-cover coverage.xml --diff-file full_diff.patch --html-report coverage_full.html; then
-    echo "Failed to generate full coverage report."
-    deactivate
-    exit 1
+    error_flag=1
+    error_messages+=("Failed to generate full coverage report.")
+else
+    echo "Full coverage report generated at coverage_full.html"
 fi
 
-echo "Full coverage report generated at coverage_full.html"
-
 # 计算增量代码的单测覆盖率
-# 基准分支为 master，如果你的基准分支不是 master，请将下面的 master 替换为你的基准分支名称
 base_branch="upstream/master"
 
 # 生成增量覆盖率报告
@@ -216,13 +212,12 @@ git diff $base_branch --name-only -- '*.go' > diff_files.txt
 
 # 检查是否有修改的 go 文件
 if [ -s diff_files.txt ]; then
-    # 生成增量覆盖率报告
     if ! diff-cover coverage.xml --compare-branch=$base_branch --html-report coverage_diff.html; then
-        echo "Failed to generate incremental coverage report."
-        deactivate
-        exit 1
+        error_flag=1
+        error_messages+=("Failed to generate incremental coverage report.")
+    else
+        echo "Incremental coverage report generated at coverage_diff.html"
     fi
-    echo "Incremental coverage report generated at coverage_diff.html"
 else
     echo "No Go files changed relative to $base_branch. Incremental coverage not generated."
 fi
@@ -234,3 +229,12 @@ rm full_diff.patch
 
 # 退出虚拟环境
 deactivate
+
+# 检查错误标志，如果有错误则输出错误消息并退出
+if [ $error_flag -ne 0 ]; then
+    echo "Errors were detected during the process:"
+    for msg in "${error_messages[@]}"; do
+        echo "- $msg"
+    done
+    exit 1
+fi
