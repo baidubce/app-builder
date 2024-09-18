@@ -219,6 +219,7 @@ jobs:
           echo "检测到Go或Shell文件被更改(根据环境变量APPBUILDER_GO_TESTS),准备启动Install dependencies部分..."
           cd cicd/app-builder/go/appbuilder
           go mod tidy
+          go get github.com/axw/gocov/gocov  # 安装增量覆盖率工具
         fi
 
     - name: Run tests
@@ -229,7 +230,25 @@ jobs:
         else
           echo "检测到Go或Shell文件被更改(根据环境变量APPBUILDER_GO_TESTS),准备启动Run tests部分..."
           cd cicd/app-builder/go/appbuilder
-          go test ./... -cover
+          go test ./... -coverprofile=coverage.out -v -count=1
+          go tool cover -html=coverage.out -o coverage.html
+          echo "全量代码覆盖率为："
+          go tool cover -func=coverage.out
+
+          echo "增量代码覆盖率："
+          git diff --name-only --diff-filter=ACMRT upstream/master | grep '.go' | xargs go test -coverprofile=incremental_coverage.out
+          go tool cover -func=incremental_coverage.out
+        fi
+
+    - name: Lint code
+      run: |
+        echo $APPBUILDER_GO_TESTS
+        if [ "$APPBUILDER_GO_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_GO_TESTS为False,没有检测到Go或Shell文件被更改,跳过Lint code部分。"
+        else
+          echo "检查代码规范性："
+          cd cicd/app-builder/go/appbuilder
+          golangci-lint run ./...
         fi
   Java-CI-Tests:
     runs-on: ubuntu-latest
@@ -315,13 +334,28 @@ jobs:
           mvn clean install -DskipTests
         fi
 
-    - name: Run Java tests
+    - name: Run Java tests with Jacoco
       run: |
         echo $APPBUILDER_JAVA_TESTS
         if [ "$APPBUILDER_JAVA_TESTS" = "False" ]; then
-          echo "环境变量APPBUILDER_JAVA_TESTS为False,没有检测到Java文件被更改,跳过Run Java tests部分。"
+          echo "环境变量APPBUILDER_JAVA_TESTS为False,没有检测到Java文件被更改,跳过Run Java tests with Jacoco部分。"
         else
-          echo "检测到Java文件被更改(根据环境变量APPBUILDER_JAVA_TESTS),准备启动单元测试Run Java tests部分..."
+          echo "检测到Java文件被更改(根据环境变量APPBUILDER_JAVA_TESTS),准备启动Run Java tests with Jacoco部分..."
           cd cicd/app-builder/java
-          mvn test
+          mvn test jacoco:report
+          echo "全量代码覆盖率报告生成完成。"
+
+          echo "增量代码覆盖率："
+          git diff --name-only --diff-filter=ACMRT upstream/master | grep '.java' | xargs mvn test jacoco:report
+        fi
+
+    - name: Check code style
+      run: |
+        echo $APPBUILDER_JAVA_TESTS
+        if [ "$APPBUILDER_JAVA_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_JAVA_TESTS为False,没有检测到Java文件被更改,跳过Check code style部分。"
+        else
+          echo "检查代码规范性："
+          cd cicd/app-builder/java
+          mvn checkstyle:check
         fi
