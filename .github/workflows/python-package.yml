@@ -229,7 +229,8 @@ jobs:
           # 安装 diff-cover via pip
           sudo apt-get update
           sudo apt-get install -y python3-pip
-          pip3 install diff-cover
+          python3 -m pip install --upgrade pip --user
+          python3 -m pip install --user diff-cover
         fi
 
     - name: Run tests and calculate incremental coverage

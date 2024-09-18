@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# 检查并添加 diff-cover 的路径
-export PATH="$HOME/Library/Python/3.9/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
 
 # 检查 diff-cover 是否可用
