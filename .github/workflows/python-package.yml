@@ -214,21 +214,22 @@ jobs:
       run: |
         echo $APPBUILDER_GO_TESTS
         if [ "$APPBUILDER_GO_TESTS" = "False" ]; then
-          echo "环境变量 APPBUILDER_GO_TESTS 为 False，没有检测到 Go 文件被更改，跳过 Install dependencies and tools 部分。"
+          echo "环境变量APPBUILDER_GO_TESTS为False,没有检测到Go文件被更改，跳过Install dependencies and tools部分。"
         else
-          echo "检测到 Go 文件被更改，准备启动 Install dependencies and tools 部分..."
+          echo "检测到Go文件被更改，准备启动Install dependencies and tools部分..."
           cd cicd/app-builder/go/appbuilder
           go mod tidy
           # 安装必要的工具
-          go install github.com/axw/gocov/gocov@latest
-          go install github.com/axw/gocov/gocov-xml@latest
+          go install github.com/axw/gocov/gocov@v1.1.0
           go install github.com/matm/gocov-html@latest
-          go install github.com/vieux/gocov-diff@latest
+          go install github.com/Bachmann1234/diff-cover@latest
           # 安装 golangci-lint
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.53.3
+          # 将 golangci-lint 添加到 PATH
+          echo "$GOPATH/bin" >> $GITHUB_PATH
         fi
 
-    - name: Run tests
+    - name: Run tests and calculate incremental coverage
       run: |
         echo $APPBUILDER_GO_TESTS
         if [ "$APPBUILDER_GO_TESTS" = "False" ]; then
@@ -243,37 +244,36 @@ jobs:
           go tool cover -func=coverage.out
 
           echo "增量代码覆盖率："
-          # 获取当前提交和目标比较提交
-          current_commit=$(git rev-parse HEAD)
-          target_commit=$(git merge-base HEAD upstream/master)
-          echo "Current commit: $current_commit"
-          echo "Target commit: $target_commit"
+          # 获取修改的 .go 文件列表（相对于仓库根目录）
+          changed_files=$(git diff --name-only --diff-filter=ACMRT upstream/master -- 'go/appbuilder/*.go' || true)
+          echo "Changed files:"
+          echo "$changed_files"
 
-          # 生成当前提交的覆盖率报告
-          gocov test ./... > gocov_current.json
+          if [ -n "$changed_files" ]; then
+            # 创建增量覆盖率报告文件，写入模式声明
+            echo "mode: set" > incremental_coverage.out
 
-          # 切换到目标比较提交
-          git checkout $target_commit
-          # 安装依赖
-          go mod tidy
-          # 生成目标提交的覆盖率报告
-          gocov test ./... > gocov_target.json
+            # 提取修改文件的覆盖率信息
+            for file in $changed_files; do
+              # 确保文件路径相对于当前目录
+              relative_file=$(echo "$file" | sed 's|^go/appbuilder/||')
+              echo "Processing file: $relative_file"
+              # 从全量覆盖率报告中提取对应文件的覆盖率信息
+              grep "$relative_file" coverage.out >> incremental_coverage.out || true
+            done
 
-          # 切换回当前提交
-          git checkout $current_commit
-
-          # 计算增量覆盖率
-          gocov diff gocov_target.json gocov_current.json > gocov_diff.txt
-
-          echo "增量代码覆盖率报告："
-          cat gocov_diff.txt
+            # 打印增量覆盖率结果
+            go tool cover -func=incremental_coverage.out
+          else
+            echo "没有增量Go文件被检测到。"
+          fi
         fi
 
     - name: Lint code
       run: |
         echo $APPBUILDER_GO_TESTS
         if [ "$APPBUILDER_GO_TESTS" = "False" ]; then
-          echo "环境变量 APPBUILDER_GO_TESTS 为 False，没有检测到 Go 文件被更改，跳过 Lint code 部分。"
+          echo "环境变量APPBUILDER_GO_TESTS为False，没有检测到Go文件被更改，跳过Lint code部分。"
         else
           echo "检查代码规范性："
           cd cicd/app-builder/go/appbuilder
