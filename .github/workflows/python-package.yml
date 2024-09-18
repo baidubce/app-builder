@@ -236,8 +236,14 @@ jobs:
           go tool cover -func=coverage.out
 
           echo "增量代码覆盖率："
-          git diff --name-only --diff-filter=ACMRT upstream/master | grep '.go' | xargs go test -coverprofile=incremental_coverage.out
-          go tool cover -func=incremental_coverage.out
+          # 使用 diff-filter 和 grep 生成增量文件列表
+          changed_files=$(git diff --name-only --diff-filter=ACMRT upstream/master | grep '.go' | xargs)
+          if [ -n "$changed_files" ]; then
+            go test -coverprofile=incremental_coverage.out $changed_files
+            go tool cover -func=incremental_coverage.out
+          else
+            echo "没有增量Go文件被检测到。"
+          fi
         fi
 
     - name: Lint code
