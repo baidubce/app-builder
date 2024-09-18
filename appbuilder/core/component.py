@@ -137,3 +137,100 @@ class Component:
     def tool_eval(self, **kwargs):
         if len(self.manifests) > 0:
             raise NotImplementedError
+
+    def create_langchain_tool(self, tool_name="", **kwargs):
+        try:
+            from langchain_core.tools import StructuredTool
+        except ImportError:
+            raise ImportError(
+                "Please install langchain to use create_langchain_tool.")
+        
+        # NOTE(chengmo): 可以支持LangChain的组件，必须要求具备mainfest
+        if self.manifests == []:
+            raise ValueError("Compnent {} No manifests found. Cannot convert it into LangChain Tool".format(type(self)))
+
+        langchain_tool_json_schema = {}
+        # NOTE(chengmo): 虽然现阶段，组件的mainfest列表中最多只有一个元素，但是需要兼容后期可能的多Tool的情况
+        if len(self.manifests) > 1:
+            if tool_name == "":
+                raise ValueError("Multiple tools found, please use 'tool_name' specify which one to use.")
+
+            for manifest in self.manifests:
+                if manifest["name"] == tool_name:
+                    langchain_tool_json_schema = manifest
+                    break
+            
+            if langchain_tool_json_schema == {}:
+                raise ValueError("Tool {} not found in mainfest.".format(tool_name))
+        else:
+            langchain_tool_json_schema = self.manifests[0]
+
+        # NOTE(chengmo): 当前AB-SDK的Tool有两种情况
+        # 1、存在tool_eval方法，则直接调用tool_eval方法，并设置stream=True, 汇总结果，封装成Message返回
+        # 2、不存在tool_eval方法，则调用run方法，并设置 stream=False, 封装成Message返回
+        has_tool_eval = self._has_implemented_tool_eval()
+        langchain_tool_func = None
+        if has_tool_eval:
+            langchain_tool_func = self._langchain_tool_eval_implement
+        else:
+            langchain_tool_func = self._langchain_run_implement
+
+        # NOTE(chengmo): name 及 description 都从mainfest中获取
+        langchain_tool_name = langchain_tool_json_schema["name"]
+        langchain_tool_description = langchain_tool_json_schema["description"]
+
+        # NOTE(chengmo): 从mainfest中获取参数的json_schema，并转换成Pydantic的BaseModel
+        from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
+        try:
+            import copy
+            schema = copy.deepcopy(langchain_tool_json_schema["parameters"])
+            schema["title"] = langchain_tool_name
+            langchain_tool_model = json_schema_to_pydantic_model(
+                schema,
+                name_override=langchain_tool_name)
+        except Exception as e:
+            raise RuntimeError("Failed to generate Pydantic model for tool schema: {}".format(e))
+
+        return StructuredTool.from_function(
+            func=langchain_tool_func,
+            name=langchain_tool_name,
+            description=langchain_tool_description,
+            args_schema=langchain_tool_model,
+            return_direct=False
+        )
+    
+    def _has_implemented_tool_eval(self):
+        has_tool_eval = False
+        try:
+            # 调用self.tool_eval方法，如果抛出NotImplementedError异常，则说明没有实现tool_eval方法
+            self.tool_eval(**{'name':"", "streaming":False})
+        except NotImplementedError:
+            has_tool_eval = False
+        else:
+            has_tool_eval = True
+        
+        return has_tool_eval
+
+    def _langchain_run_implement(self, **kwargs):
+        # NOTE(chengmo): 调用run方法，并设置 stream=False, 封装成Message返回
+        kwargs["stream"] = False
+        return self.run(**kwargs)
+
+    def _langchain_tool_eval_implement(self, **kwargs):
+        # NOTE(chengmo): 调用tool_eval方法，并设置 stream=True, 封装成Message返回
+        kwargs["stream"] = True
+        kwargs["streaming"] = True
+        res = self.tool_eval(**kwargs)
+
+        final_result = ""
+        
+        # TODO(chengmo): 在组件标准化管理前，复用DTE对流式组件的处理逻辑
+        for step in res:
+            if isinstance(step, str):
+                final_result += step
+            else:
+                final_result += step.get("text", "")
+        return final_result
+
+        
+        

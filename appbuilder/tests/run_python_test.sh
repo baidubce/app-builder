@@ -52,6 +52,11 @@ python3 setup.py bdist_wheel
 python3 -m pip install --force-reinstall dist/*.whl
 python3 -m pip uninstall numpy -y
 python3 -m pip install numpy==1.26.4
+echo "重新安装pydantic包，设置版本为2.7.4"
+python3 -m pip uninstall -y pydantic
+python3 -m pip install pydantic==2.7.4
+python3 -m pip install langchain==0.3.0
+python3 -m pip install datamodel-code-generator==0.25.8
 cd appbuilder/tests/
 
 
