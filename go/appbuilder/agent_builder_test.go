@@ -35,7 +35,7 @@ func TestNewAgentBuilder(t *testing.T) {
 	}
 
 	// 测试逻辑
-	config, err := NewSDKConfig("", "1")
+	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
