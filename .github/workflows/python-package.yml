@@ -43,8 +43,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9","3.12"]
-    secrets:
-      envPAT: ${{ secrets.envPAT }}
     
     steps:
     - uses: actions/checkout@v4
