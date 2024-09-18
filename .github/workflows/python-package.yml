@@ -240,11 +240,8 @@ jobs:
           changed_files=$(git diff --name-only --diff-filter=ACMRT upstream/master | grep '.go' || true)
 
           if [ -n "$changed_files" ]; then
-            # 获取这些文件所属的包路径，并去重
-            changed_packages=$(echo "$changed_files" | xargs -n1 dirname | sort -u)
-
-            # 执行 go test 并生成增量覆盖率报告
-            go test -coverprofile=incremental_coverage.out $changed_packages
+            # 直接对更改的文件进行测试
+            go test -coverprofile=incremental_coverage.out $changed_files
             go tool cover -func=incremental_coverage.out
           else
             echo "没有增量Go文件被检测到。"
