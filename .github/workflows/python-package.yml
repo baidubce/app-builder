@@ -136,7 +136,8 @@ jobs:
           python3 setup.py bdist_wheel
           python3 -m pip uninstall -y appbuilder-sdk
           python3 -m pip install dist/*.whl
-          python3 -m pip install --upgrade pydantic==2.7.4
+          python3 -m pip uninstall -y pydantic
+          python3 -m pip install pydantic==2.7.4
         fi
     - name: Test with unittest
       run: |
