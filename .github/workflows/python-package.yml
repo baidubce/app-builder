@@ -238,8 +238,9 @@ jobs:
           cd cicd/app-builder/go
           # 运行测试并生成覆盖率报告
           chmod +x run_go_test.sh
-          sh run_go_test.sh 
+          ./run_go_test.sh
         fi
+      shell: bash
   Java-CI-Tests:
     runs-on: ubuntu-latest
     env:

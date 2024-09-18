@@ -1,22 +1,24 @@
 #!/bin/bash
 
-# Check and add necessary paths
+# 检查并添加必要的路径
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
 
-# Set up a Python virtual environment to avoid conflicts with system Python
+# 设置 Python 虚拟环境以避免与系统 Python 冲突
 echo "Setting up Python virtual environment..."
 python3 -m venv venv
-source venv/bin/activate
 
-# Upgrade pip to the latest version
+# 激活虚拟环境
+. venv/bin/activate
+
+# 升级 pip 到最新版本
 pip install --upgrade pip
 
-# Install diff-cover in the virtual environment
+# 安装 diff-cover 在虚拟环境中
 echo "Installing diff-cover in the virtual environment..."
 pip install diff-cover
 
-# Check if diff-cover is installed
+# 检查 diff-cover 是否已安装
 if ! command -v diff-cover &> /dev/null; then
     echo "diff-cover installation failed. Please check your Python and pip installation."
     exit 1
@@ -170,3 +172,6 @@ fi
 # 清理
 rm diff_files.txt
 rm "$test_results_log"
+
+# 退出虚拟环境
+deactivate
