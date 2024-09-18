@@ -16,20 +16,20 @@ pip install --upgrade appbuilder-sdk
 <dependency>
     <groupId>com.baidubce</groupId>
     <artifactId>appbuilder</artifactId>
-    <version>0.9.2</version>
+    <version>0.9.4</version>
 </dependency>
 ```
 #### Gradle
 对于Kotlin DSL，在build.gradle.kts的dependencies中添加依赖
 ```kotlin
-implementation("com.baidubce:appbuilder:0.9.2")
+implementation("com.baidubce:appbuilder:0.9.4")
 ```
 对于Groovy DSL，在build.gradle的dependencies中添加依赖
 ```groovy
-implementation 'com.baidubce:appbuilder:0.9.2'
+implementation 'com.baidubce:appbuilder:0.9.4'
 ```
 #### 本地导入
-点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/0.9.2/appbuilder-0.9.2.jar) 下载Jar包，将Jar包导入到项目目录下。
+点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/0.9.4/appbuilder-0.9.4.jar) 下载Jar包，将Jar包导入到项目目录下。
 
 ### Go (仅支持调用端到端应用)
 > 支持Go 1.18.1以上版本
@@ -40,5 +40,5 @@ go get github.com/baidubce/app-builder/go/appbuilder
 
 ### Docker (当前仅集成了Python版本AppBuilder-SDK)
 ``` shell
-docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.9.2
+docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.9.4
 ```

@@ -20,7 +20,6 @@ import (
 	"io"
 	"reflect"
 	"strings"
-	"io/ioutil"
 )
 
 func (t *AgentBuilderAnswer) transform(inp *AgentBuilderRawResponse) {
@@ -59,11 +58,11 @@ type AgentBuilderStreamIterator struct {
 
 func (t *AgentBuilderStreamIterator) Next() (*AgentBuilderAnswer, error) {
 	data, err := t.r.ReadMessageLine()
-	if err != nil && !(err ==io.EOF) {
+	if err != nil && !(err == io.EOF) {
 		t.body.Close()
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	if err != nil && err ==io.EOF {
+	if err != nil && err == io.EOF {
 		t.body.Close()
 		return nil, err
 	}
@@ -89,7 +88,7 @@ type AgentBuilderOnceIterator struct {
 }
 
 func (t *AgentBuilderOnceIterator) Next() (*AgentBuilderAnswer, error) {
-	data, err := ioutil.ReadAll(t.body)
+	data, err := io.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}

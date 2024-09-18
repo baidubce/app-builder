@@ -9,7 +9,7 @@
   * 模型列表获取：与千帆大模型平台模型名打通，可动态获取当前账号模型名，并在组件中使用[获取模型列表](/docs/basic_module/get_model_list.md)
   * 可通过官方镜像开发和运行实例代码[二次开发](/docs/develop_guide/README.md)
 * **2024.02.27 v0.4.0版本发布** [Release Note](https://github.com/baidubce/app-builder/releases/tag/0.4.0)
-  * AppBuilder Console SDK发布[知识集合Cookbook](/cookbooks/end2end_application/console_dataset.ipynb)，[RAG调用Cookbook](/cookbooks/end2end_application/rag/rag.ipynb)
+  * AppBuilder Console SDK发布[知识集合Cookbook](/cookbooks/end2end_application/rag/console_dataset.ipynb)，[RAG调用Cookbook](/cookbooks/end2end_application/rag/rag.ipynb)
   * 大模型组件新增：Excel2Figure(基于Excel信息画图表)
   * AI能力引擎组件新增&更新：植物识别、动物识别、表格文字识别V2、手写文字识别、二维码识别、身份证混贴识别、文档矫正识别、图像内容理解、流式TTS
   * AgentRuntime：新增[Cookbook](/cookbooks/components/agent_runtime.ipynb)
@@ -52,3 +52,6 @@
 * **2024.08.20 v0.9.3版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.3)
   * Text2Image组件接口及效果更新
   * ImageUnderstand组件接口及效果更新
+* **2024.09.04 v0.9.4版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.4)
+  * AppBuilderClient新增tool_choice / end_user_id功能
+  * 增加VScode setting，优化开发者使用体验

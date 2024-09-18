@@ -15,188 +15,187 @@
 package appbuilder
 
 import (
-    "fmt"
-    "io"
-    "log"
-    "net/http"
-    "net/url"
-    "os"
-    "path"
-    "strings"
-	"io/ioutil"
-    "github.com/google/uuid"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"path"
+	"strings"
+
+	"github.com/google/uuid"
 )
 
 const (
-    GatewayURL            = "GATEWAY_URL"
-    GatewayURLV2          = "GATEWAY_URL_V2"
-    SecretKey             = "APPBUILDER_TOKEN"
-    ConsoleOpenAPIVersion = "CONSOLE_OPENAPI_VERSION"
-    ConsoleOpenAPIPrefix  = "CONSOLE_OPENAPI_PREFIX"
-    SecretKeyPrefix       = "SECRET_KEY_PREFIX"
+	GatewayURL            = "GATEWAY_URL"
+	GatewayURLV2          = "GATEWAY_URL_V2"
+	SecretKey             = "APPBUILDER_TOKEN"
+	ConsoleOpenAPIVersion = "CONSOLE_OPENAPI_VERSION"
+	ConsoleOpenAPIPrefix  = "CONSOLE_OPENAPI_PREFIX"
+	SecretKeyPrefix       = "SECRET_KEY_PREFIX"
 
-    DefaultSecretKeyPrefix       = "Bearer"
-    DefaultGatewayURL            = "https://appbuilder.baidu.com"
-    DefaultGatewayURLV2          = "https://qianfan.baidubce.com"
-    DefaultConsoleOpenAPIVersion = "/v2"
-    DefaultConsoleOpenAPIPrefix  = ""
+	DefaultSecretKeyPrefix       = "Bearer"
+	DefaultGatewayURL            = "https://appbuilder.baidu.com"
+	DefaultGatewayURLV2          = "https://qianfan.baidubce.com"
+	DefaultConsoleOpenAPIVersion = "/v2"
+	DefaultConsoleOpenAPIPrefix  = ""
 )
 
 type SDKConfig struct {
-    GatewayURL            string
-    GatewayURLV2          string
-    ConsoleOpenAPIVersion string
-    ConsoleOpenAPIPrefix  string
-    SecretKey             string
-    HTTPClient            HTTPClient // custom HTTP Client, optional
-    logger                *log.Logger
+	GatewayURL            string
+	GatewayURLV2          string
+	ConsoleOpenAPIVersion string
+	ConsoleOpenAPIPrefix  string
+	SecretKey             string
+	HTTPClient            HTTPClient // custom HTTP Client, optional
+	logger                *log.Logger
 }
 
 func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
-    gatewayURL = getEnvWithDefault(GatewayURL, gatewayURL, DefaultGatewayURL)
-    gatewayURLV2 := getEnvWithDefault(GatewayURLV2, "", DefaultGatewayURLV2)
-    openAPIVersion := getEnvWithDefault(ConsoleOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
-    openAPIPrefix := getEnvWithDefault(ConsoleOpenAPIPrefix, "", DefaultConsoleOpenAPIPrefix)
+	gatewayURL = getEnvWithDefault(GatewayURL, gatewayURL, DefaultGatewayURL)
+	gatewayURLV2 := getEnvWithDefault(GatewayURLV2, "", DefaultGatewayURLV2)
+	openAPIVersion := getEnvWithDefault(ConsoleOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
+	openAPIPrefix := getEnvWithDefault(ConsoleOpenAPIPrefix, "", DefaultConsoleOpenAPIPrefix)
 
-    secretKey = getEnvWithDefault(SecretKey, secretKey, "")
-    if len(secretKey) == 0 {
-        log.Println("Error: secret key is empty")
-    }
-    secretKeyPrefix := getEnvWithDefault(SecretKeyPrefix, "", DefaultSecretKeyPrefix)
-    if !strings.HasPrefix(secretKey, secretKeyPrefix) {
-        secretKey = secretKeyPrefix + " " + secretKey
-    }
+	secretKey = getEnvWithDefault(SecretKey, secretKey, "")
+	if len(secretKey) == 0 {
+		log.Println("Error: secret key is empty")
+	}
+	secretKeyPrefix := getEnvWithDefault(SecretKeyPrefix, "", DefaultSecretKeyPrefix)
+	if !strings.HasPrefix(secretKey, secretKeyPrefix) {
+		secretKey = secretKeyPrefix + " " + secretKey
+	}
 
-    sdkConfig := &SDKConfig{
-        GatewayURL:            gatewayURL,
-        GatewayURLV2:          gatewayURLV2,
-        ConsoleOpenAPIVersion: openAPIVersion,
-        ConsoleOpenAPIPrefix:  openAPIPrefix,
-        SecretKey:             secretKey,
-    }
+	sdkConfig := &SDKConfig{
+		GatewayURL:            gatewayURL,
+		GatewayURLV2:          gatewayURLV2,
+		ConsoleOpenAPIVersion: openAPIVersion,
+		ConsoleOpenAPIPrefix:  openAPIPrefix,
+		SecretKey:             secretKey,
+	}
 
-    logFile := os.Getenv("APPBUILDER_LOGFILE")
-    if len(logFile) > 0 {
-        f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-        if err != nil {
-            sdkConfig.logger = log.New(os.Stdout, "", log.LstdFlags)
-        } else {
-            sdkConfig.logger = log.New(f, "", log.LstdFlags)
-        }
-    } else {
-        sdkConfig.logger = log.New(os.Stdout, "", log.LstdFlags)
-    }
+	logFile := os.Getenv("APPBUILDER_LOGFILE")
+	if len(logFile) > 0 {
+		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err != nil {
+			sdkConfig.logger = log.New(os.Stdout, "", log.LstdFlags)
+		} else {
+			sdkConfig.logger = log.New(f, "", log.LstdFlags)
+		}
+	} else {
+		sdkConfig.logger = log.New(os.Stdout, "", log.LstdFlags)
+	}
 
-    return sdkConfig, nil
+	return sdkConfig, nil
 }
 
 func getEnvWithDefault(key, paramValue, defaultValue string) string {
-    if paramValue != "" {
-        return paramValue
-    }
+	if paramValue != "" {
+		return paramValue
+	}
 
-    v := os.Getenv(key)
-    if v == "" {
-        return defaultValue
-    }
-    return v
+	v := os.Getenv(key)
+	if v == "" {
+		return defaultValue
+	}
+	return v
 }
 
 func (t *SDKConfig) AuthHeader() http.Header {
-    header := t.authHeader()
-    header.Set("X-Appbuilder-Authorization", t.SecretKey)
-    t.logger.Printf("Auth Header %v", header)
-    return header
+	header := t.authHeader()
+	header.Set("X-Appbuilder-Authorization", t.SecretKey)
+	t.logger.Printf("Auth Header %v", header)
+	return header
 }
 
 // AuthHeaderV2 适配OpenAPI，当前仅AgentBuilder使用
 func (t *SDKConfig) AuthHeaderV2() http.Header {
-    header := t.authHeader()
-    header.Set("Authorization", t.SecretKey)
-    t.logger.Printf("Auth Header %v", header)
-    return header
+	header := t.authHeader()
+	header.Set("Authorization", t.SecretKey)
+	t.logger.Printf("Auth Header %v", header)
+	return header
 }
 
 func (t *SDKConfig) authHeader() http.Header {
-    header := make(http.Header)
-    platform := os.Getenv("APPBUILDER_SDK_PLATFORM")
-    if platform == "" {
-        platform = "unknown"
-    }
-    header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
-    header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.9.0\",\"appbuilder_sdk_language\":\"go\",\"appbuilder_sdk_platform\":\""+platform+"\"}")
-    header.Set("X-Appbuilder-Request-Id", uuid.New().String())
-    return header
+	header := make(http.Header)
+	platform := os.Getenv("APPBUILDER_SDK_PLATFORM")
+	if platform == "" {
+		platform = "unknown"
+	}
+	header.Set("X-Appbuilder-Origin", "appbuilder_sdk")
+	header.Set("X-Appbuilder-Sdk-Config", "{\"appbuilder_sdk_version\":\"0.9.4\",\"appbuilder_sdk_language\":\"go\",\"appbuilder_sdk_platform\":\""+platform+"\"}")
+	header.Set("X-Appbuilder-Request-Id", uuid.New().String())
+	return header
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
-    absolutePath := t.GatewayURL
-    if !strings.HasSuffix(absolutePath, "/") {
-        absolutePath += "/"
-    }
-    if strings.HasPrefix(suffix, "/") {
-        suffix = strings.TrimPrefix(suffix, "/")
-    }
-    absolutePath += suffix
+	absolutePath := t.GatewayURL
+	if !strings.HasSuffix(absolutePath, "/") {
+		absolutePath += "/"
+	}
+	if strings.HasPrefix(suffix, "/") {
+		suffix = strings.TrimPrefix(suffix, "/")
+	}
+	absolutePath += suffix
 
-    return t.formatURL(absolutePath, suffix)
+	return t.formatURL(absolutePath, suffix)
 }
-
 
 // ServiceURLV2 适配OpenAPI，当前仅AppbuilderClient使用
 func (t *SDKConfig) ServiceURLV2(suffix string) (*url.URL, error) {
-    suffix = path.Join(t.ConsoleOpenAPIPrefix, t.ConsoleOpenAPIVersion, suffix)
-    return t.formatURL(t.GatewayURLV2, suffix)
+	suffix = path.Join(t.ConsoleOpenAPIPrefix, t.ConsoleOpenAPIVersion, suffix)
+	return t.formatURL(t.GatewayURLV2, suffix)
 }
 
 func (t *SDKConfig) formatURL(absolutePath, suffix string) (*url.URL, error) {
-    t.logger.Printf("Service URL %s", absolutePath)
-    url, err := url.Parse(absolutePath)
-    if err != nil {
-        return nil, err
-    }
+	t.logger.Printf("Service URL %s", absolutePath)
+	url, err := url.Parse(absolutePath)
+	if err != nil {
+		return nil, err
+	}
 
-    endpoint, err := url.Parse(suffix)
-    if err != nil {
-        return nil, err
-    }
+	endpoint, err := url.Parse(suffix)
+	if err != nil {
+		return nil, err
+	}
 
-    url = url.ResolveReference(endpoint)
+	url = url.ResolveReference(endpoint)
 
-    return url, nil
+	return url, nil
 }
 
 type nopCloser struct {
-    io.Reader
+	io.Reader
 }
 
 func (nopCloser) Close() error { return nil }
 
 func NopCloser(r io.Reader) io.ReadCloser {
-    return nopCloser{r}
+	return nopCloser{Reader: r}
 }
 
 func (t *SDKConfig) BuildCurlCommand(req *http.Request) {
-    curlCmd := fmt.Sprintf("curl -X %s -L '%v' \\\n", req.Method, req.URL.String())
+	curlCmd := fmt.Sprintf("curl -X %s -L '%v' \\\n", req.Method, req.URL.String())
 
-    for k, v := range req.Header {
-        header := fmt.Sprintf("-H '%v: %v' \\\n", k, v[0])
-        curlCmd = fmt.Sprintf("%v %v", curlCmd, header)
-    }
+	for k, v := range req.Header {
+		header := fmt.Sprintf("-H '%v: %v' \\\n", k, v[0])
+		curlCmd = fmt.Sprintf("%v %v", curlCmd, header)
+	}
 
-    if req.Method == "POST" {
-        bodyBytes, err := ioutil.ReadAll(req.Body)
-        if err != nil {
-            t.logger.Println("Failed to read request body:", err)
-            return
-        }
-        req.Body.Close()
-        req.Body = NopCloser(strings.NewReader(string(bodyBytes)))
+	if req.Method == "POST" {
+		bodyBytes, err := io.ReadAll(req.Body)
+		if err != nil {
+			t.logger.Println("Failed to read request body:", err)
+			return
+		}
+		req.Body.Close()
+		req.Body = NopCloser(strings.NewReader(string(bodyBytes)))
 
-        body := fmt.Sprintf("-d '%v'", string(bodyBytes))
-        curlCmd = fmt.Sprintf("%v %v", curlCmd, body)
-    } else if req.Method == "GET" || req.Method == "DELETE" {
-        curlCmd = strings.TrimSuffix(curlCmd, " \\\n")
-    }
-    fmt.Println("\n" + curlCmd + "\n")
+		body := fmt.Sprintf("-d '%v'", string(bodyBytes))
+		curlCmd = fmt.Sprintf("%v %v", curlCmd, body)
+	} else if req.Method == "GET" || req.Method == "DELETE" {
+		curlCmd = strings.TrimSuffix(curlCmd, " \\\n")
+	}
+	fmt.Println("\n" + curlCmd + "\n")
 }
