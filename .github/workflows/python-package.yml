@@ -43,6 +43,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9","3.12"]
+    secrets:
+      envPAT: ${{ secrets.envPAT }}
     
     steps:
     - uses: actions/checkout@v4
@@ -147,10 +149,9 @@ jobs:
           sh appbuilder/tests/run_python_test.sh
         fi
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
-        APPBUILDER_TOKEN_V2: ${{ secrets.APPBUILDER_TOKEN_V2 }}
-        BAIDU_VDB_API_KEY: ${{ secrets.BAIDU_VDB_API_KEY }}
-        INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
-        DATASET_ID: ${{ secrets.DATASET_ID }}
-        APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
+        APPBUILDER_TOKEN: ${{ vars.APPBUILDER_TOKEN }}
+        APPBUILDER_TOKEN_V2: ${{ vars.APPBUILDER_TOKEN_V2 }}
+        BAIDU_VDB_API_KEY: ${{ vars.BAIDU_VDB_API_KEY }}
+        INSTANCE_ID: ${{ vars.INSTANCE_ID }}
+        DATASET_ID: ${{ vars.DATASET_ID }}
+        APPBUILDER_TOKEN_DOC_FORMAT: ${{ vars.APPBUILDER_TOKEN_DOC_FORMAT }}
