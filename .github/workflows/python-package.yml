@@ -40,12 +40,12 @@ jobs:
   Linux-CI-Tests:
     runs-on: ubuntu-latest
     env:
-      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
-      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-xKvnRD8ybhsGkN88XxZ6Z/34adbccbc144e9677f8d244ee83271f9a11a70f7
-      BAIDU_VDB_API_KEY: apaasTest1
-      INSTANCE_ID: vdb-bj-vuzmppgqrnhv
-      DATASET_ID: 56e82915-9642-4a03-bb02-74744c17863e
-      APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-bcKsgHd39g0Aaq3nCYUUQ/b06384229df1462c6fb011383d09230346a20ac4
+      APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
+      APPBUILDER_TOKEN_V2: ${{ secrets.APPBUILDER_TOKEN_V2 }}
+      BAIDU_VDB_API_KEY: ${{ secrets.BAIDU_VDB_API_KEY }}
+      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      DATASET_ID: ${{ secrets.DATASET_ID }}
+      APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
     strategy:
       fail-fast: false
       matrix:
