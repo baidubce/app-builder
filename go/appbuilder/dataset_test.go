@@ -15,11 +15,22 @@
 package appbuilder
 
 import (
+	"bytes"
+	"fmt"
 	"os"
 	"testing"
 )
 
 func TestDataset(t *testing.T) {
+	// 创建缓冲区来存储日志
+	var logBuffer bytes.Buffer
+
+	// 定义一个日志函数，将日志写入缓冲区
+	log := func(format string, args ...interface{}) {
+		fmt.Fprintf(&logBuffer, format+"\n", args...)
+	}
+
+	// 测试逻辑
 	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
@@ -29,15 +40,30 @@ func TestDataset(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create dataset failed: %v", err)
 	}
+	log("Dataset created with ID: %s", datasetID)
+
 	documentID, err := dataset.UploadLocalFile(datasetID, "./files/test.pdf")
 	if err != nil {
 		t.Fatalf("upload file failed: %v", err)
 	}
+	log("Document uploaded with ID: %s", documentID)
+
 	_, err = dataset.ListDocument(datasetID, 1, 10, "")
 	if err != nil {
 		t.Fatalf("list document failed: %v", err)
 	}
+	log("Listed documents for dataset ID: %s", datasetID)
+
 	if err := dataset.DeleteDocument(datasetID, documentID); err != nil {
-		t.Fatalf("delet documeny failed: %v", err)
+		t.Fatalf("delete document failed: %v", err)
+	}
+	log("Document deleted with ID: %s", documentID)
+
+	// 测试通过，打印文件名和测试函数名
+	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		fmt.Println(logBuffer.String())
 	}
 }

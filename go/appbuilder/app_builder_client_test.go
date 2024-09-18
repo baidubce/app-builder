@@ -15,6 +15,7 @@
 package appbuilder
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -22,8 +23,18 @@ import (
 )
 
 func TestNewAppBuilderClient(t *testing.T) {
+	var logBuffer bytes.Buffer
+
+	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
+
+	// 定义一个日志函数，将日志写入缓冲区
+	log := func(format string, args ...interface{}) {
+		fmt.Fprintf(&logBuffer, format+"\n", args...)
+	}
+
+	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
@@ -34,7 +45,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 	if err != nil {
 		t.Fatalf("get apps failed: %v", err)
 	}
-	fmt.Println(len(apps))
+	log("Number of apps: %d", len(apps))
 
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	client, err := NewAppBuilderClient(appID, config)
@@ -56,19 +67,34 @@ func TestNewAppBuilderClient(t *testing.T) {
 	}
 	totalAnswer := ""
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
-		totalAnswer = totalAnswer + answer.Answer
+		totalAnswer += answer.Answer
 		for _, ev := range answer.Events {
 			evJSON, _ := json.Marshal(ev)
-			fmt.Println(string(evJSON))
+			log(string(evJSON))
 		}
 	}
-	fmt.Println("----------------answer-------------------")
-	fmt.Println(totalAnswer)
+	log("----------------answer-------------------")
+	log(totalAnswer)
+
+	// 测试通过，打印文件名和测试函数名
+	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		fmt.Println(logBuffer.String())
+	}
 }
 
 func TestAppBuilderClientRunWithToolCall(t *testing.T) {
+	var logBuffer bytes.Buffer
+
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
+
+	log := func(format string, args ...interface{}) {
+		fmt.Fprintf(&logBuffer, format+"\n", args...)
+	}
+
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
@@ -125,11 +151,11 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	totalAnswer := ""
 	toolCallID := ""
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
-		totalAnswer = totalAnswer + answer.Answer
+		totalAnswer += answer.Answer
 		for _, ev := range answer.Events {
 			toolCallID = ev.ToolCalls[0].ID
 			evJSON, _ := json.Marshal(ev)
-			fmt.Println(string(evJSON))
+			log(string(evJSON))
 		}
 	}
 
@@ -149,20 +175,35 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	}
 
 	for answer, err := i2.Next(); err == nil; answer, err = i2.Next() {
-		totalAnswer = totalAnswer + answer.Answer
+		totalAnswer += answer.Answer
 		for _, ev := range answer.Events {
 			evJSON, _ := json.Marshal(ev)
-			fmt.Println(string(evJSON))
+			log(string(evJSON))
 		}
 	}
 
-	fmt.Println("----------------answer-------------------")
-	fmt.Println(totalAnswer)
+	log("----------------answer-------------------")
+	log(totalAnswer)
+
+	// 测试通过，打印文件名和测试函数名
+	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		fmt.Println(logBuffer.String())
+	}
 }
 
 func TestAppBuilderClientRunToolChoice(t *testing.T) {
+	var logBuffer bytes.Buffer
+
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
+
+	log := func(format string, args ...interface{}) {
+		fmt.Fprintf(&logBuffer, format+"\n", args...)
+	}
+
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
@@ -198,13 +239,21 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 	})
 
 	if err != nil {
-		fmt.Println("run failed: ", err)
+		t.Fatalf("run failed:%v", err)
 	}
 
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		for _, ev := range answer.Events {
 			evJSON, _ := json.Marshal(ev)
-			fmt.Println(string(evJSON))
+			log(string(evJSON))
 		}
+	}
+
+	// 测试通过，打印文件名和测试函数名
+	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		fmt.Println(logBuffer.String())
 	}
 }
