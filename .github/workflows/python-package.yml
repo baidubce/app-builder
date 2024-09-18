@@ -134,11 +134,6 @@ jobs:
           python3 setup.py bdist_wheel
           python3 -m pip uninstall -y appbuilder-sdk
           python3 -m pip install dist/*.whl
-          echo "重新安装pydantic包，设置版本为2.7.4"
-          python3 -m pip uninstall -y pydantic
-          python3 -m pip install pydantic==2.7.4
-          python3 -m pip install langchain==0.3.0
-          python3 -m pip install datamodel-code-generator==0.25.8
         fi
     - name: Test with unittest
       run: |
