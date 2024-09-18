@@ -236,10 +236,15 @@ jobs:
           go tool cover -func=coverage.out
 
           echo "增量代码覆盖率："
-          # 使用 diff-filter 和 grep 生成增量文件列表
-          changed_files=$(git diff --name-only --diff-filter=ACMRT upstream/master | grep '.go' | xargs)
+          # 使用 diff-filter 和 grep 找出修改的 .go 文件
+          changed_files=$(git diff --name-only --diff-filter=ACMRT upstream/master | grep '.go' || true)
+
           if [ -n "$changed_files" ]; then
-            go test -coverprofile=incremental_coverage.out $changed_files
+            # 获取这些文件所属的包路径
+            changed_packages=$(echo "$changed_files" | xargs -n1 dirname | sort -u | xargs -I {} go list ./{})
+
+            # 执行 go test 并生成增量覆盖率报告
+            go test -coverprofile=incremental_coverage.out $changed_packages
             go tool cover -func=incremental_coverage.out
           else
             echo "没有增量Go文件被检测到。"
