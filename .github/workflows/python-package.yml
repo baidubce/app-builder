@@ -147,6 +147,7 @@ jobs:
           sh appbuilder/tests/run_python_test.sh
         fi
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
         APPBUILDER_TOKEN_V2: ${{ secrets.APPBUILDER_TOKEN_V2 }}
         BAIDU_VDB_API_KEY: ${{ secrets.BAIDU_VDB_API_KEY }}

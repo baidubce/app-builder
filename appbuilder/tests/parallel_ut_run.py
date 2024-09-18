@@ -386,6 +386,8 @@ def create_unittest_report():
     appbuilder_token = os.getenv("APPBUILDER_TOKEN", "empty")
     logger.info("appbuilder_token: {}".format(appbuilder_token))
 
+    github_token = os.getenv("GITHUB_TOKEN", "empty")
+    logger.info("github_token: {}".format(github_token))
 
     # 创建日志目录
     if not os.path.exists("./ut_logs"):
