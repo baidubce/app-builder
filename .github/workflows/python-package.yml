@@ -39,13 +39,6 @@ jobs:
 
   Linux-CI-Tests:
     runs-on: ubuntu-latest
-    env:
-      APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
-      APPBUILDER_TOKEN_V2: ${{ secrets.APPBUILDER_TOKEN_V2 }}
-      BAIDU_VDB_API_KEY: ${{ secrets.BAIDU_VDB_API_KEY }}
-      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
-      DATASET_ID: ${{ secrets.DATASET_ID }}
-      APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
     strategy:
       fail-fast: false
       matrix:
@@ -137,6 +130,13 @@ jobs:
         fi
     - name: Test with unittest
       run: |
+        echo "AppBuilder TOKEN: $APPBUILDER_TOKEN"
+        echo "AppBuilder TOKEN_V2: $APPBUILDER_TOKEN_V2"
+        echo "BAIDU_VDB_API_KEY: $BAIDU_VDB_API_KEY"
+        echo "INSTANCE_ID: $INSTANCE_ID"
+        echo "DATASET_ID: $DATASET_ID"
+        echo "APPBUILDER_TOKEN_DOC_FORMAT: $APPBUILDER_TOKEN_DOC_FORMAT"
+
         echo $APPBUILDER_PYTHON_TESTS
         if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
           echo "环境变量APPBUILDER_PYTHON_TESTS为False,没有检测到Python或Shell文件被更改,跳过Test with unittest部分。"
@@ -146,3 +146,10 @@ jobs:
           pwd
           sh appbuilder/tests/run_python_test.sh
         fi
+      env:
+        APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
+        APPBUILDER_TOKEN_V2: ${{ secrets.APPBUILDER_TOKEN_V2 }}
+        BAIDU_VDB_API_KEY: ${{ secrets.BAIDU_VDB_API_KEY }}
+        INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+        DATASET_ID: ${{ secrets.DATASET_ID }}
+        APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
