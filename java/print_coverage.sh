@@ -1,42 +1,32 @@
 #!/bin/bash
 
-mvn clean test jacoco:report jacoco:check 
+# 设置脚本退出时错误码
+set -e
 
-python parse_jacoco.py
+# 设置脚本退出时错误码
+set -e
 
-# 基准分支
-base_branch="origin/master"
+# 运行 Maven 测试并生成 JaCoCo 报告
+echo "运行 Maven 测试并生成 JaCoCo 报告..."
+mvn clean test jacoco:report jacoco:check > mvn_output.log 2>&1
+MAVEN_EXIT_CODE=$?
+
+# 检查 Maven 测试是否成功
+if [ $MAVEN_EXIT_CODE -eq 0 ]; then
+    echo "Maven 测试成功。"
+else
+    echo "Maven 测试失败。查看详细错误日志："
+    cat mvn_output.log
+fi
+
 # 更新 PATH
 export PATH="$HOME/.local/bin:$PATH"
-# 安装 diff-cover，如果未安装
-if ! command -v diff-cover &> /dev/null; then
-    echo "diff-cover not found, installing..."
-    pip install --user diff-cover
-fi
+
+# 运行 Python 脚本解析测试和覆盖率报告
+python parse_tests_and_coverage.py
+
+# 设置基准分支
+BASE_BRANCH="origin/master"
 
 
-# 检查是否生成了 jacoco.xml 文件
-if [ -f target/site/jacoco/jacoco.xml ]; then
-    echo "jacoco.xml found."
-else
-    echo "jacoco.xml not found."
-    exit 1
-fi
 
-# 增量代码覆盖率检测
-echo "增量代码覆盖率为："
-git diff $base_branch --name-only -- '*.java' > diff_files.txt
-
-if [ -s diff_files.txt ]; then
-    if ! diff-cover target/site/jacoco/jacoco.xml --compare-branch=$base_branch --html-report coverage_diff.html; then
-        echo "Failed to generate incremental coverage report."
-        exit 1
-    else
-        echo "Incremental coverage report generated at coverage_diff.html"
-    fi
-else
-    echo "No Java files changed relative to $base_branch. Incremental coverage not generated."
-fi
-
-# 清理
-rm diff_files.txt
