@@ -314,6 +314,10 @@ jobs:
         echo "APPBUILDER_JAVA_TESTS=$APPBUILDER_JAVA_TESTS" >> $GITHUB_ENV
         pwd
 
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install lxml
     - name: Install dependencies
       run: |
         echo $APPBUILDER_JAVA_TESTS
