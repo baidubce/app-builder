@@ -220,12 +220,8 @@ def main():
     """主函数，执行所有步骤。"""
     # 解析测试报告并打印结果
     test_results = parse_surefire_reports()
-
-
-
+    
     parse_jacoco()
-
-
     # 生成增量覆盖率报告
     generate_incremental_coverage()
 
