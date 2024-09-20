@@ -16,5 +16,5 @@ fi
 # 更新 PATH
 export PATH="$HOME/.local/bin:$PATH"
 
-# 运行 Python 脚本解析测试和覆盖率报告 
+# 运行 Python 脚本解析测试和覆盖率报告
 python parse_tests_and_coverage.py
