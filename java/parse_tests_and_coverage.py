@@ -227,4 +227,4 @@ def main():
 
 if __name__ == "__main__":
     import shutil  # 用于检查 diff-cover 是否存在
-    main()
+    main()  
