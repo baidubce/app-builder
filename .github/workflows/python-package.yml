@@ -328,7 +328,7 @@ jobs:
           cd cicd/app-builder/java
           mvn clean install -DskipTests
         fi
-
+ 
     - name: Run Java tests with Jacoco
       if: env.APPBUILDER_JAVA_TESTS == 'True'
       run: |
