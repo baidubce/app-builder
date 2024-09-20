@@ -13,14 +13,12 @@ error_messages=()
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
 
-# 安装 diff-cover 在虚拟环境中
-echo "Installing diff-cover in the virtual environment..."
 
+pip install diff-cover || { error_flag=1; error_messages+=("Failed to install diff-cover."); }
 # 检查 diff-cover 是否已安装
 if ! command -v diff-cover &> /dev/null; then
     error_flag=1
     error_messages+=("diff-cover installation failed. Please check your Python and pip installation.")
-    pip install diff-cover || { error_flag=1; error_messages+=("Failed to install diff-cover."); }
 fi
 
 echo "diff-cover is installed."
