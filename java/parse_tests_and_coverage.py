@@ -9,6 +9,7 @@ def parse_surefire_reports():
     surefire_reports = glob.glob('target/surefire-reports/*.xml')
     if not surefire_reports:
         print("未找到 Surefire 报告文件（target/surefire-reports/*.xml）。")
+        sys.stdout.flush()  # 立即刷新输出
         return None
 
     total_tests = 0
@@ -19,6 +20,7 @@ def parse_surefire_reports():
     failed_tests = []
 
     print("\n=== 测试结果 ===")
+    sys.stdout.flush()  # 立即刷新输出
     for report in surefire_reports:
         try:
             tree = etree.parse(report)
@@ -58,11 +60,14 @@ def parse_surefire_reports():
                     print(f"      错误信息: {error_message}")
                 elif status == "SKIPPED":
                     print(f"[SKIPPED] {class_name}.{test_name}")
+                sys.stdout.flush()  # 立即刷新输出
 
         except etree.XMLSyntaxError as e:
             print(f"XML 解析错误在文件 {report}: {e}")
+            sys.stdout.flush()  # 立即刷新输出
         except Exception as e:
             print(f"解析报告文件 {report} 时发生错误: {e}")
+            sys.stdout.flush()  # 立即刷新输出
 
     # 打印测试总结
     print("\n=== 测试总结 ===")
@@ -71,6 +76,7 @@ def parse_surefire_reports():
     print(f"失败: {total_failures}")
     print(f"错误: {total_errors}")
     print(f"跳过: {total_skipped}")
+    sys.stdout.flush()  # 立即刷新输出
 
     return {
         "total_tests": total_tests,
@@ -85,6 +91,7 @@ def parse_jacoco():
     JACOCO_XML = "target/site/jacoco/jacoco.xml"
     if not os.path.isfile(JACOCO_XML):
         print("jacoco.xml 未找到。请先运行 'mvn jacoco:report' 生成报告。")
+        sys.stdout.flush()  # 立即刷新输出
         return
 
     try:
@@ -93,9 +100,11 @@ def parse_jacoco():
         root = tree.getroot()
     except etree.XMLSyntaxError as e:
         print(f"XML 解析错误: {e}")
+        sys.stdout.flush()  # 立即刷新输出
         return
     except Exception as e:
         print(f"解析 jacoco.xml 时发生错误: {e}")
+        sys.stdout.flush()  # 立即刷新输出
         return
 
     # 初始化总计数器
@@ -179,6 +188,7 @@ def parse_jacoco():
                 # 左对齐并加上适当的空格
                 row_str += col.ljust(col_widths[idx] + 2)
             print(row_str)
+        sys.stdout.flush()  # 立即刷新输出
 
 def generate_incremental_coverage():
     """生成增量代码覆盖率报告。"""
@@ -188,13 +198,16 @@ def generate_incremental_coverage():
     # 安装 diff-cover，如果未安装
     if not shutil.which("diff-cover"):
         print("diff-cover 未找到，正在安装...")
+        sys.stdout.flush()  # 立即刷新输出
         os.system("pip install --user diff-cover")
     
     # 检查 jacoco.xml 文件是否存在
     if os.path.isfile(JACOCO_XML):
         print("\njacoco.xml 已找到。")
+        sys.stdout.flush()  # 立即刷新输出
     else:
         print("\njacoco.xml 未找到。请先运行 'mvn jacoco:report' 生成报告。")
+        sys.stdout.flush()  # 立即刷新输出
         return
     
     # 生成修改的 Java 文件列表
@@ -203,15 +216,19 @@ def generate_incremental_coverage():
     # 检查 diff_files.txt 是否有内容
     if os.path.getsize("diff_files.txt") > 0:
         print("\n生成增量代码覆盖率报告...")
+        sys.stdout.flush()  # 立即刷新输出
         result = os.system(f"diff-cover {JACOCO_XML} --compare-branch={BASE_BRANCH} --html-report coverage_diff.html")
         if result != 0:
             print("生成增量覆盖率报告失败。")
+            sys.stdout.flush()  # 立即刷新输出
             os.remove("diff_files.txt")
             sys.exit(1)
         else:
             print("增量覆盖率报告已生成在 coverage_diff.html。")
+            sys.stdout.flush()  # 立即刷新输出
     else:
         print("\n相对于 {BASE_BRANCH}，没有修改的 Java 文件。未生成增量覆盖率报告。")
+        sys.stdout.flush()  # 立即刷新输出
 
     # 清理临时文件
     os.remove("diff_files.txt")
@@ -227,4 +244,4 @@ def main():
 
 if __name__ == "__main__":
     import shutil  # 用于检查 diff-cover 是否存在
-    main()  
+    main()
