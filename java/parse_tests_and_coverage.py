@@ -3,7 +3,7 @@ import os
 import sys
 import glob
 from lxml import etree
- 
+
 def parse_surefire_reports():
     """解析 Maven Surefire 生成的测试报告，打印每个测试的结果，并汇总测试统计信息。"""
     surefire_reports = glob.glob('target/surefire-reports/*.xml')
