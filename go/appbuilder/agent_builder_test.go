@@ -15,6 +15,7 @@
 package appbuilder
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -22,71 +23,99 @@ import (
 )
 
 func TestNewAgentBuilder(t *testing.T) {
+	// 创建缓冲区来存储日志
+	var logBuffer bytes.Buffer
+
+	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+
+	// 将日志输出重定向到缓冲区
+	log := func(format string, args ...interface{}) {
+		fmt.Fprintf(&logBuffer, format+"\n", args...)
+	}
+
+	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	appID := ""
+	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	agentBuilder, err := NewAgentBuilder(appID, config)
 	if err != nil {
-		t.Fatalf("new AgentBuidler instance failed")
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new AgentBuilder instance failed")
 	}
 	conversationID, err := agentBuilder.CreateConversation()
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("create conversation failed: %v", err)
 	}
 	_, err = agentBuilder.UploadLocalFile(conversationID, "./files/test.pdf")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("upload local file failed: %v", err)
 	}
 	i, err := agentBuilder.Run(conversationID, "描述简历中的候选人情况", nil, true)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("run failed:%v", err)
 	}
 	totalAnswer := ""
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		totalAnswer = totalAnswer + answer.Answer
 		for _, ev := range answer.Events {
-			if ev.ContentType == TextContentType {
+			switch ev.ContentType {
+			case TextContentType:
 				detail := ev.Detail.(TextDetail)
-				fmt.Println("---------------TextDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == CodeContentType {
+				log("---------------TextDetail------------")
+				log("%v", detail)
+			case CodeContentType:
 				detail := ev.Detail.(CodeDetail)
-				fmt.Println("---------------CodeDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == ImageContentType {
+				log("---------------CodeDetail------------")
+				log("%v", detail)
+			case ImageContentType:
 				detail := ev.Detail.(ImageDetail)
-				fmt.Println("---------------ImageDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == RAGContentType {
+				log("---------------ImageDetail------------")
+				log("%v", detail)
+			case RAGContentType:
 				detail := ev.Detail.(RAGDetail)
-				fmt.Println("---------------RAGDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == FunctionCallContentType {
+				log("---------------RAGDetail------------")
+				log("%v", detail)
+			case FunctionCallContentType:
 				detail := ev.Detail.(FunctionCallDetail)
-				fmt.Println("---------------FunctionCallDetail------------")
-				fmt.Println(detail)
-			} else if ev.ContentType == AudioContentType {
-				fmt.Println("---------------AudioDetail------------")
+				log("---------------FunctionCallDetail------------")
+				log("%v", detail)
+			case AudioContentType:
 				detail := ev.Detail.(AudioDetail)
-				fmt.Println(detail.Audio)
-			} else if ev.ContentType == VideoContentType {
-				fmt.Println("---------------VideoDetail------------")
+				log("---------------AudioDetail------------")
+				log("%v", detail.Audio)
+			case VideoContentType:
 				detail := ev.Detail.(VideoDetail)
-				fmt.Println(detail)
-			} else if ev.ContentType == StatusContentType {
-			} else { // 默认是json.RawMessage
+				log("---------------VideoDetail------------")
+				log("%v", detail)
+			case StatusContentType:
+				// No additional detail to log
+			default:
+				// 默认是 json.RawMessage
 				detail, ok := ev.Detail.(json.RawMessage)
 				if !ok {
 					t.Fatalf("unknown detail type")
 				}
-				fmt.Println("---------------rawMessage------------")
-				fmt.Println(string(detail))
+				log("---------------rawMessage------------")
+				log("%s", string(detail))
 			}
 		}
 	}
-	fmt.Println("----------------answer-------------------")
-	fmt.Println(totalAnswer)
+	log("----------------answer-------------------")
+	log(totalAnswer)
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		fmt.Println(logBuffer.String())
+	} else {  // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+	}
 }

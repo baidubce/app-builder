@@ -146,3 +146,193 @@ jobs:
           pwd
           sh appbuilder/tests/run_python_test.sh
         fi
+  Go-Test-CI:
+    runs-on: ubuntu-latest
+    env:
+      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
+      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
+      BAIDU_VDB_API_KEY: apaasTest1
+      INSTANCE_ID: vdb-bj-vuzmppgqrnhv
+      DATASET_ID: 2626a842-132f-45ce-977f-f701d18fd104
+      APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-bcKsgHd39g0Aaq3nCYUUQ/b06384229df1462c6fb011383d09230346a20ac4
+ 
+      APPBUILDER_TOKEN_V3: bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5
+      DATASET_ID_V3: 4b2357ff-b7d5-4573-9187-ee29af2f8373
+      DOCUMENT_ID_V3: 120619f2-1b85-4e09-a36d-fc682168d09c
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.18']
+      max-parallel: 2
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Git Clone And Checkout Branch
+      run: |
+        fork_repo="https://github.com/$GITHUB_ACTOR/app-builder.git"
+        mkdir cicd
+        cd cicd
+        git clone $fork_repo
+        cd app-builder
+        echo "github_head的值为："
+        echo $GITHUB_HEAD_REF
+        git checkout $GITHUB_HEAD_REF
+        git remote add upstream https://github.com/baidubce/app-builder.git 
+        git fetch upstream
+        git remote -v
+        git status
+
+        # 找到当前分支与 upstream/master 的共同祖先提交
+        merge_base=$(git merge-base HEAD upstream/master)
+        echo "merge_base=$merge_base"
+
+        # 比较当前分支与 merge_base 之间的差异
+        changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
+        changed_files_go=$(git diff --name-only --diff-filter=ACMRT $merge_base -- 'go/**')
+
+        echo "发生更改的文件为:"
+        echo "$changed_files"
+        echo "发生更改的Go相关文件为:"
+
+        if [ -n "$changed_files_go" ]; then
+          export APPBUILDER_GO_TESTS=True
+          echo "$changed_files_go"
+        else
+          export APPBUILDER_GO_TESTS=False
+          echo "没有检测到Go或Shell文件被更改"
+        fi
+
+        echo "APPBUILDER_GO_TESTS=$APPBUILDER_GO_TESTS" >> $GITHUB_ENV
+    - name: Install dependencies and tools
+      run: |
+        echo $APPBUILDER_GO_TESTS
+        if [ "$APPBUILDER_GO_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_GO_TESTS为False,没有检测到Go文件被更改，跳过Install dependencies and tools部分。"
+        else
+          echo "检测到Go文件被更改，准备启动Install dependencies and tools部分..."
+          cd cicd/app-builder/go/appbuilder
+          go mod tidy
+
+          go get github.com/axw/gocov/gocov  # 安装增量覆盖率工具
+
+          # 安装 golangci-lint
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.53.3
+          echo "$GOPATH/bin" >> $GITHUB_PATH
+
+        fi
+
+    - name: Run tests and calculate incremental coverage
+      run: |
+        echo $APPBUILDER_GO_TESTS
+        if [ "$APPBUILDER_GO_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_GO_TESTS为False，没有检测到Go文件被更改，跳过Run tests部分。"
+        else
+          echo "检测到Go文件被更改，准备启动Run tests部分..."
+          cd cicd/app-builder/go
+          # 运行测试并生成覆盖率报告
+          chmod +x run_go_test.sh
+          ./run_go_test.sh
+        fi
+      shell: bash
+  Java-CI-Tests:
+    runs-on: ubuntu-latest
+    env:
+      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
+      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
+      BAIDU_VDB_API_KEY: apaasTest1
+      INSTANCE_ID: vdb-bj-vuzmppgqrnhv
+      DATASET_ID: 2626a842-132f-45ce-977f-f701d18fd104
+      APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-bcKsgHd39g0Aaq3nCYUUQ/b06384229df1462c6fb011383d09230346a20ac4
+ 
+      APPBUILDER_TOKEN_V3: bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5
+      DATASET_ID_V3: 4b2357ff-b7d5-4573-9187-ee29af2f8373
+      DOCUMENT_ID_V3: 120619f2-1b85-4e09-a36d-fc682168d09c
+    strategy:
+      fail-fast: false
+      matrix:
+        java-version: ['8']  # 使用 Java 11 和 17 作为示例
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    
+    - name: Set up JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: 'temurin'
+
+    - name: Print ENV
+      run: |
+        env
+        ls
+        pwd
+
+    - name: Git Clone And Checkout Branch
+      run: |
+        fork_repo="https://github.com/$GITHUB_ACTOR/app-builder.git"
+        mkdir cicd
+        cd cicd
+        git clone $fork_repo
+        cd app-builder
+        git checkout $GITHUB_HEAD_REF
+        git remote add upstream https://github.com/baidubce/app-builder.git 
+        git fetch upstream
+        git remote -v
+        git status
+
+        # 找到当前分支与 upstream/master 的共同祖先提交
+        merge_base=$(git merge-base HEAD upstream/master)
+        echo "merge_base=$merge_base"
+
+        # 比较当前分支与 merge_base 之间的差异
+        changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
+        changed_files_java=$(git diff --name-only --diff-filter=ACMRT $merge_base -- 'java/**')
+        
+        echo "发生更改的文件为:"
+        echo "$changed_files"
+
+        echo "发生更改的Java相关文件为:"
+
+        if [ -n "$changed_files_java" ]; then
+          export APPBUILDER_JAVA_TESTS=True
+          echo "$changed_files_java"
+        else
+          export APPBUILDER_JAVA_TESTS=False
+          echo "没有检测到Java文件被更改"
+        fi
+
+        echo "APPBUILDER_JAVA_TESTS=$APPBUILDER_JAVA_TESTS" >> $GITHUB_ENV
+        pwd
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install gitpython lxml
+    - name: Install dependencies
+      run: |
+        echo $APPBUILDER_JAVA_TESTS
+        if [ "$APPBUILDER_JAVA_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_JAVA_TESTS为False,没有检测到Java文件被更改,跳过Install dependencies部分。"
+        else
+          echo "检测到Java文件被更改(根据环境变量APPBUILDER_JAVA_TESTS),准备启动单元测试Install dependencies部分..."
+          cd cicd/app-builder/java
+          mvn clean install -DskipTests
+        fi
+ 
+    - name: Run Java tests with Jacoco
+      if: env.APPBUILDER_JAVA_TESTS == 'True'
+      run: |
+        echo "检测到Java文件被更改(根据环境变量APPBUILDER_JAVA_TESTS),准备启动Run Java tests with Jacoco部分..."
+        cd cicd/app-builder/java
+        bash print_coverage.sh
+

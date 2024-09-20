@@ -34,6 +34,10 @@ const (
 	ConsoleOpenAPIVersion = "CONSOLE_OPENAPI_VERSION"
 	ConsoleOpenAPIPrefix  = "CONSOLE_OPENAPI_PREFIX"
 	SecretKeyPrefix       = "SECRET_KEY_PREFIX"
+	DatasetID             = "DATASET_ID"
+	SecretKeyV3           = "APPBUILDER_TOKEN_V3"
+	DatasetIDV3           = "DATASET_ID_V3"
+	DocumentIDV3          = "DOCUMENT_ID_V3"
 
 	DefaultSecretKeyPrefix       = "Bearer"
 	DefaultGatewayURL            = "https://appbuilder.baidu.com"
@@ -74,7 +78,6 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 		ConsoleOpenAPIPrefix:  openAPIPrefix,
 		SecretKey:             secretKey,
 	}
-
 	logFile := os.Getenv("APPBUILDER_LOGFILE")
 	if len(logFile) > 0 {
 		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
@@ -130,16 +133,26 @@ func (t *SDKConfig) authHeader() http.Header {
 }
 
 func (t *SDKConfig) ServiceURL(suffix string) (*url.URL, error) {
-	absolutePath := t.GatewayURL
-	if !strings.HasSuffix(absolutePath, "/") {
-		absolutePath += "/"
+	// 解析 GatewayURL
+	parsedURL, err := url.Parse(t.GatewayURL)
+	if err != nil {
+		return nil, err
 	}
-	if strings.HasPrefix(suffix, "/") {
-		suffix = strings.TrimPrefix(suffix, "/")
-	}
-	absolutePath += suffix
 
-	return t.formatURL(absolutePath, suffix)
+	// 使用 path.Join 拼接路径
+	parsedURL.Path = path.Join(parsedURL.Path, suffix)
+
+	// 将路径直接解析为最终 URL
+	endpoint, err := url.Parse(suffix)
+	if err != nil {
+		return nil, err
+	}
+
+	// 解析相对路径
+	parsedURL = parsedURL.ResolveReference(endpoint)
+
+	// 返回拼接后的 URL
+	return parsedURL, nil
 }
 
 // ServiceURLV2 适配OpenAPI，当前仅AppbuilderClient使用

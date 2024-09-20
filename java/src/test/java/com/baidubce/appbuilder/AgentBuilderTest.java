@@ -18,9 +18,9 @@ public class AgentBuilderTest{
 
     @Before
     public void setUp() {
-        System.setProperty("APPBUILDER_TOKEN", "");
+        System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN"));
         System.setProperty("APPBUILDER_LOGLEVEL", "INFO");
-        appId = "";
+        appId = "aa8af334-df27-4855-b3d1-0d249c61fc08";
     }
 
     @Test

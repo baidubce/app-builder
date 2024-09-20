@@ -16,8 +16,8 @@ public class DatasetTest {
 
     @Before
     public void setUp()  {
-        System.setProperty("APPBUILDER_TOKEN", "xxx");
-        System.setProperty("GATEWAY_URL", "xxx");
+        System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN_V3"));
+
     }
 
     @Test

@@ -430,7 +430,7 @@ func (t *KnowledgeBase) CreateDocuments(req CreateDocumentsRequest) error {
 	if req.ClientToken == "" {
 		req.ClientToken = uuid.New().String()
 	}
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateDocuments?clientToken=" + req.ClientToken)
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateDocuments&clientToken=" + req.ClientToken)
 	if err != nil {
 		return err
 	}
