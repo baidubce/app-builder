@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 import os
 import sys
-import glob
+import subprocess
+import glob  # 添加这一行
 from lxml import etree
+from git import Repo
+from collections import defaultdict
 
 def parse_surefire_reports():
     """解析 Maven Surefire 生成的测试报告，打印每个测试的结果，并汇总测试统计信息。"""
@@ -87,12 +90,13 @@ def parse_surefire_reports():
     }
 
 def parse_jacoco():
-    """解析 JaCoCo XML 报告，打印覆盖率详情。"""
+    """解析 JaCoCo XML 报告，打印覆盖率详情并返回包含类名和未覆盖行号的字典。"""
     JACOCO_XML = "target/site/jacoco/jacoco.xml"
+    
     if not os.path.isfile(JACOCO_XML):
         print("jacoco.xml 未找到。请先运行 'mvn jacoco:report' 生成报告。")
         sys.stdout.flush()  # 立即刷新输出
-        return
+        return {}
 
     try:
         parser = etree.XMLParser(load_dtd=False, no_network=True, recover=True)
@@ -101,11 +105,11 @@ def parse_jacoco():
     except etree.XMLSyntaxError as e:
         print(f"XML 解析错误: {e}")
         sys.stdout.flush()  # 立即刷新输出
-        return
+        return {}
     except Exception as e:
         print(f"解析 jacoco.xml 时发生错误: {e}")
         sys.stdout.flush()  # 立即刷新输出
-        return
+        return {}
 
     # 初始化总计数器
     total_lines_missed = 0
@@ -113,6 +117,9 @@ def parse_jacoco():
 
     # 创建数据表
     table_data = [["Class", "Line Coverage (%)", "Missing Lines"]]
+
+    # 初始化存储结果的字典
+    coverage_data = {}
 
     # 遍历所有 class 元素
     for class_element in root.findall('.//class'):
@@ -135,13 +142,13 @@ def parse_jacoco():
             if package_element is not None and package_element.tag == 'package':
                 sourcefile_element = package_element.find(f"sourcefile[@name='{sourcefilename}']")
                 if sourcefile_element is not None:
-                    # 查找 mi > 0 的行号
+                    # 查找 mi > 0 的行号（未覆盖的行）
                     missing_lines = [
-                        str(int(line.get('nr'))) 
+                        int(line.get('nr')) 
                         for line in sourcefile_element.findall('line') 
                         if line.get('mi') and int(line.get('mi')) > 0
                     ]
-                    missing_lines_str = ",".join(missing_lines) if missing_lines else "-"
+                    missing_lines_str = ",".join(map(str, missing_lines)) if missing_lines else "-"
                 else:
                     missing_lines_str = "N/A"
             else:
@@ -157,6 +164,10 @@ def parse_jacoco():
             coverage = 0.0
 
         table_data.append([class_name, f"{coverage:.2f}%", missing_lines_str])
+
+        # Populate coverage_data dictionary if there are missing lines
+        if missing_lines_str != "N/A" and missing_lines_str != "-":
+            coverage_data[class_name] = [int(line) for line in missing_lines_str.split(',')]
 
     # 计算总覆盖率
     total_lines = total_lines_missed + total_lines_covered
@@ -177,7 +188,7 @@ def parse_jacoco():
             if len(col) > col_widths[idx]:
                 col_widths[idx] = len(col)
 
-    # 打印数据表
+    # 打印覆盖率详情
     print("\n=== 覆盖率详情 ===")
     for row in table_data:
         if len(row) == 1:
@@ -190,58 +201,140 @@ def parse_jacoco():
             print(row_str)
         sys.stdout.flush()  # 立即刷新输出
 
-def generate_incremental_coverage():
-    """生成增量代码覆盖率报告。"""
-    JACOCO_XML = "target/site/jacoco/jacoco.xml"
-    BASE_BRANCH = "origin/master"
-    
-    # 安装 diff-cover，如果未安装
-    if not shutil.which("diff-cover"):
-        print("diff-cover 未找到，正在安装...")
-        sys.stdout.flush()  # 立即刷新输出
-        os.system("pip install --user diff-cover")
-    
-    # 检查 jacoco.xml 文件是否存在
-    if os.path.isfile(JACOCO_XML):
-        print("\njacoco.xml 已找到。")
-        sys.stdout.flush()  # 立即刷新输出
-    else:
-        print("\njacoco.xml 未找到。请先运行 'mvn jacoco:report' 生成报告。")
-        sys.stdout.flush()  # 立即刷新输出
-        return
-    
-    # 生成修改的 Java 文件列表
-    os.system(f"git diff {BASE_BRANCH} --name-only -- '*.java' > diff_files.txt")
+    return coverage_data
 
-    # 检查 diff_files.txt 是否有内容
-    if os.path.getsize("diff_files.txt") > 0:
-        print("\n生成增量代码覆盖率报告...")
-        sys.stdout.flush()  # 立即刷新输出
-        result = os.system(f"diff-cover {JACOCO_XML} --compare-branch={BASE_BRANCH} --html-report coverage_diff.html")
-        if result != 0:
-            print("生成增量覆盖率报告失败。")
-            sys.stdout.flush()  # 立即刷新输出
-            os.remove("diff_files.txt")
-            sys.exit(1)
+def get_modified_files(repo, base_branch, path_pattern='src/main/**/*.java'):
+    """
+    获取相对于 base_branch 的修改文件及其修改的行号
+    返回一个字典：{file_path: set(line_numbers)}
+    """
+    # 获取 diff 输出，带有行号
+    diff_command = [
+        'git', 'diff', base_branch, '--unified=0', '--', path_pattern
+    ]
+    try:
+        diff_output = subprocess.check_output(diff_command, stderr=subprocess.STDOUT).decode('utf-8')
+    except subprocess.CalledProcessError as e:
+        print(f"执行 git diff 失败: {e.output.decode('utf-8')}")
+        sys.stdout.flush()
+        sys.exit(1)
+    
+    modified_files = defaultdict(set)  # {file_path: set(line_numbers)}
+    current_file = None
+    line_num = 0
+
+    for line in diff_output.splitlines():
+        if line.startswith('diff --git'):
+            parts = line.split()
+            if len(parts) >= 4:
+                a_path = parts[2][2:]
+                b_path = parts[3][2:]
+                current_file = b_path  # 使用新文件路径
+        elif line.startswith('@@'):
+            if current_file:
+                # 解析 hunk header
+                # 格式: @@ -start,count +start,count @@
+                hunk_header = line
+                try:
+                    hunk_info = hunk_header.split(' ')[1:3]
+                    new_hunk = hunk_info[1]
+                    start, count = new_hunk[1:].split(',')
+                    start = int(start)
+                    count = int(count)
+                except Exception as e:
+                    print(f"解析 hunk header 失败: {hunk_header}, 错误: {e}")
+                    sys.stdout.flush()
+                    continue
+                line_num = start
+        elif line.startswith('+') and not line.startswith('+++'):
+            if current_file:
+                modified_files[current_file].add(line_num)
+                line_num += 1
+        elif line.startswith('-') and not line.startswith('---'):
+            # 删除的行，不需要增加 line_num
+            pass
         else:
-            print("增量覆盖率报告已生成在 coverage_diff.html。")
-            sys.stdout.flush()  # 立即刷新输出
-    else:
-        print("\n相对于 {BASE_BRANCH}，没有修改的 Java 文件。未生成增量覆盖率报告。")
-        sys.stdout.flush()  # 立即刷新输出
+            # 其他情况，不处理
+            pass
 
-    # 清理临时文件
-    os.remove("diff_files.txt")
+    return modified_files
+
+def generate_incremental_coverage_report(modified_files, coverage_data):
+    """
+    生成增量代码覆盖率报告
+    """
+    total_modified = 0
+    total_uncovered = 0
+    per_file_report = []
+
+    # 遍历修改的文件和行号
+    for file_path, modified_lines in modified_files.items():
+        # 将文件路径转换为类名，去掉 'java/src/main/java/' 和 '.java'
+        class_name = file_path.replace('java/src/main/java/', '').replace('.java', '')
+        # 从 coverage_data 中查找对应的类名
+        missing_lines = coverage_data.get(class_name, [])
+        # 计算被覆盖和未被覆盖的行
+        uncovered_in_modified = modified_lines.intersection(missing_lines)
+        covered_in_modified = modified_lines.difference(missing_lines)
+
+        total_modified += len(modified_lines)
+        total_uncovered += len(uncovered_in_modified)
+
+        # 保存每个文件的报告
+        per_file_report.append({
+            'file': file_path,
+            'modified': sorted(modified_lines),
+            'covered': sorted(covered_in_modified),
+            'uncovered': sorted(uncovered_in_modified)
+        })
+
+    # 计算增量覆盖率
+    coverage_percent = ((total_modified - total_uncovered) / total_modified) * 100 if total_modified > 0 else 0.0
+
+    # 生成报告输出
+    report_lines = []
+    report_lines.append("=== 增量代码覆盖率报告 ===\n")
+    for file_report in per_file_report:
+        report_lines.append(f"文件: {file_report['file']}")
+        report_lines.append(f"修改的行数: {len(file_report['modified'])}")
+        report_lines.append(f"被覆盖的行数: {len(file_report['covered'])}")
+        report_lines.append(f"未被覆盖的行数: {len(file_report['uncovered'])}")
+        if file_report['uncovered']:
+            report_lines.append(f"未覆盖的行号: {', '.join(map(str, file_report['uncovered']))}")
+        report_lines.append("\n")
+
+    # 增量覆盖率总结
+    report_lines.append("=== 总结 ===")
+    report_lines.append(f"总修改行数: {total_modified}")
+    report_lines.append(f"总未被覆盖行数: {total_uncovered}")
+    report_lines.append(f"增量覆盖率: {coverage_percent:.2f}%")
+
+    report = "\n".join(report_lines)
+    print(report)
+    sys.stdout.flush()
+
+    return {
+        'total_modified': total_modified,
+        'total_uncovered': total_uncovered,
+        'coverage_percent': coverage_percent,
+        'details': per_file_report
+    }
+
 
 def main():
     """主函数，执行所有步骤。"""
-    # 解析测试报告并打印结果
-    test_results = parse_surefire_reports()
-    
-    parse_jacoco()
+    parse_surefire_reports()
+    # 假设 parse_jacoco() 已经正确返回了覆盖率数据字典
+    coverage_data = parse_jacoco()
+
+    # 获取增量修改的文件及行号
+    repo = Repo(os.getcwd(), search_parent_directories=True)
+    base_branch = "upstream/master"
+    modified_files = get_modified_files(repo, base_branch, path_pattern='src/main/**/*.java')
+
     # 生成增量覆盖率报告
-    generate_incremental_coverage()
+    generate_incremental_coverage_report(modified_files, coverage_data)
+
 
 if __name__ == "__main__":
-    import shutil  # 用于检查 diff-cover 是否存在
     main()
