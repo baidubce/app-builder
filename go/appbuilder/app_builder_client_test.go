@@ -37,12 +37,14 @@ func TestNewAppBuilderClient(t *testing.T) {
 	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 	apps, err := GetAppList(GetAppListRequest{
 		Limit: 10,
 	}, config)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("get apps failed: %v", err)
 	}
 	log("Number of apps: %d", len(apps))
@@ -50,19 +52,23 @@ func TestNewAppBuilderClient(t *testing.T) {
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AppBuilderClient instance failed")
 	}
 
 	conversationID, err := client.CreateConversation()
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("create conversation failed: %v", err)
 	}
 	_, err = client.UploadLocalFile(conversationID, "./files/test.pdf")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("upload local file failed: %v", err)
 	}
 	i, err := client.Run(conversationID, "描述简历中的候选人情况", nil, true)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("run failed:%v", err)
 	}
 	totalAnswer := ""
@@ -76,12 +82,12 @@ func TestNewAppBuilderClient(t *testing.T) {
 	log("----------------answer-------------------")
 	log(totalAnswer)
 
-	// 测试通过，打印文件名和测试函数名
-	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
-
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {
 		fmt.Println(logBuffer.String())
+	} else {  // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
 }
 
@@ -97,17 +103,20 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 
 	config, err := NewSDKConfig("", "")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AgentBuidler instance failed")
 	}
 
 	conversationID, err := client.CreateConversation()
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("create conversation failed: %v", err)
 	}
 
@@ -146,6 +155,7 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 		},
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("run failed:%v", err)
 	}
 	totalAnswer := ""
@@ -171,6 +181,7 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	})
 
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("run failed:%v", err)
 	}
 
@@ -185,12 +196,13 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	log("----------------answer-------------------")
 	log(totalAnswer)
 
-	// 测试通过，打印文件名和测试函数名
-	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
-
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {
+		fmt.Printf("%s========== FAIL:  %s ==========%s\n", "\033[31m", t.Name(), "\033[0m")
 		fmt.Println(logBuffer.String())
+	} else {  // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
 }
 
@@ -206,17 +218,20 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 
 	config, err := NewSDKConfig("", "")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AgentBuidler instance failed")
 	}
 
 	conversationID, err := client.CreateConversation()
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("create conversation failed: %v", err)
 	}
 
@@ -239,6 +254,7 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 	})
 
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("run failed:%v", err)
 	}
 
@@ -249,11 +265,12 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 		}
 	}
 
-	// 测试通过，打印文件名和测试函数名
-	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
-
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		fmt.Println(logBuffer.String())
+	} else {  // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
 }

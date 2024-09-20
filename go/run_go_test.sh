@@ -13,24 +13,14 @@ error_messages=()
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
 
-# 设置 Python 虚拟环境以避免与系统 Python 冲突
-echo "Setting up Python virtual environment..."
-python3 -m venv venv
-
-# 激活虚拟环境
-source venv/bin/activate
-
-# 升级 pip 到最新版本
-pip install --upgrade pip
-
 # 安装 diff-cover 在虚拟环境中
 echo "Installing diff-cover in the virtual environment..."
-pip install diff-cover || { error_flag=1; error_messages+=("Failed to install diff-cover."); }
 
 # 检查 diff-cover 是否已安装
 if ! command -v diff-cover &> /dev/null; then
     error_flag=1
     error_messages+=("diff-cover installation failed. Please check your Python and pip installation.")
+    pip install diff-cover || { error_flag=1; error_messages+=("Failed to install diff-cover."); }
 fi
 
 echo "diff-cover is installed."
@@ -72,100 +62,83 @@ passed_tests=0
 skipped_list=()
 failed_list=()
 
-# 创建一个覆盖率输出文件
-coverage_file="coverage.out"
-echo "mode: atomic" > $coverage_file
+# 创建临时文件用于存储测试输出和覆盖率数据
+test_output=$(mktemp)
+coverage_file=$(mktemp)
 
-# 用于存储后台任务的 PIDs
-pids=()
+# 确保临时文件创建成功
+if [ ! -f "$test_output" ] || [ ! -f "$coverage_file" ]; then
+    echo "无法创建临时文件。"
+    exit 1
+fi
 
-# 用于存储测试结果的文件
-test_results_log=$(mktemp)
+# 运行所有包的测试并保存输出
+echo "运行所有包的测试并生成覆盖率报告..."
+set +e
+go test ./... -coverprofile="$coverage_file" -covermode=atomic -v > "$test_output" 2>&1
+GO_TEST_EXIT_CODE=$?
+set -e
+echo "Go test 退出代码: $GO_TEST_EXIT_CODE"
 
-# 遍历当前目录及子目录中的所有测试文件
-for testfile in $(find . -name '*_test.go'); do
-    # 获取测试文件的包路径
-    pkg=$(dirname "$testfile")
+# 检查覆盖率文件是否生成且非空
+if [ ! -s "$coverage_file" ]; then
+    echo "覆盖率文件未生成或为空。"
+    error_flag=1
+    error_messages+=("Coverage profile not generated or empty.")
+fi
 
-    # 使用 go test -list 来列出文件中的测试函数
-    test_funcs=$(go test -list . $pkg | grep -E '^Test')
+# 解析测试结果
+current_test=""
+while IFS= read -r line; do
+    if [[ "$line" == "=== RUN"* ]]; then
+        # 提取测试函数名称
+        test_name=$(echo "$line" | awk '{print $3}')
+        # 提取包路径
+        pkg=$(echo "$line" | awk '{print $2}' | sed 's/(//;s/)//')
+        current_test="$pkg.$test_name"
+    elif [[ "$line" == "--- PASS:"* ]]; then
+        echo "[OK] $current_test"
+        passed_tests=$((passed_tests + 1))
+        passed_list+=("$current_test")
+    elif [[ "$line" == "--- FAIL:"* ]]; then
+        echo "[FAIL] $current_test"
+        failed_tests=$((failed_tests + 1))
+        failed_list+=("$current_test")
+    elif [[ "$line" == "--- SKIP:"* ]]; then
+        echo "[SKIP] $current_test"
+        skipped_tests=$((skipped_tests + 1))
+        skipped_list+=("$current_test")
+    fi
+done < "$test_output"
 
-    # 遍历找到的测试函数并并发运行它们
-    for func in $test_funcs; do
-        (
-            # 创建一个临时文件
-            temp_file=$(mktemp)
-            coverage_temp_file=$(mktemp)
-
-            echo "Running tests in $testfile (package: $pkg)" > $temp_file
-            echo "Running $func in package $pkg" >> $temp_file
-            go test -coverprofile=$coverage_temp_file -covermode=atomic $pkg -run ^$func$ >> $temp_file 2>&1
-            # 打印临时文件的内容
-            cat $temp_file
-
-            # 分析测试结果
-            if grep -q -- "--- SKIP" $temp_file; then
-                echo "$func SKIP" >> "$test_results_log"
-            elif grep -q -- "--- FAIL" $temp_file; then
-                echo "$func FAIL" >> "$test_results_log"
-                failed_list+=("$func")
-            else
-                echo "$func PASS" >> "$test_results_log"
-                # 合并覆盖率报告
-                tail -n +2 $coverage_temp_file >> $coverage_file
-            fi
-
-            # 删除临时文件
-            rm $temp_file
-            rm $coverage_temp_file
-        ) &
-        # 记录后台任务的 PID
-        pids+=($!)
-    done
-done
-
-# 等待所有后台任务完成
-for pid in "${pids[@]}"; do
-    wait $pid || true # 避免因为某个测试失败而终止所有测试
-done
-
-# 读取测试结果
-while IFS= read -r result; do
-    case $result in
-        *"PASS")
-            passed_tests=$((passed_tests + 1))
-            ;;
-        *"FAIL")
-            failed_tests=$((failed_tests + 1))
-            failed_list+=("${result%% FAIL}")
-            ;;
-        *"SKIP")
-            skipped_tests=$((skipped_tests + 1))
-            skipped_list+=("${result%% SKIP}")
-            ;;
-    esac
-done < "$test_results_log"
-
+# 计算总测试数
 total_tests=$((passed_tests + failed_tests + skipped_tests))
 
-# 输出统计结果
-echo "Total tests: $total_tests"
-echo "Passed tests: $passed_tests"
-echo "Failed tests: $failed_tests"
-if [ $failed_tests -gt 0 ]; then
-    echo "Failed test functions:"
-    for failed in "${failed_list[@]}"; do
-        echo "  $failed"
+# 输出测试总结
+echo ""
+echo "=== 测试总结 ==="
+echo "总测试数: $total_tests"
+echo "成功: $passed_tests"
+echo "失败: $failed_tests"
+echo "跳过: $skipped_tests"
+
+# 检查错误标志，如果有错误则输出错误消息并退出
+if [ $error_flag -ne 0 ]; then
+    echo "在过程中检测到以下错误："
+    for msg in "${error_messages[@]}"; do
+        echo "- $msg"
     done
-    error_flag=1
-    error_messages+=("Some tests failed.")
+    exit 1
 fi
-echo "Skipped tests: $skipped_tests"
-if [ $skipped_tests -gt 0 ]; then
-    echo "Skipped test functions:"
-    for skipped in "${skipped_list[@]}"; do
-        echo "  $skipped"
-    done
+
+# 打印测试失败时的详细日志
+if [ $GO_TEST_EXIT_CODE -ne 0 ]; then
+    echo "测试运行过程中失败，错误代码: $GO_TEST_EXIT_CODE"
+    echo "请查看详细的测试日志："
+    echo "----------------------------------------"
+    cat "$test_output"  # 打印测试的输出日志
+    echo "----------------------------------------"
+    exit 1
 fi
 
 # 输出覆盖率摘要
@@ -224,11 +197,10 @@ fi
 
 # 清理
 rm diff_files.txt
-rm "$test_results_log"
 rm full_diff.patch
-
-# 退出虚拟环境
-deactivate
+# 清理临时文件
+rm "$test_output"
+rm "$coverage_file"
 
 # 检查错误标志，如果有错误则输出错误消息并退出
 if [ $error_flag -ne 0 ]; then

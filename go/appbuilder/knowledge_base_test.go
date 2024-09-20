@@ -36,11 +36,13 @@ func TestAddDocument(t *testing.T) {
 	knowledgeBaseID := os.Getenv(DatasetIDV3)
 	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
 	client, err := NewKnowledgeBase(config)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new Knowledge base instance failed")
 	}
 
@@ -48,12 +50,14 @@ func TestAddDocument(t *testing.T) {
 		KnowledgeBaseID: knowledgeBaseID,
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("get document list failed: %v", err)
 	}
 	log("Documents retrieved: %+v", documentsRes)
 
 	fileID, err := client.UploadFile("./files/test.pdf")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("upload file failed: %v", err)
 	}
 	log("File uploaded with ID: %s", fileID)
@@ -69,6 +73,7 @@ func TestAddDocument(t *testing.T) {
 		},
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("create document failed: %v", err)
 	}
 	log("Document created: %+v", createDocumentRes)
@@ -77,16 +82,18 @@ func TestAddDocument(t *testing.T) {
 		KnowledgeBaseID: knowledgeBaseID,
 		DocumentID:      createDocumentRes.DocumentsIDS[0]})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("delete document failed: %v", err)
 	}
 	log("Document deleted with ID: %s", createDocumentRes.DocumentsIDS[0])
 
-	// 测试通过，打印文件名和测试函数名
-	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
-
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		fmt.Println(logBuffer.String())
+	} else {  // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
 }
 
@@ -102,11 +109,13 @@ func TestCreateKnowledgeBase(t *testing.T) {
 
 	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
 	client, err := NewKnowledgeBase(config)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new Knowledge base instance failed")
 	}
 
@@ -124,6 +133,7 @@ func TestCreateKnowledgeBase(t *testing.T) {
 		},
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("create knowledge base failed: %v", err)
 	}
 	knowledgeBaseID := createKnowledgeBaseRes.ID
@@ -132,6 +142,7 @@ func TestCreateKnowledgeBase(t *testing.T) {
 	// 获取知识库详情
 	getKnowledgeBaseRes, err := client.GetKnowledgeBaseDetail(knowledgeBaseID)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("get knowledge base failed: %v", err)
 	}
 	log("Knowledge base details: %+v", getKnowledgeBaseRes)
@@ -143,6 +154,7 @@ func TestCreateKnowledgeBase(t *testing.T) {
 		},
 	)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("get knowledge base list failed: %v", err)
 	}
 	log("Knowledge base list: %+v", knowledgeBaseListRes)
@@ -176,6 +188,7 @@ func TestCreateKnowledgeBase(t *testing.T) {
 		},
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("create documents failed: %v", err)
 	}
 	log("Documents imported to knowledge base")
@@ -207,6 +220,7 @@ func TestCreateKnowledgeBase(t *testing.T) {
 		},
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("upload documents failed: %v", err)
 	}
 	log("Documents uploaded to knowledge base")
@@ -220,6 +234,7 @@ func TestCreateKnowledgeBase(t *testing.T) {
 		Description: &description,
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("modify knowledge base failed: %v", err)
 	}
 	log("Knowledge base modified with new name: %s", name)
@@ -227,6 +242,7 @@ func TestCreateKnowledgeBase(t *testing.T) {
 	// 删除知识库
 	err = client.DeleteKnowledgeBase(knowledgeBaseID)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("delete knowledge base failed: %v", err)
 	}
 	log("Knowledge base deleted with ID: %s", knowledgeBaseID)
@@ -253,11 +269,13 @@ func TestChunk(t *testing.T) {
 	documentID := os.Getenv(DocumentIDV3)
 	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
 	client, err := NewKnowledgeBase(config)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new Knowledge base instance failed")
 	}
 	// 创建切片
@@ -266,6 +284,7 @@ func TestChunk(t *testing.T) {
 		Content:    "test",
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("create chunk failed: %v", err)
 	}
 	log("Chunk created with ID: %s", chunkID)
@@ -277,6 +296,7 @@ func TestChunk(t *testing.T) {
 		Enable:  true,
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("modify chunk failed: %v", err)
 	}
 	log("Chunk modified with new content")
@@ -284,6 +304,7 @@ func TestChunk(t *testing.T) {
 	// 获取切片详情
 	describeChunkRes, err := client.DescribeChunk(chunkID)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("describe chunk failed: %v", err)
 	}
 	log("Chunk details: %+v", describeChunkRes)
@@ -295,6 +316,7 @@ func TestChunk(t *testing.T) {
 		MaxKeys:    10,
 	})
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("describe chunks failed: %v", err)
 	}
 	log("Chunks described: %+v", describeChunksRes)
@@ -304,15 +326,17 @@ func TestChunk(t *testing.T) {
 	// 删除切片
 	err = client.DeleteChunk(chunkID)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("delete chunk failed: %v", err)
 	}
 	log("Chunk deleted with ID: %s", chunkID)
 
-	// 测试通过，打印文件名和测试函数名
-	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
-
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		fmt.Println(logBuffer.String())
+	} else {  // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
 }

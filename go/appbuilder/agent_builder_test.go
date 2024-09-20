@@ -37,23 +37,28 @@ func TestNewAgentBuilder(t *testing.T) {
 	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	agentBuilder, err := NewAgentBuilder(appID, config)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AgentBuilder instance failed")
 	}
 	conversationID, err := agentBuilder.CreateConversation()
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("create conversation failed: %v", err)
 	}
 	_, err = agentBuilder.UploadLocalFile(conversationID, "./files/test.pdf")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("upload local file failed: %v", err)
 	}
 	i, err := agentBuilder.Run(conversationID, "描述简历中的候选人情况", nil, true)
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("run failed:%v", err)
 	}
 	totalAnswer := ""
@@ -105,12 +110,12 @@ func TestNewAgentBuilder(t *testing.T) {
 	log("----------------answer-------------------")
 	log(totalAnswer)
 
-	// 测试通过，打印文件名和测试函数名
-	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
-
-
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		fmt.Println(logBuffer.String())
+	} else {  // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
 }
