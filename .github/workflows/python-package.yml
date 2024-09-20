@@ -317,7 +317,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install lxml
+        pip install gitpython lxml
     - name: Install dependencies
       run: |
         echo $APPBUILDER_JAVA_TESTS
