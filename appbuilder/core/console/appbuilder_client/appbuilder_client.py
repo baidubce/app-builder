@@ -299,7 +299,7 @@ class AppBuilderClient(Component):
                 service_err_message="message={}".format(data["message"]),
             )
     
-    def create_langchain_tool(self, *kwargs):
+    def create_langchain_tool(self, name:str="", description:str="", **kwargs):
         try:
             from langchain_core.tools import StructuredTool
         except ImportError:
@@ -319,6 +319,9 @@ class AppBuilderClient(Component):
             args_schema=args_schema,
             return_direct=return_direct
         )
+
+    def appbuilder_client_tool_implement(self, **kwargs):
+        pass
 
 
 class AgentBuilder(AppBuilderClient):
