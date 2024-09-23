@@ -298,6 +298,30 @@ class AppBuilderClient(Component):
                 service_err_code=data["code"],
                 service_err_message="message={}".format(data["message"]),
             )
+    
+    def create_langchain_tool(self, name:str="", description:str="", **kwargs):
+        try:
+            from langchain_core.tools import StructuredTool
+        except ImportError:
+            raise ImportError(
+                "Please install langchain to use create_langchain_tool.")
+        
+        pass
+        func = None
+        name = None
+        description = None
+        args_schema = None
+        return_direct = False
+        return StructuredTool.from_function(
+            func=func,
+            name=name,
+            description=description,
+            args_schema=args_schema,
+            return_direct=return_direct
+        )
+
+    def appbuilder_client_tool_implement(self, **kwargs):
+        pass
 
 
 class AgentBuilder(AppBuilderClient):
