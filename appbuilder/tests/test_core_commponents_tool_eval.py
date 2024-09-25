@@ -22,7 +22,7 @@ import pandas as pd
 from appbuilder.core.component import Component
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core._exception import AppbuilderBuildexException
-from appbuilder.tests.component_check.check_base import ComponentCheckBase
+from appbuilder import ComponentCheckBase
 
 def check_ancestor(cls):
     parent_cls = Component
@@ -65,6 +65,7 @@ def find_tool_eval_components():
                 try:
                     spec.loader.exec_module(module)
                 except Exception as e:
+                    print(e)
                     continue
 
                 # 查找继承自 Component 的类
@@ -94,7 +95,7 @@ def write_error_data(error_df,error_stats):
             file.write(f"错误信息: {error}, 出现次数: {count}\n")
     print(f"\n错误信息已写入: {txt_file_path}")
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
     def setUp(self) -> None:
         self.tool_eval_components = find_tool_eval_components()
@@ -103,6 +104,7 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
 
     def test_component(self):
         error_data = []
+        error_stats ={}
         for name, cls in self.tool_eval_components:
             try:
                 pass_check, reasons = self.component_check_base.notify(cls)

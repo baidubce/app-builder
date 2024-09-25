@@ -147,6 +147,8 @@ from appbuilder.core.assistant.threads.runs import AssistantStreamManager
 
 from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
 
+from appbuilder.tests import ComponentCheckBase
+
 __all__ = [
     'logger',
 

@@ -32,7 +32,7 @@ class RuleBase(object):
         self.invalid = False
 
 
-class ComponentCheckBase(Singleton):
+class ComponentCheckBase(metaclass=Singleton):
     def __init__(self):
         self.rules = {}
 
