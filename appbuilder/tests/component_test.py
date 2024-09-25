@@ -9,16 +9,6 @@ from unittest.mock  import Mock
 from appbuilder.core import components
 from appbuilder.core._session import InnerSession
 
-
-Data_Type = {
-    'string': str,
-    'integer': int,
-    'object': int,
-    'array': list,
-    'boolean': bool,
-    'null': None,
-}
-
 class AppbuilderTestToolEval: 
     """
     功能:Components组件模拟post本地运行。

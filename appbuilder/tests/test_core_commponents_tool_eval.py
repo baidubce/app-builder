@@ -21,8 +21,8 @@ import pandas as pd
 
 from appbuilder.core.component import Component
 from appbuilder.core.components.llms.base import CompletionBaseComponent
-from appbuilder import AutomaticTestToolEval
 from appbuilder.core._exception import AppbuilderBuildexException
+from appbuilder.tests.component_check.check_base import ComponentCheckBase
 
 def check_ancestor(cls):
     parent_cls = Component
@@ -99,62 +99,20 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
     def setUp(self) -> None:
         self.tool_eval_components = find_tool_eval_components()
         self.whitelist_components = read_whitelist_components()
+        self.component_check_base = ComponentCheckBase()
 
-    def test_manifests(self):
-        """
-        要求必填，格式:  list[dict]，dict字段为
-        * "name"：str，要求不重复
-        * "description"：str，对于组件tool_eval函数功能的描述
-        * "parameters"：json_schema，对于tool_eval函数入参的描述，json_schema格式要求见https://json-schema.org/understanding-json-schema
-        """
-        print("完成manifests测试的组件:")
-        for name, cls in self.tool_eval_components:
-            init_signature = inspect.signature(cls.__init__)
-            params = init_signature.parameters
-            mock_args = {}
-            for parameter_name, param in params.items():
-                # 跳过 'self' 参数
-                if parameter_name == 'self':
-                    continue
-                if parameter_name == 'model' or name == 'model_name':
-                    mock_args[parameter_name] = appbuilder.get_model_list()[0]
-            app = cls(**mock_args)
-            manifests = app.manifests
-
-            assert isinstance(manifests, list)
-            assert len(manifests) > 0
-            assert isinstance(manifests[0],dict)
-            assert isinstance(manifests[0]['name'], str)
-            assert isinstance(manifests[0]['description'], str)
-            assert isinstance(manifests[0]['parameters'], dict)
-            print("组件名称:{}".format(name))                        
-
-    def test_tool_eval(self):
-        """
-        测试tool_eval组件，收集报错信息，生成并存储报错信息表格，并进行统计和可视化。
-        """
-        print("完成tool_eval测试的组件:")
+    def test_component(self):
         error_data = []
-        
         for name, cls in self.tool_eval_components:
-            init_signature = inspect.signature(cls.__init__)
-            params = init_signature.parameters
-            mock_args = {}
-            for parameter_name, param in params.items():
-                # 跳过 'self' 参数
-                if parameter_name == 'self':
-                    continue
-                if parameter_name == 'model' or name == 'model_name':
-                    mock_args[parameter_name] = appbuilder.get_model_list()[0]
-            app = cls(**mock_args)
             try:
-                AutomaticTestToolEval(app)
-                print("组件名称:{} 通过测试".format(name))
+                pass_check, reasons = self.component_check_base.notify(cls)
             except Exception as e:
                 error_data.append({"Component Name": name, "Error Message": str(e)})
-                print("组件名称:{} 错误信息:{}".format(name, e))
+                print("组件名称:{} 错误信息:{}".format(name, ", ".join(reasons)))
+            if not pass_check:
+                error_data.append({"Component Name": name, "Error Message": ", ".join(reasons)})
+                print("组件名称:{} 错误信息:{}".format(name, ", ".join(reasons)))
 
-        # 将错误信息表格存储在本地变量中
         error_df = pd.DataFrame(error_data) if error_data else None
         
         if error_df is not None:
@@ -179,6 +137,7 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
                 print("{}zu白名单中，暂时忽略报错。".format(component_name))
             else:
                 raise AppbuilderBuildexException(f"组件 {component_name} 未在白名单中，请检查是否需要添加到白名单。")
+
 
 if __name__ == '__main__':
     unittest.main() 
