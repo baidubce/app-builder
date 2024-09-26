@@ -46,37 +46,41 @@ def find_tool_eval_components():
     print(current_file_path)
     components = []
     added_components = set()
-    base_path = current_file_path.split('/')
-    base_path = base_path[:-2]+['core', 'components']
-    base_path = '/'.join(base_path)
+
+    # 调整路径以适应不同操作系统
+    base_path = current_file_path.split(os.path.sep)
+    base_path = base_path[:-2] + ['core', 'components']
+    base_path = os.path.sep.join(base_path)
     print(base_path)
 
     for root, _, files in os.walk(base_path):
         for file in files:
             if file.endswith(".py"):
                 module_path = os.path.join(root, file)
-                module_name = module_path.replace(base_path, '').replace('/', '.').replace('\\', '.').strip('.')
+                module_name = module_path.replace(base_path, '').replace(os.path.sep, '.').strip('.')
                 
-                # 动态加载模块
+                if module_name in added_components:
+                    continue
                 spec = importlib.util.spec_from_file_location(module_name, module_path)
                 if spec is None:
                     continue
                 module = importlib.util.module_from_spec(spec)
                 try:
+                    print(f"正在加载模块: {module}")
                     spec.loader.exec_module(module)
                 except Exception as e:
-                    print(e)
+                    print(f"加载模块 {module_name} 出错: {e}")
                     continue
 
-                # 查找继承自 Component 的类
+                # 查找包含 tool_eval 方法的类
                 for name, obj in inspect.getmembers(module, inspect.isclass):
-                    has_tool_eval = 'tool_eval' in obj.__dict__ and callable(getattr(obj, 'tool_eval', None))
-                    if has_tool_eval and obj.__name__ not in added_components and check_ancestor(obj):
-                        added_components.add(obj.__name__)
-                        components.append((name, obj))
-
+                    # has_tool_eval = 'tool_eval' in obj.__dict__ and callable(getattr(obj, 'tool_eval', None))
+                    # if has_tool_eval and obj.__name__ not in added_components and check_ancestor(obj):
+                    added_components.add(obj.__name__)
+                    components.append((name, obj))
+    for name, cls in components:
+        print(f"{name}=== {cls}")
     return components
-
 
 def read_whitelist_components():
     with open('whitelist_components.txt', 'r') as f:
