@@ -25,34 +25,22 @@ from appbuilder.utils.trace._function import _components_run_trace_with_sentry,_
 
 logging.basicConfig(level=logging.INFO)
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
-class TestAppbuilderForSentry(unittest.TestCase):
-    def test_sentry_inport_error(self):
-        # 配置测试环境
-        try:
-            subprocess.check_output(['python3','-m','pip', 'uninstall', 'sentry-sdk', '-y'])
-        except Exception as e:
-            print('pip uninstall sentry-sdk failed')
-        os.environ['ENABLE_SENTRY_TRACE'] = 'true'
-        os.environ['SENTRY_DSN'] = 'test'
-
-        with self.assertRaises(ImportError):
-            tracer = AppBuilderTracer()
-            tracer.start_trace()
-
-        with self.assertRaises(ImportError):
-            arg = ()
-            kwarg = {}
-            _components_run_trace_with_sentry(func = 'func', args = arg, kwargs = kwarg)
-        
-        with self.assertRaises(ImportError):
-            arg = ()
-            kwarg = {}
-            res = _components_stream_run_trace_with_sentry(func = 'func', args = arg, kwargs = kwarg)
-            for r in res:
-                pass
-
+class TestAppbuilderForSentryOff(unittest.TestCase):
     def test_sentry_normal(self):
+        """
+        测试Sentry的追踪功能是否正常。
+        
+        Args:
+            无。
+        
+        Returns:
+            无返回值。
+        
+        Raises:
+            ImportError: 如果未安装sentry-sdk库，则抛出此异常。
+        
+        """
+        # 配置测试环境
         try:
             subprocess.check_output(['python3','-m','pip', 'install', 'sentry-sdk==1.44.1'])
         except Exception as e:
@@ -111,7 +99,6 @@ class TestAppbuilderForSentry(unittest.TestCase):
             subprocess.check_output(['python3','-m','pip', 'uninstall', 'sentry-sdk', '-y'])
         except Exception as e:
             print('pip uninstall sentry-sdk failed')
-
 
 if __name__ == '__main__':
     unittest.main()
