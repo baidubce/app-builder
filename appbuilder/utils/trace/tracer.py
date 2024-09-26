@@ -33,8 +33,10 @@ from appbuilder.utils.trace._function import(
     _assistant_run_trace,
     _assistant_stream_trace,
     _assistant_stream_run_with_handler_trace,
-    _components_run_trace,
-    _components_stream_run_trace,
+    _components_run_trace_with_opentelemetry,
+    _components_run_trace_with_sentry,
+    _components_stream_run_trace_with_opentelemetry,
+    _components_stream_run_trace_with_sentry,
     _list_trace,
     )
 from appbuilder import logger
@@ -92,10 +94,14 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         
         # 判断是否启用Sentry跟踪，如果启用，则创建虚拟的的Tracer,仅对Components组件生效
         if os.environ.get('ENABLE_SENTRY_TRACE', None).lower() == 'true' and os.environ.get('SENTRY_DSN', None):
+            try:
+                import sentry_sdk
+            except:
+                raise ImportError("sentry-sdk is not installed.")
             self.sentry_trace = True
         else:
             self.sentry_trace = False
-        
+
         if self.sentry_trace:
             tracer = None
         else:
@@ -165,10 +171,16 @@ class AppbuilderInstrumentor(BaseInstrumentor):
             return _assistant_stream_run_with_handler_trace(tracer, self._original_assistant_stream_run_with_handler, *args, **kwargs)
         
         def _appbuilder_components_run_trace(wrapped, instance, args, kwargs):
-            return _components_run_trace(tracer, self._orignal_components_run, *args, **kwargs)
+            return _components_run_trace_with_opentelemetry(tracer, self._orignal_components_run, *args, **kwargs)
 
+        def _appbuilder_components_run_trace_with_sentry(wrapped, instance, args, kwargs):
+            return _components_run_trace_with_sentry(self._orignal_components_run, *args, **kwargs)
+        
         def _appbuilder_components_run_stream_trace(wrapped, instance, args, kwargs):
-            return _components_stream_run_trace(tracer, self._original_components_stream_run, *args, **kwargs)
+            return _components_stream_run_trace_with_opentelemetry(tracer, self._original_components_stream_run, *args, **kwargs)
+        
+        def _appbuilder_components_run_stream_trace_with_sentry(wrapped, instance, args, kwargs):
+            return _components_stream_run_trace_with_sentry(self._original_components_stream_run, *args, **kwargs)
         
         def _appbuilder_list_trace(wrapped, instance, args, kwargs):
             return _list_trace(tracer, self._original_list, *args, **kwargs)
@@ -224,17 +236,29 @@ class AppbuilderInstrumentor(BaseInstrumentor):
                     wrapper= _appbuilder_list_trace
                 )
 
-            wrap_function_wrapper(
-                module= _MODULE_1, 
-                name = 'utils.trace.tracer_wrapper.components_run_trace_func',
-                wrapper= _appbuilder_components_run_trace
-            )
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.components_run_trace_func',
+                    wrapper= _appbuilder_components_run_trace
+                )
 
-            wrap_function_wrapper(
-                module= _MODULE_1, 
-                name = 'utils.trace.tracer_wrapper.components_run_stream_trace_func',
-                wrapper= _appbuilder_components_run_stream_trace
-            )
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.components_run_stream_trace_func',
+                    wrapper= _appbuilder_components_run_stream_trace
+                )
+            else:
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.components_run_trace_func',
+                    wrapper= _appbuilder_components_run_trace_with_sentry
+                )
+
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.components_run_stream_trace_func',
+                    wrapper= _appbuilder_components_run_stream_trace_with_sentry
+                )
 
         if not appbuilder:
             raise Exception("appbuilder not found")
