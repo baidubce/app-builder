@@ -128,7 +128,7 @@ def _input(args,kwargs,span):
                 elif isinstance(value, Message):
                     input_dict[key] = str(value)
         if input_dict:
-            if os.environ.get('OPENINFERENCE_TRACE','true').lower() == 'true' and os.environ.get('SENTRY_DSN', None):
+            if os.environ.get('OPENINFERENCE_TRACE','true') == 'true' and os.environ.get('SENTRY_DSN', None):
                 span.set_data("input-value",json.dumps(input_dict, ensure_ascii=False))
             else:
                 span.set_attribute("input.value",json.dumps(input_dict, ensure_ascii=False))

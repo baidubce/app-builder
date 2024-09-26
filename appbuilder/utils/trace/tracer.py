@@ -93,7 +93,7 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         self._instrumented = True
         
         # 判断是否启用Sentry跟踪，如果启用，则创建虚拟的的Tracer,仅对Components组件生效
-        if os.environ.get('ENABLE_SENTRY_TRACE', None).lower() == 'true' and os.environ.get('SENTRY_DSN', None):
+        if os.environ.get('ENABLE_SENTRY_TRACE', None) == 'true' and os.environ.get('SENTRY_DSN', None):
             try:
                 import sentry_sdk
             except:
