@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
     branches: [ "master" ]
-  pull_request:
+  pull_request_target:
     branches: [ "master" ]
 
 jobs:
@@ -40,12 +40,12 @@ jobs:
   Linux-CI-Tests:
     runs-on: ubuntu-latest
     env:
-      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
-      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-xKvnRD8ybhsGkN88XxZ6Z/34adbccbc144e9677f8d244ee83271f9a11a70f7
-      BAIDU_VDB_API_KEY: apaasTest1
-      INSTANCE_ID: vdb-bj-vuzmppgqrnhv
-      DATASET_ID: 56e82915-9642-4a03-bb02-74744c17863e
-      APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-bcKsgHd39g0Aaq3nCYUUQ/b06384229df1462c6fb011383d09230346a20ac4
+      APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
+      APPBUILDER_TOKEN_V2: ${{ secrets.APPBUILDER_TOKEN_V2 }}
+      BAIDU_VDB_API_KEY: ${{ secrets.BAIDU_VDB_API_KEY }}
+      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      DATASET_ID: ${{ secrets.DATASET_ID }}
+      APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
     strategy:
       fail-fast: false
       matrix:
@@ -149,16 +149,16 @@ jobs:
   Go-Test-CI:
     runs-on: ubuntu-latest
     env:
-      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
-      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
-      BAIDU_VDB_API_KEY: apaasTest1
-      INSTANCE_ID: vdb-bj-vuzmppgqrnhv
-      DATASET_ID: 2626a842-132f-45ce-977f-f701d18fd104
-      APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-bcKsgHd39g0Aaq3nCYUUQ/b06384229df1462c6fb011383d09230346a20ac4
+      APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
+      APPBUILDER_TOKEN_V2: ${{ secrets.APPBUILDER_TOKEN_V2 }}
+      BAIDU_VDB_API_KEY: ${{ secrets.BAIDU_VDB_API_KEY }}
+      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      DATASET_ID: ${{ secrets.DATASET_ID }}
+      APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
  
-      APPBUILDER_TOKEN_V3: bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5
-      DATASET_ID_V3: 4b2357ff-b7d5-4573-9187-ee29af2f8373
-      DOCUMENT_ID_V3: 120619f2-1b85-4e09-a36d-fc682168d09c
+      APPBUILDER_TOKEN_V3: ${{ secrets.APPBUILDER_TOKEN_V3 }}
+      DATASET_ID_V3: ${{ secrets.DATASET_ID_V3 }}
+      DOCUMENT_ID_V3: ${{ secrets.DOCUMENT_ID_V3 }}
     strategy:
       fail-fast: false
       matrix:
@@ -244,16 +244,16 @@ jobs:
   Java-CI-Tests:
     runs-on: ubuntu-latest
     env:
-      APPBUILDER_TOKEN: bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd
-      APPBUILDER_TOKEN_V2: bce-v3/ALTAK-zX2OwTWGE9JxXSKxcBYQp/7dd073d9129c01c617ef76d8b7220a74835eb2f4
-      BAIDU_VDB_API_KEY: apaasTest1
-      INSTANCE_ID: vdb-bj-vuzmppgqrnhv
-      DATASET_ID: 2626a842-132f-45ce-977f-f701d18fd104
-      APPBUILDER_TOKEN_DOC_FORMAT: bce-v3/ALTAK-bcKsgHd39g0Aaq3nCYUUQ/b06384229df1462c6fb011383d09230346a20ac4
+      APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
+      APPBUILDER_TOKEN_V2: ${{ secrets.APPBUILDER_TOKEN_V2 }}
+      BAIDU_VDB_API_KEY: ${{ secrets.BAIDU_VDB_API_KEY }}
+      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      DATASET_ID: ${{ secrets.DATASET_ID }}
+      APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
  
-      APPBUILDER_TOKEN_V3: bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5
-      DATASET_ID_V3: 4b2357ff-b7d5-4573-9187-ee29af2f8373
-      DOCUMENT_ID_V3: 120619f2-1b85-4e09-a36d-fc682168d09c
+      APPBUILDER_TOKEN_V3: ${{ secrets.APPBUILDER_TOKEN_V3 }}
+      DATASET_ID_V3: ${{ secrets.DATASET_ID_V3 }}
+      DOCUMENT_ID_V3: ${{ secrets.DOCUMENT_ID_V3 }}
     strategy:
       fail-fast: false
       matrix:
