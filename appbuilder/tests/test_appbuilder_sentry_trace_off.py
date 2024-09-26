@@ -25,7 +25,7 @@ from appbuilder.utils.trace._function import _components_run_trace_with_sentry,_
 
 logging.basicConfig(level=logging.INFO)
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppbuilderForSentryOff(unittest.TestCase):
 
     def test_sentry_inport_error(self):
