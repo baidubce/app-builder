@@ -114,9 +114,11 @@ def parse_jacoco():
     # 初始化总计数器
     total_lines_missed = 0
     total_lines_covered = 0
+    total_branches_missed = 0
+    total_branches_covered = 0
 
     # 创建数据表
-    table_data = [["Class", "Line Coverage (%)", "Missing Lines"]]
+    table_data = [["Class", "Line Coverage (%)", "Branch Coverage (%)", "Missing Lines", "Missing Branches"]]
 
     # 初始化存储结果的字典
     coverage_data = {}
@@ -124,6 +126,8 @@ def parse_jacoco():
     # 遍历所有 class 元素
     for class_element in root.findall('.//class'):
         class_name = class_element.get('name')
+
+        # 行覆盖率
         counter_line = class_element.find("counter[@type='LINE']")
         if counter_line is not None:
             lines_missed = int(counter_line.get('missed', '0'))
@@ -134,6 +138,26 @@ def parse_jacoco():
 
         total_lines_missed += lines_missed
         total_lines_covered += lines_covered
+
+        # 分支覆盖率
+        counter_branch = class_element.find("counter[@type='BRANCH']")
+        if counter_branch is not None:
+            branches_missed = int(counter_branch.get('missed', '0'))
+            branches_covered = int(counter_branch.get('covered', '0'))
+            total_branches = branches_missed + branches_covered
+            if total_branches > 0:
+                branch_coverage = f"{(branches_covered / total_branches) * 100:.2f}%"
+            else:
+                branch_coverage = "N/A"
+        else:
+            branches_missed = 0
+            branches_covered = 0
+            branch_coverage = "N/A"
+
+        total_lines_missed += lines_missed
+        total_lines_covered += lines_covered
+        total_branches_missed += branches_missed
+        total_branches_covered += branches_covered
 
         # 获取 sourcefilename 属性
         sourcefilename = class_element.get('sourcefilename')
@@ -149,21 +173,31 @@ def parse_jacoco():
                         if line.get('mi') and int(line.get('mi')) > 0
                     ]
                     missing_lines_str = ",".join(map(str, missing_lines)) if missing_lines else "-"
+                    # 查找 mb > 0 的分支（未覆盖的分支）
+                    missing_branches = [
+                        int(line.get('nr')) 
+                        for line in sourcefile_element.findall('line') 
+                        if line.get('mb') and int(line.get('mb')) > 0
+                    ]
+                    missing_branches_str = ",".join(map(str, missing_branches)) if missing_branches else "-"
                 else:
                     missing_lines_str = "N/A"
+                    missing_branches_str = "N/A"
             else:
                 missing_lines_str = "N/A"
+                missing_branches_str = "N/A"
         else:
             missing_lines_str = "N/A"
+            missing_branches_str = "N/A"
 
         # 计算行覆盖率
         total_lines = lines_missed + lines_covered
         if total_lines > 0:
-            coverage = (lines_covered / total_lines) * 100
+            line_coverage = (lines_covered / total_lines) * 100
         else:
-            coverage = 0.0
+            line_coverage = 0.0
 
-        table_data.append([class_name, f"{coverage:.2f}%", missing_lines_str])
+        table_data.append([class_name, f"{line_coverage:.2f}%", branch_coverage, missing_lines_str, missing_branches_str])
 
         # Populate coverage_data dictionary if there are missing lines
         if missing_lines_str != "N/A" and missing_lines_str != "-":
@@ -172,13 +206,19 @@ def parse_jacoco():
     # 计算总覆盖率
     total_lines = total_lines_missed + total_lines_covered
     if total_lines > 0:
-        total_coverage = (total_lines_covered / total_lines) * 100
+        total_line_coverage = (total_lines_covered / total_lines) * 100
     else:
-        total_coverage = 0.0
+        total_line_coverage = 0.0
+
+    total_branches = total_branches_missed + total_branches_covered
+    if total_branches > 0:
+        total_branch_coverage = (total_branches_covered / total_branches) * 100
+    else:
+        total_branch_coverage = "N/A"
 
     # 添加总覆盖率到数据表
-    table_data.append(["-----------------------------", "----------------", "----------------"])
-    table_data.append(["Total Line Coverage:", f"{total_coverage:.2f}%", ""])
+    table_data.append(["-----------------------------", "----------------", "----------------", "----------------", "----------------"])
+    table_data.append(["Total Coverage:", f"{total_line_coverage:.2f}%", f"{total_branch_coverage}", "", ""])
 
     # 计算每列的最大宽度
     num_columns = len(table_data[0])
