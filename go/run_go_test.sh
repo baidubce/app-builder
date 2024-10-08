@@ -73,6 +73,7 @@ fi
 # 运行所有包的测试并保存输出
 echo "运行所有包的测试并生成覆盖率报告..."
 set +e
+cd appbuilder
 go test ./... -coverprofile="$coverage_file" -covermode=atomic -v > "$test_output" 2>&1
 GO_TEST_EXIT_CODE=$?
 set -e
