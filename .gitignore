@@ -135,3 +135,17 @@ chainlit.md
 
 # sqlite
 *.db
+go/coverage.json
+.gitignore
+go/coveragess.xml
+go/coverage.out
+go/coverage_full.html
+java/coverage_diff.json
+.gitignore
+.gitignore
+go/analyze_coverage.py
+java/coverage_diff_custom.html
+.gitignore
+java/coverage_diff.html
+java/coverage_report.txt
+coverage_diff_custom.html
