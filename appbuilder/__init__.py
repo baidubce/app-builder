@@ -56,10 +56,8 @@ def get_default_header():
     return copy.deepcopy(default_header)
 
 
-from .core import *
 from .core.components.rag_with_baidu_search_pro import RagWithBaiduSearchPro
 from .core.components.rag_with_baidu_search import RAGWithBaiduSearch
-from .core import console
 from .core.components.excel2figure import Excel2Figure
 from .core.components.llms.mrc import MRC
 from .core.components.llms.oral_query_generation import OralQueryGeneration
@@ -114,6 +112,58 @@ from .core.components.handwrite_ocr.component import HandwriteOCR
 from .core.components.image_understand.component import ImageUnderstand
 from .core.components.mix_card_ocr.component import MixCardOCR
 
+__COMPONENTS__ = [
+    "RagWithBaiduSearchPro",
+    "RAGWithBaiduSearch",
+    "Excel2Figure",
+    "MRC",
+    "OralQueryGeneration",
+    "QAPairMining",
+    "SimilarQuestion",
+    "StyleWriting",
+    "StyleRewrite",
+    "TagExtraction",
+    "NL2pandasComponent",
+    "QueryRewrite",
+    "DialogSummary",
+    "HallucinationDetection",
+    "Playground",
+    "ASR",
+    "GeneralOCR",
+    "ObjectRecognition",
+    "Text2Image",
+    "LandmarkRecognition",
+    "TTS",
+    "ExtractTableFromDoc",
+    "DocParser",
+    "DocSplitter",
+    "BESRetriever",
+    "BESVectorStoreIndex",
+    "BaiduVDBVectorStoreIndex",
+    "BaiduVDBRetriever",
+    "TableParams",
+    "Reranker",
+    "PPTGenerationFromInstruction",
+    "PPTGenerationFromPaper",
+    "PPTGenerationFromFile",
+    "DishRecognition",
+    "Translation",
+    "AnimalRecognition",
+    "DocCropEnhance",
+    "QRcodeOCR",
+    "TableOCR",
+    "DocFormatConverter",
+    "Embedding",
+    "Matching",
+    "NL2Sql",
+    "SelectTable",
+    "PlantRecognition",
+    "HandwriteOCR",
+    "ImageUnderstand",
+    "MixCardOCR",
+]
+
+
 from .tests.component_test import AppbuilderTestToolEval, AutomaticTestToolEval
 
 from appbuilder.core.message import Message
@@ -149,9 +199,8 @@ from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrument
 
 from appbuilder.tests import ComponentCheckBase
 
-__all__ = [
+__all__ = __COMPONENTS__ + [
     'logger',
-
     'BadRequestException',
     'ForbiddenException',
     'NotFoundException',
@@ -160,62 +209,10 @@ __all__ = [
     'HTTPConnectionException',
     'AppBuilderServerException',
 
-    'StyleWriting',
-    'MRC',
-    'Playground',
-    'OralQueryGeneration',
-    'QAPairMining',
-    'SimilarQuestion',
-    'IsComplexQuery',
-    'QueryDecomposition',
-    'TagExtraction',
-    'StyleRewrite',
-    'QueryRewrite',
-    'DialogSummary',
-    'ASR',
-    'GeneralOCR',
-    'ObjectRecognition',
-    'Text2Image',
-    'LandmarkRecognition',
-    'TTS',
-    "ExtractTableFromDoc",
-    "DocParser",
-    "ParserConfig",
-    "DocSplitter",
-    "BESRetriever",
-    "BESVectorStoreIndex",
-    "BaiduVDBVectorStoreIndex",
-    "BaiduVDBRetriever",
-    "TableParams",
-    "Reranker",
-    "HallucinationDetection",
-
-    'DishRecognition',
-    'Translation',
-    'Message',
-    'AnimalRecognition',
-    'DocCropEnhance',
-    'QRcodeOCR',
-    'TableOCR',
-
-    'Embedding',
-
-    'Matching',
-
-    "PlantRecognition",
-    "HandwriteOCR",
-    "ImageUnderstand",
-    "MixCardOCR",
-
-    'PPTGenerationFromInstruction',
-    'PPTGenerationFromPaper',
-    'PPTGenerationFromFile',
-
     'AppbuilderTestToolEval',
     'AutomaticTestToolEval',
 
     "get_model_list",
-
     "AppBuilderClient",
     "AgentBuilder",
     "get_app_list",
