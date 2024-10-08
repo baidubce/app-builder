@@ -32,7 +32,7 @@ implementation 'com.baidubce:appbuilder:0.9.4'
 点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/0.9.4/appbuilder-0.9.4.jar) 下载Jar包，将Jar包导入到项目目录下。
 
 ### Go (仅支持调用端到端应用)
-> 支持Go 1.18.1以上版本
+> 支持Go 1.18.1以上版本，当前最新tag为0.9.5
 
 ```shell
 go get github.com/baidubce/app-builder/go/appbuilder
