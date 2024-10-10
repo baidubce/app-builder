@@ -229,7 +229,6 @@ from .core._exception import (
 
 from appbuilder.utils.logger_util import logger
 from appbuilder.tests import ComponentCheckBase
-from .tests.component_test import AppbuilderTestToolEval, AutomaticTestToolEval
 from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
 
 __UTILS__ = [
