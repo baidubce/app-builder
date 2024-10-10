@@ -509,21 +509,18 @@ def _client_run_trace(tracer, func, *args, **kwargs):
     sig = inspect.signature(args[0])
     params = sig.parameters
     stream = False
-    try:
-        if args:
-            for idx, value in enumerate(list(args)):
-                if list(params)[idx-1] == 'stream':
-                   stream = value
-        if kwargs:
-            for key, value in dict(kwargs).items():
-                if key == 'stream':
-                    stream = value
-        if stream:
-            return _client_run_trace_stream(tracer, func, *args, **kwargs)
-        if not stream:
-            return _client_run_trace_un_stream(tracer, func, *args, **kwargs)
-    except Exception as e:
-        print(e)
+    if args:
+        for idx, value in enumerate(list(args)):
+            if list(params)[idx-1] == 'stream':
+                stream = value
+    if kwargs:
+        for key, value in dict(kwargs).items():
+            if key == 'stream':
+                stream = value
+    if stream:
+        return _client_run_trace_stream(tracer, func, *args, **kwargs)
+    if not stream:
+        return _client_run_trace_un_stream(tracer, func, *args, **kwargs)
 
     
 def _client_tool_trace(tracer, func, *args, **kwargs):
@@ -619,26 +616,22 @@ def _assistant_stream_trace(tracer, func, *args, **kwargs):
         span.set_attribute("openinference.span.kind",'Agent')
         _input(args = args, kwargs = kwargs, span=span)
         run_list = []
-        try:
-            new_span = tracer.start_span("Assistant-stream_run")
-            for message in result:
-                new_span.set_attribute("openinference.span.kind",'agent')
-                if message.event == "status":
-                    new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
-                elif message.event == "message":
-                    new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
-                    if hasattr(message, 'content') and message.content and hasattr(message.content[0], 'text') and message.content[0].text and hasattr(message.content[0].text, 'value'):
-                        run_list.append(message.content[0].text.value)
-                new_span.end()
-                new_span = tracer.start_span('Assistant-Stream_run')
-                yield message
-        except Exception as e:
-            print(e)
-        finally:
-            end_time = time.time()  
-            _time(start_time = start_time,end_time = end_time,span = span)
-            result_str = ''.join(str(res) for res in run_list)
-            span.set_attribute("output.value",result_str)
+        new_span = tracer.start_span("Assistant-stream_run")
+        for message in result:
+            new_span.set_attribute("openinference.span.kind",'agent')
+            if message.event == "status":
+                new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
+            elif message.event == "message":
+                new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
+                if hasattr(message, 'content') and message.content and hasattr(message.content[0], 'text') and message.content[0].text and hasattr(message.content[0].text, 'value'):
+                    run_list.append(message.content[0].text.value)
+            new_span.end()
+            new_span = tracer.start_span('Assistant-Stream_run')
+            yield message
+        end_time = time.time()  
+        _time(start_time = start_time,end_time = end_time,span = span)
+        result_str = ''.join(str(res) for res in run_list)
+        span.set_attribute("output.value",result_str)
 
 
 def _assistant_stream_run_with_handler_trace(tracer, func, *args, **kwargs):
@@ -739,26 +732,22 @@ def _components_stream_run_trace_with_opentelemetry(tracer, func, *args, **kwarg
         span.set_attribute("openinference.span.kind",'tool')
         _input(args = args, kwargs = kwargs, span=span)
         run_list = [] 
-        try:   
-            for item in func(*args, **kwargs):  
-                with tracer.start_as_current_span('Component-Stream') as new_span:  
-                    new_span.set_attribute("openinference.span.kind",'tool')
-                    new_span.set_attribute("output.value", "{}".format(json.dumps(item, ensure_ascii=False)))
-                    if isinstance(item, dict):
-                        run_list.append(item.get('text', None))
-                    else:
-                        try:
-                            run_list.append(str(item))
-                        except:
-                            print("message can't to be str")
-                yield item
-        except Exception as e:  
-            print(e)
-        finally:  
-            end_time = time.time()  
-            _time(start_time = start_time,end_time = end_time,span = span)
-            result_str = ''.join(str(res) for res in run_list)
-            span.set_attribute("output.value",result_str)
+        for item in func(*args, **kwargs):  
+            with tracer.start_as_current_span('Component-Stream') as new_span:  
+                new_span.set_attribute("openinference.span.kind",'tool')
+                new_span.set_attribute("output.value", "{}".format(json.dumps(item, ensure_ascii=False)))
+                if isinstance(item, dict):
+                    run_list.append(item.get('text', None))
+                else:
+                    try:
+                        run_list.append(str(item))
+                    except:
+                        print("message can't to be str")
+            yield item
+        end_time = time.time()  
+        _time(start_time = start_time,end_time = end_time,span = span)
+        result_str = ''.join(str(res) for res in run_list)
+        span.set_attribute("output.value",result_str)
 
 def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
      """
@@ -781,24 +770,20 @@ def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
         span.set_data("Span-kind", "Components-Tool-Eval")
         _input(args = args, kwargs = kwargs, span=span)
         run_list = []
-        try:   
-            for item in func(*args, **kwargs):  
-                with sentry_sdk.start_span(op=_tool_name(args=args), description=_tool_name(args=args)) as new_span:  
-                    new_span.set_data("Span-kind",'tool')
-                    new_span.set_data("output-value", "{}".format(json.dumps(item, ensure_ascii=False)))
-                    if isinstance(item, dict):
-                        run_list.append(item.get('text', None))
-                    else:
-                        try:
-                            run_list.append(str(item))
-                        except:
-                            print("message can't to be str")
-                yield item
-        except Exception as e:  
-            print(e)
-        finally:  
-            result_str = ''.join(str(res) for res in run_list)
-            span.set_data("output-value",result_str)
+        for item in func(*args, **kwargs):  
+            with sentry_sdk.start_span(op=_tool_name(args=args), description=_tool_name(args=args)) as new_span:  
+                new_span.set_data("Span-kind",'tool')
+                new_span.set_data("output-value", "{}".format(json.dumps(item, ensure_ascii=False)))
+                if isinstance(item, dict):
+                    run_list.append(item.get('text', None))
+                else:
+                    try:
+                        run_list.append(str(item))
+                    except:
+                        print("message can't to be str")
+            yield item
+        result_str = ''.join(str(res) for res in run_list)
+        span.set_data("output-value",result_str)
                 
 
 def _list_trace(tracer, func, *args, **kwargs):
