@@ -781,24 +781,20 @@ def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
         span.set_data("Span-kind", "Components-Tool-Eval")
         _input(args = args, kwargs = kwargs, span=span)
         run_list = []
-        try:   
-            for item in func(*args, **kwargs):  
-                with sentry_sdk.start_span(op=_tool_name(args=args), description=_tool_name(args=args)) as new_span:  
-                    new_span.set_data("Span-kind",'tool')
-                    new_span.set_data("output-value", "{}".format(json.dumps(item, ensure_ascii=False)))
-                    if isinstance(item, dict):
-                        run_list.append(item.get('text', None))
-                    else:
-                        try:
-                            run_list.append(str(item))
-                        except:
-                            print("message can't to be str")
-                yield item
-        except Exception as e:  
-            print(e)
-        finally:  
-            result_str = ''.join(str(res) for res in run_list)
-            span.set_data("output-value",result_str)
+        for item in func(*args, **kwargs):  
+            with sentry_sdk.start_span(op=_tool_name(args=args), description=_tool_name(args=args)) as new_span:  
+                new_span.set_data("Span-kind",'tool')
+                new_span.set_data("output-value", "{}".format(json.dumps(item, ensure_ascii=False)))
+                if isinstance(item, dict):
+                    run_list.append(item.get('text', None))
+                else:
+                    try:
+                        run_list.append(str(item))
+                    except:
+                        print("message can't to be str")
+            yield item
+        result_str = ''.join(str(res) for res in run_list)
+        span.set_data("output-value",result_str)
                 
 
 def _list_trace(tracer, func, *args, **kwargs):
@@ -813,7 +809,7 @@ def _list_trace(tracer, func, *args, **kwargs):
     
     Returns:
         Any: 调用func的返回结果。
-    
+      
     """
     with tracer.start_as_current_span(_tool_name(args = args)) as new_span:      
         result=func(*args, **kwargs)
