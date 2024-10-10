@@ -1,0 +1,66 @@
+Component Name	Error Message
+RagWithBaiduSearchPro	No manifests found
+RAGWithBaiduSearch	No manifests found
+Excel2Figure	tool_eval 参数 streaming,origin_query,file_urls 不在 mainfest 参数列表中,mainfest 参数 query 不在 tool_eval 参数列表中
+MRC	No manifests found
+OralQueryGeneration	tool_eval 参数 name,stream 不在 mainfest 参数列表中,mainfest 参数 text 不在 tool_eval 参数列表中
+QAPairMining	No manifests found
+SimilarQuestion	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 query 不在 tool_eval 参数列表中
+StyleWriting	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 query 不在 tool_eval 参数列表中
+StyleRewrite	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 query 不在 tool_eval 参数列表中
+TagExtraction	No manifests found
+Nl2pandasComponent	No manifests found
+QueryRewrite	No manifests found
+DialogSummary	No manifests found
+HallucinationDetection	tool_eval 参数 name,stream 不在 mainfest 参数列表中,mainfest 参数 query,context,answer 不在 tool_eval 参数列表中
+Playground	No manifests found
+ASR	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 file_url,file_name 不在 tool_eval 参数列表中
+GeneralOCR	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 img_url,img_name 不在 tool_eval 参数列表中
+ObjectRecognition	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 img_url,img_name 不在 tool_eval 参数列表中
+Text2Image	mainfest 参数 query 不在 tool_eval 参数列表中
+LandmarkRecognition	No manifests found
+TTS	No manifests found
+ExtractTableFromDoc	No manifests found
+DocParser	No manifests found
+DocSplitter	No manifests found
+BESRetriever	No manifests found
+BESVectorStoreIndex	No manifests found
+BaiduVDBVectorStoreIndex	No manifests found
+BaiduVDBRetriever	No manifests found
+TableParams	No manifests found
+Reranker	No manifests found
+PPTGenerationFromInstruction	tool_eval 参数 stream 不在 mainfest 参数列表中,mainfest 参数 text 不在 tool_eval 参数列表中
+PPTGenerationFromPaper	tool_eval 参数 stream 不在 mainfest 参数列表中,mainfest 参数 file_key 不在 tool_eval 参数列表中
+PPTGenerationFromFile	tool_eval 参数 stream 不在 mainfest 参数列表中,mainfest 参数 file_url 不在 tool_eval 参数列表中
+DishRecognition	No manifests found
+Translation	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 q 不在 tool_eval 参数列表中
+AnimalRecognition	tool_eval 参数 name,streaming,origin_query 不在 mainfest 参数列表中,mainfest 参数 img_name,img_url 不在 tool_eval 参数列表中
+DocCropEnhance	No manifests found
+QRcodeOCR	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 file_names 不在 tool_eval 参数列表中
+TableOCR	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 file_names 不在 tool_eval 参数列表中
+DocFormatConverter	tool_eval 参数 streaming,origin_query 不在 mainfest 参数列表中,mainfest 参数 file_name,file_url 不在 tool_eval 参数列表中
+Embedding	No manifests found
+Matching	No manifests found
+NL2Sql	No manifests found
+SelectTable	No manifests found
+PlantRecognition	tool_eval 参数 name,streaming,origin_query 不在 mainfest 参数列表中,mainfest 参数 img_name,img_url 不在 tool_eval 参数列表中
+HandwriteOCR	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 file_names 不在 tool_eval 参数列表中
+ImageUnderstand	tool_eval 参数 name,streaming,origin_query 不在 mainfest 参数列表中,mainfest 参数 img_name,img_url 不在 tool_eval 参数列表中
+MixCardOCR	tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 file_names 不在 tool_eval 参数列表中
+
+错误统计信息:
+错误信息: No manifests found, 出现次数: 26
+错误信息: mainfest 参数 query 不在 tool_eval 参数列表中, 出现次数: 1
+错误信息: tool_eval 参数 name,stream 不在 mainfest 参数列表中,mainfest 参数 query,context,answer 不在 tool_eval 参数列表中, 出现次数: 1
+错误信息: tool_eval 参数 name,stream 不在 mainfest 参数列表中,mainfest 参数 text 不在 tool_eval 参数列表中, 出现次数: 1
+错误信息: tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 file_names 不在 tool_eval 参数列表中, 出现次数: 4
+错误信息: tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 file_url,file_name 不在 tool_eval 参数列表中, 出现次数: 1
+错误信息: tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 img_url,img_name 不在 tool_eval 参数列表中, 出现次数: 2
+错误信息: tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 q 不在 tool_eval 参数列表中, 出现次数: 1
+错误信息: tool_eval 参数 name,streaming 不在 mainfest 参数列表中,mainfest 参数 query 不在 tool_eval 参数列表中, 出现次数: 3
+错误信息: tool_eval 参数 name,streaming,origin_query 不在 mainfest 参数列表中,mainfest 参数 img_name,img_url 不在 tool_eval 参数列表中, 出现次数: 3
+错误信息: tool_eval 参数 stream 不在 mainfest 参数列表中,mainfest 参数 file_key 不在 tool_eval 参数列表中, 出现次数: 1
+错误信息: tool_eval 参数 stream 不在 mainfest 参数列表中,mainfest 参数 file_url 不在 tool_eval 参数列表中, 出现次数: 1
+错误信息: tool_eval 参数 stream 不在 mainfest 参数列表中,mainfest 参数 text 不在 tool_eval 参数列表中, 出现次数: 1
+错误信息: tool_eval 参数 streaming,origin_query 不在 mainfest 参数列表中,mainfest 参数 file_name,file_url 不在 tool_eval 参数列表中, 出现次数: 1
+错误信息: tool_eval 参数 streaming,origin_query,file_urls 不在 mainfest 参数列表中,mainfest 参数 query 不在 tool_eval 参数列表中, 出现次数: 1

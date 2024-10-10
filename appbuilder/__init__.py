@@ -56,10 +56,8 @@ def get_default_header():
     return copy.deepcopy(default_header)
 
 
-from .core import *
 from .core.components.rag_with_baidu_search_pro import RagWithBaiduSearchPro
 from .core.components.rag_with_baidu_search import RAGWithBaiduSearch
-from .core import console
 from .core.components.excel2figure import Excel2Figure
 from .core.components.llms.mrc import MRC
 from .core.components.llms.oral_query_generation import OralQueryGeneration
@@ -75,7 +73,6 @@ from .core.components.llms.is_complex_query import IsComplexQuery
 from .core.components.llms.query_decomposition import QueryDecomposition
 from .core.components.llms.hallucination_detection import HallucinationDetection
 from .core.components.llms.playground import Playground
-
 from .core.components.asr.component import ASR
 from .core.components.general_ocr.component import GeneralOCR
 from .core.components.object_recognize.component import ObjectRecognition
@@ -94,7 +91,6 @@ from .core.components.retriever.reranker.rerank import Reranker
 from .core.components.ppt_generation_from_instruction.component import PPTGenerationFromInstruction
 from .core.components.ppt_generation_from_paper.component import PPTGenerationFromPaper
 from .core.components.ppt_generation_from_file.component import PPTGenerationFromFile
-
 from .core.components.dish_recognize.component import DishRecognition
 from .core.components.translate.component import Translation
 from .core.components.animal_recognize.component import AnimalRecognition
@@ -102,33 +98,124 @@ from .core.components.doc_crop_enhance.component import DocCropEnhance
 from .core.components.qrcode_ocr.component import QRcodeOCR
 from .core.components.table_ocr.component import TableOCR
 from .core.components.doc_format_converter.component import DocFormatConverter
-
 from .core.components.embeddings import Embedding
 from .core.components.matching import Matching
-
 from .core.components.gbi.nl2sql.component import NL2Sql
 from .core.components.gbi.select_table.component import SelectTable
-
 from .core.components.plant_recognize.component import PlantRecognition
 from .core.components.handwrite_ocr.component import HandwriteOCR
 from .core.components.image_understand.component import ImageUnderstand
 from .core.components.mix_card_ocr.component import MixCardOCR
 
-from .tests.component_test import AppbuilderTestToolEval, AutomaticTestToolEval
+__COMPONENTS__ = [
+    "RagWithBaiduSearchPro",
+    "RAGWithBaiduSearch",
+    "Excel2Figure",
+    "MRC",
+    "OralQueryGeneration",
+    "QAPairMining",
+    "SimilarQuestion",
+    "StyleWriting",
+    "StyleRewrite",
+    "TagExtraction",
+    "Nl2pandasComponent",
+    "QueryRewrite",
+    "DialogSummary",
+    "HallucinationDetection",
+    "Playground",
+    "ASR",
+    "GeneralOCR",
+    "ObjectRecognition",
+    "Text2Image",
+    "LandmarkRecognition",
+    "TTS",
+    "ExtractTableFromDoc",
+    "DocParser",
+    "DocSplitter",
+    "BESRetriever",
+    "BESVectorStoreIndex",
+    "BaiduVDBVectorStoreIndex",
+    "BaiduVDBRetriever",
+    "TableParams",
+    "Reranker",
+    "PPTGenerationFromInstruction",
+    "PPTGenerationFromPaper",
+    "PPTGenerationFromFile",
+    "DishRecognition",
+    "Translation",
+    "AnimalRecognition",
+    "DocCropEnhance",
+    "QRcodeOCR",
+    "TableOCR",
+    "DocFormatConverter",
+    "Embedding",
+    "Matching",
+    "NL2Sql",
+    "SelectTable",
+    "PlantRecognition",
+    "HandwriteOCR",
+    "ImageUnderstand",
+    "MixCardOCR",
+] # NOQA
 
+
+from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
 
-from appbuilder.utils.logger_util import logger
+__CORE__ = [
+    "Component",
+    "Message",
+    "AgentRuntime",
+    "UserSession",
+] # NOQA
 
 from appbuilder.core.utils import get_model_list
-
+from appbuilder.core.console.appbuilder_client.appbuilder_client import (
+    get_app_list,
+    get_all_apps
+)
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
-from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps
 from appbuilder.core.console.knowledge_base.knowledge_base import KnowledgeBase
-from appbuilder.core.console.knowledge_base.data_class import CustomProcessRule, DocumentSource, DocumentChoices, DocumentChunker, DocumentSeparator, DocumentPattern, DocumentProcessOption
+from appbuilder.core.console.knowledge_base.data_class import (
+    CustomProcessRule,
+    DocumentSource,
+    DocumentChoices,
+    DocumentChunker,
+    DocumentSeparator,
+    DocumentPattern,
+    DocumentProcessOption
+)
+
+__CONSOLE__ = [
+    "get_model_list",
+    "get_app_list",
+    "get_all_apps",
+    "AppBuilderClient",
+    "AgentBuilder",
+    "KnowledgeBase",
+    "CustomProcessRule",
+    "DocumentSource",
+    "DocumentChoices",
+    "DocumentChunker",
+    "DocumentSeparator",
+    "DocumentPattern",
+    "DocumentProcessOption",
+] # NOQA
+
+from appbuilder.core.assistant.base import assistant
+from appbuilder.core.assistant.threads.runs import StreamRunContext
+from appbuilder.core.assistant.threads.runs import AssistantEventHandler
+from appbuilder.core.assistant.threads.runs import AssistantStreamManager
+
+__ASSISTANT__ = [
+    "assistant",
+    "StreamRunContext",
+    "AssistantEventHandler",
+    "AssistantStreamManager",
+]
 
 from .core._exception import (
     BadRequestException,
@@ -140,99 +227,31 @@ from .core._exception import (
     AppBuilderServerException,
 )
 
-from appbuilder.core.assistant.base import assistant
-from appbuilder.core.assistant.threads.runs import StreamRunContext
-from appbuilder.core.assistant.threads.runs import AssistantEventHandler
-from appbuilder.core.assistant.threads.runs import AssistantStreamManager
-
+from appbuilder.utils.logger_util import logger
+from appbuilder.tests import ComponentCheckBase
+from .tests.component_test import AppbuilderTestToolEval, AutomaticTestToolEval
 from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
 
-__all__ = [
-    'logger',
-
-    'BadRequestException',
-    'ForbiddenException',
-    'NotFoundException',
-    'PreconditionFailedException',
-    'InternalServerErrorException',
-    'HTTPConnectionException',
-    'AppBuilderServerException',
-
-    'StyleWriting',
-    'MRC',
-    'Playground',
-    'OralQueryGeneration',
-    'QAPairMining',
-    'SimilarQuestion',
-    'IsComplexQuery',
-    'QueryDecomposition',
-    'TagExtraction',
-    'StyleRewrite',
-    'QueryRewrite',
-    'DialogSummary',
-    'ASR',
-    'GeneralOCR',
-    'ObjectRecognition',
-    'Text2Image',
-    'LandmarkRecognition',
-    'TTS',
-    "ExtractTableFromDoc",
-    "DocParser",
-    "ParserConfig",
-    "DocSplitter",
-    "BESRetriever",
-    "BESVectorStoreIndex",
-    "BaiduVDBVectorStoreIndex",
-    "BaiduVDBRetriever",
-    "TableParams",
-    "Reranker",
-    "HallucinationDetection",
-
-    'DishRecognition',
-    'Translation',
-    'Message',
-    'AnimalRecognition',
-    'DocCropEnhance',
-    'QRcodeOCR',
-    'TableOCR',
-
-    'Embedding',
-
-    'Matching',
-
-    "PlantRecognition",
-    "HandwriteOCR",
-    "ImageUnderstand",
-    "MixCardOCR",
-
-    'PPTGenerationFromInstruction',
-    'PPTGenerationFromPaper',
-    'PPTGenerationFromFile',
-
-    'AppbuilderTestToolEval',
-    'AutomaticTestToolEval',
-
-    "get_model_list",
-
-    "AppBuilderClient",
-    "AgentBuilder",
-    "get_app_list",
-    "get_all_apps",
-
-    "KnowledgeBase",
-    "CustomProcessRule",
-    "DocumentSource",
-    "DocumentChoices",
-    "DocumentChunker",
-    "DocumentSeparator",
-    "DocumentPattern",
-    "DocumentProcessOption",
-
-    "assistant",
-    "StreamRunContext",
-    "AssistantEventHandler",
-    "AssistantStreamManager",
-
+__UTILS__ = [
+    "BadRequestException",
+    "ForbiddenException",
+    "NotFoundException",
+    "PreconditionFailedException",
+    "InternalServerErrorException",
+    "HTTPConnectionException",
+    "AppBuilderServerException",
     "AppBuilderTracer",
-    "AppbuilderInstrumentor"
+    "AppbuilderInstrumentor",
+    "ComponentCheckBase",
+    "AppbuilderTestToolEval",
+    "AutomaticTestToolEval",
+    "logger"
 ]
+
+
+
+__all__ = __COMPONENTS__ + \
+    __CORE__ + \
+    __CONSOLE__ + \
+    __ASSISTANT__ + \
+    __UTILS__
