@@ -33,7 +33,17 @@ func TestNewAgentBuilder(t *testing.T) {
 	log := func(format string, args ...interface{}) {
 		fmt.Fprintf(&logBuffer, format+"\n", args...)
 	}
+	// 测试 1: appID 为空，预期返回错误
+	_, err := NewAgentBuilder("", &SDKConfig{})
+	if err == nil || err.Error() != "appID is empty" {
+		t.Errorf("expected error for empty appID, got %v", err)
+	}
 
+	// 测试 2: config 为 nil，预期返回错误
+	_, err = NewAgentBuilder("validAppID", nil)
+	if err == nil || err.Error() != "config is nil" {
+		t.Errorf("expected error for nil config, got %v", err)
+	}
 	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
@@ -46,6 +56,15 @@ func TestNewAgentBuilder(t *testing.T) {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AgentBuilder instance failed")
 	}
+	// 测试 1: AgentBuilder 为空，预期返回ServiceURLV2错误
+	agentBuilder2 := agentBuilder
+	agentBuilder2.sdkConfig.GatewayURLV2=""
+	// 调用 CreateConversation
+	_, err = agentBuilder2.CreateConversation()
+	if err == nil {
+		t.Errorf("expected ServiceURLV2 error, got nil")
+	}
+	//正常测试
 	conversationID, err := agentBuilder.CreateConversation()
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
