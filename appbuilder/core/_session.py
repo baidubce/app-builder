@@ -55,7 +55,7 @@ class InnerSession(requests.sessions.Session):
         Send request using inner session.
         """
         logger.debug("Curl Command:\n" + self.build_curl(request) + "\n")
-        return super(InnerSession, self).send(request, allow_redirects=False, **kwargs)
+        return super(InnerSession, self).send(request, **kwargs)
 
     @session_post
     def post(self, url, data=None, json=None, **kwargs):
