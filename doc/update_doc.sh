@@ -23,8 +23,18 @@ echo "当前路径:"
 pwd
 echo "删除  doc/build 下的所有文件夹及文件:"
 rm -r build/*
-echp "删除  doc/build 下的所有文件夹及文件完成"
+echo "删除  doc/build 下的所有文件夹及文件完成"
 echo "==============删除 doc/build  下的所有文件夹完成=============="
+
+
+# 注释掉装饰器
+echo "================注释掉装饰器========================="
+echo "当前路径:"
+pwd
+cd ..
+find . -name "*.py" -exec sed -i '' 's/@HTTPClient\.check_param/# @HTTPClient.check_param/g' {} \;|| { echo "注释掉装饰器失败"; exit 1; }
+cd doc
+echo "================注释掉装饰器完成========================="
 
 
 # 3、删除  doc/source 下除index.rst的所有.rst文件
@@ -33,9 +43,9 @@ echo "当前路径:"
 pwd
 echo "删除  doc/source 下除index.rst的所有.rst文件:"
 cd source
-find . -maxdepth 1 -type f -name '*.rst' ! -name 'index.rst' -exec rm {} \;
+find . -maxdepth 1 -type f -name '*.rst' ! -name 'index.rst' -exec rm {} \;|| { echo "删除  doc/source 下除index.rst的所有.rst文件失败"; exit 1; }
 cd ..
-echp "删除  doc/source 下除index.rst的所有.rst文件完成"
+echo "删除  doc/source 下除index.rst的所有.rst文件完成"
 echo "=========删除doc/source下除index.rst的所有.rst文件完成========="
 
 # 4、删除原有的 docs/sphinx_md 文件夹及其文件
@@ -86,7 +96,7 @@ echo "========================清理多余文件========================"
 echo "当前路径:"
 pwd
 cd source
-# find . -maxdepth 1 -type f -name '*.rst' ! -name 'index.rst' -exec rm {} \;
+find . -maxdepth 1 -type f -name '*.rst' ! -name 'index.rst' -exec rm {} \;|| { echo "删除  doc/source 下除index.rst的所有.rst文件失败"; exit 1; }
 cd ..
 echo "删除  doc/source 下除index.rst的所有.rst文件完成"
 rm -rf /build/doctrees/*
@@ -103,3 +113,13 @@ DEST_DIR="docs/sphinx_md"
 echo "正在迁移文件从 $SOURCE_DIR 到 $DEST_DIR..."
 mv "$SOURCE_DIR"/* "$DEST_DIR" || { echo "文件迁移失败"; exit 1; }
 echo "=================迁移Mardown文件到目标目录完成================="
+
+# 9、恢复装饰器
+echo "========================恢复装饰器========================"
+echo "当前路径:"
+pwd
+find . -name "*.py" -exec sed -i '' 's/# @HTTPClient\.check_param/@HTTPClient.check_param/g' {} \; || { echo "恢复装饰器失败"; exit 1; }
+cd doc
+echo "========================恢复装饰器完成========================"
+
+echo "========================更新文档完成========================"
