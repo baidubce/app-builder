@@ -50,7 +50,16 @@ echo "=======执行命令 sphinx-apidoc -o source ../appbuilder/======="
 echo "当前路径:"
 pwd
 sphinx-apidoc -o source ../appbuilder/
-rm ./source/appbuilder.tests.rst
+# 删除test目录内容
+rm ./source/appbuilder.tests.*
+rm ./source/appbuilder.utils.*
+rm ./source/appbuilder.core.assisant.type.rst
+
+cp update_rst.py source/
+cd source
+python3 update_rst.py
+rm -rf source/update_rst.py
+cd ..
 echo "======执行命令 sphinx-apidoc -o source ../appbuilder/完成======"
 
 
@@ -77,7 +86,7 @@ echo "========================清理多余文件========================"
 echo "当前路径:"
 pwd
 cd source
-find . -maxdepth 1 -type f -name '*.rst' ! -name 'index.rst' -exec rm {} \;
+# find . -maxdepth 1 -type f -name '*.rst' ! -name 'index.rst' -exec rm {} \;
 cd ..
 echo "删除  doc/source 下除index.rst的所有.rst文件完成"
 rm -rf /build/doctrees/*
