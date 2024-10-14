@@ -1,7 +1,16 @@
 echo "========================开始更新文档========================"
 
+# 1、注释@HTTPClient\.check_param装饰器
+echo "================注释@HTTPClient.check_param装饰器==============="
+echo "当前路径:"
+pwd
+echo "删除  doc/source 下除index.rst的所有.rst文件:"
+cd ..
+find . -name "*.py" -exec sed -i '' 's/@HTTPClient\.check_param/# @HTTPClient.check_param/g' {} \;
+cd doc
+echo "===============注释@HTTPClient.check_param装饰器完成=============="
 
-# 1、安装依赖
+# 2、安装依赖
 echo "=========================安装依赖========================="
 echo "当前路径:"
 pwd
@@ -13,11 +22,13 @@ python3 -m pip uninstall appbuilder-sdk -y
 rm -rf dist
 python3 -u setup.py bdist_wheel
 python3 -m pip install dist/*.whl
+# 更新builde目录
+rm -rf build
 cd doc
 echo "=========================安装依赖========================="
 
 
-# 2、删除 doc/build 下的所有文件夹
+# 3、删除 doc/build 下的所有文件夹
 echo "================删除 doc/build 下的所有文件夹================"
 echo "当前路径:"
 pwd
@@ -27,7 +38,7 @@ echo "删除  doc/build 下的所有文件夹及文件完成"
 echo "==============删除 doc/build  下的所有文件夹完成=============="
 
 
-# 3、删除  doc/source 下除index.rst的所有.rst文件
+# 4、删除  doc/source 下除index.rst的所有.rst文件
 echo "==========删除doc/source下除index.rst的所有.rst文件=========="
 echo "当前路径:"
 pwd
@@ -39,7 +50,7 @@ echo "删除  doc/source 下除index.rst的所有.rst文件完成"
 echo "=========删除doc/source下除index.rst的所有.rst文件完成========="
 
 
-# 4、删除原有的 docs/sphinx_md 文件夹及其文件
+# 5、删除原有的 docs/sphinx_md 文件夹及其文件
 echo "============删除原有的 docs/sphinx_md 文件夹及其文件============"
 echo "当前路径:"
 pwd
@@ -47,7 +58,7 @@ rm -rf ../docs/sphinx_md/*
 echo "===========删除原有的 docs/sphinx_md 文件夹及其文件完成==========="
 
 
-# 5、在doc目录下下执行命令   sphinx-apidoc -o source ../appbuilder/
+# 6、在doc目录下下执行命令   sphinx-apidoc -o source ../appbuilder/
 echo "=======执行命令 sphinx-apidoc -o source ../appbuilder/======="
 echo "当前路径:"
 pwd
@@ -65,7 +76,7 @@ cd ..
 echo "======执行命令 sphinx-apidoc -o source ../appbuilder/完成======"
 
 
-# 6、在doc目录下执行命令 make markdown
+# 7、在doc目录下执行命令 make markdown
 echo "==============在doc目录下执行命令 make markdown================"
 echo "当前路径:"
 pwd
@@ -83,7 +94,7 @@ make markdown || { echo "make markdown 命令失败"; exit 1; }
 echo "=============在doc目录下执行命令 make markdown 完成=============="
 
 
-# 7、恢复装饰器
+# 8、恢复装饰器
 echo "========================恢复装饰器========================"
 cd ..
 echo "当前路径:"
@@ -93,7 +104,7 @@ cd doc
 echo "========================恢复装饰器完成========================"
 
 
-# 8、清理多余文件
+# 9、清理多余文件
 echo "========================清理多余文件========================"
 echo "当前路径:"
 pwd
@@ -104,7 +115,7 @@ echo "删除  doc/source 下除index.rst的所有.rst文件完成"
 rm -rf /build/doctrees/*
 echo "======================清理多余文件完成======================"
 
-# 9、迁移Mardown文件到目标目录
+# 10、迁移Mardown文件到目标目录
 echo "==================迁移Mardown文件到目标目录=================="
 echo "当前路径:"
 pwd

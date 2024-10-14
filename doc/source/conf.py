@@ -21,16 +21,13 @@ release = '0.9.4'
 
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.napoleon',
-    'sphinx_markdown_builder'
+    'sphinx.ext.napoleon'
     ]
 
 templates_path = ['_templates']
 
 # 排除tests目录及其子文件
-exclude_patterns = ['appbuilder/tests/**/*']
+exclude_patterns = []
 
 language = 'zh_CN'
 

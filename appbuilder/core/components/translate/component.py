@@ -28,7 +28,7 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class Translation(Component):
-    """
+    r"""
     文本翻译组件,可支持中、英、日、韩等200+语言互译，100+语种自动检测。
     支持语种列表可参照 https://ai.baidu.com/ai-doc/MT/4kqryjku9#%E8%AF%AD%E7%A7%8D%E5%88%97%E8%A1%A8
 

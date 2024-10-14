@@ -32,6 +32,7 @@ class ImageUnderstand(Component):
     Examples:
 
     .. code-block:: python
+    
        import os
        import appbuilder
        os.environ["GATEWAY_URL"] = "..."
