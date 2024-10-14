@@ -149,3 +149,7 @@ java/coverage_diff_custom.html
 java/coverage_diff.html
 java/coverage_report.txt
 coverage_diff_custom.html
+go/coverage_diff.html
+.gitignore
+go/appbuilder/coverage_full.html
+go/appbuilder/coverage_diff.html
