@@ -523,7 +523,7 @@ func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 	}
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateChunk&clientToken=" + req.ClientToken)
 	if err != nil {
-		return "", err              //这是526行
+		return "", err
 	}
 	request.URL = serviceURL
 	request.Method = "POST"
@@ -534,7 +534,7 @@ func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
-		return "", err          //这是537行
+		return "", err
 	}
 	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
@@ -543,12 +543,12 @@ func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 	}
 	data, err = io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)  //这是546行
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	rsp := CreateChunkResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
-		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)   //这是551行
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	return rsp.ID, nil
@@ -562,7 +562,7 @@ func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
 	}
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=ModifyChunk&clientToken=" + req.ClientToken)
 	if err != nil {
-		return err           //这是565行
+		return err
 	}
 	request.URL = serviceURL
 	request.Method = "POST"
@@ -573,21 +573,21 @@ func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
-		return err            //这是576行
+		return err
 	}
 	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
-		return fmt.Errorf("requestID=%s, err=%v", requestID, err)        //这是581行
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	data, err = io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("requestID=%s, err=%v", requestID, err)   //这是585行
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	rsp := CreateChunkResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
-		return fmt.Errorf("requestID=%s, err=%v", requestID, err)  //这是590行
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	return nil
@@ -598,7 +598,7 @@ func (t *KnowledgeBase) DeleteChunk(chunkID string) error {
 }
 
 func (t *KnowledgeBase) DeleteChunkWithReq(req DeleteChunkRequest) error {
-	return t.deleteChunk(req.ChunkID, req.ClientToken)       //这是601行
+	return t.deleteChunk(req.ChunkID, req.ClientToken)
 }
 
 func (t *KnowledgeBase) deleteChunk(chunkID string, clientToken string) error {
@@ -609,7 +609,7 @@ func (t *KnowledgeBase) deleteChunk(chunkID string, clientToken string) error {
 	}
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DeleteChunk&clientToken=" + clientToken)
 	if err != nil {
-		return err                //这是612行
+		return err
 	}
 	request.URL = serviceURL
 	request.Method = "POST"
@@ -623,21 +623,21 @@ func (t *KnowledgeBase) deleteChunk(chunkID string, clientToken string) error {
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
-		return err              //这是626行
+		return err
 	}
 	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
-		return fmt.Errorf("requestID=%s, err=%v", requestID, err)     //这是631行
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	data, err = io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("requestID=%s, err=%v", requestID, err)     //这是635行
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	rsp := CreateChunkResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
-		return fmt.Errorf("requestID=%s, err=%v", requestID, err)    //这是640行
+		return fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	return nil
@@ -648,7 +648,7 @@ func (t *KnowledgeBase) DescribeChunk(chunkID string) (DescribeChunkResponse, er
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DescribeChunk")
 	if err != nil {
-		return DescribeChunkResponse{}, err    //这是651行
+		return DescribeChunkResponse{}, err
 	}
 	request.URL = serviceURL
 	request.Method = "POST"
@@ -662,21 +662,21 @@ func (t *KnowledgeBase) DescribeChunk(chunkID string) (DescribeChunkResponse, er
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
-		return DescribeChunkResponse{}, err        //这是665行
+		return DescribeChunkResponse{}, err
 	}
 	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
-		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)  //这是670行
+		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	data, err = io.ReadAll(resp.Body)
 	if err != nil {
-		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)  //这是674行
+		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	rsp := DescribeChunkResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
-		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)  //这是679行
+		return DescribeChunkResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	return rsp, nil
@@ -687,7 +687,7 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DescribeChunks")
 	if err != nil {
-		return DescribeChunksResponse{}, err        //这是690行
+		return DescribeChunksResponse{}, err
 	}
 	request.URL = serviceURL
 	request.Method = "POST"
@@ -698,21 +698,21 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
-		return DescribeChunksResponse{}, err    //这是701行
+		return DescribeChunksResponse{}, err
 	}
 	defer resp.Body.Close()
 	requestID, err := checkHTTPResponse(resp)
 	if err != nil {
-		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)   //这是706行
+		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 	data, err = io.ReadAll(resp.Body)
 	if err != nil {
-		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)   //这是710行
+		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	rsp := DescribeChunksResponse{}
 	if err := json.Unmarshal(data, &rsp); err != nil {
-		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)   //这是715行
+		return DescribeChunksResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
 	}
 
 	return rsp, nil

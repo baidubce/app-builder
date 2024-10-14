@@ -16,36 +16,31 @@ package appbuilder
 
 import (
 	"os"
-	/*"encoding/json"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"io"*/
+	"io"
 	"testing"
 )
 
 func TestNewRAG(t *testing.T) {
+	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
-	/*config, err := NewSDKConfig("", "")
+
+	// 测试逻辑
+	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
-	agentBuilder, err := NewAgentBuilder(appID, config)
-	if err != nil {
-		t.Fatalf("new AgentBuidler instance failed")
-	}
-	conversationID, err := agentBuilder.CreateConversation()
-	if err != nil {
-		t.Fatalf("create conversation failed: %v", err)
-	}
+	appID := "06e3f5c9-885d-4f85-af57-97dc85ee4606"
 
-	rag, err := NewRAG("aa8af334-df27-4855-b3d1-0d249c61fc08", config)
+	//RAG测试
+	rag, err := NewRAG(appID, config)
 	if err != nil {
 		t.Fatalf("new RAG instance failed")
 	}
-	fmt.Println("问题出现在这里2")
-
-	i, err := rag.Run(conversationID, "北京有多少小学生", true)
+	i, err := rag.Run("", "北京有多少小学生", true)
 	var answer *RAGAnswer
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
 		data, _ := json.Marshal(answer)
@@ -54,5 +49,5 @@ func TestNewRAG(t *testing.T) {
 	}
 	if !errors.Is(err, io.EOF) {
 		fmt.Println(err)
-	}*/
+	}
 }
