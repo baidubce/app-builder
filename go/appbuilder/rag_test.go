@@ -23,6 +23,7 @@ import (
 	"testing"
 )
 func TestNewRAGError(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
@@ -80,6 +81,7 @@ func TestNewRAGError(t *testing.T) {
 	}
 }
 func TestNewRAG(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 

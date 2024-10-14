@@ -76,6 +76,7 @@ func (m *MissingIDHTTPClient) Do(req *http.Request) (*http.Response, error) {
     }, nil
 }
 func TestNewAgentBuilderError(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
@@ -146,6 +147,7 @@ func TestNewAgentBuilderError(t *testing.T) {
 
 }
 func TestNewAgentBuilderUploadLocalFileError1(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	//正常的agentBuilder
@@ -186,6 +188,7 @@ func TestNewAgentBuilderUploadLocalFileError1(t *testing.T) {
 
 }
 func TestNewAgentBuilderUploadLocalFileError2(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	//正常的agentBuilder
@@ -230,6 +233,7 @@ func TestNewAgentBuilderUploadLocalFileError2(t *testing.T) {
 	}
 }
 func TestNewAgentBuilderRunError(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
@@ -274,6 +278,7 @@ func TestNewAgentBuilderRunError(t *testing.T) {
 	}
 }
 func TestNewAgentBuilder(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 创建缓冲区来存储日志
 	var logBuffer bytes.Buffer
 

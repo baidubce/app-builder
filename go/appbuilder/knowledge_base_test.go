@@ -23,6 +23,7 @@ import (
 	"strings"
 )
 func TestAddDocumentError(t *testing.T) {
+	t.Parallel() // 并发运行
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
 	//NewKnowledgeBase测试1 config== nil
@@ -255,6 +256,7 @@ func TestAddDocumentError(t *testing.T) {
 }
 
 func TestCreateKnowledgeBaseError(t *testing.T) {
+	t.Parallel() // 并发运行
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_TOKEN", "")
 	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
@@ -836,6 +838,7 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 	}
 }
 func TestChunkError(t *testing.T) {
+	t.Parallel() // 并发运行
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_TOKEN", "")
 
@@ -1109,6 +1112,7 @@ func TestChunkError(t *testing.T) {
 	}
 }
 func TestAddDocument(t *testing.T) {
+	t.Parallel() // 并发运行
 	var logBuffer bytes.Buffer
 
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
@@ -1184,6 +1188,7 @@ func TestAddDocument(t *testing.T) {
 }
 
 func TestCreateKnowledgeBase(t *testing.T) {
+	t.Parallel() // 并发运行
 	var logBuffer bytes.Buffer
 
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
@@ -1343,6 +1348,7 @@ func TestCreateKnowledgeBase(t *testing.T) {
 }
 
 func TestChunk(t *testing.T) {
+	t.Parallel() // 并发运行
 	var logBuffer bytes.Buffer
 
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")

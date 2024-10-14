@@ -26,6 +26,7 @@ import (
 
 
 func TestNewAppBuilderClientError(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
@@ -150,6 +151,7 @@ func TestNewAppBuilderClientError(t *testing.T) {
 	}
 }
 func TestClientUploadLocalFile(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
@@ -218,6 +220,7 @@ func TestClientUploadLocalFile(t *testing.T) {
 }
 
 func TestClientRun(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
@@ -272,6 +275,7 @@ func TestClientRun(t *testing.T) {
 }
 
 func TestClientRunWithToolCallError(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 测试逻辑
 	config, err := NewSDKConfig("", "")
 	if err != nil {
@@ -370,6 +374,7 @@ func TestClientRunWithToolCallError(t *testing.T) {
 }
 
 func TestNewAppBuilderClient(t *testing.T) {
+	t.Parallel() // 并发运行
 	var logBuffer bytes.Buffer
 
 	// 设置环境变量
@@ -439,6 +444,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 }
 
 func TestAppBuilderClientRunWithToolCall(t *testing.T) {
+	t.Parallel() // 并发运行
 	var logBuffer bytes.Buffer
 
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
@@ -554,6 +560,7 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 }
 
 func TestAppBuilderClientRunToolChoice(t *testing.T) {
+	t.Parallel() // 并发运行
 	var logBuffer bytes.Buffer
 
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")

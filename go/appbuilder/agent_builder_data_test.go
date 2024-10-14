@@ -10,6 +10,7 @@ import (
 
 // 测试 if !ok 分支
 func TestAgentBuilderAnswerTransformWithInvalidContentType(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 构造一个 AgentBuilderRawResponse，其中 ContentType 是不存在的
 	rawResponse := &AgentBuilderRawResponse{
 		Answer: "Test Answer",
@@ -31,6 +32,7 @@ func TestAgentBuilderAnswerTransformWithInvalidContentType(t *testing.T) {
 }
 // 测试 err != nil && !(err == io.EOF) 分支
 func TestAgentBuilderStreamIterator_Next_ReadError(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 模拟没有数据的输入
 	mockBody := io.NopCloser(strings.NewReader(""))
 	reader := bufio.NewReader(mockBody)
@@ -51,6 +53,7 @@ func TestAgentBuilderStreamIterator_Next_ReadError(t *testing.T) {
 
 // 测试 json.Unmarshal 解析失败
 func TestAgentBuilderStreamIterator_Next_JSONUnmarshalError(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 模拟 SSE 消息，data 后面跟着无效 JSON
 	mockBody := io.NopCloser(strings.NewReader("data: invalid-json"))
 	reader := bufio.NewReader(mockBody)
@@ -71,6 +74,7 @@ func TestAgentBuilderStreamIterator_Next_JSONUnmarshalError(t *testing.T) {
 
 // 测试非 SSE 格式数据
 func TestAgentBuilderStreamIterator_Next_NonSSEFormat(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 模拟非 SSE 格式的消息
 	mockBody := io.NopCloser(strings.NewReader("not-sse-format-data"))
 	reader := bufio.NewReader(mockBody)
@@ -88,6 +92,7 @@ func TestAgentBuilderStreamIterator_Next_NonSSEFormat(t *testing.T) {
 
 // 测试正常的 SSE 数据流
 func TestAgentBuilderStreamIterator_Next_ValidSSE(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 模拟有效的 SSE 消息
 	mockBody := io.NopCloser(strings.NewReader("data: {\"answer\": \"Test Answer\", \"content\": []}"))
 	reader := bufio.NewReader(mockBody)

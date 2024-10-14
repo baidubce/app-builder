@@ -21,6 +21,7 @@ import (
 	"testing"
 )
 func TestDatasetError(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 测试逻辑
 	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
 	if err != nil {
@@ -71,6 +72,7 @@ func TestDatasetError(t *testing.T) {
 	}
 }
 func TestDataset(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 创建缓冲区来存储日志
 	var logBuffer bytes.Buffer
 
