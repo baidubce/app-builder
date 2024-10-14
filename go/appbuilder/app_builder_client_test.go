@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"os"
 	"testing"
-	//"strings"
+	"strings"
 )
 
-/*
+
 
 func TestNewAppBuilderClientError(t *testing.T) {
 	// 测试逻辑
@@ -368,7 +368,7 @@ func TestClientRunWithToolCallError(t *testing.T) {
 		t.Fatalf("expected 400 error, got nil")
 	}
 }
-*/
+
 func TestNewAppBuilderClient(t *testing.T) {
 	var logBuffer bytes.Buffer
 
