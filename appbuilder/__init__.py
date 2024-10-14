@@ -136,7 +136,7 @@ __COMPONENTS__ = [
     "Text2Image",
     "LandmarkRecognition",
     "TTS",
-        "ExtractTableFromDoc",
+    "ExtractTableFromDoc",
     "DocParser",
     "DocSplitter",
     "BESRetriever",
