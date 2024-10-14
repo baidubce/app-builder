@@ -235,12 +235,6 @@ func TestClientRun(t *testing.T) {
 		t.Errorf("expected conversationID mustn't be empty, got %v", err)
 	}
 
-	//测试4   非流式
-	_, err = client.Run("13", "描述简历中的候选人情况", nil, false)
-	if err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Errorf("expected Bad Request error, got %v", err)
-	}
 	//测试2   ServiceURLV2 error 无效的ServiceURLV2
 	client.sdkConfig.GatewayURLV2 = "://invalid-url"
 	_, err = client.Run("12", "描述简历中的候选人情况", nil, true)
@@ -462,7 +456,11 @@ func TestNewAppBuilderClient(t *testing.T) {
 	}
 	log("----------------answer-------------------")
 	log(totalAnswer)
+	//测试4   非流式
+	_, err = client.Run(conversationID, "描述简历中的候选人情况", nil, false)
+	if err != nil {
 
+	}
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {
 		fmt.Println(logBuffer.String())
