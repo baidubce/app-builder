@@ -33,8 +33,10 @@ from appbuilder.utils.trace._function import(
     _assistant_run_trace,
     _assistant_stream_trace,
     _assistant_stream_run_with_handler_trace,
-    _components_run_trace,
-    _components_stream_run_trace,
+    _components_run_trace_with_opentelemetry,
+    _components_run_trace_with_sentry,
+    _components_stream_run_trace_with_opentelemetry,
+    _components_stream_run_trace_with_sentry,
     _list_trace,
     )
 from appbuilder import logger
@@ -89,14 +91,27 @@ class AppbuilderInstrumentor(BaseInstrumentor):
         if self._instrumented:
             return
         self._instrumented = True
+        
+        # 判断是否启用Sentry跟踪，如果启用，则创建虚拟的的Tracer,仅对Components组件生效
+        if os.environ.get('ENABLE_SENTRY_TRACE', None) == 'true' and os.environ.get('SENTRY_DSN', None):
+            try:
+                import sentry_sdk
+            except:
+                raise ImportError("sentry-sdk is not installed.")
+            self.sentry_trace = True
+        else:
+            self.sentry_trace = False
 
-        if not (tracer_provider := kwargs.get("tracer_provider")):
-            tracer_provider = trace.get_tracer_provider()
+        if self.sentry_trace:
+            tracer = None
+        else:
+            if not (tracer_provider := kwargs.get("tracer_provider")):
+                tracer_provider = trace.get_tracer_provider()
 
-        tracer = trace.get_tracer(
-            instrumenting_module_name=__name__,
-            tracer_provider=tracer_provider,
-        )
+            tracer = trace.get_tracer(
+                instrumenting_module_name=__name__,
+                tracer_provider=tracer_provider,
+            )
 
         # 保存原始函数的引用
 
@@ -156,76 +171,94 @@ class AppbuilderInstrumentor(BaseInstrumentor):
             return _assistant_stream_run_with_handler_trace(tracer, self._original_assistant_stream_run_with_handler, *args, **kwargs)
         
         def _appbuilder_components_run_trace(wrapped, instance, args, kwargs):
-            return _components_run_trace(tracer, self._orignal_components_run, *args, **kwargs)
+            return _components_run_trace_with_opentelemetry(tracer, self._orignal_components_run, *args, **kwargs)
 
+        def _appbuilder_components_run_trace_with_sentry(wrapped, instance, args, kwargs):
+            return _components_run_trace_with_sentry(self._orignal_components_run, *args, **kwargs)
+        
         def _appbuilder_components_run_stream_trace(wrapped, instance, args, kwargs):
-            return _components_stream_run_trace(tracer, self._original_components_stream_run, *args, **kwargs)
+            return _components_stream_run_trace_with_opentelemetry(tracer, self._original_components_stream_run, *args, **kwargs)
+        
+        def _appbuilder_components_run_stream_trace_with_sentry(wrapped, instance, args, kwargs):
+            return _components_stream_run_trace_with_sentry(self._original_components_stream_run, *args, **kwargs)
         
         def _appbuilder_list_trace(wrapped, instance, args, kwargs):
             return _list_trace(tracer, self._original_list, *args, **kwargs)
 
         # 引用相关函数并替换
         if appbuilder:
-            
-            wrap_function_wrapper(
-                module = _MODULE_1,
-                name='utils.trace.tracer_wrapper.session_post_func',
-                wrapper=_appbuilder_session_post
-            )
+            if not self.sentry_trace:
+                wrap_function_wrapper(
+                    module = _MODULE_1,
+                    name='utils.trace.tracer_wrapper.session_post_func',
+                    wrapper=_appbuilder_session_post
+                )
 
-            wrap_function_wrapper(
-                module = _MODULE_1,
-                name = 'utils.trace.tracer_wrapper.client_run_trace_func',
-                wrapper= _appbuilder_client_run_trace
-            )
+                wrap_function_wrapper(
+                    module = _MODULE_1,
+                    name = 'utils.trace.tracer_wrapper.client_run_trace_func',
+                    wrapper= _appbuilder_client_run_trace
+                )
 
-            wrap_function_wrapper(
-                module = _MODULE_1,
-                name = 'utils.trace.tracer_wrapper.client_tool_trace_func',
-                wrapper = _appbuilder_client_tool_trace
-            )
+                wrap_function_wrapper(
+                    module = _MODULE_1,
+                    name = 'utils.trace.tracer_wrapper.client_tool_trace_func',
+                    wrapper = _appbuilder_client_tool_trace
+                )
 
-            wrap_function_wrapper(
-                module= _MODULE_1, 
-                name = 'utils.trace.tracer_wrapper.assistent_tool_trace_func',
-                wrapper= _appbuilder_assistant_tool_trace
-            )
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.assistent_tool_trace_func',
+                    wrapper= _appbuilder_assistant_tool_trace
+                )
 
-            wrap_function_wrapper(
-                module= _MODULE_1, 
-                name = 'utils.trace.tracer_wrapper.assistant_run_trace_func',
-                wrapper= _appbuilder_assistant_run_trace
-            )
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.assistant_run_trace_func',
+                    wrapper= _appbuilder_assistant_run_trace
+                )
 
-            wrap_function_wrapper(
-                module= _MODULE_1, 
-                name = 'utils.trace.tracer_wrapper.assistent_stream_run_trace_func',
-                wrapper= _appbuilder_assistant_stream_run_trace
-            )
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.assistent_stream_run_trace_func',
+                    wrapper= _appbuilder_assistant_stream_run_trace
+                )
 
-            wrap_function_wrapper(
-                module= _MODULE_1, 
-                name = 'utils.trace.tracer_wrapper.assistant_stream_run_with_handler_trace_func',
-                wrapper= _appbuilder_assistant_stream_run_with_handler_trace
-            )
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.assistant_stream_run_with_handler_trace_func',
+                    wrapper= _appbuilder_assistant_stream_run_with_handler_trace
+                )
 
-            wrap_function_wrapper(
-                module= _MODULE_1, 
-                name = 'utils.trace.tracer_wrapper.components_run_trace_func',
-                wrapper= _appbuilder_components_run_trace
-            )
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.list_trace_func',
+                    wrapper= _appbuilder_list_trace
+                )
 
-            wrap_function_wrapper(
-                module= _MODULE_1, 
-                name = 'utils.trace.tracer_wrapper.components_run_stream_trace_func',
-                wrapper= _appbuilder_components_run_stream_trace
-            )
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.components_run_trace_func',
+                    wrapper= _appbuilder_components_run_trace
+                )
 
-            wrap_function_wrapper(
-                module= _MODULE_1, 
-                name = 'utils.trace.tracer_wrapper.list_trace_func',
-                wrapper= _appbuilder_list_trace
-            )
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.components_run_stream_trace_func',
+                    wrapper= _appbuilder_components_run_stream_trace
+                )
+            else:
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.components_run_trace_func',
+                    wrapper= _appbuilder_components_run_trace_with_sentry
+                )
+
+                wrap_function_wrapper(
+                    module= _MODULE_1, 
+                    name = 'utils.trace.tracer_wrapper.components_run_stream_trace_func',
+                    wrapper= _appbuilder_components_run_stream_trace_with_sentry
+                )
 
         if not appbuilder:
             raise Exception("appbuilder not found")

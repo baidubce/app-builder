@@ -243,6 +243,16 @@ func TestAddDocumentError(t *testing.T) {
 	if err == nil {
 
 	}
+	log("Document deleted with ID: %s", createDocumentRes.DocumentsIDS[0])
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		fmt.Println(logBuffer.String())
+	} else {  // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+	}
 }
 
 func TestCreateKnowledgeBaseError(t *testing.T) {

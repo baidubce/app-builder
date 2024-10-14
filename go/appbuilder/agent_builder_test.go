@@ -93,6 +93,7 @@ func TestNewAgentBuilderError(t *testing.T) {
 
 	config, err := NewSDKConfig("", "")
 	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
