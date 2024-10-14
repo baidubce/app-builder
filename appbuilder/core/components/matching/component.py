@@ -1,7 +1,3 @@
-"""
-Matching
-"""
-
 # Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -78,13 +74,16 @@ class Matching(MatchingBaseComponent):
         return_score: bool=False,
     ) -> Message[List[str]]:
         """
+        根据给定的查询和上下文，返回匹配的上下文列表。
+        
         Args:
-            query: Union[Message[str], str]
-            contexts: Union[Message[List[str]], List[str]]
+            query (Union[Message[str], str]): 查询字符串或Message对象，包含查询字符串。
+            contexts (Union[Message[List[str]], List[str]]): 上下文字符串列表或Message对象，包含上下文字符串列表。
+            return_score (bool, optional): 是否返回匹配得分。默认为False。
+        
         Returns:
-            Message[List[str]]: contexts which has been matched
+            Message[List[str]]: 匹配的上下文列表。如果return_score为True，则返回包含得分和上下文的元组列表；否则仅返回上下文列表。
         """
-
         query_embedding = self.embedding_component(query)
         contexts_embedding = self.embedding_component.batch(contexts)
 
@@ -119,18 +118,16 @@ class Matching(MatchingBaseComponent):
         context_embeddings: Union[Message[List[List[float]]], List[List[float]]],
     ) -> Message[List[float]]:
         """
-        输入query和context的embedding，输出他们的相似度
-        其中：
-            query_embedding是一个长度为 n 的数组，表示仅有一个query
-            context_embeddings是一个长度为 m x n 的矩阵，m表示有m个候选context
-
+        计算query和context的相似度
+        
         Args:
-            query_embedding: Union[Message[List[float]], List[float]]
-            context_embeddings: Union[Message[List[List[float]]], List[List[float]]]
+            query_embedding (Union[Message[List[float]], List[float]]): query的embedding，长度为n的数组
+            context_embeddings (Union[Message[List[List[float]]], List[List[float]]]): context的embedding，长度为m x n的矩阵，其中m表示候选context的数量
+        
         Returns:
-            Message[float] 
+            Message[List[float]]: query和所有候选context的相似度列表
+        
         """
-
         _query_embedding = query_embedding.content if isinstance(query_embedding, Message) else query_embedding
         _context_embeddings = context_embeddings.content if isinstance(context_embeddings, Message) else context_embeddings
 

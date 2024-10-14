@@ -71,7 +71,8 @@ def _try_import() -> None:
 
 
 class TableParams:
-    """Baidu VectorDB table params.
+    """
+    Baidu VectorDB table params.
     See the following documentation for details:
     https://cloud.baidu.com/doc/VDB/s/mlrsob0p6
     Args:
@@ -323,10 +324,18 @@ class BaiduVDBVectorStoreIndex:
 
     def add_segments(self, segments: Message, metadata=""):
         """
-        向bes中插入数据
-        参数:
-            query (Message[str]): 需要插入的内容
-        返回:
+        向bes中插入数据段
+        
+        Args:
+            segments (Message): 需要插入的数据段
+            metadata (str, optional): 元数据，默认为空字符串。
+        
+        Returns:
+            无返回值
+        
+        Raises:
+            ValueError: 如果segments为空，则抛出此异常。
+        
         """
         from pymochow.model.table import Row
 
@@ -418,22 +427,22 @@ class BaiduVDBRetriever(Component):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import appbuilder
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        import appbuilder
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            segments = appbuilder.Message(["文心一言大模型", "百度在线科技有限公司"])
-            vector_index = appbuilder.BaiduVDBVectorStoreIndex.from_params(
-                    self.instance_id,
-                    self.api_key,
-            )
-            vector_index.add_segments(segments)
+        segments = appbuilder.Message(["文心一言大模型", "百度在线科技有限公司"])
+        vector_index = appbuilder.BaiduVDBVectorStoreIndex.from_params(
+                self.instance_id,
+                self.api_key,
+        )
+        vector_index.add_segments(segments)
 
-            query = appbuilder.Message("文心一言")
-            time.sleep(5)
-            retriever = vector_index.as_retriever()
-            res = retriever(query)
+        query = appbuilder.Message("文心一言")
+        time.sleep(5)
+        retriever = vector_index.as_retriever()
+        res = retriever(query)
 
     """
     name: str = "BaiduVectorDBRetriever"
@@ -450,11 +459,18 @@ class BaiduVDBRetriever(Component):
     def run(self, query: Message, top_k: int = 1):
         """
         根据query进行查询
-        参数:
-            query (Message[str]): 需要查询的内容，
-            top_k (bool): 查询结果中匹配度最高的top_k个结果
-        返回:
-            obj (Message[Dict]): 查询到的结果，包含文本和匹配得分。
+        
+        Args:
+            query (Message[str]): 需要查询的内容，类型为Message，包含要查询的文本。
+            top_k (int, optional): 查询结果中匹配度最高的top_k个结果，默认为1。
+        
+        Returns:
+            Message[Dict]: 查询到的结果，包含文本和匹配得分。
+        
+        Raises:
+            TypeError: 如果query不是Message类型，或者top_k不是整数类型。
+            ValueError: 如果top_k不是正整数，或者query的内容为空字符串，或者长度超过512个字符。
+        
         """
         from pymochow.model.table import AnnSearch, HNSWSearchParams
         from pymochow.model.enum import ReadConsistency

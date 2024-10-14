@@ -80,7 +80,25 @@ class RagWithBaiduSearchPro(Component):
             search_top_k=4,
             hide_corner_markers=True
     ):
-
+        """
+        执行模型推理。
+        
+        Args:
+            message (Message): 待处理的信息对象。
+            stream (bool, optional): 是否以流的形式接收响应数据。默认为False。
+            instruction (Instruction, optional): 指令信息对象。默认为None。
+            model (str, optional): 模型名称。默认为None，表示使用当前实例的模型。
+            temperature (float, optional): 温度参数，控制生成文本的随机性。默认为1e-10。
+            top_p (float, optional): 累积概率阈值，用于控制生成文本的多样性。默认为1e-10。
+            search_top_k (int, optional): 搜索候选结果的数量。默认为4。
+            hide_corner_markers (bool, optional): 是否隐藏响应中的边界标记。默认为True。
+        
+        Returns:
+            Message: 处理后的信息对象。
+        
+        Raises:
+            AppBuilderServerException: 如果输入信息或指令过长，将抛出此异常。
+        """
         if len(message.content) > 300:
             raise AppBuilderServerException(service_err_message="query is too long, expected <= 300, got {}"
                                             .format(len(message.content)))

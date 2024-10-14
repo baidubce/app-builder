@@ -37,15 +37,15 @@ class DocParser(Component):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import appbuilder
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        import appbuilder
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            file_path = "./test.pdf" # 待解析的文件路径
-            msg = Message(file_path)
-            parser = appbuilder.DocParser()
-            parse_result = parser(msg)
+        file_path = "./test.pdf" # 待解析的文件路径
+        msg = Message(file_path)
+        parser = appbuilder.DocParser()
+        parse_result = parser(msg)
 
     """
 
@@ -133,11 +133,18 @@ class DocParser(Component):
     def run(self, input_message: Message, return_raw=False) -> Message:
         """
         对传入的文件进行解析
-        参数:
+        
+        Args:
             input_message (Message[str]): 输入为文件的路径
-            return_raw (bool): 是否返回云端服务的原始结果
-        返回:
-            parse_result (Message[ParseResult]): 文件的解析结果。
+            return_raw (bool, optional): 是否返回云端服务的原始结果。默认为False。
+        
+        Returns:
+            Message[ParseResult]: 文件的解析结果。
+        
+        Raises:
+            ValueError: 如果传入的文件路径不是字符串类型。
+            AppBuilderServerException: 如果文件解析过程中出现异常，将抛出该异常。
+        
         """
         file_path = input_message.content
 

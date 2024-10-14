@@ -133,9 +133,14 @@ class Embedding(EmbeddingBaseComponent):
     @components_run_trace
     def run(self, text: Union[Message[str], str]) -> Message[List[float]]:
         """
-        run
+        处理给定的文本或消息对象，并返回包含处理结果的消息对象。
+        
+        Args:
+            text (Union[Message[str], str]): 待处理的文本或消息对象。
+        
+        Returns:
+            Message[List[float]]: 处理后的结果，封装在消息对象中。结果是一个浮点数列表。
         """
-    
         _text = text if isinstance(text, str) else text.content
 
         return Message(self._batch([_text]).content[0])

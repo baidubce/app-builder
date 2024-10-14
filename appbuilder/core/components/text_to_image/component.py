@@ -83,6 +83,31 @@ class Text2Image(Component):
         text_check: Optional[int] = 1,
         request_id: Optional[str] = None
     ):
+        """
+        执行文本到图像的生成任务。
+        
+        Args:
+            message (Message): 包含任务相关信息的消息对象。
+            width (int, optional): 生成的图像的宽度，默认为1024。
+            height (int, optional): 生成的图像的高度，默认为1024。
+            image_num (int, optional): 生成图像的数量，默认为1。
+            image (Optional[str], optional): 参考图像的路径或URL，默认为None。
+            url (Optional[str], optional): 参考图像的URL，默认为None。
+            pdf_file (Optional[str], optional): 参考PDF文件的路径，默认为None。
+            pdf_file_num (Optional[str], optional): 参考PDF文件中的页码范围，默认为None。
+            change_degree (Optional[int], optional): 图像变换的程度，默认为None。
+            text_content (Optional[str], optional): 需要转换的文本内容，默认为None。
+            task_time_out (Optional[int], optional): 任务超时时间，默认为None。
+            text_check (Optional[int], optional): 是否进行文本内容检查，默认为1。
+            request_id (Optional[str], optional): 请求的唯一标识，默认为None。
+        
+        Returns:
+            Message: 包含生成图像URL的消息对象。
+        
+        Raises:
+            HTTPError: 请求失败时抛出异常。
+        
+        """
         headers = self._http_client.auth_header()
         headers["Content-Type"] = "application/json"
         api_url = self._http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
@@ -138,6 +163,19 @@ class Text2Image(Component):
         retry: int = 0,
         request_id: str = None,
     ) -> Text2ImageSubmitResponse:
+        """
+        使用给定的输入并返回文生图的任务信息。
+        
+        Args:
+            request (obj:`Text2ImageSubmitRequest`): 输入请求，这是一个必需的参数。
+            timeout (float, optional): 请求的超时时间。默认为None。
+            retry (int, optional): 请求的重试次数。默认为0。
+            request_id (str, optional): 请求的唯一标识符。默认为None。
+        
+        Returns:
+            obj:`Text2ImageSubmitResponse`: 接口返回的输出消息。
+        
+        """
 
         """
         使用给定的输入并返回文生图的任务信息。

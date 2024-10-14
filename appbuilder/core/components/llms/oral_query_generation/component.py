@@ -1,18 +1,17 @@
-"""
-Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 
 
 import json
@@ -91,27 +90,27 @@ class OralQueryGenerationArgs(ComponentArguments):
 
 
 class OralQueryGeneration(CompletionBaseComponent):
-    """
+    r"""
     口语化Query生成，可用于问答场景下对文档增强索引。
     *注：该组件推荐使用ERNIE Speed-AppBuilder模型。*
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import os
-            import appbuilder
+        import os
+        import appbuilder
 
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
-                    '文档摘要：OPPO Reno5上的视频超级防抖，视频超级防抖3.0，多代视频防抖算法积累，这一代依旧超级防抖超级稳。 开启视频超级'
-                    '防抖 开启路径：打开「相机 > 视频 > 点击屏幕上方的“超级防抖”标识」 后置视频同时支持超级防抖和超级防抖Pro功能，开启超级'
-                    '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
-                    '，实时视频分享您的生活。')
-            oral_query_generation = appbuilder.OralQueryGeneration(model='ERNIE Speed-AppBuilder')
-            answer = oral_query_generation(appbuilder.Message(text), query_type='全部', output_format='str')
-            print(answer.content)
+        text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
+                '文档摘要：OPPO Reno5上的视频超级防抖，视频超级防抖3.0，多代视频防抖算法积累，这一代依旧超级防抖超级稳。 开启视频超级'
+                '防抖 开启路径：打开「相机 > 视频 > 点击屏幕上方的“超级防抖”标识」 后置视频同时支持超级防抖和超级防抖Pro功能，开启超级'
+                '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
+                '，实时视频分享您的生活。')
+        oral_query_generation = appbuilder.OralQueryGeneration(model='ERNIE Speed-AppBuilder')
+        answer = oral_query_generation(appbuilder.Message(text), query_type='全部', output_format='str')
+        print(answer.content)
     """
     name = 'query_generation'
     version = 'v1'
@@ -225,17 +224,20 @@ class OralQueryGeneration(CompletionBaseComponent):
     def run(self, message, query_type='全部', output_format='str', stream=False, temperature=1e-10, top_p=0.0):
         """
         使用给定的输入运行模型并返回结果。
-
+        
         Args:
-            message (Message): 输入消息，用于传入query、context和answer。这是一个必需的参数。
+            message (Message): 输入消息，包含query、context和answer等信息。这是一个必需的参数。
             query_type (str, 可选): 待生成的query类型，包括问题、短语和全部（问题+短语）。默认为全部。
-            output_format (str, 可选): 输出格式，包括json和str，stream为True时，只能以json形式输出。默认为str。
+            output_format (str, 可选): 输出格式，包括json和str，当stream为True时，只能以json形式输出。默认为str。
             stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
-            temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
-            top_p (float, 可选): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
-
+            temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。
+                取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
+            top_p (float, 可选): 影响输出文本的多样性，取值越大，生成文本的多样性越强。
+                取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
+        
         Returns:
             result (Message): 模型运行后的输出消息。
+        
         """
         text = message.content
         assert text, 'Input text should be a valid string'
@@ -262,7 +264,24 @@ class OralQueryGeneration(CompletionBaseComponent):
     @components_run_stream_trace
     def tool_eval(self, name: str, stream: bool = False, **kwargs):
         """
-        tool_eval for function call
+        调用函数进行工具评估。
+        
+        Args:
+            name (str): 评估工具的名称。
+            stream (bool, optional): 是否以流的形式返回结果。默认为False。
+            **kwargs: 关键字参数，可以包含以下参数：
+                text (str): 需要评估的文本。
+                query_type (str, optional): 查询类型，默认为'全部'。
+                output_format (str, optional): 输出格式，默认为'str'。
+                model_configs (dict, optional): 模型配置，默认为空字典。
+        
+        Returns:
+            如果stream为False，则返回评估结果列表；
+            如果stream为True，则逐个返回评估结果。
+        
+        Raises:
+            ValueError: 如果未提供text参数，则抛出ValueError异常。
+        
         """
         text = kwargs.get('text', None)
         query_type = kwargs.get('query_type', '全部')

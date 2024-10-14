@@ -77,13 +77,16 @@ class Messages(object):
                file_ids: Optional[list[str]] = []) -> thread_type.AssistantMessageUpdateResponse:
         """
         修改Message对象，允许content和file_ids字段
+        
         Args:
             thread_id (str): 线程ID。
             message_id (str): 消息ID。
             content (Optional[str], optional): 消息内容。默认为空字符串。
             file_ids (Optional[list[str]], optional): 消息中包含的文件ID列表。默认为空列表。
+        
         Returns:
             thread_type.AssistantMessageUpdateResponse: 消息更新响应对象。
+        
         Raises:
             HttpError: 如果请求失败，则抛出HttpError异常。
         """
@@ -119,6 +122,7 @@ class Messages(object):
             before: str = "") -> thread_type.AssistantMessageListResponse:
         """
         查询指定Thread下的Message列表
+        
         Args:
             thread_id (str): 线程ID。
             limit (int, optional): 返回消息的最大数量，取值范围为[1,20]。默认为-20。
