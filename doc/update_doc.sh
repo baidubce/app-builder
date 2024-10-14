@@ -115,17 +115,5 @@ echo "删除  doc/source 下除index.rst的所有.rst文件完成"
 rm -rf /build/doctrees/*
 echo "======================清理多余文件完成======================"
 
-# 10、迁移Mardown文件到目标目录
-echo "==================迁移Mardown文件到目标目录=================="
-echo "当前路径:"
-pwd
-# 导航到根目录并迁移文件
-cd ..
-SOURCE_DIR="doc/build/markdown"
-DEST_DIR="docs/sphinx_md"
-echo "正在迁移文件从 $SOURCE_DIR 到 $DEST_DIR..."
-mv "$SOURCE_DIR"/* "$DEST_DIR" || { echo "文件迁移失败"; exit 1; }
-echo "=================迁移Mardown文件到目标目录完成================="
-
 
 echo "========================更新文档完成========================"

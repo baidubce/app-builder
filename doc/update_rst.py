@@ -24,7 +24,7 @@ def process_rst_file(filepath):
     new_lines = []
     i = 0
     while i < len(lines):
-        if 'base' in lines[i] and 'appbuilder.core' in lines[i]:
+        if 'base' in lines[i] and 'appbuilder.core' in lines[i] and 'knowledge_base' not in lines[i]:
             i += min(8, len(lines) - i)
         elif 'model' in lines[i] and 'appbuilder.core' in lines[i]:
             i += min(8, len(lines) - i)
