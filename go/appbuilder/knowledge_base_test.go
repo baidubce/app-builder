@@ -901,7 +901,7 @@ func TestChunkError(t *testing.T) {
 	// 创建切片
 	chunkID, err := client.CreateChunk(CreateChunkRequest{
 		DocumentID: documentID,
-		Content:    "test",
+		Content:    "test23",
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
@@ -1188,7 +1188,6 @@ func TestAddDocument(t *testing.T) {
 }
 
 func TestCreateKnowledgeBase(t *testing.T) {
-	t.Parallel() // 并发运行
 	var logBuffer bytes.Buffer
 
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")

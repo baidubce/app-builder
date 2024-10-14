@@ -157,11 +157,7 @@ func TestNewAgentBuilderUploadLocalFileError1(t *testing.T) {
 	}
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	agentBuilder, _ := NewAgentBuilder(appID, config)
-	conversationID, err := agentBuilder.CreateConversation()
-	if err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("create conversation failed: %v", err)
-	}
+
 	// 测试 UploadLocalFile 1: 文件打开错误
 	_, err = agentBuilder.UploadLocalFile("validConversationID", "invalidFilePath")
 	if err == nil || !strings.Contains(err.Error(), "no such file or directory") {
@@ -173,14 +169,14 @@ func TestNewAgentBuilderUploadLocalFileError1(t *testing.T) {
 
 	// 测试 UploadLocalFile 4: t.client.Do 错误
 	agentBuilder.sdkConfig.GatewayURLV2 = "http://192.0.2.1"
-	_, err = agentBuilder.UploadLocalFile(conversationID, "./files/test.pdf")
+	_, err = agentBuilder.UploadLocalFile("5665", "./files/test.pdf")
 	if err == nil {
 		t.Errorf("expected client error, got nil")
 	}
 
 	// 测试 UploadLocalFile 3: 无效的ServiceURLV2
 	agentBuilder.sdkConfig.GatewayURLV2 = "://invalid-url"
-	_, err = agentBuilder.UploadLocalFile(conversationID, "./files/test.pdf")
+	_, err = agentBuilder.UploadLocalFile("6776", "./files/test.pdf")
 	if err == nil || !strings.Contains(err.Error(), "missing protocol scheme") {
 		t.Errorf("expected ServiceURLV2 error, got %v", err)
 	}
@@ -198,34 +194,30 @@ func TestNewAgentBuilderUploadLocalFileError2(t *testing.T) {
 	}
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	agentBuilder, _ := NewAgentBuilder(appID, config)
-	conversationID, err := agentBuilder.CreateConversation()
-	if err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("create conversation failed: %v", err)
-	}
+
 	// 测试 UploadLocalFile 5: checkHTTPResponse 错误
 	agentBuilder.client = &MockHTTPClient{}
-	_, err = agentBuilder.UploadLocalFile(conversationID, "./files/test.pdf")
+	_, err = agentBuilder.UploadLocalFile("123321", "./files/test.pdf")
 	if err == nil || !strings.Contains(err.Error(), "Bad Request") {
 		t.Errorf("expected Bad Request error, got %v", err)
 	}
 	// 测试 UploadLocalFile 6: io.ReadAll 错误
 	agentBuilder.client = &FaultyHTTPClient{}
-	_, err = agentBuilder.UploadLocalFile(conversationID, "./files/test.pdf")
+	_, err = agentBuilder.UploadLocalFile("2332", "./files/test.pdf")
 	if err == nil || !strings.Contains(err.Error(), "simulated read error") {
 		t.Errorf("expected read error, got %v", err)
 	}
 
 	// 测试 UploadLocalFile 7: json.Unmarshal 错误
 	agentBuilder.client = &InvalidJSONHTTPClient{}
-	_, err = agentBuilder.UploadLocalFile(conversationID, "./files/test.pdf")
+	_, err = agentBuilder.UploadLocalFile("3443", "./files/test.pdf")
 	if err == nil || !strings.Contains(err.Error(), "invalid character") {
 		t.Errorf("expected JSON unmarshal error, got %v", err)
 	}
 
 	// 测试 UploadLocalFile 8: 缺少 id 字段
 	agentBuilder.client = &MissingIDHTTPClient{}
-	_, err = agentBuilder.UploadLocalFile(conversationID, "./files/test.pdf")
+	_, err = agentBuilder.UploadLocalFile("4554", "./files/test.pdf")
 
 	// 检查 err 是否为空，并且确保返回的错误信息包含 "id" 这个字段
 	if err == nil || !strings.Contains(err.Error(), "body") || !strings.Contains(err.Error(), "id") {
@@ -246,39 +238,34 @@ func TestNewAgentBuilderRunError(t *testing.T) {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AgentBuilder instance failed")
 	}
-	conversationID, err := agentBuilder.CreateConversation()
-	if err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("create conversation failed: %v", err)
-	}
+
 	//测试1   conversationID为空
 	_, err = agentBuilder.Run("", "描述简历中的候选人情况", nil, true)
 	if err == nil {
 		t.Errorf("expected conversationID mustn't be empty, got %v", err)
 	}
 	//测试4   非流式
-	_, err = agentBuilder.Run(conversationID, "描述简历中的候选人情况", nil, false)
+	_, err = agentBuilder.Run("33334", "描述简历中的候选人情况", nil, false)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Errorf("expected Bad Request error, got %v", err)
 	}
 	//测试2   ServiceURLV2 error 无效的ServiceURLV2
 	agentBuilder.sdkConfig.GatewayURLV2 = "://invalid-url"
-	_, err = agentBuilder.Run(conversationID, "描述简历中的候选人情况", nil, true)
+	_, err = agentBuilder.Run("2135", "描述简历中的候选人情况", nil, true)
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Errorf("expected ServiceURLV2 error, got %v", err)
 	}
 	//测试3   t.client.Do 错误
 	agentBuilder.sdkConfig.GatewayURLV2 = "http://192.0.2.1"
-	_, err = agentBuilder.Run(conversationID, "描述简历中的候选人情况", nil, true)
+	_, err = agentBuilder.Run("1221", "描述简历中的候选人情况", nil, true)
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Errorf("expected Bad Request error, got %v", err)
 	}
 }
 func TestNewAgentBuilder(t *testing.T) {
-	t.Parallel() // 并发运行
 	// 创建缓冲区来存储日志
 	var logBuffer bytes.Buffer
 
