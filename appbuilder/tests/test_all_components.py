@@ -22,8 +22,8 @@ import pandas as pd
 from appbuilder.core.component import Component
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core._exception import AppbuilderBuildexException
-from appbuilder import ComponentCheckBase
 from component_collector import  get_all_components, get_component_white_list
+from appbuilder.tests.component_check import ComponentCheckBase
 
 
 def write_error_data(error_df,error_stats):
