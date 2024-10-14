@@ -9,7 +9,6 @@
 # 指定项目路径
 import os
 import sys
-import sphinx_markdown_builder
 sys.path.insert(0, os.path.abspath('../../appbuilder'))
 
 project = 'Appbuilder-SDK'
@@ -21,7 +20,6 @@ release = '0.9.4'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.autodoc',
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
