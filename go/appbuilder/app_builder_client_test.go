@@ -172,7 +172,7 @@ func TestClientUploadLocalFile(t *testing.T) {
 	}
 	// 测试 UploadLocalFile 2: t.client.Do 错误
 	client.sdkConfig.GatewayURLV2 = "http://192.0.2.1"
-	_, err = client.UploadLocalFile(conversationID, "./files/test.pdf")
+	_, err = client.UploadLocalFile("5678987", "./files/test.pdf")
 	if err == nil {
 		t.Errorf("expected client error, got nil")
 	}
