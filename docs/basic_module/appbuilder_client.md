@@ -418,6 +418,8 @@ class ReferenceDetail {
     private String documentName;
     @SerializedName("dataset_id")
     private String datasetId;
+    @SerializedName("knowledgebase_id")
+    private String knowledgebaseId;
 
     public int getId() {
         return id;
@@ -491,6 +493,14 @@ class ReferenceDetail {
         this.datasetId = datasetId;
     }
 
+    public String getKnowledgebaseId() {
+        return knowledgebaseId;
+    }
+
+    public void setKnowledgebaseId(String knowledgebaseId) {
+        this.knowledgebaseId = knowledgebaseId;
+    }
+
     @Override
     public String toString() {
         return "RAGReference{" +
@@ -503,6 +513,7 @@ class ReferenceDetail {
                 ", documentId='" + documentId + '\'' +
                 ", documentName='" + documentName + '\'' +
                 ", datasetId='" + datasetId + '\'' +
+                ", knowledgebaseId='" + knowledgebaseId + '\'' +
                 '}';
     }
 }
