@@ -114,7 +114,56 @@ from .core.components.handwrite_ocr.component import HandwriteOCR
 from .core.components.image_understand.component import ImageUnderstand
 from .core.components.mix_card_ocr.component import MixCardOCR
 
-from .tests.component_test import AppbuilderTestToolEval, AutomaticTestToolEval
+__COMPONENTS__ = [
+    "RagWithBaiduSearchPro",
+    "RAGWithBaiduSearch",
+    "Excel2Figure",
+    "MRC",
+    "OralQueryGeneration",
+    "QAPairMining",
+    "SimilarQuestion",
+    "StyleWriting",
+    "StyleRewrite",
+    "TagExtraction",
+    "Nl2pandasComponent",
+    "QueryRewrite",
+    "DialogSummary",
+    "HallucinationDetection",
+    "Playground",
+    "ASR",
+    "GeneralOCR",
+    "ObjectRecognition",
+    "Text2Image",
+    "LandmarkRecognition",
+    "TTS",
+    "ExtractTableFromDoc",
+    "DocParser",
+    "DocSplitter",
+    "BESRetriever",
+    "BESVectorStoreIndex",
+    "BaiduVDBVectorStoreIndex",
+    "BaiduVDBRetriever",
+    "TableParams",
+    "Reranker",
+    "PPTGenerationFromInstruction",
+    "PPTGenerationFromPaper",
+    "PPTGenerationFromFile",
+    "DishRecognition",
+    "Translation",
+    "AnimalRecognition",
+    "DocCropEnhance",
+    "QRcodeOCR",
+    "TableOCR",
+    "DocFormatConverter",
+    "Embedding",
+    "Matching",
+    "NL2Sql",
+    "SelectTable",
+    "PlantRecognition",
+    "HandwriteOCR",
+    "ImageUnderstand",
+    "MixCardOCR",
+] # NOQA
 
 from appbuilder.core.message import Message
 from appbuilder.core.agent import AgentRuntime
@@ -149,7 +198,6 @@ from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrument
 
 __all__ = [
     'logger',
-
     'BadRequestException',
     'ForbiddenException',
     'NotFoundException',
@@ -157,68 +205,13 @@ __all__ = [
     'InternalServerErrorException',
     'HTTPConnectionException',
     'AppBuilderServerException',
-
-    'StyleWriting',
-    'MRC',
-    'Playground',
-    'OralQueryGeneration',
-    'QAPairMining',
-    'SimilarQuestion',
-    'IsComplexQuery',
-    'QueryDecomposition',
-    'TagExtraction',
-    'StyleRewrite',
-    'QueryRewrite',
-    'DialogSummary',
-    'ASR',
-    'GeneralOCR',
-    'ObjectRecognition',
-    'Text2Image',
-    'LandmarkRecognition',
-    'TTS',
-    "ExtractTableFromDoc",
-    "DocParser",
-    "ParserConfig",
-    "DocSplitter",
-    "BESRetriever",
-    "BESVectorStoreIndex",
-    "BaiduVDBVectorStoreIndex",
-    "BaiduVDBRetriever",
-    "TableParams",
-    "Reranker",
-    "HallucinationDetection",
-
-    'DishRecognition',
-    'Translation',
-    'Message',
-    'AnimalRecognition',
-    'DocCropEnhance',
-    'QRcodeOCR',
-    'TableOCR',
-
-    'Embedding',
-
-    'Matching',
-
-    "PlantRecognition",
-    "HandwriteOCR",
-    "ImageUnderstand",
-    "MixCardOCR",
-
-    'PPTGenerationFromInstruction',
-    'PPTGenerationFromPaper',
-    'PPTGenerationFromFile',
-
     'AppbuilderTestToolEval',
     'AutomaticTestToolEval',
-
     "get_model_list",
-
     "AppBuilderClient",
     "AgentBuilder",
     "get_app_list",
     "get_all_apps",
-
     "KnowledgeBase",
     "CustomProcessRule",
     "DocumentSource",
@@ -227,12 +220,10 @@ __all__ = [
     "DocumentSeparator",
     "DocumentPattern",
     "DocumentProcessOption",
-
     "assistant",
     "StreamRunContext",
     "AssistantEventHandler",
     "AssistantStreamManager",
-
     "AppBuilderTracer",
     "AppbuilderInstrumentor"
-]
+] + __COMPONENTS__

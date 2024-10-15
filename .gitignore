@@ -51,6 +51,7 @@ coverage.xml
 .pytest_cache/
 # Unit test / production
 asr_test.pcm
+components_error_info.txt
 
 # Translations
 *.mo
