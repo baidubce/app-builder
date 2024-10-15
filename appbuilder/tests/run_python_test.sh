@@ -97,13 +97,14 @@ echo "单测运行结果: $run_result"
 echo "单测覆盖率结果: $cover_result"
 echo "--------------------------"
 
+echo "--------------------------"
+echo "Components组件检查规范性检测结果: "
+python3 print_components_error_info.py
+echo "--------------------------"
+
 # 若单测失败，则退出
 if [ $run_result -ne 0 ]; then echo "单测运行失败，请检查错误日志，修复单测后重试" && exit 1; fi
 
 if [ $cover_result -ne 0 ]; then echo "增量代码的单元测试覆盖率低于90%，请完善单元测试后重试" && exit 1; fi
 
 
-echo "--------------------------"
-echo "Components组件检查规范性检测结果: "
-python3 print_components_error_info.py
-echo "--------------------------"
