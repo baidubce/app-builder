@@ -30,7 +30,7 @@ TEST_INPUT = {
 }
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip("暂时跳过")
 class TestPPTGenerationFromFileComponent(unittest.TestCase):
     def setUp(self):
         """

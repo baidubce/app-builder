@@ -1,14 +1,40 @@
 import unittest
 import os
 import appbuilder
-from tests.pytest_utils import Utils
+# from tests.pytest_utils import Utils
 
+import random
+import string
+import os
 
+class Utils(object):
+    """
+    utils 方法父类
+    """
+    @staticmethod
+    def get_random_string(str_len, prefix=None):
+        """
+        生成随机字符串，可指定前缀
+        """
+        gen_name = ''.join(
+            random.choice(string.ascii_letters + string.digits) for _ in range(str_len)
+        )
+        if prefix:
+            name = str(prefix) + gen_name
+        else:
+            name = gen_name
+        return name
+
+    @staticmethod
+    def get_data_file(filename):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        full_file_path = os.path.join(current_dir, "data", filename)
+        return full_file_path
 
 def get_cur_whether(location:str, unit:str):
     return "{} 的当前温度是30 {}".format(location, unit)
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestFunctionCall(unittest.TestCase):
     def setUp(self):
         os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_V2"]
@@ -55,7 +81,7 @@ class TestFunctionCall(unittest.TestCase):
         self.assertEqual(run_result.assistant_id, assistant.id)
         self.assertEqual(run_result.thread_id, thread.id)
         self.assertEqual(run_result.status, "completed")
-        self.assertIn("秦始皇", run_result.final_answer.message.content.text.value)
+        self.assertIn("我是秦始皇", run_result.final_answer.message.content[0].text.value)
 
     def test_run_create_v2(self):
         assistant = appbuilder.assistant.assistants.create(
