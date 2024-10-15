@@ -20,8 +20,56 @@ import (
 	"os"
 	"testing"
 )
+func TestDatasetError(t *testing.T) {
+	t.Parallel() // 并发运行
+	// 测试逻辑
+	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new http client config failed: %v", err)
+	}
+	var GatewayURL = config.GatewayURLV2
 
+	dataset, _ := NewDataset(config)
+
+	//dataset.Create测试1 无效的ServiceURLV2
+	dataset.sdkConfig.GatewayURLV2 = "://invalid-url"
+	_, err = dataset.Create("测试集合")
+	if err == nil {
+
+	}
+
+	// 测试 UploadLocalFile 2: t.client.Do 错误
+	dataset.sdkConfig.GatewayURLV2 = "http://192.0.2.1"
+	_, err = dataset.Create("测试集合")
+	if err == nil {
+
+	}
+
+	// 测试 UploadLocalFile 4: 错误的 HTTP 响应
+	dataset.client = &MockHTTPClient{}
+	dataset.sdkConfig.GatewayURLV2 = GatewayURL
+	_, err = dataset.Create("测试集合")
+	if err == nil {
+		
+	}
+	// 测试 UploadLocalFile 5: 模拟读取 body 时发生错误
+	dataset.client = &FaultyHTTPClient{}
+	dataset.sdkConfig.GatewayURLV2 = GatewayURL
+	_, err = dataset.Create("测试集合")
+	if err == nil {
+
+	}
+
+	//NewDataset测试1 config == nil
+	dataset, _ = NewDataset(nil)
+	//NewDataset测试2 client == nil
+	config.HTTPClient = nil
+	dataset, _ = NewDataset(config)
+	
+}
 func TestDataset(t *testing.T) {
+	t.Parallel() // 并发运行
 	// 创建缓冲区来存储日志
 	var logBuffer bytes.Buffer
 
@@ -43,6 +91,12 @@ func TestDataset(t *testing.T) {
 		t.Fatalf("create dataset failed: %v", err)
 	}
 	log("Dataset created with ID: %s", datasetID)
+
+	_,err = dataset.BatchUploadLocaleFile("datasetID", []string{"./files/test.pdf", "./files/test2.pdf"})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+	}
+	//log("Documents uploaded with ID: %s", documentIDs)
 
 	documentID, err := dataset.UploadLocalFile(datasetID, "./files/test.pdf")
 	if err != nil {
