@@ -165,8 +165,6 @@ __COMPONENTS__ = [
     "MixCardOCR",
 ] # NOQA
 
-from .tests.component_test import AppbuilderTestToolEval, AutomaticTestToolEval
-
 from appbuilder.core.message import Message
 from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
