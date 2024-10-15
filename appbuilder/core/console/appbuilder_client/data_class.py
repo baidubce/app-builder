@@ -163,7 +163,7 @@ class RAGReference(BaseModel):
                segment_id(str): 片段ID
                document_id(str): 文档ID
                document_name(str): 文档名
-               knowledge_base_id(str): 知识库id  知识问答专有字段 
+               knowledgebase_id(str): 知识库id  知识问答专有字段 
        """
     id: str = ""
     from_: str = Field(..., alias='from')
@@ -173,7 +173,7 @@ class RAGReference(BaseModel):
     document_id: str = ""
     dataset_id: str = ""
     document_name: str = ""
-    knowledge_base_id: str = ""
+    knowledgebase_id: str = ""
 
 
 class RAGDetail(BaseModel):
