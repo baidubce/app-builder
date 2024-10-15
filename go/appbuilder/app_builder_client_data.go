@@ -153,14 +153,15 @@ type RAGDetail struct {
 }
 
 type Reference struct {
-	ID           string `json:"id"`
-	From         string `json:"from"`
-	URL          string `json:"url"`
-	Content      string `json:"content"`
-	SegmentID    string `json:"segment_id"`
-	DocumentID   string `json:"document_id"`
-	DatasetID    string `json:"dataset_id"`
-	DocumentName string `json:"document_name"`
+	ID              string `json:"id"`
+	From            string `json:"from"`
+	URL             string `json:"url"`
+	Content         string `json:"content"`
+	SegmentID       string `json:"segment_id"`
+	DocumentID      string `json:"document_id"`
+	DatasetID       string `json:"dataset_id"`
+	DocumentName    string `json:"document_name"`
+	KnowledgeBaseID string `json:"knowledgebase_id"`
 }
 
 type FunctionCallDetail struct {
