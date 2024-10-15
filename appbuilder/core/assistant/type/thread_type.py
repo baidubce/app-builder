@@ -226,7 +226,7 @@ class LastError(BaseModel):
 
 class FinalAnswerMessage(BaseModel):
     message_id: Optional[str] = ""
-    content: Optional[AssistantContent] = None
+    content: Optional[list[AssistantContent]] = []
 
 class FinalAnswer(BaseModel):
     type: Optional[str] = "message"

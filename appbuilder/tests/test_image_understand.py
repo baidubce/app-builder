@@ -21,7 +21,7 @@ import time
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestImageUnderstand(unittest.TestCase):
     def setUp(self):
         """

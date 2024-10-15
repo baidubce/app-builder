@@ -26,7 +26,7 @@ class TestDocFormatConverter(unittest.TestCase):
         pass
 
     def setUp(self):
-        os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_DOC_FORMAT"]
+        pass
 
     @classmethod
     def test_doc_format_url(cls):
