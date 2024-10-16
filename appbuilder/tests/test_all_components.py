@@ -52,7 +52,7 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
         for name, import_res in self.all_components.items():
 
             if import_res["import_error"] != "":
-                error_data.append({"Component Name": name, "Error Message": str(e)})
+                error_data.append({"Component Name": name, "Error Message": import_res["import_error"]})
                 print("组件名称:{} 错误信息:{}".format(name, import_res["import_error"]))
                 continue
 
