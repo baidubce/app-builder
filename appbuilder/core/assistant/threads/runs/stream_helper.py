@@ -409,6 +409,19 @@ class AssistantEventHandler():
             yield item
 
     def until_done(self):
+        """
+        直到迭代器结束为止，持续迭代。
+        
+        Args:
+            无
+        
+        Returns:
+            无
+        
+        Raises:
+            无
+        
+        """
         for _ in self._iterator:
             ...
 

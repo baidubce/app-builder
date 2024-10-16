@@ -25,10 +25,29 @@ class Threads():
 
     @property
     def messages(self) -> Messages:
+        """
+        获取消息实例
+        
+        Args:
+            无
+        
+        Returns:
+            Messages: 返回Messages实例
+        
+        """
         return Messages()
     
     @property
     def runs(self) -> Runs:
+        """
+        返回Runs对象。
+        
+        Args:
+            无
+        
+        Returns:
+            Runs: 一个Runs对象实例。
+        """
         return Runs()
 
     @assistent_tool_trace
