@@ -20,6 +20,8 @@ import unittest
 import appbuilder
 import uuid
 
+os.environ['APPBUILDER_TOKEN'] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+
 TEST_INPUT = {
     "query": appbuilder.Message("这篇文档讲了什么"),
     "instruction": "请根据文档内容回答问题",
@@ -28,8 +30,7 @@ TEST_INPUT = {
     "stream": True,
     "conversation_id": str(uuid.uuid4()),
     "trace_id": str(uuid.uuid4()),
-    "uid": str(uuid.uuid4()),
-    "APPBUILDER_TOKEN": os.getenv("APPBUILDER_TOKEN", None),
+    "uid": str(uuid.uuid4())
 }
 
 
@@ -45,7 +46,7 @@ class TestDocumentUnderstandingComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        os.environ['APPBUILDER_TOKEN'] = TEST_INPUT.get("APPBUILDER_TOKEN")
+        os.environ['APPBUILDER_TOKEN'] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
         self.du = appbuilder.DocumentUnderstanding()
 
     def test_run_with_stream(self):

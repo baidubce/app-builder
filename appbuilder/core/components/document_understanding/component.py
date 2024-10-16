@@ -80,11 +80,8 @@ class DocumentUnderstanding(Component):
             base64_message = base64_encoded_data.decode('utf-8')
 
             return base64_message
-
-        except FileNotFoundError:
-            return "文件未找到，请检查文件路径是否正确。"
-        except Exception as e:
-            return f"发生错误: {str(e)}"
+        except:
+            return f"文件未找到，请检查文件路径是否正确。"
 
     def run(self,
             message: Message,
