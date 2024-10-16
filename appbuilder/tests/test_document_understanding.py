@@ -20,10 +20,6 @@ import unittest
 import appbuilder
 import uuid
 
-# 生产环境
-os.environ['APPBUILDER_TOKEN'] = "YOUR-TOKEN"
-
-
 TEST_INPUT = {
     "query": appbuilder.Message("这篇文档讲了什么"),
     "instruction": "请根据文档内容回答问题",
@@ -93,6 +89,23 @@ class TestDocumentUnderstandingComponent(unittest.TestCase):
         query = TEST_INPUT.get("query")
         results = self.du.run(query,
                              TEST_INPUT.get("test_utils_logging_util.py"),
+                             instruction=TEST_INPUT.get("instruction"),
+                             addition_instruction=TEST_INPUT.get("addition_instruction"),
+                             stream=False,
+                             conversation_id=TEST_INPUT.get("conversation_id"),
+                             trace_id=TEST_INPUT.get("trace_id"),
+                             uid=TEST_INPUT.get("uid"))
+
+        for result in results:
+            self.assertIsNotNone(result)
+            print(f'\n[result]\n{result}\n')
+
+    def test_run_with_nofile(self):
+        """测试 run 方法上传无效文件
+        """
+        query = TEST_INPUT.get("query")
+        results = self.du.run(query,
+                             TEST_INPUT.get("tt.txt"),
                              instruction=TEST_INPUT.get("instruction"),
                              addition_instruction=TEST_INPUT.get("addition_instruction"),
                              stream=False,
