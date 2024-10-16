@@ -27,6 +27,16 @@ class Assistants(object):
 
     @property
     def files(self):
+        """
+        获取当前工作目录下的文件对象。
+        
+        Args:
+            无
+        
+        Returns:
+            Files: 返回当前工作目录下的文件对象。
+        
+        """
         return Files()
 
     @assistent_tool_trace
