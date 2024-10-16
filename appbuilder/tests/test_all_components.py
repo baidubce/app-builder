@@ -47,7 +47,6 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
     def test_component(self):
         error_data = []
         error_stats ={}
-        e = AppbuilderBuildexException
          
         for name, import_res in self.all_components.items():
 
