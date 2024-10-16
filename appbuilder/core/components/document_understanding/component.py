@@ -33,34 +33,6 @@ class DocumentUnderstanding(Component):
     name = "document_understanding"
     version = "v1"
     meta = DocumentUnderstandingArgs
-    manifests = [{
-        "name": "document_understanding",
-        "description": "该工具支持对图片以及文档内容进行理解，并基于图片以及文档内容对用户的提问进行回答，包括但不限于文档内容问答、"
-                       "总结摘要、内容分析。",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "用户输入的query"
-                },
-                "file_path": {
-                    "type": "string",
-                    "description": "用户上传的文档的文件路径"
-                },
-                "instruction": {
-                    "type": "string",
-                    "description": "用户指令"
-                },
-                "addition_instruction": {
-                    "type": "string",
-                    "description": "用户增强指令"
-                },
-            },
-            "required": ["query", "file_path", "instruction", "addition_instruction"]
-        }
-    }]
-
     def __init__(
             self,
             secret_key: Optional[str] = None,
@@ -185,31 +157,3 @@ class DocumentUnderstanding(Component):
                     raise Exception(f"服务请求失败: {result['message']}")
         else:
             response.raise_for_status()
-
-
-if __name__ == '__main__':
-    import uuid
-    APPBUILDER_TOKEN = "YOUR-TOKEN"
-    os.environ["APPBUILDER_TOKEN"] = APPBUILDER_TOKEN
-    import appbuilder
-    uid = str(uuid.uuid4())
-    trace_id = str(uuid.uuid4())
-    conversation_id = str(uuid.uuid4())
-    du = DocumentUnderstanding()
-    query = appbuilder.Message("这篇文档讲了什么")
-    instruction = "请根据文档内容回答问题"
-    addition_instruction = "请你用一句话简短概括"
-    file_path = "test.docx"
-    stream = True
-    print(trace_id)
-    response_ = du.run(query,
-                       file_path,
-                       instruction=instruction,
-                       addition_instruction=addition_instruction,
-                       uid=uid,
-                       trace_id=trace_id,
-                       conversation_id=conversation_id,
-                       stream=stream)
-
-    for result in response_:
-        print(result)

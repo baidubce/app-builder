@@ -52,8 +52,8 @@ class TestDocumentUnderstandingComponent(unittest.TestCase):
         os.environ['APPBUILDER_TOKEN'] = TEST_INPUT.get("APPBUILDER_TOKEN")
         self.du = appbuilder.DocumentUnderstanding()
 
-    def test_run_with_default_params(self):
-        """测试 run 方法使用默认参数
+    def test_run_with_stream(self):
+        """测试 run 方法流式输出
         """
         query = TEST_INPUT.get("query")
         results = self.du.run(query,
@@ -61,6 +61,41 @@ class TestDocumentUnderstandingComponent(unittest.TestCase):
                              instruction=TEST_INPUT.get("instruction"),
                              addition_instruction=TEST_INPUT.get("addition_instruction"),
                              stream=TEST_INPUT.get("stream"),
+                             conversation_id=TEST_INPUT.get("conversation_id"),
+                             trace_id=TEST_INPUT.get("trace_id"),
+                             uid=TEST_INPUT.get("uid"))
+
+        for result in results:
+            self.assertIsNotNone(result)
+            print(f'\n[result]\n{result}\n')
+
+    def test_run_with_nostream(self):
+        """测试 run 方法非流式输出
+        """
+        query = TEST_INPUT.get("query")
+        results = self.du.run(query,
+                             TEST_INPUT.get("file_path"),
+                             instruction=TEST_INPUT.get("instruction"),
+                             addition_instruction=TEST_INPUT.get("addition_instruction"),
+                             stream=False,
+                             conversation_id=TEST_INPUT.get("conversation_id"),
+                             trace_id=TEST_INPUT.get("trace_id"),
+                             uid=TEST_INPUT.get("uid"))
+
+        for result in results:
+            self.assertIsNotNone(result)
+            print(f'\n[result]\n{result}\n')
+
+
+    def test_run_with_errortype(self):
+        """测试 run 方法上传非法文件类型
+        """
+        query = TEST_INPUT.get("query")
+        results = self.du.run(query,
+                             TEST_INPUT.get("test_utils_logging_util.py"),
+                             instruction=TEST_INPUT.get("instruction"),
+                             addition_instruction=TEST_INPUT.get("addition_instruction"),
+                             stream=False,
                              conversation_id=TEST_INPUT.get("conversation_id"),
                              trace_id=TEST_INPUT.get("trace_id"),
                              uid=TEST_INPUT.get("uid"))
