@@ -36,12 +36,12 @@ res = retriever(query)
 根据query进行查询
 
 * **参数:**
-  * **query** ([*Message*](appbuilder.md#appbuilder.Message) *[**str* *]*) – 需要查询的内容，以Message对象的形式传递。
+  * **query** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message) *[**str* *]*) – 需要查询的内容，以Message对象的形式传递。
   * **top_k** (*int* *,* *optional*) – 查询结果中匹配度最高的top_k个结果。默认为1。
 * **返回:**
   查询到的结果，包含文本、元数据以及匹配得分，以Message对象的形式返回。
 * **返回类型:**
-  obj ([Message](appbuilder.md#appbuilder.Message)[Dict])
+  obj ([Message](appbuilder.core.md#appbuilder.core.message.Message)[Dict])
 
 #### tool_desc *: Dict[str, Any]* *= {'description': 'a retriever based on Baidu ElasticSearch'}*
 
@@ -56,7 +56,7 @@ BES向量存储检索工具
 向BES中插入数据
 
 * **参数:**
-  * **segments** ([*Message*](appbuilder.md#appbuilder.Message) *[**str* *]*) – 需要插入的内容，包含多个文本段
+  * **segments** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message) *[**str* *]*) – 需要插入的内容，包含多个文本段
   * **metadata** (*str* *,* *optional*) – 元数据，默认为空字符串。
 * **返回:**
   无返回值
@@ -97,6 +97,13 @@ BES向量存储检索工具
 
 #### *property* es
 
+获取Elasticsearch客户端实例。
+
+* **参数:**
+  **无**
+* **返回:**
+  Elasticsearch客户端实例。
+
 #### *classmethod* from_segments(segments, cluster_id, user_name, password, embedding=None, \*\*kwargs)
 
 根据段落创建一个bes向量索引。
@@ -106,7 +113,7 @@ BES向量存储检索工具
   * **cluster_id** (*str*) – bes集群ID。
   * **user_name** (*str*) – bes用户名。
   * **password** (*str*) – bes用户密码。
-  * **embedding** ([*Embedding*](appbuilder.md#appbuilder.Embedding) *,* *optional*) – 文本段落embedding工具，默认为None，使用默认的Embedding类。
+  * **embedding** ([*Embedding*](appbuilder.core.components.embeddings.md#appbuilder.core.components.embeddings.component.Embedding) *,* *optional*) – 文本段落embedding工具，默认为None，使用默认的Embedding类。
   * **\*\*kwargs** – 其他初始化参数。
 * **返回:**
   bes索引实例。
@@ -130,4 +137,11 @@ BES向量存储检索工具
 
 #### *property* helpers
 
-## Module contents
+获取帮助器实例。
+
+* **参数:**
+  **无**
+* **返回:**
+  帮助器实例。
+* **返回类型:**
+  \_helpers (对象)

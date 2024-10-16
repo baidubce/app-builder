@@ -39,12 +39,12 @@ print(ranked_1)
 运行查询，对给定的文本集合进行批量处理，并返回处理后的结果列表。
 
 * **参数:**
-  * **query** (*Union* *[*[*Message*](appbuilder.md#appbuilder.Message) *[**str* *]* *,* *str* *]*) – 查询条件，可以是字符串或Message对象。
-  * **texts** (*Union* *[*[*Message*](appbuilder.md#appbuilder.Message) *[**List* *[**str* *]* *]* *,* *List* *[**str* *]* *]*) – 待处理的文本集合，可以是字符串列表或包含字符串列表的Message对象。
+  * **query** (*Union* *[*[*Message*](appbuilder.core.md#appbuilder.core.message.Message) *[**str* *]* *,* *str* *]*) – 查询条件，可以是字符串或Message对象。
+  * **texts** (*Union* *[*[*Message*](appbuilder.core.md#appbuilder.core.message.Message) *[**List* *[**str* *]* *]* *,* *List* *[**str* *]* *]*) – 待处理的文本集合，可以是字符串列表或包含字符串列表的Message对象。
 * **返回:**
   处理后的结果列表，每个元素是一个字典，包含处理后的文本信息。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)[List[dict]]
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)[List[dict]]
 
 #### version *: str* *= 'v1'*
 
@@ -53,6 +53,13 @@ print(ranked_1)
 基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
 
 配置
+
+#### text
+
+Union[Message[str], str]
+
+* **Type:**
+  [appbuilder.core.message.Message](appbuilder.core.md#appbuilder.core.message.Message)[str] | str
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
 
@@ -70,5 +77,3 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### text *: [Message](appbuilder.core.md#appbuilder.core.message.Message)[str] | str*
-
-## Module contents

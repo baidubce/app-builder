@@ -27,44 +27,49 @@ print(out.content) # eg: {"img_urls": ["xxx"]}
 
 #### *static* check_service_error(request_id: str, data: dict)
 
-个性化服务response参数检查
+检查服务错误信息
 
-参数:
-: request (dict) : 文生图生成结果body返回
-
-返回：
-: 无
+* **参数:**
+  * **request_id** (*str*) – 请求ID
+  * **data** (*dict*) – 响应数据
+* **抛出:**
+  **AppBuilderServerException** – 如果响应数据中包含错误信息，则抛出异常
+* **返回:**
+  None
 
 #### extract_img_urls(response: Text2ImageQueryResponse)
 
-提取图片的url。
+从作画生成的返回结果中提取图片url。
 
-参数:
-: response (obj:Text2ImageQueryResponse): A作画生成的返回结果。
-
-返回:
-: List[str]:img_urls: 从返回体中提取的图片url列表。
+* **参数:**
+  **(****obj** (*response*) – Text2ImageQueryResponse): 作画生成的返回结果。
+* **返回:**
+  从返回体中提取的图片url列表。
+* **返回类型:**
+  List[str]
 
 #### manifests *= [{'description': '文生图，该组件只用于图片创作。当用户需要进行场景、人物、海报等内容的绘制时，使用该画图组件。如果用户需要生成图表（柱状图、折线图、雷达图等），则必须使用代码解释器。', 'name': 'text_to_image', 'parameters': {'properties': {'query': {'description': '文生图用的query。特别注意，这个字段只能由中文字符组成，不能含有任何英语描述。', 'type': 'string'}}, 'required': ['query'], 'type': 'object'}}]*
 
-#### queryText2ImageData(request: Text2ImageQueryRequest, timeout: float = None, retry: int = 0, request_id: str = None) → Text2ImageQueryResponse
+#### queryText2ImageData(request: Text2ImageQueryRequest, timeout: float | None = None, retry: int = 0, request_id: str | None = None) → Text2ImageQueryResponse
 
-使用给定的输入并返回文生图的结果。
+将文本查询请求转换为图像数据。
 
-参数:
-: request (obj:Text2ImageQueryRequest): 输入请求，这是一个必需的参数。
-  timeout (float, 可选): 请求的超时时间。
-  retry (int, 可选): 请求的重试次数。
-
-返回:
-: obj:Text2ImageQueryResponse: 接口返回的输出消息。
+* **参数:**
+  * **request** (*Text2ImageQueryRequest*) – 输入请求，必填参数。
+  * **timeout** (*float* *,* *optional*) – 请求的超时时间，默认为None。
+  * **retry** (*int* *,* *optional*) – 请求的重试次数，默认为0。
+  * **request_id** (*str* *,* *optional*) – 请求的唯一标识符，默认为None。
+* **返回:**
+  接口返回的输出消息。
+* **返回类型:**
+  Text2ImageQueryResponse
 
 #### run(message: [Message](appbuilder.core.md#appbuilder.core.message.Message), width: int = 1024, height: int = 1024, image_num: int = 1, image: str | None = None, url: str | None = None, pdf_file: str | None = None, pdf_file_num: str | None = None, change_degree: int | None = None, text_content: str | None = None, task_time_out: int | None = None, text_check: int | None = 1, request_id: str | None = None)
 
 执行文本到图像的生成任务。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 包含任务相关信息的消息对象。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 包含任务相关信息的消息对象。
   * **width** (*int* *,* *optional*) – 生成的图像的宽度，默认为1024。
   * **height** (*int* *,* *optional*) – 生成的图像的高度，默认为1024。
   * **image_num** (*int* *,* *optional*) – 生成图像的数量，默认为1。
@@ -80,11 +85,11 @@ print(out.content) # eg: {"img_urls": ["xxx"]}
 * **返回:**
   包含生成图像URL的消息对象。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 * **抛出:**
   **HTTPError** – 请求失败时抛出异常。
 
-#### submitText2ImageTask(request: Text2ImageSubmitRequest, timeout: float = None, retry: int = 0, request_id: str = None) → Text2ImageSubmitResponse
+#### submitText2ImageTask(request: Text2ImageSubmitRequest, timeout: float | None = None, retry: int = 0, request_id: str | None = None) → Text2ImageSubmitResponse
 
 使用给定的输入并返回文生图的任务信息。
 
@@ -97,5 +102,3 @@ print(out.content) # eg: {"img_urls": ["xxx"]}
   Text2ImageSubmitResponse: 接口返回的输出消息。
 * **返回类型:**
   obj
-
-## Module contents

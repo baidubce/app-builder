@@ -84,20 +84,17 @@ class AnimalRecognition(Component):
     @HTTPClient.check_param
     @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r"""
-        执行动物识别
+        """
+        根据输入消息运行动物识别功能
         
         Args:
-            message (obj: `Message`): 用于执行识别操作的输入图片或图片url下载地址。
-                例如：Message(content={"raw_image": b"..."}) 或 Message(content={"url": "https://image/download/url"})。
-            timeout (float, 可选): HTTP超时时间
-            retry (int, 可选): HTTP重试次数
+            message (Message): 输入的消息对象，其中应包含需要识别的图像数据或URL
+            timeout (float, optional): 超时时间，单位为秒。默认为None，表示无超时限制。Defaults to None.
+            retry (int, optional): 重试次数。默认为0，表示不重试。Defaults to 0.
         
         Returns:
-            message (obj: `Message`): 识别结果。
-                例如：Message(name=msg, content={'result': [{'name': '国宝大熊猫', 'score': '0.945917'}, {'name': '秦岭四宝', 'score': '0.0417291'},
-                {'name': '团团圆圆', 'score': '0.00584368'}, {'name': '圆仔', 'score': '0.000846628'}, {'name': '棕色大熊猫', 'score': '0.000538988'},
-                {'name': '金丝猴', 'score': '0.000279618'}]}, mtype=dict)
+            Message: 识别结果的消息对象
+        
         """
         inp = AnimalRecognitionInMsg(**message.content)
         req = AnimalRecognitionRequest()

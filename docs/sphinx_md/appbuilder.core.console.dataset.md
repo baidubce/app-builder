@@ -8,7 +8,7 @@
 
 基类：`object`
 
-console知识库操作工具，即将上线
+console知识库操作工具
 
 Examples:
 
@@ -37,22 +37,20 @@ dataset.delete_documents(document_ids)
 向知识库中添加文档
 
 * **参数:**
-  * **file_path_list** (*List* *[**str* *]*) – 文档路径列表
-  * **is_custom_process_rule** (*bool* *,* *optional*) – 是否使用自定义文档处理规则, 默认为False, 使用平台的默认规则，为True时使用自定义规则. Defaults to False.
-  * **custom_process_rule** (*Dict* *,* *optional*) – 自定义文档规则，当is_custom_process_rule为True时生效，格式示例如下：
-    {
-    “separators”: [”。”, “，”],    # 文本切分符，支持这几种[ , , “？”, , “!”, “?”, “……”]
+  * **file_path_list** – 文档路径列表
+  * **is_custom_process_rule** – 是否使用自定义文档处理规则, 默认为False, 使用平台的默认规则，为True时使用自定义规则
+  * **custom_process_rule** – 自定义文档规则，当is_custom_process_rule为True时生效，格式示例如下：
+  * **{** – “separators”: [”。”, “，”],    # 文本切分符，支持这几种[ , , “？”, , “!”, “?”, “……”]
     “target_length”: 300,         # 文本切片片段长度，取值范围[300, 800]
     “overlap_rate”: 0.3           # 文本片段重叠率，取值范围[0, 0.3]
-    }
-    Defaults to None.
-  * **is_enhanced** (*bool* *,* *optional*) – 是否开启知识增强, 默认为False，在检索问答时通过知识点来索引到对应的切片，大模型根据切片内容生成答案，开启知识增强会调用大模型抽取更加丰富的知识点，增加切片的召回率. Defaults to False.
+  * **}**
+  * **is_enhanced** – 是否开启知识增强, 默认为False，在检索问答时通过知识点来索引到对应的切片，大模型根据切片内容生成答案，开启知识增强会调用大模型抽取更加丰富的知识点，增加切片的召回率
 * **返回:**
-  添加文档响应对象
+  添加文档的响应结果，包含以下属性：
+  - dataset_id (str): 知识库id
+  - document_ids (List[str]): 文档id列表
 * **返回类型:**
   AddDocumentsResponse
-* **抛出:**
-  **ValueError** – 如果文档类型不受支持或文档数量超过最大限制，则引发异常
 
 #### add_file_url *: str* *= '/v1/ai_engine/agi_platform/v1/datasets/documents'*
 
@@ -61,9 +59,9 @@ dataset.delete_documents(document_ids)
 创建知识库
 
 * **参数:**
-  **dataset_name** (*str*) – 知识库名称
+  **dataset_name** – 知识库名称
 * **返回:**
-  Dataset实例
+  创建成功的知识库实例
 * **返回类型:**
   [Dataset](#appbuilder.core.console.dataset.dataset.Dataset)
 
@@ -74,9 +72,9 @@ dataset.delete_documents(document_ids)
 删除知识库中的文档
 
 * **参数:**
-  **document_ids** (*List* *[**str* *]*) – 文档id列表
+  **document_ids** – 文档id列表
 * **返回:**
-  无返回值
+  None
 
 #### delete_file_url *: str* *= '/v1/ai_engine/agi_platform/v1/datasets/document/delete'*
 
@@ -85,20 +83,15 @@ dataset.delete_documents(document_ids)
 获取知识库中的文档列表
 
 * **参数:**
-  * **page** (*int*) – 第几页
-  * **limit** (*int*) – 每页文档数
-  * **keyword** (*str* *,* *optional*) – 文件名关键字，支持模糊查询。默认为空字符串。
+  * **page** – 第几页
+  * **limit** – 每页文档数
+  * **keyword** – 文件名关键字，支持模糊查询
 * **返回:**
-  返回文档列表的响应对象
-* **返回类型:**
-  DocumentListResponse
-
-Returns Example:
-: {
+  DocumentListResponses实例，返回示例：
+  {
   “data”: [
-  <br/>
   > {
-  > : “id”: “d2d1bc1a-1763-4162-88b2-0dad225da16f”, # 文档id
+  > : “id”:”d2d1bc1a-1763-4162-88b2-0dad225da16f”, # 文档id
   >   “name”: “唐诗三百首（全集）全新编辑版.pdf”, # 文档名称
   >   “created_from”: “web”, # 创建来源
   >   “created_by”: “76efed91-cf19-435d-993c-cdd901d6d13c”, # 创建人
@@ -110,9 +103,9 @@ Returns Example:
   >   “disabled_by”: null, # 文档禁用人
   >   “display_status”: “indexing”, # 文档显示状态，和前端展示状态一致
   >   “word_count”: 5024 # 文档字数
-  <br/>
+
   > }
-  <br/>
+
   ],
   “has_more”: false, # 是否还有下一页
   “limit”: 10, # 每页文档数
@@ -124,13 +117,4 @@ Returns Example:
 
 #### *property* http_client
 
-* **参数:**
-  **无**
-* **返回:**
-  返回HTTPClient实例，若不存在则先创建后返回。
-* **返回类型:**
-  HTTPClient
-
 #### upload_file_url *: str* *= '/v1/ai_engine/agi_platform/v1/datasets/files/upload'*
-
-## Module contents

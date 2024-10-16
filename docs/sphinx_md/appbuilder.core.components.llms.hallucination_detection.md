@@ -41,9 +41,20 @@ result = hallucination_detection.run(msg)
 print(result)
 ```
 
-#### completion(version, base_url, request, timeout: float = None, retry: int = 0)
+#### completion(version, base_url, request, timeout: float | None = None, retry: int = 0)
 
 Send a byte array of an audio file to obtain the result of speech recognition.
+
+* **参数:**
+  * **version** (*str*) – API version.
+  * **base_url** (*str*) – Base URL of the API.
+  * **request** (*Request*) – Request object containing audio file and other parameters.
+  * **timeout** (*float* *,* *optional*) – Timeout for the request. Defaults to None.
+  * **retry** (*int* *,* *optional*) – Number of retries for the request. Defaults to 0.
+* **返回:**
+  Processed response object.
+* **返回类型:**
+  Response
 
 #### manifests *= [{'description': '输入用户查询query、检索结果context以及根据检索结果context生成的用户查询query的回答answer，判断answer中是否存在幻觉。', 'name': 'hallucination_detection', 'parameters': {'properties': {'answer': {'description': '根据检索结果context生成的用户查询query的回答answer。', 'text': 'string'}, 'context': {'description': '检索结果。', 'text': 'string'}, 'query': {'description': '用户查询。', 'text': 'string'}}, 'required': ['query', 'context', 'answer'], 'type': 'object'}}]*
 
@@ -58,7 +69,7 @@ Send a byte array of an audio file to obtain the result of speech recognition.
 使用给定的输入运行模型并返回结果。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入消息，包含 query、context 和 answer。是必需的参数。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入消息，包含 query、context 和 answer。是必需的参数。
   * **stream** (*bool* *,*  *可选*) – 是否以流式形式返回响应。默认为 False。
   * **temperature** (*float* *,*  *可选*) – 模型配置的温度参数，用于调整模型的生成概率。
     取值范围为 0.0 到 1.0，较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
@@ -67,14 +78,31 @@ Send a byte array of an audio file to obtain the result of speech recognition.
 * **返回:**
   模型运行后的输出消息。
 * **返回类型:**
-  result ([Message](appbuilder.md#appbuilder.Message))
+  result ([Message](appbuilder.core.md#appbuilder.core.message.Message))
 * **抛出:**
   * **AssertionError** – 如果输入的 message 中缺少 query、context 或 answer。
-  * [**AppBuilderServerException**](appbuilder.md#appbuilder.AppBuilderServerException) – 如果请求执行失败，将抛出异常，包含服务错误码和错误信息。
+  * **AppBuilderServerException** – 如果请求执行失败，将抛出异常，包含服务错误码和错误信息。
 
 #### tool_eval(name: str, stream: bool = False, \*\*kwargs)
 
-tool_eval for function call
+调用函数进行工具评估。
+
+* **参数:**
+  * **name** (*str*) – 函数名，当前方法未使用此参数，预留接口。
+  * **stream** (*bool* *,* *optional*) – 是否以流的方式返回结果，默认为False。如果为True，则逐个返回结果；如果为False，则一次性返回所有结果。
+  * **\*\*kwargs** – 
+
+    关键字参数，包含评估所需的输入参数。
+    - query (str): 查询语句。
+    - context (str): 上下文信息。
+    - answer (str): 参考答案。
+    - model_configs (dict, optional): 模型配置信息，默认为空字典。包含以下字段：
+      : - temperature (float, optional): 温度参数，用于控制生成文本的随机性，默认为1e-10。
+        - top_p (float, optional): 截断概率，用于控制生成文本的质量，默认为0.0。
+* **返回:**
+  如果stream为False，返回包含所有评估结果的列表；如果stream为True，逐个返回评估结果。
+* **抛出:**
+  **ValueError** – 如果缺少query、context或answer参数，将引发此异常。
 
 #### version *: str* *= 'v1'*
 
@@ -83,6 +111,30 @@ tool_eval for function call
 基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
 
 幻觉检测配置
+
+#### query
+
+str
+用户查询。
+
+* **Type:**
+  str
+
+#### context
+
+str
+根据query得到的检索结果。
+
+* **Type:**
+  str
+
+#### answer
+
+str
+基于context生成的query的答案。
+
+* **Type:**
+  str
 
 #### answer *: str*
 
@@ -104,5 +156,3 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### query *: str*
-
-## Module contents

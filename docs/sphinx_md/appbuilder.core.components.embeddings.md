@@ -12,6 +12,10 @@ ernie bot embedding
 
 Embedding-V1是基于百度文心大模型技术的文本表示模型，将文本转化为用数值表示的向量形式，用于文本检索、信息推荐、知识挖掘等场景。
 
+#### model
+
+str = “Embedding-V1”
+
 ### 示例
 
 ```python
@@ -33,7 +37,14 @@ embedding_batch = embedding.batch(Message(["hello", "world"]))
 
 #### batch(texts: [Message](appbuilder.core.md#appbuilder.core.message.Message)[List[str]] | List[str]) → [Message](appbuilder.core.md#appbuilder.core.message.Message)[List[List[float]]]
 
-batch run
+批量处理文本数据。
+
+* **参数:**
+  **texts** (*Union* *[*[*Message*](appbuilder.core.md#appbuilder.core.message.Message) *[**List* *[**str* *]* *]* *,* *List* *[**str* *]* *]*) – 待处理的文本数据，可以是 Message 类型，包含多个文本列表，也可以是普通列表类型，包含多个文本。
+* **返回:**
+  处理后的结果，为 Message 类型，包含一个二维浮点数列表，每个子列表对应输入文本列表中一个文本的处理结果。
+* **返回类型:**
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)[List[List[float]]]
 
 #### meta
 
@@ -46,11 +57,11 @@ batch run
 处理给定的文本或消息对象，并返回包含处理结果的消息对象。
 
 * **参数:**
-  **text** (*Union* *[*[*Message*](appbuilder.md#appbuilder.Message) *[**str* *]* *,* *str* *]*) – 待处理的文本或消息对象。
+  **text** (*Union* *[*[*Message*](appbuilder.core.md#appbuilder.core.message.Message) *[**str* *]* *,* *str* *]*) – 待处理的文本或消息对象。
 * **返回:**
   处理后的结果，封装在消息对象中。结果是一个浮点数列表。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)[List[float]]
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)[List[float]]
 
 #### version *: str* *= 'v1'*
 
@@ -59,6 +70,13 @@ batch run
 基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
 
 ernie bot embedding配置
+
+#### text
+
+输入文本
+
+* **Type:**
+  Union[[Message](appbuilder.core.md#appbuilder.core.message.Message)[str], str]
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
 
@@ -76,7 +94,3 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### text *: [Message](appbuilder.core.md#appbuilder.core.message.Message)[str] | str*
-
-## Module contents
-
-init

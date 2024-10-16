@@ -43,14 +43,6 @@ class NL2SqlArgs(ComponentArguments):
 class NL2Sql(Component):
     """
     gib nl2sql
-
-    Args:
-        model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, ERNIE Speed-AppBuilder
-        table_schemas: 表的 schema 列表，例如: ```
-                        CREATE TABLE `mytable` (
-                        `d_year` COMMENT '年度,2019,2020..2022..',
-                        `industry` COMMENT '行业',
-                        `project_name` COM
     """
     meta = NL2SqlArgs
 

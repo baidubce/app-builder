@@ -70,19 +70,20 @@ class DocSplitter(Component):
     @components_run_trace
     def run(self, message: Message):
         """
-        将输入的解析文档结果处理为多个段落结果。
+        运行函数，根据splitter_type将文档分割成多个部分
         
         Args:
-            message (obj:`Message`): 上游docparser的文档解析结果。
+            message (Message): 包含文档内容的消息对象
         
         Returns:
-            obj:`Message`: 文档分隔后的段落结果。
+            list: 分割后的文档列表
         
         Raises:
-            ValueError: 如果 message.content 不是 ParseResult 类型。
-            ValueError: 如果 splitter_type 未设置值。
-            ValueError: 如果 ParseResult 对象不包含原始值（raw）。
-            ValueError: 如果 splitter_type 不是 'split_by_chunk' 或 'split_by_title'。
+            ValueError: 如果message.content不是ParseResult类型，抛出异常
+            ValueError: 如果splitter_type为空，抛出异常
+            ValueError: 如果ParseResult不包含原始值，抛出异常
+            ValueError: 如果splitter_type不是split_by_chunk或split_by_title，抛出异常
+        
         """
         parse_result = message.content
         if not isinstance(parse_result, ParseResult):
@@ -171,10 +172,13 @@ class ChunkSplitter(Component):
         对输入的解析文档结果，按照最大段落块大小、结尾分隔符等，处理为多个段落结果
         
         Args:
-            message (obj:`Message`): 上游docparser的文档解析结果
+            message (obj:Message): 上游docparser的文档解析结果
         
         Returns:
-            obj:`Message`: 文档分隔后的段落结果
+            obj:Message: 文档分隔后的段落结果
+        
+        Raises:
+            ValueError: 如果 message.content 的类型不是 ParseResult，则抛出 ValueError 异常
         
         Examples:
         
@@ -274,10 +278,10 @@ class TitleSplitter(Component):
         对输入的解析文档结果，按照各标题层级，处理为多个段落结果
         
         Args:
-            input_message (obj:`Message`): 上游docparser的文档解析结果
+            input_message (obj:Message): 上游docparser的文档解析结果
         
         Returns:
-            obj:`Message`: 文档分隔后的段落结果
+            obj:Message: 文档分隔后的段落结果
         
         Raises:
             ValueError: 如果message.content的类型不是ParseResult，则抛出异常
@@ -285,6 +289,7 @@ class TitleSplitter(Component):
         Examples:
 
         .. code-block:: python
+        
             import os
             from appbuilder.core.components.doc_parser.doc_parser import DocParser
             from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter, TitleSplitter

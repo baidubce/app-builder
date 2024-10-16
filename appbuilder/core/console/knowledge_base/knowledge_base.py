@@ -27,6 +27,24 @@ from appbuilder.utils.trace.tracer_wrapper import client_tool_trace
 
 
 class KnowledgeBase(Component):
+    r"""
+    console知识库操作工具，用于创建、删除、查询、更新知识库等操作
+
+    Examples:
+
+    .. code-block:: python
+
+        import os
+        import appbuilder
+        os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+        my_knowledge_base_id = "your_knowledge_base_id"
+        my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
+        print("知识库ID: ", my_knowledge.knowledge_id)
+
+        list_res = my_knowledge.get_documents_list(my_knowledge_base_id)
+        print("文档列表: ", list_res)
+    """
 
     def __init__(
         self,
@@ -34,6 +52,13 @@ class KnowledgeBase(Component):
         knowledge_name: Optional[str] = None,
         **kwargs
     ):
+        r"""
+        初始化KnowledgeBase类实例
+        
+        Args:
+            knowledge_id (Optional[str]): 知识库ID
+            knowledge_name (Optional[str]): 知识库名称
+        """
         super().__init__(**kwargs)
         self.knowledge_id = knowledge_id
         self.knowledge_name = knowledge_name
@@ -41,22 +66,15 @@ class KnowledgeBase(Component):
     @classmethod
     @deprecated()
     def create_knowledge(cls, knowledge_name: str) -> "KnowledgeBase":
-        """
-        创建一个新的知识库。
+        r""" 创建知识库
         
+        Deprecated: use create_knowledge_base instead
+
         Args:
-            cls (type): 类对象，用于调用此方法时不需要显式传递。
-            knowledge_name (str): 要创建的知识库名称。
-        
+            knowledge_name (str): 知识库名称
+
         Returns:
-            KnowledgeBase: 创建的知识库对象。
-        
-        Raises:
-            HTTPError: 如果HTTP请求失败或响应状态码不为200。
-            JSONDecodeError: 如果响应数据不是有效的JSON格式。
-        
-        Note:
-            此方法已被弃用，请使用 create_knowledge_base 方法代替。
+            KnowledgeBase: 返回一个KnowledgeBase对象
         """
         payload = json.dumps({"name": knowledge_name})
         http_client = HTTPClient()
@@ -76,19 +94,18 @@ class KnowledgeBase(Component):
     def upload_file(
         self, file_path: str, client_token: str = None
     ) -> data_class.KnowledgeBaseUploadFileResponse:
-        """
-        上传文件到知识库服务器。
-        
+        r"""
+        上传文件到知识库
+
         Args:
-            file_path (str): 要上传的文件的路径。
-            client_token (str, optional): 客户端令牌，用于标识请求的唯一性。如果未提供，则自动生成。
-        
+            file_path (str): 文件路径
+            client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            data_class.KnowledgeBaseUploadFileResponse: 上传文件的响应。
-        
-        Raises:
-            FileNotFoundError: 如果指定的文件路径不存在，则抛出 FileNotFoundError 异常。
-        
+            KnowledgeBaseUploadFileResponse: 返回一个KnowledgeBaseUploadFileResponse对象，包含以下属性：
+            - request_id (int): 请求id
+            - id (str): 文件id
+            - name (dict): 文件名称
         """
         if not os.path.exists(file_path):
             raise FileNotFoundError("File {} does not exist".format(file_path))
@@ -123,23 +140,22 @@ class KnowledgeBase(Component):
         knowledge_base_id: Optional[str] = None,
         client_token: str = None,
     ) -> data_class.KnowledgeBaseAddDocumentResponse:
-        """
-        向知识库中添加文档。
-        
+        r"""
+        添加文档到知识库
+
         Args:
-            content_type (str): 文档的类型，例如 'TEXT' 或 'PDF'。
-            file_ids (list[str], optional): 文档ID列表，默认为空列表。文档ID通常由文件上传接口返回。
-            is_enhanced (bool, optional): 是否启用增强模式，默认为False。启用后会对文档进行语义理解和结构化处理。
-            custom_process_rule (Optional[data_class.CustomProcessRule], optional): 自定义处理规则，默认为None。
-            knowledge_base_id (Optional[str], optional): 知识库ID，默认为None。如果未指定，则使用当前实例的知识库ID。
-            client_token (str, optional): 客户端请求的唯一标识，默认为None。如果不指定，则自动生成。
-        
+            content_type (str): 内容类型，可选值有"raw_text", "qa"。
+            file_ids (List[str], optional): 文件ID列表。默认为空列表。
+            is_enhanced (bool, optional): 是否增强。默认为False。
+            custom_process_rule (Optional[data_class.CustomProcessRule], optional): 自定义处理规则。默认为None。
+            knowledge_base_id (Optional[str], optional): 知识库ID。默认为None，此时使用当前类的knowledge_id属性。
+            client_token (str): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            data_class.KnowledgeBaseAddDocumentResponse: 添加文档后的响应对象。
-        
-        Raises:
-            ValueError: 如果知识库ID为空且未先调用`create`方法或未指定现有知识库ID，则抛出ValueError异常。
-        
+            KnowledgeBaseAddDocumentResponse: 添加文档的相应结果。包含以下属性：
+            - request_id (str): 请求ID
+            - knowledge_base_id (str): 知识库ID
+            - document_ids (list[str]): 成功新建的文档id集合
         """
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -180,19 +196,17 @@ class KnowledgeBase(Component):
         knowledge_base_id: Optional[str] = None,
         client_token: str = None,
     ) -> data_class.KnowledgeBaseDeleteDocumentResponse:
-        """
+        r"""
         删除知识库中的文档
-        
+
         Args:
-            document_id (str): 要删除的文档ID
-            knowledge_base_id (Optional[str], optional): 知识库ID，如果为None，则使用类的知识库ID。默认为None。
-            client_token (str, optional): 请求的唯一标识，用于服务器追踪问题。默认为None，如果不传则自动生成。
-        
+            document_id (str): 文档ID
+            knowledge_base_id (Optional[str], optional): 知识库ID。默认为None，此时使用当前类的knowledge_id属性。
+            client_token (str): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            data_class.KnowledgeBaseDeleteDocumentResponse: 删除文档响应对象
-        
-        Raises:
-            ValueError: 如果未设置类的知识库ID且未提供知识库ID，则抛出ValueError异常。
+            KnowledgeBaseDeleteDocumentResponse: 删除文档的响应消息,包含以下属性：
+            - request_id (str): 请求ID
         """
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -229,21 +243,19 @@ class KnowledgeBase(Component):
         before: Optional[str] = "",
         knowledge_base_id: Optional[str] = None,
     ) -> data_class.KnowledgeBaseGetDocumentsListResponse:
-        """
-        获取文档列表。
-        
+        r"""
+        获取知识库中的文档列表
+
         Args:
-            limit (int, optional): 返回的文档数量上限，默认为10。
-            after (Optional[str], optional): 返回时间戳大于指定值的文档。默认为空字符串。
-            before (Optional[str], optional): 返回时间戳小于指定值的文档。默认为空字符串。
-            knowledge_base_id (Optional[str], optional): 知识库ID，如果未指定，则使用当前实例的知识库ID。默认为None。
-        
+            limit (int, optional): 限制数量。默认为10。
+            after (Optional[str], optional): 起始位置。默认为空字符串""。
+            before (Optional[str], optional): 结束位置。默认为空字符串""。
+            knowledge_base_id (Optional[str], optional): 知识库ID。默认为None，此时使用当前类的knowledge_id属性。
+
         Returns:
-            data_class.KnowledgeBaseGetDocumentsListResponse: 包含文档列表的响应对象。
-        
-        Raises:
-            ValueError: 如果知识库ID为空，且未通过调用create方法创建知识库，则抛出此异常。
-        
+            KnowledgeBaseGetDocumentsListResponse: 知识库文档列表服务的响应消息,包含以下属性：
+            - request_id (str): 请求ID
+            - data (list[Document]): 文档信息列表
         """
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -281,23 +293,24 @@ class KnowledgeBase(Component):
         esPassword: str = None,
         client_token: str = None,
     ) -> data_class.KnowledgeBaseDetailResponse:
-        """
-        创建一个知识库
-        
+        r"""
+        创建知识库
+
         Args:
-            name (str): 知识库名称
-            description (str): 知识库描述
-            type (str, optional): 知识库类型，默认为'public'。默认为 "public"。
-            esUrl (str, optional): Elasticsearch 服务地址。默认为 None。
-            esUserName (str, optional): Elasticsearch 用户名。默认为 None。
-            esPassword (str, optional): Elasticsearch 密码。默认为 None。
-            client_token (str, optional): 客户端token，用于区分请求来源。默认为 None。
-        
+            name (str): 知识库名称。
+            description (str): 知识库描述。
+            type (str, optional): 知识库类型。默认为"public"。
+            esUrl (str, optional): Elasticsearch服务器地址。默认为None。
+            esUserName (str, optional): Elasticsearch用户名。默认为None。
+            esPassword (str, optional): Elasticsearch密码。默认为None。
+            client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            data_class.KnowledgeBaseDetailResponse: 创建知识库后的响应对象
-        
-        Raises:
-            requests.exceptions.HTTPError: 请求失败时抛出
+            KnowledgeBaseDetailResponse: 创建知识库的响应消息,包含以下属性：
+            - id (str): 知识库ID
+            - name (str): 知识库名称
+            - description (Optional[str], optional): 知识库描述
+            - config (Optional[KnowledgeBaseConfig], optional): 知识库配置
         """
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
@@ -337,19 +350,18 @@ class KnowledgeBase(Component):
     def get_knowledge_base_detail(
         self, knowledge_base_id: Optional[str] = None
     ) -> data_class.KnowledgeBaseDetailResponse:
-        """
-        获取知识库详情。
-        
+        r"""
+        获取知识库详情
+
         Args:
-            knowledge_base_id (Optional[str], optional): 知识库ID. 如果为None，则使用实例中的knowledge_id.
-                                                        默认为None.
-        
+            knowledge_base_id (Optional[str], optional): 知识库ID，如果不指定则使用当前实例的knowledge_id属性。默认值为None。
+
         Returns:
-            data_class.KnowledgeBaseDetailResponse: 知识库详情响应对象.
-        
-        Raises:
-            ValueError: 如果knowledge_base_id为空且实例中的knowledge_id也为空，则抛出异常.
-        
+            KnowledgeBaseDetailResponse: 知识库详情，返回一个KnowledgeBaseDetailResponse对象,包含以下属性：
+            - id (str): 知识库ID
+            - name(str): 知识库名称
+            - description(Optional[str], optional): 知识库描述
+            - config(Optional[KnowledgeBaseConfig], optional): 知识库配置
         """
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -385,21 +397,17 @@ class KnowledgeBase(Component):
         description: Optional[str] = None,
         client_token: str = None,
     ):
-        """
+        r"""
         修改知识库信息
-        
+
         Args:
-            knowledge_base_id (Optional[str], optional): 知识库ID，如果为None，则使用当前实例的知识库ID. 默认为 None.
-            name (Optional[str], optional): 知识库名称. 默认为 None.
-            description (Optional[str], optional): 知识库描述. 默认为 None.
-            client_token (str, optional): 客户端唯一标识符，用于保证幂等性. 默认为 None.
-        
+            knowledge_base_id (Optional[str], optional): 知识库ID，如果不指定则使用当前实例的knowledge_id属性。默认值为None。
+            name (Optional[str], optional): 新的知识库名称。默认值为None。
+            description (Optional[str], optional): 新的知识库描述。默认值为None。
+            client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            dict: 修改后的知识库信息
-        
-        Raises:
-            ValueError: 如果既没有提供knowledge_base_id，且当前实例没有设置knowledge_id，则抛出此异常.
-        
+            dict: 响应数据，包含请求ID: requestId。
         """
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -433,18 +441,15 @@ class KnowledgeBase(Component):
     def delete_knowledge_base(
         self, knowledge_base_id: Optional[str] = None, client_token: str = None
     ):
-        """
+        r"""
         删除知识库
-        
+
         Args:
-            knowledge_base_id (Optional[str], optional): 知识库ID. 如果未提供，则使用当前实例的knowledge_id. Defaults to None.
-            client_token (str, optional): 请求的唯一标识，用于服务端去重. 如果未提供，则自动生成一个UUID. Defaults to None.
-        
+            knowledge_base_id (Optional[str], optional): 知识库ID，如果不指定则使用当前实例的knowledge_id属性。默认值为None。
+            client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            dict: API响应数据
-        
-        Raises:
-            ValueError: 如果既没有提供knowledge_base_id，且当前实例的knowledge_id也为None，则抛出异常
+            响应数据，包含请求ID: requestId
         """
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -481,22 +486,18 @@ class KnowledgeBase(Component):
         processOption: data_class.DocumentProcessOption = None,
         client_token: str = None,
     ):
-        """
-        创建文档。
-        
+        r"""
+        创建文档
+
         Args:
-            id (Optional[str], optional): 知识库ID，默认为None。如果为None，则使用当前知识库ID。默认为None。
-            contentFormat (str): 文档内容格式，默认为空字符串。
-            source (data_class.DocumentSource, optional): 文档来源信息，默认为None。
-            processOption (data_class.DocumentProcessOption, optional): 文档处理选项，默认为None。
-            client_token (str, optional): 用于标识请求的客户端令牌，默认为None。如果不提供，将自动生成一个UUID。
-        
+            id (Optional[str], optional): 知识库ID，如果不指定则使用当前实例的knowledge_id属性。默认值为None。
+            contentFormat (str, optional): 文档内容格式，可以是"rawText", "qa"之一。默认值为""。
+            source (data_class.DocumentSource, optional): 文档源数据。默认值为None。
+            processOption (data_class.DocumentProcessOption, optional): 文档处理选项。默认值为None。
+            client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            dict: API响应结果。
-        
-        Raises:
-            ValueError: 如果当前知识库ID为空且未提供id参数，则抛出ValueError异常。
-        
+            dict: 响应数据，包含请求ID: requestId
         """
         if self.knowledge_id == None and id == None:
             raise ValueError(
@@ -534,20 +535,22 @@ class KnowledgeBase(Component):
         maxKeys: int = 10,
         keyword: Optional[str] = None,
     ) -> data_class.KnowledgeBaseGetListResponse:
-        """
+        r"""
         获取知识库列表
-        
+
         Args:
-            knowledge_base_id (Optional[str], optional): 知识库ID. 如果为None，则使用self.knowledge_id. 默认为None.
-            maxKeys (int, optional): 最大返回数量. 默认为10.
-            keyword (Optional[str], optional): 搜索关键字. 默认为None.
-        
+            knowledge_base_id (Optional[str], optional): 知识库ID，如果不指定则使用当前实例的knowledge_id属性。默认值为None。
+            maxKeys (int, optional): 最大键数。默认值为10。
+            keyword (Optional[str], optional): 关键字。默认值为None。
+
         Returns:
-            data_class.KnowledgeBaseGetListResponse: 知识库列表响应对象.
-        
-        Raises:
-            ValueError: 如果self.knowledge_id和knowledge_base_id都为None，则抛出异常，提示需要先调用create方法或使用已存在的知识库ID.
-        
+            KnowledgeBaseGetListResponse: 获取知识库列表的响应消息，返回一个KnowledgeBaseGetListResponse对象，包含以下属性：
+            - requestId (str): 请求ID
+            - data (list[KnowledgeBaseDetailResponse]): 知识库详情列表
+            - marker (str): 起始位置
+            - nextMarker (str): 下一页起始位置
+            - maxKeys (int): 返回文档数量大小，默认10，最大值100
+            - isTruncated (bool): 是否有更多结果
         """
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
@@ -585,21 +588,18 @@ class KnowledgeBase(Component):
         processOption: data_class.DocumentProcessOption = None,
         client_token: str = None,
     ):
-        """
-        上传文档到知识库
-        
+        r"""
+        上传文档
+
         Args:
             file_path (str): 文件路径
-            content_format (str, optional): 内容格式，默认为 'rawText'。可选项包括 'rawText', 'markdown', 'html' 等
-            id (Optional[str], optional): 知识库ID，默认为None，此时将使用当前实例的知识库ID
-            processOption (data_class.DocumentProcessOption, optional): 文档处理选项，默认为None
-            client_token (str, optional): 客户端token，默认为None，将自动生成一个UUID
-        
+            content_format (str, optional): 内容格式。默认值为"rawText"。
+            id (Optional[str], optional): 知识库ID，如果不指定则使用当前实例的knowledge_id属性。默认值为None。
+            processOption (data_class.DocumentProcessOption, optional): 文档处理选项。默认值为None。
+            client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            dict: 上传文档后的响应数据
-        
-        Raises:
-            FileNotFoundError: 如果指定的文件路径不存在，将抛出 FileNotFoundError 异常
+            dict: 响应数据，包含请求ID: requestId
         """
         if not os.path.exists(file_path):
             raise FileNotFoundError("File {} does not exist".format(file_path))
@@ -644,20 +644,19 @@ class KnowledgeBase(Component):
         content: str,
         client_token: str = None,
     ) -> data_class.CreateChunkResponse:
-        """
-        创建一个知识块。
-        
+        r"""
+        创建文档块
+
         Args:
-            documentId (str): 文档ID。
-            content (str): 知识块内容。
-            client_token (str, optional): 用于支持幂等性，默认为None。如果为None，则使用uuid4生成一个唯一的client_token。
-        
+            documentId (str): 文档ID
+            content (str): 内容
+            client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            data_class.CreateChunkResponse: 创建知识块响应。
-        
-        Raises:
-            HTTPError: 如果请求失败，将抛出HTTPError异常。
+            CreateChunkResponse: 创建文档块的相应消息, 包含以下属性：
+            - id (str): 切片ID
         """
+        
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
@@ -690,22 +689,16 @@ class KnowledgeBase(Component):
         enable: bool,
         client_token: str = None,
     ):
-        """
-        修改知识库片段
-        
+        r"""
+        修改文档块
+
         Args:
-            chunkId (str): 知识库片段ID
-            content (str): 修改后的内容
-            enable (bool): 是否启用该知识库片段
-            client_token (str, optional): 请求的唯一标识，默认为 None. 如果不指定，则自动生成.
-        
+            chunkId (str): 文档块ID
+            content (str): 内容
+            enable (bool): 是否启用
+
         Returns:
-            dict: 修改后的知识库片段信息
-        
-        Raises:
-            HttpClientError: 如果请求失败，则抛出 HttpClientError 异常
-            ConsoleResponseError: 如果控制台响应错误，则抛出 ConsoleResponseError 异常
-        
+            dict: 响应数据，包含请求ID: requestId
         """
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
@@ -737,16 +730,15 @@ class KnowledgeBase(Component):
         chunkId: str,
         client_token: str = None,
     ):
-        """
-        删除知识库中的一个块
-        
+        r"""
+        删除文档块
+
         Args:
-            chunkId (str): 要删除的块的ID
-            client_token (str, optional): 客户端令牌，用于请求的唯一标识，默认为None。
-        
+            chunkId (str): 文档块ID
+            client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+
         Returns:
-            dict: 包含删除操作结果的字典。
-        
+            dict: 响应数据，包含请求ID: requestId
         """
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
@@ -775,15 +767,26 @@ class KnowledgeBase(Component):
         self,
         chunkId: str,
     ) -> data_class.DescribeChunkResponse:
-        """
-        获取知识库片段信息
-        
+        r"""
+        获取文档块详情
+
         Args:
-            chunkId (str): 知识库片段的ID
-        
+            chunkId (str): 文档块ID
+
         Returns:
-            DescribeChunkResponse: 知识库片段信息响应对象
-        
+            DescribeChunkResponse: 文档块详情，一个DescribeChunkResponse对象,包含以下属性：
+            - id (str): 切片ID
+            - type (str): 切片类型
+            - knowledgeBaseId (str): 知识库ID
+            - documentId (str): 文档ID
+            - content (str): 文档内容
+            - enabled (bool): 是否启用
+            - wordCount (int): 切片内字符数量
+            - tokenCount (int): 切片内token数量
+            - status (str): 切片状态
+            - statusMessage (str): 切片状态信息
+            - createTime (int): 创建时间
+            - updateTime (int): 更新时间
         """
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
@@ -812,18 +815,22 @@ class KnowledgeBase(Component):
         maxKeys: int = None,
         type: str = None,
     ) -> data_class.DescribeChunksResponse:
-        """
-        查询文档分块信息
-        
+        r"""
+        获取文档块列表
+
         Args:
             documentId (str): 文档ID
-            marker (str, optional): 分页标记，默认为None。用于分页查询，如果第一页调用此API后，还有更多数据，API会返回一个Marker值，使用此Marker值调用API可以查询下一页数据，直到没有更多数据，API将不再返回Marker值。
-            maxKeys (int, optional): 最大返回记录数，默认为None。指定本次调用最多可以返回的文档分块信息条数，最大值为100。
-            type (str, optional): 文档分块类型，默认为None。指定要查询的文档分块类型。
-        
+            marker (str, optional): 分页标记，用于指定从哪个位置开始返回结果。默认为None，表示从头开始返回结果。
+            maxKeys (int, optional): 最大返回数量，用于限制每次请求返回的最大文档块数目。默认为None，表示不限制返回数量。
+            type (str, optional): 文档块类型。默认为None，表示不限定类型。
+
         Returns:
-            DescribeChunksResponse: 包含文档分块信息的响应对象
-        
+            DescribeChunksResponse: 文档块列表，一个DescribeChunksResponse对象,包含以下属性：
+            - data (list[DescribeChunkResponse]): 切片列表
+            - marker (str): 起始位置
+            - isTruncated (bool): true表示后面还有数据，false表示已经是最后一页
+            - nextMarker (str): 下一页起始位置
+            - maxKeys (int): 本次查询包含的最大结果集数量
         """
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
@@ -848,20 +855,20 @@ class KnowledgeBase(Component):
         resp = data_class.DescribeChunksResponse(**data)
         return resp
 
-    def get_all_documents(self, knowledge_base_id: Optional[str] = None) -> dict:
+    def get_all_documents(self, knowledge_base_id: Optional[str] = None) -> list:
         """
         获取知识库中所有文档。
-        
+
         Args:
             knowledge_base_id (Optional[str], optional): 知识库的ID。如果为None，则使用当前实例的knowledge_id。默认为None。
-        
+
         Returns:
-            dict: 包含所有文档的列表。
-        
+            list: 包含所有文档的列表。
+
         Raises:
             ValueError: 如果knowledge_base_id为空，且当前实例没有已创建的knowledge_id时抛出。
-        
         """
+
         if self.knowledge_id == None and knowledge_base_id == None:
             raise ValueError(
                 "knowledge_base_id cannot be empty, please call `create` first or use existing one"

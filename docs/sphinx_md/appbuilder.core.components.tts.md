@@ -41,19 +41,8 @@ with open("sample.wav", "wb") as f:
 执行文本转语音。
 
 * **参数:**
-  * **(****obj** (*message*) – Message): 待转为语音的文本。举例: Message(content={“text”: “欢迎使用百度语音”})如果选择\`baidu-tts\`模型，
-
-    ```
-    `
-    ```
-
-    text\`最大文本长度为1024 GBK编码长度,大约为512个中英文字符;如果选择\`paddlespeech-tts\`模型, 
-
-    ```
-    `
-    ```
-
-    text\`最大文本长度是510个字符。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 待转为语音的文本。
+    举例: Message(content={“text”: “欢迎使用百度语音”})如果选择baidu-tts模型，text最大文本长度为1024 GBK编码长度,大约为512个中英文字符;如果选择paddlespeech-tts模型, text最大文本长度是510个字符。
   * **model** (*str* *,*  *可选*) – 默认是\`baidu-tts\`模型，可设置为\`paddlespeech-tts\`。
   * **speed** (*int* *,*  *可选*) – 语音语速，默认是5中等语速，取值范围在0~15之间，
     如果选择模型为paddlespeech-tts，参数自动失效。
@@ -71,8 +60,6 @@ with open("sample.wav", "wb") as f:
   * **retry** (*int* *,*  *可选*) – HTTP重试次数。
   * **stream** (*bool* *,*  *可选*) – 是否以流的形式返回音频数据，默认为False。
 * **返回:**
-  Message): 文本转语音结果。举例: Message(content={“audio_binary”: b”xxx”, “audio_type”: “mp3”})
+  文本转语音结果。举例: Message(content={“audio_binary”: b”xxx”, “audio_type”: “mp3”})
 * **返回类型:**
-  message (obj
-
-## Module contents
+  message ([Message](appbuilder.core.md#appbuilder.core.message.Message))

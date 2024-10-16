@@ -71,6 +71,62 @@ print(result)
 
 阅读理解问答配置
 
+#### message
+
+Message
+用户输入的查询内容，例如’千帆平台都有哪些大模型？’
+
+* **Type:**
+  [appbuilder.core.message.Message](appbuilder.core.md#appbuilder.core.message.Message)
+
+#### context_list
+
+list
+用户输入的检索片段列表，例如[‘content1’, ‘content2’, ‘content3’,…]，也可以为空，即[]
+
+* **Type:**
+  list
+
+#### reject
+
+bool
+控制大模型拒答能力的开关，为true即为开启拒答功能，为false即为关闭拒答功能
+
+* **Type:**
+  bool
+
+#### clarify
+
+bool
+控制大模型澄清能力的开关，为true即为开启澄清反问功能，为false即为关闭澄清反问功能
+
+* **Type:**
+  bool
+
+#### highlight
+
+bool
+控制大模型重点强调能力的开关，为true即为开启重点强调功能，为false即为关闭重点强调功能
+
+* **Type:**
+  bool
+
+#### friendly
+
+bool
+控制大模型友好对提升难过能力的开关，为true即为开启友好度提升功能，为false即为关闭重点强调功能
+
+* **Type:**
+  bool
+
+#### cite
+
+bool
+控制大模型溯源能力的开关，为true即为开启溯源功能，为false即为关闭溯源功能
+
+* **Type:**
+  bool
+
 #### cite *: bool*
 
 #### clarify *: bool*
@@ -99,5 +155,3 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### reject *: bool*
-
-## Module contents

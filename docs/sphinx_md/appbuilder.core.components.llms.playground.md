@@ -62,6 +62,13 @@ play(appbuilder.Message({"name": "小明", "bot_name": "小红", "bot_type": "�
 
 空模板参数配置
 
+#### message
+
+输入消息，用于模型的主要输入内容
+
+* **Type:**
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
+
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -78,7 +85,3 @@ Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 
 This replaces Model._\_fields_\_ from Pydantic V1.
-
-## Module contents
-
-text to pandas

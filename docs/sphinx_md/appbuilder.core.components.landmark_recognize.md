@@ -30,7 +30,7 @@ with open("xxxx.jpg", "rb") as f:
 执行地标识别任务
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入消息对象，包含待识别的图片或图片URL。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入消息对象，包含待识别的图片或图片URL。
     例如：Message(content={“raw_image”: b”…”}) 或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”})。
   * **timeout** (*float* *,* *optional*) – HTTP请求的超时时间。默认为None。
   * **retry** (*int* *,* *optional*) – HTTP请求的重试次数。默认为0。
@@ -38,6 +38,4 @@ with open("xxxx.jpg", "rb") as f:
   地标识别结果的消息对象。
   : 例如：Message(content={“landmark”: b”狮身人面像”})
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
-
-## Module contents
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)

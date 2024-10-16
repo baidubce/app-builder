@@ -17,7 +17,7 @@ gbi 选表
 执行查询操作，返回识别的表名列表。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 
 
     包含查询信息的消息对象。
     - message.content 字典包含以下 key:
@@ -28,7 +28,7 @@ gbi 选表
 * **返回:**
   包含识别出的表名列表的 Message 对象。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)[List[str]]
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)[List[str]]
 * **抛出:**
   **ValueError** – 如果输入的 message.content 不符合期望的格式，将抛出 ValueError 异常。
 
@@ -46,7 +46,7 @@ A dictionary of computed field names and their corresponding ComputedFieldInfo o
 
 Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
 
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'name': FieldInfo(annotation=str, required=False, default=''), 'query': FieldInfo(annotation=str, required=True, description='用户的 query 输入'), 'session': FieldInfo(annotation=List[SessionRecord], required=False, default=[], description='gbi session 的历史 列表'), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
+#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'name': FieldInfo(annotation=str, required=False, default=''), 'query': FieldInfo(annotation=str, required=True, description='用户的 query 输入'), 'session': FieldInfo(annotation=List[appbuilder.core.components.gbi.basic.SessionRecord], required=False, default=[], description='gbi session 的历史 列表'), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
 
 Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
@@ -56,5 +56,3 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 #### query *: str*
 
 #### session *: List[[SessionRecord](appbuilder.core.components.gbi.md#appbuilder.core.components.gbi.basic.SessionRecord)]*
-
-## Module contents

@@ -33,12 +33,10 @@ with open("xxxx.jpg", "rb") as f:
 根据输入图片进行菜品识别。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入待识别图片，支持传图片二进制流和图片URL。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入待识别图片，支持传图片二进制流和图片URL。
   * **timeout** (*float* *,* *optional*) – 请求超时时间，默认为 None。
   * **retry** (*int* *,* *optional*) – 重试次数，默认为 0。
 * **返回:**
   包含菜品识别结果的输出消息。例如，Message(content={‘result’: [{‘name’: ‘剁椒鱼头’, ‘calorie’: ‘127’}]})
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
-
-## Module contents
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)

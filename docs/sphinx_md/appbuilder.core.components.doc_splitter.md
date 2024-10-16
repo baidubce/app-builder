@@ -39,6 +39,8 @@ Examples:
   Message: 文档分隔后的段落结果
 * **返回类型:**
   obj
+* **抛出:**
+  **ValueError** – 如果 message.content 的类型不是 ParseResult，则抛出 ValueError 异常
 
 Examples:
 
@@ -68,25 +70,41 @@ print(res_paras.content)
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
+文档段落切分组件
+
+#### name
+
+组件名称。
+
+* **Type:**
+  str
+
+#### meta
+
+组件元数据。
+
+* **Type:**
+  [ComponentArguments](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
+
 #### meta *: [ComponentArguments](appbuilder.core.md#appbuilder.core.component.ComponentArguments)* *= ComponentArguments(name='', tool_desc={'description': 'split data to segments in doc'})*
 
 #### name *: str* *= 'doc_to_parapraphs'*
 
 #### run(message: [Message](appbuilder.core.md#appbuilder.core.message.Message))
 
-将输入的解析文档结果处理为多个段落结果。
+运行函数，根据splitter_type将文档分割成多个部分
 
 * **参数:**
-  **(****obj** (*message*) – Message): 上游docparser的文档解析结果。
+  **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 包含文档内容的消息对象
 * **返回:**
-  Message: 文档分隔后的段落结果。
+  分割后的文档列表
 * **返回类型:**
-  obj
+  list
 * **抛出:**
-  * **ValueError** – 如果 message.content 不是 ParseResult 类型。
-  * **ValueError** – 如果 splitter_type 未设置值。
-  * **ValueError** – 如果 ParseResult 对象不包含原始值（raw）。
-  * **ValueError** – 如果 splitter_type 不是 ‘split_by_chunk’ 或 ‘split_by_title’。
+  * **ValueError** – 如果message.content不是ParseResult类型，抛出异常
+  * **ValueError** – 如果splitter_type为空，抛出异常
+  * **ValueError** – 如果ParseResult不包含原始值，抛出异常
+  * **ValueError** – 如果splitter_type不是split_by_chunk或split_by_title，抛出异常
 
 ### *class* appbuilder.core.components.doc_splitter.doc_splitter.TitleSplitter(meta: [ComponentArguments](appbuilder.core.md#appbuilder.core.component.ComponentArguments) | None = ComponentArguments(name='', tool_desc={}), secret_key: str | None = None, gateway: str = '', lazy_certification: bool = False)
 
@@ -131,6 +149,26 @@ print(res_paras.content)
 
 Examples:
 
-#### tool_desc *: Dict[str, Any]* *= {'description': 'split document content by titles'}*
+```python
+import os
+from appbuilder.core.components.doc_parser.doc_parser import DocParser
+from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter, TitleSplitter
+from appbuilder.core.message import Message
 
-## Module contents
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+os.environ["APPBUILDER_TOKEN"] = "..."
+
+# 先解析
+msg = Message("./title_splitter.docx")
+parser = DocParser()
+parse_result = parser(msg, return_raw=True)
+
+# 基于parser的结果切分段落
+splitter = TitleSplitter()
+res_paras = splitter(parse_result)
+
+# 打印结果
+print(res_paras.content)
+```
+
+#### tool_desc *: Dict[str, Any]* *= {'description': 'split document content by titles'}*

@@ -46,13 +46,13 @@ print(out.content)
 表格文字识别
 
 * **参数:**
-  * **(****obj** (*message*) – Message): 输入图片或图片url下载地址用于执行识别操作。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入图片或图片url下载地址用于执行识别操作。
     举例: Message(content={“raw_image”: b”…”})
     或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”})。
   * **timeout** (*float* *,*  *可选*) – HTTP超时时间。
   * **retry** (*int* *,*  *可选*) – HTTP重试次数。
 * **返回:**
-  Message): 识别结果。
+  识别结果。
   : 举例: Message(name=msg, content={‘tables_result’: [{
     ‘table_location’: [{‘x’: 15, ‘y’: 15}, {‘x’: 371, ‘y’: 15}, {‘x’: 371, ‘y’: 98}, {‘x’: 15,
     ‘y’: 98}], ‘header’: [], ‘body’: [{‘cell_location’: [{‘x’: 15, ‘y’: 15}, {‘x’: 120, ‘y’: 15},
@@ -65,7 +65,7 @@ print(out.content)
     ‘y’: 58}, {‘x’: 371, ‘y’: 98}, {‘x’: 120, ‘y’: 98}], ‘row_start’: 1, ‘row_end’: 2, ‘col_start’:
     1, ‘col_end’: 2, ‘words’: ‘application/x-www-form-urlencoded’}], ‘footer’: []}]}, mtype=dict)
 * **返回类型:**
-  message (obj
+  message ([Message](appbuilder.core.md#appbuilder.core.message.Message))
 
 #### tool_eval(name: str, streaming: bool, \*\*kwargs)
 
@@ -86,5 +86,3 @@ print(out.content)
   **InvalidRequestArgumentError** – 若传入文件名在file_urls中未找到对应的URL，则抛出此异常。
 
 #### version *= 'v1'*
-
-## Module contents

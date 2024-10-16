@@ -12,9 +12,23 @@ is complex query
 
 基于输入的问题, 对问题进行初步的分类，方便下游使用不同类型的流程来处理当前的简单问题/复杂问题。广泛用于知识问答场景。
 
-> Examples:
+Examples:
 
-{}”.format(answer.content))
+```python
+import os
+import appbuilder
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+os.environ["APPBUILDER_TOKEN"] = "..."
+
+is_complex_query = appbuilder.IsComplexQuery(model="ERNIE Speed-AppBuilder")
+
+msg = "吸塑包装盒在工业化生产和物流运输中分别有什么重要性？"
+msg = appbuilder.Message(msg)
+answer = is_complex_query(msg)
+
+print("Answer: \n{}".format(answer.content))
+```
 
 #### meta
 
@@ -42,6 +56,13 @@ is complex query
 
 基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
 
+#### message
+
+输入消息，用于模型的输入，一般为问题。
+
+* **Type:**
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
+
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -58,5 +79,3 @@ Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 
 This replaces Model._\_fields_\_ from Pydantic V1.
-
-## Module contents
