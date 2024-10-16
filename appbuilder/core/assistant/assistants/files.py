@@ -175,6 +175,7 @@ class Files(object):
             ) -> assistant_type.AssistantFilesDeleteResponse:
         """
         删除文件
+        
         Args:
             file_id (str): 文件ID
         Returns:
