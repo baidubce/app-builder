@@ -17,7 +17,7 @@
 执行模型推理
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 用户输入的消息对象
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 用户输入的消息对象
   * **instruction** (*Instruction* *,* *optional*) – 用户提供的指令信息，默认为None。如果未提供，则使用默认的指令信息。
   * **reject** (*bool* *,* *optional*) – 是否拒绝执行，默认为None。如果未提供，则使用默认设置。
   * **clarify** (*bool* *,* *optional*) – 是否需要澄清，默认为None。如果未提供，则使用默认设置。
@@ -30,9 +30,9 @@
 * **返回:**
   推理结果消息对象
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 * **抛出:**
-  [**AppBuilderServerException**](appbuilder.md#appbuilder.AppBuilderServerException) – 如果输入消息内容过长（超过72个字符）或推理结果中存在错误，则抛出异常。
+  **AppBuilderServerException** – 如果输入消息内容过长（超过72个字符）或推理结果中存在错误，则抛出异常。
 
 #### version *: str* *= 'v1'*
 
@@ -70,5 +70,3 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### reject *: bool*
-
-## Module contents

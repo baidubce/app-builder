@@ -4,9 +4,11 @@
 
 ## appbuilder.core.components.llms.style_writing.component module
 
-### *class* appbuilder.core.components.llms.style_writing.component.LengthChoices(value, names=<not given>, \*values, module=None, qualname=None, type=None, start=1, boundary=None)
+### *class* appbuilder.core.components.llms.style_writing.component.LengthChoices(value)
 
 基类：`Enum`
+
+An enumeration.
 
 #### LONG *= 600*
 
@@ -25,9 +27,26 @@
 * **返回类型:**
   str
 
-### *class* appbuilder.core.components.llms.style_writing.component.StyleQueryChoices(value, names=<not given>, \*values, module=None, qualname=None, type=None, start=1, boundary=None)
+### *class* appbuilder.core.components.llms.style_writing.component.StyleQueryChoices(value)
 
 基类：`Enum`
+
+StyleQueryChoices是一个枚举类型，包含三个选项：
+
+#### BILIBILI
+
+* **Type:**
+  “B站”
+
+#### XIAOHONGSHU
+
+* **Type:**
+  “小红书”
+
+#### GENERAL
+
+* **Type:**
+  “通用”
 
 #### BILIBILI *= 'B站'*
 
@@ -81,6 +100,7 @@ answer = style_writing(appbuilder.Message("帮我写一篇关于人体工学椅�
   * **stream** (*bool* *,* *optional*) – 指定是否以流式形式返回响应。默认为 False。
   * **temperature** (*float* *,* *optional*) – 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
   * **top_p** (*float* *,* *optional*) – 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
+  * **request_id** (*str* *,* *optional*) – 请求ID，用于跟踪和识别请求。
 * **返回:**
   Message: 模型运行后的输出消息。
 * **返回类型:**
@@ -109,6 +129,27 @@ answer = style_writing(appbuilder.Message("帮我写一篇关于人体工学椅�
 
 风格写作配置
 
+#### message
+
+Message = Field(…)
+
+* **Type:**
+  [appbuilder.core.message.Message](appbuilder.core.md#appbuilder.core.message.Message)
+
+#### style_query
+
+StyleQueryChoices = Field(…)
+
+* **Type:**
+  [appbuilder.core.components.llms.style_writing.component.StyleQueryChoices](#appbuilder.core.components.llms.style_writing.component.StyleQueryChoices)
+
+#### length
+
+LengthChoices = Field(…)
+
+* **Type:**
+  [appbuilder.core.components.llms.style_writing.component.LengthChoices](#appbuilder.core.components.llms.style_writing.component.LengthChoices)
+
 #### length *: [LengthChoices](#appbuilder.core.components.llms.style_writing.component.LengthChoices)*
 
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
@@ -129,19 +170,3 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### style_query *: [StyleQueryChoices](#appbuilder.core.components.llms.style_writing.component.StyleQueryChoices)*
-
-## Module contents
-
-Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the “License”);
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-> [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an “AS IS” BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.

@@ -12,9 +12,23 @@ query decomposition
 
 尝试对已经判定为复杂问题的原始问题进行拆解，把复杂问题拆解为一个个简单问题。广泛用于知识问答场景。
 
-> Examples:
+Examples:
 
-{}”.format(answer.content))
+```python
+import os
+import appbuilder
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+os.environ["APPBUILDER_TOKEN"] = "..."
+
+query_decomposition = appbuilder.QueryDecomposition(model="ERNIE Speed-AppBuilder")
+
+msg = "吸塑包装盒在工业化生产和物流运输中分别有什么重要性？"
+msg = appbuilder.Message(msg)
+answer = query_decomposition(msg)
+
+print("Answer: \n{}".format(answer.content))
+```
 
 #### meta
 
@@ -44,6 +58,13 @@ query decomposition
 
 QueryDecomposition
 
+#### message
+
+输入消息，用于模型的主要输入内容。
+
+* **Type:**
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
+
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -60,5 +81,3 @@ Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 
 This replaces Model._\_fields_\_ from Pydantic V1.
-
-## Module contents

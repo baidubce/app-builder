@@ -10,6 +10,14 @@ excel2figure component
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
+excel2figure 组件类
+
+* **参数:**
+  * **model** – str
+  * **secret_key** – Optional[str]
+  * **gateway** – str
+  * **lazy_certification** – bool
+
 #### excluded_models *: List[str]* *= ['Yi-34B-Chat', 'ChatLaw']*
 
 #### manifests *= [{'description': 'Excel转图表工具，当用户需要根据Excel图表的数据进行数据分析并绘制图表（柱状图、折线图、雷达图等），使用该工具。', 'name': 'excel_to_figure', 'parameters': {'properties': {'query': {'description': '需要根据Excel图表的数据进行数据分析并绘制图表的请求描述。', 'type': 'string'}}, 'required': ['query'], 'type': 'object'}}]*
@@ -27,13 +35,13 @@ excel2figure component
 执行 excel2figure。
 
 * **参数:**
-  **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 消息对象，其 content 属性是一个字典，包含以下键值对：
+  **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 消息对象，其 content 属性是一个字典，包含以下键值对：
   - query (str): 用户的问题。
   - excel_file_url (str): 用户的 Excel 文件地址。
 * **返回:**
   处理后的消息对象。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 * **抛出:**
   **ValueError** – 当 message.content 解析失败时抛出此异常。
 
@@ -65,6 +73,20 @@ excel2figure component
 
 excel2figure 的参数
 
+#### query
+
+str
+
+* **Type:**
+  str
+
+#### excel_file_url
+
+AnyUrl
+
+* **Type:**
+  pydantic_core._pydantic_core.Url
+
 #### excel_file_url *: Url*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -83,5 +105,3 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### query *: str*
-
-## Module contents

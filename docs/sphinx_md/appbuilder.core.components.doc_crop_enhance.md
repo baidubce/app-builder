@@ -32,7 +32,7 @@ print(out.content)
 文档矫正增强
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入图片或图片url下载地址用于执行操作。举例: Message(content={“raw_image”: b”…”,
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入图片或图片url下载地址用于执行操作。举例: Message(content={“raw_image”: b”…”,
   * **"enhance_type"** – 3})或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”})。
   * **enhance_type** (*int* *,*  *可选*) – 选择是否开启图像增强功能，如开启可选择增强效果，可选值如下：
     - 0：默认值，不开启增强功能
@@ -46,6 +46,4 @@ print(out.content)
   ‘points’: [{‘x’: 220, ‘y’: 705}, {‘x’: 240, ‘y’: 0}, {‘x’: 885, ‘y’: 2}, {‘x’: 980, ‘y’: 759}]},
   mtype=dict)
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
-
-## Module contents
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)

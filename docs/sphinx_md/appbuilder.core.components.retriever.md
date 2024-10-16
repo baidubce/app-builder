@@ -16,7 +16,6 @@
       * [`BaiduVDBVectorStoreIndex.from_params()`](appbuilder.core.components.retriever.baidu_vdb.md#appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.BaiduVDBVectorStoreIndex.from_params)
       * [`BaiduVDBVectorStoreIndex.vdb_uri_prefix`](appbuilder.core.components.retriever.baidu_vdb.md#appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.BaiduVDBVectorStoreIndex.vdb_uri_prefix)
     * [`TableParams`](appbuilder.core.components.retriever.baidu_vdb.md#appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.TableParams)
-  * [Module contents](appbuilder.core.components.retriever.baidu_vdb.md#module-appbuilder.core.components.retriever.baidu_vdb)
 * [appbuilder.core.components.retriever.bes package](appbuilder.core.components.retriever.bes.md)
   * [Submodules](appbuilder.core.components.retriever.bes.md#submodules)
   * [appbuilder.core.components.retriever.bes.bes_retriever module](appbuilder.core.components.retriever.bes.md#module-appbuilder.core.components.retriever.bes.bes_retriever)
@@ -36,7 +35,6 @@
       * [`BESVectorStoreIndex.generate_id()`](appbuilder.core.components.retriever.bes.md#appbuilder.core.components.retriever.bes.bes_retriever.BESVectorStoreIndex.generate_id)
       * [`BESVectorStoreIndex.get_all_segments()`](appbuilder.core.components.retriever.bes.md#appbuilder.core.components.retriever.bes.bes_retriever.BESVectorStoreIndex.get_all_segments)
       * [`BESVectorStoreIndex.helpers`](appbuilder.core.components.retriever.bes.md#appbuilder.core.components.retriever.bes.bes_retriever.BESVectorStoreIndex.helpers)
-  * [Module contents](appbuilder.core.components.retriever.bes.md#module-appbuilder.core.components.retriever.bes)
 * [appbuilder.core.components.retriever.reranker package](appbuilder.core.components.retriever.reranker.md)
   * [Submodules](appbuilder.core.components.retriever.reranker.md#submodules)
   * [appbuilder.core.components.retriever.reranker.rerank module](appbuilder.core.components.retriever.reranker.md#module-appbuilder.core.components.retriever.reranker.rerank)
@@ -48,10 +46,8 @@
       * [`Reranker.run()`](appbuilder.core.components.retriever.reranker.md#appbuilder.core.components.retriever.reranker.rerank.Reranker.run)
       * [`Reranker.version`](appbuilder.core.components.retriever.reranker.md#appbuilder.core.components.retriever.reranker.rerank.Reranker.version)
     * [`RerankerArgs`](appbuilder.core.components.retriever.reranker.md#appbuilder.core.components.retriever.reranker.rerank.RerankerArgs)
+      * [`RerankerArgs.text`](appbuilder.core.components.retriever.reranker.md#appbuilder.core.components.retriever.reranker.rerank.RerankerArgs.text)
       * [`RerankerArgs.model_computed_fields`](appbuilder.core.components.retriever.reranker.md#appbuilder.core.components.retriever.reranker.rerank.RerankerArgs.model_computed_fields)
       * [`RerankerArgs.model_config`](appbuilder.core.components.retriever.reranker.md#appbuilder.core.components.retriever.reranker.rerank.RerankerArgs.model_config)
       * [`RerankerArgs.model_fields`](appbuilder.core.components.retriever.reranker.md#appbuilder.core.components.retriever.reranker.rerank.RerankerArgs.model_fields)
-      * [`RerankerArgs.text`](appbuilder.core.components.retriever.reranker.md#appbuilder.core.components.retriever.reranker.rerank.RerankerArgs.text)
-  * [Module contents](appbuilder.core.components.retriever.reranker.md#module-appbuilder.core.components.retriever.reranker)
-
-## Module contents
+      * [`RerankerArgs.text`](appbuilder.core.components.retriever.reranker.md#id0)

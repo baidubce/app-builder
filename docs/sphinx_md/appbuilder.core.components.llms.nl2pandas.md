@@ -12,6 +12,20 @@
 
 自然语言转pandas代码 参数配置
 
+#### message
+
+Message = Field(…)
+
+* **Type:**
+  [appbuilder.core.message.Message](appbuilder.core.md#appbuilder.core.message.Message)
+
+#### table_info
+
+str = Field(…)
+
+* **Type:**
+  str
+
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -80,7 +94,3 @@ answer = nl2pandas(query, table_info = table_info)
   obj
 
 #### version *: str* *= 'v1'*
-
-## Module contents
-
-text to pandas

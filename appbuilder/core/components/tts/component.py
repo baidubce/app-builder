@@ -83,7 +83,7 @@ class TTS(Component):
         执行文本转语音。
         
         Args:
-            message (obj: `Message`): 待转为语音的文本。
+            message (Message): 待转为语音的文本。
                 举例: Message(content={"text": "欢迎使用百度语音"})如果选择baidu-tts模型，text最大文本长度为1024 GBK编码长度,大约为512个中英文字符;如果选择paddlespeech-tts模型, text最大文本长度是510个字符。
             model (str, 可选): 默认是`baidu-tts`模型，可设置为`paddlespeech-tts`。
             speed (int, 可选): 语音语速，默认是5中等语速，取值范围在0~15之间，
@@ -103,7 +103,7 @@ class TTS(Component):
             stream (bool, 可选): 是否以流的形式返回音频数据，默认为False。
         
         Returns:
-            message (obj: `Message`): 文本转语音结果。举例: Message(content={"audio_binary": b"xxx", "audio_type": "mp3"})
+            message (Message): 文本转语音结果。举例: Message(content={"audio_binary": b"xxx", "audio_type": "mp3"})
         """
         if model != self.Baidu_TTS and model != self.PaddleSpeech_TTS:
             raise InvalidRequestArgumentError(

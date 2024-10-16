@@ -8,6 +8,8 @@
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
+RagWithBaiduSearchPro 组件
+
 #### meta *: [RagWithBaiduSearchProArgs](#appbuilder.core.components.rag_with_baidu_search_pro.component.RagWithBaiduSearchProArgs)*
 
 #### name *= 'rag_with_baidu_search_pro'*
@@ -17,7 +19,7 @@
 执行模型推理。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 待处理的信息对象。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 待处理的信息对象。
   * **stream** (*bool* *,* *optional*) – 是否以流的形式接收响应数据。默认为False。
   * **instruction** (*Instruction* *,* *optional*) – 指令信息对象。默认为None。
   * **model** (*str* *,* *optional*) – 模型名称。默认为None，表示使用当前实例的模型。
@@ -28,9 +30,9 @@
 * **返回:**
   处理后的信息对象。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 * **抛出:**
-  [**AppBuilderServerException**](appbuilder.md#appbuilder.AppBuilderServerException) – 如果输入信息或指令过长，将抛出此异常。
+  **AppBuilderServerException** – 如果输入信息或指令过长，将抛出此异常。
 
 #### set_secret_key_and_gateway(\*\*kwargs)
 
@@ -41,6 +43,9 @@
 基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
 
 RagWithBaiduSearchPro 的参数
+
+* **参数:**
+  **query** (*str*) – 用户的 query 输入
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
 
@@ -62,6 +67,57 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 ### *class* appbuilder.core.components.rag_with_baidu_search_pro.component.RagWithBaiduSearchProRequest(\*, message: object, stream: bool = False, instruction: str, model: str | None = None, temperature: Annotated[float, None, Interval(gt=None, ge=0, lt=None, le=1), None, None] = 1e-10, top_p: Annotated[float, None, Interval(gt=None, ge=0, lt=None, le=1), None, None] = 1e-10, search_top_k: Annotated[int, None, Interval(gt=None, ge=1, lt=None, le=None), None] = 4, hide_corner_markers: bool = True)
 
 基类：`BaseModel`
+
+RagWithBaiduSearchPro 的请求
+
+#### message
+
+用户的消息
+
+* **Type:**
+  object
+
+#### stream
+
+是否流式处理
+
+* **Type:**
+  bool
+
+#### instruction
+
+指令
+
+* **Type:**
+  str
+
+#### model
+
+模型名称
+
+* **Type:**
+  Optional[str]
+
+#### temperature
+
+温度，范围在0到1之间
+
+* **Type:**
+  confloat(ge=0, le=1)
+
+#### top_p
+
+top_p，范围在0到1之间
+
+* **Type:**
+  confloat(ge=0, le=1)
+
+#### search_top_k
+
+search_top_k，
+
+* **Type:**
+  conint(ge=1)
 
 #### hide_corner_markers *: bool*
 
@@ -104,7 +160,3 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 
 对模型输出的 Message 对象进行包装。
 当 Message 是流式数据时，数据被迭代完后，将重新更新 content 为 blocking 的字符串。
-
-## Module contents
-
-init

@@ -6,7 +6,7 @@
 
 GBI nl2sql component.
 
-### *class* appbuilder.core.components.gbi.nl2sql.component.NL2Sql(model_name: str, table_schemas: List[str], knowledge: Dict = None, prompt_template: str = '')
+### *class* appbuilder.core.components.gbi.nl2sql.component.NL2Sql(model_name: str, table_schemas: List[str], knowledge: Dict | None = None, prompt_template: str = '')
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
@@ -21,7 +21,7 @@ gib nl2sql
 执行自然语言转SQL操作。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 
 
     包含用户问题和会话历史的消息对象。
     - message.content 是一个字典，包含以下关键字：
@@ -33,13 +33,34 @@ gib nl2sql
 * **返回:**
   转换结果以Message对象形式返回，其中content属性包含NL2SqlResult对象。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)[[NL2SqlResult](appbuilder.core.components.gbi.md#appbuilder.core.components.gbi.basic.NL2SqlResult)]
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)[[NL2SqlResult](appbuilder.core.components.gbi.md#appbuilder.core.components.gbi.basic.NL2SqlResult)]
 
 ### *class* appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, query: str, session: List[[SessionRecord](appbuilder.core.components.gbi.md#appbuilder.core.components.gbi.basic.SessionRecord)] = [], column_constraint: List[[ColumnItem](appbuilder.core.components.gbi.md#appbuilder.core.components.gbi.basic.ColumnItem)] = [])
 
 基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
 
 nl2sql 的参数
+
+#### query
+
+用户的 query 输入
+
+* **Type:**
+  str
+
+#### session
+
+gbi session 的历史 列表
+
+* **Type:**
+  List[[appbuilder.core.components.gbi.basic.SessionRecord](appbuilder.core.components.gbi.md#appbuilder.core.components.gbi.basic.SessionRecord)]
+
+#### column_constraint
+
+列选的限制条件
+
+* **Type:**
+  List[[appbuilder.core.components.gbi.basic.ColumnItem](appbuilder.core.components.gbi.md#appbuilder.core.components.gbi.basic.ColumnItem)]
 
 #### column_constraint *: List[[ColumnItem](appbuilder.core.components.gbi.md#appbuilder.core.components.gbi.basic.ColumnItem)]*
 
@@ -51,7 +72,7 @@ A dictionary of computed field names and their corresponding ComputedFieldInfo o
 
 Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
 
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'column_constraint': FieldInfo(annotation=List[ColumnItem], required=False, default=[], description='列选的限制条件'), 'name': FieldInfo(annotation=str, required=False, default=''), 'query': FieldInfo(annotation=str, required=True, description='用户的 query 输入'), 'session': FieldInfo(annotation=List[SessionRecord], required=False, default=[], description='gbi session 的历史 列表'), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
+#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'column_constraint': FieldInfo(annotation=List[appbuilder.core.components.gbi.basic.ColumnItem], required=False, default=[], description='列选的限制条件'), 'name': FieldInfo(annotation=str, required=False, default=''), 'query': FieldInfo(annotation=str, required=True, description='用户的 query 输入'), 'session': FieldInfo(annotation=List[appbuilder.core.components.gbi.basic.SessionRecord], required=False, default=[], description='gbi session 的历史 列表'), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
 
 Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
@@ -61,5 +82,3 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 #### query *: str*
 
 #### session *: List[[SessionRecord](appbuilder.core.components.gbi.md#appbuilder.core.components.gbi.basic.SessionRecord)]*
-
-## Module contents

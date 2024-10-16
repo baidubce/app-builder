@@ -57,6 +57,13 @@ print(answer)
 
 会话小结生成配置
 
+#### message
+
+输入对话文本，用于生成小结
+
+* **Type:**
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
+
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -73,7 +80,3 @@ Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 
 This replaces Model._\_fields_\_ from Pydantic V1.
-
-## Module contents
-
-DialogSummary

@@ -49,17 +49,13 @@ logger.info("Tables: {}".format(
 将文档原始解析结果，请求云端进行表格抽取，返回表格列表。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 文档原始解析结果。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 文档原始解析结果。
   * **table_max_size** (*int*) – 单个表格的长度的最大值(包含上文)，按字符数即len(table_str)统计，默认为800。如果表格超长，则会被拆            分成多个子表格，拆分的最小粒度为表格的行。若单行就超长，则会强制按table_max_size截断。截断时会优先截断上文，尽量保留表格内容。
   * **doc_node_num_before_table** (*int*) – 表格前附加的上文DocParser Node的数量，默认为1。范围：1~10。
 * **返回:**
   返回解析后的消息实体对象
   : Message.content (list): 解析出来的文档表格，list(二维)。解析出来的文档表格，如果元素长度为1，则对应原文档中格式化后的                长度不超过\`table_max_size\`的表格；如果元素长度>1，则是对应原文档中一个大表格，该表格被拆分成的多个子表格，以满足设置                大小。输出结果数据结构样例：[[{table1}], [{table2-part1}, {table2-part2}]]
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 * **抛出:**
   **ValueError** – 当输入参数不为文档原始解析结果时，或值不合法时，抛出异常。
-
-## Module contents
-
-\_\_init_\_

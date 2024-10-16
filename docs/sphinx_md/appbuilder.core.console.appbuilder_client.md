@@ -10,6 +10,26 @@ AppBuilderClient组件
 
 基类：[`AppBuilderClient`](#appbuilder.core.console.appbuilder_client.appbuilder_client.AppBuilderClient)
 
+AgentBuilder是继承自AppBuilderClient的一个子类，用于构建和管理智能体应用。
+支持调用在[百度智能云千帆AppBuilder]([https://cloud.baidu.com/product/AppBuilder](https://cloud.baidu.com/product/AppBuilder))平台上
+构建并发布的智能体应用，具体包括创建会话、上传文档、运行对话等。
+
+Examples:
+
+```python
+import appbuilder
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+os.environ["APPBUILDER_TOKEN"] = '...'
+# 可在Console 应用页面获取
+app_id = "app_id"
+client = appbuilder.AppBuilderClient("app_id")
+conversation_id = client.create_conversation()
+file_id = client.upload_local_file(conversation_id, "/path/to/file")
+message = client.run(conversation_id, "今天你好吗？")
+# 打印对话结果
+print(message.content)
+```
+
 ### *class* appbuilder.core.console.appbuilder_client.appbuilder_client.AppBuilderClient(app_id: str, \*\*kwargs)
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
@@ -17,12 +37,27 @@ AppBuilderClient组件
 AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder]([https://cloud.baidu.com/product/AppBuilder](https://cloud.baidu.com/product/AppBuilder))平台上
 构建并发布的智能体应用，具体包括创建会话、上传文档、运行对话等。
 
-### 示例
+Examples:
+
+```python
+import appbuilder
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+os.environ["APPBUILDER_TOKEN"] = '...'
+# 可在Console 应用页面获取
+app_id = "app_id"
+client = appbuilder.AppBuilderClient("app_id")
+conversation_id = client.create_conversation()
+file_id = client.upload_local_file(conversation_id, "/path/to/file")
+message = client.run(conversation_id, "今天你好吗？")
+# 打印对话结果
+print(message.content)
+```
 
 #### create_conversation() → str
 
-创建会话并返回会话ID，会话ID在服务端用于上下文管理、绑定会话文档等，
-如需开始新的会话，请创建并使用新的会话ID
+创建会话并返回会话ID
+
+会话ID在服务端用于上下文管理、绑定会话文档等，如需开始新的会话，请创建并使用新的会话ID
 
 * **参数:**
   **无**
@@ -33,27 +68,45 @@ AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder]([https:/
 
 #### run(conversation_id: str, query: str = '', file_ids: list = [], stream: bool = False, tools: list[Tool] = None, tool_outputs: list[ToolOutput] = None, tool_choice: ToolChoice = None, end_user_id: str = None, \*\*kwargs) → [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
-运行一次对话，返回对话结果
+运行智能体应用
 
 * **参数:**
   * **query** (*str*) – query内容
   * **conversation_id** (*str*) – 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
-  * **file_ids** (*list* *[**str* *]* *,* *optional*) – 上传文件ID列表
-  * **stream** (*bool* *,* *optional*) – 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
-  * **tools** (*list* *[**data_class.Tool* *]* *,* *optional*) – 一个Tool组成的列表，其中每个Tool对应一个工具的配置, 默认为None
-  * **tool_outputs** (*list* *[**data_class.ToolOutput* *]* *,* *optional*) – 工具输出列表，格式为list[ToolOutput], ToolOutput内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
-  * **tool_choice** (*data_class.ToolChoice* *,* *optional*) – 控制大模型使用组件的方式，默认为None
-  * **end_user_id** (*str* *,* *optional*) – 用户ID，用于区分不同用户
+  * **file_ids** (*list* *[**str* *]*) – 文件ID列表
+  * **stream** (*bool*) – 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
+  * **tools** (*list* *[**data_class.Tools* *]*) – 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
+  * **tool_outputs** (*list* *[**data_class.ToolOutput* *]*) – 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
+  * **tool_choice** (*data_class.ToolChoice*) – 控制大模型使用组件的方式，默认为None
+  * **end_user_id** (*str*) – 用户ID，用于区分不同用户
+  * **kwargs** – 其他参数
 * **返回:**
-  Message): 对话结果
+  Message): 对话结果，一个Message对象，使用message.content获取内容。
 * **返回类型:**
   message (obj
 
-#### run_with_handler(conversation_id: str, query: str = '', file_ids: list = [], tools: list[Tool] = None, stream: bool = False, event_handler=None, \*\*kwargs)
+#### run_with_handler(conversation_id: str, query: str = '', file_ids: list = [], tools: list[Tool] | None = None, stream: bool = False, event_handler=None, \*\*kwargs)
+
+运行智能体应用，并通过事件处理器处理事件
+
+* **参数:**
+  * **conversation_id** (*str*) – 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+  * **query** (*str*) – 查询字符串
+  * **file_ids** (*list*) – 文件ID列表
+  * **tools** (*list* *[**data_class.Tools* *]* *,*  *可选*) – 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
+  * **stream** (*bool*) – 是否流式响应
+  * **event_handler** (*EventHandler*) – 事件处理器
+  * **kwargs** – 其他参数
+* **返回:**
+  事件处理器
+* **返回类型:**
+  EventHandler
 
 #### upload_local_file(conversation_id, local_file_path: str) → str
 
 上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
+
+该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
 
 * **参数:**
   * **conversation_id** (*str*) – 会话ID
@@ -61,12 +114,7 @@ AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder]([https:/
 * **返回:**
   唯一文件ID
 * **返回类型:**
-  str
-* **抛出:**
-  * **ValueError** – 如果conversation_id为空，将抛出ValueError异常
-  * **FileNotFoundError** – 如果本地文件路径不存在，将抛出FileNotFoundError异常
-
-该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
+  response (str)
 
 ### appbuilder.core.console.appbuilder_client.appbuilder_client.get_all_apps()
 
@@ -150,5 +198,3 @@ AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder]([https:/
   **无参数。**
 * **返回:**
   无返回值。
-
-## Module contents

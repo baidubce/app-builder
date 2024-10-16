@@ -34,17 +34,16 @@ print(out.content)
 
 #### run(message: [Message](appbuilder.core.md#appbuilder.core.message.Message), timeout: float = None, retry: int = 0) → [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
-执行图片中的文字识别
+执行图片中的文字识别。
 
 * **参数:**
-  * **(****obj** (*message*) – Message): 输入图片或图片url下载地址用于执行识别操作.x举例: Message(content={“raw_image”: b”…”}) 或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”}).
-  * **timeout** (*float* *,*  *可选*) – HTTP超时时间
-  * **retry** (*int* *,*  *可选*) – HTTP重试次数
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入图片或图片url下载地址用于执行识别操作。举例: Message(content={“raw_image”: b”…”}) 或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”})。
+  * **timeout** (*float* *,*  *可选*) – HTTP超时时间。
+  * **retry** (*int* *,*  *可选*) – HTTP重试次数。
 * **返回:**
-  Message): 模型识别结果.
-  : 举例: Message(content={“words_result”:[{“words”:”100”}, {“words”:”G8”}]})
+  模型识别结果。举例: Message(content={“words_result”:[{“words”:”100”}, {“words”:”G8”}]})。
 * **返回类型:**
-  message (obj
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
 #### tool_eval(name: str, streaming: bool, \*\*kwargs)
 
@@ -65,5 +64,3 @@ print(out.content)
   **InvalidRequestArgumentError** – 如果请求格式错误（例如未设置文件名或指定文件名对应的URL不存在），则抛出此异常。
 
 #### version *= 'v1'*
-
-## Module contents

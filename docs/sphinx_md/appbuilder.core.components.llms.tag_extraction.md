@@ -53,6 +53,13 @@ answer = tag_extraction(appbuilder.Message("从这段文本中抽取关键标签
 
 标签抽取配置
 
+#### message
+
+输入消息，用于模型的主要输入内容
+
+* **Type:**
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
+
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -69,5 +76,3 @@ Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 
 This replaces Model._\_fields_\_ from Pydantic V1.
-
-## Module contents

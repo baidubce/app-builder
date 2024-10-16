@@ -36,7 +36,7 @@ print(resp.content)
 根据提供的文本以及语种参数执行文本翻译
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 翻译文本。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 翻译文本。
   * **from_lang** (*str*) – 翻译的源语言。默认为 “auto”。
   * **to_lang** (*str*) – 翻译的目标语言。默认为 “en”。
   * **timeout** (*float* *,* *optional*) – 翻译请求的超时时间。
@@ -45,7 +45,7 @@ print(resp.content)
   返回的文本翻译结果。
   例如，Message(content={‘from_lang’: ‘zh’, ‘to_lang’: ‘en’, ‘trans_result’: [{‘src’: ‘你好’, ‘dst’: ‘hello’}]})
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
 #### tool_eval(name: str, streaming: bool, \*\*kwargs)
 
@@ -65,5 +65,3 @@ print(resp.content)
   **InvalidRequestArgumentError** – 如果未设置参数”q”，则抛出此异常。
 
 #### version *= 'v1'*
-
-## Module contents

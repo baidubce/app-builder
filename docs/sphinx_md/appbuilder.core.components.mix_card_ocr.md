@@ -42,14 +42,14 @@ print(out.content)
 执行身份证识别操作
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 包含待识别图片或图片下载URL的Message对象.
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 包含待识别图片或图片下载URL的Message对象.
     示例: Message(content={“raw_image”: b”…”}) 或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”}).
   * **timeout** (*float* *,*  *可选*) – HTTP请求的超时时间，默认为None.
   * **retry** (*int* *,*  *可选*) – HTTP请求的重试次数，默认为0.
 * **返回:**
   包含身份证识别结果的Message对象.
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
 #### tool_eval(name: str, streaming: bool, \*\*kwargs)
 
@@ -69,5 +69,3 @@ print(out.content)
   **InvalidRequestArgumentError** – 如果请求格式错误，即文件URL不存在时抛出。
 
 #### version *= 'v1'*
-
-## Module contents

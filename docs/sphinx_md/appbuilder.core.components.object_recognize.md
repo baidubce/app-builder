@@ -35,17 +35,17 @@ print(out.content)
 通用物体识别
 
 * **参数:**
-  * **(****obj** (*message*) – Message): 输入图片或图片url下载地址用于执行识别操作。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入图片或图片url下载地址用于执行识别操作。
     例如: Message(content={“raw_image”: b”…”}) 或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”})。
-  * **timeout** (*float* *,*  *可选*) – HTTP超时时间
-  * **retry** (*int* *,*  *可选*) – HTTP重试次数
+  * **timeout** (*float* *,* *optional*) – HTTP超时时间，默认为None。
+  * **retry** (*int* *,* *optional*) – HTTP重试次数，默认为0。
 * **返回:**
-  Message): 模型识别结果。
+  模型识别结果。
   : 例如: Message(content={“result”:[{“keyword”:”苹果”,
     : ”score”:0.94553,”root”:”植物-蔷薇科”},{“keyword”:”姬娜果”,”score”:0.730442,”root”:”植物-其它”},
       {“keyword”:”红富士”,”score”:0.505194,”root”:”植物-其它”}]})
 * **返回类型:**
-  message (obj
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
 #### tool_eval(name: str, streaming: bool, \*\*kwargs)
 
@@ -71,5 +71,3 @@ print(out.content)
   **InvalidRequestArgumentError** – 如果请求格式错误（如未设置文件名或文件URL不存在），则抛出此异常。
 
 #### version *= 'v1'*
-
-## Module contents

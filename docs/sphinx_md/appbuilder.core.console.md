@@ -25,7 +25,6 @@
       * [`AppBuilderEventHandler.running()`](appbuilder.core.console.appbuilder_client.md#appbuilder.core.console.appbuilder_client.event_handler.AppBuilderEventHandler.running)
       * [`AppBuilderEventHandler.success()`](appbuilder.core.console.appbuilder_client.md#appbuilder.core.console.appbuilder_client.event_handler.AppBuilderEventHandler.success)
       * [`AppBuilderEventHandler.until_done()`](appbuilder.core.console.appbuilder_client.md#appbuilder.core.console.appbuilder_client.event_handler.AppBuilderEventHandler.until_done)
-  * [Module contents](appbuilder.core.console.appbuilder_client.md#module-appbuilder.core.console.appbuilder_client)
 * [appbuilder.core.console.dataset package](appbuilder.core.console.dataset.md)
   * [Submodules](appbuilder.core.console.dataset.md#submodules)
   * [appbuilder.core.console.dataset.dataset module](appbuilder.core.console.dataset.md#module-appbuilder.core.console.dataset.dataset)
@@ -40,7 +39,6 @@
       * [`Dataset.get_file_list_url`](appbuilder.core.console.dataset.md#appbuilder.core.console.dataset.dataset.Dataset.get_file_list_url)
       * [`Dataset.http_client`](appbuilder.core.console.dataset.md#appbuilder.core.console.dataset.dataset.Dataset.http_client)
       * [`Dataset.upload_file_url`](appbuilder.core.console.dataset.md#appbuilder.core.console.dataset.dataset.Dataset.upload_file_url)
-  * [Module contents](appbuilder.core.console.dataset.md#module-appbuilder.core.console.dataset)
 * [`KnowledgeBase`](appbuilder.core.console.knowledge_base.md)
   * [`KnowledgeBase.add_document()`](appbuilder.core.console.knowledge_base.md#appbuilder.core.console.knowledge_base.knowledge_base.KnowledgeBase.add_document)
   * [`KnowledgeBase.create_chunk()`](appbuilder.core.console.knowledge_base.md#appbuilder.core.console.knowledge_base.knowledge_base.KnowledgeBase.create_chunk)
@@ -60,7 +58,6 @@
   * [`KnowledgeBase.modify_knowledge_base()`](appbuilder.core.console.knowledge_base.md#appbuilder.core.console.knowledge_base.knowledge_base.KnowledgeBase.modify_knowledge_base)
   * [`KnowledgeBase.upload_documents()`](appbuilder.core.console.knowledge_base.md#appbuilder.core.console.knowledge_base.knowledge_base.KnowledgeBase.upload_documents)
   * [`KnowledgeBase.upload_file()`](appbuilder.core.console.knowledge_base.md#appbuilder.core.console.knowledge_base.knowledge_base.KnowledgeBase.upload_file)
-* [Module contents](appbuilder.core.console.knowledge_base.md#module-appbuilder.core.console.knowledge_base)
 * [appbuilder.core.console.rag package](appbuilder.core.console.rag.md)
   * [Submodules](appbuilder.core.console.rag.md#submodules)
   * [appbuilder.core.console.rag.rag module](appbuilder.core.console.rag.md#module-appbuilder.core.console.rag.rag)
@@ -70,8 +67,5 @@
       * [`RAG.integrated_url`](appbuilder.core.console.rag.md#appbuilder.core.console.rag.rag.RAG.integrated_url)
       * [`RAG.name`](appbuilder.core.console.rag.md#appbuilder.core.console.rag.rag.RAG.name)
       * [`RAG.run()`](appbuilder.core.console.rag.md#appbuilder.core.console.rag.rag.RAG.run)
-  * [Module contents](appbuilder.core.console.rag.md#module-appbuilder.core.console.rag)
 
 ## Submodules
-
-## Module contents

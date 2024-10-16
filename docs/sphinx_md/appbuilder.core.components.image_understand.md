@@ -39,14 +39,14 @@ print(out.content)
 执行图像内容理解
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={“raw_image”: b”…”, “question”: “图片主要内容是什么？”})
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={“raw_image”: b”…”, “question”: “图片主要内容是什么？”})
     或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”, “question”: “图片主要内容是什么？”}).
   * **timeout** (*float* *,* *optional*) – HTTP超时时间. 默认为 None.
   * **retry** (*int* *,* *optional*) – HTTP重试次数. 默认为 0.
 * **返回:**
   模型识别结果.
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
 #### tool_eval(name: str, streaming: bool, origin_query: str, \*\*kwargs) → Generator[str, None, None] | str
 
@@ -63,5 +63,3 @@ print(out.content)
   Union[Generator[str, None, None], str]
 
 #### version *= 'v1'*
-
-## Module contents

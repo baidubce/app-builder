@@ -29,7 +29,7 @@ print(out.content)
 
 #### name *= 'doc_converter'*
 
-#### queryDocFormatConverterTask(request: DocFormatConverterQueryRequest, timeout: float = None, retry: int = 0, request_id: str = None) → DocFormatConverterQueryResponse
+#### queryDocFormatConverterTask(request: DocFormatConverterQueryRequest, timeout: float | None = None, retry: int = 0, request_id: str | None = None) → DocFormatConverterQueryResponse
 
 查询任务
 :param request: 请求参数
@@ -42,17 +42,17 @@ print(out.content)
 将PDF、JPG、PNG、BMP等格式文件转换为Word、Excel格式，并返回转换后的文件URL。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 包含待转换文件路径和页码信息的消息对象。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 包含待转换文件路径和页码信息的消息对象。
   * **timeout** (*float* *,* *optional*) – 请求超时时间，单位为秒。默认为None，表示不设置超时时间。
   * **retry** (*int* *,* *optional*) – 请求重试次数。默认为0，表示不重试。
 * **返回:**
   包含转换后文件URL的消息对象。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 * **抛出:**
-  [**AppBuilderServerException**](appbuilder.md#appbuilder.AppBuilderServerException) – 文档格式转换服务发生错误时抛出。
+  **AppBuilderServerException** – 文档格式转换服务发生错误时抛出。
 
-#### submitDocFormatConverterTask(request: DocFormatConverterSubmitRequest, timeout: float = None, retry: int = 0, request_id: str = None) → DocFormatConverterSubmitResponse
+#### submitDocFormatConverterTask(request: DocFormatConverterSubmitRequest, timeout: float | None = None, retry: int = 0, request_id: str | None = None) → DocFormatConverterSubmitResponse
 
 提交任务
 :param request: 请求参数
@@ -77,8 +77,6 @@ print(out.content)
   如果streaming为True，则逐个生成包含文件URL的字典；如果streaming为False，则直接返回结果内容。
 * **抛出:**
   * **InvalidRequestArgumentError** – 如果请求格式错误，如page_num不是整数、file_url为空且无法从file_urls和file_name中获取file_url等。
-  * [**AppBuilderServerException**](appbuilder.md#appbuilder.AppBuilderServerException) – 如果服务执行过程中出现异常。
+  * **AppBuilderServerException** – 如果服务执行过程中出现异常。
 
 #### version *= 'v1'*
-
-## Module contents

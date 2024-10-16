@@ -85,13 +85,13 @@ class ObjectRecognition(Component):
         通用物体识别
         
         Args:
-            message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作。
+            message (Message): 输入图片或图片url下载地址用于执行识别操作。
                 例如: Message(content={"raw_image": b"..."}) 或 Message(content={"url": "https://image/download/url"})。
-            timeout (float, 可选): HTTP超时时间
-            retry (int, 可选): HTTP重试次数
+            timeout (float, optional): HTTP超时时间，默认为None。
+            retry (int, optional): HTTP重试次数，默认为0。
         
         Returns:
-            message (obj: `Message`): 模型识别结果。
+            Message: 模型识别结果。
                 例如: Message(content={"result":[{"keyword":"苹果",
                     "score":0.94553,"root":"植物-蔷薇科"},{"keyword":"姬娜果","score":0.730442,"root":"植物-其它"},
                     {"keyword":"红富士","score":0.505194,"root":"植物-其它"}]})

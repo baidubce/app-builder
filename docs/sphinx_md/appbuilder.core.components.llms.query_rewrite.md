@@ -63,6 +63,20 @@ answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？',
 
 多轮改写配置
 
+#### message
+
+Message = Field(…)
+
+* **Type:**
+  [appbuilder.core.message.Message](appbuilder.core.md#appbuilder.core.message.Message)
+
+#### rewrite_type
+
+RewriteTypeChoices = Field(…)
+
+* **Type:**
+  [appbuilder.core.components.llms.query_rewrite.component.RewriteTypeChoices](#appbuilder.core.components.llms.query_rewrite.component.RewriteTypeChoices)
+
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -82,9 +96,11 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### rewrite_type *: [RewriteTypeChoices](#appbuilder.core.components.llms.query_rewrite.component.RewriteTypeChoices)*
 
-### *class* appbuilder.core.components.llms.query_rewrite.component.RewriteTypeChoices(value, names=<not given>, \*values, module=None, qualname=None, type=None, start=1, boundary=None)
+### *class* appbuilder.core.components.llms.query_rewrite.component.RewriteTypeChoices(value)
 
 基类：`Enum`
+
+多轮改写类型选择
 
 #### to_chinese()
 
@@ -98,7 +114,3 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 #### user_assistant_user *= '带机器人回复'*
 
 #### user_user *= '仅用户查询'*
-
-## Module contents
-
-query_rewrite

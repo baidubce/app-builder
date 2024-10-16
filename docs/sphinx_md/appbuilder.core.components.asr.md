@@ -36,7 +36,7 @@ print(out.content) # eg: {"result": ["北京科技馆。"]}
 执行语音识别操作，并返回识别结果。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入消息对象，包含待识别的音频数据。该参数为必需项，格式如：Message(content={“raw_audio”: b”…”})。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入消息对象，包含待识别的音频数据。该参数为必需项，格式如：Message(content={“raw_audio”: b”…”})。
   * **audio_format** (*str* *,* *optional*) – 音频文件格式，支持pcm/wav/amr/m4a，不区分大小写，推荐使用pcm格式。默认为”pcm”。
   * **rate** (*int* *,* *optional*) – 音频采样率，固定为16000。默认为16000。
   * **timeout** (*float* *,* *optional*) – HTTP请求超时时间。默认为None。
@@ -44,7 +44,7 @@ print(out.content) # eg: {"result": ["北京科技馆。"]}
 * **返回:**
   语音识别结果，格式如：Message(content={“result”: [“识别结果”]})。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
 #### tool_eval(name: str, streaming: bool, \*\*kwargs)
 
@@ -61,5 +61,3 @@ print(out.content) # eg: {"result": ["北京科技馆。"]}
   **InvalidRequestArgumentError** – 如果未设置文件名或文件URL不存在，则抛出此异常。
 
 #### version *= 'v1'*
-
-## Module contents

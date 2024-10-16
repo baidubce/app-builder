@@ -8,7 +8,7 @@
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
-console RAG组件，利用console端RAG应用进行问答，即将上线
+console RAG组件，利用console端RAG应用进行问答
 
 Examples:
 
@@ -34,43 +34,21 @@ print(answer.extra)  # 获取结果来源
 
 #### debug(query: [Message](appbuilder.core.md#appbuilder.core.message.Message))
 
-调试函数(RAG暂时无DEBUG服务)
-
-* **参数:**
-  **query** ([*Message*](appbuilder.md#appbuilder.Message)) – 待调试的消息对象
-* **返回:**
-  None
-
-说明:
-: 这是一个用于调试的函数，接收一个消息对象作为参数，但并不返回任何值。
-  你可以在这里添加任何用于调试的代码，比如打印日志或输出消息内容等。
-
 #### *property* http_client
-
-获取HTTP客户端对象。
-
-* **参数:**
-  **无参数**
-* **返回:**
-  返回HTTPClient对象，如果尚未创建则创建新对象。
-* **返回类型:**
-  HTTPClient
 
 #### integrated_url *: str* *= '/v1/ai_engine/agi_platform/v1/instance/integrated'*
 
 #### name *= 'rag'*
 
-#### run(query: [Message](appbuilder.core.md#appbuilder.core.message.Message), conversation_id: str = '', stream: bool = False)
+#### run(query: [Message](appbuilder.core.md#appbuilder.core.message.Message), conversation_id: str = '', stream: bool = False) → [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
 RAG问答
 
 * **参数:**
-  * **query** ([*Message*](appbuilder.md#appbuilder.Message)) – 用户输入的文本
-  * **conversation_id** (*str* *,* *optional*) – 会话ID，默认为空字符串，表示新建对话。
-  * **stream** (*bool* *,* *optional*) – 是否开启流式模式，默认为False。
+  * **query** – 用户输入的文本
+  * **stream** – 是否开启流式模式
+  * **conversation_id** – 会话ID，不传表示新建对话
 * **返回:**
-  RAG问答的答案
+  rag答案
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
-
-## Module contents
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)

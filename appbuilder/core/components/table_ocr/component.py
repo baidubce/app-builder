@@ -75,14 +75,14 @@ class TableOCR(Component):
         表格文字识别
         
         Args:
-            message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作。
+            message (Message): 输入图片或图片url下载地址用于执行识别操作。
                 举例: Message(content={"raw_image": b"..."})
                 或 Message(content={"url": "https://image/download/url"})。
             timeout (float, 可选): HTTP超时时间。
             retry (int, 可选): HTTP重试次数。
         
         Returns:
-            message (obj: `Message`): 识别结果。
+            message (Message): 识别结果。
                 举例: Message(name=msg, content={'tables_result': [{
                 'table_location': [{'x': 15, 'y': 15}, {'x': 371, 'y': 15}, {'x': 371, 'y': 98}, {'x': 15,
                 'y': 98}], 'header': [], 'body': [{'cell_location': [{'x': 15, 'y': 15}, {'x': 120, 'y': 15},

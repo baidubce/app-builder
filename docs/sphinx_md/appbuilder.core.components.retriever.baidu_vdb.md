@@ -38,12 +38,12 @@ res = retriever(query)
 根据query进行查询
 
 * **参数:**
-  * **query** ([*Message*](appbuilder.md#appbuilder.Message) *[**str* *]*) – 需要查询的内容，类型为Message，包含要查询的文本。
+  * **query** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message) *[**str* *]*) – 需要查询的内容，类型为Message，包含要查询的文本。
   * **top_k** (*int* *,* *optional*) – 查询结果中匹配度最高的top_k个结果，默认为1。
 * **返回:**
   查询到的结果，包含文本和匹配得分。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)[Dict]
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)[Dict]
 * **抛出:**
   * **TypeError** – 如果query不是Message类型，或者top_k不是整数类型。
   * **ValueError** – 如果top_k不是正整数，或者query的内容为空字符串，或者长度超过512个字符。
@@ -61,7 +61,7 @@ Baidu VDB向量存储检索工具
 向bes中插入数据段
 
 * **参数:**
-  * **segments** ([*Message*](appbuilder.md#appbuilder.Message)) – 需要插入的数据段
+  * **segments** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 需要插入的数据段。
   * **metadata** (*str* *,* *optional*) – 元数据，默认为空字符串。
 * **返回:**
   无返回值
@@ -70,48 +70,60 @@ Baidu VDB向量存储检索工具
 
 #### as_retriever()
 
-转化为retriever
+将对象转化为retriever
+
+* **参数:**
+  **无**
+* **返回:**
+  转化后的retriever对象
+* **返回类型:**
+  [BaiduVDBRetriever](#appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.BaiduVDBRetriever)
 
 #### *property* client *: Any*
 
-Get client.
+获取客户端对象。
+
+* **参数:**
+  **无参数**
+* **返回:**
+  返回客户端对象，具体类型依赖于vdb_client属性的值。
+* **返回类型:**
+  Any
 
 #### *classmethod* from_params(instance_id: str, api_key: str, account: str = 'root', database_name: str = 'AppBuilderDatabase', table_name: str = 'AppBuilderTable', drop_exists: bool = False, \*\*kwargs)
 
 从参数中实例化类。
 
 * **参数:**
-  * **cls** – 类对象，即当前函数所属的类。
-  * **instance_id** – str，实例ID。
-  * **api_key** – str，API密钥。
-  * **account** – str，账户名，默认为root。
-  * **database_name** – str，数据库名，默认为AppBuilderDatabase。
-  * **table_name** – str，表名，默认为AppBuilderTable。
-  * **drop_exists** – bool，是否删除已存在的表，默认为False。
+  * **cls** (*type*) – 类对象，即当前函数所属的类。
+  * **instance_id** (*str*) – 实例ID。
+  * **api_key** (*str*) – API密钥。
+  * **account** (*str* *,* *optional*) – 账户名，默认为’root’。 Defaults to DEFAULT_ACCOUNT.
+  * **database_name** (*str* *,* *optional*) – 数据库名，默认为’AppBuilderDatabase’。 Defaults to DEFAULT_DATABASE_NAME.
+  * **table_name** (*str* *,* *optional*) – 表名，默认为’AppBuilderTable’。 Defaults to DEFAULT_TABLE_NAME.
+  * **drop_exists** (*bool* *,* *optional*) – 是否删除已存在的表，默认为False。 Defaults to False.
   * **\*\*kwargs** – 其他参数，可选的维度参数dimension默认为384。
 * **返回:**
   类实例，包含实例ID、账户名、API密钥、数据库名、表参数等属性。
+* **返回类型:**
+  cls
 
 #### vdb_uri_prefix *= b'/api/v1/bce/vdb/instance/'*
 
-### *class* appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.TableParams(dimension: int, table_name: str = 'AppBuilderTable', replication: int = 3, partition: int = 1, index_type: str = 'HNSW', metric_type: str = 'L2', drop_exists: bool = False, vector_params: Dict = None)
+### *class* appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.TableParams(dimension: int, table_name: str = 'AppBuilderTable', replication: int = 3, partition: int = 1, index_type: str = 'HNSW', metric_type: str = 'L2', drop_exists: bool = False, vector_params: Dict | None = None)
 
 基类：`object`
 
 Baidu VectorDB table params.
 See the following documentation for details:
 [https://cloud.baidu.com/doc/VDB/s/mlrsob0p6](https://cloud.baidu.com/doc/VDB/s/mlrsob0p6)
-:param dimension int: The dimension of vector.
-:param replication int: The number of replicas in the table.
-:param partition int: The number of partitions in the table.
-:param index_type: HNSW, FLAT… Default value is “HNSW”
-:type index_type: Optional[str]
-:param metric_type: L2, COSINE, IP. Default value is “L2”
-:type metric_type: Optional[str]
-:param drop_exists: Delete the existing Table. Default value is False.
-:type drop_exists: Optional[bool]
-:param vector_params: if HNSW set parameters: M and efConstruction, for example {‘M’: 16, efConstruction: 200}
 
-> default is HNSW
-
-## Module contents
+* **参数:**
+  * **int** (*partition*) – The dimension of vector.
+  * **int** – The number of replicas in the table.
+  * **int** – The number of partitions in the table.
+  * **index_type** (*Optional* *[**str* *]*) – HNSW, FLAT… Default value is “HNSW”
+  * **metric_type** (*Optional* *[**str* *]*) – L2, COSINE, IP. Default value is “L2”
+  * **drop_exists** (*Optional* *[**bool* *]*) – Delete the existing Table. Default value is False.
+  * **vector_params** (*Optional* *[**Dict* *]*) – if HNSW set parameters: M and efConstruction, for example {‘M’: 16, efConstruction: 200}
+    default is HNSW

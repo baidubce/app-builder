@@ -29,7 +29,7 @@ answer = oral_query_generation(appbuilder.Message(text), query_type='全部', ou
 print(answer.content)
 ```
 
-#### completion(version, base_url, request, timeout: float = None, retry: int = 0)
+#### completion(version, base_url, request, timeout: float | None = None, retry: int = 0)
 
 Send a byte array of an audio file to obtain the result of speech recognition.
 
@@ -50,7 +50,7 @@ Send a byte array of an audio file to obtain the result of speech recognition.
 使用给定的输入运行模型并返回结果。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入消息，包含query、context和answer等信息。这是一个必需的参数。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入消息，包含query、context和answer等信息。这是一个必需的参数。
   * **query_type** (*str* *,*  *可选*) – 待生成的query类型，包括问题、短语和全部（问题+短语）。默认为全部。
   * **output_format** (*str* *,*  *可选*) – 输出格式，包括json和str，当stream为True时，只能以json形式输出。默认为str。
   * **stream** (*bool* *,*  *可选*) – 指定是否以流式形式返回响应。默认为 False。
@@ -61,7 +61,7 @@ Send a byte array of an audio file to obtain the result of speech recognition.
 * **返回:**
   模型运行后的输出消息。
 * **返回类型:**
-  result ([Message](appbuilder.md#appbuilder.Message))
+  result ([Message](appbuilder.core.md#appbuilder.core.message.Message))
 
 #### tool_eval(name: str, stream: bool = False, \*\*kwargs)
 
@@ -110,9 +110,11 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### text *: str*
 
-### *class* appbuilder.core.components.llms.oral_query_generation.component.OutputFormatChoices(value, names=<not given>, \*values, module=None, qualname=None, type=None, start=1, boundary=None)
+### *class* appbuilder.core.components.llms.oral_query_generation.component.OutputFormatChoices(value)
 
 基类：`Enum`
+
+An enumeration.
 
 #### json_format *= 'json'*
 
@@ -127,9 +129,11 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 * **返回:**
   返回一个字典，键是OutputFormatChoices枚举类的成员，值为对应的中文描述字符串。
 
-### *class* appbuilder.core.components.llms.oral_query_generation.component.QueryTypeChoices(value, names=<not given>, \*values, module=None, qualname=None, type=None, start=1, boundary=None)
+### *class* appbuilder.core.components.llms.oral_query_generation.component.QueryTypeChoices(value)
 
 基类：`Enum`
+
+An enumeration.
 
 #### phrases *= '短语'*
 
@@ -145,5 +149,3 @@ This replaces Model._\_fields_\_ from Pydantic V1.
   **无参数**
 * **返回:**
   返回一个字典，键是QueryTypeChoices枚举类的成员，值为对应的中文描述字符串。
-
-## Module contents

@@ -11,9 +11,23 @@ similar question
 基类：`CompletionBaseComponent`
 
 基于输入的问题, 挖掘出与该问题相关的类似问题。广泛用于客服、问答等场景。
-: Examples:
 
-{}”.format(answer.content))
+Examples:
+
+```python
+import os
+import appbuilder
+
+os.environ["APPBUILDER_TOKEN"] = "..."
+
+qa_mining = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
+
+msg = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
+msg = appbuilder.Message(msg)
+answer = qa_mining(msg)
+
+print("Answer: \n{}".format(answer.content))
+```
 
 #### manifests *= [{'description': '基于输入的问题，挖掘出与该问题相关的类似问题。', 'name': 'similar_question', 'parameters': {'properties': {'query': {'description': '输入的问题，用于大模型根据该问题输出相关的类似问题。', 'type': 'string'}}, 'required': ['query'], 'type': 'object'}}]*
 
@@ -64,6 +78,13 @@ similar question
 
 基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
 
+#### message
+
+输入消息，用于模型的输入，一般为问题。
+
+* **Type:**
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
+
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -80,5 +101,3 @@ Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 
 This replaces Model._\_fields_\_ from Pydantic V1.
-
-## Module contents

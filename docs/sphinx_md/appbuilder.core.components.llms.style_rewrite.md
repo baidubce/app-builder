@@ -4,9 +4,31 @@
 
 ## appbuilder.core.components.llms.style_rewrite.component module
 
-### *class* appbuilder.core.components.llms.style_rewrite.component.StyleChoices(value, names=<not given>, \*values, module=None, qualname=None, type=None, start=1, boundary=None)
+### *class* appbuilder.core.components.llms.style_rewrite.component.StyleChoices(value)
 
 基类：`Enum`
+
+StyleChoices枚举类，包含了五种风格：
+
+#### YINGXIAO
+
+营销话术
+
+#### JIAOXUE
+
+教学话术
+
+#### JILI
+
+激励话术
+
+#### KEFU
+
+客服话术
+
+#### ZHIBO
+
+直播话术
 
 #### JIAOXUE *= '教学话术'*
 
@@ -97,6 +119,20 @@ answer = style_rewrite(appbuilder.Message("文心大模型发布新版本"), sty
 
 文本风格转写配置
 
+#### message
+
+Message
+
+* **Type:**
+  [appbuilder.core.message.Message](appbuilder.core.md#appbuilder.core.message.Message)
+
+#### style
+
+StyleChoices
+
+* **Type:**
+  [appbuilder.core.components.llms.style_rewrite.component.StyleChoices](#appbuilder.core.components.llms.style_rewrite.component.StyleChoices)
+
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
 #### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
@@ -115,7 +151,3 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### style *: [StyleChoices](#appbuilder.core.components.llms.style_rewrite.component.StyleChoices)*
-
-## Module contents
-
-StyleRewrite

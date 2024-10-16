@@ -39,13 +39,13 @@ print(out.content)
 输入图片并识别其中的文字
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入图片或图片url下载地址用于执行识别操作.例如: Message(content={“raw_image”: b”…”}) 或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”}).
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入图片或图片url下载地址用于执行识别操作.例如: Message(content={“raw_image”: b”…”}) 或 Message(content={“url”: “[https://image/download/url](https://image/download/url)”}).
   * **timeout** (*float* *,* *optional*) – HTTP超时时间. 默认为None.
   * **retry** (*int* *,* *optional*) – HTTP重试次数. 默认为0.
 * **返回:**
   手写体模型识别结果.
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
 #### tool_eval(name: str, streaming: bool, \*\*kwargs)
 
@@ -64,5 +64,3 @@ print(out.content)
   **InvalidRequestArgumentError** – 如果请求格式错误，例如指定的文件名对应的URL不存在。
 
 #### version *= 'v1'*
-
-## Module contents

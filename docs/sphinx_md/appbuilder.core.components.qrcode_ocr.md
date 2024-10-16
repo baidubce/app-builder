@@ -34,7 +34,7 @@ print(out.content)
 执行二维码识别操作。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入的图片或图片URL下载地址，用于执行识别操作。例如：
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入的图片或图片URL下载地址，用于执行识别操作。例如：
     Message(content={“raw_image”: b”…”, “location”: “”}) 或
     Message(content={“url”: “[https://image/download/url](https://image/download/url)”})。
   * **location** (*str* *,*  *可选*) – 是否需要返回二维码位置信息，默认为 “true”。
@@ -45,7 +45,7 @@ print(out.content)
   : Message(name=msg, content={‘codes_result’: [{‘type’: ‘QR_CODE’, ‘text’: [’[http://weixin.qq.com/r/cS7M1PHE5qyZrbW393tj](http://weixin.qq.com/r/cS7M1PHE5qyZrbW393tj)’],
     : ’location’: {‘top’: 63, ‘left’: 950, ‘width’: 220, ‘height’: 211}}, …]}, mtype=dict)
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 * **抛出:**
   **InvalidRequestArgumentError** – 如果 location 参数非法，将抛出该异常。
 
@@ -71,5 +71,3 @@ print(out.content)
   **InvalidRequestArgumentError** – 如果请求格式错误，或者位置信息不合法，则抛出该异常
 
 #### version *= 'v1'*
-
-## Module contents

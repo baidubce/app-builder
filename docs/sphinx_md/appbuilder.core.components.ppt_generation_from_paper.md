@@ -26,7 +26,7 @@ answer = ppt_generator(appbuilder.Message(user_input))
 print(answer.content)
 ```
 
-#### get_ppt_download_link(job_id: str, timeout: float = None)
+#### get_ppt_download_link(job_id: str, timeout: float | None = None)
 
 获取PPT下载链接
 
@@ -42,7 +42,7 @@ print(answer.content)
 
 #### get_ppt_download_link_url *= '/ppt/text2ppt/apps/ppt-download'*
 
-#### get_ppt_generation_status(job_id: str, request_times: int = 60, request_interval: int = 5, timeout: float = None)
+#### get_ppt_generation_status(job_id: str, request_times: int = 60, request_interval: int = 5, timeout: float | None = None)
 
 轮询查看PPT生成状态
 
@@ -71,7 +71,7 @@ print(answer.content)
 
 #### name *= 'ppt_generation_from_paper'*
 
-#### ppt_generation(post_data: dict, timeout: float = None)
+#### ppt_generation(post_data: dict, timeout: float | None = None)
 
 创建PPT生成任务
 
@@ -92,13 +92,13 @@ print(answer.content)
 使用给定的输入运行模型并返回结果。
 
 * **参数:**
-  * **message** ([*Message*](appbuilder.md#appbuilder.Message)) – 输入消息，用于传入请求参数。
+  * **message** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message)) – 输入消息，用于传入请求参数。
   * **poll_request_times** (*int*) – 轮询请求结果次数，默认为60次。
   * **poll_request_interval** (*int*) – 轮询请求的间隔时间（秒），默认为5秒。
 * **返回:**
   模型运行后的输出消息，包含PPT下载链接。
 * **返回类型:**
-  [Message](appbuilder.md#appbuilder.Message)
+  [Message](appbuilder.core.md#appbuilder.core.message.Message)
 * **抛出:**
   **Exception** – 当输入参数中缺少必要的键时，抛出异常。
 
@@ -118,5 +118,3 @@ print(answer.content)
 #### uniform_prefix *= '/api/v1/component/component'*
 
 #### version *: str*
-
-## Module contents

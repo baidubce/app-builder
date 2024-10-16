@@ -9,13 +9,15 @@
       * [`NL2Sql.meta`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2Sql.meta)
       * [`NL2Sql.run()`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2Sql.run)
     * [`NL2SqlArgs`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs)
+      * [`NL2SqlArgs.query`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs.query)
+      * [`NL2SqlArgs.session`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs.session)
       * [`NL2SqlArgs.column_constraint`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs.column_constraint)
+      * [`NL2SqlArgs.column_constraint`](appbuilder.core.components.gbi.nl2sql.md#id0)
       * [`NL2SqlArgs.model_computed_fields`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs.model_computed_fields)
       * [`NL2SqlArgs.model_config`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs.model_config)
       * [`NL2SqlArgs.model_fields`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs.model_fields)
-      * [`NL2SqlArgs.query`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs.query)
-      * [`NL2SqlArgs.session`](appbuilder.core.components.gbi.nl2sql.md#appbuilder.core.components.gbi.nl2sql.component.NL2SqlArgs.session)
-  * [Module contents](appbuilder.core.components.gbi.nl2sql.md#module-appbuilder.core.components.gbi.nl2sql)
+      * [`NL2SqlArgs.query`](appbuilder.core.components.gbi.nl2sql.md#id1)
+      * [`NL2SqlArgs.session`](appbuilder.core.components.gbi.nl2sql.md#id2)
 * [appbuilder.core.components.gbi.select_table package](appbuilder.core.components.gbi.select_table.md)
   * [Submodules](appbuilder.core.components.gbi.select_table.md#submodules)
   * [appbuilder.core.components.gbi.select_table.component module](appbuilder.core.components.gbi.select_table.md#module-appbuilder.core.components.gbi.select_table.component)
@@ -27,7 +29,6 @@
       * [`SelectTableArgs.model_fields`](appbuilder.core.components.gbi.select_table.md#appbuilder.core.components.gbi.select_table.component.SelectTableArgs.model_fields)
       * [`SelectTableArgs.query`](appbuilder.core.components.gbi.select_table.md#appbuilder.core.components.gbi.select_table.component.SelectTableArgs.query)
       * [`SelectTableArgs.session`](appbuilder.core.components.gbi.select_table.md#appbuilder.core.components.gbi.select_table.component.SelectTableArgs.session)
-  * [Module contents](appbuilder.core.components.gbi.select_table.md#module-appbuilder.core.components.gbi.select_table)
 
 ## Submodules
 
@@ -115,5 +116,3 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 This replaces Model._\_fields_\_ from Pydantic V1.
 
 #### query *: str*
-
-## Module contents
