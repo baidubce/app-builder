@@ -86,18 +86,20 @@ class Files(object):
 
         Returns:
             assistant_type.AssistantFilesListResponse: 文件列表的响应对象，包含以下属性：
-                - object (str): 表示对象类型，默认值为 "list"
-                - data (list[AssistantFilesListData]): 包含文件信息的列表，列表中的每个元素为 AssistantFilesListData 对象，
-                该对象包含以下属性：
-                    - id (str): 文件ID
-                    - bytes (int): 文件大小（字节）
-                    - object (str): 文件对象标识
-                    - purpose (str): 文件用途
-                    - censored (AuditStatus): 文件的审核状态
-                    - create_at (int): 文件创建时间戳
-                    - filename (str): 文件名
-                    - classification_id (str): 文件分类ID
-                    - file_type (str): 文件类型
+            
+            - object (str): 表示对象类型，默认值为 "list"
+            
+            - data (list[AssistantFilesListData]): 包含文件信息的列表，列表中的每个元素为 AssistantFilesListData 对象。该对象包含以下属性：
+            
+                - id (str): 文件ID
+                - bytes (int): 文件大小（字节）
+                - object (str): 文件对象标识
+                - purpose (str): 文件用途
+                - censored (AuditStatus): 文件的审核状态
+                - create_at (int): 文件创建时间戳
+                - filename (str): 文件名
+                - classification_id (str): 文件分类ID
+                - file_type (str): 文件类型
 
         Raises:
             assistant_type.AssistantError: 请求发生错误时抛出，具体错误信息可通过 `error_msg` 属性获取。
