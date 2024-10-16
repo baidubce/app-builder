@@ -92,6 +92,15 @@
 
 #### *property* messages *: [Messages](appbuilder.core.assistant.threads.messages.md#appbuilder.core.assistant.threads.messages.messages.Messages)*
 
+获取消息实例
+
+* **参数:**
+  **无**
+* **返回:**
+  返回Messages实例
+* **返回类型:**
+  [Messages](appbuilder.core.assistant.threads.messages.md#appbuilder.core.assistant.threads.messages.messages.Messages)
+
 #### query(thread_id: str) → ThreadQueryResponse
 
 查询对话线程信息。
@@ -104,6 +113,15 @@
   **ValueError** – 如果传入的thread_id参数不是字符串类型。
 
 #### *property* runs *: [Runs](appbuilder.core.assistant.threads.runs.md#appbuilder.core.assistant.threads.runs.runs.Runs)*
+
+返回Runs对象。
+
+* **参数:**
+  **无**
+* **返回:**
+  一个Runs对象实例。
+* **返回类型:**
+  [Runs](appbuilder.core.assistant.threads.runs.md#appbuilder.core.assistant.threads.runs.runs.Runs)
 
 #### update(thread_id: str, metadata: dict | None = {}) → ThreadUpdateResponse
 

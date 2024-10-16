@@ -324,6 +324,15 @@ Assistant事件处理程序通常与具体的Assistant实例相关联，用于�
 
 #### until_done()
 
+直到迭代器结束为止，持续迭代。
+
+* **参数:**
+  **无**
+* **返回:**
+  无
+* **抛出:**
+  **无** – 
+
 ### *class* appbuilder.core.assistant.threads.runs.stream_helper.AssistantStreamManager(response, event_handler: [AssistantEventHandler](#appbuilder.core.assistant.threads.runs.stream_helper.AssistantEventHandler))
 
 基类：[`AssistantEventHandler`](#appbuilder.core.assistant.threads.runs.stream_helper.AssistantEventHandler)
