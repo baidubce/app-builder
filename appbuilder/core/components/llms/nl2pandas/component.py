@@ -25,7 +25,13 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class Nl2pandasArgs(ComponentArguments):
-    """自然语言转pandas代码 参数配置"""
+    """
+    自然语言转pandas代码 参数配置
+
+    Attributes:
+        message: Message = Field(...)
+        table_info: str = Field(...)
+    """
     message: Message = Field(..., 
                              variable_name="query", 
                              description="输入问题，一般是针对表格信息的提问，例如'海淀区的小学有哪些'")

@@ -23,7 +23,16 @@ from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 class HallucinationDetectionArgs(ComponentArguments):
-    """幻觉检测配置
+    """
+    幻觉检测配置
+
+    Attributes:
+        query: str
+            用户查询。
+        context: str
+            根据query得到的检索结果。
+        answer: str
+            基于context生成的query的答案。
     """
     query: str = Field(...,
                        valiable_name='query',
@@ -133,8 +142,20 @@ class HallucinationDetection(CompletionBaseComponent):
 
     def completion(self, version, base_url, request, timeout: float = None,
                    retry: int = 0):
-        r"""Send a byte array of an audio file to obtain the result of speech recognition."""
-
+        """
+        Send a byte array of an audio file to obtain the result of speech recognition.
+        
+        Args:
+            version (str): API version.
+            base_url (str): Base URL of the API.
+            request (Request): Request object containing audio file and other parameters.
+            timeout (float, optional): Timeout for the request. Defaults to None.
+            retry (int, optional): Number of retries for the request. Defaults to 0.
+        
+        Returns:
+            Response: Processed response object.
+        
+        """
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
 
@@ -199,7 +220,25 @@ class HallucinationDetection(CompletionBaseComponent):
     @components_run_stream_trace
     def tool_eval(self, name: str, stream: bool = False, **kwargs):
         """
-        tool_eval for function call
+        调用函数进行工具评估。
+        
+        Args:
+            name (str): 函数名，当前方法未使用此参数，预留接口。
+            stream (bool, optional): 是否以流的方式返回结果，默认为False。如果为True，则逐个返回结果；如果为False，则一次性返回所有结果。
+            **kwargs: 关键字参数，包含评估所需的输入参数。
+        
+                - query (str): 查询语句。
+                - context (str): 上下文信息。
+                - answer (str): 参考答案。
+                - model_configs (dict, optional): 模型配置信息，默认为空字典。包含以下字段：
+                    - temperature (float, optional): 温度参数，用于控制生成文本的随机性，默认为1e-10。
+                    - top_p (float, optional): 截断概率，用于控制生成文本的质量，默认为0.0。
+        
+        Returns:
+            如果stream为False，返回包含所有评估结果的列表；如果stream为True，逐个返回评估结果。
+        
+        Raises:
+            ValueError: 如果缺少query、context或answer参数，将引发此异常。
         """
         query = kwargs.get('query', None)
         context = kwargs.get('context', None)

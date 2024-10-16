@@ -26,7 +26,9 @@ import appbuilder
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 class RewriteTypeChoices(Enum):
-    """"""
+    """
+    多轮改写类型选择
+    """
     user_assistant_user = "带机器人回复"
     user_user = "仅用户查询"
 
@@ -49,7 +51,13 @@ class RewriteTypeChoices(Enum):
 
 
 class QueryRewriteArgs(ComponentArguments):
-    """多轮改写配置"""
+    """
+    多轮改写配置
+    
+    Attributes:
+        message: Message = Field(...)
+        rewrite_type: RewriteTypeChoices = Field(...)
+    """
     message: Message = Field(..., 
                              variable_name="query",
                              description="输入消息，用于模型的主要输入内容，例如'['我应该怎么办理护照？', '您可以查询官网或人工咨询', \

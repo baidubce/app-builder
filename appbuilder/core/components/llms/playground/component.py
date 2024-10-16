@@ -21,7 +21,12 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class PlaygroundArgs(ComponentArguments):
-    """空模板参数配置"""
+    """
+    空模板参数配置
+
+    Attributes:
+        message (Message): 输入消息，用于模型的主要输入内容
+    """
     message: Message = Field(...,
                              json_schema_extra={
                                  "variable_name": "query",

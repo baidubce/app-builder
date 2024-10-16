@@ -54,11 +54,31 @@ class BESVectorStoreIndex:
 
     @property
     def es(self):
+        """
+        获取Elasticsearch客户端实例。
+        
+        Args:
+            无
+        
+        Returns:
+            Elasticsearch客户端实例。
+        
+        """
         self._lazy_import_es()
         return self._es
 
     @property
     def helpers(self):
+        """
+        获取帮助器实例。
+        
+        Args:
+            无
+        
+        Returns:
+            _helpers (对象): 帮助器实例。
+        
+        """
         self._lazy_import_es()
         return self._helpers
 
@@ -88,7 +108,19 @@ class BESVectorStoreIndex:
 
     def _create_bes_client(self, cluster_id, user_name, password):
         """
-        创建一个bes的client
+        创建一个BES客户端。
+        
+        Args:
+            cluster_id (str): BES集群的ID。
+            user_name (str): 用于连接BES的用户名。
+            password (str): 用于连接BES的密码。
+        
+        Returns:
+            Elasticsearch: 初始化好的BES客户端。
+        
+        Raises:
+            ConnectionError: 如果无法连接到BES集群，则抛出此异常。
+        
         """
         secret_key = os.getenv("APPBUILDER_TOKEN")
         if not secret_key.startswith("Bearer"):

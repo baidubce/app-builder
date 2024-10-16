@@ -22,7 +22,12 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class TagExtractionArgs(ComponentArguments):
-    """标签抽取配置"""
+    """
+    标签抽取配置
+
+    Attributes:
+        message (Message): 输入消息，用于模型的主要输入内容
+    """
     message: Message = Field(...,
                              variable_name="query",
                              description="""输入消息，用于模型的主要输入内容，例如'本实用新型公开了一种可利用热能的太阳能光伏光热一体化组件，

@@ -25,7 +25,16 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class StyleChoices(Enum):
-    """"""
+    """
+    StyleChoices枚举类，包含了五种风格：
+
+    Attributes:
+        YINGXIAO : 营销话术
+        JIAOXUE : 教学话术
+        JILI : 激励话术
+        KEFU : 客服话术
+        ZHIBO : 直播话术
+    """
     YINGXIAO = "营销话术"
     JIAOXUE = "教学话术"
     JILI = "激励话术"
@@ -54,7 +63,13 @@ class StyleChoices(Enum):
 
 
 class StyleRewriteArgs(ComponentArguments):
-    """文本风格转写配置"""
+    """
+    文本风格转写配置
+
+    Attributes:
+        message: Message
+        style: StyleChoices
+    """
     message: Message = Field(...,
                              variable_name="query",
                              description="需要改写的文本，该字段为必须字段。")

@@ -26,6 +26,14 @@ from enum import Enum
 
 
 class StyleQueryChoices(Enum):
+    """
+    StyleQueryChoices是一个枚举类型，包含三个选项：
+    
+    Attributes:
+        BILIBILI ("B站")
+        XIAOHONGSHU ("小红书")
+        GENERAL ("通用")
+    """
     BILIBILI = "B站"
     XIAOHONGSHU = "小红书"
     GENERAL = "通用"
@@ -74,7 +82,14 @@ class LengthChoices(Enum):
 
 
 class StyleWritingArgs(ComponentArguments):
-    """风格写作配置"""
+    """
+    风格写作配置
+
+    Attributes:
+        message: Message = Field(...)
+        style_query: StyleQueryChoices = Field(...)
+        length: LengthChoices = Field(...)
+    """
     message: Message = Field(...,
                              variable_name="query",
                              description="输入消息，用于模型的主要输入内容，例如'帮我生成一个介绍保温杯的话术'")
@@ -172,6 +187,7 @@ class StyleWriting(CompletionBaseComponent):
             stream (bool, optional): 指定是否以流式形式返回响应。默认为 False。
             temperature (float, optional): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
             top_p (float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
+            request_id (str, optional): 请求ID，用于跟踪和识别请求。
         
         Returns:
             obj:`Message`: 模型运行后的输出消息。

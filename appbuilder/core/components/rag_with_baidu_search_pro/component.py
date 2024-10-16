@@ -25,6 +25,18 @@ from typing import Optional
 
 
 class RagWithBaiduSearchProRequest(BaseModel):
+    """
+    RagWithBaiduSearchPro 的请求
+
+    Attributes:
+        message (object): 用户的消息
+        stream (bool): 是否流式处理
+        instruction (str): 指令
+        model (Optional[str]): 模型名称
+        temperature (confloat(ge=0, le=1)): 温度，范围在0到1之间
+        top_p (confloat(ge=0, le=1)): top_p，范围在0到1之间
+        search_top_k (conint(ge=1)): search_top_k，
+    """
     message: object
     stream: bool = False
     instruction: str
@@ -38,11 +50,17 @@ class RagWithBaiduSearchProRequest(BaseModel):
 class RagWithBaiduSearchProArgs(ComponentArguments):
     """
     RagWithBaiduSearchPro 的参数
+
+    Args:
+        query (str): 用户的 query 输入
     """
     query: str = Field(..., description="用户的 query 输入", max_length=300)
 
 
 class RagWithBaiduSearchPro(Component):
+    """
+    RagWithBaiduSearchPro 组件
+    """
     name = "rag_with_baidu_search_pro"
     version = "v1"
     meta: RagWithBaiduSearchProArgs
@@ -64,6 +82,17 @@ class RagWithBaiduSearchPro(Component):
 
     @ttl_lru_cache(seconds_to_live=1 * 60 * 60)  # 1h
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
+        """
+        设置API密钥和网关地址。
+        
+        Args:
+            secret_key (Optional[str], optional): API密钥，默认为None。如果为None，则不会更新现有的API密钥。
+            gateway (str, optional): 网关地址，默认为空字符串。如果为空字符串，则不会更新现有的网关地址。
+        
+        Returns:
+            None
+        
+        """
         super(RagWithBaiduSearchPro, self).set_secret_key_and_gateway(
             secret_key=secret_key, gateway=gateway)
         self.__class__.model_info = ModelInfo(client=self.http_client)

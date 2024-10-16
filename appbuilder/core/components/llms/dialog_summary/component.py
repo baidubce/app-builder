@@ -23,7 +23,11 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class DialogSummaryArgs(ComponentArguments):
-    """会话小结生成配置
+    """
+    会话小结生成配置
+
+    Attributes:
+        message (Message): 输入对话文本，用于生成小结
     """
     message: Message = Field(...,
                              variable_name='query',

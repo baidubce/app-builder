@@ -25,7 +25,12 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace
 
 
 class RerankerArgs(ComponentArguments):
-    """配置"""
+    """
+    配置
+
+    Attributes:
+        text: Union[Message[str], str]
+    """
 
     text: Union[Message[str], str]
 

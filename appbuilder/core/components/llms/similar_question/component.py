@@ -26,7 +26,11 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class SimilarQuestionMeta(ComponentArguments):
-    """ SimilarQuestionMeta
+    """ 
+    SimilarQuestionMeta
+
+    Attributes:
+        message (Message): 输入消息，用于模型的输入，一般为问题。
     """
     message: Message = Field(..., 
                              variable_name="query", 

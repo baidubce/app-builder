@@ -24,7 +24,11 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class IsComplexQueryMeta(ComponentArguments):
-    """ IsComplexQueryMeta
+    """ 
+    IsComplexQueryMeta
+
+    Attributes:
+        message (Message): 输入消息，用于模型的输入，一般为问题。
     """
     message: Message = Field(..., 
                              variable_name="query", 
@@ -32,7 +36,8 @@ class IsComplexQueryMeta(ComponentArguments):
 
 
 class IsComplexQuery(CompletionBaseComponent):
-    """ 基于输入的问题, 对问题进行初步的分类，方便下游使用不同类型的流程来处理当前的简单问题/复杂问题。广泛用于知识问答场景。
+    """ 
+    基于输入的问题, 对问题进行初步的分类，方便下游使用不同类型的流程来处理当前的简单问题/复杂问题。广泛用于知识问答场景。
     
     Examples:
 

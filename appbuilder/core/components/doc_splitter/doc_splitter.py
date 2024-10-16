@@ -29,6 +29,13 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class DocSplitter(Component):
+    """
+    文档段落切分组件
+
+    Attributes:
+        name (str): 组件名称。
+        meta (ComponentArguments): 组件元数据。
+    """
     name: str = "doc_to_parapraphs"
     meta: ComponentArguments = ComponentArguments(tool_desc={
         "description": "split data to segments in doc",

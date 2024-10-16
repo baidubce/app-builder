@@ -75,6 +75,7 @@ class TableParams:
     Baidu VectorDB table params.
     See the following documentation for details:
     https://cloud.baidu.com/doc/VDB/s/mlrsob0p6
+    
     Args:
         dimension int: The dimension of vector.
         replication int: The number of replicas in the table.
@@ -310,12 +311,27 @@ class BaiduVDBVectorStoreIndex:
 
     @property
     def client(self) -> Any:
-        """Get client."""
+        """
+        获取客户端对象。
+        
+        Args:
+            无参数
+        
+        Returns:
+            Any: 返回客户端对象，具体类型依赖于vdb_client属性的值。
+        """
         return self.vdb_client
 
     def as_retriever(self):
         """
-        转化为retriever
+        将对象转化为retriever
+        
+        Args:
+            无
+        
+        Returns:
+            BaiduVDBRetriever: 转化后的retriever对象
+        
         """
         return BaiduVDBRetriever(
             embedding=self.embedding,
@@ -327,7 +343,7 @@ class BaiduVDBVectorStoreIndex:
         向bes中插入数据段
         
         Args:
-            segments (Message): 需要插入的数据段
+            segments (Message): 需要插入的数据段。
             metadata (str, optional): 元数据，默认为空字符串。
         
         Returns:
@@ -370,20 +386,20 @@ class BaiduVDBVectorStoreIndex:
     ):
         """
         从参数中实例化类。
-
+        
         Args:
-            cls: 类对象，即当前函数所属的类。
-            instance_id: str，实例ID。
-            api_key: str，API密钥。
-            account: str，账户名，默认为root。
-            database_name: str，数据库名，默认为AppBuilderDatabase。
-            table_name: str，表名，默认为AppBuilderTable。
-            drop_exists: bool，是否删除已存在的表，默认为False。
+            cls (type): 类对象，即当前函数所属的类。
+            instance_id (str): 实例ID。
+            api_key (str): API密钥。
+            account (str, optional): 账户名，默认为'root'。 Defaults to DEFAULT_ACCOUNT.
+            database_name (str, optional): 数据库名，默认为'AppBuilderDatabase'。 Defaults to DEFAULT_DATABASE_NAME.
+            table_name (str, optional): 表名，默认为'AppBuilderTable'。 Defaults to DEFAULT_TABLE_NAME.
+            drop_exists (bool, optional): 是否删除已存在的表，默认为False。 Defaults to False.
             **kwargs: 其他参数，可选的维度参数dimension默认为384。
-
+        
         Returns:
-            类实例，包含实例ID、账户名、API密钥、数据库名、表参数等属性。
-
+            cls: 类实例，包含实例ID、账户名、API密钥、数据库名、表参数等属性。
+        
         """
         _try_import()
         dimension = kwargs.get("dimension", 384)

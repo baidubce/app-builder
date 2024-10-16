@@ -24,7 +24,11 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class QAPairMiningMeta(ComponentArguments):
-    """ QAPairMiningMeta
+    """
+    QAPairMiningMeta
+
+    Attributes:
+        message (Message): 输入消息，用于模型的输入，一般为文档段落。
     """
     message: Message = Field(..., 
                              variable_name="query", 
@@ -32,7 +36,8 @@ class QAPairMiningMeta(ComponentArguments):
 
 
 class QAPairMining(CompletionBaseComponent):
-    """ 基于输入文本内容，快速生成多个问题及对应答案,极大提高信息提炼的效率和准确性.广泛用于在线客服、智能问答等领域。
+    """ 
+    基于输入文本内容，快速生成多个问题及对应答案,极大提高信息提炼的效率和准确性.广泛用于在线客服、智能问答等领域。
 
     Examples:
 

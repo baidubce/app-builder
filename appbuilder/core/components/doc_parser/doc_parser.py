@@ -57,12 +57,25 @@ class DocParser(Component):
     def set_config(self, config: ParserConfig):
         """
         设置解析配置
+        
+        Args:
+            config (ParserConfig): 解析配置对象
+        
+        Returns:
+            None
         """
         self.config = config
 
     def make_parse_result(self, response: Dict):
         """
         将解析结果的内容转化成ParseResult的结构
+        
+        Args:
+            response (Dict): 解析后的响应字典，包含文件内容、目录等信息
+        
+        Returns:
+            Dict: 转换后的ParseResult结构，包含段落节点树、页面内容和PDF数据
+        
         """
         para_nodes = (
             response["para_nodes"] if response["para_nodes"] is not None else []
