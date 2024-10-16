@@ -32,6 +32,8 @@ def process_rst_file(filepath):
             i += min(8, len(lines) - i)
         elif 'data_class' in lines[i] and 'appbuilder.core' in lines[i]:
             i += min(8, len(lines) - i)
+        elif 'Module contents' in lines[i]:
+            i += min(8, len(lines) - i)
         else:
             new_lines.append(lines[i])
             i += 1
