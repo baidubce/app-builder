@@ -36,11 +36,12 @@ class QueryDecompositionMeta(ComponentArguments):
 
 
 class QueryDecomposition(CompletionBaseComponent):
-    """ 尝试对已经判定为复杂问题的原始问题进行拆解，把复杂问题拆解为一个个简单问题。广泛用于知识问答场景。
+    r""" 尝试对已经判定为复杂问题的原始问题进行拆解，把复杂问题拆解为一个个简单问题。广泛用于知识问答场景。
     
     Examples:
 
     .. code-block:: python
+        
         import os
         import appbuilder
 
