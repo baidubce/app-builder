@@ -32,6 +32,16 @@ class Runs():
 
     @property
     def steps(self) -> Steps:
+        """
+        返回步骤对象
+        
+        Args:
+            无
+        
+        Returns:
+            Steps: 返回一个新的Steps对象
+        
+        """
         return Steps()
     
     @assistant_run_trace
@@ -81,12 +91,6 @@ class Runs():
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs")
 
-        """
-        注意：
-            1. 若thread_id没有传，则thread必须要传值
-            2. 若这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user
-            3. 若这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user
-        """
         if thread_id == "" and thread is None:
             raise ValueError("Runs().run() argument thread_id && thread can't be empty at the same time")
         
