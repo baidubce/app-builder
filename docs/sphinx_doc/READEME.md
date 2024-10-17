@@ -4,8 +4,8 @@
 
 - 完成SDK代码开发
 - 依照google规范编写注释--仅需要对类和非私有方法进行注释
-- 进入根目录的doc目录下执行update_doc.sh脚本
-- 执行成功后，在doc/build/markdown目录下查看生成的文档是否无误
+- 进入根目录的docs/sphinx_doc目录下执行update_doc.sh脚本
+- 执行成功后，在docs/sphinx_doc/build/markdown目录下查看生成的文档是否无误
 - 迁移所有生成的文档到docs/sphinx_md目录下
 
 ## 代码注释规范
