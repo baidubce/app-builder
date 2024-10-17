@@ -38,12 +38,12 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 class DocFormatConverter(Component):
     r"""
-      可识别图片/PDF文档版面布局，提取文字内容，并转换为保留原文档版式的Word、Excel文档，方便二次编辑和复制，
-      可支持含表格、印章、水印、手写等内容的文档。满足文档格式转换、企业档案电子化等信息管理需求。
+    可识别图片/PDF文档版面布局，提取文字内容，并转换为保留原文档版式的Word、Excel文档，方便二次编辑和复制，
+    可支持含表格、印章、水印、手写等内容的文档。满足文档格式转换、企业档案电子化等信息管理需求。
 
-       Examples:
+    Examples:
 
-       ... code-block:: python
+       .. code-block:: python
 
            import appbuilder
            # 请前往千帆AppBuilder官网创建密钥
@@ -52,7 +52,7 @@ class DocFormatConverter(Component):
            table_ocr = appbuilder.DocFormatConverter()
            out = self.component.run(appbuilder.Message(content={"file_path": ""}))
            print(out.content)
-        """
+    """
 
     name = "doc_converter"
     version = "v1"
@@ -100,6 +100,7 @@ class DocFormatConverter(Component):
 
         Returns:
             Message: 包含转换后文件URL的消息对象。
+            
         Raises:
             AppBuilderServerException: 文档格式转换服务发生错误时抛出。
         """
@@ -217,7 +218,25 @@ class DocFormatConverter(Component):
     @components_run_stream_trace
     def tool_eval(self, streaming: bool, origin_query: str, **kwargs,):
         """
-        tool eval
+        评估工具函数。
+        
+        Args:
+            streaming (bool): 是否流式输出。如果为True，则逐个生成文件URL；如果为False，则直接返回结果内容。
+            origin_query (str): 原始查询字符串。
+            **kwargs: 其他关键字参数，包括但不限于：
+                traceid (str): 请求的跟踪ID，用于日志追踪。
+                file_url (str): 文件的URL地址。如果为空，则从file_urls和file_name中获取。
+                file_urls (dict): 包含多个文件路径与URL的映射关系的字典。
+                file_name (str): 文件名。如果file_url为空，则从file_urls和file_name中获取file_url。
+                page_num (Union[int, str]): 需要处理的页面编号，如果为字符串，必须为纯数字。
+        
+        Returns:
+            如果streaming为True，则逐个生成包含文件URL的字典；如果streaming为False，则直接返回结果内容。
+        
+        Raises:
+            InvalidRequestArgumentError: 如果请求格式错误，如page_num不是整数、file_url为空且无法从file_urls和file_name中获取file_url等。
+            AppBuilderServerException: 如果服务执行过程中出现异常。
+        
         """
         traceid = kwargs.get("traceid")
         file_url = kwargs.get("file_url", None)

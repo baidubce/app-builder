@@ -25,10 +25,29 @@ class Threads():
 
     @property
     def messages(self) -> Messages:
+        """
+        获取消息实例
+        
+        Args:
+            无
+        
+        Returns:
+            Messages: 返回Messages实例
+        
+        """
         return Messages()
     
     @property
     def runs(self) -> Runs:
+        """
+        返回Runs对象。
+        
+        Args:
+            无
+        
+        Returns:
+            Runs: 一个Runs对象实例。
+        """
         return Runs()
 
     @assistent_tool_trace
@@ -75,10 +94,13 @@ class Threads():
               thread_id:str)->thread_type.ThreadQueryResponse:
         """
         查询对话线程信息。
+
         Args:
             thread_id: 要查询的对话线程ID。
+
         Returns:
             一个ThreadQueryResponse对象，包含对话线程的相关信息。
+            
         Raises:
             ValueError: 如果传入的thread_id参数不是字符串类型。
         """

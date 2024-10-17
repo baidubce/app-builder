@@ -1,18 +1,17 @@
-"""
-Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 
 
 import traceback
@@ -106,7 +105,19 @@ class PPTGenerationFromInstruction(Component):
     def ppt_generation(self,
                        post_data: dict,
                        timeout: float = None):
-        """创建PPT生成任务
+        """
+        创建PPT生成任务
+        
+        Args:
+            post_data (dict): 请求数据
+            timeout (float, optional): 请求超时时间，默认为None.
+        
+        Returns:
+            str: 任务ID
+        
+        Raises:
+            Exception: PPT生成请求失败
+        
         """
         url = self.http_client.service_url(self.ppt_generation_url, self.uniform_prefix)
         headers = self.http_client.auth_header()
@@ -143,7 +154,24 @@ class PPTGenerationFromInstruction(Component):
                                   request_times: int = 60,
                                   request_interval: int = 5,
                                   timeout: float = None):
-        """轮询查看PPT生成状态
+        """
+        轮询查看PPT生成状态
+        
+        Args:
+            job_id (str): PPT生成任务的唯一标识符
+            request_times (int, optional): 轮询请求的次数，默认为60次。
+            request_interval (int, optional): 每次轮询请求之间的间隔时间（秒），默认为5秒。
+            timeout (float, optional): 请求的超时时间（秒）。如果未设置，则使用http_client的默认超时时间。
+        
+        Returns:
+            int: PPT生成状态码。
+                - 1：正在生成
+                - 2：生成完成
+                - 3：生成失败
+        
+        Raises:
+            Exception: PPT生成过程中出现异常时抛出。
+        
         """
         url = self.http_client.service_url(self.get_ppt_generation_status_url, self.uniform_prefix) + f'?id={job_id}'
         headers = self.http_client.auth_header()
@@ -205,7 +233,18 @@ class PPTGenerationFromInstruction(Component):
     def get_ppt_download_link(self,
                               job_id: str,
                               timeout: float = None):
-        """获取PPT下载链接
+        """
+        获取PPT下载链接
+        
+        Args:
+            job_id (str): 作业ID
+            timeout (float, optional): 请求超时时间，默认为None。
+        
+        Returns:
+            str: PPT下载链接
+        
+        Raises:
+            Exception: 当PPT生成请求失败时抛出异常
         """
         url = self.http_client.service_url(self.get_ppt_download_link_url, self.uniform_prefix) + f'?id={job_id}'
         headers = self.http_client.auth_header()
@@ -234,15 +273,17 @@ class PPTGenerationFromInstruction(Component):
         return download_link
     
     def run(self, message: Message, poll_request_times=60, poll_request_interval=5) -> Message:
-        """使用给定的输入运行模型并返回结果。
-
+        """
+        使用给定的输入运行模型并返回结果。
+        
         Args:
             message (Message): 输入消息，用于传入请求参数。
-            poll_request_times (int): 轮询请求结果次数。
-            poll_request_interval (int): 轮询请求的间隔时间（秒）。
-
+            poll_request_times (int, optional): 轮询请求结果次数，默认为60。
+            poll_request_interval (int, optional): 轮询请求的间隔时间（秒），默认为5。
+        
         Returns:
-            result (Message): 模型运行后的输出消息。
+            Message: 模型运行后的输出消息，包含PPT下载链接。
+        
         """
         # 参数检查与设置
         user_input = message.content
@@ -278,7 +319,19 @@ class PPTGenerationFromInstruction(Component):
         return Message(ppt_download_link)
 
     def tool_eval(self, stream: bool = False, **kwargs):
-        """用于function call
+        """
+        评估给定的文本内容。
+        
+        Args:
+            stream (bool, optional): 是否以生成器形式返回结果，默认为False。如果为True，则逐个生成下载链接；如果为False，则直接返回下载链接。
+            **kwargs: 关键字参数，可以传递其他参数，但当前只使用 'text' 参数。
+        
+        Returns:
+            如果 stream 为 False，则返回一个包含下载链接的字符串；如果 stream 为 True，则逐个生成下载链接。
+        
+        Raises:
+            ValueError: 如果 'text' 参数为空，则抛出此异常。
+        
         """
         text = kwargs.get('text', '')
         if not text:

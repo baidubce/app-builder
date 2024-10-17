@@ -1,18 +1,17 @@
-"""
-Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 
 
 import traceback
@@ -36,19 +35,19 @@ class PPTGenerationFromPaper(Component):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import os
-            import appbuilder
+        import os
+        import appbuilder
 
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            ppt_generator = appbuilder.PPTGenerationFromPaper()
-            user_input = {
-                'file_key': 'http://image.yoojober.com/users/chatppt/temp/2024-06/6672aa839a9da.docx'
-            }
-            answer = ppt_generator(appbuilder.Message(user_input))
-            print(answer.content)
+        ppt_generator = appbuilder.PPTGenerationFromPaper()
+        user_input = {
+            'file_key': 'http://image.yoojober.com/users/chatppt/temp/2024-06/6672aa839a9da.docx'
+        }
+        answer = ppt_generator(appbuilder.Message(user_input))
+        print(answer.content)
     """
     uniform_prefix = '/api/v1/component/component'
     ppt_generation_url = '/ppt/text2ppt/apps/ppt-create-thesis'
@@ -102,7 +101,19 @@ class PPTGenerationFromPaper(Component):
     def ppt_generation(self,
                        post_data: dict,
                        timeout: float = None):
-        """创建PPT生成任务
+        """
+        创建PPT生成任务
+        
+        Args:
+            post_data (dict): 发送的POST请求体数据
+            timeout (float, optional): 请求超时时间，默认为None。
+        
+        Returns:
+            str: 返回的任务ID
+        
+        Raises:
+            Exception: 如果PPT生成请求失败，抛出异常
+        
         """
         url = self.http_client.service_url(self.ppt_generation_url, self.uniform_prefix)
         headers = self.http_client.auth_header()
@@ -139,7 +150,23 @@ class PPTGenerationFromPaper(Component):
                                   request_times: int = 60,
                                   request_interval: int = 5,
                                   timeout: float = None):
-        """轮询查看PPT生成状态
+        """
+        轮询查看PPT生成状态
+        
+        Args:
+            job_id (str): 任务ID
+            request_times (int, optional): 请求次数，默认为60次。
+            request_interval (int, optional): 请求间隔时间，默认为5秒。
+            timeout (float, optional): 请求超时时间，默认为None，即不设置超时时间。
+        
+        Returns:
+            int: PPT生成状态码。
+                - 1: PPT正在生成中
+                - 2: PPT生成完成
+                - 3: PPT生成失败
+        
+        Raises:
+            Exception: PPT生成失败或请求失败时抛出异常。
         """
         url = self.http_client.service_url(self.get_ppt_generation_status_url, self.uniform_prefix) + f'?id={job_id}'
         headers = self.http_client.auth_header()
@@ -201,7 +228,19 @@ class PPTGenerationFromPaper(Component):
     def get_ppt_download_link(self,
                               job_id: str,
                               timeout: float = None):
-        """获取PPT下载链接
+        """
+        获取PPT下载链接
+        
+        Args:
+            job_id (str): 任务ID
+            timeout (float, optional): 请求超时时间，默认为None.
+        
+        Returns:
+            str: PPT下载链接
+        
+        Raises:
+            Exception: PPT生成请求失败
+        
         """
         url = self.http_client.service_url(self.get_ppt_download_link_url, self.uniform_prefix) + f'?id={job_id}'
         headers = self.http_client.auth_header()
@@ -230,15 +269,20 @@ class PPTGenerationFromPaper(Component):
         return download_link
     
     def run(self, message: Message, poll_request_times=60, poll_request_interval=5) -> Message:
-        """使用给定的输入运行模型并返回结果。
-
+        """
+        使用给定的输入运行模型并返回结果。
+        
         Args:
             message (Message): 输入消息，用于传入请求参数。
-            poll_request_times (int): 轮询请求结果次数。
-            poll_request_interval (int): 轮询请求的间隔时间（秒）。
-
+            poll_request_times (int): 轮询请求结果次数，默认为60次。
+            poll_request_interval (int): 轮询请求的间隔时间（秒），默认为5秒。
+        
         Returns:
-            result (Message): 模型运行后的输出消息。
+            Message: 模型运行后的输出消息，包含PPT下载链接。
+        
+        Raises:
+            Exception: 当输入参数中缺少必要的键时，抛出异常。
+        
         """
         # 参数检查与设置
         user_input = message.content
@@ -272,7 +316,20 @@ class PPTGenerationFromPaper(Component):
         return Message(ppt_download_link)
 
     def tool_eval(self, stream: bool = False, **kwargs):
-        """用于function call
+        """
+        使用指定的file_key来评估并获取相应的结果。
+        
+        Args:
+            stream (bool, optional): 是否以生成器的方式逐项返回结果，默认为False。
+            **kwargs: 关键字参数，用于传递其他参数，目前仅支持file_key。
+        
+        Returns:
+            如果stream为False，则直接返回结果。
+            如果stream为True，则逐个返回结果。
+        
+        Raises:
+            ValueError: 如果参数file_key为空，则抛出异常。
+        
         """
         file_key = kwargs.get('file_key', '')
         if not file_key:

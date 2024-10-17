@@ -1,18 +1,17 @@
-"""
-Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 
 
 import traceback
@@ -36,19 +35,19 @@ class PPTGenerationFromFile(Component):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import os
-            import appbuilder
+        import os
+        import appbuilder
 
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            ppt_generator = appbuilder.PPTGenerationFromFile()
-            user_input = {
-                'file_url': 'http://image.yoojober.com/users/chatppt/temp/2024-06/6672aa839a9da.docx'
-            }
-            answer = ppt_generator(appbuilder.Message(user_input))
-            print(answer.content)
+        ppt_generator = appbuilder.PPTGenerationFromFile()
+        user_input = {
+            'file_url': 'http://image.yoojober.com/users/chatppt/temp/2024-06/6672aa839a9da.docx'
+        }
+        answer = ppt_generator(appbuilder.Message(user_input))
+        print(answer.content)
     """
     uniform_prefix = '/api/v1/component/component'
     ppt_generation_url = '/ppt/text2ppt/apps/ppt-create-file'
@@ -102,7 +101,19 @@ class PPTGenerationFromFile(Component):
     def ppt_generation(self,
                        post_data: dict,
                        timeout: float = None):
-        """创建PPT生成任务
+        """
+        创建PPT生成任务
+        
+        Args:
+            post_data (dict): 包含PPT生成任务所需数据的字典
+            timeout (float, optional): 请求超时时间，默认为None，表示不设置超时时间。
+        
+        Returns:
+            str: PPT生成任务的Job ID
+        
+        Raises:
+            Exception: 如果PPT生成任务请求失败，抛出异常
+        
         """
         url = self.http_client.service_url(self.ppt_generation_url, self.uniform_prefix)
         headers = self.http_client.auth_header()
@@ -139,7 +150,20 @@ class PPTGenerationFromFile(Component):
                                   request_times: int = 60,
                                   request_interval: int = 5,
                                   timeout: float = None):
-        """轮询查看PPT生成状态
+        """
+        轮询查看PPT生成状态
+        
+        Args:
+            job_id (str): PPT生成任务的唯一标识符
+            request_times (int, optional): 轮询请求次数，默认为60次。
+            request_interval (int, optional): 每次轮询请求的间隔时间（秒），默认为5秒。
+            timeout (float, optional): 请求的超时时间（秒），默认为None，即无超时限制。
+        
+        Returns:
+            int: PPT生成状态码，1表示正在生成，2表示生成完成，3表示生成失败。
+        
+        Raises:
+            Exception: 如果PPT生成状态码不为2（生成完成），则抛出异常。
         """
         url = self.http_client.service_url(self.get_ppt_generation_status_url, self.uniform_prefix) + f'?id={job_id}'
         headers = self.http_client.auth_header()
@@ -201,7 +225,19 @@ class PPTGenerationFromFile(Component):
     def get_ppt_download_link(self,
                               job_id: str,
                               timeout: float = None):
-        """获取PPT下载链接
+        """
+        获取PPT下载链接
+        
+        Args:
+            job_id (str): 任务ID
+            timeout (float, optional): 请求超时时间，默认为None。
+        
+        Returns:
+            str: PPT下载链接
+        
+        Raises:
+            Exception: PPT生成请求错误
+        
         """
         url = self.http_client.service_url(self.get_ppt_download_link_url, self.uniform_prefix) + f'?id={job_id}'
         headers = self.http_client.auth_header()
@@ -270,7 +306,20 @@ class PPTGenerationFromFile(Component):
         return Message(ppt_download_link)
 
     def tool_eval(self, stream: bool = False, **kwargs):
-        """用于function call
+        """
+        用于执行function call的功能。
+        
+        Args:
+            stream (bool, optional): 是否以生成器的方式返回结果，默认为False。
+            **kwargs: 任意关键字参数，目前只支持'file_url'。
+        
+        Returns:
+            如果stream为False，则返回一个字符串，表示ppt下载链接。
+            如果stream为True，则返回一个生成器，生成器产生一个字符串，表示ppt下载链接。
+        
+        Raises:
+            ValueError: 如果'file_url'为空，则抛出异常。
+        
         """
         file_url = kwargs.get('file_url', '')
         if not file_url:

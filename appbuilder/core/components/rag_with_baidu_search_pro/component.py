@@ -25,6 +25,18 @@ from typing import Optional
 
 
 class RagWithBaiduSearchProRequest(BaseModel):
+    """
+    RagWithBaiduSearchPro 的请求
+
+    Attributes:
+        message (object): 用户的消息
+        stream (bool): 是否流式处理
+        instruction (str): 指令
+        model (Optional[str]): 模型名称
+        temperature (confloat(ge=0, le=1)): 温度，范围在0到1之间
+        top_p (confloat(ge=0, le=1)): top_p，范围在0到1之间
+        search_top_k (conint(ge=1)): search_top_k，
+    """
     message: object
     stream: bool = False
     instruction: str
@@ -38,11 +50,17 @@ class RagWithBaiduSearchProRequest(BaseModel):
 class RagWithBaiduSearchProArgs(ComponentArguments):
     """
     RagWithBaiduSearchPro 的参数
+
+    Args:
+        query (str): 用户的 query 输入
     """
     query: str = Field(..., description="用户的 query 输入", max_length=300)
 
 
 class RagWithBaiduSearchPro(Component):
+    """
+    RagWithBaiduSearchPro 组件
+    """
     name = "rag_with_baidu_search_pro"
     version = "v1"
     meta: RagWithBaiduSearchProArgs
@@ -64,6 +82,17 @@ class RagWithBaiduSearchPro(Component):
 
     @ttl_lru_cache(seconds_to_live=1 * 60 * 60)  # 1h
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
+        """
+        设置API密钥和网关地址。
+        
+        Args:
+            secret_key (Optional[str], optional): API密钥，默认为None。如果为None，则不会更新现有的API密钥。
+            gateway (str, optional): 网关地址，默认为空字符串。如果为空字符串，则不会更新现有的网关地址。
+        
+        Returns:
+            None
+        
+        """
         super(RagWithBaiduSearchPro, self).set_secret_key_and_gateway(
             secret_key=secret_key, gateway=gateway)
         self.__class__.model_info = ModelInfo(client=self.http_client)
@@ -80,7 +109,25 @@ class RagWithBaiduSearchPro(Component):
             search_top_k=4,
             hide_corner_markers=True
     ):
-
+        """
+        执行模型推理。
+        
+        Args:
+            message (Message): 待处理的信息对象。
+            stream (bool, optional): 是否以流的形式接收响应数据。默认为False。
+            instruction (Instruction, optional): 指令信息对象。默认为None。
+            model (str, optional): 模型名称。默认为None，表示使用当前实例的模型。
+            temperature (float, optional): 温度参数，控制生成文本的随机性。默认为1e-10。
+            top_p (float, optional): 累积概率阈值，用于控制生成文本的多样性。默认为1e-10。
+            search_top_k (int, optional): 搜索候选结果的数量。默认为4。
+            hide_corner_markers (bool, optional): 是否隐藏响应中的边界标记。默认为True。
+        
+        Returns:
+            Message: 处理后的信息对象。
+        
+        Raises:
+            AppBuilderServerException: 如果输入信息或指令过长，将抛出此异常。
+        """
         if len(message.content) > 300:
             raise AppBuilderServerException(service_err_message="query is too long, expected <= 300, got {}"
                                             .format(len(message.content)))

@@ -34,13 +34,14 @@ class PlantRecognition(Component):
     Examples:
 
     .. code-block:: python
+    
         import os
         import requests
         import appbuilder
 
         # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
         os.environ["GATEWAY_URL"] = "..."
-os.environ["APPBUILDER_TOKEN"] = "..."
+        os.environ["APPBUILDER_TOKEN"] = "..."
         image_url = "https://bj.bcebos.com/v1/appbuilder/palnt_recognize_test.jpg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-23T09%3A51%3A03Z%2F-1%2Fhost%2Faa2217067f78f0236c8262cdd89a4b4f4b2188d971ca547c53d01742af4a2cbe"
 
         # 从BOS存储读取样例文件
@@ -91,16 +92,17 @@ os.environ["APPBUILDER_TOKEN"] = "..."
     @HTTPClient.check_param
     @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 输入图片并识别其中的植物
-
-             参数:
-                message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                或 Message(content={"url": "https://image/download/uel"}).
-                timeout (float, 可选): HTTP超时时间
-                retry (int, 可选)： HTTP重试次数
-
-              返回:
-                 message (obj: `Message`): 模型识别结果.
+        """
+        输入图片并识别其中的植物
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
+            或 Message(content={"url": "https://image/download/uel"}).
+            timeout (float, optional): HTTP超时时间，默认为None
+            retry (int, optional): HTTP重试次数，默认为0
+        
+        Returns:
+            Message: 模型识别结果
         """
         inp = PlantRecognitionInMsg(**message.content)
         request = PlantRecognitionRequest()
@@ -155,15 +157,17 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         origin_query: str,
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
-        r"""用于工具的执行，通过调用底层接口进行植物识别
-            参数:
-                name (str): 工具名
-                streaming (bool): 是否流式返回
-                origin_query (str): 用户原始query
-                **kwargs: 工具调用的额外关键字参数
-
-            返回：
-                Union[Generator[str, None, None], str]: 植物识别结果，包括识别出的植物类别和相应的置信度信息
+        """
+        用于工具的执行，通过调用底层接口进行植物识别
+        
+        Args:
+            name (str): 工具名
+            streaming (bool): 是否流式返回
+            origin_query (str): 用户原始query
+            **kwargs: 工具调用的额外关键字参数
+        
+        Returns:
+            Union[Generator[str, None, None], str]: 植物识别结果，包括识别出的植物类别和相应的置信度信息
         """
         traceid = kwargs.get("traceid")
         img_name = kwargs.get("img_name", "")

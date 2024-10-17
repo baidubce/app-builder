@@ -28,24 +28,24 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class Translation(Component):
-    """
+    r"""
     文本翻译组件,可支持中、英、日、韩等200+语言互译，100+语种自动检测。
     支持语种列表可参照 https://ai.baidu.com/ai-doc/MT/4kqryjku9#%E8%AF%AD%E7%A7%8D%E5%88%97%E8%A1%A8
 
 
     Examples:
 
-            .. code-block:: python
+    .. code-block:: python
 
-                import appbuilder
+        import appbuilder
 
-                # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
-                os.environ["APPBUILDER_TOKEN"] = '...'
+        # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-                translate = appbuilder.Translation()
-                resp = translate(appbuilder.Message("你好\n中国"), to_lang="en")
-                # 输出 {'from_lang':'zh', 'to_lang':'en', 'trans_result':[{'src':'你好','dst':'hello'},{'src':'中国','dst':'China'}]}
-                print(resp.content)
+        translate = appbuilder.Translation()
+        resp = translate(appbuilder.Message("你好\n中国"), to_lang="en")
+        # 输出 {'from_lang':'zh', 'to_lang':'en', 'trans_result':[{'src':'你好','dst':'hello'},{'src':'中国','dst':'China'}]}
+        print(resp.content)
     """
 
     name = "translate"
@@ -151,7 +151,23 @@ class Translation(Component):
     @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         """
-        translate for function call
+        工具函数，用于翻译指定的文本。
+        
+        Args:
+            name (str): 函数名称，此参数在本函数中未使用。
+            streaming (bool): 是否流式输出翻译结果。
+            **kwargs: 关键字参数，可以包含以下参数：
+                - traceid (str, optional): 请求的唯一标识符，默认为None。
+                - q (str): 待翻译的文本。
+                - to_lang (str, optional): 目标语言代码，默认为"en"。
+        
+        Returns:
+            如果streaming为True，则返回生成器，生成包含翻译结果的字典；
+            如果streaming为False，则返回包含翻译结果的JSON字符串。
+        
+        Raises:
+            InvalidRequestArgumentError: 如果未设置参数"q"，则抛出此异常。
+        
         """
         traceid = kwargs.get("traceid")
         req = TranslateRequest()

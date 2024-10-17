@@ -23,9 +23,11 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 class HandwriteOCR(Component):
     r""" 手写文字识别组件
+    
     Examples:
 
     .. code-block:: python
+        
         import os
         import appbuilder
         os.environ["GATEWAY_URL"] = "..."
@@ -39,6 +41,7 @@ class HandwriteOCR(Component):
         out = handwrite_ocr.run(inp)
         # 打印识别结果
         print(out.content)
+        
      """
 
     name = "handwriting_ocr"
@@ -66,16 +69,16 @@ class HandwriteOCR(Component):
     @HTTPClient.check_param
     @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 输入图片并识别其中的文字
-
-                参数:
-                    message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                       或 Message(content={"url": "https://image/download/url"}).
-                       timeout (float, 可选): HTTP超时时间
-                       retry (int, 可选)： HTTP重试次数
-
-                 返回:
-                    message (obj: `Message`): 手写体模型识别结果.
+        r"""
+        输入图片并识别其中的文字
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作.例如: Message(content={"raw_image": b"..."}) 或 Message(content={"url": "https://image/download/url"}).
+            timeout (float, optional): HTTP超时时间. 默认为None.
+            retry (int, optional): HTTP重试次数. 默认为0.
+        
+        Returns:
+            Message: 手写体模型识别结果.
         """
         inp = HandwriteOCRInMsg(**message.content)
         request = HandwriteOCRRequest()
@@ -103,7 +106,24 @@ class HandwriteOCR(Component):
 
     @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
-
+        r"""
+        对指定文件或URL进行手写识别。
+        
+        Args:
+            name (str): 任务名称。
+            streaming (bool): 是否以流式形式返回结果。
+            kwargs: 其他参数，包括：
+                traceid (str, optional): 请求的traceid，用于标识请求的唯一性。默认为None。
+                file_names (List[str], optional): 待识别的文件名列表。默认为None，此时会从kwargs中获取'files'参数。
+                file_urls (Dict[str, str], optional): 文件名与URL的映射字典。默认为空字典。
+        
+        Returns:
+            如果streaming为True，则以生成器形式返回识别结果，否则直接返回结果字符串。
+        
+        Raises:
+            InvalidRequestArgumentError: 如果请求格式错误，例如指定的文件名对应的URL不存在。
+        
+        """
         traceid = kwargs.get("traceid")
         result = ""
         file_names = kwargs.get("file_names", None)

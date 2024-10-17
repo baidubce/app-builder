@@ -32,12 +32,25 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 class Excel2FigureArgs(ComponentArguments):
     """
     excel2figure 的参数
+
+    Attributes:
+        query: str
+        excel_file_url: AnyUrl
     """
     query: str = Field(..., description="用户的 query 输入", max_length=400)
     excel_file_url: AnyUrl = Field(..., description="用户的 excel 文件地址，需要是一个可被公网下载的 URL 地址")
 
 
 class Excel2Figure(Component):
+    """
+    excel2figure 组件类
+
+    Args:
+        model: str
+        secret_key: Optional[str]
+        gateway: str
+        lazy_certification: bool
+    """
     meta = Excel2FigureArgs
     model_type: str = "chat"
     excluded_models: List[str] = ["Yi-34B-Chat", "ChatLaw"]
@@ -77,6 +90,17 @@ class Excel2Figure(Component):
 
     @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
+        """
+        设置密钥和网关。
+        
+        Args:
+            secret_key (Optional[str], optional): API密钥，默认为None。如果未指定，则不会更新密钥。
+            gateway (str, optional): 网关地址，默认为空字符串。如果未指定，则不会更新网关。
+        
+        Returns:
+            None
+        
+        """
         super(Excel2Figure, self).set_secret_key_and_gateway(
                 secret_key=secret_key, gateway=gateway)
         self.__class__.model_info = ModelInfo(client=self.http_client)
@@ -100,15 +124,20 @@ class Excel2Figure(Component):
     @components_run_trace
     def run(self, message: Message) -> Message:
         """
-        执行 excel2figure
+        执行 excel2figure。
+        
         Args:
-            message: message.content 是字典包含, key 如下:
-                1. query: 用户问题
-                2. excel_file_url: 用户的 excel 文件地址
+            message (Message): 消息对象，其 content 属性是一个字典，包含以下键值对：
+                - query (str): 用户的问题。
+                - excel_file_url (str): 用户的 Excel 文件地址。
+        
         Returns:
-            message
+            Message: 处理后的消息对象。
+        
+        Raises:
+            ValueError: 当 message.content 解析失败时抛出此异常。
+        
         """
-
         try:
             inputs = self.meta(**message.content)
         except ValidationError as e:
@@ -121,6 +150,7 @@ class Excel2Figure(Component):
     def _run_excel2figure(self, query: str, excel_file_url: str, model: str, excel_file_name: str = None):
         """
         运行
+
         Args:
             query: query
             excel_file_url: 用户的 excel 文件地址
@@ -202,7 +232,25 @@ class Excel2Figure(Component):
         **kwargs,
     ):
         """
-        tool eval
+        对指定的Excel文件进行图表生成和评估。
+        
+        Args:
+            streaming (bool): 是否以流式传输方式返回结果。如果为True，则通过生成器返回结果；如果为False，则直接返回结果。
+            origin_query (str): 原始查询字符串，用于在缺少其他查询参数时使用。
+            file_urls (dict): 包含Excel文件信息的字典，其中键为文件名，值为文件URL。
+            **kwargs: 其他关键字参数，可以包括查询字符串等。
+        
+        Returns:
+            如果streaming为True，则通过生成器返回结果。每个结果是一个字典，包含以下键：
+            - event (str): 事件类型，始终为'excel_to_figure'。
+            - type (str): 数据类型，始终为'files'。
+            - text (list of str): 包含生成的图表信息的列表。
+        
+            如果streaming为False，则直接返回一个包含上述信息的字典。
+        
+        Raises:
+            ValueError: 如果file_urls的长度不等于1，则抛出异常。
+            RuntimeError: 如果Excel文件到图表的转换失败或出现异常，则抛出异常。
         """
         query = kwargs.get("query", "")
         if not query:

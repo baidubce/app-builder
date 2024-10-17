@@ -32,6 +32,16 @@ class Runs():
 
     @property
     def steps(self) -> Steps:
+        """
+        返回步骤对象
+        
+        Args:
+            无
+        
+        Returns:
+            Steps: 返回一个新的Steps对象
+        
+        """
         return Steps()
     
     @assistant_run_trace
@@ -81,12 +91,6 @@ class Runs():
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs")
 
-        """
-        注意：
-            1. 若thread_id没有传，则thread必须要传值
-            2. 若这里不传值，thread_id查出来的历史对话，最后一条消息的role必须为user
-            3. 若这里传值，则需要保证thread_id查出来的历史对话 + 本轮追加的thread对话，最后一条消息的role必须为user
-        """
         if thread_id == "" and thread is None:
             raise ValueError("Runs().run() argument thread_id && thread can't be empty at the same time")
         
@@ -322,6 +326,33 @@ class Runs():
                    user_info: Optional[public_type.AssistantUserInfo] = None,
                    user_loc: Optional[public_type.AssistantUserLoc] = None,
                    ) -> AssistantStreamManager:
+        """
+        使用带有事件处理器的流运行助手
+        
+        Args:
+            assistant_id (str): 助手的唯一标识符
+            thread_id (Optional[str], optional): 会话线程的标识符，默认为空字符串. 默认为 "".
+            thread (Optional[thread_type.AssistantThread], optional): 会话线程对象，默认为None. 默认为 None.
+            model (Optional[str], optional): 模型标识符，默认为None. 默认为 None.
+            response_format (Optional[str], optional): 响应格式，可选值为"text"或"json"，默认为"text". 默认为 "text".
+            instructions (Optional[str], optional): 主要指令，默认为空字符串. 默认为 "".
+            thought_instructions (Optional[str], optional): 思维指令，默认为空字符串. 默认为 "".
+            chat_instructions (Optional[str], optional): 聊天指令，默认为空字符串. 默认为 "".
+            tools (Optional[list[assistant_type.AssistantTool]], optional): 助手工具列表，默认为空列表. 默认为 [].
+            metadata (Optional[dict], optional): 元数据字典，默认为空字典. 默认为 {}.
+            tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象，默认为None. 默认为 None.
+            event_handler (Optional[AssistantEventHandler], optional): 事件处理器对象，默认为None. 默认为 None.
+            model_parameters (Optional[public_type.AssistantModelParameters], optional): 模型参数对象，默认为None. 默认为 None.
+            user_info (Optional[public_type.AssistantUserInfo], optional): 用户信息对象，默认为None. 默认为 None.
+            user_loc (Optional[public_type.AssistantUserLoc], optional): 用户位置信息对象，默认为None. 默认为 None.
+        
+        Returns:
+            AssistantStreamManager: 返回的流管理器对象
+        
+        Raises:
+            HTTPError: 如果HTTP响应状态码不为200，则抛出HTTPError异常
+        
+        """
         response = self._stream(
             assistant_id=assistant_id,
             thread_id=thread_id,
@@ -535,7 +566,4 @@ class Runs():
         self._http_client.check_assistant_response(request_id, data)
         resp = thread_type.RunResult(**data)
         return resp
-
     
-
-

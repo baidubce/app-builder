@@ -57,9 +57,33 @@ class StreamRunContext(object):
     def current_event(self) -> Union[thread_type.StreamRunStatus,
                                      thread_type.StreamRunMessage,
                                      None]:
+        """
+        获取当前事件。
+        
+        Args:
+            无
+        
+        Returns:
+            Union[thread_type.StreamRunStatus, thread_type.StreamRunMessage, None]:
+                当前事件，可能为StreamRunStatus类型（表示流运行状态）、StreamRunMessage类型（表示流运行消息）或None。
+        
+        """
         return self._current_event
 
     def set_current_event(self, event):
+        """
+        设置当前事件
+        
+        Args:
+            event (thread_type.StreamRunStatus or thread_type.StreamRunMessage): 需要设置的事件对象
+        
+        Returns:
+            None
+        
+        Raises:
+            无
+        
+        """
         if isinstance(event, thread_type.StreamRunStatus) or \
                 isinstance(event, thread_type.StreamRunMessage):
             self._current_event = event
@@ -68,9 +92,32 @@ class StreamRunContext(object):
 
     @property
     def current_tool_calls(self) -> Union[list[thread_type.ToolCall], None]:
+        """
+        获取当前工具调用列表。
+        
+        Args:
+            无
+        
+        Returns:
+            Union[list[thread_type.ToolCall], None]: 如果存在当前工具调用列表，则返回该列表；否则返回None。
+        
+        """
         return self._current_tool_calls
 
     def set_current_tool_calls(self, tool_calls):
+        """
+        设置当前工具调用列表。
+        
+        Args:
+            tool_calls (list of thread_type.ToolCall): 工具调用列表。
+        
+        Returns:
+            None
+        
+        Raises:
+            AssertionError: 如果 tool_calls 不是 ToolCall 对象的列表。
+        
+        """
         if isinstance(tool_calls, list) and len(tool_calls) > 0:
             for call in tool_calls:
                 assert isinstance(call, thread_type.ToolCall), \
@@ -81,9 +128,34 @@ class StreamRunContext(object):
 
     @property
     def current_run_id(self) -> Union[str, None]:
+        """
+        获取当前运行的ID。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            str 或 None: 返回当前运行的ID，如果没有当前运行的ID，则返回None。
+        
+        """
         return self._current_run_id
 
     def set_current_run_id(self, run_id):
+        """
+        设置当前运行ID。
+        
+        Args:
+            run_id (str): 运行ID字符串。
+        
+        Returns:
+            None
+        
+        Raises:
+            无
+        
+        注意事项:
+            如果传入的run_id不是字符串类型或长度为0，则不设置当前运行ID，将其设置为None。
+        """
         if isinstance(run_id, str) and len(run_id) > 0:
             self._current_run_id = run_id
         else:
@@ -91,9 +163,35 @@ class StreamRunContext(object):
 
     @property
     def current_run_step_id(self) -> Union[str, None]:
+        """
+        获取当前运行的步骤ID。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            Union[str, None]: 当前运行的步骤ID，如果没有运行任何步骤则返回None。
+        
+        """
         return self._current_run_step_id
 
     def set_current_run_step_id(self, run_step_id):
+        """
+        设置当前运行步骤的ID。
+        
+        Args:
+            run_step_id (str): 需要设置的运行步骤ID。
+        
+        Returns:
+            None
+        
+        Raises:
+            无
+        
+        Note:
+            如果传入的run_step_id是一个非空字符串，则将其设置为当前运行步骤的ID；
+            否则，将当前运行步骤的ID设置为None。
+        """
         if isinstance(run_step_id, str) and len(run_step_id) > 0:
             self._current_run_step_id = run_step_id
         else:
@@ -101,9 +199,34 @@ class StreamRunContext(object):
 
     @property
     def current_thread_id(self) -> Union[str, None]:
+        """
+        获取当前线程的ID。
+        
+        Args:
+            无参数。
+        
+        Returns:
+            Union[str, None]: 当前线程的ID，如果当前没有线程ID则返回None。
+        
+        """
         return self._current_thread_id
 
     def set_current_thread_id(self, thread_id):
+        """
+        设置当前线程的ID。
+        
+        Args:
+            thread_id (str): 要设置的线程ID。
+        
+        Returns:
+            None
+        
+        Raises:
+            无
+        
+        Note:
+            如果thread_id不是字符串类型或者长度为0，则不会设置当前线程的ID，并将其设置为None。
+        """
         if isinstance(thread_id, str) and len(thread_id) > 0:
             self._current_thread_id = thread_id
         else:
@@ -111,15 +234,50 @@ class StreamRunContext(object):
 
     @property
     def current_assistant_id(self) -> Union[str, None]:
+        """
+        获取当前助手ID。
+        
+        Args:
+            无
+        
+        Returns:
+            Union[str, None]: 返回当前助手ID的字符串，如果未设置则返回None。
+        
+        """
         return self._current_assistant_id
 
     def set_current_assistant_id(self, assistant_id):
+        """
+        设置当前助手ID。
+        
+        Args:
+            assistant_id (str): 需要设置的助手ID。
+        
+        Returns:
+            None
+        
+        Raises:
+            无
+        
+        Note:
+            如果输入的assistant_id是有效的字符串且长度大于0，则将其设置为当前助手ID；否则，将当前助手ID设置为None。
+        """
         if isinstance(assistant_id, str) and len(assistant_id) > 0:
             self._current_assistant_id = assistant_id
         else:
             self._current_assistant_id = None
 
     def reset_step_context(self):
+        """
+        重置步骤上下文。
+        
+        Args:
+            无
+        
+        Returns:
+            无
+        
+        """
         self._current_tool_calls = None
         self._current_run_step_id = None
         self._current_event = None
@@ -251,6 +409,19 @@ class AssistantEventHandler():
             yield item
 
     def until_done(self):
+        """
+        直到迭代器结束为止，持续迭代。
+        
+        Args:
+            无
+        
+        Returns:
+            无
+        
+        Raises:
+            无
+        
+        """
         for _ in self._iterator:
             ...
 
@@ -271,39 +442,138 @@ class AssistantEventHandler():
             stream_run_status.details.run_step_object.id)
 
     def messages(self, messages_event: thread_type.StreamRunMessage):
-        # 用户可以重载此函数，当触发messages打印事件时，会回调此函数
+        """
+        当触发 messages 打印事件时回调此函数。
+        
+        Args:
+            messages_event (thread_type.StreamRunMessage): 包含消息内容的事件对象
+        
+        Returns:
+            None
+        
+        Note:
+            用户可以重载此函数，实现自定义的消息处理逻辑。
+        """
         pass
 
     def tool_calls(self, status_event: thread_type.StreamRunStatus):
-        # 用户可以重载此函数，当触发tool_calls事件时，会回调此函数
+        """
+        当触发 tool_calls 事件时回调此函数。
+        
+        Args:
+            status_event (thread_type.StreamRunStatus): 工具调用状态事件对象
+        
+        Returns:
+            None
+        
+        Note:
+            用户可以重载此函数，实现自定义的工具调用处理逻辑。
+        """
         pass
 
     def tool_submitted_output(self, status_event: thread_type.StreamRunStatus):
-        # 用户可以重载此函数，当触发tool_submitted_output事件时，会回调此函数
+        """
+        当触发 tool_submitted_output 事件时回调此函数。
+        
+        Args:
+            status_event (thread_type.StreamRunStatus): 工具提交输出状态事件对象
+        
+        Returns:
+            None
+        
+        Note:
+            用户可以重载此函数，实现自定义的工具输出处理逻辑。
+        """
         pass
 
     def message_creation(self, status_event: thread_type.StreamRunStatus):
-        # 用户可以重载此函数，当触发message_creation事件时，会回调此函数
+        """
+        当触发 message_creation 事件时回调此函数。
+        
+        Args:
+            status_event (thread_type.StreamRunStatus): 消息创建状态事件对象
+        
+        Returns:
+            None
+        
+        Note:
+            用户可以重载此函数，实现自定义的消息创建处理逻辑。
+        """
         pass
 
     def run_begin(self, status_event: thread_type.StreamRunStatus):
-        # 用户可以重载此函数，当触发run_begin事件时，会回调此函数
+        """
+        当触发 run_begin 事件时回调此函数。
+        
+        Args:
+            status_event (thread_type.StreamRunStatus): 运行开始状态事件对象
+        
+        Returns:
+            None
+        
+        Note:
+            用户可以重载此函数，实现自定义的运行开始处理逻辑。
+        """
         pass
 
     def run_end(self, status_event: thread_type.StreamRunStatus):
-        # 用户可以重载此函数，当触发run_end事件时，会回调此函数
+        """
+        当触发 run_end 事件时回调此函数。
+        
+        Args:
+            status_event (thread_type.StreamRunStatus): 运行结束状态事件对象
+        
+        Returns:
+            None
+        
+        Note:
+            用户可以重载此函数，实现自定义的运行结束处理逻辑。
+        """
         pass
 
     def tool_step_begin(self, status_event: thread_type.StreamRunStatus):
-        # 用户可以重载此函数，当触发tool_step_begin事件时，会回调此函数
+        """
+        当触发 tool_step_begin 事件时回调此函数。
+        
+        Args:
+            status_event (thread_type.StreamRunStatus): 工具步骤开始状态事件对象
+        
+        Returns:
+            None
+        
+        Note:
+            用户可以重载此函数，实现自定义的工具步骤开始处理逻辑。
+        """
         pass
 
     def tool_step_end(self, status_event: thread_type.StreamRunStatus):
-        # 用户可以重载此函数，当触发tool_step_end事件时，会回调此函数
+        """
+        当触发 tool_step_end 事件时回调此函数。
+        
+        Args:
+            status_event (thread_type.StreamRunStatus): 工具步骤结束状态事件对象
+        
+        Returns:
+            None
+        
+        Note:
+            用户可以重载此函数，实现自定义的工具步骤结束处理逻辑。
+        """
         pass
 
     def run_cancelling(self, status_event: thread_type.StreamRunStatus):
-        # 用户可以重载此函数，当触发run_cancelling事件时，会回调此函数
+        """
+        当触发 run_cancelling 事件时回调此函数。
+        
+        Args:
+            status_event (thread_type.StreamRunStatus): 运行取消状态事件对象
+        
+        Returns:
+            None
+        
+        Note:
+            用户可以重载此函数，实现自定义的运行取消处理逻辑。
+        """
         pass
 
 

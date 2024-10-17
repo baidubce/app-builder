@@ -76,35 +76,52 @@ class Files(object):
     @assistent_tool_trace
     def list(self) -> assistant_type.AssistantFilesListResponse:
         """
-        列出存储中的文件列表
+        列出存储中的文件列表。
         
+        此方法向存储服务发送请求，获取已上传的文件列表。返回的文件列表包含每个文件的详细信息，
+        包括文件ID、大小、用途、审核状态、创建时间、文件名、文件分类ID等。
+
         Args:
             无
-        
+
         Returns:
             assistant_type.AssistantFilesListResponse: 文件列表的响应对象，包含以下属性：
-        
+            
+            - object (str): 表示对象类型，默认值为 "list"
+            
+            - data (list[AssistantFilesListData]): 包含文件信息的列表，列表中的每个元素为 AssistantFilesListData 对象。该对象包含以下属性：
+            
+                - id (str): 文件ID
+                - bytes (int): 文件大小（字节）
+                - object (str): 文件对象标识
+                - purpose (str): 文件用途
+                - censored (AuditStatus): 文件的审核状态
+                - create_at (int): 文件创建时间戳
+                - filename (str): 文件名
+                - classification_id (str): 文件分类ID
+                - file_type (str): 文件类型
+
         Raises:
-            assistant_type.AssistantError: 请求发生错误时抛出，具体错误信息可通过 `error_msg` 属性获取
+            assistant_type.AssistantError: 请求发生错误时抛出，具体错误信息可通过 `error_msg` 属性获取。
         """
-        headers = self._http_client.auth_header()
-        headers['Content-Type'] = 'application/json'
-        url = self._http_client.service_url("/v2/storage/files/list")
+        headers = self._http_client.auth_header()  # 获取身份认证头
+        headers['Content-Type'] = 'application/json'  # 设置请求头为JSON格式
+        url = self._http_client.service_url("/v2/storage/files/list")  # 拼接存储服务的URL
         
-        response = self._http_client.session.post(
+        response = self._http_client.session.post(  # 向存储服务发送POST请求，获取文件列表
             url=url,
             headers=headers,
-            json={},
-            timeout=None
+            json={},  # 发送空的JSON请求体
+            timeout=None  # 设置为无超时限制
         ) 
-        self._http_client.check_response_header(response)
+        self._http_client.check_response_header(response)  # 检查响应头是否合法
 
-        request_id = self._http_client.response_request_id(response)
-        data = response.json()
+        request_id = self._http_client.response_request_id(response)  # 从响应中获取请求ID
+        data = response.json()  # 将响应内容转换为JSON格式
 
-        self._http_client.check_assistant_response(request_id, data)
-        resp = assistant_type.AssistantFilesListResponse(**data)
-        return resp
+        self._http_client.check_assistant_response(request_id, data)  # 检查Assistant响应是否有错误
+        resp = assistant_type.AssistantFilesListResponse(**data)  # 将响应数据映射为AssistantFilesListResponse对象
+        return resp  # 返回文件列表响应对象
 
     
     @assistent_tool_trace
@@ -158,6 +175,7 @@ class Files(object):
             ) -> assistant_type.AssistantFilesDeleteResponse:
         """
         删除文件
+        
         Args:
             file_id (str): 文件ID
         Returns:

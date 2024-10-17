@@ -83,6 +83,31 @@ class Text2Image(Component):
         text_check: Optional[int] = 1,
         request_id: Optional[str] = None
     ):
+        """
+        执行文本到图像的生成任务。
+        
+        Args:
+            message (Message): 包含任务相关信息的消息对象。
+            width (int, optional): 生成的图像的宽度，默认为1024。
+            height (int, optional): 生成的图像的高度，默认为1024。
+            image_num (int, optional): 生成图像的数量，默认为1。
+            image (Optional[str], optional): 参考图像的路径或URL，默认为None。
+            url (Optional[str], optional): 参考图像的URL，默认为None。
+            pdf_file (Optional[str], optional): 参考PDF文件的路径，默认为None。
+            pdf_file_num (Optional[str], optional): 参考PDF文件中的页码范围，默认为None。
+            change_degree (Optional[int], optional): 图像变换的程度，默认为None。
+            text_content (Optional[str], optional): 需要转换的文本内容，默认为None。
+            task_time_out (Optional[int], optional): 任务超时时间，默认为None。
+            text_check (Optional[int], optional): 是否进行文本内容检查，默认为1。
+            request_id (Optional[str], optional): 请求的唯一标识，默认为None。
+        
+        Returns:
+            Message: 包含生成图像URL的消息对象。
+        
+        Raises:
+            HTTPError: 请求失败时抛出异常。
+        
+        """
         headers = self._http_client.auth_header()
         headers["Content-Type"] = "application/json"
         api_url = self._http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
@@ -138,17 +163,18 @@ class Text2Image(Component):
         retry: int = 0,
         request_id: str = None,
     ) -> Text2ImageSubmitResponse:
-
         """
         使用给定的输入并返回文生图的任务信息。
-
-        参数:
+        
+        Args:
             request (obj:`Text2ImageSubmitRequest`): 输入请求，这是一个必需的参数。
-            timeout (float, 可选): 请求的超时时间。
-            retry (int, 可选): 请求的重试次数。
-
-        返回:
+            timeout (float, optional): 请求的超时时间。默认为None。
+            retry (int, optional): 请求的重试次数。默认为0。
+            request_id (str, optional): 请求的唯一标识符。默认为None。
+        
+        Returns:
             obj:`Text2ImageSubmitResponse`: 接口返回的输出消息。
+        
         """
         url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
         data = request.model_dump()
@@ -170,17 +196,17 @@ class Text2Image(Component):
         retry: int = 0,
         request_id: str = None,
     ) -> Text2ImageQueryResponse:
-
         """
-        使用给定的输入并返回文生图的结果。
-
-        参数:
-            request (obj:`Text2ImageQueryRequest`): 输入请求，这是一个必需的参数。
-            timeout (float, 可选): 请求的超时时间。
-            retry (int, 可选): 请求的重试次数。
-
-        返回:
-            obj:`Text2ImageQueryResponse`: 接口返回的输出消息。
+        将文本查询请求转换为图像数据。
+        
+        Args:
+            request (Text2ImageQueryRequest): 输入请求，必填参数。
+            timeout (float, optional): 请求的超时时间，默认为None。
+            retry (int, optional): 请求的重试次数，默认为0。
+            request_id (str, optional): 请求的唯一标识符，默认为None。
+        
+        Returns:
+            Text2ImageQueryResponse: 接口返回的输出消息。
         """
         url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/getImgv2")
         data = {
@@ -201,12 +227,14 @@ class Text2Image(Component):
 
     def extract_img_urls(self, response: Text2ImageQueryResponse):
         """
-        提取图片的url。
-
-        参数:
-            response (obj:`Text2ImageQueryResponse`): A作画生成的返回结果。
-        返回:
-            List[str]:`img_urls`: 从返回体中提取的图片url列表。
+        从作画生成的返回结果中提取图片url。
+        
+        Args:
+            response (obj:`Text2ImageQueryResponse`): 作画生成的返回结果。
+        
+        Returns:
+            List[str]: 从返回体中提取的图片url列表。
+        
         """
         img_urls = []
         if response and response.data and response.data.sub_task_result_list:
@@ -220,12 +248,18 @@ class Text2Image(Component):
 
     @staticmethod
     def check_service_error(request_id: str, data: dict):
-        r"""个性化服务response参数检查
-
-            参数:
-                request (dict) : 文生图生成结果body返回
-            返回：
-                无
+        """
+        检查服务错误信息
+        
+        Args:
+            request_id (str): 请求ID
+            data (dict): 响应数据
+        
+        Raises:
+            AppBuilderServerException: 如果响应数据中包含错误信息，则抛出异常
+        
+        Returns:
+            None
         """
         if "error_code" in data or "error_msg" in data:
             raise AppBuilderServerException(

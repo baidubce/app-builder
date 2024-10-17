@@ -32,6 +32,7 @@ class ImageUnderstand(Component):
     Examples:
 
     .. code-block:: python
+    
        import os
        import appbuilder
        os.environ["GATEWAY_URL"] = "..."
@@ -39,12 +40,12 @@ class ImageUnderstand(Component):
        # 从BOS存储读取样例文件
        image_url = "https://bj.bcebos.com/v1/appbuilder/test_image_understand.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T09%3A41%3A01Z%2F-1%2Fhost%2Fe8665506e30e0edaec4f1cc84a2507c4cb3fdb9b769de3a5bfe25c372b7e56e6"
        # 输入参数为一张图片
-      inp = Message(content={"url": image_url, "question": "图片里内容是什么?"})
-      # 进行图像内容理解
-      image_understand = ImageUnderstand()
-      out = image_understand.run(inp)
-      # 打印识别结果
-      print(out.content)
+       inp = Message(content={"url": image_url, "question": "图片里内容是什么?"})
+       # 进行图像内容理解
+       image_understand = ImageUnderstand()
+       out = image_understand.run(inp)
+       # 打印识别结果
+       print(out.content)
      """
     name = "image_understanding"
     version = "v1"
@@ -83,15 +84,18 @@ class ImageUnderstand(Component):
     @HTTPClient.check_param
     @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 执行图像内容理解
-
-             参数:
-                message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"...", "question": "图片主要内容是什么？"})
-                或 Message(content={"url": "https://image/download/url", "question": "图片主要内容是什么？"}).
-                timeout (float, 可选): HTTP超时时间
-                retry (int, 可选)： HTTP重试次数
-              返回:
-                 message (obj: `Message`): 模型识别结果.
+        """
+        执行图像内容理解
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"...", "question": "图片主要内容是什么？"})
+                              或 Message(content={"url": "https://image/download/url", "question": "图片主要内容是什么？"}).
+            timeout (float, optional): HTTP超时时间. 默认为 None.
+            retry (int, optional): HTTP重试次数. 默认为 0.
+        
+        Returns:
+            Message: 模型识别结果.
+        
         """
         inp = ImageUnderstandInMsg(**message.content)
         request = ImageUnderstandRequest()
@@ -174,15 +178,17 @@ class ImageUnderstand(Component):
         origin_query: str,
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
-        r"""用于工具的执行，调用底层接口进行图像内容理解
-            参数:
-                name (str): 工具名
-                streaming (bool): 是否流式返回
-                origin_query (str): 用户原始query
-                **kwargs: 工具调用的额外关键字参数
-
-            返回：
-                Union[Generator[str, None, None], str]: 图片内容理解结果
+        """
+        用于工具的执行，调用底层接口进行图像内容理解
+        
+        Args:
+            name (str): 工具名
+            streaming (bool): 是否流式返回
+            origin_query (str): 用户原始query
+            **kwargs: 工具调用的额外关键字参数
+        
+        Returns:
+            Union[Generator[str, None, None], str]: 图片内容理解结果
         """
         traceid = kwargs.get("traceid")
         img_name = kwargs.get("img_name", "")

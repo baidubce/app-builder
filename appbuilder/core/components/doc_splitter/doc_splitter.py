@@ -29,6 +29,13 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class DocSplitter(Component):
+    """
+    文档段落切分组件
+
+    Attributes:
+        name (str): 组件名称。
+        meta (ComponentArguments): 组件元数据。
+    """
     name: str = "doc_to_parapraphs"
     meta: ComponentArguments = ComponentArguments(tool_desc={
         "description": "split data to segments in doc",
@@ -39,15 +46,16 @@ class DocSplitter(Component):
                  join_symbol="", **kwargs):
         """
         文档段落切分实例化
-
-        参数:
-            splitter_type: 切分器的类型，str型，目前支持split_by_chunk和split_by_title，为split_by_title时，后续参数无效
-            max_segment_length: 切分后每个段落的最大长度，int型，默认800
-            overlap: 每个段落和其前后相邻块，首尾重叠两部分的长度，int型，默认200
-            separators: 段落按照最大字符数切分时，字符数超限时，边界用分隔符截断，list型，默认["。", "！", "？", ".", "!", "?", "……"]
-            join_symbol: 文本块拼接时，作为连接符的字符，str型，默认""
-            **kwargs(any, 可选)： 关键字参数
-        返回:
+        
+        Args:
+            splitter_type (str): 切分器的类型，目前支持split_by_chunk和split_by_title，为split_by_title时，后续参数无效
+            max_segment_length (int, optional): 切分后每个段落的最大长度，默认为800。
+            overlap (int, optional): 每个段落和其前后相邻块，首尾重叠两部分的长度，默认为200。
+            separators (list, optional): 段落按照最大字符数切分时，字符数超限时，边界用分隔符截断，默认为["。", "！", "？", ".", "!", "?", "……"]。
+            join_symbol (str, optional): 文本块拼接时，作为连接符的字符，默认为""。
+            **kwargs (Any, optional): 关键字参数。
+        
+        Returns:
             无
         """
         self.splitter_type = splitter_type
@@ -62,13 +70,20 @@ class DocSplitter(Component):
     @components_run_trace
     def run(self, message: Message):
         """
-        对输入的解析文档结果，处理为多个段落结果
-
-        参数:
-            message (obj:`Message`): 上游docparser的文档解析结果
-
-        返回:
-            obj:`Message`: 文档分隔后的段落结果
+        运行函数，根据splitter_type将文档分割成多个部分
+        
+        Args:
+            message (Message): 包含文档内容的消息对象
+        
+        Returns:
+            list: 分割后的文档列表
+        
+        Raises:
+            ValueError: 如果message.content不是ParseResult类型，抛出异常
+            ValueError: 如果splitter_type为空，抛出异常
+            ValueError: 如果ParseResult不包含原始值，抛出异常
+            ValueError: 如果splitter_type不是split_by_chunk或split_by_title，抛出异常
+        
         """
         parse_result = message.content
         if not isinstance(parse_result, ParseResult):
@@ -100,18 +115,21 @@ class DocSplitter(Component):
 
 
 class ChunkSplitter(Component):
-    """ 文档按照块大小切分段落
+    """
+    文档按照块大小切分段落
+    
     Examples:
-        原始文档：
-                贷款资金不得用于从事股本权益性投资，不得用于购买股票、有价证券、期货、理财产品等金融产品。
-                不得用于从事房地产经营，不得用于借贷牟取非法收入。不得用于个人或其控制的企业生产经营。
-                不得套取现金。不得用于其他违反国家法律、政策规定的领域，不得用于监管机构禁止银行贷款进入的领域。
 
-        切分结果：
-            ["贷款资金不得用于从事股本权益性投资，不得用于购买股票、有价证券、期货、理财产品等金融产品。不得用于从事房地产经营，
-            不得用于借贷牟取非法收入。不得用于个",
-            "不得用于个人或其控制的企业生产经营。不得套取现金。不得用于其他违反国家法律、政策规定的领域，
-            不得用于监管机构禁止银行贷款进入的领域。"]
+    原始文档：
+        贷款资金不得用于从事股本权益性投资，不得用于购买股票、有价证券、期货、理财产品等金融产品。
+        不得用于从事房地产经营，不得用于借贷牟取非法收入。不得用于个人或其控制的企业生产经营。
+        不得套取现金。不得用于其他违反国家法律、政策规定的领域，不得用于监管机构禁止银行贷款进入的领域。
+
+    切分结果：
+        ["贷款资金不得用于从事股本权益性投资，不得用于购买股票、有价证券、期货、理财产品等金融产品。不得用于从事房地产经营，
+        不得用于借贷牟取非法收入。不得用于个",
+        "不得用于个人或其控制的企业生产经营。不得套取现金。不得用于其他违反国家法律、政策规定的领域，
+        不得用于监管机构禁止银行贷款进入的领域。"]
     """
 
     name: str = "doc_to_chunk"
@@ -124,15 +142,17 @@ class ChunkSplitter(Component):
                  join_symbol="", **kwargs):
         """
         文档段落切分实例化
-
-        参数:
-            max_segment_length: 切分后每个段落的最大长度，int型，默认800
-            overlap: 每个段落和其前后相邻块，首尾重叠两部分的长度，int型，默认200
-            separators: 按照段落最大字符数切分超限时，边界用分隔符截断，list型，默认["。", "！", "？", ".", "!", "?", "……", "|\n"]
-            join_symbol: 文本块拼接时，作为连接符的字符，str型，默认""
-            **kwargs(any, 可选)： 关键字参数
-        返回:
-            无
+        
+        Args:
+            max_segment_length (int, optional): 切分后每个段落的最大长度，默认为800。
+            overlap (int, optional): 每个段落和其前后相邻块，首尾重叠两部分的长度，默认为200。
+            separators (list of str, optional): 按照段落最大字符数切分超限时，边界用分隔符截断，默认为["。", "！", "？", ".", "!", "?", "……", "|\n"]。
+            join_symbol (str, optional): 文本块拼接时，作为连接符的字符，默认为""。
+            **kwargs (Any, optional): 关键字参数。
+        
+        Returns:
+            None
+        
         """
         self.base_url = kwargs.get(
             "base_url",
@@ -150,38 +170,40 @@ class ChunkSplitter(Component):
     def run(self, message: Message):
         """
         对输入的解析文档结果，按照最大段落块大小、结尾分隔符等，处理为多个段落结果
-
-        参数:
-            message (obj:`Message`): 上游docparser的文档解析结果
-
-        返回:
-            obj:`Message`: 文档分隔后的段落结果
-
+        
+        Args:
+            message (obj:Message): 上游docparser的文档解析结果
+        
+        Returns:
+            obj:Message: 文档分隔后的段落结果
+        
+        Raises:
+            ValueError: 如果 message.content 的类型不是 ParseResult，则抛出 ValueError 异常
+        
         Examples:
-
+        
         .. code-block:: python
-
+        
             import os
             from appbuilder.core.components.doc_parser.doc_parser import DocParser
             from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter, ChunkSplitter
             from appbuilder.core.message import Message
-
+        
             # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
             os.environ["APPBUILDER_TOKEN"] = "..."
-
+        
             # 先解析
             msg = Message("./test.pdf")
             parser = DocParser()
             parse_result = parser(msg, return_raw=True)
-
+        
             # 基于parser的结果切分段落
             splitter = ChunkSplitter()
             res_paras = splitter(parse_result)
-
+        
             # 打印结果
             print(res_paras.content)
         """
-
         paser_res = message.content
         if not isinstance(paser_res, ParseResult):
             raise ValueError("message.content type must be a ParseResult")
@@ -203,27 +225,20 @@ class ChunkSplitter(Component):
 
 
 class TitleSplitter(Component):
-    """ 文档按照标题层级切分段落
-        Examples:
+    """ 
+    文档按照标题层级切分段落
+        
+    Examples:
 
         原始文档：
             一、简介
-
             叠贷业务是指借款人家庭为满足购房、购车、装修、教育、医疗、旅游、日常消费等符合国家法律法规规定的消费用途。
-
             二、申请条件
-
             （一）基本条件
-
             1、年满18周岁的自然人，具有完全民事行为能力，能提供有效身份证明或居留证明；
-
             2、有稳定职业和收入，有偿还贷款本息的能力；
-
-
             （二）抵押房产所有人的要求
-
             1、抵押房产的所有人应为借款人本人
-
             2、抵押房产如有共同所有人，借款人必须为之一，且其他共同所有人必须同意以该房产办理最高额抵押登记，并提供同意抵押的合法有效的书面文件。
 
         切分结果：
@@ -261,16 +276,20 @@ class TitleSplitter(Component):
     def run(self, input_message: Message) -> Message:
         """
         对输入的解析文档结果，按照各标题层级，处理为多个段落结果
-
-        参数:
-            message (obj:`Message`): 上游docparser的文档解析结果
-
-        返回:
-            obj:`Message`: 文档分隔后的段落结果
-
+        
+        Args:
+            input_message (obj:Message): 上游docparser的文档解析结果
+        
+        Returns:
+            obj:Message: 文档分隔后的段落结果
+        
+        Raises:
+            ValueError: 如果message.content的类型不是ParseResult，则抛出异常
+        
         Examples:
 
         .. code-block:: python
+        
             import os
             from appbuilder.core.components.doc_parser.doc_parser import DocParser
             from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter, TitleSplitter
@@ -290,8 +309,8 @@ class TitleSplitter(Component):
 
             # 打印结果
             print(res_paras.content)
+        
         """
-
         parse_result = input_message.content
         if not isinstance(parse_result, ParseResult):
             raise ValueError("message.content type must be a ParseResult")
