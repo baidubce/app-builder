@@ -40,6 +40,7 @@ class SelectTable(Component):
                  prompt_template: str = ""):
         """
         创建 GBI 选表对象
+        
         Args:
             model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, ERNIE Speed-AppBuilder
             table_descriptions: 表的描述是个字典，key: 是表的名字, value: 是表的描述，例如:
@@ -80,16 +81,23 @@ class SelectTable(Component):
     def run(self,
             message: Message, timeout: int = 60, retry: int = 0) -> Message[List[str]]:
         """
+        执行查询操作，返回识别的表名列表。
+        
         Args:
-            message: message.content 字典包含 key:
-                1. query - 用户的问题输入
-                2. session - 对话历史， 可选
-            timeout: 超时时间
-            retry: 重试次数
-
-        Returns: 识别的表名的列表 ["table_name"]
+            message (Message): 包含查询信息的消息对象。
+                - message.content 字典包含以下 key:
+                    1. query (str): 用户的问题输入。
+                    2. session (list, optional): 对话历史，默认为空列表。
+            timeout (int, optional): 超时时间，默认为 60 秒。
+            retry (int, optional): 重试次数，默认为 0。
+        
+        Returns:
+            Message[List[str]]: 包含识别出的表名列表的 Message 对象。
+        
+        Raises:
+            ValueError: 如果输入的 message.content 不符合期望的格式，将抛出 ValueError 异常。
+        
         """
-
         try:
             inputs = self.meta(**message.content)
         except ValidationError as e:

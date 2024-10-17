@@ -146,6 +146,27 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
         temperature=1e-10, 
         top_p=1e-10,
     ):
+        """
+        执行模型推理
+        
+        Args:
+            message (Message): 用户输入的消息对象
+            instruction (Instruction, optional): 用户提供的指令信息，默认为None。如果未提供，则使用默认的指令信息。
+            reject (bool, optional): 是否拒绝执行，默认为None。如果未提供，则使用默认设置。
+            clarify (bool, optional): 是否需要澄清，默认为None。如果未提供，则使用默认设置。
+            highlight (bool, optional): 是否高亮显示，默认为None。如果未提供，则使用默认设置。
+            friendly (bool, optional): 是否以友好的方式回答，默认为None。如果未提供，则使用默认设置。
+            cite (bool, optional): 是否引用原始信息，默认为None。如果未提供，则使用默认设置。
+            stream (bool, optional): 是否以流式方式返回结果，默认为False。
+            temperature (float, optional): 温度参数，用于控制生成文本的多样性，默认为1e-10。
+            top_p (float, optional): 截断概率阈值，用于控制生成文本的多样性，默认为1e-10。
+        
+        Returns:
+            Message: 推理结果消息对象
+        
+        Raises:
+            AppBuilderServerException: 如果输入消息内容过长（超过72个字符）或推理结果中存在错误，则抛出异常。
+        """
         instruction_set = self.__get_instruction_set()
 
         # query 长度限制不能超过 72

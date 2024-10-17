@@ -105,26 +105,32 @@ class AppBuilderClient(Component):
     r"""
     AppBuilderClient 组件支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上
     构建并发布的智能体应用，具体包括创建会话、上传文档、运行对话等。
-        Examples:
-        ... code-block:: python
-            import appbuilder
-            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
-            os.environ["APPBUILDER_TOKEN"] = '...'
-            # 可在Console 应用页面获取
-            app_id = "app_id"
-            client = appbuilder.AppBuilderClient("app_id")
-            conversation_id = client.create_conversation()
-            file_id = client.upload_local_file(conversation_id, "/path/to/file")
-            message = client.run(conversation_id, "今天你好吗？")
-            # 打印对话结果
-            print(message.content)
+    
+    Examples:
+        
+    .. code-block:: python
+    
+        import appbuilder
+        # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+        os.environ["APPBUILDER_TOKEN"] = '...'
+        # 可在Console 应用页面获取
+        app_id = "app_id"
+        client = appbuilder.AppBuilderClient("app_id")
+        conversation_id = client.create_conversation()
+        file_id = client.upload_local_file(conversation_id, "/path/to/file")
+        message = client.run(conversation_id, "今天你好吗？")
+        # 打印对话结果
+        print(message.content)
+        
     """
 
     def __init__(self, app_id: str, **kwargs):
         r"""初始化智能体应用
-        参数:
+        
+        Args:
             app_id (str: 必须) : 应用唯一ID
-        返回：
+            
+        Returns:
             response (obj: `AppBuilderClient`): 智能体实例
         """
         super().__init__(**kwargs)
@@ -138,11 +144,16 @@ class AppBuilderClient(Component):
 
     @client_tool_trace
     def create_conversation(self) -> str:
-        r"""创建会话并返回会话ID，会话ID在服务端用于上下文管理、绑定会话文档等，如需开始新的会话，请创建并使用新的会话ID
-        参数:
+        r"""创建会话并返回会话ID
+
+        会话ID在服务端用于上下文管理、绑定会话文档等，如需开始新的会话，请创建并使用新的会话ID
+        
+        Args:
             无
-        返回：
-            response (str: ): 唯一会话ID
+            
+        Returns:
+            response (str): 唯一会话ID
+            
         """
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
@@ -158,15 +169,17 @@ class AppBuilderClient(Component):
     @client_tool_trace
     def upload_local_file(self, conversation_id, local_file_path: str) -> str:
         r"""上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
+        
         该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
 
-            参数:
-                conversation_id (str: 必须) : 会话ID
-                local_file_path (str: 必须) : 本地文件路径
-            返回：
-                response (str: ): 唯一文件ID
+        Args:
+            conversation_id (str) : 会话ID
+            local_file_path (str) : 本地文件路径
+            
+        Returns:
+            response (str): 唯一文件ID
+            
         """
-
         if len(conversation_id) == 0:
             raise ValueError("conversation_id is empty, you can run self.create_conversation to get a conversation_id")
 
@@ -200,17 +213,21 @@ class AppBuilderClient(Component):
             end_user_id: str = None,
             **kwargs
             ) -> Message:
-        r"""
-        参数:
-            query (str: 必须): query内容
-            conversation_id (str, 必须): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
-            file_ids(list[str], 可选):
-            stream (bool, 可选): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
-            tools(list[data_class.Tools], 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
-            tool_outputs(list[data_class.ToolOutput], 可选): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
-            tool_choice(data_class.ToolChoice, 可选): 控制大模型使用组件的方式，默认为None
-            end_user_id (str, 可选): 用户ID，用于区分不同用户
-        返回: message (obj: `Message`): 对话结果.
+        r"""运行智能体应用
+        
+        Args:
+            query (str): query内容
+            conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+            file_ids(list[str]): 文件ID列表
+            stream (bool): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
+            tools(list[data_class.Tools]): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
+            tool_outputs(list[data_class.ToolOutput]): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
+            tool_choice(data_class.ToolChoice): 控制大模型使用组件的方式，默认为None
+            end_user_id (str): 用户ID，用于区分不同用户
+            kwargs: 其他参数
+            
+        Returns: 
+            message (obj: `Message`): 对话结果，一个Message对象，使用message.content获取内容。
         """
 
         if len(conversation_id) == 0:
@@ -259,6 +276,20 @@ class AppBuilderClient(Component):
                         stream: bool = False,
                         event_handler = None,
                         **kwargs):
+        r"""运行智能体应用，并通过事件处理器处理事件
+
+        Args:
+            conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+            query (str): 查询字符串
+            file_ids (list): 文件ID列表
+            tools(list[data_class.Tools], 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
+            stream (bool): 是否流式响应
+            event_handler (EventHandler): 事件处理器
+            kwargs: 其他参数
+
+        Returns:
+            EventHandler: 事件处理器
+        """
         assert event_handler is not None, "event_handler is None"
         event_handler.init(
             appbuilder_client=self,
@@ -301,13 +332,33 @@ class AppBuilderClient(Component):
 
 
 class AgentBuilder(AppBuilderClient):
+    r"""AgentBuilder是继承自AppBuilderClient的一个子类，用于构建和管理智能体应用。
+    支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上
+    构建并发布的智能体应用，具体包括创建会话、上传文档、运行对话等。
+    
+    Examples:
+    
+    .. code-block:: python
+    
+        import appbuilder
+        # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+        os.environ["APPBUILDER_TOKEN"] = '...'
+        # 可在Console 应用页面获取
+        app_id = "app_id"
+        client = appbuilder.AppBuilderClient("app_id")
+        conversation_id = client.create_conversation()
+        file_id = client.upload_local_file(conversation_id, "/path/to/file")
+        message = client.run(conversation_id, "今天你好吗？")
+        # 打印对话结果
+        print(message.content)
+
+    """
     @deprecated(
         reason="AgentBuilder is deprecated, please use AppBuilderClient instead",
         version="1.0.0",
     )
     def __init__(self, app_id: str):
-        """
-        初始化方法，用于创建一个新的实例对象。
+        r"""初始化方法，用于创建一个新的实例对象。
 
         为了避免歧义，减少用户上手门槛，推荐使用该类调用AgentBuilder
 
@@ -315,7 +366,7 @@ class AgentBuilder(AppBuilderClient):
             app_id (str): 应用程序的唯一标识符。
 
         Returns:
-            None
+            response (obj: `AgentBuilder`): 智能体实例
 
         """
         super().__init__(app_id)

@@ -26,8 +26,12 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class EmbeddingArgs(ComponentArguments):
-    """ernie bot embedding配置"""
+    """
+    ernie bot embedding配置
 
+    Attributes:
+        text (Union[Message[str], str]): 输入文本
+    """
     text: Union[Message[str], str]
 
 
@@ -36,6 +40,9 @@ class Embedding(EmbeddingBaseComponent):
     Embedding
 
     Embedding-V1是基于百度文心大模型技术的文本表示模型，将文本转化为用数值表示的向量形式，用于文本检索、信息推荐、知识挖掘等场景。
+
+    Attributes:
+        model: str = "Embedding-V1"
 
     Examples:
 
@@ -108,7 +115,6 @@ class Embedding(EmbeddingBaseComponent):
         """
         batchify input text list
         """
-
         if batch_size > 16:
             raise ValueError(f"The max Embedding batch_size is 16, but got {batch_size}")
 
@@ -120,7 +126,6 @@ class Embedding(EmbeddingBaseComponent):
         """
         batch run implement
         """
-
         batches = self._batchify(texts)
         results = []
         for batch in batches:
@@ -133,18 +138,31 @@ class Embedding(EmbeddingBaseComponent):
     @components_run_trace
     def run(self, text: Union[Message[str], str]) -> Message[List[float]]:
         """
-        run
+        处理给定的文本或消息对象，并返回包含处理结果的消息对象。
+        
+        Args:
+            text (Union[Message[str], str]): 待处理的文本或消息对象。
+        
+        Returns:
+            Message[List[float]]: 处理后的结果，封装在消息对象中。结果是一个浮点数列表。
         """
-    
         _text = text if isinstance(text, str) else text.content
 
         return Message(self._batch([_text]).content[0])
 
     def batch(self, texts: Union[Message[List[str]], List[str]]) -> Message[List[List[float]]]:
         """
-        batch run
+        批量处理文本数据。
+        
+        Args:
+            texts (Union[Message[List[str]], List[str]]):
+                待处理的文本数据，可以是 Message 类型，包含多个文本列表，也可以是普通列表类型，包含多个文本。
+        
+        Returns:
+            Message[List[List[float]]]:
+                处理后的结果，为 Message 类型，包含一个二维浮点数列表，每个子列表对应输入文本列表中一个文本的处理结果。
+        
         """
-
         _texts = texts if isinstance(texts, list) else texts.content
 
         return self._batch(_texts)

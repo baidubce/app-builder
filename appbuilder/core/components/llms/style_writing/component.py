@@ -1,18 +1,17 @@
-"""
-Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
 import json
 
 from appbuilder.core.components.llms.base import CompletionBaseComponent
@@ -27,6 +26,14 @@ from enum import Enum
 
 
 class StyleQueryChoices(Enum):
+    """
+    StyleQueryChoices是一个枚举类型，包含三个选项：
+    
+    Attributes:
+        BILIBILI ("B站")
+        XIAOHONGSHU ("小红书")
+        GENERAL ("通用")
+    """
     BILIBILI = "B站"
     XIAOHONGSHU = "小红书"
     GENERAL = "通用"
@@ -75,7 +82,14 @@ class LengthChoices(Enum):
 
 
 class StyleWritingArgs(ComponentArguments):
-    """风格写作配置"""
+    """
+    风格写作配置
+
+    Attributes:
+        message: Message = Field(...)
+        style_query: StyleQueryChoices = Field(...)
+        length: LengthChoices = Field(...)
+    """
     message: Message = Field(...,
                              variable_name="query",
                              description="输入消息，用于模型的主要输入内容，例如'帮我生成一个介绍保温杯的话术'")
@@ -93,15 +107,15 @@ class StyleWriting(CompletionBaseComponent):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import os
-            import appbuilder
-            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        import os
+        import appbuilder
+        # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            style_writing = appbuilder.StyleWriting(model="ERNIE Speed-AppBuilder")
-            answer = style_writing(appbuilder.Message("帮我写一篇关于人体工学椅的文案"), style_query="小红书", length=100)
+        style_writing = appbuilder.StyleWriting(model="ERNIE Speed-AppBuilder")
+        answer = style_writing(appbuilder.Message("帮我写一篇关于人体工学椅的文案"), style_query="小红书", length=100)
 
     """
 
@@ -165,16 +179,17 @@ class StyleWriting(CompletionBaseComponent):
     def run(self, message, style_query="通用", length=100, stream=False, temperature=1e-10, top_p=0, request_id=None):
         """
         使用给定的输入运行模型并返回结果。
-
-        参数:
+        
+        Args:
             message (obj:`Message`): 输入消息，用于模型的主要输入内容。这是一个必需的参数。
             style_query (str): 风格查询选项，用于指定写作风格。有效的选项包括 'B站', '小红书', '通用'。默认值为 '通用'。
             length (int): 输出内容的长度。有效的选项包括 100（短），300（中），600（长）。默认值为 100。
-            stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
-            temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
-            top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
-
-        返回:
+            stream (bool, optional): 指定是否以流式形式返回响应。默认为 False。
+            temperature (float, optional): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
+            top_p (float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
+            request_id (str, optional): 请求ID，用于跟踪和识别请求。
+        
+        Returns:
             obj:`Message`: 模型运行后的输出消息。
         """
         return super().run(message=message, style_query=style_query, length=length, stream=stream,
@@ -183,7 +198,19 @@ class StyleWriting(CompletionBaseComponent):
     @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool = False, **kwargs):
         """
-        tool_eval for function call
+        对指定的工具进行函数调用评估。
+        
+        Args:
+            name (str): 工具名称。
+            streaming (bool, optional): 是否以流的方式返回结果。默认为False。
+            **kwargs: 其他参数。
+        
+        Returns:
+            str 或 generator: 如果 streaming 为 False，则返回评估结果字符串；如果 streaming 为 True，则返回一个生成器，每次迭代返回评估结果字符串的一部分。
+        
+        Raises:
+            ValueError: 如果未提供必要的参数 'query'。
+        
         """
         traceid = kwargs.get("traceid")
         query = kwargs.get("query", None)

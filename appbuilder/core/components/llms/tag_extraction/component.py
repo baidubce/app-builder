@@ -22,7 +22,12 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class TagExtractionArgs(ComponentArguments):
-    """标签抽取配置"""
+    """
+    标签抽取配置
+
+    Attributes:
+        message (Message): 输入消息，用于模型的主要输入内容
+    """
     message: Message = Field(...,
                              variable_name="query",
                              description="""输入消息，用于模型的主要输入内容，例如'本实用新型公开了一种可利用热能的太阳能光伏光热一体化组件，
@@ -36,14 +41,14 @@ class TagExtraction(CompletionBaseComponent):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import appbuilder
-            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        import appbuilder
+        # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            tag_extraction = appbuilder.TagExtraction(model="ERNIE Speed-AppBuilder")
-            answer = tag_extraction(appbuilder.Message("从这段文本中抽取关键标签"))
+        tag_extraction = appbuilder.TagExtraction(model="ERNIE Speed-AppBuilder")
+        answer = tag_extraction(appbuilder.Message("从这段文本中抽取关键标签"))
 
     """
 
@@ -77,14 +82,18 @@ class TagExtraction(CompletionBaseComponent):
     def run(self, message, stream=False, temperature=1e-10, top_p=0.0):
         """
         使用给定的输入运行模型并返回结果。
-
+        
         Args:
-            message (obj:`Message`，必选): 输入消息，用于模型的主要输入内容。
+            message (obj:`Message`, 必选): 输入消息，用于模型的主要输入内容。
             stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
-            temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
-            top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
-
-        返回:
+            temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。
+                取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。
+                默认值为 1e-10。
+            top_p (float, 可选): 影响输出文本的多样性，取值越大，生成文本的多样性越强。
+                取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。
+                默认值为 0。
+        
+        Returns:
             obj:`Message`: 模型运行后的输出消息。
         """
         return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p)

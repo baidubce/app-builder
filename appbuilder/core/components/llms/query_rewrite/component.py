@@ -1,4 +1,3 @@
-"""QueryRewrite"""
 # Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +26,9 @@ import appbuilder
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 class RewriteTypeChoices(Enum):
-    """"""
+    """
+    多轮改写类型选择
+    """
     user_assistant_user = "带机器人回复"
     user_user = "仅用户查询"
 
@@ -50,7 +51,13 @@ class RewriteTypeChoices(Enum):
 
 
 class QueryRewriteArgs(ComponentArguments):
-    """多轮改写配置"""
+    """
+    多轮改写配置
+    
+    Attributes:
+        message: Message = Field(...)
+        rewrite_type: RewriteTypeChoices = Field(...)
+    """
     message: Message = Field(..., 
                              variable_name="query",
                              description="输入消息，用于模型的主要输入内容，例如'['我应该怎么办理护照？', '您可以查询官网或人工咨询', \
@@ -67,18 +74,18 @@ class QueryRewrite(CompletionBaseComponent):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import appbuilder
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        import appbuilder
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            query_rewrite = appbuilder.QueryRewrite(model="ERNIE Speed-AppBuilder")
-            answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？', 
-                                                     '您可以查询官网或人工咨询', 
-                                                     '我需要准备哪些材料？', 
-                                                     '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', 
-                                                     '在哪里办']), 
-                                                     rewrite_type="带机器人回复")
+        query_rewrite = appbuilder.QueryRewrite(model="ERNIE Speed-AppBuilder")
+        answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？', 
+                                                    '您可以查询官网或人工咨询', 
+                                                    '我需要准备哪些材料？', 
+                                                    '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', 
+                                                    '在哪里办']), 
+                                                    rewrite_type="带机器人回复")
                         
     """
 
@@ -111,22 +118,27 @@ class QueryRewrite(CompletionBaseComponent):
     @components_run_trace
     def run(self, message, rewrite_type="带机器人回复", stream=False, temperature=1e-10, top_p=0):
         """
-        使用给定的输入运行模型并返回结果。输入列表长度不超过10，字符总长度不超过5000.
+        使用给定的输入运行模型并返回结果。
         
-        变量:
+        Args:
             message (obj:`Message`): 输入消息，用于模型的主要输入内容。这是一个必需的参数。
-            rewrite_type (str, optional): 改写类型选项，可选值为 '带机器人回复'(改写时参考user查询历史和assistant回复历史)，
-                                         '仅用户查询'(改写时参考user查询历史)。 默认是"带机器人回复。
-            stream (bool, optional): 指定是否以流式形式返回响应。默认为 False。
-            temperature(float, optional): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
-            top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
-
-        返回:
+            rewrite_type (str, 可选): 改写类型选项，可选值为 '带机器人回复'(改写时参考user查询历史和assistant回复历史)，
+                                      '仅用户查询'(改写时参考user查询历史)。默认为"带机器人回复"。
+            stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
+            temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。
+                                       取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。
+                                       默认值为 1e-10。
+            top_p (float, 可选): 影响输出文本的多样性，取值越大，生成文本的多样性越强。
+                                 取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。
+                                 默认值为 0。
+        
+        Returns:
             obj:`Message`: 模型运行后的输出消息。
         
+        Raises:
+            ValueError: 如果输入消息为空或不符合要求，将抛出 ValueError 异常。
+        
         """
-
-
         if message is None:
             raise ValueError("input message is required")
 

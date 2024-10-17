@@ -34,7 +34,7 @@ class DocCropEnhance(Component):
 
        Examples:
 
-       ... code-block:: python
+       .. code-block:: python
 
            import appbuilder
 
@@ -46,26 +46,29 @@ class DocCropEnhance(Component):
                out = self.component.run(appbuilder.Message(content={"raw_image": f.read()}))
            print(out.content)
 
-        """
+    """
+    
     @HTTPClient.check_param
     @components_run_trace
     def run(self, message: Message, enhance_type: int = 0, timeout: float = None, retry: int = 0) -> Message:
-        r""" 文档矫正增强
-
-            参数:
-                message (obj: `Message`): 输入图片或图片url下载地址用于执行操作. 举例: Message(content={"raw_image": b"...",
-                "enhance_type": 3})或 Message(content={"url": "https://image/download/url"}).
-                enhance_type(int, 可选) 选择是否开启图像增强功能，如开启可选择增强效果，可选值如下：
-                    - enhance_type = 0：默认值，不开启增强功能
-                    - enhance_type = 1：去阴影
-                    - enhance_type = 2：增强并锐化
-                    - enhance_type = 3：黑白滤镜。
-                timeout (float, 可选): HTTP超时时间
-                retry (int, 可选)： HTTP重试次数
-
-                返回: message (obj: `Message`): 识别结果. 举例: Message(name=msg, content={'image_processed': '...',
-                'points': [{'x': 220, 'y': 705}, {'x': 240, 'y': 0}, {'x': 885, 'y': 2}, {'x': 980, 'y': 759}]},
-                mtype=dict)
+        r"""
+        文档矫正增强
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行操作。举例: Message(content={"raw_image": b"...",
+            "enhance_type": 3})或 Message(content={"url": "https://image/download/url"})。
+            enhance_type (int, 可选): 选择是否开启图像增强功能，如开启可选择增强效果，可选值如下：
+                - 0：默认值，不开启增强功能
+                - 1：去阴影
+                - 2：增强并锐化
+                - 3：黑白滤镜。
+            timeout (float, 可选): HTTP超时时间
+            retry (int, 可选): HTTP重试次数
+        
+        Returns:
+            Message: 识别结果。举例: Message(name=msg, content={'image_processed': '...',
+            'points': [{'x': 220, 'y': 705}, {'x': 240, 'y': 0}, {'x': 885, 'y': 2}, {'x': 980, 'y': 759}]},
+            mtype=dict)
         """
         inp = DocCropEnhanceInMsg(**message.content)
         req = DocCropEnhanceRequest()

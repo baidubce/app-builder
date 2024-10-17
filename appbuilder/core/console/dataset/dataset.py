@@ -10,10 +10,13 @@ from appbuilder.utils.trace.tracer_wrapper import client_tool_trace
 
 
 class Dataset:
-    """
-    console知识库操作工具，即将上线
+    r"""
+    console知识库操作工具
+    
     Examples:
-        .. code-block:: python
+    
+    .. code-block:: python
+        
         import appbuilder
         import os
 
@@ -40,6 +43,16 @@ class Dataset:
     upload_file_url: str = "/v1/ai_engine/agi_platform/v1/datasets/files/upload"
 
     def __init__(self, dataset_id: str = "", dataset_name: str = ""):
+        r"""
+        初始化Dataset实例
+
+        Args:
+            dataset_id: 知识库ID
+            dataset_name: 知识库名称
+
+        Returns:
+            Dataset: 知识库实例
+        """
         self.dataset_id = dataset_id
         self.dataset_name = dataset_name
         self._http_client = None
@@ -52,12 +65,14 @@ class Dataset:
 
     @classmethod
     def create_dataset(cls, dataset_name: str):
-        """
+        r"""
         创建知识库
-        传参：
+        
+        Args:
             dataset_name: 知识库名称
-        返回:
-            Dataset实例
+            
+        Returns:
+            Dataset: 创建成功的知识库实例
         """
         payload = json.dumps({"name": dataset_name})
         http_client = HTTPClient()
@@ -73,19 +88,24 @@ class Dataset:
     @deprecated()
     def add_documents(self, file_path_list: List[str], is_custom_process_rule: bool = False,
                       custom_process_rule: Dict = None, is_enhanced: bool = False) -> AddDocumentsResponse:
-        """
+        r"""
         向知识库中添加文档
-        传参：
-        file_path_list: 文档路径列表
-        is_custom_process_rule: 是否使用自定义文档处理规则, 默认为False, 使用平台的默认规则，为True时使用自定义规则
-        custom_process_rule: 自定义文档规则，当is_custom_process_rule为True时生效，格式示例如下：
-        {
-        "separators": ["。", "，"],    # 文本切分符，支持这几种[ , , "？", , "!", "?", "……"]
-        "target_length": 300,         # 文本切片片段长度，取值范围[300, 800]
-        "overlap_rate": 0.3           # 文本片段重叠率，取值范围[0, 0.3]
-        }
-        is_enhanced: 是否开启知识增强, 默认为False，在检索问答时通过知识点来索引到对应的切片，大模型根据切片内容生成答案，开启知识增强会调用大模型抽取更加丰富的知识点，增加切片的召回率
-        返回：
+        
+        Args:
+            file_path_list: 文档路径列表
+            is_custom_process_rule: 是否使用自定义文档处理规则, 默认为False, 使用平台的默认规则，为True时使用自定义规则
+            custom_process_rule: 自定义文档规则，当is_custom_process_rule为True时生效，格式示例如下：
+            {
+                "separators": ["。", "，"],    # 文本切分符，支持这几种[ , , "？", , "!", "?", "……"]
+                "target_length": 300,         # 文本切片片段长度，取值范围[300, 800]
+                "overlap_rate": 0.3           # 文本片段重叠率，取值范围[0, 0.3]
+            }
+            is_enhanced: 是否开启知识增强, 默认为False，在检索问答时通过知识点来索引到对应的切片，大模型根据切片内容生成答案，开启知识增强会调用大模型抽取更加丰富的知识点，增加切片的召回率
+            
+        Returns:
+            AddDocumentsResponse: 添加文档的响应结果，包含以下属性：
+            - dataset_id (str): 知识库id
+            - document_ids (List[str]): 文档id列表
         """
         for file_path in file_path_list:
             file_type = file_path.split(".")[-1].lower()
@@ -116,11 +136,13 @@ class Dataset:
         return res
 
     def _upload_document(self, file_path: str):
-        """
+        r"""
         上传文档
-        传参：
+        
+        Args:
             file_path: 文档路径
-        返回:
+            
+        Returns:
             上传文档的信息
         """
         headers = self.http_client.auth_header()
@@ -135,11 +157,14 @@ class Dataset:
 
     @deprecated()
     def delete_documents(self, document_ids: List[str]):
-        """
+        r"""
         删除知识库中的文档
-        参数：
+        
+        Args:
             document_ids: 文档id列表
-        返回:
+
+        Returns:
+            None
         """
         for document_id in document_ids:
             self._delete_document(document_id)
@@ -149,7 +174,6 @@ class Dataset:
         删除知识库中的文档
         参数：
             document_id: 文档id
-        返回:
         """
         payload = json.dumps({"dataset_id": self.dataset_id, "document_id": document_id})
         headers = self.http_client.auth_header()
@@ -161,18 +185,20 @@ class Dataset:
 
     @deprecated()
     def get_documents(self, page: int, limit: int, keyword: str = "") -> DocumentListResponse:
-        """
+        r"""
         获取知识库中的文档列表
-        参数：
+        
+        Args:
             page: 第几页
             limit: 每页文档数
             keyword: 文件名关键字，支持模糊查询
-        返回:
-            返回示例：
+            
+        Returns:
+            DocumentListResponses实例，返回示例：
             {
             "data": [
                 {
-                    "id": "d2d1bc1a-1763-4162-88b2-0dad225da16f", # 文档id
+                    "id":"d2d1bc1a-1763-4162-88b2-0dad225da16f", # 文档id
                     "name": "唐诗三百首（全集）全新编辑版.pdf", # 文档名称
                     "created_from": "web", # 创建来源
                     "created_by": "76efed91-cf19-435d-993c-cdd901d6d13c", # 创建人

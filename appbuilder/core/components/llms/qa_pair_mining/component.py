@@ -24,7 +24,11 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 
 
 class QAPairMiningMeta(ComponentArguments):
-    """ QAPairMiningMeta
+    """
+    QAPairMiningMeta
+
+    Attributes:
+        message (Message): 输入消息，用于模型的输入，一般为文档段落。
     """
     message: Message = Field(..., 
                              variable_name="query", 
@@ -32,25 +36,26 @@ class QAPairMiningMeta(ComponentArguments):
 
 
 class QAPairMining(CompletionBaseComponent):
-    """ 基于输入文本内容，快速生成多个问题及对应答案,极大提高信息提炼的效率和准确性.广泛用于在线客服、智能问答等领域。
+    """ 
+    基于输入文本内容，快速生成多个问题及对应答案,极大提高信息提炼的效率和准确性.广泛用于在线客服、智能问答等领域。
 
     Examples:
 
-        .. code-block:: python
-            import os
-            import appbuilder
+    .. code-block:: python
+        import os
+        import appbuilder
 
-            os.environ["APPBUILDER_TOKEN"] = "..."
+        os.environ["APPBUILDER_TOKEN"] = "..."
 
-            qa_mining = appbuilder.QAPairMining(model="ERNIE Speed-AppBuilder")
-            # 输入文本（对此文本挖掘问答对）
-            msg =  '2017年，工商银行根据外部宏观环境变化，及时调整业务策略，优化资产负债结构，' + \
-                '保持存贷款业务协调发展，提升资产负债配置效率。' + \
-                '2018年3月末，工商银行总资产264,937.81亿元，比上年末增加4,067.38亿元。'
-            msg = appbuilder.Message(msg)
-            answer = qa_mining(msg)
+        qa_mining = appbuilder.QAPairMining(model="ERNIE Speed-AppBuilder")
+        # 输入文本（对此文本挖掘问答对）
+        msg =  '2017年，工商银行根据外部宏观环境变化，及时调整业务策略，优化资产负债结构，' + \
+            '保持存贷款业务协调发展，提升资产负债配置效率。' + \
+            '2018年3月末，工商银行总资产264,937.81亿元，比上年末增加4,067.38亿元。'
+        msg = appbuilder.Message(msg)
+        answer = qa_mining(msg)
 
-            print(">>> Output: {}".format(answer.content))
+        print(">>> Output: {}".format(answer.content))
     
     """
     name = "qa_pair_mining"
@@ -83,14 +88,14 @@ class QAPairMining(CompletionBaseComponent):
     def run(self, message, stream=False, temperature=1e-10, top_p=0.0):
         """
         给定输入（message）到模型运行，同时指定运行参数，并返回结果。
-
-        参数:
+        
+        Args:
             message (obj:`Message`): 输入消息，用于模型的主要输入内容。这是一个必需的参数。
-            stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
-            temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
-            top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
-
-        返回:
+            stream (bool, optional): 指定是否以流式形式返回响应。默认为 False。
+            temperature (float, optional): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
+            top_p (float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
+        
+        Returns:
             obj:`Message`: 模型运行后的输出消息。
         """
         return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p)

@@ -54,11 +54,31 @@ class BESVectorStoreIndex:
 
     @property
     def es(self):
+        """
+        获取Elasticsearch客户端实例。
+        
+        Args:
+            无
+        
+        Returns:
+            Elasticsearch客户端实例。
+        
+        """
         self._lazy_import_es()
         return self._es
 
     @property
     def helpers(self):
+        """
+        获取帮助器实例。
+        
+        Args:
+            无
+        
+        Returns:
+            _helpers (对象): 帮助器实例。
+        
+        """
         self._lazy_import_es()
         return self._helpers
 
@@ -75,13 +95,32 @@ class BESVectorStoreIndex:
     @staticmethod
     def generate_id(length=16):
         """
-        生成随机的ID
+        生成随机的ID。
+        
+        Args:
+            length (int, optional): 生成ID的长度，默认为16。
+        
+        Returns:
+            str: 生成的随机ID。
+        
         """
         return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
     def _create_bes_client(self, cluster_id, user_name, password):
         """
-        创建一个bes的client
+        创建一个BES客户端。
+        
+        Args:
+            cluster_id (str): BES集群的ID。
+            user_name (str): 用于连接BES的用户名。
+            password (str): 用于连接BES的密码。
+        
+        Returns:
+            Elasticsearch: 初始化好的BES客户端。
+        
+        Raises:
+            ConnectionError: 如果无法连接到BES集群，则抛出此异常。
+        
         """
         secret_key = os.getenv("APPBUILDER_TOKEN")
         if not secret_key.startswith("Bearer"):
@@ -110,7 +149,14 @@ class BESVectorStoreIndex:
 
     def as_retriever(self):
         """
-        转化为retriever
+        将当前对象转化为retriever。
+        
+        Args:
+            无
+        
+        Returns:
+            BESRetriever: 转化后的retriever对象
+        
         """
         return BESRetriever(embedding=self.embedding, index_name=self.index_name, bes_client=self.bes_client,
                             index_type=self.index_type)
@@ -119,6 +165,14 @@ class BESVectorStoreIndex:
     def create_index_mappings(index_type, vector_dims):
         """
         创建索引的mapping
+        
+        Args:
+            index_type (str): 索引类型，如"hnsw"
+            vector_dims (int): 向量的维度
+        
+        Returns:
+            dict: 索引的mapping配置
+        
         """
         mappings = {
             'properties': {
@@ -136,10 +190,14 @@ class BESVectorStoreIndex:
 
     def add_segments(self, segments: Message, metadata=""):
         """
-        向bes中插入数据
-        参数:
-            query (Message[str]): 需要插入的内容
-        返回:
+        向BES中插入数据
+        
+        Args:
+            segments (Message[str]): 需要插入的内容，包含多个文本段
+            metadata (str, optional): 元数据，默认为空字符串。
+        
+        Returns:
+            无返回值
         """
         segment_vectors = self.embedding.batch(segments)
         segment_vectors = segment_vectors.content
@@ -159,16 +217,19 @@ class BESVectorStoreIndex:
     @classmethod
     def from_segments(cls, segments, cluster_id, user_name, password, embedding=None, **kwargs):
         """
-        根据段落创建一个bes向量索引
-        参数：
-            segments: 切分的文本段落
-            cluster_id: bes集群ID
-            user_name: bes用户名
-            password: bes用户密码
-            embedding: 文本段落embedding工具
-            kwargs: 其他初始化参数
-        返回：
-            bes索引实例
+        根据段落创建一个bes向量索引。
+        
+        Args:
+            segments (list): 切分的文本段落列表。
+            cluster_id (str): bes集群ID。
+            user_name (str): bes用户名。
+            password (str): bes用户密码。
+            embedding (Embedding, optional): 文本段落embedding工具，默认为None，使用默认的Embedding类。
+            **kwargs: 其他初始化参数。
+        
+        Returns:
+            BesVectorIndex: bes索引实例。
+        
         """
         if embedding is None:
             embedding = Embedding()
@@ -183,7 +244,14 @@ class BESVectorStoreIndex:
 
     def delete_all_segments(self):
         """
-        删除索引中的全部内容
+        删除索引中的全部内容。
+        
+        Args:
+            无
+        
+        Returns:
+            无
+        
         """
         query = {
             'query': {
@@ -211,18 +279,18 @@ class BESRetriever(Component):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import appbuilder
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        import appbuilder
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            segments = appbuilder.Message(["文心一言大模型", "百度在线科技有限公司"])
-            vector_index = appbuilder.BESVectorStoreIndex.from_segments(segments, self.cluster_id, self.username,
-                                                                        self.password)
-            query = appbuilder.Message("文心一言")
-            time.sleep(5)
-            retriever = vector_index.as_retriever()
-            res = retriever(query)
+        segments = appbuilder.Message(["文心一言大模型", "百度在线科技有限公司"])
+        vector_index = appbuilder.BESVectorStoreIndex.from_segments(segments, self.cluster_id, self.username,
+                                                                    self.password)
+        query = appbuilder.Message("文心一言")
+        time.sleep(5)
+        retriever = vector_index.as_retriever()
+        res = retriever(query)
 
     """
     name: str = "BaiduElasticSearchRetriever"
@@ -241,11 +309,14 @@ class BESRetriever(Component):
     def run(self, query: Message, top_k: int = 1):
         """
         根据query进行查询
-        参数:
-            query (Message[str]): 需要查询的内容，
-            top_k (bool): 查询结果中匹配度最高的top_k个结果
-        返回:
-            obj (Message[Dict]): 查询到的结果，包含文本和匹配得分。
+        
+        Args:
+            query (Message[str]): 需要查询的内容，以Message对象的形式传递。
+            top_k (int, optional): 查询结果中匹配度最高的top_k个结果。默认为1。
+        
+        Returns:
+            obj (Message[Dict]): 查询到的结果，包含文本、元数据以及匹配得分，以Message对象的形式返回。
+        
         """
         query_embedding = self.embedding(query)
         vector_query = {"vector": query_embedding.content, "k": top_k}

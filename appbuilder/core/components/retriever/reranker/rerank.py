@@ -25,27 +25,33 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace
 
 
 class RerankerArgs(ComponentArguments):
-    """配置"""
+    """
+    配置
+
+    Attributes:
+        text: Union[Message[str], str]
+    """
 
     text: Union[Message[str], str]
 
 
 class Reranker(Component):
-    """ Reranker
+    """ 
+    Reranker
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import os
-            import appbuilder
-            from appbuilder import Message
+        import os
+        import appbuilder
+        from appbuilder import Message
 
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            reranker = appbuilder.Reranker()
-            ranked_1 = reranker("你好", ["他也好", "hello?"])
-            print(ranked_1)
+        reranker = appbuilder.Reranker()
+        ranked_1 = reranker("你好", ["他也好", "hello?"])
+        print(ranked_1)
     """
     name: str = "reranker"
     version: str = "v1"
@@ -121,7 +127,14 @@ class Reranker(Component):
     def run(self, query: Union[Message[str], str],
             texts: Union[Message[List[str]], List[str]]) -> Message[List[dict]]:
         """
-        run
+        运行查询，对给定的文本集合进行批量处理，并返回处理后的结果列表。
+        
+        Args:
+            query (Union[Message[str], str]): 查询条件，可以是字符串或Message对象。
+            texts (Union[Message[List[str]], List[str]]): 待处理的文本集合，可以是字符串列表或包含字符串列表的Message对象。
+        
+        Returns:
+            Message[List[dict]]: 处理后的结果列表，每个元素是一个字典，包含处理后的文本信息。
         """
         _query = query if isinstance(query, str) else query.content
         _texts = texts if isinstance(texts, List) else texts.content

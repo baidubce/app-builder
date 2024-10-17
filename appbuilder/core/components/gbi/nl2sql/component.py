@@ -29,6 +29,11 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 class NL2SqlArgs(ComponentArguments):
     """
     nl2sql 的参数
+
+    Attributes:
+        query: 用户的 query 输入
+        session: gbi session 的历史 列表
+        column_constraint: 列选的限制条件
     """
     query: str = Field(..., description="用户的 query 输入")
     session: List[SessionRecord] = Field(default=list(), description="gbi session 的历史 列表")
@@ -45,6 +50,7 @@ class NL2Sql(Component):
                  prompt_template: str = ""):
         """
         创建 gbi nl2sql 对象
+        
         Args:
             model_name:  支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, ERNIE Speed-AppBuilder
             table_schemas: 表的 schema 列表，例如: ```
@@ -84,18 +90,21 @@ class NL2Sql(Component):
     def run(self,
             message: Message, timeout: float = 60, retry: int = 0) -> Message[NL2SqlResult]:
         """
-        执行 nl2sql
+        执行自然语言转SQL操作。
+        
         Args:
-            message: message.content 是字典包含, key 如下:
-                1. query: 用户问题
-                2. session: gbi session 的历史 列表, 参考 SessionRecord
-                3. column_constraint: 列选约束 参考 ColumnItem 具体定义
-            timeout: 超时时间
-            retry: 重试次数
+            message (Message): 包含用户问题和会话历史的消息对象。
+                - message.content 是一个字典，包含以下关键字：
+                    1. query: 用户问题
+                    2. session: 会话历史列表，参考 SessionRecord
+                    3. column_constraint: 列选约束，参考 ColumnItem 具体定义
+            timeout (float): 超时时间，默认为60秒。
+            retry (int): 重试次数，默认为0次。
+        
         Returns:
-            NL2SqlResult 的 message
+            Message[NL2SqlResult]: 转换结果以Message对象形式返回，其中content属性包含NL2SqlResult对象。
+        
         """
-
         try:
             inputs = self.meta(**message.content)
         except ValidationError as e:
