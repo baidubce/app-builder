@@ -20,8 +20,6 @@ import unittest
 import appbuilder
 import uuid
 
-os.environ['APPBUILDER_TOKEN'] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
-
 TEST_INPUT = {
     "query": appbuilder.Message("这篇文档讲了什么"),
     "instruction": "请根据文档内容回答问题",
@@ -46,7 +44,6 @@ class TestDocumentUnderstandingComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        os.environ['APPBUILDER_TOKEN'] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
         self.du = appbuilder.DocumentUnderstanding()
 
     def test_run_with_stream(self):
@@ -117,6 +114,21 @@ class TestDocumentUnderstandingComponent(unittest.TestCase):
         for result in results:
             self.assertIsNotNone(result)
             print(f'\n[result]\n{result}\n')
+
+    def test_tool_eval(self):
+        '''测试tool_eval方法'''
+        INPUT_JON_ = {
+            "instruction": "请根据文档内容回答问题",
+            "addition_instruction": "请你用一句话简短概括",
+            "uid": str(uuid.uuid4()),
+            "trace_id": str(uuid.uuid4()),
+            "conversation_id": str(uuid.uuid4()),
+        }
+        query = appbuilder.Message("这篇文档讲了什么")
+        results = self.du.tool_eval(query, file_path="治安管理处罚条例.docx", stream=False, **INPUT_JON_)
+        for result in results:
+            print(result)
+
 
 if __name__ == '__main__':
     unittest.main()

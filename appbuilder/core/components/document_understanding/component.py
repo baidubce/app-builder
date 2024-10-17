@@ -19,7 +19,6 @@ import requests
 
 import json
 from typing import Optional
-
 from appbuilder.core.components.document_understanding.base import DocumentUnderstandingArgs
 
 from appbuilder.core.message import Message
@@ -33,6 +32,33 @@ class DocumentUnderstanding(Component):
     name = "document_understanding"
     version = "v1"
     meta = DocumentUnderstandingArgs
+    manifests = [{
+        "name": "document_understanding",
+        "description": "该工具支持对图片以及文档内容进行理解，并基于图片以及文档内容对用户的提问进行回答，包括但不限于文档内容问答、"
+                       "总结摘要、内容分析。",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "用户输入的query"
+                },
+                "file_path": {
+                    "type": "string",
+                    "description": "用户上传的文档的文件路径"
+                },
+                "instruction": {
+                    "type": "string",
+                    "description": "用户指令"
+                },
+                "addition_instruction": {
+                    "type": "string",
+                    "description": "用户增强指令"
+                },
+            },
+            "required": ["query", "file_path", "instruction", "addition_instruction"]
+        }
+    }]
     def __init__(
             self,
             secret_key: Optional[str] = None,
@@ -57,7 +83,6 @@ class DocumentUnderstanding(Component):
                          secret_key=secret_key,
                          gateway=gateway,
                          lazy_certification=lazy_certification)
-        self.url = "http://copilot-test.now.baidu-int.com/dte/api/v2/component/tool_eval"
         self.instruction = instruction,
         self.addition_instruction = addition_instruction
         self.file_path = file_path
@@ -91,7 +116,8 @@ class DocumentUnderstanding(Component):
             uid=None,
             trace_id=None,
             conversation_id=None,
-            stream=False):
+            stream=False,
+            timeout=None):
         '''
         run方法，用于执行长文档理解任务
         Args:
@@ -130,15 +156,14 @@ class DocumentUnderstanding(Component):
                 "query": message.content
             }
         })
-        headers = {
-            'content-type': 'application/json',
-            'user-agent': 'vscode-restclient',
-            'x-appbuilder-authorization': f"Bearer {os.getenv('APPBUILDER_TOKEN', '')}",
-            'x-appbuilder-from': 'sdk'
-        }
-
-        # try:
-        response = requests.request("POST", self.url, headers=headers, data=payload, stream=True)
+        headers = self.http_client.auth_header()
+        headers['content-type'] = 'application/json'
+        headers['user-agent'] = 'vscode-restclient'
+        headers['x-appbuilder-from'] = 'sdk'
+        headers['x-appbuilder-authorization'] = f"Bearer {os.getenv('APPBUILDER_TOKEN', '')}"
+        url = "http://copilot-test.now.baidu-int.com/dte/api/v2/component/tool_eval"
+        response = self.http_client.session.post(url, headers=headers, data=payload, timeout=timeout, stream=stream)
+        self.http_client.check_response_header(response)
         if response.status_code == 200:
             if stream:
                 # 处理流式响应，逐行生成数据
@@ -154,3 +179,26 @@ class DocumentUnderstanding(Component):
                     raise Exception(f"服务请求失败: {result['message']}")
         else:
             response.raise_for_status()
+
+    def tool_eval(self,
+                  message: Message,
+                  file_path: str,
+                  stream: bool = False,
+                  **kwargs):
+        """用于function call
+        """
+        instruction = kwargs.get("instruction", "")
+        addition_instruction = kwargs.get("addition_instruction", "")
+        uid = kwargs.get("uid", "")
+        trace_id = kwargs.get("trace_id", "")
+        conversation_id = kwargs.get("conversation_id", "")
+
+        result = self.run(message,
+                          file_path,
+                          instruction=instruction,
+                          addition_instruction=addition_instruction,
+                          uid=uid,
+                          trace_id=trace_id,
+                          conversation_id=conversation_id,
+                          stream=stream)
+        return result
