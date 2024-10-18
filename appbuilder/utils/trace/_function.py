@@ -768,7 +768,8 @@ def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
                 new_span.set_data("Span-kind",'tool')
                 new_span.set_data("output-value", "{}".format(json.dumps(item, ensure_ascii=False)))
                 if isinstance(item, dict):
-                    run_list.append(item.get('text', None))
+                    text = item.get('text', None)
+                    run_list.append(text)
                 else:
                     run_list.append(str(item))
             yield item
