@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-__version__ = '0.9.4'
+__version__ = '0.9.5'
 
 import os
 import sys
