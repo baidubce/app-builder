@@ -202,10 +202,7 @@ def _client_trace_generator(generator, tracer, parent_context):
                 if has_reference:
                     new_span.set_attribute("input.value", 'Context(上下文) For RAG:\n{}'.format(context_message_str))
 
-                try:
-                    new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
-                except Exception as e:
-                    raise AppbuilderTraceException(str(e))
+                new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
 
                 result_str += str(message.answer)
 
@@ -738,10 +735,7 @@ def _components_stream_run_trace_with_opentelemetry(tracer, func, *args, **kwarg
                 if isinstance(item, dict):
                     run_list.append(item.get('text', None))
                 else:
-                    try:
-                        run_list.append(str(item))
-                    except Exception as e:
-                        raise AppbuilderTraceException(str(e))
+                    run_list.append(str(item))
             yield item
         end_time = time.time()  
         _time(start_time = start_time,end_time = end_time,span = span)
@@ -776,10 +770,7 @@ def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
                 if isinstance(item, dict):
                     run_list.append(item.get('text', None))
                 else:
-                    try:
-                        run_list.append(str(item))
-                    except Exception as e:
-                        raise AppbuilderTraceException(str(e))
+                    run_list.append(str(item))
             yield item
         result_str = ''.join(str(res) for res in run_list)
         span.set_data("output-value",result_str)
