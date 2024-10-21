@@ -1,0 +1,159 @@
+# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import os
+import unittest
+import appbuilder
+
+from appbuilder.utils.trace.tracer_wrapper import session_post, client_run_trace, assistant_run_trace, assistent_stream_run_trace, components_run_stream_trace, list_trace
+
+class TestException(Exception):
+    def __init__(self):
+        # 调用基类的构造方法，但不允许传递任何自定义消息
+        super().__init__("这是一个预定义的错误消息，不能通过构造函数自定义。")
+
+@session_post
+def mock_post_01():
+    raise Exception("mock exception")
+
+@session_post
+def mock_post_02():
+    raise TestException("测试异常")
+
+@client_run_trace
+def mock_client_run_trace_01():
+    raise Exception("mock exception")
+
+@client_run_trace
+def mock_client_run_trace_02():
+    raise TestException("测试异常")
+
+@assistant_run_trace
+def mock_assistant_run_trace_01():
+    raise Exception("mock exception")
+
+@assistant_run_trace
+def mock_assistant_run_trace_02():
+    raise TestException("测试异常")
+
+@assistent_stream_run_trace
+def mock_assistent_stream_run_trace_01():
+    raise Exception("mock exception")
+
+@assistent_stream_run_trace
+def mock_assistent_stream_run_trace_02():
+    raise TestException("测试异常")
+
+@components_run_stream_trace
+def mock_components_run_stream_trace_01():
+    raise Exception("mock exception")
+
+@components_run_stream_trace
+def mock_components_run_stream_trace_02():
+    raise TestException("测试异常")
+
+@list_trace
+def mock_list_trace_01():
+    raise Exception("mock exception")
+
+@list_trace
+def mock_list_trace_02():
+    raise TestException("测试异常")
+
+
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+class TestTraceSkipRaiseError(unittest.TestCase):
+    def setUp(self):
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "True"
+
+    def tearDown(self):
+        del os.environ["APPBUILDER_TRACE_DEBUG"]
+
+    def test_session_post(self):
+        # test_session_post APPBUILDER_TRACE_DEBUG = true
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
+        with self.assertRaises(Exception):
+            mock_post_01()
+
+        # test_session_post APPBUILDER_TRACE_DEBUG = false
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
+        with self.assertRaises(Exception):
+            mock_post_01()
+
+        with self.assertRaises(TypeError):
+            mock_post_02()
+
+    def test_client_run_trace(self):
+        # test_client_run_trace APPBUILDER_TRACE_DEBUG = true
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
+        with self.assertRaises(Exception):
+            mock_client_run_trace_01()
+
+        # test_session_post APPBUILDER_TRACE_DEBUG = false
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
+        with self.assertRaises(TypeError):
+            mock_client_run_trace_02()
+
+    def test_assistant_run_trace(self):
+        # test_assistant_run_trace APPBUILDER_TRACE_DEBUG = true
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
+        with self.assertRaises(Exception):
+            mock_assistant_run_trace_01()
+
+        # test_session_post APPBUILDER_TRACE_DEBUG = false
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
+        with self.assertRaises(TypeError):
+            mock_assistant_run_trace_02()
+
+    def test_assistent_stream_run_trace(self):
+        # test_assistent_stream_run_trace APPBUILDER_TRACE_DEBUG = true
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
+        with self.assertRaises(Exception):
+            mock_assistent_stream_run_trace_01()
+
+        # test_session_post APPBUILDER_TRACE_DEBUG = false
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
+        with self.assertRaises(Exception):
+            mock_assistent_stream_run_trace_01()
+
+        with self.assertRaises(TypeError):
+            mock_assistent_stream_run_trace_02()
+
+    def test_components_run_stream_trace(self):
+        # test_components_run_stream_trace APPBUILDER_TRACE_DEBUG = true
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
+        with self.assertRaises(Exception):
+            mock_components_run_stream_trace_01()
+
+        # test_session_post APPBUILDER_TRACE_DEBUG = false
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
+        with self.assertRaises(Exception):
+            mock_components_run_stream_trace_01()
+
+        with self.assertRaises(TypeError):
+            mock_components_run_stream_trace_02()
+
+    def test_list_trace(self):
+        # test_list_trace APPBUILDER_TRACE_DEBUG = true
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
+        with self.assertRaises(Exception):
+            mock_list_trace_01()
+
+        # test_session_post APPBUILDER_TRACE_DEBUG = false
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
+        with self.assertRaises(TypeError):
+            mock_list_trace_02()
+
+
+if __name__ == '__main__':
+    unittest.main()
