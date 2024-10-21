@@ -50,15 +50,24 @@ def list_trace_func(func, *args, **kwargs):
 
 def session_post(func):
     """
-    对给定的函数添加 session post 请求装饰器
+    将指定的函数装饰为使用 session_post_func 发送 POST 请求的函数。
     
     Args:
-        func (callable): 需要被装饰的函数
+        func (Callable): 被装饰的函数。
     
     Returns:
-        callable: 返回一个装饰器函数，该函数在被调用时会使用 session post 请求执行原始函数
+        Callable: 返回一个新的函数，该函数会在被调用时通过 session_post_func 发送 POST 请求。
     
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
+    
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -85,13 +94,23 @@ def session_post(func):
 
 def client_run_trace(func):
     """
-    为一个函数添加追踪功能，记录函数调用的开始和结束时间，以及函数的输入参数和返回结果。
+    对传入的函数进行装饰，添加客户端运行跟踪功能。
     
     Args:
-        func (callable): 需要被追踪的函数。
+        func (callable): 需要被装饰的函数。
     
     Returns:
-        callable: 封装后的函数，该函数在被调用时会执行原函数，并添加追踪功能。
+        callable: 返回一个包装后的函数，该函数在执行时会调用 client_run_trace_func 函数，
+                  并传入原始函数及其参数。
+    
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
+    
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     
     """
     @wraps(func)
@@ -128,6 +147,14 @@ def client_tool_trace(func):
     Returns:
         callable: 返回一个装饰器函数，该函数会调用原函数并记录相关信息。
     
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
+    
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -164,6 +191,14 @@ def assistent_tool_trace(func):
         Callable[..., Any]: 返回一个函数，该函数会在调用原函数前后记录一些信息，
         然后将原函数的返回值返回。
     
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
+    
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -198,7 +233,15 @@ def assistant_run_trace(func):
     
     Returns:
         Callable: 经过装饰后，带有日志跟踪功能的函数。
+
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
     
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -232,7 +275,15 @@ def assistent_stream_run_trace(func):
     
     Returns:
         Callable: 包装后的函数对象，调用时将执行辅助流执行追踪，并返回目标函数的执行结果。
+
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
     
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -267,7 +318,15 @@ def assistent_stream_run_with_handler_trace(func):
     Returns:
         Callable: 返回一个包装后的函数，该函数在调用时会执行assistant_stream_run_with_handler_trace_func函数，
                    并将原始函数func及其参数传递给它。
+
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
     
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -301,7 +360,15 @@ def components_run_trace(func):
     
     Returns:
         Callable[..., Any]: 装饰后的函数，当被调用时，会调用 components_run_trace_func 并传入原始函数和参数。
+
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
     
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -335,7 +402,15 @@ def components_run_stream_trace(func):
     
     Returns:
         callable: 返回一个装饰器函数，当被装饰的函数被调用时，会执行流追踪功能。
+
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
     
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -366,8 +441,18 @@ def list_trace(func):
     
     Args:
         func (Callable[..., Any]): 需要被装饰的函数，接受任意数量和类型的参数。
+        
     Returns:
         Callable[..., Any]: 返回一个装饰器函数，该函数在被调用时会执行原始函数并记录相关信息。
+    
+    Raises:
+        Exception: 如果在发送 POST 请求时发生异常，并且环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则直接抛出异常；
+                  否则，尝试捕获异常并生成自定义的异常信息后抛出。
+    
+    Note:
+        如果环境变量 APPBUILDER_TRACE_DEBUG 被设置为 "true"，则在发生异常时将直接抛出原始异常。
+        否则，会尝试过滤掉与 "appbuilder/utils/trace" 相关的堆栈跟踪，并生成自定义的异常信息后抛出。
+        如果在生成自定义异常信息的过程中发生异常，则会直接抛出原始异常。
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
