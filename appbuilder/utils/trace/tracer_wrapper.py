@@ -76,18 +76,18 @@ def session_post(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
                 
     return wrapper 
 
@@ -121,18 +121,18 @@ def client_run_trace(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
 
     return wrapper 
 
@@ -164,18 +164,18 @@ def client_tool_trace(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
 
     return wrapper 
 
@@ -208,18 +208,18 @@ def assistent_tool_trace(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
     
     return wrapper
 
@@ -251,18 +251,18 @@ def assistant_run_trace(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
     
     return wrapper 
 
@@ -293,18 +293,18 @@ def assistent_stream_run_trace(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
     
     return wrapper 
 
@@ -336,18 +336,18 @@ def assistent_stream_run_with_handler_trace(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
     
     return wrapper 
 
@@ -378,18 +378,18 @@ def components_run_trace(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
                 
     return wrapper
 
@@ -420,18 +420,19 @@ def components_run_stream_trace(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
+  
     
     return wrapper
 
@@ -441,7 +442,7 @@ def list_trace(func):
     
     Args:
         func (Callable[..., Any]): 需要被装饰的函数，接受任意数量和类型的参数。
-        
+
     Returns:
         Callable[..., Any]: 返回一个装饰器函数，该函数在被调用时会执行原始函数并记录相关信息。
     
@@ -462,18 +463,18 @@ def list_trace(func):
             if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
                 raise
             else:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                tb = traceback.extract_tb(exc_traceback)
+                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                formatted_lines = traceback.format_list(filtered_tb)
+                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                custom_traceback = ''.join(formatted_lines)
+                exception_type = type(e)
                 try:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    tb = traceback.extract_tb(exc_traceback)
-                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                    formatted_lines = traceback.format_list(filtered_tb)
-                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                    custom_traceback = ''.join(formatted_lines)
-                    exception_type = type(e)
-                    # 在这里尝试使用自定义的异常信息，如果失败，直接抛出原始异常
-                    raise exception_type("\n"+custom_traceback) from None
+                    exception_type("\n"+custom_traceback)
                 except Exception:
                     raise e
+                raise exception_type("\n"+custom_traceback) from None
     
     return wrapper
 
