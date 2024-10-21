@@ -15,12 +15,21 @@ import os
 import unittest
 import appbuilder
 
-from appbuilder.utils.trace.tracer_wrapper import session_post, client_run_trace, assistant_run_trace, assistent_stream_run_trace, components_run_stream_trace, list_trace
+from appbuilder.utils.trace.tracer_wrapper import (
+session_post, 
+client_run_trace, 
+assistant_run_trace,
+assistent_stream_run_trace,
+components_run_stream_trace, 
+list_trace, 
+assistent_stream_run_with_handler_trace,
+)
 
 class TestException(Exception):
-    def __init__(self):
-        # 调用基类的构造方法，但不允许传递任何自定义消息
-        super().__init__("这是一个预定义的错误消息，不能通过构造函数自定义。")
+    def __init__(self, message):
+        if isinstance(message, str):
+            raise ValueError("传入了字符串，这是不被允许的。")
+        super().__init__(message)
 
 @session_post
 def mock_post_01():
@@ -70,6 +79,13 @@ def mock_list_trace_01():
 def mock_list_trace_02():
     raise TestException("测试异常")
 
+@assistent_stream_run_with_handler_trace
+def mock_assistent_stream_run_with_handler_trace_01():
+    raise Exception("mock exception")
+
+@assistent_stream_run_with_handler_trace
+def mock_assistent_stream_run_with_handler_trace_02():
+    raise TestException("测试异常")
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestTraceSkipRaiseError(unittest.TestCase):
@@ -90,7 +106,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(Exception):
             mock_post_01()
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             mock_post_02()
 
     def test_client_run_trace(self):
@@ -101,7 +117,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
 
         # test_session_post APPBUILDER_TRACE_DEBUG = false
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             mock_client_run_trace_02()
 
     def test_assistant_run_trace(self):
@@ -112,7 +128,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
 
         # test_session_post APPBUILDER_TRACE_DEBUG = false
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             mock_assistant_run_trace_02()
 
     def test_assistent_stream_run_trace(self):
@@ -126,7 +142,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(Exception):
             mock_assistent_stream_run_trace_01()
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             mock_assistent_stream_run_trace_02()
 
     def test_components_run_stream_trace(self):
@@ -140,7 +156,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(Exception):
             mock_components_run_stream_trace_01()
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             mock_components_run_stream_trace_02()
 
     def test_list_trace(self):
@@ -151,8 +167,22 @@ class TestTraceSkipRaiseError(unittest.TestCase):
 
         # test_session_post APPBUILDER_TRACE_DEBUG = false
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             mock_list_trace_02()
+
+    def test_assistent_stream_run_with_handler_trace(self):
+        # test_assistent_stream_run_with_handler_trace APPBUILDER_TRACE_DEBUG = true
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
+        with self.assertRaises(Exception):
+            mock_assistent_stream_run_with_handler_trace_01()
+
+        # test_session_post APPBUILDER_TRACE_DEBUG = false
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
+        with self.assertRaises(Exception):
+            mock_assistent_stream_run_with_handler_trace_01()
+
+        with self.assertRaises(ValueError):
+            mock_assistent_stream_run_with_handler_trace_02()
 
 
 if __name__ == '__main__':
