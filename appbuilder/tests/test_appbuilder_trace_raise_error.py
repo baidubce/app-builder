@@ -19,7 +19,7 @@ from appbuilder import AppbuilderTraceException
 from appbuilder.utils.trace._function import _input,_client_trace_generator,_assistant_stream_run_with_handler_output
 
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppbuilderTraceRaiseError(unittest.TestCase):
     def setUp(self):
         tracer_provider = trace.get_tracer_provider()
