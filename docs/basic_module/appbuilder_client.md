@@ -60,23 +60,29 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
 
 #### 方法参数
 
-| 参数名称        | 参数类型         | 是否必须 | 描述                                                         | 示例值            |
-| --------------- | ---------------- | -------- | ------------------------------------------------------------ | ----------------- |
-| conversation_id | String           | 是       | 会话ID                                                       |                   |
-| query           | String           | 否       | query问题内容                                                | "今天天气怎么样?" |
-| file_ids        | list[String]     | 否       | 对话可引用的文档ID                                           |                   |
-| stream          | Bool             | 否       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 | False             |
-| tools           | List[Tool]       | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                   |
-| tools[0]        | Tool             | 否       | 工具配置                                                     |                   |
-| +type           | String           | 否       | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 |                   |
-| +function       | Function         | 否       | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写 |                   |
-| ++name          | String           | 否       | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。 |                   |
-| ++description   | String           | 否       | 工具描述                                                     |                   |
-| ++parameters    | Dict             | 否       | 工具参数, json_schema格式                                    |                   |
-| tool_outputs    | List[ToolOutput] | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                   |
-| tool_outputs[0] | ToolOutput       | 否       | 工具执行结果                                                 |                   |
-| +tool_call_id   | String           | 否       | 工具调用ID                                                   |                   |
-| +output         | String           | 否       | 工具输出                                                     |                   |
+| 参数名称        | 参数类型           | 是否必须 | 描述                                                         | 示例值            |
+| --------------- | ------------------ | -------- | ------------------------------------------------------------ | ----------------- |
+| conversation_id | String             | 是       | 会话ID                                                       |                   |
+| query           | String             | 否       | query问题内容                                                | "今天天气怎么样?" |
+| file_ids        | list[String]       | 否       | 对话可引用的文档ID                                           |                   |
+| stream          | Bool               | 否       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 | False             |
+| end_user_id     | String             | 否       | 终端用户ID，限制6 - 64字符                                   |                   |
+| tools           | List[Tool]         | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                   |
+| tools[0]        | Tool               | 否       | 工具配置                                                     |                   |
+| +type           | String             | 否       | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 |                   |
+| +function       | Function           | 否       | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写 |                   |
+| ++name          | String             | 否       | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。 |                   |
+| ++description   | String             | 否       | 工具描述                                                     |                   |
+| ++parameters    | Dict               | 否       | 工具参数, json_schema格式                                    |                   |
+| tool_outputs    | List[ToolOutput]   | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                   |
+| tool_outputs[0] | ToolOutput         | 否       | 工具执行结果                                                 |                   |
+| +tool_call_id   | String             | 否       | 工具调用ID                                                   |                   |
+| +output         | String             | 否       | 工具输出                                                     |                   |
+| tool_choice     | ToolChoice         | 否       | 控制大模型使用组件的方式，仅对自主规划Agent生效。            |                   |
+| +type           | String             | 否       | auto/function，auto表示由LLM自动判断调什么组件；function表示由用户指定调用哪个组件。 |                   |
+| +function       | ToolChoiceFunction | 否       | 组件对象，包括组件的英文名称和入参                           |                   |
+| ++name          | String             | 否       | 组件的英文名称（唯一标识）                                   |                   |
+| ++input         | String             | 否       | 组件入参，当组件没有入参时填入空对象{}                       |                   |
 
 #### Run方法非流式返回值
 
@@ -273,6 +279,41 @@ msg_2 = client.run(
 print(msg_2.model_dump_json(indent=4))
 ```
 
+#### Run方法带ToolChoice使用示例：
+
+* 注意：当前功能为试运行阶段，可能存在如下问题，如使用过程遇到其他问题，欢迎提issue或微信群讨论。
+  * 需开启"组件/知识库结论可直接作为回复"
+  * 组件名称不是界面上的原始名字，而是个人空间组件列表中的英文名
+  * 自定义组件的参数不能使用系统参数，可以使用用户添加的参数
+  * 部分官方组件使用的参数与界面上的参数不一致
+
+```python
+import appbuilder
+import os
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+# 设置环境变量
+os.environ["APPBUILDER_TOKEN"] = "..."
+
+app_id = "..."  # 已发布AppBuilder应用的ID
+# 初始化智能体
+client = appbuilder.AppBuilderClient(app_id)
+# 创建会话
+conversation_id = client.create_conversation()
+
+# 注意使用创建应用中用到的组件。名称、参数均以实际使用的组件为准。
+answer = app_builder_client.run(
+    conversation_id,
+    "北京今天的天气",
+    stream=False,
+    end_user_id="user_id_toolchoice",
+    tool_choice={
+        "type": "function",
+        "function": {"name": "WeatherQuery", "input": {"city": "北京"}},
+    },
+)
+```
+
 ## Java基本用法
 
 ### ```new AppBuilderClient(appId)```
@@ -319,6 +360,11 @@ print(msg_2.model_dump_json(indent=4))
 | tool_outputs[0] | ToolOutput | 否 | 工具执行结果 | |
 | +tool_call_id | String | 否 | 工具调用ID | |
 | +output | String | 否 | 工具输出 | |
+| tool_choice | ToolChoice | 否 | 控制大模型使用组件的方式，仅对自主规划Agent生效。 | |
+| +type | String | 否 | auto/function，auto表示由LLM自动判断调什么组件；function表示由用户指定调用哪个组件。 | |
+| +function | ToolChoiceFunction | 否 | 组件对象，包括组件的英文名称和入参 | |
+| ++name | String | 否 | 组件的英文名称（唯一标识） | |
+| ++input | String | 否 | 组件入参，当组件没有入参时填入空对象{} | |
 
 #### Run方法出参
 | 参数名称                 | 参数类型         | 描述                   | 示例值 |
@@ -582,7 +628,6 @@ class AppBuilderClientDemo {
         request.setTools(new AppBuilderClientRunRequest.Tool[] {tool});
 
         AppBuilderClientIterator itor = builder.run(request);
-        assertTrue(itor.hasNext());
         String ToolCallID = "";
         while (itor.hasNext()) {
             AppBuilderClientResult result = itor.next();
@@ -598,9 +643,70 @@ class AppBuilderClientDemo {
                 new AppBuilderClientRunRequest.ToolOutput(ToolCallID, "北京今天35度");
         request2.setToolOutputs(new AppBuilderClientRunRequest.ToolOutput[] {output});
         AppBuilderClientIterator itor2 = builder.run(request2);
-        assertTrue(itor2.hasNext());
         while (itor2.hasNext()) {
             AppBuilderClientResult result = itor2.next();
+            System.out.println(result);
+        }
+    }
+}
+
+```
+
+#### Run方法带Toolchoice使用示例
+
+* 注意：当前功能为试运行阶段，可能存在如下问题，如使用过程遇到其他问题，欢迎提issue或微信群讨论。
+
+  * 需开启"组件/知识库结论可直接作为回复"
+
+  * 组件名称不是界面上的原始名字，而是个人空间组件列表中的英文名
+
+  * 自定义组件的参数不能使用系统参数，可以使用用户添加的参数
+
+  * 部分官方组件使用的参数与界面上的参数不一致
+
+```java
+package org.example;
+
+import java.io.IOException;
+import java.util.*;
+
+import com.google.gson.annotations.SerializedName;
+
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.Event;
+import com.baidubce.appbuilder.base.utils.json.JsonUtils;
+
+class AppBuilderClientDemo {
+
+    public static void main(String[] args) throws IOException, AppBuilderServerException {
+        System.setProperty("APPBUILDER_TOKEN", "请设置正确的应用密钥");
+        String appId = "请设置正确的应用ID";
+        AppBuilderClient builder = new AppBuilderClient(appId);
+        String conversationId = builder.createConversation();
+
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
+        request.setAppId(appId);
+        request.setConversationID(conversationId);
+        request.setQuery("北京今天的天气");
+        request.setStream(false);
+        request.setEndUserId("java_toolchoice_demo");
+      
+        // 注意使用创建应用中用到的组件。名称、参数均以实际使用的组件为准。
+        Map<String, Object> input = new HashMap<>();
+        input.put("city", "北京");
+        AppBuilderClientRunRequest.ToolChoice.Function func = new AppBuilderClientRunRequest.ToolChoice.Function(
+                "WeatherQuery", input);
+      
+        AppBuilderClientRunRequest.ToolChoice choice = new AppBuilderClientRunRequest.ToolChoice("function", func);
+        request.setToolChoice(choice);
+
+        AppBuilderClientIterator itor = builder.run(request);
+        while (itor.hasNext()) {
+            AppBuilderClientResult result = itor.next();
             System.out.println(result);
         }
     }
@@ -748,8 +854,9 @@ func main() {
 | AppID          | string     | 是       | 应用ID，线上Agent应用的ID                                    |                      |
 | Tools          | []Tool     | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                      |
 | ToolOuptus     | []ToolOupt | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                      |
+| ToolChoice     | ToolChoice | 否       | 控制大模型使用组件的方式，仅对自主规划Agent生效。            |                      |
 
-`Tool`、`ToolOutput`定义如下：
+`Tool`、`ToolOutput`、`ToolChoice`定义如下：
 
 ```go
 type Tool struct {
@@ -766,6 +873,16 @@ type Function struct {
 type ToolOutput struct {
 	ToolCallID string `json:"tool_call_id" description:"工具调用ID"`
 	Output     string `json:"output" description:"工具输出"`
+}
+
+type ToolChoice struct {
+	Type     string             `json:"type"`
+	Function ToolChoiceFunction `json:"function"`
+}
+
+type ToolChoiceFunction struct {
+	Name  string                 `json:"name"`
+	Input map[string]interface{} `json:"input"`
 }
 ```
 
@@ -791,7 +908,7 @@ type ToolOutput struct {
 | ++Detail      | interface{} | 事件输出详情         | 代码解释器、文生图、工具组件、RAG等的详细输出内容            |
 | ++Usage       | Usage       | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K') |
 
-#### 示例代码
+#### ToolCall示例代码
 
 ```go
 package main
@@ -903,6 +1020,88 @@ func main() {
 
 	fmt.Println("----------------answer-------------------")
 	fmt.Println(totalAnswer)
+}
+```
+
+#### ToolChoice示例代码
+
+* 注意：当前功能为试运行阶段，可能存在如下问题，如使用过程遇到其他问题，欢迎提issue或微信群讨论。
+
+  * 需开启"组件/知识库结论可直接作为回复"
+
+  * 组件名称不是界面上的原始名字，而是个人空间组件列表中的英文名
+  
+  * 自定义组件的参数不能使用系统参数，可以使用用户添加的参数
+
+  * 部分官方组件使用的参数与界面上的参数不一致
+
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"io"
+	"os"
+
+	"github.com/baidubce/app-builder/go/appbuilder"
+)
+
+func main() {
+	// 设置APPBUILDER_TOKEN、GATEWAY_URL_V2环境变量
+	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
+	// 默认可不填，默认值是 https://qianfan.baidubce.com
+	os.Setenv("GATEWAY_URL_V2", "")
+	config, err := appbuilder.NewSDKConfig("", "")
+	if err != nil {
+		fmt.Println("new config failed: ", err)
+		return
+	}
+	// 初始化实例
+	appID := "请填写正确的应用ID"
+	builder, err := appbuilder.NewAppBuilderClient(appID, config)
+	if err != nil {
+		fmt.Println("new agent builder failed: ", err)
+		return
+	}
+	// 创建对话ID
+	conversationID, err := builder.CreateConversation()
+	if err != nil {
+		fmt.Println("create conversation failed: ", err)
+		return
+	}
+
+    // 注意使用创建应用中用到的组件。名称、参数均以实际使用的组件为准。
+	input := make(map[string]any)
+	input["city"] = "北京"
+	end_user_id := "go_toolchoice_demo"
+	i, err := client.RunWithToolCall(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "",
+		EndUserID:      &end_user_id,
+		Stream:         false,
+		ToolChoice: &ToolChoice{
+			Type: "function",
+			Function: ToolChoiceFunction{
+				Name:  "WeatherQuery",
+				Input: input,
+			},
+		},
+	})
+  
+	if err != nil {
+		fmt.Println("run failed: ", err)
+		return
+	}
+
+    for answer, err := i.Next(); err == nil; answer, err = i.Next() {
+		for _, ev := range answer.Events {
+			evJSON, _ := json.Marshal(ev)
+			fmt.Println(string(evJSON))
+		}
+	}
 }
 ```
 
