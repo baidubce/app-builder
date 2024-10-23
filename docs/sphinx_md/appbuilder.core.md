@@ -484,7 +484,7 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 
 ## appbuilder.core.message module
 
-### *class* appbuilder.core.message.Message(content: \_T | None = None, \*, name: str | None = 'msg', mtype: str | None = 'dict', id: str | None = 'fdeb8342-8cfe-48c3-9784-00ca30d768f3', \*\*data)
+### *class* appbuilder.core.message.Message(content: \_T | None = None, \*, name: str | None = 'msg', mtype: str | None = 'dict', id: str | None = '68555143-38cb-4313-b672-b15e84bd4250', \*\*data)
 
 基类：`BaseModel`, `Generic`[`_T`]
 
@@ -500,7 +500,7 @@ A dictionary of computed field names and their corresponding ComputedFieldInfo o
 
 Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
 
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'content': FieldInfo(annotation=Union[~_T, NoneType], required=False, default={}), 'id': FieldInfo(annotation=Union[str, NoneType], required=False, default='fdeb8342-8cfe-48c3-9784-00ca30d768f3'), 'mtype': FieldInfo(annotation=Union[str, NoneType], required=False, default='dict'), 'name': FieldInfo(annotation=Union[str, NoneType], required=False, default='msg')}*
+#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'content': FieldInfo(annotation=Union[~_T, NoneType], required=False, default={}), 'id': FieldInfo(annotation=Union[str, NoneType], required=False, default='68555143-38cb-4313-b672-b15e84bd4250'), 'mtype': FieldInfo(annotation=Union[str, NoneType], required=False, default='dict'), 'name': FieldInfo(annotation=Union[str, NoneType], required=False, default='msg')}*
 
 Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].

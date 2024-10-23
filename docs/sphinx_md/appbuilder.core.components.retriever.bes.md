@@ -44,3 +44,104 @@ res = retriever(query)
   obj ([Message](appbuilder.core.md#appbuilder.core.message.Message)[Dict])
 
 #### tool_desc *: Dict[str, Any]* *= {'description': 'a retriever based on Baidu ElasticSearch'}*
+
+### *class* appbuilder.core.components.retriever.bes.bes_retriever.BESVectorStoreIndex(cluster_id, user_name, password, embedding=None, index_name=None, index_type='hnsw', prefix='/rpc/2.0/cloud_hub')
+
+基类：`object`
+
+BES向量存储检索工具
+
+#### add_segments(segments: [Message](appbuilder.core.md#appbuilder.core.message.Message), metadata='')
+
+向BES中插入数据
+
+* **参数:**
+  * **segments** ([*Message*](appbuilder.core.md#appbuilder.core.message.Message) *[**str* *]*) – 需要插入的内容，包含多个文本段
+  * **metadata** (*str* *,* *optional*) – 元数据，默认为空字符串。
+* **返回:**
+  无返回值
+
+#### as_retriever()
+
+将当前对象转化为retriever。
+
+* **参数:**
+  **无**
+* **返回:**
+  转化后的retriever对象
+* **返回类型:**
+  [BESRetriever](#appbuilder.core.components.retriever.bes.bes_retriever.BESRetriever)
+
+#### base_es_url *: str* *= '/v1/bce/bes/cluster/'*
+
+#### *static* create_index_mappings(index_type, vector_dims)
+
+创建索引的mapping
+
+* **参数:**
+  * **index_type** (*str*) – 索引类型，如”hnsw”
+  * **vector_dims** (*int*) – 向量的维度
+* **返回:**
+  索引的mapping配置
+* **返回类型:**
+  dict
+
+#### delete_all_segments()
+
+删除索引中的全部内容。
+
+* **参数:**
+  **无**
+* **返回:**
+  无
+
+#### *property* es
+
+获取Elasticsearch客户端实例。
+
+* **参数:**
+  **无**
+* **返回:**
+  Elasticsearch客户端实例。
+
+#### *classmethod* from_segments(segments, cluster_id, user_name, password, embedding=None, \*\*kwargs)
+
+根据段落创建一个bes向量索引。
+
+* **参数:**
+  * **segments** (*list*) – 切分的文本段落列表。
+  * **cluster_id** (*str*) – bes集群ID。
+  * **user_name** (*str*) – bes用户名。
+  * **password** (*str*) – bes用户密码。
+  * **embedding** ([*Embedding*](appbuilder.core.components.embeddings.md#appbuilder.core.components.embeddings.component.Embedding) *,* *optional*) – 文本段落embedding工具，默认为None，使用默认的Embedding类。
+  * **\*\*kwargs** – 其他初始化参数。
+* **返回:**
+  bes索引实例。
+* **返回类型:**
+  BesVectorIndex
+
+#### *static* generate_id(length=16)
+
+生成随机的ID。
+
+* **参数:**
+  **length** (*int* *,* *optional*) – 生成ID的长度，默认为16。
+* **返回:**
+  生成的随机ID。
+* **返回类型:**
+  str
+
+#### get_all_segments()
+
+获取索引中的全部内容
+
+#### *property* helpers
+
+获取帮助器实例。
+
+* **参数:**
+  **无**
+* **返回:**
+  帮助器实例。
+* **返回类型:**
+  \_helpers (对象)
