@@ -28,10 +28,8 @@ list_trace,
 )
 
 class TestException(Exception):
-    def __init__(self, message):
-        if isinstance(message, str):
-            raise ValueError("传入了字符串，这是不被允许的。")
-        super().__init__(message)
+    def __init__(self):
+        pass
 
 @session_post
 def mock_post_01():
@@ -39,7 +37,7 @@ def mock_post_01():
 
 @session_post
 def mock_post_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 @client_run_trace
 def mock_client_run_trace_01():
@@ -47,7 +45,7 @@ def mock_client_run_trace_01():
 
 @client_run_trace
 def mock_client_run_trace_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 @client_tool_trace
 def mock_client_tool_trace_01():
@@ -55,7 +53,7 @@ def mock_client_tool_trace_01():
 
 @client_tool_trace
 def mock_client_tool_trace_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 @assistent_tool_trace
 def mock_assistent_tool_trace_01():
@@ -63,7 +61,7 @@ def mock_assistent_tool_trace_01():
 
 @assistent_tool_trace
 def mock_assistent_tool_trace_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 @assistant_run_trace
 def mock_assistant_run_trace_01():
@@ -71,7 +69,7 @@ def mock_assistant_run_trace_01():
 
 @assistant_run_trace
 def mock_assistant_run_trace_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 @assistent_stream_run_trace
 def mock_assistent_stream_run_trace_01():
@@ -79,7 +77,7 @@ def mock_assistent_stream_run_trace_01():
 
 @assistent_stream_run_trace
 def mock_assistent_stream_run_trace_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 @assistent_stream_run_with_handler_trace
 def mock_assistent_stream_run_with_handler_trace_01():
@@ -87,7 +85,7 @@ def mock_assistent_stream_run_with_handler_trace_01():
 
 @assistent_stream_run_with_handler_trace
 def mock_assistent_stream_run_with_handler_trace_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 @components_run_trace
 def mock_components_run_trace_01():
@@ -95,7 +93,7 @@ def mock_components_run_trace_01():
 
 @components_run_trace
 def mock_components_run_trace_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 @components_run_stream_trace
 def mock_components_run_stream_trace_01():
@@ -103,7 +101,7 @@ def mock_components_run_stream_trace_01():
 
 @components_run_stream_trace
 def mock_components_run_stream_trace_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 @list_trace
 def mock_list_trace_01():
@@ -111,7 +109,7 @@ def mock_list_trace_01():
 
 @list_trace
 def mock_list_trace_02():
-    raise TestException("测试异常")
+    raise TestException()
 
 # @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestTraceSkipRaiseError(unittest.TestCase):
@@ -132,7 +130,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_post_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_post_02()
 
     def test_client_run_trace(self):
@@ -144,7 +142,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_client_run_trace_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_client_run_trace_02()
 
     def test_client_tool_trace(self):
@@ -156,7 +154,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_client_tool_trace_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_client_tool_trace_02()
 
     def test_assistent_tool_trace(self):
@@ -168,7 +166,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_assistent_tool_trace_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_assistent_tool_trace_02()
 
     def test_assistant_run_trace(self):
@@ -180,7 +178,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_assistant_run_trace_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_assistant_run_trace_02()
 
     def test_assistent_stream_run_trace(self):
@@ -192,7 +190,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_assistent_stream_run_trace_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_assistent_stream_run_trace_02()
 
     def test_assistent_stream_run_with_handler_trace(self):
@@ -204,7 +202,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_assistent_stream_run_with_handler_trace_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_assistent_stream_run_with_handler_trace_02()
 
     def test_components_run_trace(self):
@@ -216,7 +214,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_components_run_trace_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_components_run_trace_02()
     
     def test_components_run_stream_trace(self):
@@ -228,7 +226,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_components_run_stream_trace_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_components_run_stream_trace_02()
 
     def test_list_trace(self):
@@ -240,7 +238,7 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "false"
         with self.assertRaises(Exception):
             mock_list_trace_01()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TestException):
             mock_list_trace_02()
 
 
