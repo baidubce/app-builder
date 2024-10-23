@@ -111,7 +111,7 @@ def mock_list_trace_01():
 def mock_list_trace_02():
     raise TestException()
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestTraceSkipRaiseError(unittest.TestCase):
     def setUp(self):
         os.environ["APPBUILDER_TRACE_DEBUG"] = "True"
