@@ -16,6 +16,14 @@ import sys
 import traceback
 from functools import wraps
 
+def _whether_enable_trace():
+    if os.environ.get('ENABLE_SENTRY_TRACE', None) == 'true' and os.environ.get('SENTRY_DSN', None):
+        return True
+    elif os.environ.get('APPBUILDER_SDK_TRACE_ENABLE', None) == 'true':
+        return True
+    else:
+        return False
+
 def session_post_func(func, *args, **kwargs):
     return func(*args, **kwargs)
 
@@ -70,24 +78,27 @@ def session_post(func):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return session_post_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
+        if _whether_enable_trace():  
+            try:
+                return session_post_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
                 
     return wrapper 
 
@@ -115,24 +126,27 @@ def client_run_trace(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return client_run_trace_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
+        if _whether_enable_trace():
+            try:
+                return client_run_trace_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
 
     return wrapper 
 
@@ -158,25 +172,27 @@ def client_tool_trace(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return client_tool_trace_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
-
+        if _whether_enable_trace():
+            try:
+                return client_tool_trace_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
     return wrapper 
 
 
@@ -202,24 +218,27 @@ def assistent_tool_trace(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return assistent_tool_trace_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
+        if _whether_enable_trace():
+            try:
+                return assistent_tool_trace_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
     
     return wrapper
 
@@ -245,24 +264,27 @@ def assistant_run_trace(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return assistant_run_trace_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
+        if _whether_enable_trace():
+            try:
+                return assistant_run_trace_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
     
     return wrapper 
 
@@ -287,25 +309,28 @@ def assistent_stream_run_trace(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return assistent_stream_run_trace_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
-    
+        if _whether_enable_trace():
+            try:
+                return assistent_stream_run_trace_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
+        
     return wrapper 
 
 def assistent_stream_run_with_handler_trace(func):
@@ -330,24 +355,27 @@ def assistent_stream_run_with_handler_trace(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return assistant_stream_run_with_handler_trace_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
+        if _whether_enable_trace():
+            try:
+                return assistant_stream_run_with_handler_trace_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
     
     return wrapper 
 
@@ -372,24 +400,27 @@ def components_run_trace(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return components_run_trace_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
+        if _whether_enable_trace():    
+            try:
+                return components_run_trace_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
                 
     return wrapper
 
@@ -414,24 +445,27 @@ def components_run_stream_trace(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return components_run_stream_trace_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
+        if _whether_enable_trace():
+            try:
+                return components_run_stream_trace_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
   
     
     return wrapper
@@ -457,24 +491,27 @@ def list_trace(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return list_trace_func(func, *args, **kwargs)
-        except Exception as e:
-            if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
-                raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = traceback.extract_tb(exc_traceback)
-                filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
-                formatted_lines = traceback.format_list(filtered_tb)
-                formatted_lines += traceback.format_exception_only(exc_type, exc_value)
-                custom_traceback = ''.join(formatted_lines)
-                exception_type = type(e)
-                try:
-                    exception_type("\n"+custom_traceback)
-                except Exception:
-                    raise e
-                raise exception_type("\n"+custom_traceback) from None
+        if _whether_enable_trace():
+            try:
+                return list_trace_func(func, *args, **kwargs)
+            except Exception as e:
+                if os.getenv("APPBUILDER_TRACE_DEBUG", "None").lower() == "true":
+                    raise
+                else:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    tb = traceback.extract_tb(exc_traceback)
+                    filtered_tb = [frame for frame in tb if "appbuilder/utils/trace" not in frame.filename]
+                    formatted_lines = traceback.format_list(filtered_tb)
+                    formatted_lines += traceback.format_exception_only(exc_type, exc_value)
+                    custom_traceback = ''.join(formatted_lines)
+                    exception_type = type(e)
+                    try:
+                        exception_type("\n"+custom_traceback)
+                    except Exception:
+                        raise e
+                    raise exception_type("\n"+custom_traceback) from None
+        else:
+            return func(*args, **kwargs)
     
     return wrapper
 
