@@ -19,20 +19,11 @@
 from typing import Union, List
 
 from appbuilder.core.message import Message
-from appbuilder.core.component import ComponentArguments, Component, Message
+from appbuilder.core.component import Component, Message
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace
 
-
-class RerankerArgs(ComponentArguments):
-    """
-    配置
-
-    Attributes:
-        text: Union[Message[str], str]
-    """
-
-    text: Union[Message[str], str]
+from .model import RerankerArgs
 
 
 class Reranker(Component):

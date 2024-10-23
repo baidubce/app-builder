@@ -22,9 +22,8 @@ from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.plant_recognize.model import *
 from typing import Generator, Union
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
+from .model import TOP_NUM, BAIKE_NUM
 
-TOP_NUM = 1
-BAIKE_NUM = 0
 
 
 class PlantRecognition(Component):

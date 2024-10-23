@@ -4,65 +4,6 @@
 
 ## appbuilder.core.components.llms.style_writing.component module
 
-### *class* appbuilder.core.components.llms.style_writing.component.LengthChoices(value)
-
-基类：`Enum`
-
-An enumeration.
-
-#### LONG *= 600*
-
-#### MEDIUM *= 300*
-
-#### SHORT *= 100*
-
-#### to_chinese()
-
-将LengthChoices枚举对象转换为中文描述。
-
-* **参数:**
-  **无参数**
-* **返回:**
-  转换后的中文描述，包括”短”、”中”和”长”。
-* **返回类型:**
-  str
-
-### *class* appbuilder.core.components.llms.style_writing.component.StyleQueryChoices(value)
-
-基类：`Enum`
-
-StyleQueryChoices是一个枚举类型，包含三个选项：
-
-#### BILIBILI
-
-* **Type:**
-  “B站”
-
-#### XIAOHONGSHU
-
-* **Type:**
-  “小红书”
-
-#### GENERAL
-
-* **Type:**
-  “通用”
-
-#### BILIBILI *= 'B站'*
-
-#### GENERAL *= '通用'*
-
-#### XIAOHONGSHU *= '小红书'*
-
-#### to_chinese()
-
-将StyleQueryChoices枚举类中的值转换为中文描述。
-
-* **参数:**
-  **无参数**
-* **返回:**
-  返回一个字典，键是StyleQueryChoices枚举类的成员，值为对应的中文描述字符串。
-
 ### *class* appbuilder.core.components.llms.style_writing.component.StyleWriting(model=None, secret_key: str | None = None, gateway: str = '', lazy_certification: bool = False)
 
 基类：`CompletionBaseComponent`
@@ -123,7 +64,7 @@ answer = style_writing(appbuilder.Message("帮我写一篇关于人体工学椅�
 
 #### version *: str* *= 'v1'*
 
-### *class* appbuilder.core.components.llms.style_writing.component.StyleWritingArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, message: [Message](appbuilder.core.md#appbuilder.core.message.Message), style_query: [StyleQueryChoices](#appbuilder.core.components.llms.style_writing.component.StyleQueryChoices), length: [LengthChoices](#appbuilder.core.components.llms.style_writing.component.LengthChoices))
+### *class* appbuilder.core.components.llms.style_writing.component.StyleWritingArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, message: [Message](appbuilder.core.md#appbuilder.core.message.Message), style_query: StyleQueryChoices, length: LengthChoices)
 
 基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
 
@@ -141,16 +82,16 @@ Message = Field(…)
 StyleQueryChoices = Field(…)
 
 * **Type:**
-  [appbuilder.core.components.llms.style_writing.component.StyleQueryChoices](#appbuilder.core.components.llms.style_writing.component.StyleQueryChoices)
+  appbuilder.core.components.llms.style_writing.base.StyleQueryChoices
 
 #### length
 
 LengthChoices = Field(…)
 
 * **Type:**
-  [appbuilder.core.components.llms.style_writing.component.LengthChoices](#appbuilder.core.components.llms.style_writing.component.LengthChoices)
+  appbuilder.core.components.llms.style_writing.base.LengthChoices
 
-#### length *: [LengthChoices](#appbuilder.core.components.llms.style_writing.component.LengthChoices)*
+#### length *: LengthChoices*
 
 #### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
 
@@ -169,4 +110,4 @@ mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
 
 This replaces Model._\_fields_\_ from Pydantic V1.
 
-#### style_query *: [StyleQueryChoices](#appbuilder.core.components.llms.style_writing.component.StyleQueryChoices)*
+#### style_query *: StyleQueryChoices*

@@ -23,7 +23,7 @@ play(appbuilder.Message({"name": "小明", "bot_name": "小红", "bot_type": "�
 
 #### meta
 
-[`PlaygroundArgs`](#appbuilder.core.components.llms.playground.component.PlaygroundArgs) 的别名
+`PlaygroundArgs` 的别名
 
 #### name *: str* *= 'playground'*
 
@@ -55,33 +55,3 @@ play(appbuilder.Message({"name": "小明", "bot_name": "小红", "bot_type": "�
 #### variable_names *= {}*
 
 #### version *: str* *= 'v1'*
-
-### *class* appbuilder.core.components.llms.playground.component.PlaygroundArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, message: [Message](appbuilder.core.md#appbuilder.core.message.Message))
-
-基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
-
-空模板参数配置
-
-#### message
-
-输入消息，用于模型的主要输入内容
-
-* **Type:**
-  [Message](appbuilder.core.md#appbuilder.core.message.Message)
-
-#### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
-
-#### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'message': FieldInfo(annotation=Message, required=True, json_schema_extra={'variable_name': 'query', 'description': '输入消息，用于模型的主要输入内容'}), 'name': FieldInfo(annotation=str, required=False, default=''), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
-
-This replaces Model._\_fields_\_ from Pydantic V1.

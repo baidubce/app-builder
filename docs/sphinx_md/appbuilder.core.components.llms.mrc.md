@@ -39,7 +39,7 @@ result = mrc_component.run(msg, context_list, reject=True,
 print(result)
 ```
 
-#### meta *: [MrcArgs](#appbuilder.core.components.llms.mrc.component.MrcArgs)*
+#### meta *: MrcArgs*
 
 #### name *: str* *= 'mrc'*
 
@@ -64,94 +64,3 @@ print(result)
   obj
 
 #### version *: str* *= 'v1'*
-
-### *class* appbuilder.core.components.llms.mrc.component.MrcArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, message: [Message](appbuilder.core.md#appbuilder.core.message.Message), context_list: list, reject: bool, clarify: bool, highlight: bool, friendly: bool, cite: bool)
-
-基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
-
-阅读理解问答配置
-
-#### message
-
-Message
-用户输入的查询内容，例如’千帆平台都有哪些大模型？’
-
-* **Type:**
-  [appbuilder.core.message.Message](appbuilder.core.md#appbuilder.core.message.Message)
-
-#### context_list
-
-list
-用户输入的检索片段列表，例如[‘content1’, ‘content2’, ‘content3’,…]，也可以为空，即[]
-
-* **Type:**
-  list
-
-#### reject
-
-bool
-控制大模型拒答能力的开关，为true即为开启拒答功能，为false即为关闭拒答功能
-
-* **Type:**
-  bool
-
-#### clarify
-
-bool
-控制大模型澄清能力的开关，为true即为开启澄清反问功能，为false即为关闭澄清反问功能
-
-* **Type:**
-  bool
-
-#### highlight
-
-bool
-控制大模型重点强调能力的开关，为true即为开启重点强调功能，为false即为关闭重点强调功能
-
-* **Type:**
-  bool
-
-#### friendly
-
-bool
-控制大模型友好对提升难过能力的开关，为true即为开启友好度提升功能，为false即为关闭重点强调功能
-
-* **Type:**
-  bool
-
-#### cite
-
-bool
-控制大模型溯源能力的开关，为true即为开启溯源功能，为false即为关闭溯源功能
-
-* **Type:**
-  bool
-
-#### cite *: bool*
-
-#### clarify *: bool*
-
-#### context_list *: list*
-
-#### friendly *: bool*
-
-#### highlight *: bool*
-
-#### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
-
-#### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'cite': FieldInfo(annotation=bool, required=True, description='控制大模型溯源能力的开关，为true即为开启溯源功能，为false即为关闭溯源功能', json_schema_extra={'variable_name': 'cite'}), 'clarify': FieldInfo(annotation=bool, required=True, description='控制大模型澄清能力的开关，为true即为开启澄清反问功能，为false即为关闭澄清反问功能', json_schema_extra={'variable_name': 'clarify'}), 'context_list': FieldInfo(annotation=list, required=True, description='用户输入检索片段list，例如[content1, content2, content3,...]，也可以为空, 即[]', json_schema_extra={'variable_name': 'context_list'}), 'friendly': FieldInfo(annotation=bool, required=True, description='控制大模型友好对提升难过能力的开关，为true即为开启友好度提升功能，为false即为关闭友好度提升功能', json_schema_extra={'variable_name': 'friendly'}), 'highlight': FieldInfo(annotation=bool, required=True, description='控制大模型重点强调能力的开关，为true即为开启重点强调功能，为false即为关闭重点强调功能', json_schema_extra={'variable_name': 'highlight'}), 'message': FieldInfo(annotation=Message, required=True, description="输入用户query，例如'千帆平台都有哪些大模型？'", json_schema_extra={'variable_name': 'query'}), 'name': FieldInfo(annotation=str, required=False, default=''), 'reject': FieldInfo(annotation=bool, required=True, description='控制大模型拒答能力的开关，为true即为开启拒答功能，为false即为关闭拒答功能', json_schema_extra={'variable_name': 'reject'}), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-#### reject *: bool*

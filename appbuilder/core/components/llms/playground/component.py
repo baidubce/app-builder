@@ -11,28 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from pydantic import Field
 from typing import Optional
 import re
-from appbuilder.core.component import ComponentArguments
+
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core.message import Message
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-
-class PlaygroundArgs(ComponentArguments):
-    """
-    空模板参数配置
-
-    Attributes:
-        message (Message): 输入消息，用于模型的主要输入内容
-    """
-    message: Message = Field(...,
-                             json_schema_extra={
-                                 "variable_name": "query",
-                                 "description": "输入消息，用于模型的主要输入内容"}
-                             )
-
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace
+from .base import PlaygroundArgs
 
 class Playground(CompletionBaseComponent):
     """

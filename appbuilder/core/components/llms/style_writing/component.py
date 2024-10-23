@@ -11,75 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import json
-
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core.message import Message
 
 from appbuilder.core.component import ComponentArguments
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 from typing import Optional
-from enum import Enum
 
-
-class StyleQueryChoices(Enum):
-    """
-    StyleQueryChoices是一个枚举类型，包含三个选项：
-    
-    Attributes:
-        BILIBILI ("B站")
-        XIAOHONGSHU ("小红书")
-        GENERAL ("通用")
-    """
-    BILIBILI = "B站"
-    XIAOHONGSHU = "小红书"
-    GENERAL = "通用"
-
-    def to_chinese(self):
-        """
-        将StyleQueryChoices枚举类中的值转换为中文描述。
-        
-        Args:
-            无参数
-        
-        Returns:
-            返回一个字典，键是StyleQueryChoices枚举类的成员，值为对应的中文描述字符串。
-        
-        """
-        descriptions = {
-            StyleQueryChoices.BILIBILI: "B站",
-            StyleQueryChoices.XIAOHONGSHU: "小红书",
-            StyleQueryChoices.GENERAL: "通用",
-        }
-        return descriptions[self]
-
-
-class LengthChoices(Enum):
-    SHORT = 100  # 短
-    MEDIUM = 300  # 中
-    LONG = 600  # 长
-
-    def to_chinese(self):
-        """
-        将LengthChoices枚举对象转换为中文描述。
-        
-        Args:
-            无参数
-        
-        Returns:
-            str: 转换后的中文描述，包括"短"、"中"和"长"。
-        
-        """
-        descriptions = {
-            LengthChoices.SHORT: "短",
-            LengthChoices.MEDIUM: "中",
-            LengthChoices.LONG: "长",
-        }
-        return descriptions[self]
-
+from .base import StyleQueryChoices, LengthChoices
 
 class StyleWritingArgs(ComponentArguments):
     """

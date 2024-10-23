@@ -4,51 +4,6 @@
 
 ## appbuilder.core.components.llms.style_rewrite.component module
 
-### *class* appbuilder.core.components.llms.style_rewrite.component.StyleChoices(value)
-
-基类：`Enum`
-
-StyleChoices枚举类，包含了五种风格：
-
-#### YINGXIAO
-
-营销话术
-
-#### JIAOXUE
-
-教学话术
-
-#### JILI
-
-激励话术
-
-#### KEFU
-
-客服话术
-
-#### ZHIBO
-
-直播话术
-
-#### JIAOXUE *= '教学话术'*
-
-#### JILI *= '激励话术'*
-
-#### KEFU *= '客服话术'*
-
-#### YINGXIAO *= '营销话术'*
-
-#### ZHIBO *= '直播话术'*
-
-#### to_chinese()
-
-将StyleChoices枚举类中的值转换为中文描述。
-
-* **参数:**
-  **无参数**
-* **返回:**
-  返回一个字典，键是StyleChoices枚举类的成员，值为对应的中文描述字符串。
-
 ### *class* appbuilder.core.components.llms.style_rewrite.component.StyleRewrite(model=None, secret_key: str | None = None, gateway: str = '', lazy_certification: bool = False)
 
 基类：`CompletionBaseComponent`
@@ -70,7 +25,7 @@ answer = style_rewrite(appbuilder.Message("文心大模型发布新版本"), sty
 
 #### meta
 
-[`StyleRewriteArgs`](#appbuilder.core.components.llms.style_rewrite.component.StyleRewriteArgs) 的别名
+`StyleRewriteArgs` 的别名
 
 #### name *: str* *= 'style_rewrite'*
 
@@ -112,42 +67,3 @@ answer = style_rewrite(appbuilder.Message("文心大模型发布新版本"), sty
   **ValueError** – 如果缺少参数 ‘query’。
 
 #### version *: str* *= 'v1'*
-
-### *class* appbuilder.core.components.llms.style_rewrite.component.StyleRewriteArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, message: [Message](appbuilder.core.md#appbuilder.core.message.Message), style: [StyleChoices](#appbuilder.core.components.llms.style_rewrite.component.StyleChoices))
-
-基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
-
-文本风格转写配置
-
-#### message
-
-Message
-
-* **Type:**
-  [appbuilder.core.message.Message](appbuilder.core.md#appbuilder.core.message.Message)
-
-#### style
-
-StyleChoices
-
-* **Type:**
-  [appbuilder.core.components.llms.style_rewrite.component.StyleChoices](#appbuilder.core.components.llms.style_rewrite.component.StyleChoices)
-
-#### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
-
-#### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'message': FieldInfo(annotation=Message, required=True, description='需要改写的文本，该字段为必须字段。', json_schema_extra={'variable_name': 'query'}), 'name': FieldInfo(annotation=str, required=False, default=''), 'style': FieldInfo(annotation=StyleChoices, required=True, description='想要转换的文本风格，目前有营销、客服、直播、激励及教学五种话术可选', json_schema_extra={'variable_name': 'style'}), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-#### style *: [StyleChoices](#appbuilder.core.components.llms.style_rewrite.component.StyleChoices)*

@@ -21,6 +21,9 @@ from enum import Enum
 from appbuilder.core.component import ComponentArguments
 
 
+
+DEFAULT_AUTHOR = '百度千帆AppBuilder'
+
 class PPTGenerationFromFileArgs(ComponentArguments):
     """论文生成PPT组件配置
     """

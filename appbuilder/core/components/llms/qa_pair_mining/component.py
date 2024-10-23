@@ -11,9 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-""" """
 from pydantic import Field
 from typing import Optional
 
@@ -21,18 +18,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-
-class QAPairMiningMeta(ComponentArguments):
-    """
-    QAPairMiningMeta
-
-    Attributes:
-        message (Message): 输入消息，用于模型的输入，一般为文档段落。
-    """
-    message: Message = Field(..., 
-                             variable_name="query", 
-                             description="输入消息，用于模型的输入，一般为文档段落。")
+from .base import QAPairMiningMeta
 
 
 class QAPairMining(CompletionBaseComponent):
