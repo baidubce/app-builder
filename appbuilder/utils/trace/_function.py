@@ -19,6 +19,8 @@ from opentelemetry import trace
 from pydantic import BaseModel
 from appbuilder import Message
 
+from appbuilder import AppbuilderTraceException
+
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -133,21 +135,18 @@ def _input(args,kwargs,span):
             else:
                 span.set_attribute("input.value",json.dumps(input_dict, ensure_ascii=False))
     except Exception as e:
-        print(e)
+        raise AppbuilderTraceException(e)
 
 def _client_tool_trace_output_deep_iterate(output,span):
     """
-    对客户端工具的输出进行深度迭代，并设置OpenTelemetry的span属性。
+    对输出进行深度遍历，并将结果以JSON格式记录到span的属性中
     
     Args:
-        output (Union[dict, bool, str, bytes, int, float, list]): 客户端工具的输出结果，可以是字典、布尔值、字符串、字节串、整数、浮点数或列表。
-        span (Span): OpenTelemetry的span对象，用于设置span属性。
+        output (dict, bool, str, bytes, int, float, list): 需要遍历的输出对象
+        span (Span): 用于记录输出结果的span对象
     
     Returns:
-        None: 此函数不返回任何值，但会设置span的"output.value"属性。
-    
-    Raises:
-        无特定异常，但会捕获并打印所有在函数执行过程中发生的异常。
+        None
     
     """
     input_dict={}
@@ -203,10 +202,7 @@ def _client_trace_generator(generator, tracer, parent_context):
                 if has_reference:
                     new_span.set_attribute("input.value", 'Context(上下文) For RAG:\n{}'.format(context_message_str))
 
-                try:
-                    new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
-                except Exception as e:
-                    print(e)
+                new_span.set_attribute("output.value", "{}".format(message.model_dump_json(indent=4)))
 
                 result_str += str(message.answer)
 
@@ -221,7 +217,7 @@ def _client_trace_generator(generator, tracer, parent_context):
                 new_span = tracer.start_span('Client-Stream')
                 yield message
         except Exception as e:
-            print(e)
+            raise AppbuilderTraceException(str(e))  
         finally:
             span.set_attribute("output.value", result_str)
             span.set_attribute("llm.token_count.prompt", prompt_tokens)
@@ -397,7 +393,7 @@ def _assistant_stream_run_with_handler_output(generator , tracer, parent_context
                 new_span = tracer.start_span('Assistant-Stream_run_with_handler')
                 yield message
         except Exception as e:
-            print(e)
+            raise AppbuilderTraceException(str(e))
         finally:
             new_span.set_attribute("output.value",'流式运行结束')
             new_span.set_attribute("openinference.span.kind",'agent')   
@@ -739,10 +735,7 @@ def _components_stream_run_trace_with_opentelemetry(tracer, func, *args, **kwarg
                 if isinstance(item, dict):
                     run_list.append(item.get('text', None))
                 else:
-                    try:
-                        run_list.append(str(item))
-                    except:
-                        print("message can't to be str")
+                    run_list.append(str(item))
             yield item
         end_time = time.time()  
         _time(start_time = start_time,end_time = end_time,span = span)
@@ -751,15 +744,15 @@ def _components_stream_run_trace_with_opentelemetry(tracer, func, *args, **kwarg
 
 def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
      """
-     通过sentry追踪函数运行时的信息
+     通过sentry追踪函数运行时的信息。
      
      Args:
-         func (callable): 要执行的函数
-         *args: 可变位置参数，传入func的参数
-         **kwargs: 可变关键字参数，传入func的参数
+         func (callable): 要执行的函数。
+         *args: 可变位置参数，传入func的参数。
+         **kwargs: 可变关键字参数，传入func的参数。
      
      Returns:
-         Generator: 返回一个生成器，每次迭代返回func的一个返回值
+         Generator: 返回一个生成器，每次迭代返回func的一个返回值。
      
      """
      try:
@@ -775,12 +768,10 @@ def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
                 new_span.set_data("Span-kind",'tool')
                 new_span.set_data("output-value", "{}".format(json.dumps(item, ensure_ascii=False)))
                 if isinstance(item, dict):
-                    run_list.append(item.get('text', None))
+                    text = item.get('text', None)
+                    run_list.append(text)
                 else:
-                    try:
-                        run_list.append(str(item))
-                    except:
-                        print("message can't to be str")
+                    run_list.append(str(item))
             yield item
         result_str = ''.join(str(res) for res in run_list)
         span.set_data("output-value",result_str)

@@ -21,18 +21,7 @@ from appbuilder.core.message import Message
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-
-class IsComplexQueryMeta(ComponentArguments):
-    """ 
-    IsComplexQueryMeta
-
-    Attributes:
-        message (Message): 输入消息，用于模型的输入，一般为问题。
-    """
-    message: Message = Field(..., 
-                             variable_name="query", 
-                             description="输入消息，用于模型的输入，一般为问题。")
+from .base import IsComplexQueryMeta
 
 
 class IsComplexQuery(CompletionBaseComponent):

@@ -228,7 +228,7 @@ class AppBuilderClient(Component):
             kwargs: 其他参数
             
         Returns: 
-            message (obj: `Message`): 对话结果，一个Message对象，使用message.content获取内容。
+            message (Message): 对话结果，一个Message对象，使用message.content获取内容。
         """
         if tools == None:
             tools = [function_to_json(f) for f in functions]

@@ -14,21 +14,15 @@
 
 r"""GBI nl2sql component.
 """
-from typing import Dict, List, Optional
-from pydantic import BaseModel, Field, ValidationError
+from typing import Dict, List
+from pydantic import ValidationError
 
-from appbuilder.core.component import Component, ComponentArguments
+from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-class SelectTableArgs(ComponentArguments):
-    """
-    选表的参数
-    """
-    query: str = Field(..., description="用户的 query 输入")
-    session: List[SessionRecord] = Field(default=list(), description="gbi session 的历史 列表")
+from .base import SelectTableArgs
 
 
 class SelectTable(Component):

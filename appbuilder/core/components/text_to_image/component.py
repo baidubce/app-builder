@@ -15,7 +15,6 @@
 r"""Text2Image component.
 """
 import time
-import json
 import math
 
 from typing import Optional

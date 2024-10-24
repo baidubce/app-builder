@@ -19,14 +19,11 @@ import time
 
 from typing import Optional
 
-from .base import PPTGenerationFromFileArgs
+from .base import PPTGenerationFromFileArgs, DEFAULT_AUTHOR
 
 from appbuilder.core.message import Message
 from appbuilder.core.component import Component
 from appbuilder.utils.logger_util import logger
-
-
-DEFAULT_AUTHOR = '百度千帆AppBuilder'
 
 
 class PPTGenerationFromFile(Component):

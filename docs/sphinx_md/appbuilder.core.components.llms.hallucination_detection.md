@@ -60,7 +60,7 @@ Send a byte array of an audio file to obtain the result of speech recognition.
 
 #### meta
 
-[`HallucinationDetectionArgs`](#appbuilder.core.components.llms.hallucination_detection.component.HallucinationDetectionArgs) 的别名
+`HallucinationDetectionArgs` 的别名
 
 #### name *: str* *= 'hallucination_detection'*
 
@@ -105,54 +105,3 @@ Send a byte array of an audio file to obtain the result of speech recognition.
   **ValueError** – 如果缺少query、context或answer参数，将引发此异常。
 
 #### version *: str* *= 'v1'*
-
-### *class* appbuilder.core.components.llms.hallucination_detection.component.HallucinationDetectionArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, query: str, context: str, answer: str)
-
-基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
-
-幻觉检测配置
-
-#### query
-
-str
-用户查询。
-
-* **Type:**
-  str
-
-#### context
-
-str
-根据query得到的检索结果。
-
-* **Type:**
-  str
-
-#### answer
-
-str
-基于context生成的query的答案。
-
-* **Type:**
-  str
-
-#### answer *: str*
-
-#### context *: str*
-
-#### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'answer': FieldInfo(annotation=str, required=True, description='基于context生成的query的答案。', json_schema_extra={'valiable_name': 'answer'}), 'context': FieldInfo(annotation=str, required=True, description='根据query得到的检索结果。', json_schema_extra={'valiable_name': 'context'}), 'name': FieldInfo(annotation=str, required=False, default=''), 'query': FieldInfo(annotation=str, required=True, description='用户查询。', json_schema_extra={'valiable_name': 'query'}), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-#### query *: str*

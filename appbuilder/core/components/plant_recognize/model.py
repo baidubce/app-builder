@@ -21,6 +21,9 @@ import proto
 from pydantic import BaseModel
 
 
+TOP_NUM = 1
+BAIKE_NUM = 0
+
 class PlantBaikeInfo(proto.Message):
     """
     植物百度百科信息

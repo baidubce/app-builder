@@ -152,11 +152,4 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 
 ## appbuilder.core.components.rag_with_baidu_search_pro.parse_rag_pro_response module
 
-### *class* appbuilder.core.components.rag_with_baidu_search_pro.parse_rag_pro_response.ParseRagProResponse(response, stream: bool = False)
-
-基类：`CompletionResponse`
-
-#### message_iterable_wrapper(message)
-
-对模型输出的 Message 对象进行包装。
-当 Message 是流式数据时，数据被迭代完后，将重新更新 content 为 blocking 的字符串。
+init

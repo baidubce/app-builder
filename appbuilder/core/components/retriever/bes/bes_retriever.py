@@ -272,7 +272,6 @@ class BESVectorStoreIndex:
         }
         return self.bes_client.search(index=self.index_name, body=query)
 
-
 class BESRetriever(Component):
     """
     向量检索组件，用于检索和query相匹配的内容

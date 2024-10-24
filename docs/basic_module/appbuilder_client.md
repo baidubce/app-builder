@@ -45,7 +45,7 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
 | conversation_id | string | 会话的ID | "80c5bbee-931d-4ed9-a4ff-63e1971bd071" |
 
 
-### `AppBuilderClient().upload_file(file_path: str)-> str`
+### `AppBuilderClient().upload_local_file(file_path: str)-> str`
 #### 方法参数
 | 参数名称   | 参数类型   | 描述         | 示例值       |
 |--------|--------|------------|-----------|

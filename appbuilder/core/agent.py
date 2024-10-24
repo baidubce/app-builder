@@ -26,6 +26,7 @@ from appbuilder.core.context import init_context
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.utils.logger_util import logger
+from appbuilder.core.console.appbuilder_client.data_class import ToolChoiceFunction, ToolChoice
 
 # 流式场景首包超时时，最大重试次数
 MAX_RETRY_COUNT = 3
@@ -41,6 +42,7 @@ class AgentRuntime(BaseModel):
         component (Component): 可运行的 Component, 需要实现 run(message, stream, **args) 方法  
         user_session_config (sqlalchemy.engine.URL|str|None): Session 输出存储配置字符串。默认使用 sqlite:///user_session.db
             遵循 sqlalchemy 后端定义，参考文档：https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls
+        tool_choice (ToolChoice): 可用于Agent强制执行的组件工具
 
     Examples:
 
@@ -203,6 +205,7 @@ class AgentRuntime(BaseModel):
     component: Component
     user_session_config: Optional[Union[Any, str]] = None
     user_session: Optional[Any] = None
+    tool_choice: ToolChoice = None
 
     class Config:
         """
@@ -529,7 +532,7 @@ class AgentRuntime(BaseModel):
                     conversation_id, message.elements[0].path)
                 file_ids.append(file_id)
             return self.component.run(conversation_id=conversation_id, query=message.content, file_ids=file_ids,
-                                      stream=True)
+                                      stream=True, tool_choice=self.tool_choice)
 
         @cl.on_chat_start
         async def start():

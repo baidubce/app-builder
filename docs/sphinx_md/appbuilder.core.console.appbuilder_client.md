@@ -81,9 +81,9 @@ print(message.content)
   * **end_user_id** (*str*) – 用户ID，用于区分不同用户
   * **kwargs** – 其他参数
 * **返回:**
-  Message): 对话结果，一个Message对象，使用message.content获取内容。
+  对话结果，一个Message对象，使用message.content获取内容。
 * **返回类型:**
-  message (obj
+  message ([Message](appbuilder.core.md#appbuilder.core.message.Message))
 
 #### run_with_handler(conversation_id: str, query: str = '', file_ids: list = [], tools: list[Tool] | None = None, stream: bool = False, event_handler=None, \*\*kwargs)
 

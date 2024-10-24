@@ -17,47 +17,14 @@
 """
 基于Baidu VDB的retriever
 """
-import importlib
 import os
-import random
-import string
 import time
 from typing import Dict, Any
 from appbuilder.core.component import Component, Message
 from appbuilder.core.components.embeddings.component import Embedding
 from appbuilder.core.constants import GATEWAY_URL
-from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-DEFAULT_ACCOUNT = "root"
-DEFAULT_DATABASE_NAME = "AppBuilderDatabase"
-DEFAULT_TABLE_NAME = "AppBuilderTable"
-DEFAULT_TIMEOUT_IN_MILLS: int = 30 * 1000
-
-DEFAULT_PARTITION = 1
-DEFAULT_REPLICA = 3
-DEFAULT_INDEX_TYPE = "HNSW"
-DEFAULT_METRIC_TYPE = "L2"
-
-DEFAULT_HNSW_M = 16
-DEFAULT_HNSW_EF_CONSTRUCTION = 200
-DEFAULT_HNSW_EF = 10
-
-DEFAULT_BATCH_SIZE = 1000
-
-FIELD_ID: str = "id"
-FIELD_TEXT: str = "text"
-FIELD_VECTOR: str = "vector"
-FIELD_METADATA: str = "metadata"
-INDEX_VECTOR: str = "vector_idx"
-
-VALUE_NONE_ERROR = "Parameter `{}` can not be None."
-NOT_SUPPORT_INDEX_TYPE_ERROR = (
-    "Unsupported index type: `{}`, supported index types are {}"
-)
-NOT_SUPPORT_METRIC_TYPE_ERROR = (
-    "Unsupported metric type: `{}`, supported metric types are {}"
-)
+from .model import *
 
 
 def _try_import() -> None:
@@ -68,7 +35,6 @@ def _try_import() -> None:
             "pymochow module is not installed. "
             "Please install it using 'pip install pymochow'."
         )
-
 
 class TableParams:
     """
