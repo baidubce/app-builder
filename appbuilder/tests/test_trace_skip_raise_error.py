@@ -133,6 +133,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(TestException):
             mock_post_02()
 
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
+            mock_post_02()
+
     def test_client_run_trace(self):
         # test_client_run_trace APPBUILDER_TRACE_DEBUG = true
         os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
@@ -143,6 +147,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(Exception):
             mock_client_run_trace_01()
         with self.assertRaises(TestException):
+            mock_client_run_trace_02()
+
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
             mock_client_run_trace_02()
 
     def test_client_tool_trace(self):
@@ -157,6 +165,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(TestException):
             mock_client_tool_trace_02()
 
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
+            mock_client_tool_trace_02()
+
     def test_assistent_tool_trace(self):
         # test_assistent_tool_trace APPBUILDER_TRACE_DEBUG = true
         os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
@@ -167,6 +179,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(Exception):
             mock_assistent_tool_trace_01()
         with self.assertRaises(TestException):
+            mock_assistent_tool_trace_02()
+
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
             mock_assistent_tool_trace_02()
 
     def test_assistant_run_trace(self):
@@ -180,6 +196,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
             mock_assistant_run_trace_01()
         with self.assertRaises(TestException):
             mock_assistant_run_trace_02()
+        
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
+            mock_assistant_run_trace_02()
 
     def test_assistent_stream_run_trace(self):
         # test_assistent_stream_run_trace APPBUILDER_TRACE_DEBUG = true
@@ -191,6 +211,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(Exception):
             mock_assistent_stream_run_trace_01()
         with self.assertRaises(TestException):
+            mock_assistent_stream_run_trace_02()
+        
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
             mock_assistent_stream_run_trace_02()
 
     def test_assistent_stream_run_with_handler_trace(self):
@@ -205,6 +229,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(TestException):
             mock_assistent_stream_run_with_handler_trace_02()
 
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
+            mock_assistent_stream_run_with_handler_trace_02()
+
     def test_components_run_trace(self):
         # test_components_run_trace APPBUILDER_TRACE_DEBUG = true
         os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
@@ -215,6 +243,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(Exception):
             mock_components_run_trace_01()
         with self.assertRaises(TestException):
+            mock_components_run_trace_02()
+
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
             mock_components_run_trace_02()
     
     def test_components_run_stream_trace(self):
@@ -229,6 +261,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(TestException):
             mock_components_run_stream_trace_02()
 
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
+            mock_components_run_stream_trace_02()
+
     def test_list_trace(self):
         # test_list_trace APPBUILDER_TRACE_DEBUG = true
         os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
@@ -239,6 +275,10 @@ class TestTraceSkipRaiseError(unittest.TestCase):
         with self.assertRaises(Exception):
             mock_list_trace_01()
         with self.assertRaises(TestException):
+            mock_list_trace_02()
+
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "false"
+        with self.assertRaises(Exception):
             mock_list_trace_02()
 
 
