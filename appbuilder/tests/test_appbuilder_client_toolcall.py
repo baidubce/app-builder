@@ -75,8 +75,91 @@ class TestAgentRuntime(unittest.TestCase):
         )
         print(msg_2.model_dump_json(indent=4))
 
-        
-        
+
+        """测试functions字段功能 启用function,tools不用"""
+        def get_current_weather(location: str, unit: str) -> str:
+            """
+            查询指定中国城市的当前天气。
+
+            参数:
+                location (str): 城市名称，例如："北京"
+                unit (str): 温度单位，可选 "celsius" 或 "fahrenheit"
+
+            返回:
+                str: 天气情况描述
+
+            抛出:
+                ValueError: 如果传入的城市不支持或单位不正确
+            """
+            return "北京今天35度"
+        def get_current_water_temperature() -> str:
+            """
+            获取当前水温。
+
+            返回:
+                str: 当前水温描述
+            """
+            return "当前水温35度"
+
+        msg = builder.run(
+            conversation_id=conversation_id,
+            query="当前水温多少度？你知道吗",
+            functions=[get_current_weather,get_current_water_temperature],
+            #tools = tools
+            )
+        print(msg.model_dump_json(indent=4))
+
+        event = msg.content.events[-1]
+        assert event.status == "interrupt"
+        assert event.event_type == "Interrupt"
+
+        msg_2 = builder.run(
+            conversation_id=conversation_id,
+            tool_outputs=[
+                {
+                    "tool_call_id": event.tool_calls[-1].id,
+                    "output": "35度"
+                }
+            ]
+        )
+        print(msg_2.model_dump_json(indent=4))
+
+        """测试functions字段功能 启用functions,tools同时启用，调用functions里的函数"""
+         msg = builder.run(
+            conversation_id=conversation_id,
+            query="当前水温多少度？你知道吗",
+            functions=[get_current_water_temperature],
+            tools = tools
+            )
+        print(msg.model_dump_json(indent=4))
+
+        event = msg.content.events[-1]
+        assert event.status != "interrupt"
+        assert event.event_type != "Interrupt"
+
+        """测试functions字段功能 启用functions,tools同时启用，调用tools里的函数"""
+         msg = builder.run(
+            conversation_id=conversation_id,
+            query="当前北京多少度？你知道吗",
+            functions=[get_current_water_temperature],
+            tools = tools
+            )
+        print(msg.model_dump_json(indent=4))
+
+        event = msg.content.events[-1]
+        assert event.status != "interrupt"
+        assert event.event_type != "Interrupt"
+
+        msg_2 = builder.run(
+            conversation_id=conversation_id,
+            tool_outputs=[
+                {
+                    "tool_call_id": event.tool_calls[-1].id,
+                    "output": "35度"
+                }
+            ]
+        )
+        print(msg_2.model_dump_json(indent=4))      
 
 if __name__ == '__main__':
     unittest.main()

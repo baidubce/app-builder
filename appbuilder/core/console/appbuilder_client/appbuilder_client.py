@@ -22,70 +22,10 @@ from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._client import HTTPClient
-from appbuilder.utils.func_utils import deprecated
+from appbuilder.utils.func_utils import deprecated, function_to_json
 from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import client_run_trace, client_tool_trace
 
-
-import inspect
-
-def function_to_json(func) -> dict:
-    """
-    Converts a Python function into a JSON-serializable dictionary
-    that describes the function's signature, including its name,
-    description, and parameters.
-
-    Args:
-        func: The function to be converted.
-
-    Returns:
-        A dictionary representing the function's signature in JSON format.
-    """
-    type_map = {
-        str: "string",
-        int: "integer",
-        float: "number",
-        bool: "boolean",
-        list: "array",
-        dict: "object",
-        type(None): "null",
-    }
-
-    try:
-        signature = inspect.signature(func)
-    except ValueError as e:
-        raise ValueError(
-            f"Failed to get signature for function {func.__name__}: {str(e)}"
-        )
-
-    parameters = {}
-    for param in signature.parameters.values():
-        try:
-            param_type = type_map.get(param.annotation, "string")
-        except KeyError as e:
-            raise KeyError(
-                f"Unknown type annotation {param.annotation} for parameter {param.name}: {str(e)}"
-            )
-        parameters[param.name] = {"type": param_type}
-
-    required = [
-        param.name
-        for param in signature.parameters.values()
-        if param.default == inspect._empty
-    ]
-
-    return {
-        "type": "function",
-        "function": {
-            "name": func.__name__,
-            "description": func.__doc__ or "",
-            "parameters": {
-                "type": "object",
-                "properties": parameters,
-                "required": required,
-            },
-        },
-    }
 
 @client_tool_trace
 def get_app_list(
@@ -268,7 +208,7 @@ class AppBuilderClient(Component):
             file_ids: list = [],
             stream: bool = False,
             functions: List[Callable[..., Any]] = [],
-            #tools: list[data_class.Tool] = None,
+            tools: list[data_class.Tool] = None,
             tool_outputs: list[data_class.ToolOutput] = None,
             tool_choice: data_class.ToolChoice = None,
             end_user_id: str = None,
@@ -290,7 +230,8 @@ class AppBuilderClient(Component):
         Returns: 
             message (obj: `Message`): 对话结果，一个Message对象，使用message.content获取内容。
         """
-        tools = [function_to_json(f) for f in functions]
+        if tools == None:
+            tools = [function_to_json(f) for f in functions]
         if len(conversation_id) == 0:
             raise ValueError(
                 "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
@@ -449,47 +390,3 @@ def _transform(
             tool_calls=ev.tool_calls,
         )
         out.events.append(event)
-
-
-
-
-builder = AppBuilderClient("b2a972c5-e082-46e5-b313-acbf51792422")
-conversation_id = builder.create_conversation()
-
-def get_current_weather(location: str, unit: str) -> str:
-    """
-    查询指定中国城市的当前天气。
-
-    参数:
-        location (str): 城市名称，例如："北京"
-        unit (str): 温度单位，可选 "celsius" 或 "fahrenheit"
-
-    返回:
-        str: 天气情况描述
-
-    抛出:
-        ValueError: 如果传入的城市不支持或单位不正确
-    """
-    return "北京今天25度"
-
-msg = builder.run(
-    conversation_id=conversation_id,
-    query="今天北京天气怎么样？",
-    functions=[get_current_weather]
-    )
-print(msg.model_dump_json(indent=4))
-
-event = msg.content.events[-1]
-assert event.status == "interrupt"
-assert event.event_type == "Interrupt"
-
-msg_2 = builder.run(
-    conversation_id=conversation_id,
-    tool_outputs=[
-        {
-            "tool_call_id": event.tool_calls[-1].id,
-            "output": "北京今天35度"
-        }
-    ]
-)
-print(msg_2.model_dump_json(indent=4))
