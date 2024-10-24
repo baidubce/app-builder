@@ -1,6 +1,8 @@
 package com.baidubce.appbuilder.model.appbuilderclient;
 
 import java.util.Map;
+
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 public class AppBuilderClientRunRequest {
@@ -17,6 +19,25 @@ public class AppBuilderClientRunRequest {
     private ToolOutput[] ToolOutputs;
     @SerializedName("tool_choice")
     private ToolChoice ToolChoice;
+
+    public AppBuilderClientRunRequest() {
+    }
+
+    public AppBuilderClientRunRequest(String appID) {
+        this.appId = appID;
+    }
+
+    public AppBuilderClientRunRequest(String appID, String conversationID) {
+        this.appId = appID;
+        this.conversationID = conversationID;
+    }
+
+    public AppBuilderClientRunRequest(String appID, String conversationID, String query, Boolean stream) {
+        this.appId = appID;
+        this.conversationID = conversationID;
+        this.query = query;
+        this.stream = stream;
+    }
 
     public String getAppId() {
         return appId;
@@ -66,12 +87,23 @@ public class AppBuilderClientRunRequest {
         this.tools = tools;
     }
 
+    public void setTools(String toolJson) {
+        Gson gson = new Gson();
+        Tool tool = gson.fromJson(toolJson, Tool.class);
+        this.tools = new Tool[] {tool};
+    }
+
     public ToolOutput[] getToolOutputs() {
         return ToolOutputs;
     }
 
     public void setToolOutputs(ToolOutput[] toolOutputs) {
         this.ToolOutputs = toolOutputs;
+    }
+
+    public void setToolOutputs(String toolCallID, String outputString) {
+        ToolOutput output = new ToolOutput(toolCallID, outputString);
+        this.ToolOutputs = new ToolOutput[] { output };
     }
 
     public ToolChoice getToolChoice() {

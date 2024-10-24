@@ -12,6 +12,7 @@ import java.util.Map;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
+import com.google.gson.Gson;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,44 +66,37 @@ public class AppBuilderClientTest {
         AppBuilderClient builder = new AppBuilderClient(appId);
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
-        String fileId = builder.uploadLocalFile(conversationId,
-                "src/test/java/com/baidubce/appbuilder/files/test.pdf");
-        assertNotNull(fileId);
-        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
-        request.setAppId(appId);
-        request.setConversationID(conversationId);
-        request.setQuery("今天北京的天气怎么样?");
-        request.setStream(false);
+        
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(appId, conversationId, "今天北京的天气怎么样?", false);
 
-        String name = "get_cur_whether";
-        String desc = "这是一个获得指定地点天气的工具";
-        Map<String, Object> parameters = new HashMap<>();
-
-        Map<String, Object> location = new HashMap<>();
-        location.put("type", "string");
-        location.put("description", "省，市名，例如：河北省");
-
-        Map<String, Object> unit = new HashMap<>();
-        unit.put("type", "string");
-        List<String> enumValues = new ArrayList<>();
-        enumValues.add("摄氏度");
-        enumValues.add("华氏度");
-        unit.put("enum", enumValues);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("location", location);
-        properties.put("unit", unit);
-
-        parameters.put("type", "object");
-        parameters.put("properties", properties);
-        List<String> required = new ArrayList<>();
-        required.add("location");
-        parameters.put("required", required);
-
-        AppBuilderClientRunRequest.Tool.Function func = new AppBuilderClientRunRequest.Tool.Function(name, desc,
-                parameters);
-        AppBuilderClientRunRequest.Tool tool = new AppBuilderClientRunRequest.Tool("function", func);
-        request.setTools(new AppBuilderClientRunRequest.Tool[] { tool });
+        // 如果你本地的java版本更高，可以使用文本块特性，简化字符串构造
+        String toolJson = "{\n" +
+        "  \"type\": \"function\",\n" +
+        "  \"function\": {\n" +
+        "    \"name\": \"get_cur_whether\",\n" +
+        "    \"description\": \"这是一个获得指定地点天气的工具\",\n" +
+        "    \"parameters\": {\n" +
+        "      \"type\": \"object\",\n" +
+        "      \"properties\": {\n" +
+        "        \"location\": {\n" +
+        "          \"type\": \"string\",\n" +
+        "          \"description\": \"省，市名，例如：河北省\"\n" +
+        "        },\n" +
+        "        \"unit\": {\n" +
+        "          \"type\": \"string\",\n" +
+        "          \"enum\": [\n" +
+        "            \"摄氏度\",\n" +
+        "            \"华氏度\"\n" +
+        "          ]\n" +
+        "        }\n" +
+        "      },\n" +
+        "      \"required\": [\n" +
+        "        \"location\"\n" +
+        "      ]\n" +
+        "    }\n" +
+        "  }\n" +
+        "}";
+        request.setTools(toolJson);
 
         AppBuilderClientIterator itor = builder.run(request);
         assertTrue(itor.hasNext());
@@ -113,12 +107,8 @@ public class AppBuilderClientTest {
             System.out.println(result);
         }
 
-        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest();
-        request2.setAppId(appId);
-        request2.setConversationID(conversationId);
-
-        AppBuilderClientRunRequest.ToolOutput output = new AppBuilderClientRunRequest.ToolOutput(ToolCallID, "北京今天35度");
-        request2.setToolOutputs(new AppBuilderClientRunRequest.ToolOutput[] { output });
+        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest(appId, conversationId);
+        request2.setToolOutputs(ToolCallID, "北京今天35度");
         AppBuilderClientIterator itor2 = builder.run(request2);
         assertTrue(itor2.hasNext());
         while (itor2.hasNext()) {
