@@ -90,7 +90,16 @@ public class AppBuilderClientRunRequest {
     public void setTools(String toolJson) {
         Gson gson = new Gson();
         Tool tool = gson.fromJson(toolJson, Tool.class);
-        this.tools = new Tool[] {tool};
+        this.tools = new Tool[] { tool };
+    }
+    
+    public void setTools(String[] toolJsons) {
+        Gson gson = new Gson();
+        this.tools = new Tool[toolJsons.length];
+        for (int i = 0; i < toolJsons.length; i++) {
+            Tool tool = gson.fromJson(toolJsons[i], Tool.class);
+            this.tools[i] = tool;
+        }
     }
 
     public ToolOutput[] getToolOutputs() {
