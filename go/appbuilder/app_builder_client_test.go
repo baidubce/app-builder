@@ -19,11 +19,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"testing"
 	"strings"
+	"testing"
 )
-
-
 
 func TestNewAppBuilderClientError(t *testing.T) {
 	t.Parallel() // 并发运行
@@ -33,20 +31,20 @@ func TestNewAppBuilderClientError(t *testing.T) {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	//NewAppBuilderClient测试1 
+	//NewAppBuilderClient测试1
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
-	client, err := NewAppBuilderClient("", config)
+	_, err = NewAppBuilderClient("", config)
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 	}
-	//NewAppBuilderClient测试2 
-	client, err = NewAppBuilderClient(appID, nil)
+	//NewAppBuilderClient测试2
+	_, err = NewAppBuilderClient(appID, nil)
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 	}
 
 	//GetSdkConfig测试
-	client, err = NewAppBuilderClient(appID, config)
+	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AppBuilderClient instance failed")
@@ -95,12 +93,7 @@ func TestNewAppBuilderClientError(t *testing.T) {
 	}
 	//CreateConversation 测试 6: 缺少 id 字段
 	client.client = &MissingIDHTTPClient{}
-	_, err = client.CreateConversation()
-
-	// 检查 err 是否为空，并且确保返回的错误信息包含 "id" 这个字段
-	if err == nil {
-		
-	}
+	client.CreateConversation()
 
 	// 测试1  ServiceURLV2 错误
 	config.GatewayURLV2 = "://invalid-url"
@@ -273,128 +266,84 @@ func TestClientRunWithToolCallError(t *testing.T) {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AppBuilderClient instance failed")
 	}
-	parameters := make(map[string]any)
+	jsonStr := `
+	{
+		"type": "function",
+		"function": {
+			"name": "get_cur_whether",
+			"description": "这是一个获得指定地点天气的工具",
+			"parameters": {
+				"type": "object",
+				"properties": {
+					"location": {
+						"type": "string",
+						"description": "省，市名，例如：河北省"
+					},
+					"unit": {
+						"type": "string",
+						"enum": ["摄氏度", "华氏度"]
+					}
+				},
+				"required": ["location"]
+			}
+		}
+	}`
 
-	location := make(map[string]any)
-	location["type"] = "string"
-	location["description"] = "省，市名，例如：河北省"
+	var tool Tool
+	err = json.Unmarshal([]byte(jsonStr), &tool)
+	if err != nil {
+		fmt.Println("unmarshal tool error:", err)
+	}
 
-	unit := make(map[string]any)
-	unit["type"] = "string"
-	unit["enum"] = []string{"摄氏度", "华氏度"}
-
-	properties := make(map[string]any)
-	properties["location"] = location
-	properties["unit"] = unit
-
-	parameters["type"] = "object"
-	parameters["properties"] = properties
-	parameters["required"] = []string{"location"}
 	//测试1 conversationID ==0
-	_, err = client.RunWithToolCall(AppBuilderClientRunRequest{
+	client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
 		ConversationID: "",
 		Stream:         false,
-		Tools: []Tool{
-			{
-				Type: "function",
-				Function: Function{
-					Name:        "get_cur_whether",
-					Description: "这是一个获得指定地点天气的工具",
-					Parameters:  parameters,
-				},
-			},
-		},
+		Tools:          []Tool{tool},
 	})
-	if err == nil {
-		
-	}
 
 	//测试4   非流式
-	_, err = client.RunWithToolCall(AppBuilderClientRunRequest{
+	client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
 		ConversationID: "111111",
 		Stream:         false,
-		Tools: []Tool{
-			{
-				Type: "function",
-				Function: Function{
-					Name:        "get_cur_whether",
-					Description: "这是一个获得指定地点天气的工具",
-					Parameters:  parameters,
-				},
-			},
-		},
+		Tools:          []Tool{tool},
 	})
-	if err != nil {
 
-	}
 	//测试2   ServiceURLV2 error 无效的ServiceURLV2
 	client.sdkConfig.GatewayURLV2 = "://invalid-url"
-	_, err = client.RunWithToolCall(AppBuilderClientRunRequest{
+	client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
 		ConversationID: "111111111",
 		Stream:         false,
-		Tools: []Tool{
-			{
-				Type: "function",
-				Function: Function{
-					Name:        "get_cur_whether",
-					Description: "这是一个获得指定地点天气的工具",
-					Parameters:  parameters,
-				},
-			},
-		},
+		Tools:          []Tool{tool},
 	})
-	if err == nil {
 
-	}
 	//测试3   t.client.Do 错误
 	client.sdkConfig.GatewayURLV2 = "http://192.0.2.1"
-	_, err = client.RunWithToolCall(AppBuilderClientRunRequest{
+	client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
 		ConversationID: "222222",
 		Stream:         false,
-		Tools: []Tool{
-			{
-				Type: "function",
-				Function: Function{
-					Name:        "get_cur_whether",
-					Description: "这是一个获得指定地点天气的工具",
-					Parameters:  parameters,
-				},
-			},
-		},
+		Tools:          []Tool{tool},
 	})
-	if err == nil {
 
-	}
 	//测试4   错误的 HTTP 响应
 	client.client = &MockHTTPClient{}
 	client.sdkConfig.GatewayURLV2 = GatewayURL
-	_, err = client.RunWithToolCall(AppBuilderClientRunRequest{
+	client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
 		ConversationID: "33333",
 		Stream:         false,
-		Tools: []Tool{
-			{
-				Type: "function",
-				Function: Function{
-					Name:        "get_cur_whether",
-					Description: "这是一个获得指定地点天气的工具",
-					Parameters:  parameters,
-				},
-			},
-		},
+		Tools:          []Tool{tool},
 	})
-	if err == nil {
-	
-	}
+
 }
 
 func TestNewAppBuilderClient(t *testing.T) {
@@ -457,14 +406,12 @@ func TestNewAppBuilderClient(t *testing.T) {
 	log("----------------answer-------------------")
 	log(totalAnswer)
 	//测试4   非流式
-	_, err = client.Run(conversationID, "描述简历中的候选人情况", nil, false)
-	if err != nil {
+	client.Run(conversationID, "描述简历中的候选人情况", nil, false)
 
-	}
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {
 		fmt.Println(logBuffer.String())
-	} else {  // else 紧跟在右大括号后面
+	} else { // else 紧跟在右大括号后面
 		// 测试通过，打印文件名和测试函数名
 		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
@@ -579,7 +526,7 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	if t.Failed() {
 		fmt.Printf("%s========== FAIL:  %s ==========%s\n", "\033[31m", t.Name(), "\033[0m")
 		fmt.Println(logBuffer.String())
-	} else {  // else 紧跟在右大括号后面
+	} else { // else 紧跟在右大括号后面
 		// 测试通过，打印文件名和测试函数名
 		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
@@ -648,7 +595,7 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 	if t.Failed() {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		fmt.Println(logBuffer.String())
-	} else {  // else 紧跟在右大括号后面
+	} else { // else 紧跟在右大括号后面
 		// 测试通过，打印文件名和测试函数名
 		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
