@@ -228,7 +228,7 @@ class AppBuilderClient(Component):
             kwargs: 其他参数
             
         Returns: 
-            message (Message): 对话结果，一个Message对象，使用message.content获取内容。
+            message (obj: `Message`): 对话结果，一个Message对象，使用message.content获取内容。
         """
         if tools == None:
             tools = [function_to_json(f) for f in functions]
@@ -390,3 +390,82 @@ def _transform(
             tool_calls=ev.tool_calls,
         )
         out.events.append(event)
+
+
+
+
+builder = AppBuilderClient("b2a972c5-e082-46e5-b313-acbf51792422")
+conversation_id = builder.create_conversation()
+
+def get_current_weather(location: str, unit: str) -> str:
+    """
+    查询指定中国城市的当前天气。
+
+    参数:
+        location (str): 城市名称，例如："北京"
+        unit (str): 温度单位，可选 "celsius" 或 "fahrenheit"
+
+    返回:
+        str: 天气情况描述
+
+    抛出:
+        ValueError: 如果传入的城市不支持或单位不正确
+    """
+    return "北京今天25度"
+def get_current_water_temperature() -> str:
+    """
+    获取当前水温。
+
+    返回:
+        str: 当前水温描述
+    """
+    return "当前水温25度"
+tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_current_weather",
+                    "description": "仅支持中国城市的天气查询，参数location为中国城市名称，其他国家城市不支持天气查询",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "城市名，举例：北京",
+                            },
+                            "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
+                        },
+                        "required": ["location", "unit"],
+                    },
+                },
+            }
+        ]
+functions = [get_current_water_temperature]
+msg = builder.run(
+    conversation_id=conversation_id,
+    query="当前水温多少度？你知道吗",
+    functions=functions,
+)
+print(msg.model_dump_json(indent=4))
+
+# 获取最后的事件和工具调用信息
+event = msg.content.events[-1]
+tool_call = event.tool_calls[-1]
+
+# 获取函数名称和参数
+name = tool_call.function.name
+args = tool_call.function.arguments
+
+# 将函数名称映射到具体的函数并执行
+function_map = {f.__name__: f for f in functions}
+raw_result = function_map[name](**args)
+
+# 传递工具的输出
+msg_2 = builder.run(
+    conversation_id=conversation_id,
+    tool_outputs=[{
+        "tool_call_id": tool_call.id,
+        "output": str(raw_result)
+    }],
+)
+print(msg_2.model_dump_json(indent=4))
