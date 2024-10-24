@@ -5,14 +5,13 @@ import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
 import com.baidubce.appbuilder.console.appbuilderclient.AppList;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
-import com.google.gson.Gson;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,33 +68,7 @@ public class AppBuilderClientTest {
         
         AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(appId, conversationId, "今天北京的天气怎么样?", false);
 
-        // 如果你本地的java版本更高，可以使用文本块特性，简化字符串构造
-        String toolJson = "{\n" +
-        "  \"type\": \"function\",\n" +
-        "  \"function\": {\n" +
-        "    \"name\": \"get_cur_whether\",\n" +
-        "    \"description\": \"这是一个获得指定地点天气的工具\",\n" +
-        "    \"parameters\": {\n" +
-        "      \"type\": \"object\",\n" +
-        "      \"properties\": {\n" +
-        "        \"location\": {\n" +
-        "          \"type\": \"string\",\n" +
-        "          \"description\": \"省，市名，例如：河北省\"\n" +
-        "        },\n" +
-        "        \"unit\": {\n" +
-        "          \"type\": \"string\",\n" +
-        "          \"enum\": [\n" +
-        "            \"摄氏度\",\n" +
-        "            \"华氏度\"\n" +
-        "          ]\n" +
-        "        }\n" +
-        "      },\n" +
-        "      \"required\": [\n" +
-        "        \"location\"\n" +
-        "      ]\n" +
-        "    }\n" +
-        "  }\n" +
-        "}";
+        String toolJson = new String(Files.readAllBytes(Paths.get("src/test/java/com/baidubce/appbuilder/files/toolcall.json")));
         request.setTools(toolJson);
 
         AppBuilderClientIterator itor = builder.run(request);
@@ -123,11 +96,7 @@ public class AppBuilderClientTest {
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
 
-        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
-        request.setAppId(appId);
-        request.setConversationID(conversationId);
-        request.setQuery("你能干什么");
-        request.setStream(false);
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(appId, conversationId, "你能干什么", false);
         request.setEndUserId("java_test_user_0");
         Map<String, Object> input = new HashMap<>();
         input.put("city", "北京");
