@@ -42,6 +42,8 @@ class AgentRuntime(BaseModel):
         component (Component): 可运行的 Component, 需要实现 run(message, stream, args) 方法  
         user_session_config (sqlalchemy.engine.URL|str|None): Session 输出存储配置字符串。默认使用 sqlite:///user_session.db
             遵循 sqlalchemy 后端定义，参考文档：https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls
+        tool_choice (ToolChoice): 可用于Agent强制执行的组件工具
+
 
     Examples:
 

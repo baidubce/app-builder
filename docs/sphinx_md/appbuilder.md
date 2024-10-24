@@ -27,6 +27,7 @@
       * [`AgentRuntime.model_fields`](appbuilder.core.md#appbuilder.core.agent.AgentRuntime.model_fields)
       * [`AgentRuntime.prepare_chainlit_readme()`](appbuilder.core.md#appbuilder.core.agent.AgentRuntime.prepare_chainlit_readme)
       * [`AgentRuntime.serve()`](appbuilder.core.md#appbuilder.core.agent.AgentRuntime.serve)
+      * [`AgentRuntime.tool_choice`](appbuilder.core.md#appbuilder.core.agent.AgentRuntime.tool_choice)
       * [`AgentRuntime.user_session`](appbuilder.core.md#appbuilder.core.agent.AgentRuntime.user_session)
       * [`AgentRuntime.user_session_config`](appbuilder.core.md#appbuilder.core.agent.AgentRuntime.user_session_config)
   * [appbuilder.core.message module](appbuilder.core.md#module-appbuilder.core.message)
