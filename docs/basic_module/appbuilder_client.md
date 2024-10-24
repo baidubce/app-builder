@@ -567,6 +567,37 @@ class ReferenceDetail {
 
 #### Run方法带ToolCall调用示例
 
+**创建tool的json文件**
+
+```json
+{
+    "type": "function",
+    "function": {
+        "name": "get_cur_whether",
+        "description": "这是一个获得指定地点天气的工具",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "省，市名，例如：河北省"
+                },
+                "unit": {
+                    "type": "string",
+                    "enum": [
+                        "摄氏度",
+                        "华氏度"
+                    ]
+                }
+            },
+            "required": [
+                "location"
+            ]
+        }
+    }
+}
+```
+
 ```java
 package org.example;
 
@@ -590,42 +621,10 @@ class AppBuilderClientDemo {
         AppBuilderClient builder = new AppBuilderClient(appId);
         String conversationId = builder.createConversation();
        
-       	AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
-        request.setAppId(appId);
-        request.setConversationID(conversationId);
-        request.setQuery("今天北京的天气怎么样?");
-        request.setStream(false);
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(appId, conversationId, "今天北京的天气怎么样?", false);
 
-        String name = "get_cur_whether";
-        String desc = "这是一个获得指定地点天气的工具";
-        Map<String, Object> parameters = new HashMap<>();
-
-        Map<String, Object> location = new HashMap<>();
-        location.put("type", "string");
-        location.put("description", "省，市名，例如：河北省");
-
-        Map<String, Object> unit = new HashMap<>();
-        unit.put("type", "string");
-        List<String> enumValues = new ArrayList<>();
-        enumValues.add("摄氏度");
-        enumValues.add("华氏度");
-        unit.put("enum", enumValues);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("location", location);
-        properties.put("unit", unit);
-
-        parameters.put("type", "object");
-        parameters.put("properties", properties);
-        List<String> required = new ArrayList<>();
-        required.add("location");
-        parameters.put("required", required);
-
-        AppBuilderClientRunRequest.Tool.Function func =
-                new AppBuilderClientRunRequest.Tool.Function(name, desc, parameters);
-        AppBuilderClientRunRequest.Tool tool =
-                new AppBuilderClientRunRequest.Tool("function", func);
-        request.setTools(new AppBuilderClientRunRequest.Tool[] {tool});
+        String toolJson = new String(Files.readAllBytes(Paths.get("json文件所在的路径")));
+        request.setTools(toolJson);
 
         AppBuilderClientIterator itor = builder.run(request);
         String ToolCallID = "";
@@ -635,12 +634,8 @@ class AppBuilderClientDemo {
             System.out.println(result);
         }
 
-        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest();
-        request2.setAppId(appId);
-        request2.setConversationID(conversationId);
-
-        AppBuilderClientRunRequest.ToolOutput output =
-                new AppBuilderClientRunRequest.ToolOutput(ToolCallID, "北京今天35度");
+        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest(appId, conversationId);
+        request2.setToolOutputs(ToolCallID, "北京今天35度");
         request2.setToolOutputs(new AppBuilderClientRunRequest.ToolOutput[] {output});
         AppBuilderClientIterator itor2 = builder.run(request2);
         while (itor2.hasNext()) {
@@ -688,11 +683,7 @@ class AppBuilderClientDemo {
         AppBuilderClient builder = new AppBuilderClient(appId);
         String conversationId = builder.createConversation();
 
-        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
-        request.setAppId(appId);
-        request.setConversationID(conversationId);
-        request.setQuery("北京今天的天气");
-        request.setStream(false);
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(appId, conversationId, "你能干什么", false);
         request.setEndUserId("java_toolchoice_demo");
       
         // 注意使用创建应用中用到的组件。名称、参数均以实际使用的组件为准。
@@ -700,7 +691,6 @@ class AppBuilderClientDemo {
         input.put("city", "北京");
         AppBuilderClientRunRequest.ToolChoice.Function func = new AppBuilderClientRunRequest.ToolChoice.Function(
                 "WeatherQuery", input);
-      
         AppBuilderClientRunRequest.ToolChoice choice = new AppBuilderClientRunRequest.ToolChoice("function", func);
         request.setToolChoice(choice);
 
