@@ -63,7 +63,7 @@ class Component:
     Component基类, 其它实现的Component子类需要继承该基类，并至少实现run方法.
 
     Args:
-        meta (obj: `ComponentArguments`): component meta information.
+        meta (ComponentArguments): component meta information.
         secret_key (str): user authentication token.
         gateway (str): backend gateway server address.
         lazy_certification (bool): lazy certification flag.
@@ -134,20 +134,42 @@ class Component:
 
     def run(self, *inputs, **kwargs):
         """
-        run method.
+        run method,待子类重写实现
+
+        Args:
+            inputs: list of arguments
+            kwargs: keyword arguments
         """
         raise NotImplementedError
 
     def batch(self, *args, **kwargs) -> List[Message]:
-        r"""pass"""
+        r"""
+        batch method,待子类重写实现
+
+        Args:
+            args: list of arguments
+            kwargs: keyword arguments
+        """
         return None
 
     async def arun(self, *args, **kwargs) -> Optional[Message]:
-        r"""pass"""
+        r"""
+        arun method,待子类重写实现
+
+        Args:
+            args: list of arguments
+            kwargs: keyword arguments
+        """
         return None
 
     async def abatch(self, *args, **kwargs) -> List[Message]:
-        r"""pass"""
+        r"""
+        abatch method,待子类重写实现
+
+        Args:
+            args: list of arguments
+            kwargs: keyword arguments
+        """
         return None
 
     def _trace(self, **data) -> None:
@@ -159,16 +181,50 @@ class Component:
         pass
 
     def tool_desc(self) -> List[str]:
+        r"""
+        tool_desc method,待子类重写实现
+
+        Args:
+            None
+
+        Returns:
+            list of strings
+        """
         return [json.dumps(manifest, ensure_ascii=False) for manifest in self.manifests]
 
     def tool_name(self) -> List[str]:
+        r"""
+        tool_name method,待子类重写实现
+
+        Args:
+            None
+
+        Returns:
+            list of strings
+        """
         return [manifest["name"] for manifest in self.manifests]
 
     def tool_eval(self, **kwargs):
+        r"""
+        tool_eval method,待子类重写实现
+
+        Args:
+            kwargs: keyword arguments
+        """
         if len(self.manifests) > 0:
             raise NotImplementedError
 
     def create_langchain_tool(self, tool_name="", **kwargs):
+        r"""
+        create_langchain_tool method,将AB-SDK的Tool转换为LangChain的StructuredTool
+
+        Args:
+            tool_name: string, optional, default is empty string
+            kwargs: keyword arguments
+
+        Returns:
+            StructuredTool
+        """
         try:
             from langchain_core.tools import StructuredTool
         except ImportError:

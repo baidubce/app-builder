@@ -306,7 +306,7 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 
 ## appbuilder.core.message module
 
-### *class* appbuilder.core.message.Message(content: \_T | None = None, \*, name: str | None = 'msg', mtype: str | None = 'dict', id: str | None = 'e3829da2-aeaf-4a54-b41d-63156c6f5320', \*\*data)
+### *class* appbuilder.core.message.Message(content: \_T | None = None, \*, name: str | None = 'msg', mtype: str | None = 'dict', id: str | None = '88caf1fe-da8b-4dfb-a87c-32e88df1d5cb', \*\*data)
 
 基类：`BaseModel`, `Generic`[`_T`]
 
@@ -352,7 +352,7 @@ A dictionary of computed field names and their corresponding ComputedFieldInfo o
 
 Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
 
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'content': FieldInfo(annotation=Union[~_T, NoneType], required=False, default={}), 'id': FieldInfo(annotation=Union[str, NoneType], required=False, default='e3829da2-aeaf-4a54-b41d-63156c6f5320'), 'mtype': FieldInfo(annotation=Union[str, NoneType], required=False, default='dict'), 'name': FieldInfo(annotation=Union[str, NoneType], required=False, default='msg')}*
+#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'content': FieldInfo(annotation=Union[~_T, NoneType], required=False, default={}), 'id': FieldInfo(annotation=Union[str, NoneType], required=False, default='88caf1fe-da8b-4dfb-a87c-32e88df1d5cb'), 'mtype': FieldInfo(annotation=Union[str, NoneType], required=False, default='dict'), 'name': FieldInfo(annotation=Union[str, NoneType], required=False, default='msg')}*
 
 Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
@@ -376,24 +376,44 @@ Component模块包括组件基类，用户自定义组件需要继承Component�
 Component基类, 其它实现的Component子类需要继承该基类，并至少实现run方法.
 
 * **参数:**
-  * **(****obj** (*meta*) – ComponentArguments): component meta information.
+  * **meta** ([*ComponentArguments*](#appbuilder.core.component.ComponentArguments)) – component meta information.
   * **secret_key** (*str*) – user authentication token.
   * **gateway** (*str*) – backend gateway server address.
   * **lazy_certification** (*bool*) – lazy certification flag.
 
 #### *async* abatch(\*args, \*\*kwargs) → List[[Message](#appbuilder.core.message.Message)]
 
-pass
+abatch method,待子类重写实现
+
+* **参数:**
+  * **args** – list of arguments
+  * **kwargs** – keyword arguments
 
 #### *async* arun(\*args, \*\*kwargs) → [Message](#appbuilder.core.message.Message) | None
 
-pass
+arun method,待子类重写实现
+
+* **参数:**
+  * **args** – list of arguments
+  * **kwargs** – keyword arguments
 
 #### batch(\*args, \*\*kwargs) → List[[Message](#appbuilder.core.message.Message)]
 
-pass
+batch method,待子类重写实现
+
+* **参数:**
+  * **args** – list of arguments
+  * **kwargs** – keyword arguments
 
 #### create_langchain_tool(tool_name='', \*\*kwargs)
+
+create_langchain_tool method,将AB-SDK的Tool转换为LangChain的StructuredTool
+
+* **参数:**
+  * **tool_name** – string, optional, default is empty string
+  * **kwargs** – keyword arguments
+* **返回:**
+  StructuredTool
 
 #### *property* http_client
 
@@ -410,7 +430,11 @@ pass
 
 #### run(\*inputs, \*\*kwargs)
 
-run method.
+run method,待子类重写实现
+
+* **参数:**
+  * **inputs** – list of arguments
+  * **kwargs** – keyword arguments
 
 #### set_secret_key_and_gateway(secret_key: str | None = None, gateway: str = '')
 
@@ -424,9 +448,28 @@ run method.
 
 #### tool_desc() → List[str]
 
+tool_desc method,待子类重写实现
+
+* **参数:**
+  **None**
+* **返回:**
+  list of strings
+
 #### tool_eval(\*\*kwargs)
 
+tool_eval method,待子类重写实现
+
+* **参数:**
+  **kwargs** – keyword arguments
+
 #### tool_name() → List[str]
+
+tool_name method,待子类重写实现
+
+* **参数:**
+  **None**
+* **返回:**
+  list of strings
 
 ### *class* appbuilder.core.component.ComponentArguments(\*, name: str = '', tool_desc: Dict[str, Any] = {})
 
