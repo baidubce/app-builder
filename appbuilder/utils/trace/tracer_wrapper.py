@@ -14,6 +14,7 @@
 import os
 import sys
 import traceback
+import _testcapi
 from functools import wraps
 
 def _whether_enable_trace():
@@ -93,12 +94,24 @@ def session_post(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
                 
     return wrapper 
 
@@ -141,12 +154,24 @@ def client_run_trace(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
 
     return wrapper 
 
@@ -187,12 +212,24 @@ def client_tool_trace(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
     return wrapper 
 
 
@@ -233,12 +270,24 @@ def assistent_tool_trace(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
     
     return wrapper
 
@@ -279,12 +328,24 @@ def assistant_run_trace(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
     
     return wrapper 
 
@@ -324,12 +385,24 @@ def assistent_stream_run_trace(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
         
     return wrapper 
 
@@ -370,12 +443,24 @@ def assistent_stream_run_with_handler_trace(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
     
     return wrapper 
 
@@ -415,12 +500,24 @@ def components_run_trace(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
                 
     return wrapper
 
@@ -460,12 +557,24 @@ def components_run_stream_trace(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
   
     
     return wrapper
@@ -506,12 +615,24 @@ def list_trace(func):
                     custom_traceback = ''.join(formatted_lines)
                     exception_type = type(e)
                     try:
-                        exception_type("\n"+custom_traceback)
-                    except Exception:
-                        raise e
-                    raise exception_type("\n"+custom_traceback) from None
+                        try:
+                            exception_type('\n'+custom_traceback)
+                        except Exception:
+                            raise e from None
+                        raise exception_type('\n'+custom_traceback) from None
+                    except:
+                        tp, exc, tb = sys.exc_info()
+                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        del tp, exc, tb
+                        raise
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except:
+                tp, exc, tb = sys.exc_info()
+                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                del tp, exc, tb
+                raise
     
     return wrapper
 
