@@ -946,39 +946,42 @@ func main() {
 		return
 	}
 
-	parameters := make(map[string]interface{})
+	jsonStr := `
+	{
+		"type": "function",
+		"function": {
+			"name": "get_cur_whether",
+			"description": "这是一个获得指定地点天气的工具",
+			"parameters": {
+				"type": "object",
+				"properties": {
+					"location": {
+						"type": "string",
+						"description": "省，市名，例如：河北省"
+					},
+					"unit": {
+						"type": "string",
+						"enum": ["摄氏度", "华氏度"]
+					}
+				},
+				"required": ["location"]
+			}
+		}
+	}`
 
-	location := make(map[string]interface{})
-	location["type"] = "string"
-	location["description"] = "省，市名，例如：河北省"
-
-	unit := make(map[string]interface{})
-	unit["type"] = "string"
-	unit["enum"] = []string{"摄氏度", "华氏度"}
-
-	properties := make(map[string]interface{})
-	properties["location"] = location
-	properties["unit"] = unit
-
-	parameters["type"] = "object"
-	parameters["properties"] = properties
-	parameters["required"] = []string{"location"}
+	var tool Tool
+	err = json.Unmarshal([]byte(jsonStr), &tool)
+	if err != nil {
+		fmt.Println("unmarshal tool error:", err)
+        return
+	}
 
 	i, err := client.RunWithFunctionCall(appbuilder.AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
 		ConversationID: conversationID,
 		Stream:         true,
-		Tools: []appbuilder.Tool{
-			{
-				Type: "function",
-				Function: appbuilder.Function{
-					Name:        "get_cur_whether",
-					Description: "这是一个获得指定地点天气的工具",
-					Parameters:  parameters,
-				},
-			},
-		},
+		Tools: []appbuilder.Tool{tool},
 	})
 	if err != nil {
 		fmt.Println("run failed:", err)
