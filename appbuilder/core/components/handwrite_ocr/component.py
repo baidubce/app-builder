@@ -12,7 +12,6 @@
 
 r"""手写文字识别组件"""
 import base64
-import json
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
 from appbuilder.core.components.handwrite_ocr.model import *

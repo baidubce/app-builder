@@ -11,33 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-"""
-自然语言转pandas
-"""
 from appbuilder.core.components.llms.base import CompletionBaseComponent
-from appbuilder.core.message import Message
-from pydantic import BaseModel, Field
 from typing import Optional
-from appbuilder.core.component import ComponentArguments
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-
-class Nl2pandasArgs(ComponentArguments):
-    """
-    自然语言转pandas代码 参数配置
-
-    Attributes:
-        message: Message = Field(...)
-        table_info: str = Field(...)
-    """
-    message: Message = Field(..., 
-                             variable_name="query", 
-                             description="输入问题，一般是针对表格信息的提问，例如'海淀区的小学有哪些'")
-    table_info: str = Field(...,  
-                                variable_name="table_info", 
-                                description="表格信息，一般是表格列名以及对应列名的举例和释义，例如'表格列信息如下：\n学校名 : 清华附小 , 字符串类型，代表小学学校的名称")
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace
+from .base import Nl2pandasArgs
  
 class Nl2pandasComponent(CompletionBaseComponent):
     """

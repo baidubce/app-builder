@@ -48,7 +48,7 @@ embedding_batch = embedding.batch(Message(["hello", "world"]))
 
 #### meta
 
-[`EmbeddingArgs`](#appbuilder.core.components.embeddings.component.EmbeddingArgs) 的别名
+`EmbeddingArgs` 的别名
 
 #### name *: str* *= 'embedding'*
 
@@ -64,33 +64,3 @@ embedding_batch = embedding.batch(Message(["hello", "world"]))
   [Message](appbuilder.core.md#appbuilder.core.message.Message)[List[float]]
 
 #### version *: str* *= 'v1'*
-
-### *class* appbuilder.core.components.embeddings.component.EmbeddingArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, text: [Message](appbuilder.core.md#appbuilder.core.message.Message)[str] | str)
-
-基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
-
-ernie bot embedding配置
-
-#### text
-
-输入文本
-
-* **Type:**
-  Union[[Message](appbuilder.core.md#appbuilder.core.message.Message)[str], str]
-
-#### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'name': FieldInfo(annotation=str, required=False, default=''), 'text': FieldInfo(annotation=Union[Message[str], str], required=True), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-#### text *: [Message](appbuilder.core.md#appbuilder.core.message.Message)[str] | str*

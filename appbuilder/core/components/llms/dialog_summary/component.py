@@ -12,27 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-from pydantic import BaseModel, Field
 from typing import Optional
 
 from appbuilder.core.components.llms.base import CompletionBaseComponent
-from appbuilder.core.message import Message
-from appbuilder.core.component import ComponentArguments
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-
-class DialogSummaryArgs(ComponentArguments):
-    """
-    会话小结生成配置
-
-    Attributes:
-        message (Message): 输入对话文本，用于生成小结
-    """
-    message: Message = Field(...,
-                             variable_name='query',
-                             description='输入对话文本，用于生成小结')
-
+from .base import DialogSummaryArgs
 
 class DialogSummary(CompletionBaseComponent):
     r"""

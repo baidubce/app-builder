@@ -23,7 +23,7 @@ answer = tag_extraction(appbuilder.Message("从这段文本中抽取关键标签
 
 #### meta
 
-[`TagExtractionArgs`](#appbuilder.core.components.llms.tag_extraction.component.TagExtractionArgs) 的别名
+`TagExtractionArgs` 的别名
 
 #### name *: str* *= 'tag_extraction'*
 
@@ -46,33 +46,3 @@ answer = tag_extraction(appbuilder.Message("从这段文本中抽取关键标签
   obj
 
 #### version *: str* *= 'v1'*
-
-### *class* appbuilder.core.components.llms.tag_extraction.component.TagExtractionArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, message: [Message](appbuilder.core.md#appbuilder.core.message.Message))
-
-基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
-
-标签抽取配置
-
-#### message
-
-输入消息，用于模型的主要输入内容
-
-* **Type:**
-  [Message](appbuilder.core.md#appbuilder.core.message.Message)
-
-#### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
-
-#### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'message': FieldInfo(annotation=Message, required=True, description="输入消息，用于模型的主要输入内容，例如'本实用新型公开了一种可利用热能的太阳能光伏光热一体化组件，\\n                             包括太阳能电池，还包括有吸热板，太阳能电池粘附在吸热板顶面，吸热板内嵌入有热电材料制成的内芯，吸热板底面设置有蛇形管。\\n                             本实用新型结构紧凑，安装方便，能充分利用太阳能电池散发的热能，具有较高的热能利用率。'", json_schema_extra={'variable_name': 'query'}), 'name': FieldInfo(annotation=str, required=False, default=''), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
-
-This replaces Model._\_fields_\_ from Pydantic V1.

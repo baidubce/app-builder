@@ -28,9 +28,13 @@ def process_rst_file(filepath):
             i += min(8, len(lines) - i)
         elif 'model' in lines[i] and 'appbuilder.core' in lines[i]:
             i += min(8, len(lines) - i)
-        elif 'appbuilder.core.utils' in lines[i] and 'appbuilder.core' in lines[i]:
+        elif 'appbuilder.core.utils' in lines[i]:
             i += min(8, len(lines) - i)
         elif 'data_class' in lines[i] and 'appbuilder.core' in lines[i]:
+            i += min(8, len(lines) - i)
+        elif 'basic' in lines[i] and 'appbuilder.core' in lines[i]:
+            i += min(8, len(lines) - i)
+        elif 'parse_rag_pro_response' in lines[i] and 'appbuilder.core' in lines[i]:
             i += min(8, len(lines) - i)
         elif 'Module contents' in lines[i]:
             i += min(8, len(lines) - i)

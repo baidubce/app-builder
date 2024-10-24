@@ -20,20 +20,9 @@ from typing import Union, List
 
 from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings.base import EmbeddingBaseComponent
-from appbuilder.core.component import ComponentArguments
 from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-
-class EmbeddingArgs(ComponentArguments):
-    """
-    ernie bot embedding配置
-
-    Attributes:
-        text (Union[Message[str], str]): 输入文本
-    """
-    text: Union[Message[str], str]
-
+from .base import EmbeddingArgs
 
 class Embedding(EmbeddingBaseComponent):
     """

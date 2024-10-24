@@ -33,7 +33,7 @@ print("Answer: \n{}".format(answer.content))
 
 #### meta
 
-[`SimilarQuestionMeta`](#appbuilder.core.components.llms.similar_question.component.SimilarQuestionMeta) 的别名
+`SimilarQuestionMeta` 的别名
 
 #### name *: str* *= 'similar_question'*
 
@@ -73,31 +73,3 @@ print("Answer: \n{}".format(answer.content))
   **ValueError** – 如果未提供query参数，则抛出此异常。
 
 #### version *: str* *= 'v1'*
-
-### *class* appbuilder.core.components.llms.similar_question.component.SimilarQuestionMeta(\*, name: str = '', tool_desc: Dict[str, Any] = {}, message: [Message](appbuilder.core.md#appbuilder.core.message.Message))
-
-基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
-
-#### message
-
-输入消息，用于模型的输入，一般为问题。
-
-* **Type:**
-  [Message](appbuilder.core.md#appbuilder.core.message.Message)
-
-#### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
-
-#### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'message': FieldInfo(annotation=Message, required=True, description='输入消息，用于模型的输入，一般为问题。', json_schema_extra={'variable_name': 'query'}), 'name': FieldInfo(annotation=str, required=False, default=''), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
-
-This replaces Model._\_fields_\_ from Pydantic V1.

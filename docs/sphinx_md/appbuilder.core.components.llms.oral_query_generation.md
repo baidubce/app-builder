@@ -37,7 +37,7 @@ Send a byte array of an audio file to obtain the result of speech recognition.
 
 #### meta
 
-[`OralQueryGenerationArgs`](#appbuilder.core.components.llms.oral_query_generation.component.OralQueryGenerationArgs) 的别名
+`OralQueryGenerationArgs` 的别名
 
 #### name *: str* *= 'query_generation'*
 
@@ -82,70 +82,3 @@ Send a byte array of an audio file to obtain the result of speech recognition.
   **ValueError** – 如果未提供text参数，则抛出ValueError异常。
 
 #### version *: str* *= 'v1'*
-
-### *class* appbuilder.core.components.llms.oral_query_generation.component.OralQueryGenerationArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, text: str, query_type: [QueryTypeChoices](#appbuilder.core.components.llms.oral_query_generation.component.QueryTypeChoices), output_format: [QueryTypeChoices](#appbuilder.core.components.llms.oral_query_generation.component.QueryTypeChoices))
-
-基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
-
-口语化Query生成配置
-
-#### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'name': FieldInfo(annotation=str, required=False, default=''), 'output_format': FieldInfo(annotation=QueryTypeChoices, required=True, description='输出格式，可选值为json、str。', json_schema_extra={'variable_name': 'output_format'}), 'query_type': FieldInfo(annotation=QueryTypeChoices, required=True, description='待生成的query类型，可选值为问题、短语和全部（问题+短语）。', json_schema_extra={'variable_name': 'query_type'}), 'text': FieldInfo(annotation=str, required=True, description='输入文本，用于生成Query', json_schema_extra={'valiable_name': 'text'}), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-#### output_format *: [QueryTypeChoices](#appbuilder.core.components.llms.oral_query_generation.component.QueryTypeChoices)*
-
-#### query_type *: [QueryTypeChoices](#appbuilder.core.components.llms.oral_query_generation.component.QueryTypeChoices)*
-
-#### text *: str*
-
-### *class* appbuilder.core.components.llms.oral_query_generation.component.OutputFormatChoices(value)
-
-基类：`Enum`
-
-An enumeration.
-
-#### json_format *= 'json'*
-
-#### str_format *= 'str'*
-
-#### to_chinese()
-
-将OutputFormatChoices枚举类中的值转换为中文描述。
-
-* **参数:**
-  **无参数**
-* **返回:**
-  返回一个字典，键是OutputFormatChoices枚举类的成员，值为对应的中文描述字符串。
-
-### *class* appbuilder.core.components.llms.oral_query_generation.component.QueryTypeChoices(value)
-
-基类：`Enum`
-
-An enumeration.
-
-#### phrases *= '短语'*
-
-#### questions *= '问题'*
-
-#### questions_and_phrases *= '全部'*
-
-#### to_chinese()
-
-将QueryTypeChoices枚举类中的值转换为中文描述。
-
-* **参数:**
-  **无参数**
-* **返回:**
-  返回一个字典，键是QueryTypeChoices枚举类的成员，值为对应的中文描述字符串。

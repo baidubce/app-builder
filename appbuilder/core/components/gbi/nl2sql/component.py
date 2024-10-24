@@ -14,31 +14,17 @@
 
 r"""GBI nl2sql component.
 """
-from typing import Dict, List, Optional
-from pydantic import BaseModel, Field, ValidationError
+from typing import Dict, List
+from pydantic import ValidationError
 
-from appbuilder.core.component import Component, ComponentArguments
+from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import ColumnItem
 from appbuilder.core.components.gbi.basic import NL2SqlResult
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-
-class NL2SqlArgs(ComponentArguments):
-    """
-    nl2sql 的参数
-
-    Attributes:
-        query: 用户的 query 输入
-        session: gbi session 的历史 列表
-        column_constraint: 列选的限制条件
-    """
-    query: str = Field(..., description="用户的 query 输入")
-    session: List[SessionRecord] = Field(default=list(), description="gbi session 的历史 列表")
-    column_constraint: List[ColumnItem] = Field(default=list(), description="列选的限制条件")
-
+from .base import NL2SqlArgs
 
 class NL2Sql(Component):
     """

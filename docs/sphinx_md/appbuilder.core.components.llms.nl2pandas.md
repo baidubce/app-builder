@@ -4,47 +4,6 @@
 
 ## appbuilder.core.components.llms.nl2pandas.component module
 
-自然语言转pandas
-
-### *class* appbuilder.core.components.llms.nl2pandas.component.Nl2pandasArgs(\*, name: str = '', tool_desc: Dict[str, Any] = {}, message: [Message](appbuilder.core.md#appbuilder.core.message.Message), table_info: str)
-
-基类：[`ComponentArguments`](appbuilder.core.md#appbuilder.core.component.ComponentArguments)
-
-自然语言转pandas代码 参数配置
-
-#### message
-
-Message = Field(…)
-
-* **Type:**
-  [appbuilder.core.message.Message](appbuilder.core.md#appbuilder.core.message.Message)
-
-#### table_info
-
-str = Field(…)
-
-* **Type:**
-  str
-
-#### message *: [Message](appbuilder.core.md#appbuilder.core.message.Message)*
-
-#### model_computed_fields *: ClassVar[dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[dict[str, FieldInfo]]* *= {'message': FieldInfo(annotation=Message, required=True, description="输入问题，一般是针对表格信息的提问，例如'海淀区的小学有哪些'", json_schema_extra={'variable_name': 'query'}), 'name': FieldInfo(annotation=str, required=False, default=''), 'table_info': FieldInfo(annotation=str, required=True, description="表格信息，一般是表格列名以及对应列名的举例和释义，例如'表格列信息如下：\\n学校名 : 清华附小 , 字符串类型，代表小学学校的名称", json_schema_extra={'variable_name': 'table_info'}), 'tool_desc': FieldInfo(annotation=Dict[str, Any], required=False, default={})}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo].
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-#### table_info *: str*
-
 ### *class* appbuilder.core.components.llms.nl2pandas.component.Nl2pandasComponent(model=None, secret_key: str | None = None, gateway: str = '', lazy_certification: bool = False)
 
 基类：`CompletionBaseComponent`
@@ -74,7 +33,7 @@ answer = nl2pandas(query, table_info = table_info)
 
 #### meta
 
-[`Nl2pandasArgs`](#appbuilder.core.components.llms.nl2pandas.component.Nl2pandasArgs) 的别名
+`Nl2pandasArgs` 的别名
 
 #### name *: str* *= 'nl2pandas'*
 

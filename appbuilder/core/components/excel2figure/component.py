@@ -17,29 +17,17 @@ excel2figure component
 import os
 import uuid
 from typing import Dict, List, Optional
-from pydantic import BaseModel, Field, ValidationError, AnyUrl
+from pydantic import ValidationError
 import tempfile
 import requests
 import logging
 import pandas as pd
-from appbuilder.core._exception import AppBuilderServerException, ModelNotSupportedException
-from appbuilder.core.component import Component, ComponentArguments
+from appbuilder.core._exception import ModelNotSupportedException
+from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core.utils import ModelInfo, ttl_lru_cache
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
-
-
-class Excel2FigureArgs(ComponentArguments):
-    """
-    excel2figure 的参数
-
-    Attributes:
-        query: str
-        excel_file_url: AnyUrl
-    """
-    query: str = Field(..., description="用户的 query 输入", max_length=400)
-    excel_file_url: AnyUrl = Field(..., description="用户的 excel 文件地址，需要是一个可被公网下载的 URL 地址")
-
+from .base import Excel2FigureArgs
 
 class Excel2Figure(Component):
     """
