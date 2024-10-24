@@ -66,6 +66,7 @@ sphinx-apidoc -o source ../../appbuilder/
 rm ./source/appbuilder.tests.*
 rm ./source/appbuilder.utils.*
 rm ./source/appbuilder.core.assistant.type.rst
+cp ./appbuilder.core.rst ./source/appbuilder.core.rst
 
 cp update_rst.py source/
 cd source
@@ -90,6 +91,7 @@ echo "当前路径: $(pwd)"
 export PATH=/path/to/your/python:$PATH
 # 执行 make markdown
 make markdown || { echo "make markdown 命令失败"; exit 1; }
+make html || { echo "make html 命令失败"; exit 1; }
 echo "=============在doc目录下执行命令 make markdown 完成=============="
 
 

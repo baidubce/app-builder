@@ -47,6 +47,14 @@ excel2figure 组件类
 
 #### set_secret_key_and_gateway(\*\*kwargs)
 
+设置密钥和网关地址。
+
+* **参数:**
+  * **secret_key** (*Optional* *[**str* *]* *,* *optional*) – 密钥，默认为None。如果未指定，则使用实例当前的密钥。
+  * **gateway** (*str* *,* *optional*) – 网关地址，默认为空字符串。如果未指定，则使用实例当前的网关地址。
+* **返回:**
+  None
+
 #### tool_eval(streaming: bool, origin_query: str, file_urls: dict, \*\*kwargs)
 
 对指定的Excel文件进行图表生成和评估。

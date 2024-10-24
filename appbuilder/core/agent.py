@@ -33,16 +33,17 @@ MAX_RETRY_COUNT = 3
 
 
 class AgentRuntime(BaseModel):
-    """
+    r"""
     AgentRuntime 是对组件调用的服务化封装，开发者不是必须要用 AgentRuntime 才能运行自己的组件服务。
     但 AgentRuntime 可以快速帮助开发者服务化组件服务，并且提供API、对话框等部署方式。
     此外，结合 Component 和 Message 自带的运行和调试接口，可以方便开发者快速获得一个调试 Agent 的服务。
 
-    AgentRuntime 接受两个参数:
-        component (Component): 可运行的 Component, 需要实现 run(message, stream, **args) 方法  
+    Args:
+        component (Component): 可运行的 Component, 需要实现 run(message, stream, args) 方法  
         user_session_config (sqlalchemy.engine.URL|str|None): Session 输出存储配置字符串。默认使用 sqlite:///user_session.db
             遵循 sqlalchemy 后端定义，参考文档：https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls
         tool_choice (ToolChoice): 可用于Agent强制执行的组件工具
+
 
     Examples:
 
@@ -91,12 +92,10 @@ class AgentRuntime(BaseModel):
             agent = appbuilder.AgentRuntime(component=component)
             agent.chainlit_demo(port=8091)
 
-
-    ** Session 数据管理 **: 除去上述简单应用外，还支持 Session 数据管理，下面是一个例子
-
-    Examples:
+        Session 数据管理 : 除去上述简单应用外，还支持 Session 数据管理，下面是一个例子
 
         .. code-block:: python
+
             import os
             import sys
             from appbuilder.core.component import Component
@@ -140,9 +139,7 @@ class AgentRuntime(BaseModel):
             agent = AgentRuntime(component=PlaygroundWithHistory())
             agent.chainlit_demo(port=8091)
 
-    ** 请求时认证 **: component在创建时可以不进行认证，由AgentRuntime服务化后带入AppbuilderToken
-
-    Examples:
+        请求时认证 : component在创建时可以不进行认证，由AgentRuntime服务化后带入AppbuilderToken
 
         .. code-block:: python
 
@@ -157,6 +154,7 @@ class AgentRuntime(BaseModel):
             agent.serve(debug=False, port=8091)
 
         .. code-block:: shell
+        
             curl --location 'http://0.0.0.0:8091/chat' \
                 --header 'Content-Type: application/json' \
                 --header 'X-Appbuilder-Token: ...' \
@@ -165,9 +163,7 @@ class AgentRuntime(BaseModel):
                     "stream": false
                 }'
 
-    ** Session 信息查看 **: 查看本地user_session.db数据库内部信息，下面是一个例子
-                
-    Examples:
+        Session 信息查看 : 查看本地user_session.db数据库内部信息，下面是一个例子
 
         .. code-block:: python
 
@@ -210,6 +206,10 @@ class AgentRuntime(BaseModel):
     class Config:
         """
         检查配置
+
+        Attributes:
+            extra (Extra): 额外属性，默认为 Extra.forbid，即禁止添加任何额外的属性
+            arbitrary_types_allowed (bool): 任意类型是否允许，默认为 True
         """
         extra = Extra.forbid  # 不能传入类定义中未声明的字段
         arbitrary_types_allowed = True  # 此设置允许在模型中使用自定义类型的字段
@@ -222,6 +222,7 @@ class AgentRuntime(BaseModel):
 
         Args:
             values (Dict): 初始化参数
+
         Returns:
             None
         """
@@ -242,7 +243,7 @@ class AgentRuntime(BaseModel):
             **args: 其他参数，会被透传到 component
 
         Returns:
-            Message
+            Message(Message): 返回的 Message
         """
         return self.component.run(message=message, stream=stream, **args)
 
@@ -281,6 +282,23 @@ class AgentRuntime(BaseModel):
                 return {"code": 500, "message": "Internal Server Error", "result": None}, 200
 
         def warp():
+            """
+            根据component的lazy_certification属性处理请求。
+            
+            Args:
+                无参数。
+            
+            Returns:
+                如果stream为True，则返回流式响应（Content-Type为text/event-stream）。
+                如果stream为False，则返回包含处理结果的字典。
+            
+            Raises:
+                BadRequest: 当请求头中缺少必要的X-Appbuilder-Authorization时抛出。
+                BadRequest: 当请求体中缺少必要的message字段时抛出。
+                BadRequest: 当请求体中session_id字段不是字符串类型时抛出。
+                BadRequest: 当请求体中stream字段不是布尔类型时抛出。
+            
+            """
             # 根据component是否lazy_certification，分成两种情况：
             # 1. lazy_certification为True，初始化时未被认证，每次请求都需要带入AppbuilderToken
             # 2. lazy_certification为False，初始化时已经认证，请求时不需要带入AppbuilderToken，并且带入也无效
@@ -415,14 +433,15 @@ class AgentRuntime(BaseModel):
         return app
 
     def serve(self, host='0.0.0.0', debug=True, port=8092, url_rule="/chat"):
-        """ 
+        """
         将 component 服务化，提供 Flask http API 接口
-
+        
         Args:
-            host (str): 服务 host
-            debug (bool): 是否是 debug 模式
-            port (int): 服务 port
-
+            host (str): 服务运行的host地址，默认为'0.0.0.0'
+            debug (bool): 是否开启debug模式，默认为True
+            port (int): 服务运行的端口号，默认为8092
+            url_rule (str): 服务的URL规则，默认为"/chat"
+        
         Returns:
             None
         """
@@ -430,6 +449,22 @@ class AgentRuntime(BaseModel):
         app.run(host=host, debug=debug, port=port)
 
     def prepare_chainlit_readme(self):
+        """
+        准备 Chainlit 的 README 文件
+        
+        Args:
+            无
+        
+        Returns:
+            无
+        
+        Raises:
+            无
+        
+        说明:
+            从 utils 文件夹中拷贝 chainlit.md 文件到当前工作目录下，如果当前工作目录下已存在 chainlit.md 文件，则不拷贝。
+        
+        """
         try:
             # 获取当前python命令执行的路径，而不是文件的位置
             cwd_path = os.getcwd()
