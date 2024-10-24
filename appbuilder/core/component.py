@@ -25,7 +25,13 @@ from appbuilder.core.message import Message
 
 
 class ComponentArguments(BaseModel):
-    r""""ComponentArguments define Component meta fields"""
+    """
+    ComponentArguments define Component meta fields
+    
+    Attributes:
+        name (str): component name.
+        tool_desc (dict): component description.
+    """
     name: str = ""
     tool_desc: Dict[str, Any] = {}
 
@@ -53,7 +59,15 @@ class ComponentArguments(BaseModel):
 
 
 class Component:
-    r"""Component基类, 其它实现的Component子类需要继承该基类，并至少实现run方法."""
+    """
+    Component基类, 其它实现的Component子类需要继承该基类，并至少实现run方法.
+
+    Args:
+        meta (obj: `ComponentArguments`): component meta information.
+        secret_key (str): user authentication token.
+        gateway (str): backend gateway server address.
+        lazy_certification (bool): lazy certification flag.
+    """
 
     manifests = []
 
@@ -83,12 +97,33 @@ class Component:
             self.set_secret_key_and_gateway(self.secret_key, self.gateway)
  
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
+        """
+        设置密钥和网关地址。
+        
+        Args:
+            secret_key (Optional[str], optional): 密钥，默认为None。如果未指定，则使用实例当前的密钥。
+            gateway (str, optional): 网关地址，默认为空字符串。如果未指定，则使用实例当前的网关地址。
+        
+        Returns:
+            None
+        
+        """
         self.secret_key = secret_key
         self.gateway = gateway
         self._http_client = HTTPClient(self.secret_key, self.gateway)
 
     @property
     def http_client(self):
+        """
+        获取 HTTP 客户端实例。
+        
+        Args:
+            无
+        
+        Returns:
+            HTTPClient: HTTP 客户端实例。
+        
+        """
         if self._http_client is None:
             self._http_client = HTTPClient(self.secret_key, self.gateway)
         return self._http_client
@@ -98,13 +133,8 @@ class Component:
         return self.run(*inputs, **kwargs)
 
     def run(self, *inputs, **kwargs):
-        r"""
-        Defines the computation performed at every call.
-        Should be overridden by all subclasses.
-
-        Parameters:
-            *inputs(tuple): unpacked tuple arguments
-            **kwargs(dict): unpacked dict arguments
+        """
+        run method.
         """
         raise NotImplementedError
 

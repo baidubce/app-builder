@@ -36,6 +36,15 @@ print(answer.extra)  # 获取结果来源
 
 #### *property* http_client
 
+获取 HTTP 客户端实例。
+
+* **参数:**
+  **无**
+* **返回:**
+  HTTP 客户端实例。
+* **返回类型:**
+  HTTPClient
+
 #### integrated_url *: str* *= '/v1/ai_engine/agi_platform/v1/instance/integrated'*
 
 #### name *= 'rag'*
