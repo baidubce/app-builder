@@ -382,10 +382,12 @@ class AppBuilderTracer():
         if self._trace_start:
             return
         logger.info("AppBuilder Starting trace...")
+        os.environ["APPBUILDER_SDK_TRACE_ENABLE"] = "true"
         self._instrumentor._instrument(tracer_provider=self._tracer_provider)
 
     def end_trace(self):
         logger.info("AppBuilder Ending trace...")
+        del os.environ["APPBUILDER_SDK_TRACE_ENABLE"]
         self._instrumentor._uninstrument()
 
     def __enter__(self):
