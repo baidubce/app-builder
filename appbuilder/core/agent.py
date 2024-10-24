@@ -26,6 +26,7 @@ from appbuilder.core.context import init_context
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.utils.logger_util import logger
+from appbuilder.core.console.appbuilder_client.data_class import ToolChoiceFunction, ToolChoice
 
 # 流式场景首包超时时，最大重试次数
 MAX_RETRY_COUNT = 3
@@ -198,6 +199,7 @@ class AgentRuntime(BaseModel):
     component: Component
     user_session_config: Optional[Union[Any, str]] = None
     user_session: Optional[Any] = None
+    tool_choice: ToolChoice = None
 
     class Config:
         """
@@ -563,7 +565,7 @@ class AgentRuntime(BaseModel):
                     conversation_id, message.elements[0].path)
                 file_ids.append(file_id)
             return self.component.run(conversation_id=conversation_id, query=message.content, file_ids=file_ids,
-                                      stream=True)
+                                      stream=True, tool_choice=self.tool_choice)
 
         @cl.on_chat_start
         async def start():
