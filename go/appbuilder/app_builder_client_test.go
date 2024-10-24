@@ -31,52 +31,52 @@ func TestNewAppBuilderClientError(t *testing.T) {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
-	//NewAppBuilderClient测试1
+	// NewAppBuilderClient测试1
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	_, err = NewAppBuilderClient("", config)
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 	}
-	//NewAppBuilderClient测试2
+	// NewAppBuilderClient测试2
 	_, err = NewAppBuilderClient(appID, nil)
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 	}
 
-	//GetSdkConfig测试
+	// GetSdkConfig测试
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AppBuilderClient instance failed")
 	}
 	client.GetSdkConfig()
-	//GetClient测试
+	// GetClient测试
 	client.GetClient()
 
 	var GatewayURL = config.GatewayURLV2
 
-	//CreateConversation 测试1 ServiceURLV2 错误
+	// CreateConversation 测试1 ServiceURLV2 错误
 	client.sdkConfig.GatewayURLV2 = "://invalid-url"
 	_, err = client.CreateConversation()
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Errorf("expected ServiceURLV2 error, got %v", err)
 	}
-	//CreateConversation 测试2  Do 错误
+	// CreateConversation 测试2  Do 错误
 	client.sdkConfig.GatewayURLV2 = "http://192.0.2.1"
 	_, err = client.CreateConversation()
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Errorf("expected Bad Request error, got %v", err)
 	}
-	//CreateConversation 测试3  错误的 HTTP 响应
+	// CreateConversation 测试3  错误的 HTTP 响应
 	client.sdkConfig.GatewayURLV2 = GatewayURL
 	client.client = &MockHTTPClient{}
 	_, err = client.CreateConversation()
 	if err == nil {
 		t.Fatalf("expected 400 error, got nil")
 	}
-	//CreateConversation 测试 4: 模拟读取 body 时发生错误
+	// CreateConversation 测试 4: 模拟读取 body 时发生错误
 	client.sdkConfig.GatewayURLV2 = GatewayURL
 	client.client = &FaultyHTTPClient{}
 	_, err = client.CreateConversation()
@@ -84,14 +84,14 @@ func TestNewAppBuilderClientError(t *testing.T) {
 		t.Fatalf("expected read error, got nil")
 	}
 
-	//CreateConversation 测试 5: json.Unmarshal错误
+	// CreateConversation 测试 5: json.Unmarshal错误
 	client.sdkConfig.GatewayURLV2 = GatewayURL
 	client.client = &InvalidJSONHTTPClient{}
 	_, err = client.CreateConversation()
 	if err == nil {
 		t.Fatalf("expected JSON unmarshal error, got nil")
 	}
-	//CreateConversation 测试 6: 缺少 id 字段
+	// CreateConversation 测试 6: 缺少 id 字段
 	client.client = &MissingIDHTTPClient{}
 	client.CreateConversation()
 
@@ -114,7 +114,7 @@ func TestNewAppBuilderClientError(t *testing.T) {
 		t.Errorf("expected Bad Request error, got %v", err)
 	}
 
-	//测试3  错误的 HTTP 响应
+	// 测试3  错误的 HTTP 响应
 	config.GatewayURLV2 = GatewayURL
 	config.HTTPClient = &MockHTTPClient{}
 	_, err = GetAppList(GetAppListRequest{
@@ -143,6 +143,7 @@ func TestNewAppBuilderClientError(t *testing.T) {
 		t.Fatalf("expected JSON unmarshal error, got nil")
 	}
 }
+
 func TestClientUploadLocalFile(t *testing.T) {
 	t.Parallel() // 并发运行
 	// 测试逻辑
@@ -222,27 +223,27 @@ func TestClientRun(t *testing.T) {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new AppBuilderClient instance failed")
 	}
-	//测试1 conversationID ==0
+	// 测试1 conversationID ==0
 	_, err = client.Run("", "描述简历中的候选人情况", nil, true)
 	if err == nil {
 		t.Errorf("expected conversationID mustn't be empty, got %v", err)
 	}
 
-	//测试2   ServiceURLV2 error 无效的ServiceURLV2
+	// 测试2   ServiceURLV2 error 无效的ServiceURLV2
 	client.sdkConfig.GatewayURLV2 = "://invalid-url"
 	_, err = client.Run("12", "描述简历中的候选人情况", nil, true)
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Errorf("expected ServiceURLV2 error, got %v", err)
 	}
-	//测试3   t.client.Do 错误
+	// 测试3   t.client.Do 错误
 	client.sdkConfig.GatewayURLV2 = "http://192.0.2.1"
 	_, err = client.Run("123", "描述简历中的候选人情况", nil, true)
 	if err == nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Errorf("expected Bad Request error, got %v", err)
 	}
-	//测试4   错误的 HTTP 响应
+	// 测试4   错误的 HTTP 响应
 	client.client = &MockHTTPClient{}
 	client.sdkConfig.GatewayURLV2 = GatewayURL
 	_, err = client.Run("1234", "描述简历中的候选人情况", nil, true)
@@ -295,7 +296,7 @@ func TestClientRunWithToolCallError(t *testing.T) {
 		fmt.Println("unmarshal tool error:", err)
 	}
 
-	//测试1 conversationID ==0
+	// 测试1 conversationID ==0
 	client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
@@ -304,7 +305,7 @@ func TestClientRunWithToolCallError(t *testing.T) {
 		Tools:          []Tool{tool},
 	})
 
-	//测试4   非流式
+	// 测试4   非流式
 	client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
@@ -313,7 +314,7 @@ func TestClientRunWithToolCallError(t *testing.T) {
 		Tools:          []Tool{tool},
 	})
 
-	//测试2   ServiceURLV2 error 无效的ServiceURLV2
+	// 测试2   ServiceURLV2 error 无效的ServiceURLV2
 	client.sdkConfig.GatewayURLV2 = "://invalid-url"
 	client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
@@ -323,7 +324,7 @@ func TestClientRunWithToolCallError(t *testing.T) {
 		Tools:          []Tool{tool},
 	})
 
-	//测试3   t.client.Do 错误
+	// 测试3   t.client.Do 错误
 	client.sdkConfig.GatewayURLV2 = "http://192.0.2.1"
 	client.RunWithToolCall(AppBuilderClientRunRequest{
 		AppID:          appID,
@@ -333,7 +334,7 @@ func TestClientRunWithToolCallError(t *testing.T) {
 		Tools:          []Tool{tool},
 	})
 
-	//测试4   错误的 HTTP 响应
+	// 测试4   错误的 HTTP 响应
 	client.client = &MockHTTPClient{}
 	client.sdkConfig.GatewayURLV2 = GatewayURL
 	client.RunWithToolCall(AppBuilderClientRunRequest{
@@ -343,7 +344,6 @@ func TestClientRunWithToolCallError(t *testing.T) {
 		Stream:         false,
 		Tools:          []Tool{tool},
 	})
-
 }
 
 func TestNewAppBuilderClient(t *testing.T) {
@@ -354,7 +354,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGFILE", "")
 
 	// 定义一个日志函数，将日志写入缓冲区
-	log := func(format string, args ...interface{}) {
+	log := func(format string, args ...any) {
 		fmt.Fprintf(&logBuffer, format+"\n", args...)
 	}
 
@@ -405,7 +405,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 	}
 	log("----------------answer-------------------")
 	log(totalAnswer)
-	//测试4   非流式
+	// 测试4   非流式
 	client.Run(conversationID, "描述简历中的候选人情况", nil, false)
 
 	// 如果测试失败，则输出缓冲区中的日志
@@ -423,7 +423,7 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
 
-	log := func(format string, args ...interface{}) {
+	log := func(format string, args ...any) {
 		fmt.Fprintf(&logBuffer, format+"\n", args...)
 	}
 
@@ -540,7 +540,7 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
 
-	log := func(format string, args ...interface{}) {
+	log := func(format string, args ...any) {
 		fmt.Fprintf(&logBuffer, format+"\n", args...)
 	}
 
