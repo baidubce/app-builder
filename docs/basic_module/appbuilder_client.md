@@ -312,7 +312,7 @@ msg_2 = client.run(
 )
 print(msg_2.model_dump_json(indent=4))
 
-#--------------------------使用直接传函数对象的方式进行ToolCall的调用------------------------
+#--------------------使用function_to_json函数直接传函数对象的方式进行ToolCall的调用-----------------
 #注意：要使用此方法要为函数写好注释。
 
 #定义函数列表
@@ -417,7 +417,6 @@ answer = app_builder_client.run(
 | query          | String       | 是    | query内容                                            | "汽车性能参数怎么样" |
 | conversationId | String          | 是    | 对话id，可以通过createConversation()获取                |             |
 | stream         | boolean       | 是    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |     |
-| functions       | List[Callable]   | 否       | 传入本地函数对象列表，以直接调用函数                         |                   |
 | tools | List[Tool] | 否 | 一个列表，其中每个字典对应一个工具的配置 | |
 | tools[0] | Tool | 否 | 工具配置 | |
 | +type | String | 否 | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 | |
