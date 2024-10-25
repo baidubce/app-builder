@@ -260,7 +260,7 @@ def get_current_weather(location: str, unit: str) -> str:
         ValueError: 如果传入的城市不支持或单位不正确
     """
     return "北京今天25度"
-#--------------------------使用tools字段进行ToolCall的调用---------------------------
+#------------------------直接使用JsonSchema格式描述tools来进行ToolCall调用-------------------------
 tools = [
     {
         "type": "function",
@@ -312,23 +312,9 @@ msg_2 = client.run(
 )
 print(msg_2.model_dump_json(indent=4))
 
-#---------------------------使用functions字段进行ToolCall的调用------------------------
-#为了区分再定义一个新的函数,注意：要使用此方法要为函数写好注释。
-def get_current_weather2(location: str, unit: str) -> str:
-    """
-    查询指定中国城市的当前天气。
+#--------------------------使用直接传函数对象的方式进行ToolCall的调用------------------------
+#注意：要使用此方法要为函数写好注释。
 
-    参数:
-        location (str): 城市名称，例如："北京"
-        unit (str): 温度单位，可选 "celsius" 或 "fahrenheit"
-
-    返回:
-        str: 天气情况描述
-
-    抛出:
-        ValueError: 如果传入的城市不支持或单位不正确
-    """
-    return "北京今天35度"
 #定义函数列表
 functions = [get_current_weather2]
 function_map = {f.__name__: f for f in functions}
@@ -336,8 +322,7 @@ function_map = {f.__name__: f for f in functions}
 msg = client.run(
   conversation_id=conversation_id,
   query="今天北京的天气怎么样？",
-  functions=functions,
-  #tools = tools
+  tools = [appbuilder.function_to_json(f) for f in functions]
   )
 print(msg.model_dump_json(indent=4))
 # 获取最后的事件和工具调用信息
@@ -360,29 +345,6 @@ msg_2 = client.run(
     }],
 )
 print(msg_2.model_dump_json(indent=4))
-
-#--------------同时使用functions字段和tools字段，tools字段的优先级更高---------------
-
-#创建函数对象列表
-functions = [get_current_weather,get_current_weather2]
-
-msg = client.run(
-  conversation_id=conversation_id,
-  query="今天北京的天气怎么样？",
-  functions=[get_current_weather2],
-  tools = tools
-  )
-print(msg.model_dump_json(indent=4))
-# 获取最后的事件和工具调用信息
-event = msg.content.events[-1]
-tool_call = event.tool_calls[-1]
-
-# 获取函数名称和参数
-name = tool_call.function.name
-args = tool_call.function.arguments
-
-#打印大模型返回函数名称
-print(name)
 ```
 
 #### Run方法带ToolChoice使用示例：

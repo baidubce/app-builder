@@ -22,7 +22,7 @@ from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._client import HTTPClient
-from appbuilder.utils.func_utils import deprecated, function_to_json
+from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import client_run_trace, client_tool_trace
 
@@ -207,7 +207,6 @@ class AppBuilderClient(Component):
             query: str = "",
             file_ids: list = [],
             stream: bool = False,
-            functions: List[Callable[..., Any]] = [],
             tools: list[data_class.Tool] = None,
             tool_outputs: list[data_class.ToolOutput] = None,
             tool_choice: data_class.ToolChoice = None,
@@ -228,10 +227,9 @@ class AppBuilderClient(Component):
             kwargs: 其他参数
             
         Returns: 
-            message (obj: `Message`): 对话结果，一个Message对象，使用message.content获取内容。
+            message (Message): 对话结果，一个Message对象，使用message.content获取内容。
         """
-        if tools == None:
-            tools = [function_to_json(f) for f in functions]
+
         if len(conversation_id) == 0:
             raise ValueError(
                 "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
@@ -390,3 +388,4 @@ def _transform(
             tool_calls=ev.tool_calls,
         )
         out.events.append(event)
+
