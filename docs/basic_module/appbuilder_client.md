@@ -244,6 +244,23 @@ app_id = "..."  # 已发布AppBuilder应用的ID
 client = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = client.create_conversation()
+#定义本地函数
+def get_current_weather(location: str, unit: str) -> str:
+    """
+    查询指定中国城市的当前天气。
+
+    参数:
+        location (str): 城市名称，例如："北京"
+        unit (str): 温度单位，可选 "celsius" 或 "fahrenheit"
+
+    返回:
+        str: 天气情况描述
+
+    抛出:
+        ValueError: 如果传入的城市不支持或单位不正确
+    """
+    return "北京今天25度"
+#--------------------------使用tools字段进行ToolCall的调用---------------------------
 tools = [
     {
         "type": "function",
@@ -264,19 +281,108 @@ tools = [
         },
     }
 ]
+#创建函数对象列表
+functions = [get_current_weather]
 
+#调用大模型
 msg = client.run(
     conversation_id=conversation_id, query="今天北京天气怎么样？", tools=tools
 )
 print(msg.model_dump_json(indent=4))
 
+# 获取最后的事件和工具调用信息
 event = msg.content.events[-1]
+tool_call = event.tool_calls[-1]
 
+# 获取函数名称和参数
+name = tool_call.function.name
+args = tool_call.function.arguments
+
+# 将函数名称映射到具体的函数并执行
+function_map = {f.__name__: f for f in functions}
+raw_result = function_map[name](**args)
+
+# 传递工具的输出
 msg_2 = client.run(
     conversation_id=conversation_id,
-    tool_outputs=[{"tool_call_id": event.tool_calls[-1].id, "output": "北京今天35度"}],
+    tool_outputs=[{
+        "tool_call_id": tool_call.id,
+        "output": str(raw_result)
+    }],
 )
 print(msg_2.model_dump_json(indent=4))
+
+#---------------------------使用functions字段进行ToolCall的调用------------------------
+#为了区分再定义一个新的函数,注意：要使用此方法要为函数写好注释。
+def get_current_weather2(location: str, unit: str) -> str:
+    """
+    查询指定中国城市的当前天气。
+
+    参数:
+        location (str): 城市名称，例如："北京"
+        unit (str): 温度单位，可选 "celsius" 或 "fahrenheit"
+
+    返回:
+        str: 天气情况描述
+
+    抛出:
+        ValueError: 如果传入的城市不支持或单位不正确
+    """
+    return "北京今天35度"
+#定义函数列表
+functions = [get_current_weather2]
+function_map = {f.__name__: f for f in functions}
+#调用大模型
+msg = client.run(
+  conversation_id=conversation_id,
+  query="今天北京的天气怎么样？",
+  functions=functions,
+  #tools = tools
+  )
+print(msg.model_dump_json(indent=4))
+# 获取最后的事件和工具调用信息
+event = msg.content.events[-1]
+tool_call = event.tool_calls[-1]
+
+# 获取函数名称和参数
+name = tool_call.function.name
+args = tool_call.function.arguments
+
+# 将函数名称映射到具体的函数并执行
+raw_result = function_map[name](**args)
+
+# 传递工具的输出
+msg_2 = client.run(
+    conversation_id=conversation_id,
+    tool_outputs=[{
+        "tool_call_id": tool_call.id,
+        "output": str(raw_result)
+    }],
+)
+print(msg_2.model_dump_json(indent=4))
+
+#--------------同时使用functions字段和tools字段，tools字段的优先级更高---------------
+
+#创建函数对象列表
+functions = [get_current_weather,get_current_weather2]
+
+msg = client.run(
+  conversation_id=conversation_id,
+  query="今天北京的天气怎么样？",
+  functions=[get_current_weather2],
+  tools = tools
+  )
+print(msg.model_dump_json(indent=4))
+# 获取最后的事件和工具调用信息
+event = msg.content.events[-1]
+tool_call = event.tool_calls[-1]
+
+# 获取函数名称和参数
+name = tool_call.function.name
+args = tool_call.function.arguments
+
+#打印大模型返回函数名称
+print(name)
 ```
 
 #### Run方法带ToolChoice使用示例：
@@ -349,6 +455,7 @@ answer = app_builder_client.run(
 | query          | String       | 是    | query内容                                            | "汽车性能参数怎么样" |
 | conversationId | String          | 是    | 对话id，可以通过createConversation()获取                |             |
 | stream         | boolean       | 是    | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |     |
+| functions       | List[Callable]   | 否       | 传入本地函数对象列表，以直接调用函数                         |                   |
 | tools | List[Tool] | 否 | 一个列表，其中每个字典对应一个工具的配置 | |
 | tools[0] | Tool | 否 | 工具配置 | |
 | +type | String | 否 | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 | |
