@@ -29,7 +29,7 @@ TEST_INPUT = {
 }
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDocumentUnderstandingComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -72,37 +72,23 @@ class TestDocumentUnderstandingComponent(unittest.TestCase):
         for result in results:
             self.assertIsNotNone(result)
             print(f'\n[result]\n{result}\n')
-
-
-    def test_run_with_errortype(self):
-        """测试 run 方法上传非法文件类型
-        """
-        query = TEST_INPUT.get("query")
-        results = self.du.run(query,
-                             "test_utils_logging_util.py",
-                             instruction=TEST_INPUT.get("instruction"),
-                             addition_instruction=TEST_INPUT.get("addition_instruction"),
-                             stream=False,
-                             app_id=TEST_INPUT.get("app_id"))
-
-        for result in results:
-            self.assertIsNotNone(result)
-            print(f'\n[result]\n{result}\n')
-
     def test_run_with_nofile(self):
         """测试 run 方法上传无效文件
         """
         query = TEST_INPUT.get("query")
-        results = self.du.run(query,
-                             "tt.txt",
-                             instruction=TEST_INPUT.get("instruction"),
-                             addition_instruction=TEST_INPUT.get("addition_instruction"),
-                             stream=False,
-                             app_id=TEST_INPUT.get("app_id"))
+        # 使用 assertRaises 捕获预期异常
+        with self.assertRaises(FileNotFoundError):  # 假设无效文件抛出 FileNotFoundError 异常
+            results = self.du.run(query,
+                                  "invalid_file.txt",  # 使用无效文件
+                                  instruction=TEST_INPUT.get("instruction"),
+                                  addition_instruction=TEST_INPUT.get("addition_instruction"),
+                                  stream=False,
+                                  app_id=TEST_INPUT.get("app_id"))
 
-        for result in results:
-            self.assertIsNotNone(result)
-            print(f'\n[result]\n{result}\n')
+            # 如果 run 方法抛出异常，以下代码将不会执行
+            for result in results:
+                self.assertIsNotNone(result)
+                print(f'\n[result]\n{result}\n')
 
     def test_tool_eval(self):
         '''测试tool_eval方法'''

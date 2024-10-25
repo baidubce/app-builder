@@ -99,21 +99,6 @@ class DocumentUnderstanding(Component):
         """拼接addition_instruction"""
         return "，指令：" + addition_instruction
 
-    def file_to_base64(self, file_path: str):
-        try:
-            # 打开文件并读取内容
-            with open(file_path, "rb") as file:
-                file_data = file.read()
-
-            # 将文件数据转换为base64格式
-            base64_encoded_data = base64.b64encode(file_data)
-
-            # 将base64字节数据转换为字符串
-            base64_message = base64_encoded_data.decode('utf-8')
-
-            return base64_message
-        except:
-            return f"文件未找到，请检查文件路径是否正确。"
 
     def get_conversation_id(self, app_id: str):
         url = "https://qianfan.baidubce.com/v2/app/conversation"
@@ -189,7 +174,6 @@ class DocumentUnderstanding(Component):
         headers['Authorization'] = f"Bearer {os.getenv('APPBUILDER_TOKEN', '')}"
         headers['X-Appbuilder-Request-Id'] = request_id
         url = self.http_client.service_url_v2("/components/document_understanding/version/preview")
-        print("url: ", url)
         response = self.http_client.session.post(url, headers=headers, data=payload, timeout=timeout, stream=stream)
         self.http_client.check_response_header(response)
         if response.status_code == 200:
