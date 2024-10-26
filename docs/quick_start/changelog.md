@@ -59,3 +59,8 @@
   * 更新KnowledgeBase组件，新增`切片详情`获取接口，新增切片关联的图片ID字段
   * AppBuilderTrace 支持SentrySDK
   * AppBuilder新增[Sphinx API文档](/docs/sphinx_md/appbuilder.md)
+* **2024.10.26 v0.9.6版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.6)
+  * 更新AppBuilderClient，简化Java & Go语言使用ToolCall的方式
+  * 新增长文档内容理解组件
+  * 优化requirements，去除部分组件的版本限制
+  * 简化报错堆栈，去除冗余的Trace信息
