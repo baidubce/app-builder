@@ -67,7 +67,8 @@ COMPONENT_WHITE_LIST = [
     "PlantRecognition",
     "HandwriteOCR",
     "ImageUnderstand",
-    "MixCardOCR", 
+    "MixCardOCR",
+    "DocumentUnderstanding",
 ]
 
 
