@@ -16,7 +16,7 @@
 import os
 import json
 import uuid
-from typing import Callable, List, Any, Optional
+from typing import Optional
 from appbuilder.core.component import Message, Component
 from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
