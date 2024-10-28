@@ -238,8 +238,7 @@ import os
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 # 设置环境变量
-os.environ["APPBUILDER_TOKEN"] = "..."
-app_id = "..."  # 已发布AppBuilder应用的ID
+app_id = "b2a972c5-e082-46e5-b313-acbf51792422"  # 已发布AppBuilder应用的ID
 # 初始化智能体
 client = appbuilder.AppBuilderClient(app_id)
 # 创建会话
@@ -260,9 +259,6 @@ def get_current_weather(location: str, unit: str) -> str:
         ValueError: 如果传入的城市不支持或单位不正确
     """
     return "北京今天25度"
-#定义函数列表
-functions = [get_current_weather2]
-function_map = {f.__name__: f for f in functions}
 #------------------------直接使用JsonSchema格式描述tools来进行ToolCall调用-------------------------
 tools = [
     {
@@ -317,7 +313,9 @@ print(msg_2.model_dump_json(indent=4))
 
 #--------------------使用function_to_json函数直接传函数对象的方式进行ToolCall的调用-----------------
 #注意：要使用此方法要为函数写好注释。
-
+#定义函数列表
+functions = [get_current_weather]
+function_map = {f.__name__: f for f in functions}
 #调用大模型
 msg = client.run(
   conversation_id=conversation_id,
