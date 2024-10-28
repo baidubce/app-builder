@@ -23,13 +23,13 @@ TEST_INPUT = {
     "query": appbuilder.Message("这篇文档讲了什么"),
     "instruction": "请根据文档内容回答问题",
     "addition_instruction": "请你用一句话简短概括",
-    "file_path": "title_splitter.docx",
+    "file_path": "data/qa_demo.xlsx",
     "stream": True,
     "app_id": "87187054-78f0-4ef3-b710-fdcf2bfba7f2"
 }
 
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDocumentUnderstandingComponent(unittest.TestCase):
     def setUp(self):
         """
