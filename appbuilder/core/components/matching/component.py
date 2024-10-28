@@ -15,6 +15,8 @@
 
 from typing import List, Union
 
+import numpy as np
+
 from appbuilder.core.message import Message
 from appbuilder.core.components.embeddings import EmbeddingBaseComponent
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
@@ -95,65 +97,20 @@ class Matching(MatchingBaseComponent):
         else:
             return Message([item[1] for item in sorted_combined])
 
-    def _dot_product(self, v1, v2):
-        """
-        计算两个向量的点积。
-        
-        Args:
-            v1 (list): 第一个向量，元素为数值类型。
-            v2 (list): 第二个向量，元素为数值类型，长度应与v1相同。
-        
-        Returns:
-            float: 向量v1和v2的点积结果。
-        
-        Raises:
-            ValueError: 如果v1和v2的长度不相等。
-        """
-
-        return sum(x1 * x2 for x1, x2 in zip(v1, v2))
-
-    def _vector_norm(self, v):
-        """
-        计算向量的欧几里得范数（L2范数）。
-        
-        Args:
-            v (list of float): 输入的向量，其中每个元素都是浮点数。
-        
-        Returns:
-            float: 向量的欧几里得范数。
-        
-        """
-        return sum(x**2 for x in v) ** 0.5
-
     def _cosine_similarity(self, X, Y):
         """
-        计算向量X与矩阵Y中每一行的余弦相似度。
-        
         Args:
-            X (list or numpy.ndarray): 待计算的单个向量，长度为n的列表或一维numpy数组。
-            Y (list of lists or numpy.ndarray): 包含多个向量的矩阵，每个向量长度为n的列表的列表或二维numpy数组。
-        
+            X: 长度为 1 x n 的矩阵
+            Y: 长度为 m x n 的矩阵
         Returns:
-            list: 包含X与Y中每一行向量余弦相似度的列表。
-        
+            长度为 m x 1 的矩阵，每个元素表示 X 与 Y的对应行m 的余弦相似度
         """
-        if len(X) == 1:
-            X = X[0]
 
-        norm_X = self._vector_norm(X)
-        similarities = []
-        
-        for row in Y:
-            dot_prod = self._dot_product(X, row)
-            norm_row = self._vector_norm(row)
-            if norm_X != 0 and norm_row != 0:
-                similarity = dot_prod / (norm_X * norm_row)
-            else:
-                similarity = 0  
-            
-            similarities.append(similarity)
-        
-        return similarities
+        X_norm = X / np.linalg.norm(X)
+        Y_norm = Y / np.linalg.norm(Y, axis=1, keepdims=True)
+
+        similarity = np.dot(Y_norm, X_norm.T)
+        return similarity
 
     def semantics(
         self,
@@ -174,7 +131,7 @@ class Matching(MatchingBaseComponent):
         _query_embedding = query_embedding.content if isinstance(query_embedding, Message) else query_embedding
         _context_embeddings = context_embeddings.content if isinstance(context_embeddings, Message) else context_embeddings
 
-        similarity_scores = self._cosine_similarity([_query_embedding], _context_embeddings)
-        similarity_scores = list(similarity_scores)
+        similarity_matrix = self._cosine_similarity([_query_embedding], _context_embeddings)
+        similarity_matrix = similarity_matrix.flatten().tolist()
 
-        return Message(similarity_scores)
+        return Message(similarity_matrix)
