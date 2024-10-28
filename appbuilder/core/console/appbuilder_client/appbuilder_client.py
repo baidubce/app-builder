@@ -388,4 +388,3 @@ def _transform(
             tool_calls=ev.tool_calls,
         )
         out.events.append(event)
-
