@@ -68,12 +68,7 @@ def function_to_json(func) -> dict:
 
     parameters = {}
     for param in signature.parameters.values():
-        try:
-            param_type = type_map.get(param.annotation, "string")
-        except KeyError as e:
-            raise KeyError(
-                f"Unknown type annotation {param.annotation} for parameter {param.name}: {str(e)}"
-            )
+        param_type = type_map.get(param.annotation, "string")
         parameters[param.name] = {"type": param_type}
 
     required = [
