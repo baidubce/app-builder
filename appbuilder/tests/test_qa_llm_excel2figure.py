@@ -14,10 +14,7 @@
 
 import unittest
 import os
-import time
 import appbuilder
-import requests
-from parameterized import parameterized, param
 import appbuilder
 class LoadConfig(object):
     """
