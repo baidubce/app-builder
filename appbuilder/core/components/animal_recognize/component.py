@@ -35,7 +35,7 @@ class AnimalRecognition(Component):
 
        Examples:
 
-       ... code-block:: python
+       .. code-block:: python
 
            import appbuilder
            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
@@ -84,18 +84,17 @@ class AnimalRecognition(Component):
     @HTTPClient.check_param
     @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 动物识别
-
-                    参数:
-                       message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                       或 Message(content={"url": "https://image/download/url"}).
-                       timeout (float, 可选): HTTP超时时间
-                       retry (int, 可选)： HTTP重试次数
-
-                     返回: message (obj: `Message`): 识别结果. 举例: Message(name=msg, content={'result': [{'name':
-                     '国宝大熊猫', 'score': '0.945917'}, {'name': '秦岭四宝', 'score': '0.0417291'}, {'name': '团团圆圆',
-                     'score': '0.00584368'}, {'name': '圆仔', 'score': '0.000846628'}, {'name': '棕色大熊猫',
-                     'score': '0.000538988'}, {'name': '金丝猴', 'score': '0.000279618'}]}, mtype=dict)
+        """
+        根据输入消息运行动物识别功能
+        
+        Args:
+            message (Message): 输入的消息对象，其中应包含需要识别的图像数据或URL
+            timeout (float, optional): 超时时间，单位为秒。默认为None，表示无超时限制。Defaults to None.
+            retry (int, optional): 重试次数。默认为0，表示不重试。Defaults to 0.
+        
+        Returns:
+            Message: 识别结果的消息对象
+        
         """
         inp = AnimalRecognitionInMsg(**message.content)
         req = AnimalRecognitionRequest()
@@ -151,14 +150,17 @@ class AnimalRecognition(Component):
         origin_query: str,
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
-        r"""用于工具的执行，通过调用底层接口进行动物识别
-                   参数:
-                       name (str): 工具名
-                       streaming (bool): 是否流式返回
-                       origin_query (str): 用户原始query
-                       **kwargs: 工具调用的额外关键字参数
-                   返回：
-                       Union[Generator[str, None, None], str]: 动物识别结果，包括识别出的动物类别和相应的置信度信息
+        """
+        用于工具的执行，通过调用底层接口进行动物识别。
+        
+        Args:
+            name (str): 工具名。
+            streaming (bool): 是否流式返回。
+            origin_query (str): 用户原始query。
+            **kwargs: 工具调用的额外关键字参数。
+        
+        Returns:
+            Union[Generator[str, None, None], str]: 动物识别结果，包括识别出的动物类别和相应的置信度信息。
         """
         traceid = kwargs.get("traceid")
         img_name = kwargs.get("img_name", "")

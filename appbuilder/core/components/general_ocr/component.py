@@ -85,16 +85,17 @@ class GeneralOCR(Component):
     @HTTPClient.check_param
     @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 输入图片并识别其中的文字
-
-                    参数:
-                       message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                       或 Message(content={"url": "https://image/download/url"}).
-                       timeout (float, 可选): HTTP超时时间
-                       retry (int, 可选)： HTTP重试次数
-
-                     返回: message (obj: `Message`): 模型识别结果. 举例: Message(content={"words_result":[{"words":"100"},
-                     {"words":"G8"}]})
+        """
+        执行图片中的文字识别。
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作。举例: Message(content={"raw_image": b"..."}) 或 Message(content={"url": "https://image/download/url"})。
+            timeout (float, 可选): HTTP超时时间。
+            retry (int, 可选): HTTP重试次数。
+        
+        Returns:
+            Message: 模型识别结果。举例: Message(content={"words_result":[{"words":"100"}, {"words":"G8"}]})。
+        
         """
         inp = GeneralOCRInMsg(**message.content)
         request = GeneralOCRRequest()
@@ -160,8 +161,25 @@ class GeneralOCR(Component):
 
     @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
-        """
-        general_ocr for function call
+        r"""
+        根据给定的参数执行OCR识别功能。
+        
+        Args:
+            name (str): 函数名称，此处未使用，但为保持一致性保留。
+            streaming (bool): 是否以流式方式返回结果。如果为True，则逐个返回结果，否则返回全部结果。
+            kwargs: 关键字参数，支持以下参数：
+                traceid (str): 请求的唯一标识符，用于追踪请求和响应。
+                img_url (str): 待识别图片的URL。
+                file_urls (dict): 包含文件名和对应URL的字典。如果提供了img_url，则忽略此参数。
+                img_name (str): 待识别图片的文件名，与file_urls配合使用。
+        
+        Returns:
+            如果streaming为False，则返回包含识别结果的JSON字符串。
+            如果streaming为True，则逐个返回包含识别结果的字典。
+        
+        Raises:
+            InvalidRequestArgumentError: 如果请求格式错误（例如未设置文件名或指定文件名对应的URL不存在），则抛出此异常。
+        
         """
         traceid = kwargs.get("traceid")
         img_url = kwargs.get("img_url", None)

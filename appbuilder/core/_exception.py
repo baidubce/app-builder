@@ -116,3 +116,9 @@ class AppbuilderBuildexException(BaseRPCException):
     r"""AppbuilderBuildxException
     """
     pass
+
+
+class AppbuilderTraceException(BaseRPCException):
+    r"""AppbuilderTraceException
+    """
+    pass

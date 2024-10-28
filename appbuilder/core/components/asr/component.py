@@ -98,18 +98,18 @@ class ASR(Component):
     @components_run_trace
     def run(self, message: Message, audio_format: str = "pcm", rate: int = 16000,
             timeout: float = None, retry: int = 0, **kwargs) -> Message:
-        """
-        输入语音文件并返回语音识别结果。
-
-        参数:
-            message (obj:`Message`): 输入消息，用于模型的主要输入内容。这是一个必需的参数。举例: Message(content={"raw_audio": b"..."})。
-            audio_format (str，可选): 语音文件的格式，pcm/wav/amr/m4a。不区分大小写。推荐pcm文件。
-            rate (int， 可选): 采样率，16000，固定值。
-            timeout (float, 可选): HTTP超时时间。
-            retry (int, 可选): HTTP重试次数。
-
-        返回:
-            obj:`Message`: 短语音识别结果。举例: Message(content={"result": ["北京科技馆。"]})。
+        r"""
+        执行语音识别操作，并返回识别结果。
+        
+        Args:
+            message (Message): 输入消息对象，包含待识别的音频数据。该参数为必需项，格式如：Message(content={"raw_audio": b"..."})。
+            audio_format (str, optional): 音频文件格式，支持pcm/wav/amr/m4a，不区分大小写，推荐使用pcm格式。默认为"pcm"。
+            rate (int, optional): 音频采样率，固定为16000。默认为16000。
+            timeout (float, optional): HTTP请求超时时间。默认为None。
+            retry (int, optional): HTTP请求重试次数。默认为0。
+        
+        Returns:
+            Message: 语音识别结果，格式如：Message(content={"result": ["识别结果"]})。
         """
         inp = ASRInMsg(**message.content)
         request = ShortSpeechRecognitionRequest()
@@ -181,7 +181,20 @@ class ASR(Component):
     @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         """
-        asr for function call
+        评估给定文件名或文件URL的语音识别结果。
+        
+        Args:
+            name (str): 函数调用名称。
+            streaming (bool): 是否以流的方式返回结果。
+            **kwargs: 关键字参数，用于指定文件名、文件URL等参数。
+        
+        Returns:
+            如果streaming为True，则通过生成器逐个返回包含识别结果的消息对象；
+            如果streaming为False，则返回包含识别结果的JSON字符串。
+        
+        Raises:
+            InvalidRequestArgumentError: 如果未设置文件名或文件URL不存在，则抛出此异常。
+        
         """
         file_url = kwargs.get("file_url", None)
         if not file_url:

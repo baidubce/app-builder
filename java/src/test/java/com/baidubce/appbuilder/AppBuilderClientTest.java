@@ -5,9 +5,9 @@ import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
 import com.baidubce.appbuilder.console.appbuilderclient.AppList;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
@@ -65,44 +65,11 @@ public class AppBuilderClientTest {
         AppBuilderClient builder = new AppBuilderClient(appId);
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
-        String fileId = builder.uploadLocalFile(conversationId,
-                "src/test/java/com/baidubce/appbuilder/files/test.pdf");
-        assertNotNull(fileId);
-        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
-        request.setAppId(appId);
-        request.setConversationID(conversationId);
-        request.setQuery("今天北京的天气怎么样?");
-        request.setStream(false);
+        
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(appId, conversationId, "今天北京的天气怎么样?", false);
 
-        String name = "get_cur_whether";
-        String desc = "这是一个获得指定地点天气的工具";
-        Map<String, Object> parameters = new HashMap<>();
-
-        Map<String, Object> location = new HashMap<>();
-        location.put("type", "string");
-        location.put("description", "省，市名，例如：河北省");
-
-        Map<String, Object> unit = new HashMap<>();
-        unit.put("type", "string");
-        List<String> enumValues = new ArrayList<>();
-        enumValues.add("摄氏度");
-        enumValues.add("华氏度");
-        unit.put("enum", enumValues);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("location", location);
-        properties.put("unit", unit);
-
-        parameters.put("type", "object");
-        parameters.put("properties", properties);
-        List<String> required = new ArrayList<>();
-        required.add("location");
-        parameters.put("required", required);
-
-        AppBuilderClientRunRequest.Tool.Function func = new AppBuilderClientRunRequest.Tool.Function(name, desc,
-                parameters);
-        AppBuilderClientRunRequest.Tool tool = new AppBuilderClientRunRequest.Tool("function", func);
-        request.setTools(new AppBuilderClientRunRequest.Tool[] { tool });
+        String toolJson = new String(Files.readAllBytes(Paths.get("src/test/java/com/baidubce/appbuilder/files/toolcall.json")));
+        request.setTools(toolJson);
 
         AppBuilderClientIterator itor = builder.run(request);
         assertTrue(itor.hasNext());
@@ -113,12 +80,8 @@ public class AppBuilderClientTest {
             System.out.println(result);
         }
 
-        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest();
-        request2.setAppId(appId);
-        request2.setConversationID(conversationId);
-
-        AppBuilderClientRunRequest.ToolOutput output = new AppBuilderClientRunRequest.ToolOutput(ToolCallID, "北京今天35度");
-        request2.setToolOutputs(new AppBuilderClientRunRequest.ToolOutput[] { output });
+        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest(appId, conversationId);
+        request2.setToolOutputs(ToolCallID, "北京今天35度");
         AppBuilderClientIterator itor2 = builder.run(request2);
         assertTrue(itor2.hasNext());
         while (itor2.hasNext()) {
@@ -133,11 +96,7 @@ public class AppBuilderClientTest {
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
 
-        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest();
-        request.setAppId(appId);
-        request.setConversationID(conversationId);
-        request.setQuery("你能干什么");
-        request.setStream(false);
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(appId, conversationId, "你能干什么", false);
         request.setEndUserId("java_test_user_0");
         Map<String, Object> input = new HashMap<>();
         input.put("city", "北京");

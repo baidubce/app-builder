@@ -31,7 +31,7 @@ class ObjectRecognition(Component):
 
        Examples:
 
-       ... code-block:: python
+       .. code-block:: python
 
            import appbuilder
            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
@@ -81,17 +81,20 @@ class ObjectRecognition(Component):
     @HTTPClient.check_param
     @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 通用物体识别
-
-                    参数:
-                       message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                       或 Message(content={"url": "https://image/download/url"}).
-                       timeout (float, 可选): HTTP超时时间
-                       retry (int, 可选)： HTTP重试次数
-
-                     返回: message (obj: `Message`): 模型识别结果. 举例: Message(content={"result":[{"keyword":"苹果",
-                     "score":0.94553,"root":"植物-蔷薇科"},{"keyword":"姬娜果","score":0.730442,"root":"植物-其它"},
-                     {"keyword":"红富士","score":0.505194,"root":"植物-其它"}]})
+        """
+        通用物体识别
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作。
+                例如: Message(content={"raw_image": b"..."}) 或 Message(content={"url": "https://image/download/url"})。
+            timeout (float, optional): HTTP超时时间，默认为None。
+            retry (int, optional): HTTP重试次数，默认为0。
+        
+        Returns:
+            Message: 模型识别结果。
+                例如: Message(content={"result":[{"keyword":"苹果",
+                    "score":0.94553,"root":"植物-蔷薇科"},{"keyword":"姬娜果","score":0.730442,"root":"植物-其它"},
+                    {"keyword":"红富士","score":0.505194,"root":"植物-其它"}]})
         """
         inp = ObjectRecognitionInMsg(**message.content)
         req = ObjectRecognitionRequest()
@@ -149,7 +152,28 @@ class ObjectRecognition(Component):
     @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
         """
-        object_recognize for function call
+        评估并识别传入图像中的物体或场景。
+        
+        Args:
+            name (str): 调用此方法的对象名称。
+            streaming (bool): 是否以流式方式返回结果。如果是True，则以生成器形式返回结果；如果是False，则直接返回字符串形式的识别结果。
+            **kwargs: 任意关键字参数，支持以下参数：
+                traceid (str, optional): 请求的追踪ID，用于追踪请求处理流程。默认为None。
+                img_url (str, optional): 待识别图像的URL地址。默认为None，如果未指定，则尝试从file_urls和img_name参数中获取图像路径。
+                file_urls (dict, optional): 包含文件名和对应URL的字典。默认为空字典。
+                img_name (str, optional): 待识别图像的文件名。如果img_url未指定，则根据img_name从file_urls中获取图像的URL。默认为None。
+                score_threshold (float, optional): 置信度阈值，低于此阈值的识别结果将被忽略。默认为0.5。
+        
+        Returns:
+            如果streaming为True，则返回一个生成器，生成器中的元素为包含识别结果的字典，字典包含以下键：
+                type (str): 结果类型，固定为"text"。
+                text (str): 识别结果的JSON字符串表示。
+                visible_scope (str): 结果的可见范围，'llm'表示仅对LLM可见，'user'表示对用户可见。
+        
+            如果streaming为False，则直接返回识别结果的JSON字符串表示。
+        
+        Raises:
+            InvalidRequestArgumentError: 如果请求格式错误（如未设置文件名或文件URL不存在），则抛出此异常。
         """
         traceid = kwargs.get("traceid")
         img_url = kwargs.get("img_url", None)

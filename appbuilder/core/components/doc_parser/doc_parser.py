@@ -37,15 +37,15 @@ class DocParser(Component):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import appbuilder
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        import appbuilder
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            file_path = "./test.pdf" # 待解析的文件路径
-            msg = Message(file_path)
-            parser = appbuilder.DocParser()
-            parse_result = parser(msg)
+        file_path = "./test.pdf" # 待解析的文件路径
+        msg = Message(file_path)
+        parser = appbuilder.DocParser()
+        parse_result = parser(msg)
 
     """
 
@@ -57,12 +57,25 @@ class DocParser(Component):
     def set_config(self, config: ParserConfig):
         """
         设置解析配置
+        
+        Args:
+            config (ParserConfig): 解析配置对象
+        
+        Returns:
+            None
         """
         self.config = config
 
     def make_parse_result(self, response: Dict):
         """
         将解析结果的内容转化成ParseResult的结构
+        
+        Args:
+            response (Dict): 解析后的响应字典，包含文件内容、目录等信息
+        
+        Returns:
+            Dict: 转换后的ParseResult结构，包含段落节点树、页面内容和PDF数据
+        
         """
         para_nodes = (
             response["para_nodes"] if response["para_nodes"] is not None else []
@@ -133,11 +146,18 @@ class DocParser(Component):
     def run(self, input_message: Message, return_raw=False) -> Message:
         """
         对传入的文件进行解析
-        参数:
+        
+        Args:
             input_message (Message[str]): 输入为文件的路径
-            return_raw (bool): 是否返回云端服务的原始结果
-        返回:
-            parse_result (Message[ParseResult]): 文件的解析结果。
+            return_raw (bool, optional): 是否返回云端服务的原始结果。默认为False。
+        
+        Returns:
+            Message[ParseResult]: 文件的解析结果。
+        
+        Raises:
+            ValueError: 如果传入的文件路径不是字符串类型。
+            AppBuilderServerException: 如果文件解析过程中出现异常，将抛出该异常。
+        
         """
         file_path = input_message.content
 

@@ -255,6 +255,7 @@ class DescribeChunkResponse(BaseModel):
     tokenCount: int = Field(..., description="切片内token数量")
     status: str = Field(..., description="切片状态")
     statusMessage: str = Field(..., description="切片状态信息")
+    imageUrls: list[str] = Field(..., description="图片地址")
     createTime: int = Field(..., description="创建时间")
     updateTime: int = Field(None, description="更新时间")
 

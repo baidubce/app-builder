@@ -14,6 +14,7 @@ public class ChunkDescribeResponse {
     private boolean enabled;
     private String status;
     private String statusMessage;
+    private String[] imageUrls;
     private Integer createTime;
     private Integer updateTime;
 
@@ -95,6 +96,14 @@ public class ChunkDescribeResponse {
 
     public String getStatusMessage() {
         return statusMessage;
+    }
+
+    public void setImageUrls(String[] imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public String[] getImageUrls() {
+        return imageUrls;
     }
 
     public void setCreateTime(Integer createTime) {

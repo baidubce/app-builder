@@ -11,45 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import json
-import logging
-
 from appbuilder.core.component import ComponentArguments
 from appbuilder.core.components.llms.base import CompletionBaseComponent, ModelArgsConfig
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.message import Message
 from pydantic import Field
 from typing import Optional
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace
 
-
-class RAGWithBaiduSearchArgs(ComponentArguments):
-    """
-    RAG with Baidusearch提示词配置
-    """
-    message: Message = Field(...,
-                             variable_name="message",
-                             description="输入用户query，例如'千帆平台都有哪些大模型？'")
-    reject: bool = Field(...,
-                         variable_name="reject",
-                         description="控制大模型拒答能力的开关，为true即为开启拒答功能，为false即为关闭拒答功能")
-    clarify: bool = Field(...,
-                          variable_name="clarify",
-                          description="控制大模型澄清能力的开关，为true即为开启澄清反问功能，为false即为关闭澄清反问功能")
-    highlight: bool = Field(...,
-                            variable_name="highlight",
-                            description="控制大模型重点强调能力的开关，为true即为开启重点强调功能，为false即为关闭重点强调功能")
-    friendly: bool = Field(...,
-                           variable_name="friendly",
-                           description="控制大模型友好对提升难过能力的开关，"
-                                       "为true即为开启友好度提升功能，为false即为关闭友好度提升功能")
-    cite: bool = Field(...,
-                       variable_name="cite",
-                       description="控制大模型溯源能力的开关，为true即为开启溯源功能，为false即为关闭溯源功能")
-
-    instruction: Message = Field(...,
-                                 variable_name="instruction",
-                                 description="系统人设")
+from .model import RAGWithBaiduSearchArgs
 
 
 class RAGWithBaiduSearch(CompletionBaseComponent):
@@ -146,6 +116,27 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
         temperature=1e-10, 
         top_p=1e-10,
     ):
+        """
+        执行模型推理
+        
+        Args:
+            message (Message): 用户输入的消息对象
+            instruction (Instruction, optional): 用户提供的指令信息，默认为None。如果未提供，则使用默认的指令信息。
+            reject (bool, optional): 是否拒绝执行，默认为None。如果未提供，则使用默认设置。
+            clarify (bool, optional): 是否需要澄清，默认为None。如果未提供，则使用默认设置。
+            highlight (bool, optional): 是否高亮显示，默认为None。如果未提供，则使用默认设置。
+            friendly (bool, optional): 是否以友好的方式回答，默认为None。如果未提供，则使用默认设置。
+            cite (bool, optional): 是否引用原始信息，默认为None。如果未提供，则使用默认设置。
+            stream (bool, optional): 是否以流式方式返回结果，默认为False。
+            temperature (float, optional): 温度参数，用于控制生成文本的多样性，默认为1e-10。
+            top_p (float, optional): 截断概率阈值，用于控制生成文本的多样性，默认为1e-10。
+        
+        Returns:
+            Message: 推理结果消息对象
+        
+        Raises:
+            AppBuilderServerException: 如果输入消息内容过长（超过72个字符）或推理结果中存在错误，则抛出异常。
+        """
         instruction_set = self.__get_instruction_set()
 
         # query 长度限制不能超过 72

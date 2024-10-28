@@ -19,7 +19,6 @@ import appbuilder
 
 from appbuilder.core.components.retriever.bes.bes_retriever import BESVectorStoreIndex
 from appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever import BaiduVDBVectorStoreIndex,TableParams
-from appbuilder.core.components.embeddings.component import Embedding
 from appbuilder.core.component import Message 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")

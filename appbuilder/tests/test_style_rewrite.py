@@ -16,10 +16,10 @@ limitations under the License.
 import unittest
 import os
 
-from appbuilder.core.components.llms.style_rewrite.component import StyleChoices
+from appbuilder.core.components.llms.style_rewrite.base import StyleChoices
 import appbuilder
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestStyleRewriteComponent(unittest.TestCase):
     def setUp(self):
         """

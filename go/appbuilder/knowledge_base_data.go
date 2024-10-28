@@ -206,18 +206,19 @@ type DescribeChunkRequest struct {
 }
 
 type DescribeChunkResponse struct {
-	ID              string `json:"id"`
-	Type            string `json:"type"`
-	KnowledgeBaseID string `json:"knowledgeBaseId"`
-	DocumentID      string `json:"documentId"`
-	Content         string `json:"content"`
-	WordCount       int64  `json:"wordCount"`
-	TokenCount      int64  `json:"tokenCount"`
-	Enabled         bool   `json:"enabled"`
-	Status          string `json:"status"`
-	StatusMessage   string `json:"statusMessage"`
-	CreatedAt       int64  `json:"createTime"`
-	UpdatedAt       int64  `json:"updateTime"`
+	ID              string   `json:"id"`
+	Type            string   `json:"type"`
+	KnowledgeBaseID string   `json:"knowledgeBaseId"`
+	DocumentID      string   `json:"documentId"`
+	Content         string   `json:"content"`
+	WordCount       int64    `json:"wordCount"`
+	TokenCount      int64    `json:"tokenCount"`
+	Enabled         bool     `json:"enabled"`
+	Status          string   `json:"status"`
+	StatusMessage   string   `json:"statusMessage"`
+	ImageUrls       []string `json:"imageUrls"`
+	CreatedAt       int64    `json:"createTime"`
+	UpdatedAt       int64    `json:"updateTime"`
 }
 
 type DescribeChunksRequest struct {

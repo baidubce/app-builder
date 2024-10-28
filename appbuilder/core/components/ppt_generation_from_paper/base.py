@@ -21,6 +21,8 @@ from enum import Enum
 from appbuilder.core.component import ComponentArguments
 
 
+DEFAULT_AUTHOR = '百度千帆AppBuilder'
+
 class StyleChoices(Enum):
     technology = '科技'
     business = '商务'
