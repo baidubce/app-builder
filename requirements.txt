@@ -1,12 +1,8 @@
 requests
-proto-plus>=1.22.3
 pydantic>=2.6.4
 numpy
-urllib3
-tenacity>=8.2.3
 openpyxl
 pymochow>=1.1.2
-parameterized
 PyYAML
 bce-python-sdk
 pycryptodome
