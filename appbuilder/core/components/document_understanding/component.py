@@ -121,8 +121,8 @@ class DocumentUnderstanding(Component):
             'conversation_id': conversation_id
         }
         files = [
-            ('file', (file_path,
-                      open(file_path, 'rb'), 'application/{}'.format(file_path.split("."[-1]))))
+            ('file', (os.path.basename(file_path),
+                      open(file_path, 'rb'), 'application/{}'.format(file_path.split(".")[-1])))
         ]
         headers = {
             'X-Appbuilder-Authorization': f"Bearer {os.getenv('APPBUILDER_TOKEN', '')}"
