@@ -238,7 +238,8 @@ import os
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 # 设置环境变量
-app_id = "b2a972c5-e082-46e5-b313-acbf51792422"  # 已发布AppBuilder应用的ID
+os.environ["APPBUILDER_TOKEN"] = '...'
+app_id = '...'  # 已发布AppBuilder应用的ID
 # 初始化智能体
 client = appbuilder.AppBuilderClient(app_id)
 # 创建会话
