@@ -21,7 +21,7 @@ from pydantic import ValidationError
 import tempfile
 import requests
 import logging
-import pandas as pd
+from openpyxl import load_workbook
 from appbuilder.core._exception import ModelNotSupportedException
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
@@ -135,6 +135,19 @@ class Excel2Figure(Component):
                 query=inputs.query, excel_file_url=inputs.excel_file_url, model=self.model)
         return result_msg
 
+    def _read_excel(self, filename):
+        wb = load_workbook(filename)
+        ws = wb.active
+
+        data = []
+        columns = []
+        for row_index, row in enumerate(ws.iter_rows(values_only=True)):
+            if row_index == 0:
+                columns = row  
+            else:
+                data.append(row)
+        return columns, data
+
     def _run_excel2figure(self, query: str, excel_file_url: str, model: str, excel_file_name: str = None):
         """
         运行
@@ -169,12 +182,13 @@ class Excel2Figure(Component):
                 raise e
 
             # read file
-            df = pd.read_excel(local_filename)
+            columns, data = self._read_excel(local_filename)
             file_contents = ["打印每一列的名称如下: "]
-            file_contents.extend(df.columns)
+            file_contents.extend(columns)
             file_contents.append("展示每一列的数据样例: ")
-            for column in df.columns:
-                file_contents.append(column + ": " + ", ".join([str(x) for x in df[column].iloc[:2]]))
+            for i, column in enumerate(columns):
+                sample_data = ", ".join([str(data[row][i]) for row in range(min(2, len(data)))])
+                file_contents.append(f"{column}: {sample_data}")
             file_contents.append("")
             file_content = "\n".join(file_contents)
 

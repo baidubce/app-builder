@@ -16,14 +16,14 @@
 
 import uuid
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 from typing import Optional, TypeVar, Generic
 
 
 _T = TypeVar("_T")
 
 
-class Message(BaseModel, Generic[_T], extra=Extra.allow):
+class Message(BaseModel, Generic[_T], extra='allow'):
     """
     Message class
 
