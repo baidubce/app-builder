@@ -64,12 +64,7 @@ def function_to_json(func) -> dict:
         type(None): "null",
     }
 
-    try:
-        signature = inspect.signature(func)
-    except ValueError as e:
-        raise ValueError(
-            f"Failed to get signature for function {func.__name__}: {str(e)}"
-        )
+    signature = inspect.signature(func)
 
     parameters = {}
     for param in signature.parameters.values():
