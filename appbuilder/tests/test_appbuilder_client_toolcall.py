@@ -31,8 +31,8 @@ class TestAgentRuntime(unittest.TestCase):
             None: 如果app_id不为空，则不会引发任何异常
             unittest.SkipTest (optional): 如果app_id为空，则跳过单测执行
         """
-        builder = appbuilder.AppBuilderClient(self.app_id)
-        conversation_id = builder.create_conversation()
+        client = appbuilder.AppBuilderClient(self.app_id)
+        conversation_id = client.create_conversation()
         tools = [
             {
                 "type": "function",
@@ -54,7 +54,7 @@ class TestAgentRuntime(unittest.TestCase):
             }
         ]
 
-        msg = builder.run(
+        msg = client.run(
             conversation_id=conversation_id,
             query="今天北京天气怎么样？",
             tools=tools)
@@ -64,7 +64,7 @@ class TestAgentRuntime(unittest.TestCase):
         assert event.status == "interrupt"
         assert event.event_type == "Interrupt"
 
-        msg_2 = builder.run(
+        msg_2 = client.run(
             conversation_id=conversation_id,
             tool_outputs=[
                 {
