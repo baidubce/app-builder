@@ -77,8 +77,24 @@ class TestAgentRuntime(unittest.TestCase):
 
 
         """测试functions2tools功能"""
+        #定义本地函数
+        def get_current_weather(location: str, unit: str) -> str:
+            """
+            查询指定中国城市的当前天气。
+
+            参数:
+                location (str): 城市名称，例如："北京"
+                unit (str): 温度单位，可选 "celsius" 或 "fahrenheit"
+
+            返回:
+                str: 天气情况描述
+
+            抛出:
+                ValueError: 如果传入的城市不支持或单位不正确
+            """
+            return "北京今天25度"
         #定义函数列表
-        functions = [get_current_weather2]
+        functions = [get_current_weather]
         function_map = {f.__name__: f for f in functions}
         #调用大模型
         msg = client.run(
