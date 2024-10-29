@@ -72,6 +72,46 @@ def get_app_list(
     out = resp.data
     return out
 
+@client_tool_trace
+def describe_apps(
+    marker: str="", 
+    maxKeys: int=10,
+    secret_key: Optional[str] = None,
+    gateway_v2: Optional[str] = None
+)-> data_class.DescribeAppsResponse:
+    """
+    该接口查询用户下状态为已发布的应用列表
+
+    Args:
+        maxKeys (int, optional): 返回结果的最大数量，默认值为10，最大为100。
+        marker (str, optional): 起始位置，即从哪个游标开始查询，默认值为空字符串。
+        secret_key (Optional[str], optional): 认证密钥。如果未指定，则使用默认的密钥。默认值为None。
+        gateway_v2 (Optional[str], optional): 网关地址。如果未指定，则使用默认的地址。默认值为None。
+
+    Returns:
+        DescribeAppsResponse: 应用列表。
+
+    """
+    client = HTTPClient(secret_key=secret_key, gateway_v2=gateway_v2)
+    headers = client.auth_header_v2()
+    headers["Content-Type"] = "application/json"
+    url = client.service_url_v2("/app?Action=DescribeApps")
+    request = data_class.DescribeAppsRequest(
+        MaxKeys=maxKeys, Marker=marker
+    )
+    response = client.session.get(
+        url=url,
+        headers=headers,
+        params=request.model_dump(),
+    )
+
+    client.check_console_response(response)
+    client.check_response_header(response)
+    data = response.json()
+    resp = data_class.DescribeAppsResponse(**data)
+    out = resp.data
+    return out
+    
 
 @client_tool_trace
 def get_all_apps():

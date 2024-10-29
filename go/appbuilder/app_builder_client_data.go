@@ -216,10 +216,27 @@ type GetAppListResponse struct {
 	Message   string `json:"message"`
 }
 
+type DescribeAppsRequest struct {
+	Marker  *string `json:"marker,omitempty"`
+	MaxKeys *int    `json:"maxKeys,omitempty"`
+}
+
+type DescribeAppsResponse struct {
+	RequestID   string `json:"requestId"`
+	Marker      string `json:"marker"`
+	IsTruncated bool   `json:"isTruncated"`
+	NextMarker  string `json:"nextMarker"`
+	MaxKeys     int    `json:"maxKeys"`
+	Data        []App  `json:"data"`
+}
+
 type App struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	AppType     string `json:"appType,omitempty"`
+	IsPublished bool   `json:"isPublished,omitempty"`
+	UpdateTime  int64  `json:"updateTime,omitempty"`
 }
 
 type AppBuilderClientAnswer struct {

@@ -86,6 +86,45 @@ func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	return rsp.Data, nil
 }
 
+func DescribeApps(req DescribeAppsRequest, config *SDKConfig) (DescribeAppsResponse, error) {
+	request := http.Request{}
+	header := config.AuthHeaderV2()
+	serviceURL, err := config.ServiceURLV2("/app?Action=DescribeApps")
+	if err != nil {
+		return DescribeAppsResponse{}, err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = NopCloser(bytes.NewReader(data))
+	config.BuildCurlCommand(&request)
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 300 * time.Second}
+	}
+	resp, err := client.Do(&request)
+	if err != nil {
+		return DescribeAppsResponse{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return DescribeAppsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return DescribeAppsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := DescribeAppsResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return DescribeAppsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp, nil
+}
+
 func NewAppBuilderClient(appID string, config *SDKConfig) (*AppBuilderClient, error) {
 	if appID == "" {
 		return nil, errors.New("appID is empty")

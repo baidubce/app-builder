@@ -305,8 +305,23 @@ class AppOverview(BaseModel):
     id: str = Field("", description="应用ID")
     name: str = Field("", description="应用名称")
     description: str = Field("", description="应用简介")
+    appType: str = Field("", description="应用类型")
+    isPublished: bool = Field(False, description="是否已发布")
+    updateTime: int = Field(None, description="更新时间")
 
 class AppBuilderClientAppListResponse(BaseModel):
     request_id: str = Field("", description="请求ID")
     data: Optional[list[AppOverview]] = Field(
         [], description="应用概览列表")
+
+class DescribeAppsRequest(BaseModel):
+    maxKeys: int = Field(default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
+    marker: str = Field(default="", description="用于分页的游标。marker 是应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 开始，那么可以使用 marker=app_id_123 来获取列表的下一页数据")
+
+class DescribeAppsResponse(BaseModel):
+    requestId: str = Field("", description="请求ID")
+    marker: str = Field("", description="起始位置")
+    isTruncated: bool = Field(False, description="是否有更多数据")
+    nextMarker: str = Field("", description="下一次起始位置")
+    maxKeys: int = Field(0, description="最大返回数量")
+    data: list[AppOverview] = Field([], description="应用概览列表")
