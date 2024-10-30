@@ -99,12 +99,12 @@ curl --location 'http://{public_ip}:8091/chat' \
 ### 接入AppBuilder工作流示例：
 * 进入AppBuilder官网，先后点击“个人空间”、“组件”、“创建组件”、“API接入”
 
-<img src='../../Image/component_create.png' alt='wechat' width='800' >
+<img src='https://bj.bcebos.com/v1/appbuilder-sdk-components/component_create.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-10-30T09%3A13%3A56Z%2F-1%2Fhost%2Fbc6e4e889bd3c4471c5e9449f1aaadb15c057e363a2b7d47e2007ef4e6e69fb3' alt='wechat' width='800' >
 
 * 点击“编辑API”、“导入cURL”，粘贴上面的curl命令，解析并导入
 
-<img src='../../Image/component_api_import.png' alt='wechat' width='800' >
+<img src='https://bj.bcebos.com/v1/appbuilder-sdk-components/component_api_import.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-10-30T09%3A13%3A25Z%2F-1%2Fhost%2F8b4b87ebdec0884977e1e44fcba892f2001350552ab5f87fd4a5f38e08c53f58' alt='wechat' width='800' >
 
 * 调试通过
 
-<img src='../../Image/component_api_debug.png' alt='wechat' width='800' >
+<img src='https://bj.bcebos.com/v1/appbuilder-sdk-components/component_api_debug.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-10-30T09%3A11%3A57Z%2F-1%2Fhost%2F9b7f412e78ac9c98354c9dd28493b1e1fdd781f5473decc723eb73f504b28eea' alt='wechat' width='800' >
