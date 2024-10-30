@@ -1,0 +1,60 @@
+site_name: Appbuilder-SDK
+
+# 网站页面结构和导航配置
+nav:
+  - 首页: docs/README.md
+  - 快速上手: 
+    - 开始你的第一个AI原生应用: 
+      - 安装: docs/QuickStart/StartFirstAINativeApplication/install.md
+    - 产业实践应用范例:
+    - SDK当前支持的编程语言:
+  - 基础:
+    - 模型:
+    - 组件:
+    - 监控:
+    - 部署:
+    - 平台:
+      - 知识库:
+      - 应用:
+      - 自定义组件:
+  - 应用:
+    - Agent:
+      - 基础知识:
+      - 使用官方组件:
+      - ToolCall:
+      - ToolChoice:
+      - 使用异步和流式加速客户端调用:
+    - RAG:
+      - 基础知识:
+      - 知识库管理:
+      - Reference信息处理:
+    - Workflow:
+      - 基础知识:
+      - 从零使用Workflow组装一个RAG应用:
+      - 从零使用Workflow组装一个Agent应用:
+  - 开发者指南:
+    - 如何贡献代码:
+    - 版本升级日志:
+    - 常见问题FAQ:
+    - 日志管理:
+    - 错误信息:
+    - 环境参数:
+  - API Reference:
+    - Python API Reference:
+    - Java API Reference:
+    - Go API Reference:
+
+# 主题设置
+theme:
+  name: readthedocs
+
+# 插件列表
+plugins:
+  - search
+  - minify
+
+# 其他配置
+markdown_extensions:
+  - codehilite
+  - toc:
+      permalink: true
