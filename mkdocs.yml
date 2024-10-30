@@ -2,51 +2,65 @@ site_name: Appbuilder-SDK
 
 # 网站页面结构和导航配置
 nav:
-  - 首页: docs/README.md
+  - 首页: README.md
   - 快速上手: 
     - 开始你的第一个AI原生应用: 
-      - 安装: docs/QuickStart/StartFirstAINativeApplication/install.md
-    - 产业实践应用范例:
-    - SDK当前支持的编程语言:
+      - 安装: QuickStart/StartFirstAINativeApplication/install.md
+      - 快速开始: QuickStart/StartFirstAINativeApplication/README.md
+    - 产业实践应用范例: 
+      - SDK使用示例: QuickStart/ExamplesOfIndustrialPracticeApplications/README.md
+    - SDK当前支持的编程语言: QuickStart/CurrentlySupportedProgrammingLanguages/README.md
   - 基础:
     - 模型:
-    - 组件:
+      - 获取模型列表: BasisModule/Model/get_model_list.md
+    # - 组件:
     - 监控:
+      - TRACE基础功能: BasisModule/Trace/basic.md
+      - TRACE拓展功能: BasisModule/Trace/phoenix_method.md
     - 部署:
+      - 交互式前端部署: BasisModule/Deployment/AgentChainlit.md
+      - 公有云部署: BasisModule/Deployment/cloud.md
+      - API 访问: BasisModule/Deployment/flask.md
+      - AgentRuntime: BasisModule/Deployment/agentruntime.md
+      - UserSession: BasisModule/Deployment/usersession.md
     - 平台:
-      - 知识库:
       - 应用:
+        - AppBuilderClient组件: BasisModule/Platform/Application/appbuilder_client.md
+        - 获取AppBuilder已发布的应用列表: BasisModule/Platform/Application/get_app_list.md
+      - 知识库:
+        - 知识库组件: BasisModule/Platform/KnowledgeBase/knowledgebase.md
       - 自定义组件:
+        - 基础能力组件: BasisModule/Platform/CustomComponents/components.md
   - 应用:
-    - Agent:
-      - 基础知识:
-      - 使用官方组件:
-      - ToolCall:
-      - ToolChoice:
-      - 使用异步和流式加速客户端调用:
+    # - Agent:
+    #   - 基础知识: 
+    #   - 使用官方组件: 
+    #   - ToolCall: 
+    #   - ToolChoice: 
+    #   - 使用异步和流式加速客户端调用: 
     - RAG:
-      - 基础知识:
-      - 知识库管理:
-      - Reference信息处理:
-    - Workflow:
-      - 基础知识:
-      - 从零使用Workflow组装一个RAG应用:
-      - 从零使用Workflow组装一个Agent应用:
+      - 基础知识: Application/RAG/BasicKnowledge/rag.md
+      # - 知识库管理: 
+      # - Reference信息处理: 
+    # - Workflow:
+    #   - 基础知识: 
+    #   - 从零使用Workflow组装一个RAG应用: 
+    #   - 从零使用Workflow组装一个Agent应用: 
   - 开发者指南:
-    - 如何贡献代码:
-    - 版本升级日志:
-    - 常见问题FAQ:
-    - 日志管理:
-    - 错误信息:
-    - 环境参数:
+    - 如何贡献代码: DevelopGuide/HowToContributeCode/README.md
+    - 版本升级日志: DevelopGuide/ChangeLog/changelog.md
+    # - 常见问题FAQ: 
+    # - 日志管理: 
+    # - 错误信息: 
+    - 环境参数: DevelopGuide/EnvironmentalParameters/env.md
   - API Reference:
-    - Python API Reference:
-    - Java API Reference:
-    - Go API Reference:
+    - Python API Reference: API-Reference/Python/modules.md
+    # - Java API Reference: 
+    # - Go API Reference: 
 
 # 主题设置
 theme:
-  name: readthedocs
+  name: material
 
 # 插件列表
 plugins:
