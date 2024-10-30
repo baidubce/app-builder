@@ -154,3 +154,17 @@ go/coverage_diff.html
 .gitignore
 go/appbuilder/coverage_full.html
 go/appbuilder/coverage_diff.html
+
+
+# 构建文档的配置
+sphinx:
+  configuration: mkdocs.yml
+
+# 构建文档所使用的构建工具
+build:
+  image: latest
+
+# MkDocs 配置
+mkdocs:
+  configuration: mkdocs.yml
+  fail_on_warning: false
