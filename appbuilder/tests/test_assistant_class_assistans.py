@@ -12,7 +12,7 @@ class TestAssistant(unittest.TestCase):
         from appbuilder.core.assistant.type import assistant_type
 
         assistant = appbuilder.assistant.assistants.create(
-            model = "ERNIE-4.0-8K",
+            model = "ERNIE-4.0T-8K",
             name="Abc-_123",
             description="test",
         )
@@ -25,7 +25,7 @@ class TestAssistant(unittest.TestCase):
     def test_assistants_create_v2(self):
         try:
             appbuilder.assistant.assistants.create(
-                model = "ERNIE-4.0-8K",
+                model = "ERNIE-4.0T-8K",
                 name="Abc-_123@",
                 description="test"*512,
                 response_format="other",
@@ -40,7 +40,7 @@ class TestAssistant(unittest.TestCase):
     def test_assistants_create_v3(self):
         try:
             appbuilder.assistant.assistants.create(
-                model = "ERNIE-4.0-8K",
+                model = "ERNIE-4.0T-8K",
                 name="Abc-_123",
                 description="test",
                 metadata={
@@ -53,7 +53,7 @@ class TestAssistant(unittest.TestCase):
     def test_assistants_create_v4(self):
         from appbuilder.core.assistant.type import assistant_type
         assistant=appbuilder.assistant.assistants.create(
-            model = "ERNIE-4.0-8K",
+            model = "ERNIE-4.0T-8K",
             name="测试",
             description="test",
             metadata={
@@ -65,7 +65,7 @@ class TestAssistant(unittest.TestCase):
     def test_Assistant(self):
         from appbuilder.core.assistant.type import assistant_type
         assistant = appbuilder.assistant.assistants.create(
-            model = "ERNIE-4.0-8K",
+            model = "ERNIE-4.0T-8K",
             name="Abc-_123",
             description="test",
         )
@@ -73,7 +73,7 @@ class TestAssistant(unittest.TestCase):
         # test assistant update
         assistant_update = appbuilder.assistant.assistants.update(
             assistant_id = assistant.id,
-            model="ERNIE-4.0-8K",
+            model="ERNIE-4.0T-8K",
             name="Test_Name",
             description = "test"
         )

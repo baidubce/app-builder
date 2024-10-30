@@ -329,7 +329,7 @@ class ToolOutput(BaseModel):
     run_id: str = ""
 
 class AssistantRunModel(str,Enum):
-    ERNIE_4_0_8K = "ERNIE-4.0-8K"
+    ERNIE_4_0_8K = "ERNIE-4.0T-8K"
     ERNIE_3_5_8K = "ERNIE-3.5-8K"
 
 class AssistantRunRequest(BaseModel):
