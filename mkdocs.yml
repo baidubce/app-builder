@@ -51,7 +51,6 @@ theme:
 # 插件列表
 plugins:
   - search
-  - minify
 
 # 其他配置
 markdown_extensions:
