@@ -1,5 +1,5 @@
 <div align="center">
-<img src='image/logo.png' alt='logo' width='700' >
+<img src='Image/logo.png' alt='logo' width='700' >
 <br>
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
@@ -240,7 +240,7 @@ Hook:
 
 ## Panorama of Baidu AI Cloud Qianfan AppBuilder SDK capability
 <div align="center">
-<img src='image/structure-en.png' alt='wechat' width='800' >
+<img src='Image/structure-en.png' alt='wechat' width='800' >
 </div>
 
 
@@ -265,7 +265,7 @@ Hook:
 ## Open source community and activities
 <div align="center">
 <h3>AppBuilder-SDK WeChat Group QR Code</h3>
-<img src='image/wechat_group.png' alt='wechat' width='200' >
+<img src='Image/wechat_group.png' alt='wechat' width='200' >
 </div>
 
 - [Github Issue](https://github.com/baidubce/app-builder/issues):  Submit installation/usage issues, report bugs, suggest new features, communicate development plans, etc
