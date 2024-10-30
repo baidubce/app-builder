@@ -76,7 +76,7 @@ class AssistantFilesDeleteResponse(BaseModel):
 
 # AssistantCreateRequest类，用于描述创建助理的请求参数
 class AssistantCreateRequest(BaseModel):
-    model: str = Field(default="ERNIE-4.0-8K")  # 使用的模型
+    model: str = Field(default="ERNIE-4.0T-8K")  # 使用的模型
     name: str = Field(default="", min_length=1, max_length=128, pattern="^[\u4e00-\u9fa50-9a-zA-Z_-]+$")  # 助理名称
     description: str = Field(default="", max_length=512)  # 助理描述
     response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)  # 响应格式
@@ -105,7 +105,7 @@ class AssistantCreateResponse(BaseModel):
 
 class AssistantUpdateRequest(BaseModel):
     assistant_id: Optional[str] = ""  # 助理ID
-    model: str = Field(default="ERNIE-4.0-8K")  # 使用的模型
+    model: str = Field(default="ERNIE-4.0T-8K")  # 使用的模型
     name: str = Field(default="", min_length=1, max_length=128, pattern="^[\u4e00-\u9fa50-9a-zA-Z_-]+$")   # 助理名称
     description: str = Field(default="", max_length=512)  # 助理描述
     response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)  # 响应格式
