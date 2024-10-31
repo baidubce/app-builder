@@ -26,7 +26,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 创建rag_with_baidusearch_pro对象
-rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE Speed-AppBuilder")
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Appbuilder-Speed-8k")
 
 # 运行rag_with_baidusearch基本组件
 msg = appbuilder.Message("残疾人怎么办相关证件")
@@ -88,7 +88,7 @@ os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 创建rag_with_baidusearch对象, 并初始化人设指令
 rag_with_baidusearch_pro = appbuilder.RagWithBaiduSearchPro(
-        model="ERNIE Speed-AppBuilder", 
+        model="Qianfan-Appbuilder-Speed-8k", 
         instruction=appbuilder.Message("你是问答助手，在回答问题前需要加上: 很高兴为您解答"))
 
 

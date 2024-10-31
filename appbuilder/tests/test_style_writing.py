@@ -32,7 +32,7 @@ class TestStyleWritingComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.model_name = "ERNIE Speed-AppBuilder"
+        self.model_name = "Qianfan-Appbuilder-Speed-8k"
         self.node = appbuilder.StyleWriting(model=self.model_name)
         self.sqc=StyleQueryChoices.BILIBILI
         self.lc=LengthChoices.SHORT

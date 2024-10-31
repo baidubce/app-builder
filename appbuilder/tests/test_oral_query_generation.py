@@ -36,7 +36,7 @@ class TestOralQueryGenerationComponent(unittest.TestCase):
             无返回值，方法中执行了环境变量的赋值操作。
         """
 
-        self.model_name = 'ERNIE Speed-AppBuilder'
+        self.model_name = 'Qianfan-Appbuilder-Speed-8k'
         secret_key = os.getenv('SECRET_KEY', None)
         self.query_generation = appbuilder.OralQueryGeneration(model=self.model_name, secret_key=secret_key)
     

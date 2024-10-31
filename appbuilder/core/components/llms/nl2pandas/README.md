@@ -30,7 +30,7 @@ query = "海淀区有哪些学校"
 query = appbuilder.Message(query)
 
 #定义并运行Nl2pandas实例，得到结果
-nl2pandas = appbuilder.Nl2pandasComponent(model="ERNIE Speed-AppBuilder")
+nl2pandas = appbuilder.Nl2pandasComponent(model="Qianfan-Appbuilder-Speed-8k")
 answer = nl2pandas(query, table_info = table_info)
 ```
 

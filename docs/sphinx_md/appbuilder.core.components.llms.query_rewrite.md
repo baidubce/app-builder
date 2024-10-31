@@ -18,7 +18,7 @@ Examples:
 import appbuilder
 os.environ["APPBUILDER_TOKEN"] = '...'
 
-query_rewrite = appbuilder.QueryRewrite(model="ERNIE Speed-AppBuilder")
+query_rewrite = appbuilder.QueryRewrite(model="Qianfan-Appbuilder-Speed-8k")
 answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？',
                                             '您可以查询官网或人工咨询',
                                             '我需要准备哪些材料？',

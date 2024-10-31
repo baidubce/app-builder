@@ -17,7 +17,7 @@ import os
 import appbuilder
 os.environ["APPBUILDER_TOKEN"] = '...'
 
-style_rewrite = appbuilder.StyleRewrite(model="ERNIE Speed-AppBuilder")
+style_rewrite = appbuilder.StyleRewrite(model="Qianfan-Appbuilder-Speed-8k")
 answer = style_rewrite(appbuilder.Message("文心大模型发布新版本"), style="激励话术")
 ```
 

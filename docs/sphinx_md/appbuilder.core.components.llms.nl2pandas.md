@@ -27,7 +27,7 @@ table_info = '''表格列信息如下：
 query = "海淀区有哪些学校"
 query = appbuilder.Message(query)
 
-nl2pandas = appbuilder.Nl2pandasComponent(model="ERNIE Speed-AppBuilder")
+nl2pandas = appbuilder.Nl2pandasComponent(model="Qianfan-Appbuilder-Speed-8k")
 answer = nl2pandas(query, table_info = table_info)
 ```
 
