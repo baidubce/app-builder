@@ -93,6 +93,8 @@ export PATH=/path/to/your/python:$PATH
 make markdown || { echo "make markdown 命令失败"; exit 1; }
 # 执行 make html
 make html || { echo "make html 命令失败"; exit 1; }
+# 迁移目录文档
+cp PythonAPI.md build/markdown/
 echo "=============在doc目录下执行命令 make markdown 完成=============="
 
 

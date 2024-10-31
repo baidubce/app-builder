@@ -54,7 +54,7 @@ nav:
     # - 错误信息: 
     - 环境参数: DevelopGuide/EnvironmentalParameters/env.md
   - API Reference:
-    - Python API Reference: API-Reference/Python/appbuilder.md
+    - Python API Reference: API-Reference/Python/PythonAPI.md
     # - Java API Reference: 
     # - Go API Reference: 
 

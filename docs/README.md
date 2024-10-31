@@ -53,7 +53,7 @@
       - [错误信息](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
       - [环境参数](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
   - API Reference:
-      - [Python API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/appbuilder.md)
+      - [Python API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/PythonAPI.md)
       - [Java API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
       - [Go API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
 
