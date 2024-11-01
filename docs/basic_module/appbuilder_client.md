@@ -244,6 +244,23 @@ app_id = "..."  # 已发布AppBuilder应用的ID
 client = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = client.create_conversation()
+#定义本地函数
+def get_current_weather(location: str, unit: str) -> str:
+    """
+    查询指定中国城市的当前天气。
+
+    参数:
+        location (str): 城市名称，例如："北京"
+        unit (str): 温度单位，可选 "celsius" 或 "fahrenheit"
+
+    返回:
+        str: 天气情况描述
+
+    抛出:
+        ValueError: 如果传入的城市不支持或单位不正确
+    """
+    return "北京今天25度"
+#------------------------直接使用JsonSchema格式描述tools来进行ToolCall调用-------------------------
 tools = [
     {
         "type": "function",
@@ -264,17 +281,67 @@ tools = [
         },
     }
 ]
+#创建函数对象列表
+functions = [get_current_weather]
 
+#调用大模型
 msg = client.run(
     conversation_id=conversation_id, query="今天北京天气怎么样？", tools=tools
 )
 print(msg.model_dump_json(indent=4))
 
+# 获取最后的事件和工具调用信息
 event = msg.content.events[-1]
+tool_call = event.tool_calls[-1]
 
+# 获取函数名称和参数
+name = tool_call.function.name
+args = tool_call.function.arguments
+
+# 将函数名称映射到具体的函数并执行
+function_map = {f.__name__: f for f in functions}
+raw_result = function_map[name](**args)
+
+# 传递工具的输出
 msg_2 = client.run(
     conversation_id=conversation_id,
-    tool_outputs=[{"tool_call_id": event.tool_calls[-1].id, "output": "北京今天35度"}],
+    tool_outputs=[{
+        "tool_call_id": tool_call.id,
+        "output": str(raw_result)
+    }],
+)
+print(msg_2.model_dump_json(indent=4))
+
+#--------------------使用function_to_json函数直接传函数对象的方式进行ToolCall的调用-----------------
+#注意：要使用此方法要为函数写好注释。
+#定义函数列表
+functions = [get_current_weather]
+function_map = {f.__name__: f for f in functions}
+#调用大模型
+msg = client.run(
+  conversation_id=conversation_id,
+  query="今天北京的天气怎么样？",
+  tools = [appbuilder.function_to_json(f) for f in functions]
+  )
+print(msg.model_dump_json(indent=4))
+# 获取最后的事件和工具调用信息
+event = msg.content.events[-1]
+tool_call = event.tool_calls[-1]
+
+# 获取函数名称和参数
+name = tool_call.function.name
+args = tool_call.function.arguments
+
+# 将函数名称映射到具体的函数并执行
+raw_result = function_map[name](**args)
+
+# 传递工具的输出
+msg_2 = client.run(
+    conversation_id=conversation_id,
+    tool_outputs=[{
+        "tool_call_id": tool_call.id,
+        "output": str(raw_result)
+    }],
 )
 print(msg_2.model_dump_json(indent=4))
 ```
