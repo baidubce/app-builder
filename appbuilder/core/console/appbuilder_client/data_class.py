@@ -305,9 +305,9 @@ class AppOverview(BaseModel):
     id: str = Field("", description="应用ID")
     name: str = Field("", description="应用名称")
     description: str = Field("", description="应用简介")
-    appType: str = Field(None, description="应用类型")
-    isPublished: bool = Field(None, description="是否已发布")
-    updateTime: int = Field(None, description="更新时间")
+    appType: Optional[str] = Field(None, description="应用类型")
+    isPublished: Optional[bool] = Field(None, description="是否已发布")
+    updateTime: Optional[int] = Field(None, description="更新时间")
 
 class AppBuilderClientAppListResponse(BaseModel):
     request_id: str = Field("", description="请求ID")
