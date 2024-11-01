@@ -58,11 +58,14 @@ def get_app_list(
     request = data_class.AppBuilderClientAppListRequest(
         limit=limit, after=after, before=before
     )
-    
-    response = client.session.post(
-        url, headers=headers
+
+    response = client.session.get(
+        url=url,
+        headers=headers,
+        params=request.model_dump(),
     )
 
+    client.check_console_response(response)
     client.check_response_header(response)
     data = response.json()
     resp = data_class.AppBuilderClientAppListResponse(**data)
