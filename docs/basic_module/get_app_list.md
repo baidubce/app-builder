@@ -66,6 +66,9 @@ class AppOverview(BaseModel):
     id: str = Field("", description="应用ID")
     name: str = Field("", description="应用名称")
     description: str = Field("", description="应用简介")
+    appType: str = Field("", description="应用类型")
+    isPublished: bool = Field(False, description="是否已发布")
+    updateTime: int = Field(None, description="更新时间")
 ```
 
 #### 代码示例
