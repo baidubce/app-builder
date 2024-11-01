@@ -28,7 +28,7 @@ class TestGetAppList(unittest.TestCase):
     def test_get_app_list_v2(self):
         app_list = appbuilder.describe_apps()
         print(app_list)
-        self.assertIsInstance(app_list, dict)
+        self.assertIsInstance(app_list, list)
 
 if __name__ == '__main__':
     unittest.main()

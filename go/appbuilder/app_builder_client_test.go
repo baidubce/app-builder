@@ -373,6 +373,14 @@ func TestNewAppBuilderClient(t *testing.T) {
 	}
 	log("Number of apps: %d", len(apps))
 
+	maxKeys := 10
+	apps2, err := DescribeApps(DescribeAppsRequest{MaxKeys: &maxKeys}, config)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("describe apps failed: %v", err)
+	}
+	log("Number of apps: %d", len(apps2.Data))
+
 	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {

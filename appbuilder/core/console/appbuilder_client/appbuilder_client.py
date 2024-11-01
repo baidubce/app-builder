@@ -78,7 +78,7 @@ def describe_apps(
     maxKeys: int=10,
     secret_key: Optional[str] = None,
     gateway_v2: Optional[str] = None
-)-> data_class.DescribeAppsResponse:
+)-> list[data_class.AppOverview]:
     """
     该接口查询用户下状态为已发布的应用列表
 
