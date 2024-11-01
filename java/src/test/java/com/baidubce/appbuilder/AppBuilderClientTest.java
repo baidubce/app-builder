@@ -12,6 +12,7 @@ import java.util.Map;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.AppsDescribeRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +35,13 @@ public class AppBuilderClientTest {
         AppListRequest request = new AppListRequest();
         request.setLimit(10);
         assertNotNull(builder.getAppList(request)[0].getId());
+    }
+
+    @Test
+    public void DescribeAppsTest() throws IOException, AppBuilderServerException {
+        AppList appList = new AppList();
+        AppsDescribeRequest request = new AppsDescribeRequest();
+        assertNotNull(appList.describeApps(request).getData()[0].getId());
     }
 
     @Test

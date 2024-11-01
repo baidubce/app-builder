@@ -26,7 +26,7 @@ from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import client_run_trace, client_tool_trace
 
-
+@deprecated(reason="use describe_apps instead")
 @client_tool_trace
 def get_app_list(
     limit: int = 10,
@@ -72,6 +72,45 @@ def get_app_list(
     out = resp.data
     return out
 
+@client_tool_trace
+def describe_apps(
+    marker: Optional[str]=None, 
+    maxKeys: int=10,
+    secret_key: Optional[str] = None,
+    gateway: Optional[str] = None
+)-> list[data_class.AppOverview]:
+    """
+    该接口查询用户下状态为已发布的应用列表
+
+    Args:
+        maxKeys (int, optional): 返回结果的最大数量，默认值为10，最大为100。
+        marker (str, optional): 起始位置，即从哪个游标开始查询，默认值为空字符串。
+        secret_key (Optional[str], optional): 认证密钥。如果未指定，则使用默认的密钥。默认值为None。
+        gateway (Optional[str], optional): 网关地址。如果未指定，则使用默认的地址。默认值为None。
+
+    Returns:
+        DescribeAppsResponse: 应用列表。
+
+    """
+    client = HTTPClient(secret_key=secret_key, gateway_v2=gateway)
+    headers = client.auth_header_v2()
+    headers["Content-Type"] = "application/json"
+    url = client.service_url_v2("/app?Action=DescribeApps")
+    request = data_class.DescribeAppsRequest(
+        MaxKeys=maxKeys, Marker=marker
+    )
+    response = client.session.post(
+        url=url,
+        json=request.model_dump(),
+        headers=headers,
+    )
+
+    client.check_response_header(response)
+    data = response.json()
+    resp = data_class.DescribeAppsResponse(**data)
+    out = resp.data
+    return out
+
 
 @client_tool_trace
 def get_all_apps():
@@ -87,13 +126,13 @@ def get_all_apps():
 
     """
     app_list = []
-    response_per_time = get_app_list(limit=100)
+    response_per_time = describe_apps(maxKeys=100)
     list_len_per_time = len(response_per_time)
     if list_len_per_time != 0:
         app_list.extend(response_per_time)
     while list_len_per_time == 100:
         after_id = response_per_time[-1].id
-        response_per_time = get_app_list(after=after_id, limit=100)
+        response_per_time = describe_apps(marker=after_id, maxKeys=100)
         list_len_per_time = len(response_per_time)
         if list_len_per_time != 0:
             app_list.extend(response_per_time)

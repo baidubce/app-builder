@@ -176,7 +176,7 @@ from appbuilder.core.utils import get_model_list
 
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
-from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps
+from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps, describe_apps
 from appbuilder.core.console.knowledge_base.knowledge_base import KnowledgeBase
 from appbuilder.core.console.knowledge_base.data_class import CustomProcessRule, DocumentSource, DocumentChoices, DocumentChunker, DocumentSeparator, DocumentPattern, DocumentProcessOption
 
@@ -215,6 +215,7 @@ __all__ = [
     "AgentBuilder",
     "get_app_list",
     "get_all_apps",
+    "describe_apps",
     "KnowledgeBase",
     "CustomProcessRule",
     "DocumentSource",

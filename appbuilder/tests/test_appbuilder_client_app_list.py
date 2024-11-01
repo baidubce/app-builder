@@ -13,17 +13,26 @@
 # limitations under the License.
 
 import unittest
-import requests
 import appbuilder
 import os
-import logging
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestGetAppList(unittest.TestCase):
     def test_get_app_list_v1(self):
         app_list = appbuilder.get_app_list()
-        print(app_list)
         self.assertIsInstance(app_list, list)
+
+    def test_describe_apps(self):
+        app_list = appbuilder.describe_apps()
+        self.assertIsInstance(app_list, list)
+        app_case = app_list[0]
+        self.assertIsInstance(app_case.id, str)
+        self.assertIsInstance(app_case.name, str)
+        self.assertIsInstance(app_case.description, str)
+        self.assertIn(app_case.appType, ["chatflow", "agent"])
+        self.assertIsInstance(app_case.isPublished, bool)
+        isSecondTimestamp = str(app_case.updateTime).isdigit() and len(str(app_case.updateTime)) < 13
+        self.assertTrue(isSecondTimestamp)
 
 if __name__ == '__main__':
     unittest.main()
