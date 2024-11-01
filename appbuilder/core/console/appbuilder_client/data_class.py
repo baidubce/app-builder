@@ -306,10 +306,11 @@ class AppOverview(BaseModel):
     name: str = Field("", description="应用名称")
     description: str = Field("", description="应用简介")
     appType: Optional[str] = Field(
-        None, description="应用类型:agent、chatflow。agent:自主规划Agent, chatflow:工作流Agent。"
+        None,
+        description="应用类型:agent、chatflow。agent:自主规划Agent, chatflow:工作流Agent。",
     )
     isPublished: Optional[bool] = Field(None, description="是否已发布")
-    updateTime: Optional[int] = Field(None, description="更新时间")
+    updateTime: Optional[int] = Field(None, description="更新时间。时间戳，单位秒")
 
 class AppBuilderClientAppListResponse(BaseModel):
     request_id: str = Field("", description="请求ID")
