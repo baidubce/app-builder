@@ -316,7 +316,7 @@ class AppBuilderClientAppListResponse(BaseModel):
 
 class DescribeAppsRequest(BaseModel):
     maxKeys: int = Field(default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
-    marker: str = Field(default="", description="用于分页的游标。marker 是应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 开始，那么可以使用 marker=app_id_123 来获取列表的下一页数据")
+    marker: str = Field(default=None, description="用于分页的游标。marker 是应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 开始，那么可以使用 marker=app_id_123 来获取列表的下一页数据")
 
 class DescribeAppsResponse(BaseModel):
     requestId: str = Field("", description="请求ID")

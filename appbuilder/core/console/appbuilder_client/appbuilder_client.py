@@ -71,7 +71,7 @@ def get_app_list(
 
 @client_tool_trace
 def describe_apps(
-    marker: str="", 
+    marker: Optional[str]=None, 
     maxKeys: int=10,
     secret_key: Optional[str] = None,
     gateway_v2: Optional[str] = None
@@ -96,10 +96,10 @@ def describe_apps(
     request = data_class.DescribeAppsRequest(
         MaxKeys=maxKeys, Marker=marker
     )
-    response = client.session.get(
+    response = client.session.post(
         url=url,
+        json=request.model_dump(),
         headers=headers,
-        params=request.model_dump(),
     )
 
     client.check_response_header(response)
@@ -107,7 +107,7 @@ def describe_apps(
     resp = data_class.DescribeAppsResponse(**data)
     out = resp.data
     return out
-    
+
 
 @client_tool_trace
 def get_all_apps():
