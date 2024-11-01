@@ -31,6 +31,7 @@ public class AppList extends Component {
      * @throws IOException               当请求失败时抛出IOException
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
+    @Deprecated
     public App[] getAppList(AppListRequest request) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.APP_LIST_URL;
 

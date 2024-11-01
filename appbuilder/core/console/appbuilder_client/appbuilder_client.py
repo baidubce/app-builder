@@ -26,7 +26,7 @@ from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import client_run_trace, client_tool_trace
 
-
+@deprecated(reason="use describe_apps instead")
 @client_tool_trace
 def get_app_list(
     limit: int = 10,
@@ -58,14 +58,11 @@ def get_app_list(
     request = data_class.AppBuilderClientAppListRequest(
         limit=limit, after=after, before=before
     )
-
-    response = client.session.get(
-        url=url,
-        headers=headers,
-        params=request.model_dump(),
+    
+    response = client.session.post(
+        url, headers=headers
     )
 
-    client.check_console_response(response)
     client.check_response_header(response)
     data = response.json()
     resp = data_class.AppBuilderClientAppListResponse(**data)
@@ -105,7 +102,6 @@ def describe_apps(
         params=request.model_dump(),
     )
 
-    client.check_console_response(response)
     client.check_response_header(response)
     data = response.json()
     resp = data_class.DescribeAppsResponse(**data)
@@ -127,13 +123,13 @@ def get_all_apps():
 
     """
     app_list = []
-    response_per_time = get_app_list(limit=100)
+    response_per_time = describe_apps(maxKeys=100)
     list_len_per_time = len(response_per_time)
     if list_len_per_time != 0:
         app_list.extend(response_per_time)
     while list_len_per_time == 100:
         after_id = response_per_time[-1].id
-        response_per_time = get_app_list(after=after_id, limit=100)
+        response_per_time = describe_apps(marker=after_id, maxKeys=100)
         list_len_per_time = len(response_per_time)
         if list_len_per_time != 0:
             app_list.extend(response_per_time)

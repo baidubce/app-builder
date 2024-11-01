@@ -30,6 +30,7 @@ import (
 	"time"
 )
 
+// Deprecated: 将废弃，请使用DescribeApps替代
 func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	request := http.Request{}
 	header := config.AuthHeaderV2()
