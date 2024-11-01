@@ -85,12 +85,17 @@ class BESVectorStoreIndex:
     def _lazy_import_es(self):
         if self._es is None or self._helpers is None:
             try:
-                from elasticsearch import Elasticsearch, helpers
+                from elasticsearch7 import Elasticsearch, helpers
                 self._es = Elasticsearch
                 self._helpers = helpers
             except ImportError:
-                raise ImportError("Elasticsearch module is not installed. "
-                                  "Please install it using 'pip install elasticsearch==7.11.0'.")
+                try:
+                    from elasticsearch import Elasticsearch, helpers
+                    self._es = Elasticsearch
+                    self._helpers = helpers
+                except ImportError:
+                    raise ImportError("Elasticsearch module is not installed. "
+                                      "Please install it using 'pip install elasticsearch7==7.11.0'.")
 
     @staticmethod
     def generate_id(length=16):
