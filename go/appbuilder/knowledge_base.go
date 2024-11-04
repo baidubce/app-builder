@@ -458,6 +458,43 @@ func (t *KnowledgeBase) CreateDocuments(req CreateDocumentsRequest) error {
 	return nil
 }
 
+func (t *KnowledgeBase) CreateDocumentsWithResp(req CreateDocumentsRequest) (CreateDocumentsResponse, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateDocuments&clientToken=" + req.ClientToken)
+	if err != nil {
+		return CreateDocumentsResponse{}, err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return CreateDocumentsResponse{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return CreateDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return CreateDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := CreateDocumentsResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return CreateDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	return rsp, nil
+}
+
 func (t *KnowledgeBase) UploadDocuments(localFilePath string, req CreateDocumentsRequest) error {
 	var data bytes.Buffer
 	w := multipart.NewWriter(&data)
@@ -513,6 +550,66 @@ func (t *KnowledgeBase) UploadDocuments(localFilePath string, req CreateDocument
 	}
 
 	return nil
+}
+
+func (t *KnowledgeBase) UploadDocumentsWithResp(localFilePath string, req CreateDocumentsRequest) (UploadDocumentsResponse, error) {
+	var data bytes.Buffer
+	w := multipart.NewWriter(&data)
+	file, err := os.Open(localFilePath)
+	if err != nil {
+		return UploadDocumentsResponse{}, err
+	}
+	defer file.Close()
+	filePart, _ := w.CreateFormFile("file", filepath.Base(file.Name()))
+	if _, err := io.Copy(filePart, file); err != nil {
+		return UploadDocumentsResponse{}, err
+	}
+
+	jsonData, err := json.Marshal(req)
+	if err != nil {
+		return UploadDocumentsResponse{}, fmt.Errorf("failed to marshal request: %w", err)
+	}
+	jsonPart, err := w.CreateFormField("payload")
+	if err != nil {
+		return UploadDocumentsResponse{}, fmt.Errorf("failed to create form field: %w", err)
+	}
+	if _, err := jsonPart.Write(jsonData); err != nil {
+		return UploadDocumentsResponse{}, fmt.Errorf("failed to write JSON data: %w", err)
+	}
+	w.Close()
+
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	if req.ClientToken == "" {
+		req.ClientToken = uuid.New().String()
+	}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=UploadDocuments&clientToken=" + req.ClientToken)
+	if err != nil {
+		return UploadDocumentsResponse{}, err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	request.Header = header
+	header.Set("Content-Type", w.FormDataContentType())
+	request.Body = NopCloser(bytes.NewReader(data.Bytes()))
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return UploadDocumentsResponse{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return UploadDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	jsonData, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return UploadDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := UploadDocumentsResponse{}
+	if err := json.Unmarshal(jsonData, &rsp); err != nil {
+		return UploadDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	return rsp, nil
 }
 
 func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
