@@ -220,6 +220,15 @@ class KnowledgeBaseCreateDocumentsRequest(BaseModel):
         None, description="文档处理选项"
     )
 
+class KnowledgeBaseCreateDocumentsResponse(BaseModel):
+    requestId: str = Field(..., description="请求ID")
+    documentIds: list[str] = Field(..., description="文档ID列表")
+
+
+class KnowledgeBaseUploadDocumentsResponse(BaseModel):
+    requestId: str = Field(..., description="请求ID")
+    documentId: str = Field(..., description="文档ID")
+
 
 class CreateChunkRequest(BaseModel):
     documentId: str = Field(..., description="文档ID")

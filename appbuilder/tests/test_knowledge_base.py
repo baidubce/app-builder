@@ -72,7 +72,7 @@ class TestKnowLedge(unittest.TestCase):
             print("create_knowledge_base函数运行失败{},将调用本地DATASET_ID".format(e))
             knowledge_base_id = os.getenv('DATASET_ID', 'UNKNOWN')
 
-        knowledge.create_documents(
+        create_documents_response = knowledge.create_documents(
             id=knowledge_base_id,
             contentFormat="rawText",
             source=appbuilder.DocumentSource(
@@ -97,8 +97,9 @@ class TestKnowLedge(unittest.TestCase):
                 knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
             ),
         )
+        self.assertIsInstance(create_documents_response.documentIds, list)
 
-        knowledge.upload_documents(
+        upload_documents_response = knowledge.upload_documents(
             id=knowledge_base_id,
             content_format="rawText",
             file_path="./data/qa_appbuilder_client_demo.pdf",
@@ -119,6 +120,7 @@ class TestKnowLedge(unittest.TestCase):
                 knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
             ),
         )
+        self.assertIsInstance(upload_documents_response.documentId, str)
 
         list_res = knowledge.get_documents_list(knowledge_base_id=knowledge_base_id)
         document_id = list_res.data[-1].id
