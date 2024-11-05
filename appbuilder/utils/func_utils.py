@@ -44,16 +44,21 @@ def deprecated(reason=None, version=None):
 
 def function_to_json(func) -> dict:
     """
-    Converts a Python function into a JSON-serializable dictionary
-    that describes the function's signature, including its name,
-    description, and parameters.
+    将Python函数转换为可序列化为JSON的字典格式，包含函数的名称、描述和参数签名。
 
-    Args:
-        func: The function to be converted.
+    参数:
+        func: 需要转换的函数。
 
-    Returns:
-        A dictionary representing the function's signature in JSON format.
+    返回:
+        表示函数签名的字典格式。
+
+    抛出:
+        ValueError: 如果函数没有文档字符串。
     """
+    # 检查文档字符串
+    if not func.__doc__:
+        raise ValueError(f"Function '{func.__name__}' is missing a docstring description.")
+
     type_map = {
         str: "string",
         int: "integer",
@@ -81,7 +86,7 @@ def function_to_json(func) -> dict:
         "type": "function",
         "function": {
             "name": func.__name__,
-            "description": func.__doc__ or "",
+            "description": func.__doc__,
             "parameters": {
                 "type": "object",
                 "properties": parameters,
@@ -90,6 +95,53 @@ def function_to_json(func) -> dict:
         },
     }
 
+def convert_and_call(func, str_args: dict):
+    """
+    根据函数的签名，将字符串类型的参数转换为目标类型，并调用该函数。
+
+    参数:
+        func (Callable): 目标函数。
+        str_args (dict): 字符串形式的参数字典。
+
+    返回:
+        Any: 函数调用的返回值。
+
+    抛出:
+        ValueError: 如果参数不能转换为目标类型。
+    """
+    # 获取函数的签名
+    signature = inspect.signature(func)
+    
+    # 将字符串参数转换为对应类型
+    converted_args = {}
+    for name, param in signature.parameters.items():
+        if name in str_args:
+            # 获取目标类型
+            param_type = param.annotation
+            
+            # 尝试转换参数
+            try:
+                if param_type is int:
+                    converted_args[name] = int(str_args[name])
+                elif param_type is float:
+                    converted_args[name] = float(str_args[name])
+                elif param_type is bool:
+                    converted_args[name] = str_args[name].lower() in ['true', '1', 't', 'yes']
+                elif param_type is list:
+                    converted_args[name] = eval(str_args[name])  # 将字符串解析为列表
+                elif param_type is dict:
+                    converted_args[name] = eval(str_args[name])  # 将字符串解析为字典
+                else:
+                    converted_args[name] = str_args[name]  # 保持字符串形式
+            except (ValueError, SyntaxError, TypeError) as e:
+                raise ValueError(f"无法将参数 '{name}' 转换为类型 {param_type}: {e}")
+        else:
+            # 如果参数在str_args中不存在，使用默认值
+            converted_args[name] = param.default
+    
+    # 调用函数并返回结果
+    return func(**converted_args)
+    
 class Singleton(type):
     _instances = {}
 
