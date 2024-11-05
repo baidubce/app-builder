@@ -11,8 +11,6 @@ import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.console.knowledgebase.Knowledgebase;
 import com.baidubce.appbuilder.model.knowledgebase.*;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import java.util.Arrays;
 
 
 public class KnowledgebaseTest {
@@ -118,7 +116,8 @@ public class KnowledgebaseTest {
                         knowledgeAugmentation);
         DocumentsCreateRequest documentsCreateRequest =
                 new DocumentsCreateRequest(knowledgeBaseId, "rawText", source, processOption);
-        knowledgebase.createDocuments(documentsCreateRequest);
+        DocumentsCreateResponse documentsCreateResponse = knowledgebase.createDocuments(documentsCreateRequest);
+        assertNotNull(documentsCreateResponse.getDocumentIds());
 
         // 上传文档
         String filePath = "src/test/java/com/baidubce/appbuilder/files/test.pdf";
@@ -126,7 +125,9 @@ public class KnowledgebaseTest {
                 new DocumentsCreateRequest.Source("file", null, null);
         DocumentsCreateRequest documentsCreateRequest2 =
                 new DocumentsCreateRequest(knowledgeBaseId, "rawText", source2, processOption);
-        knowledgebase.uploadDocuments(filePath, documentsCreateRequest2);
+        DocumentsUploadResponse documentsUploadResponse = knowledgebase.uploadDocuments(filePath,
+                documentsCreateRequest2);
+        assertNotNull(documentsUploadResponse.getDocumentId());
 
         // 删除知识库
         knowledgebase.deleteKnowledgeBase(knowledgeBaseId);

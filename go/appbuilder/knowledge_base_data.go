@@ -179,6 +179,16 @@ type CreateDocumentsRequest struct {
 	ClientToken   string                  `json:"client_token,omitempty"`
 }
 
+type CreateDocumentsResponse struct {
+	RequestID   string   `json:"requestId"`
+	DocumentIDS []string `json:"documentIds"`
+}
+
+type UploadDocumentsResponse struct {
+	RequestID  string `json:"requestId"`
+	DocumentID string `json:"documentId"`
+}
+
 type CreateChunkRequest struct {
 	DocumentID  string `json:"documentId"`
 	Content     string `json:"content"`

@@ -485,7 +485,7 @@ class KnowledgeBase(Component):
         source: data_class.DocumentSource = None,
         processOption: data_class.DocumentProcessOption = None,
         client_token: str = None,
-    ):
+    ) -> data_class.KnowledgeBaseCreateDocumentsResponse:
         r"""
         创建文档
 
@@ -497,7 +497,9 @@ class KnowledgeBase(Component):
             client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
 
         Returns:
-            dict: 响应数据，包含请求ID: requestId
+            KnowledgeBaseCreateDocumentsResponse: 创建知识库文档的响应消息，返回一个KnowledgeBaseCreateDocumentsResponse对象，包含以下属性：
+            - requestId (str): 请求ID
+            - documentIds (list[str]): 文档ID列表
         """
         if self.knowledge_id == None and id == None:
             raise ValueError(
@@ -527,7 +529,8 @@ class KnowledgeBase(Component):
         self.http_client.check_console_response(response)
         data = response.json()
 
-        return data
+        resp = data_class.KnowledgeBaseCreateDocumentsResponse(**data)
+        return resp
 
     def get_knowledge_base_list(
         self,
@@ -587,7 +590,7 @@ class KnowledgeBase(Component):
         id: Optional[str] = None,
         processOption: data_class.DocumentProcessOption = None,
         client_token: str = None,
-    ):
+    ) -> data_class.KnowledgeBaseUploadDocumentsResponse:
         r"""
         上传文档
 
@@ -599,7 +602,9 @@ class KnowledgeBase(Component):
             client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
 
         Returns:
-            dict: 响应数据，包含请求ID: requestId
+            KnowledgeBaseUploadDocumentsResponse: 创建知识库文档的响应消息，返回一个KnowledgeBaseUploadDocumentsResponse对象，包含以下属性：
+            - requestId (str): 请求ID
+            - documentId (str): 文档ID
         """
         if not os.path.exists(file_path):
             raise FileNotFoundError("File {} does not exist".format(file_path))
@@ -635,8 +640,9 @@ class KnowledgeBase(Component):
             self.http_client.check_response_header(response)
             self.http_client.check_console_response(response)
             data = response.json()
+            resp = data_class.KnowledgeBaseUploadDocumentsResponse(**data)
 
-        return data
+        return resp
 
     def create_chunk(
         self,
@@ -656,7 +662,7 @@ class KnowledgeBase(Component):
             CreateChunkResponse: 创建文档块的相应消息, 包含以下属性：
             - id (str): 切片ID
         """
-        
+
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
