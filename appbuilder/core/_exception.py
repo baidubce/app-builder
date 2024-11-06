@@ -320,8 +320,8 @@ class AppBuilderServerException(BaseRPCException):
         self.code = code if code else self.code
 
     def __str__(self):
-        if _check_error_message(self.message):
-            return self.message
+        if _check_error_message(self.description):
+            return self.description
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.description}"
@@ -364,8 +364,8 @@ class AssistantServerException(BaseRPCException):
             str: 格式化后的错误信息字符串，包含错误描述、错误代码和解决方案。
         
         """
-        if _check_error_message(self.message):
-            return self.message
+        if _check_error_message(self.description):
+            return self.description
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.description}"
