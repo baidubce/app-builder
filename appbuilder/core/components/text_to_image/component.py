@@ -21,7 +21,7 @@ from typing import Optional
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException, RiskInputException
+from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.text_to_image.model import Text2ImageSubmitRequest, Text2ImageQueryRequest, \
     Text2ImageQueryResponse, Text2ImageSubmitResponse, Text2ImageOutMessage, Text2ImageInMessage
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
