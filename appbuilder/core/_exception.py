@@ -16,6 +16,9 @@
 """include HTTP and backend server exception.
 """
 
+def _check_error_message(message):
+    if message.startswith('Traceback ') or message.startswith("\n  File "):
+        return True
 
 class BaseRPCException(Exception):
     r"""Base RPC exception.
@@ -46,6 +49,8 @@ class BadRequestException(BaseRPCException):
             str: 返回包含错误消息、HTTP状态和解决方案的格式化字符串。
         """
         # 使用分隔线和缩进增加可读性
+        if _check_error_message(self.message):
+            return self.message
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.message}"
@@ -77,6 +82,8 @@ class ForbiddenException(BaseRPCException):
             str: 返回包含错误消息、HTTP状态和解决方案的格式化字符串。
         """
         # 使用分隔线和缩进增加可读性
+        if _check_error_message(self.message):
+            return self.message
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.message}"
@@ -114,6 +121,8 @@ class NotFoundException(BaseRPCException):
             str: 返回包含错误消息、HTTP状态和解决方案的格式化字符串。
         """
         # 使用分隔线和缩进增加可读性
+        if _check_error_message(self.message):
+            return self.message
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.message}"
@@ -147,6 +156,8 @@ class PreconditionFailedException(BaseRPCException):
             str: 返回包含错误消息、HTTP状态和解决方案的格式化字符串。
         """
         # 使用分隔线和缩进增加可读性
+        if _check_error_message(self.message):
+            return self.message
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.message}"
@@ -183,6 +194,8 @@ class InternalServerErrorException(BaseRPCException):
         Returns:
             str: 返回包含错误消息、HTTP状态和解决方案的格式化字符串。
         """
+        if _check_error_message(self.message):
+            return self.message
         # 使用分隔线和缩进增加可读性
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
@@ -216,6 +229,8 @@ class HTTPConnectionException(BaseRPCException):
         Returns:
             str: 返回包含错误消息和解决方案的格式化字符串。
         """
+        if _check_error_message(self.message):
+            return self.message
         # 使用分隔线和缩进增加可读性
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
@@ -249,6 +264,8 @@ class ModelNotSupportedException(BaseRPCException):
             str: 返回包含错误消息和解决方案的格式化字符串。
         """
         # 使用分隔线和缩进增加可读性
+        if _check_error_message(self.message):
+            return self.message
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.message}"
@@ -303,6 +320,8 @@ class AppBuilderServerException(BaseRPCException):
         self.code = code if code else self.code
 
     def __str__(self):
+        if _check_error_message(self.message):
+            return self.message
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.description}"
@@ -345,6 +364,8 @@ class AssistantServerException(BaseRPCException):
             str: 格式化后的错误信息字符串，包含错误描述、错误代码和解决方案。
         
         """
+        if _check_error_message(self.message):
+            return self.message
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.description}"
@@ -376,6 +397,8 @@ class InvalidRequestArgumentError(BaseRPCException):
         Returns:
             str: 返回包含错误消息和建议解决方案的格式化字符串。
         """
+        if _check_error_message(self.message):
+            return self.message
         # 使用分隔线和缩进增加可读性
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
@@ -407,6 +430,8 @@ class AppbuilderBuildexException(BaseRPCException):
         super().__init__(message)
     
     def __str__(self):
+        if _check_error_message(self.message):
+            return self.message
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.message}"
@@ -441,6 +466,8 @@ class AppbuilderTraceException(BaseRPCException):
             str: 包含错误信息和解决方案的字符串。
         
         """
+        if _check_error_message(self.message):
+            return self.message
         error_separator = "\n" + "-" * 100 
         return (f"{error_separator}"
                 f"\n错误信息(Error Message): {self.message}"
