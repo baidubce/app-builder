@@ -14,9 +14,13 @@
 import os
 import json
 import inspect
+from jsonschema import validate, ValidationError
 from pydantic import BaseModel
+from typing import Generator
 from appbuilder.utils.func_utils import Singleton
 from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
+from component_tool_eval_cases import component_tool_eval_cases
+from component_output_schemas import components_tool_eval_output_type_maps
 
 
 class CheckInfo(BaseModel):
@@ -145,13 +149,26 @@ class MainfestMatchToolEvalRule(RuleBase):
             properties = manifest['parameters']['properties']
             required_params = []
             anyOf = manifest['parameters'].get('anyOf', None)
+            required_exists = False
             if anyOf:
                 for anyOf_dict in anyOf:
-                    required_params += anyOf_dict['required']
+                    if 'required' in anyOf_dict:
+                        required_exists = True
+                        required_params += anyOf_dict['required']
+                    
             if not anyOf:
-                required_params += manifest['parameters']['required']
+                if 'required' in manifest['parameters']:
+                    required_exists = True
+                    required_params += manifest['parameters']['required']
 
-
+            if not required_exists:
+                check_pass_flag = False
+                invalid_details.append("mainfest 未定义required参数")
+                return CheckInfo(
+                    check_rule_name=self.rule_name,
+                    check_result=check_pass_flag,
+                    check_detail=",".join(invalid_details))
+            
             # 交互检查
             tool_eval_input_params = []
             print("required_params: {}".format(required_params))
@@ -239,7 +256,53 @@ class ToolEvalInputNameRule(RuleBase):
             check_detail="以下ToolEval方法参数名称是系统保留字段，请更换：{}".format("，".join(invalid_details)) if len(invalid_details) > 0 else "")
 
 
+class ToolEvalOutputJsonRule(RuleBase):
+    """
+    检查tool_eval的输出结果是否符合对应的json schema
+    """
+    def __init__(self):
+        super().__init__()
+        self.rule_name = 'ToolEvalOutputJsonRule'
+        self.output_types = ["text", "image"]
+
+    def _check(self, outputs, output_schema, invalid_details):
+        if isinstance(outputs, Generator):
+            out = next(outputs)
+            mod = "流式"
+        else:
+            out = outputs
+            mod = "非流式"
+        try:
+            validate(instance=out, schema=output_schema)
+        except ValidationError as e:
+            invalid_details.append("{}ToolEval返回值不符合JSON Schema要求: {}\n".format(mod, str(e)))
+
+    def check(self, component_cls) -> CheckInfo:
+        invalid_details = []
+        component_cls_name = component_cls.__name__
+        assert component_cls_name in components_tool_eval_output_type_maps, "{} 没有注册到 components_output_maps 中".format(component_cls_name)
+        output_json_schema = components_tool_eval_output_type_maps[component_cls_name]
+        non_stream_output_json_schema = output_json_schema[0]
+        stream_output_json_schema = output_json_schema[1]
+        input_dict = component_tool_eval_cases[component_cls_name]
+        component_obj = component_cls()
+        stream_outputs = component_obj.tool_eval(**input_dict)
+        non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
+        self._check(stream_outputs, stream_output_json_schema, invalid_details) #校验流式输出
+        self._check(non_stream_outputs, non_stream_output_json_schema, invalid_details)  #校验非流式输出
+        if len(invalid_details) > 0:
+            return CheckInfo(
+                check_rule_name=self.rule_name,
+                check_result=True,
+                check_detail="")
+        else:
+            return CheckInfo(
+                check_rule_name=self.rule_name,
+                check_result=False,
+                check_detail=",".join(invalid_details))
+            
 
 register_component_check_rule("ManifestValidRule", ManifestValidRule)
 register_component_check_rule("MainfestMatchToolEvalRule", MainfestMatchToolEvalRule)
 register_component_check_rule("ToolEvalInputNameRule", ToolEvalInputNameRule)
+register_component_check_rule("ToolEvalOutputJsonRule", ToolEvalOutputJsonRule)

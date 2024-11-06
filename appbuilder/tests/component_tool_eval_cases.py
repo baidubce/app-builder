@@ -11,3 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+component_tool_eval_cases = {
+    "AnimalRecognition": {
+        "img_name": "",
+        "img_url": "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
+            "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T" \
+            "12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad68" \
+            "62cf937c03f8c5260d51c6ae"
+    }
+}
