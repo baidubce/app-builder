@@ -59,7 +59,7 @@ print(f"llm result: {nl2sql_result_message.content.llm_result}")
 ## 参数说明
 
 ### 初始化参数
-- model_name:  支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, Qianfan-Appbuilder-Speed-8k
+- model_name:  支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, Qianfan-Agent-Speed-8k
 - table_schemas: 表的 schema，例如:
   
 ```

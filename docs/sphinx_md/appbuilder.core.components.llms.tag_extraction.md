@@ -17,7 +17,7 @@ import appbuilder
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = '...'
 
-tag_extraction = appbuilder.TagExtraction(model="Qianfan-Appbuilder-Speed-8k")
+tag_extraction = appbuilder.TagExtraction(model="Qianfan-Agent-Speed-8k")
 answer = tag_extraction(appbuilder.Message("从这段文本中抽取关键标签"))
 ```
 

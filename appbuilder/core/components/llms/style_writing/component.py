@@ -55,7 +55,7 @@ class StyleWriting(CompletionBaseComponent):
         # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
         os.environ["APPBUILDER_TOKEN"] = '...'
 
-        style_writing = appbuilder.StyleWriting(model="Qianfan-Appbuilder-Speed-8k")
+        style_writing = appbuilder.StyleWriting(model="Qianfan-Agent-Speed-8k")
         answer = style_writing(appbuilder.Message("帮我写一篇关于人体工学椅的文案"), style_query="小红书", length=100)
 
     """

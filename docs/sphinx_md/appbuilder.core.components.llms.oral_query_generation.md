@@ -9,7 +9,7 @@
 基类：`CompletionBaseComponent`
 
 口语化Query生成，可用于问答场景下对文档增强索引。
- *注：该组件推荐使用Qianfan-Appbuilder-Speed-8k模型。*
+ *注：该组件推荐使用Qianfan-Agent-Speed-8k模型。*
 
 Examples:
 
@@ -24,7 +24,7 @@ text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
         '防抖 开启路径：打开「相机 > 视频 > 点击屏幕上方的“超级防抖”标识」 后置视频同时支持超级防抖和超级防抖Pro功能，开启超级'
         '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
         '，实时视频分享您的生活。')
-oral_query_generation = appbuilder.OralQueryGeneration(model='Qianfan-Appbuilder-Speed-8k')
+oral_query_generation = appbuilder.OralQueryGeneration(model='Qianfan-Agent-Speed-8k')
 answer = oral_query_generation(appbuilder.Message(text), query_type='全部', output_format='str')
 print(answer.content)
 ```
