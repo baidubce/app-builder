@@ -57,7 +57,7 @@ python3 -m pip uninstall -y pydantic
 python3 -m pip install pydantic==2.7.4
 python3 -m pip install langchain==0.3.0
 python3 -m pip install datamodel-code-generator==0.25.8
-cd appbuilder/tests/
+cd python/tests/
 
 
 # 5、执行parallel_ut_run.py，运行python单元测试
@@ -66,7 +66,7 @@ python3 parallel_ut_run.py
 run_result=$?
 
 # 6、基于coverage 测试结果计算全量单测覆盖率
-# coverage combine ./appbuilder/tests/
+# coverage combine ./python/tests/
 coverage combine
 coverage xml -o coverage.xml 
 coverage html -d coverage_html
@@ -82,8 +82,8 @@ echo "--------------------------"
 # 替换后 /Users/chengmo/workspace/baidu_code/app-builder/
 # 首先获取appbuilder-sdk的python lib的安装目录
 python_lib=$(python3 -m pip show appbuilder-sdk | grep Location | awk '{print $2}')
-# 再获取git clone的目录, 当前目录为 app-builder/appbuilder/tests, 取 app-builder/目录
-git_dir=$(pwd | sed 's/appbuilder\/tests//')
+# 再获取git clone的目录, 当前目录为 app-builder/python/tests, 取 app-builder/目录
+git_dir=$(pwd | sed 's/python\/tests//')
 # 批量替换coverage.xml文件中的python_lib为git_dir，并将源文件备份一个orignal.xml后缀
 python3 -u sed_str.py coverage.xml $python_lib $git_dir
 # 最后进行增量代码覆盖率测试
