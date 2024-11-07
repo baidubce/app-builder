@@ -62,7 +62,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 - `temperature (float, 可选)`: 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
 - `top_p (float, 可选)`: 模型配置的top_p参数，top_p值越高输出文本越多样，top_p值越低输出文本越稳定。取值范围为 0.0 到 1.0，默认值为 1e-10。
 - `search_top_k (int, 可选)`: 指定百度搜索返回的检索个数，最多10，默认为4。
-- `hide_corner_markers (bool, 可选)`: 溯源开关，默认开。
+- `hide_corner_markers (bool, 可选)`: 溯源开关，True隐藏来源，False显示来源，默认为True，不显示结果来源。
 
 
 ### 返回值
