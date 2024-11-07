@@ -64,7 +64,7 @@ and add/update `.vscode/settings.json` file with the following content:
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        "./appbuilder",
+        "./python",
         "-p",
         "test*.py"
     ],
