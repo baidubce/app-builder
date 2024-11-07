@@ -25,29 +25,32 @@ from appbuilder.core.component import Component
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.dish_recognize.model import *
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class DishRecognition(Component):
     """
     菜品识别组件，适用于识别只含有单个菜品的图片，返回识别的菜品名称和卡路里信息
+    
     Examples:
 
-            .. code-block:: python
+    .. code-block:: python
 
-                import appbuilder
+        import appbuilder
 
-                # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
-                os.environ["APPBUILDER_TOKEN"] = '...'
+        # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-                dish_recognition = appbuilder.DishRecognition()
+        dish_recognition = appbuilder.DishRecognition()
 
-                with open("xxxx.jpg", "rb") as f:
-                    resp = dish_recognition(appbuilder.Message({"raw_image": f.read()}))
-                    # 输出示例 {'result': [{'name': '剁椒鱼头', 'calorie': '127'}]}
-                    print(resp.content)
+        with open("xxxx.jpg", "rb") as f:
+            resp = dish_recognition(appbuilder.Message({"raw_image": f.read()}))
+            # 输出示例 {'result': [{'name': '剁椒鱼头', 'calorie': '127'}]}
+            print(resp.content)
     """
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
         """
         根据输入图片进行菜品识别。
@@ -58,8 +61,7 @@ class DishRecognition(Component):
             retry (int, optional): 重试次数，默认为 0。
 
         Returns:
-            Message: 包含菜品识别结果的输出消息。
-                例如，Message(content={'result': [{'name': '剁椒鱼头', 'calorie': '127'}]})
+            Message: 包含菜品识别结果的输出消息。例如，Message(content={'result': [{'name': '剁椒鱼头', 'calorie': '127'}]})
 
         """
         inp = DishRecognitionInMsg(**message.content)
@@ -84,7 +86,7 @@ class DishRecognition(Component):
         :return: 包含食物识别结果的响应对象。
         """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         if not request.top_num:
             request.top_num = 1
         if not request.filter_threshold:

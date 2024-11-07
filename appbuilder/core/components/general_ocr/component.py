@@ -23,6 +23,7 @@ from appbuilder.core._exception import AppBuilderServerException, InvalidRequest
 from appbuilder.core.component import Component
 from appbuilder.core.components.general_ocr.model import *
 from appbuilder.core.message import Message
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class GeneralOCR(Component):
@@ -52,7 +53,7 @@ class GeneralOCR(Component):
     manifests = [
         {
             "name": "general_ocr",
-            "description": "提供更高精度的通用文字识别能力，能够识别图片中的文字",
+            "description": "提供更高精度的通用文字识别能力，能够识别图片中的文字，不支持html后缀文件的输入",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -82,17 +83,19 @@ class GeneralOCR(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 输入图片并识别其中的文字
-
-                    参数:
-                       message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                       或 Message(content={"url": "https://image/download/url"}).
-                       timeout (float, 可选): HTTP超时时间
-                       retry (int, 可选)： HTTP重试次数
-
-                     返回: message (obj: `Message`): 模型识别结果. 举例: Message(content={"words_result":[{"words":"100"},
-                     {"words":"G8"}]})
+        """
+        执行图片中的文字识别。
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作。举例: Message(content={"raw_image": b"..."}) 或 Message(content={"url": "https://image/download/url"})。
+            timeout (float, 可选): HTTP超时时间。
+            retry (int, 可选): HTTP重试次数。
+        
+        Returns:
+            Message: 模型识别结果。举例: Message(content={"words_result":[{"words":"100"}, {"words":"G8"}]})。
+        
         """
         inp = GeneralOCRInMsg(**message.content)
         request = GeneralOCRRequest()
@@ -107,8 +110,13 @@ class GeneralOCR(Component):
         out = GeneralOCROutMsg(**result_dict)
         return Message(content=out.model_dump())
 
-    def _recognize(self, request: GeneralOCRRequest, timeout: float = None,
-                  retry: int = 0) -> GeneralOCRResponse:
+    def _recognize(
+        self,
+        request: GeneralOCRRequest,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> GeneralOCRResponse:
         r"""调用底层接口进行通用文字识别
                    参数:
                        request (obj: `GeneralOCRRequest`) : 通用文字识别输入参数
@@ -117,14 +125,16 @@ class GeneralOCR(Component):
                        response (obj: `GeneralOCRResponse`): 通用文字识别返回结果
                """
         if not request.image and not request.url and not request.pdf_file and not request.ofd_file:
-            raise ValueError("one of image or url or must pdf_file or ofd_file be set")
+            raise ValueError(
+                "request format error, one of image or url or must pdf_file or ofd_file be set")
         data = GeneralOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/accurate_basic")
-        response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
+        response = self.http_client.session.post(
+            url, headers=headers, data=data, timeout=timeout)
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
@@ -149,24 +159,45 @@ class GeneralOCR(Component):
                 service_err_message=data.get("error_msg")
             )
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
+        r"""
+        根据给定的参数执行OCR识别功能。
+        
+        Args:
+            name (str): 函数名称，此处未使用，但为保持一致性保留。
+            streaming (bool): 是否以流式方式返回结果。如果为True，则逐个返回结果，否则返回全部结果。
+            kwargs: 关键字参数，支持以下参数：
+                traceid (str): 请求的唯一标识符，用于追踪请求和响应。
+                img_url (str): 待识别图片的URL。
+                file_urls (dict): 包含文件名和对应URL的字典。如果提供了img_url，则忽略此参数。
+                img_name (str): 待识别图片的文件名，与file_urls配合使用。
+        
+        Returns:
+            如果streaming为False，则返回包含识别结果的JSON字符串。
+            如果streaming为True，则逐个返回包含识别结果的字典。
+        
+        Raises:
+            InvalidRequestArgumentError: 如果请求格式错误（例如未设置文件名或指定文件名对应的URL不存在），则抛出此异常。
+        
         """
-        general_ocr for function call
-        """
+        traceid = kwargs.get("traceid")
         img_url = kwargs.get("img_url", None)
         if not img_url:
             file_urls = kwargs.get("file_urls", {})
             img_path = kwargs.get("img_name", None)
             if not img_path:
-                raise InvalidRequestArgumentError("file name is not set")
+                raise InvalidRequestArgumentError(
+                    "request format error, file name is not set")
             img_name = os.path.basename(img_path)
             img_url = file_urls.get(img_name, None)
             if not img_url:
-                raise InvalidRequestArgumentError(f"file {img_name} url does not exist")
+                raise InvalidRequestArgumentError(
+                    f"request format error, file {img_name} url does not exist")
         req = GeneralOCRRequest(url=img_url)
         req.detect_direction = "true"
         req.language_type = "auto_detect"
-        result = proto.Message.to_dict(self._recognize(req))
+        result = proto.Message.to_dict(self._recognize(req, request_id=traceid))
         results = {
             "识别结果": " \n".join(item["words"] for item in result["words_result"])
         }

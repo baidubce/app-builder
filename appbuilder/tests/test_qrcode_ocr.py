@@ -17,6 +17,8 @@ import requests
 import unittest
 import appbuilder
 
+from appbuilder.core._exception import InvalidRequestArgumentError 
+
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestQRcodeOCR(unittest.TestCase):
     def setUp(self):
@@ -126,7 +128,41 @@ class TestQRcodeOCR(unittest.TestCase):
         message = appbuilder.Message(content={"url": url})
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.qrcode_ocr.run(message)
-
+        
+        with self.assertRaises(InvalidRequestArgumentError):
+            self.qrcode_ocr.run(message=message,location='test')
+        
+            
+    def test_tool_eval(self):
+        image_url = "https://bj.bcebos.com/v1/appbuilder/qrcode_ocr_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-" \
+                    "01-24T12%3A45%3A13Z%2F-1%2Fhost%2Ffc43d07b41903aeeb5a023131ba6" \
+                    "e74ab057ce26d50e966dc31ff083e6a9c41b"
+        result=self.qrcode_ocr.tool_eval(name='name',streaming=False,files=['test'])
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)
+        result=self.qrcode_ocr.tool_eval(
+            name='name',
+            streaming=True,
+            file_names=['test'],
+            file_urls={'test':image_url}
+            )
+        res=next(result)
+        self.assertEqual(res['visible_scope'],'llm')
+        res=next(result)
+        self.assertEqual(res['visible_scope'],'user')
+        
+        result=self.qrcode_ocr.tool_eval(
+            name='name',
+            streaming=False,
+            file_names=['test'],
+            file_urls={'test':image_url},
+            locations = 'test'
+        )
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)
+        
+        
 
 if __name__ == '__main__':
     unittest.main()

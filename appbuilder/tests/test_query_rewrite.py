@@ -19,7 +19,7 @@ import unittest
 from typing import List, Tuple
 import appbuilder
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")  
 class TestQueryRewriteComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -32,7 +32,7 @@ class TestQueryRewriteComponent(unittest.TestCase):
             无返回值。
         """
         # 设置环境变量和初始化TranslateComponent实例
-        self.model_name = "ERNIE Speed-AppBuilder"
+        self.model_name = "Qianfan-Appbuilder-Speed-8k"
         self.node = appbuilder.QueryRewrite(model=self.model_name)
 
     def test_run_with_default_params(self):
@@ -54,11 +54,26 @@ class TestQueryRewriteComponent(unittest.TestCase):
 
     def test_run_with_stream_and_temperature(self):
         """测试不同的 stream 和 temperature 参数值"""
-        node = appbuilder.QueryRewrite("ERNIE Speed-AppBuilder")
+        node = appbuilder.QueryRewrite("Qianfan-Appbuilder-Speed-8k")
         query = ['我应该怎么办理护照？', '您可以查询官网或人工咨询', '我需要准备哪些材料？', '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', '在哪里办']
         msg = appbuilder.Message(query)
         answer = node(msg, rewrite_type="带机器人回复", stream=False, temperature=0.5)
         self.assertIsNotNone(answer)
+        
+    def test_run_raise(self):
+        with self.assertRaises(ValueError):
+            self.node(message=None)
+
+        query = ['我应该怎么办理护照？', '您可以查询官网或人工咨询']
+        msg=appbuilder.Message(query)
+        with self.assertRaises(ValueError):
+            self.node(message=msg)
+           
+        test_str='test'*1500    
+        query = [test_str]
+        msg=appbuilder.Message(query)
+        with self.assertRaises(ValueError):
+            self.node(message=msg) 
 
 if __name__ == '__main__':
     unittest.main()

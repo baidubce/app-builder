@@ -16,7 +16,7 @@ import os
 import unittest
 import appbuilder
 
-@unittest.skip("AssertionError: False is not true")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestDialogSummary(unittest.TestCase):
     def setUp(self):
         """
@@ -28,7 +28,7 @@ class TestDialogSummary(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.model_name = "ERNIE Speed-AppBuilder"
+        self.model_name = "Qianfan-Appbuilder-Speed-8k"
         self.node = appbuilder.DialogSummary(model=self.model_name)
 
     def test_run_with_default_params(self):
@@ -49,13 +49,12 @@ class TestDialogSummary(unittest.TestCase):
         """测试不同的 stream 和 temperature 参数值"""
 
         chats = appbuilder.get_model_list(api_type_filter=["chat"])
-        self.assertTrue("ERNIE Speed-AppBuilder专用版" in chats)
+        self.assertTrue("EB-turbo-AppBuilder专用版" in chats)
 
-        appbuilder.DialogSummary(model="ERNIE Speed-AppBuilder专用版")
+        appbuilder.DialogSummary(model="EB-turbo-AppBuilder专用版")
 
         with self.assertRaises(Exception):
-            appbuilder.DialogSummary(model="ERNIE Speed-AppBuilder-None")
-
+            appbuilder.DialogSummary(model="")
 
 if __name__ == '__main__':
     unittest.main()

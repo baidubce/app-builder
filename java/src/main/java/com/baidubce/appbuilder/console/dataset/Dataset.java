@@ -20,14 +20,17 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 public class Dataset extends Component {
     String datasetId;
 
+    @Deprecated
     public Dataset() {
         super();
     }
 
+    @Deprecated
     public Dataset(String secretKey) {
         super(secretKey);
     }
 
+    @Deprecated
     public Dataset(String secretKey, String datasetId) {
         super(secretKey);
         this.datasetId = datasetId;

@@ -1,0 +1,13 @@
+TableOCR 
+Excel2Figure  
+HandwriteOCR  
+GeneralOCR  
+Translation  
+ObjectRecognition  
+DocFormatConverter  
+MixCardOCR  
+ASR  
+PlantRecognition  
+AnimalRecognition  
+QRcodeOCR  
+ImageUnderstand

@@ -15,9 +15,9 @@
 package appbuilder
 
 type DatasetResponse struct {
-	Code    int                    `json:"code"`
-	Message string                 `json:"message"`
-	Result  map[string]interface{} `json:"result"`
+	Code    int            `json:"code"`
+	Message string         `json:"message"`
+	Result  map[string]any `json:"result"`
 }
 
 type DatasetBindResponse struct {

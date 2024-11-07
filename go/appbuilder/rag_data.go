@@ -16,7 +16,6 @@ package appbuilder
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -70,11 +69,11 @@ type RAGStreamIterator struct {
 
 func (t *RAGStreamIterator) Next() (*RAGAnswer, error) {
 	data, err := t.r.ReadMessageLine()
-	if err != nil && !errors.Is(err, io.EOF) {
+	if err != nil && !(err == io.EOF) {
 		t.body.Close()
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	if err != nil && errors.Is(err, io.EOF) {
+	if err != nil && err == io.EOF {
 		t.body.Close()
 		return nil, err
 	}

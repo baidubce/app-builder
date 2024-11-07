@@ -20,10 +20,12 @@ from appbuilder.core._exception import AppBuilderServerException, InvalidRequest
 from appbuilder.core.component import Component
 from appbuilder.core.components.mix_card_ocr.model import *
 from appbuilder.core.message import Message
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class MixCardOCR(Component):
     r""" 身份证混贴识别组件
+    
     Examples:
 
     .. code-block:: python
@@ -69,16 +71,19 @@ class MixCardOCR(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 输入图片并识别身份证信息
-
-                参数:
-                    message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                    或 Message(content={"url": "https://image/download/url"}).
-                    timeout (float, 可选): HTTP超时时间
-                    retry (int, 可选)： HTTP重试次数
-
-                返回: message (obj: `Message`): 身份证识别结果.
+        """
+        执行身份证识别操作
+        
+        Args:
+            message (Message): 包含待识别图片或图片下载URL的Message对象.
+                示例: Message(content={"raw_image": b"..."}) 或 Message(content={"url": "https://image/download/url"}).
+            timeout (float, 可选): HTTP请求的超时时间，默认为None.
+            retry (int, 可选): HTTP请求的重试次数，默认为0.
+        
+        Returns:
+            Message: 包含身份证识别结果的Message对象.
         """
         inp = MixCardOCRInMsg(**message.content)
         request = MixCardOCRRequest()
@@ -108,7 +113,7 @@ class MixCardOCR(Component):
         out.direction = response.direction
         return Message(content=out.model_dump())
 
-    def _recognize(self, request: MixCardOCRRequest, timeout: float = None, retry: int = 0) -> MixCardOCRResponse:
+    def _recognize(self, request: MixCardOCRRequest, timeout: float = None, retry: int = 0, request_id: str = None) -> MixCardOCRResponse:
         r"""调用底层身份证混贴识别
                 参数:
                     request (obj: `GeneralOCRRequest`) : 通用文字识别输入参数
@@ -117,11 +122,11 @@ class MixCardOCR(Component):
                     response (obj: `GeneralOCRResponse`): 通用文字识别返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         data = MixCardOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/multi_idcard")
         response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
@@ -149,8 +154,29 @@ class MixCardOCR(Component):
                 service_err_message=data.get("error_msg")
             )
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
+        """
+        对指定文件进行OCR识别。
+        
+        Args:
+            name (str): API名称。
+            streaming (bool): 是否流式输出。如果为True，则逐个返回识别结果；如果为False，则一次性返回所有识别结果。
+            **kwargs: 其他参数。
+        
+        Returns:
+            如果streaming为False，则返回包含所有识别结果的JSON字符串。
+            如果streaming为True，则逐个返回包含识别结果的字典，每个字典包含以下字段：
+                type (str): 消息类型，固定为"text"。
+                text (str): 识别结果的JSON字符串。
+                visible_scope (str): 消息可见范围，可以是"llm"或"user"。
+        
+        Raises:
+            InvalidRequestArgumentError: 如果请求格式错误，即文件URL不存在时抛出。
+        
+        """
         result = {}
+        traceid = kwargs.get("traceid")
         file_names = kwargs.get("file_names", None)
         if not file_names:
             file_names = kwargs.get("files")
@@ -161,7 +187,7 @@ class MixCardOCR(Component):
             else:
                 file_url = file_urls.get(file_name, None)
             if file_url is None:
-                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+                raise InvalidRequestArgumentError(f"request format error, file {file_name} url does not exist")
 
             request = MixCardOCRRequest()
             request.url = file_url
@@ -169,7 +195,7 @@ class MixCardOCR(Component):
             request.detect_quality = "false"
             request.detect_photo = "false"
             request.detect_card = "false"
-            response = self._recognize(request)
+            response = self._recognize(request, request_id=traceid)
             out = MixCardOCROutMsg()
             for res in response.words_result:
                 card_type = res.card_info.card_type

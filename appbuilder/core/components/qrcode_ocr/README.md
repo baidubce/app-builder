@@ -23,7 +23,7 @@
 下面是二维码识别的代码示例：
 
 示例图片为：
-![示例图片](./image/qrcode_ocr_test.png)
+![示例图片](https://bj.bcebos.com/v1/appbuilder/qrcode_ocr_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A45%3A13Z%2F-1%2Fhost%2Ffc43d07b41903aeeb5a023131ba6e74ab057ce26d50e966dc31ff083e6a9c41b)
 
 ```python
 import os

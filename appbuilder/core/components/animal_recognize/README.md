@@ -19,8 +19,8 @@
 我们选取一张可爱的大熊猫照片，使用动物识别组件进行识别。
 
 
-![大熊猫](./image/animal_recognize_test.png)
-
+![大熊猫](https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad6862cf937c03f8c5260d51c6ae
+)
 
 
 下面是动物识别的代码示例：

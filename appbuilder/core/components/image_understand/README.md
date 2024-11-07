@@ -14,7 +14,7 @@
 
 下面是图像内容理解的代码示例：
 
-示例图片为：![示例图片](./image/test_image_understand.jpeg)
+示例图片为：![示例图片](https://bj.bcebos.com/v1/appbuilder/test_image_understand.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T09%3A41%3A01Z%2F-1%2Fhost%2Fe8665506e30e0edaec4f1cc84a2507c4cb3fdb9b769de3a5bfe25c372b7e56e6)
 
 ```python
 import os
@@ -51,13 +51,16 @@ os.environ["APPBUILDER_TOKEN"] = "..."
 无
 
 ### 调用参数
-| 参数名称       | 参数类型    | 是否必须 | 描述                          |示例值|
-|------------|---------|------|-----------------------------|--|
-| message    | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 ||
-| +content   | Dict    | 是    | 消息内容                        ||
-| +raw_image | String  | 否    | 原始图片字节流                     ||
-| +url       | String  | 否    | 图片下载链接地址                    ||
-| +question  | String  | 是    | 问题字符串，长度小于100               ||
+
+| 参数名称       | 参数类型   | 是否必须 | 描述                                | 示例值 |
+|------------|--------|------|-----------------------------------|-----|
+| message    | String | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数       |     |
+| +content   | Dict   | 是    | 消息内容                              |     |
+| +raw_image | String | 否    | 原始图片字节流                           |     |
+| +url       | String | 否    | 图片下载链接地址                          |     |
+| +question  | String | 是    | 问题字符串，长度小于100                     |     |
+| +language  | String | 否    | 描述内容的所使用的语言，默认是zh-CN（中文），可选en(英文) |     |
+
 |timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 |retry| Integer | 否    | HTTP重试次数                    |3||
 

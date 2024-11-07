@@ -85,6 +85,20 @@ class AppBuilderServerException(BaseRPCException):
     def __str__(self):
         return self.description
 
+class AssistantServerException(BaseRPCException):
+    r"""AssistantSercerException represent assistant server failed response.
+    """
+    description: str = "Interal Server Error"
+    code: int = 500
+
+    def __init__(self, request_id= "", code="", message="", type="", params=""):
+        self.description = "request_id={}, code={}, message={}, type={}, params={} ".format(
+            request_id, code, message, type, params)
+        self.code = code if code else self.code
+
+    def __str__(self):
+        return self.description
+
 
 class InvalidRequestArgumentError(BaseRPCException):
     r"""InvalidRequestArgumentError invalid request param
@@ -94,5 +108,17 @@ class InvalidRequestArgumentError(BaseRPCException):
 
 class RiskInputException(BaseRPCException):
     r"""RiskInputException
+    """
+    pass
+
+
+class AppbuilderBuildexException(BaseRPCException):
+    r"""AppbuilderBuildxException
+    """
+    pass
+
+
+class AppbuilderTraceException(BaseRPCException):
+    r"""AppbuilderTraceException
     """
     pass

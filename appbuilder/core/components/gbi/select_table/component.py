@@ -14,21 +14,15 @@
 
 r"""GBI nl2sql component.
 """
-from typing import Dict, List, Optional
-from pydantic import BaseModel, Field, ValidationError
+from typing import Dict, List
+from pydantic import ValidationError
 
-from appbuilder.core.component import Component, ComponentArguments
+from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core.components.gbi.basic import SessionRecord
 from appbuilder.core.components.gbi.basic import SUPPORTED_MODEL_NAME
-
-
-class SelectTableArgs(ComponentArguments):
-    """
-    选表的参数
-    """
-    query: str = Field(..., description="用户的 query 输入")
-    session: List[SessionRecord] = Field(default=list(), description="gbi session 的历史 列表")
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
+from .base import SelectTableArgs
 
 
 class SelectTable(Component):
@@ -40,8 +34,9 @@ class SelectTable(Component):
                  prompt_template: str = ""):
         """
         创建 GBI 选表对象
+        
         Args:
-            model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, ERNIE Speed-AppBuilder
+            model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, Qianfan-Appbuilder-Speed-8k
             table_descriptions: 表的描述是个字典，key: 是表的名字, value: 是表的描述，例如:
                                 {
                                     "超市营收明细表": "超市营收明细表，包含超市各种信息等",
@@ -68,25 +63,35 @@ class SelectTable(Component):
         """
         super().__init__(meta=SelectTableArgs)
         if model_name not in SUPPORTED_MODEL_NAME:
-            raise ValueError(f"model_name 错误， 请使用 {SUPPORTED_MODEL_NAME} 中的大模型")
+            raise ValueError(
+                f"model_name mismatchhed, expected in {SUPPORTED_MODEL_NAME}, got {model_name}"
+            )
         self.model_name = model_name
         self.server_sub_path = "/v1/ai_engine/gbi/v1/gbi_select_table"
         self.table_descriptions = table_descriptions
         self.prompt_template = prompt_template
 
+    @components_run_trace
     def run(self,
             message: Message, timeout: int = 60, retry: int = 0) -> Message[List[str]]:
         """
+        执行查询操作，返回识别的表名列表。
+        
         Args:
-            message: message.content 字典包含 key:
-                1. query - 用户的问题输入
-                2. session - 对话历史， 可选
-            timeout: 超时时间
-            retry: 重试次数
-
-        Returns: 识别的表名的列表 ["table_name"]
+            message (Message): 包含查询信息的消息对象。
+                - message.content 字典包含以下 key:
+                    1. query (str): 用户的问题输入。
+                    2. session (list, optional): 对话历史，默认为空列表。
+            timeout (int, optional): 超时时间，默认为 60 秒。
+            retry (int, optional): 重试次数，默认为 0。
+        
+        Returns:
+            Message[List[str]]: 包含识别出的表名列表的 Message 对象。
+        
+        Raises:
+            ValueError: 如果输入的 message.content 不符合期望的格式，将抛出 ValueError 异常。
+        
         """
-
         try:
             inputs = self.meta(**message.content)
         except ValidationError as e:

@@ -22,6 +22,7 @@ import json
 
 from appbuilder.core.component import Component, Message, ComponentArguments
 from appbuilder.utils.logger_util import logger
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class ExtractTableFromDoc(Component):
@@ -64,12 +65,12 @@ class ExtractTableFromDoc(Component):
         """ para_check
         """
         if table_max_size < 30:
-            raise ValueError("table_max_size must be >= 30")
+            raise ValueError("table_max_size mismached, expected table_max_size >= 30, got {}".format(table_max_size))
         if doc_node_num_before_table < 1 or doc_node_num_before_table > 10:
-            raise ValueError("doc_node_num_before_table must be >=1, <=10]")
+            raise ValueError("doc_node_num_before_table mismatched, expected [1, 10], got {}".format(doc_node_num_before_table))
         obj = message.content.get("result", {}).get("result_list", [])
         if len(obj) < 1:
-            raise ValueError("Input check failed, it must be raw_doc_parser output.")
+            raise ValueError("Input check failed, expected raw_doc_parser output.")
 
     def _post_process(self, resp):
         """ pass
@@ -96,6 +97,7 @@ class ExtractTableFromDoc(Component):
             data.append(tmp)
         return data
 
+    @components_run_trace
     def run(self, message: Message, table_max_size: int = 800, doc_node_num_before_table: int = 1):
         """
         将文档原始解析结果，请求云端进行表格抽取，返回表格列表。

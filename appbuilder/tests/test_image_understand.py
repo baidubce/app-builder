@@ -16,11 +16,13 @@ import os
 import unittest
 import requests
 import appbuilder
+import time 
+
 from appbuilder.core.message import Message
+from appbuilder.core._exception import AppBuilderServerException
 
-@unittest.skip("ValueError: one of image or url must be set")
-class TestPlantRecognition(unittest.TestCase):
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+class TestImageUnderstand(unittest.TestCase):
     def setUp(self):
         """
         设置环境变量
@@ -51,6 +53,7 @@ class TestPlantRecognition(unittest.TestCase):
         inp = Message(content={"url": self.image_url, "question": "图像内容是什么？"})
         msg = self.image_understand.run(inp)
         self.assertIsNotNone(msg.content)
+        time.sleep(1)
 
     def test_run_with_raw_image(self):
         """
@@ -67,6 +70,7 @@ class TestPlantRecognition(unittest.TestCase):
         inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？"})
         msg = self.image_understand.run(inp)
         self.assertIsNotNone(msg.content)
+        time.sleep(1)
 
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
@@ -75,11 +79,13 @@ class TestPlantRecognition(unittest.TestCase):
                   "12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad68" \
                   "62cf937c03f8c5260d51c6ae"
         img_name = "test_img.jpg"
+
         file_urls = {img_name: img_url}
         result = self.image_understand.tool_eval(name="image_understand", streaming=True,
                                                  img_name=img_name, file_urls=file_urls, origin_query="")
         res = [item for item in result]
         self.assertNotEqual(len(res), 0)
+        time.sleep(1)
 
     def test_tool_eval_invalid(self):
         """测试 tool 方法对无效请求的处理。"""
@@ -87,7 +93,27 @@ class TestPlantRecognition(unittest.TestCase):
             result = self.image_understand.tool_eval(name="image_understand", streaming=True,
                                                      origin_query="")
             next(result)
+            time.sleep(1)
+
+    def test_run_language_en(self):
+        """测试 tool 方法对无效请求的处理。"""
+        inp = Message(content={"raw_image": self.raw_image, "question": "图像内容是什么？", "language": "en"})
+        self.image_understand.run(inp)
+        time.sleep(1) 
+    
+    def test_run_raise(self):
+        # question is empty
+        with self.assertRaises(ValueError):
+            inp = Message(content={"raw_image": self.raw_image, "question": ""})
+            self.image_understand.run(inp)
+        
+        # question length bigger than 100
+        with self.assertRaises(ValueError):
+            question="test"*26
+            inp = Message(content={"raw_image": self.raw_image, "question": question, "language": ""})
+            self.image_understand.run(inp)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
+

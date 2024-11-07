@@ -16,123 +16,11 @@ package appbuilder
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"reflect"
 	"strings"
 )
-
-const (
-	CodeContentType         = "code"
-	TextContentType         = "text"
-	ImageContentType        = "image"
-	RAGContentType          = "rag"
-	FunctionCallContentType = "function_call"
-	AudioContentType        = "audio"
-	VideoContentType        = "video"
-	StatusContentType       = "status"
-)
-
-var TypeToStruct = map[string]reflect.Type{
-	CodeContentType:         reflect.TypeOf(CodeDetail{}),
-	TextContentType:         reflect.TypeOf(TextDetail{}),
-	ImageContentType:        reflect.TypeOf(ImageDetail{}),
-	RAGContentType:          reflect.TypeOf(RAGDetail{}),
-	FunctionCallContentType: reflect.TypeOf(FunctionCallDetail{}),
-	AudioContentType:        reflect.TypeOf(AudioDetail{}),
-	VideoContentType:        reflect.TypeOf(VideoDetail{}),
-	StatusContentType:       reflect.TypeOf(StatusDetail{}),
-}
-
-type AgentBuilderRawResponse struct {
-	RequestID      string           `json:"request_id"`
-	Date           string           `json:"date"`
-	Answer         string           `json:"answer"`
-	ConversationID string           `json:"conversation_id"`
-	MessageID      string           `json:"message_id"`
-	IsCompletion   bool             `json:"is_completion"`
-	Content        []RawEventDetail `json:"content"`
-}
-
-type RawEventDetail struct {
-	EventCode    int             `json:"event_code"`
-	EventMessage string          `json:"event_message"`
-	EventType    string          `json:"event_type"`
-	EventID      string          `json:"event_id"`
-	EventStatus  string          `json:"event_status"`
-	ContentType  string          `json:"content_type"`
-	Outputs      json.RawMessage `json:"outputs"`
-}
-
-type AgentBuilderAnswer struct {
-	Answer string
-	Events []Event
-}
-
-type Event struct {
-	Code        int
-	Message     string
-	Status      string
-	EventType   string
-	ContentType string
-	Detail      interface{}
-}
-
-type TextDetail struct {
-	Text string `json:"text"`
-}
-
-type CodeDetail struct {
-	Text  string   `json:"text"`
-	Code  string   `json:"code"`
-	Files []string `json:"files"`
-}
-
-type RAGDetail struct {
-	Text       string      `json:"text"`
-	References []Reference `json:"references"`
-}
-
-type Reference struct {
-	ID           string `json:"id"`
-	From         string `json:"from"`
-	URL          string `json:"url"`
-	Content      string `json:"content"`
-	SegmentID    string `json:"segment_id"`
-	DocumentID   string `json:"document_id"`
-	DatasetID    string `json:"dataset_id"`
-	DocumentName string `json:"document_name"`
-}
-
-type FunctionCallDetail struct {
-	Text  interface{} `json:"text"`
-	Image string      `json:"image"`
-	Audio string      `json:"audio"`
-	Video string      `json:"video"`
-}
-
-type ImageDetail struct {
-	Image string `json:"image"`
-}
-
-type AudioDetail struct {
-	Audio string `json:"audio"`
-}
-
-type VideoDetail struct {
-	Video string `json:"video"`
-}
-
-type StatusDetail struct{}
-
-type DefaultDetail struct {
-	URLS  []string `json:"urls"`
-	Files []string `json:"files"`
-	Image string   `json:"image"`
-	Video string   `json:"video"`
-	Audio string   `json:"audio"`
-}
 
 func (t *AgentBuilderAnswer) transform(inp *AgentBuilderRawResponse) {
 	t.Answer = inp.Answer
@@ -170,11 +58,11 @@ type AgentBuilderStreamIterator struct {
 
 func (t *AgentBuilderStreamIterator) Next() (*AgentBuilderAnswer, error) {
 	data, err := t.r.ReadMessageLine()
-	if err != nil && !errors.Is(err, io.EOF) {
+	if err != nil && !(err == io.EOF) {
 		t.body.Close()
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	if err != nil && errors.Is(err, io.EOF) {
+	if err != nil && err == io.EOF {
 		t.body.Close()
 		return nil, err
 	}
@@ -200,7 +88,6 @@ type AgentBuilderOnceIterator struct {
 }
 
 func (t *AgentBuilderOnceIterator) Next() (*AgentBuilderAnswer, error) {
-
 	data, err := io.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)

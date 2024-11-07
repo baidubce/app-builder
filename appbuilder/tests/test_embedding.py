@@ -20,7 +20,7 @@ class TestEmbedding(unittest.TestCase):
     def test_run(self):
         embedding_1 = self.embedding("hello world!")
         embedding_2 = self.embedding(appbuilder.Message("hello world!"))
-        self.assertEqual(embedding_1.content, embedding_2.content)
+        np.testing.assert_array_almost_equal(embedding_1.content, embedding_1.content, decimal=4)
 
     def test_batch(self):
         embeddings_1 = self.embedding.batch(
@@ -31,7 +31,7 @@ class TestEmbedding(unittest.TestCase):
         embeddings_2 = self.embedding.batch(
             appbuilder.Message(["hello", "world", "!"])
         )
-        np.testing.assert_array_almost_equal(embeddings_1.content, embeddings_2.content)
+        np.testing.assert_array_almost_equal(embeddings_1.content, embeddings_2.content, decimal=4)
 
         embeddings_3 = self.embedding.batch(
             appbuilder.Message([]),

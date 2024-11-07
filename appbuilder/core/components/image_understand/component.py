@@ -22,6 +22,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.image_understand.model import *
 from typing import Generator, Union
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class ImageUnderstand(Component):
@@ -31,6 +32,7 @@ class ImageUnderstand(Component):
     Examples:
 
     .. code-block:: python
+    
        import os
        import appbuilder
        os.environ["GATEWAY_URL"] = "..."
@@ -38,12 +40,12 @@ class ImageUnderstand(Component):
        # 从BOS存储读取样例文件
        image_url = "https://bj.bcebos.com/v1/appbuilder/test_image_understand.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T09%3A41%3A01Z%2F-1%2Fhost%2Fe8665506e30e0edaec4f1cc84a2507c4cb3fdb9b769de3a5bfe25c372b7e56e6"
        # 输入参数为一张图片
-      inp = Message(content={"url": image_url, "question": "图片里内容是什么?"})
-      # 进行图像内容理解
-      image_understand = ImageUnderstand()
-      out = image_understand.run(inp)
-      # 打印识别结果
-      print(out.content)
+       inp = Message(content={"url": image_url, "question": "图片里内容是什么?"})
+       # 进行图像内容理解
+       image_understand = ImageUnderstand()
+       out = image_understand.run(inp)
+       # 打印识别结果
+       print(out.content)
      """
     name = "image_understanding"
     version = "v1"
@@ -80,34 +82,51 @@ class ImageUnderstand(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 执行图像内容理解
-
-             参数:
-                message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"...", "question": "图片主要内容是什么？"})
-                或 Message(content={"url": "https://image/download/url", "question": "图片主要内容是什么？"}).
-                timeout (float, 可选): HTTP超时时间
-                retry (int, 可选)： HTTP重试次数
-              返回:
-                 message (obj: `Message`): 模型识别结果.
+        """
+        执行图像内容理解
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"...", "question": "图片主要内容是什么？"})
+                              或 Message(content={"url": "https://image/download/url", "question": "图片主要内容是什么？"}).
+            timeout (float, optional): HTTP超时时间. 默认为 None.
+            retry (int, optional): HTTP重试次数. 默认为 0.
+        
+        Returns:
+            Message: 模型识别结果.
+        
         """
         inp = ImageUnderstandInMsg(**message.content)
         request = ImageUnderstandRequest()
+        # 兼容新参数，确保输出结果一致
+        request.subject_detect = False
+        request.llm_switch = False
         if inp.raw_image:
             request.image = base64.b64encode(inp.raw_image)
         if inp.url:
             request.url = inp.url
         if inp.question == "":
-            raise ValueError("question is empty")
+            raise ValueError("request format error, question is empty")
         if len(inp.question) > 100:
-            raise ValueError("question length bigger than 100")
+            raise ValueError(f"request format error, expected len(question)>100, got {len(inp.question)}")
+        if inp.language != "zh-CN" and inp.language != "en":
+            raise ValueError(f"request format error, expected language in ['zh-CN', 'en'], got {inp.language}")
         request.question = inp.question
+        request.output_CHN = True
+        if inp.language == "en":
+            request.output_CHN = False
         response = self.__recognize(request, timeout, retry)
         out = ImageUnderstandOutMsg(description=response.result.description_to_llm)
         return Message(content=out.model_dump())
 
-    def __recognize(self, request: ImageUnderstandRequest, timeout: float = None,
-                    retry: int = 0) -> ImageUnderstandResponse:
+    def __recognize(
+        self, 
+        request: ImageUnderstandRequest, 
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> ImageUnderstandResponse:
         r"""调用底层接口进行图像内容理解
 
             参数:
@@ -117,11 +136,11 @@ class ImageUnderstand(Component):
                 response (obj: `ImageUnderstandResponse`): 图像内容理解输出
         """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
         data = ImageUnderstandRequest.to_dict(request)
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['Content-Type'] = 'application/json'
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/image-understanding/request")
         response = self.http_client.session.post(url, json=data, timeout=timeout, headers=headers)
@@ -129,7 +148,7 @@ class ImageUnderstand(Component):
         data = response.json()
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
-        self.__class__.__check_service_error(request_id, data)
+        self.__class__.__check_create_task_service_error(request_id, data)
         task = ImageUnderstandTask(data, request_id=request_id)
         task_id = task.result.get("task_id", "")
         if task_id == "":
@@ -141,7 +160,7 @@ class ImageUnderstand(Component):
             data = response.json()
             self.http_client.check_response_json(data)
             request_id = self.http_client.response_request_id(response)
-            self.__class__.__check_service_error(request_id, data)
+            self.__class__.__check_service_error(request_id, data.get("result", {}))
             # 处理成功
             response = ImageUnderstandResponse(data)
             if response.result.ret_code == 0:
@@ -151,22 +170,31 @@ class ImageUnderstand(Component):
                 # 避免触发限流（>1QPS），等待1.1秒
                 time.sleep(1.1)
 
-    def tool_eval(self, name: str, streaming: bool,
-                  origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:
-        r"""用于工具的执行，调用底层接口进行图像内容理解
-            参数:
-                name (str): 工具名
-                streaming (bool): 是否流式返回
-                origin_query (str): 用户原始query
-                **kwargs: 工具调用的额外关键字参数
-
-            返回：
-                Union[Generator[str, None, None], str]: 图片内容理解结果
+    @components_run_stream_trace
+    def tool_eval(
+        self,
+        name: str,
+        streaming: bool,
+        origin_query: str,
+        **kwargs,
+    ) -> Union[Generator[str, None, None], str]:
         """
+        用于工具的执行，调用底层接口进行图像内容理解
+        
+        Args:
+            name (str): 工具名
+            streaming (bool): 是否流式返回
+            origin_query (str): 用户原始query
+            **kwargs: 工具调用的额外关键字参数
+        
+        Returns:
+            Union[Generator[str, None, None], str]: 图片内容理解结果
+        """
+        traceid = kwargs.get("traceid")
         img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls)
+        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
         if streaming:
             yield {
                 "type": "text",
@@ -181,7 +209,14 @@ class ImageUnderstand(Component):
         else:
             return rec_res
 
-    def _recognize_w_post_process(self, img_name, img_url, file_urls, question="图片内容有哪些") -> str:
+    def _recognize_w_post_process(
+        self,
+        img_name,
+        img_url,
+        file_urls,
+        question="图片内容有哪些",
+        request_id=None,
+    ) -> str:
         r"""
             参数:
                 img_name (str): 图片文件名
@@ -193,6 +228,9 @@ class ImageUnderstand(Component):
                 str: 图片内容理解结果
         """
         req = ImageUnderstandRequest()
+        # 兼容新参数，确保输出结果一致
+        req.subject_detect = False
+        req.llm_switch = False
         req.question = question
         if img_name in file_urls:
             req.url = file_urls[img_name]
@@ -200,7 +238,7 @@ class ImageUnderstand(Component):
             if img_url in file_urls:
                 img_url = file_urls[img_url]
             req.url = img_url
-        response = self.__recognize(req)
+        response = self.__recognize(req, request_id=request_id)
         description_to_llm = response.result.description_to_llm
         description_processed = description_to_llm.rsplit("。", 2)[0]
         return description_processed
@@ -210,14 +248,36 @@ class ImageUnderstand(Component):
         r"""个性化服务response参数检查
 
             参数:
-                request (dict) : 地标识别body返回
+                request (dict) : 图像内容理解body返回
             返回：
                 无
         """
-        if "ret_code" in data and data["ret_code"] > 1:
+        ret_code = data.get("ret_code", 0)
+        if ret_code != 0 and ret_code != 1:
             raise AppBuilderServerException(
                 request_id=request_id,
-                service_err_code=data.get("ret_code"),
-                service_err_message=data.get("ret_msg")
+                service_err_code=data.get("ret_code", ""),
+                service_err_message=data.get("ret_msg", "")
             )
+
+    @staticmethod
+    def __check_create_task_service_error(request_id: str, data: dict):
+        r"""个性化服务response参数检查
+            参数:
+                request_id (str) : 任务请求ID
+                data (dict): 响应数据
+            返回：
+                无
+        """
+
+        if "error_code" in data and "error_msg" in data:
+            raise AppBuilderServerException(
+                request_id=request_id,
+                service_err_code=data.get("error_code", ""),
+                service_err_message=data.get("error_msg", "")
+            )
+
+
+
+
 

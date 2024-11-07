@@ -12,19 +12,21 @@
 
 r"""手写文字识别组件"""
 import base64
-import json
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
 from appbuilder.core.components.handwrite_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core import utils
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 class HandwriteOCR(Component):
     r""" 手写文字识别组件
+    
     Examples:
 
     .. code-block:: python
+        
         import os
         import appbuilder
         os.environ["GATEWAY_URL"] = "..."
@@ -38,6 +40,7 @@ class HandwriteOCR(Component):
         out = handwrite_ocr.run(inp)
         # 打印识别结果
         print(out.content)
+        
      """
 
     name = "handwriting_ocr"
@@ -45,7 +48,7 @@ class HandwriteOCR(Component):
     manifests = [
         {
             "name": "handwriting_ocr",
-            "description": "需要对图片中手写体文字进行识别时，使用该工具",
+            "description": "需要对图片中手写体文字进行识别时，使用该工具，不支持PDF文件，如果用户没有提供图片文件，应引导用户提供图片，而不是尝试使用该工具",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -63,17 +66,18 @@ class HandwriteOCR(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 输入图片并识别其中的文字
-
-                参数:
-                    message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                       或 Message(content={"url": "https://image/download/url"}).
-                       timeout (float, 可选): HTTP超时时间
-                       retry (int, 可选)： HTTP重试次数
-
-                 返回:
-                    message (obj: `Message`): 手写体模型识别结果.
+        r"""
+        输入图片并识别其中的文字
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作.例如: Message(content={"raw_image": b"..."}) 或 Message(content={"url": "https://image/download/url"}).
+            timeout (float, optional): HTTP超时时间. 默认为None.
+            retry (int, optional): HTTP重试次数. 默认为0.
+        
+        Returns:
+            Message: 手写体模型识别结果.
         """
         inp = HandwriteOCRInMsg(**message.content)
         request = HandwriteOCRRequest()
@@ -99,8 +103,27 @@ class HandwriteOCR(Component):
             for w in response.words_result]
         return Message(content=out.model_dump())
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
-
+        r"""
+        对指定文件或URL进行手写识别。
+        
+        Args:
+            name (str): 任务名称。
+            streaming (bool): 是否以流式形式返回结果。
+            kwargs: 其他参数，包括：
+                traceid (str, optional): 请求的traceid，用于标识请求的唯一性。默认为None。
+                file_names (List[str], optional): 待识别的文件名列表。默认为None，此时会从kwargs中获取'files'参数。
+                file_urls (Dict[str, str], optional): 文件名与URL的映射字典。默认为空字典。
+        
+        Returns:
+            如果streaming为True，则以生成器形式返回识别结果，否则直接返回结果字符串。
+        
+        Raises:
+            InvalidRequestArgumentError: 如果请求格式错误，例如指定的文件名对应的URL不存在。
+        
+        """
+        traceid = kwargs.get("traceid")
         result = ""
         file_names = kwargs.get("file_names", None)
         if not file_names:
@@ -113,14 +136,14 @@ class HandwriteOCR(Component):
             else:
                 file_url = file_urls.get(file_name, None)
             if file_url is None:
-                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+                raise InvalidRequestArgumentError(f"request format error, file {file_name} url does not exist")
             req = HandwriteOCRRequest()
             req.url = file_url
             req.recognize_granularity = "big"
             req.probability = "false"
             req.detect_direction = "true"
             req.detect_alteration = "true"
-            response = self._recognize(req)
+            response = self._recognize(req, request_id=traceid)
             text = "".join([w.words for w in response.words_result])
             result += f"{file_name}的手写识别结果是：{text} "
 
@@ -138,7 +161,13 @@ class HandwriteOCR(Component):
         else:
             return result
 
-    def _recognize(self, request: HandwriteOCRRequest, timeout: float = None, retry: int = 0) -> HandwriteOCRResponse:
+    def _recognize(
+        self, 
+        request: HandwriteOCRRequest, 
+        timeout: float = None, 
+        retry: int = 0,
+        request_id: str = None,
+    ) -> HandwriteOCRResponse:
         r"""调用底层接口进行通用文字识别
                     参数:
                        request (obj: `HandwriteOCRRequest`) : 通用文字识别输入参数
@@ -147,11 +176,11 @@ class HandwriteOCR(Component):
                        response (obj: `HandwriteOCRResponse`): 通用文字识别返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         data = HandwriteOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/handwriting")
         response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)

@@ -16,14 +16,23 @@
 
 import uuid
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 from typing import Optional, TypeVar, Generic
 
 
 _T = TypeVar("_T")
 
 
-class Message(BaseModel, Generic[_T], extra=Extra.allow):
+class Message(BaseModel, Generic[_T], extra='allow'):
+    """
+    Message class
+
+    Attributes:
+        content: The message content
+        name: The message name
+        mtype: The message type
+        id: The message id
+    """
     content: Optional[_T] = {}
     name: Optional[str] = "msg"
     mtype: Optional[str] = "dict"

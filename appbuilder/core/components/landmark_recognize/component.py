@@ -20,6 +20,7 @@ from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.landmark_recognize.model import *
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class LandmarkRecognition(Component):
@@ -41,17 +42,20 @@ class LandmarkRecognition(Component):
      """
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 输入图片并识别其中的地标
-
-             参数:
-                message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                或 Message(content={"url": "https://image/download/uel"}).
-                timeout (float, 可选): HTTP超时时间
-                retry (int, 可选)： HTTP重试次数
-
-              返回:
-                 message (obj: `Message`): 模型识别结果. 举例: Message(content={"landmark": b"狮身人面相"})
+        """
+        执行地标识别任务
+        
+        Args:
+            message (Message): 输入消息对象，包含待识别的图片或图片URL。
+                例如：Message(content={"raw_image": b"..."}) 或 Message(content={"url": "https://image/download/url"})。
+            timeout (float, optional): HTTP请求的超时时间。默认为None。
+            retry (int, optional): HTTP请求的重试次数。默认为0。
+        
+        Returns:
+            Message: 地标识别结果的消息对象。
+                例如：Message(content={"landmark": b"狮身人面像"})
         """
         inp = LandmarkRecognitionInMsg(**message.content)
         request = LandmarkRecognitionRequest()
@@ -75,7 +79,7 @@ class LandmarkRecognition(Component):
         """
 
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         data = LandmarkRecognitionRequest.to_dict(request)
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry

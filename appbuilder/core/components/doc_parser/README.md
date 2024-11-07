@@ -1,7 +1,7 @@
 # 文档解析（DocParser）
 
 ## 简介
-文档解析组件（DocParser）可以用于文档内容解析，支持PDF、JPG、DOC、TXT、XLS、PPT等17种文档格式的内容解析。
+文档解析组件（DocParser）可以用于文档内容解析，支持PDF、JPG、DOC、TXT、XLS、PPT等16种文档格式的内容解析。
 
 ### 功能介绍
 文档解析组件（DocParser）支持从文档中解析出文档字符内容、版式信息、位置坐标、表格结构、阅读顺序、标题段落层级树等内容
@@ -9,7 +9,7 @@
 ### 特色优势
 DocParser支持解析以下几种类型的文档：
 * 版式文档：「pdf」、「jpg」、「jpeg」、「png」、「bmp」、「tif」、「tiff」、「ofd」
-* 流式文档：「doc」、「docx」、「txt」、「xls」、「xlsx」、「wps」、「ppt」、「pptx」、「html」
+* 流式文档：「doc」、「docx」、「txt」、「xls」、「xlsx」、「wps」、「ppt」、「pptx」
 
 支持解析的文档内容包括：
 * 文档的版式分析，识别文档中的标题、正文、页眉页脚、表格等
@@ -189,7 +189,7 @@ class Table(BaseModel):
 ```
 表格解析结构说明, 以下图为例：
 
-<img width="512" alt="image" src="./image/table.png">
+![表格](https://bj.bcebos.com/v1/appbuilder-sdk-components/table.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-05-30T03%3A09%3A32Z%2F-1%2Fhost%2Fb36695708e047713b5fe17b49733228aecdaf46322a5cec8d4e7bd0989032197)
 
 ```python
 # cells中一共有26个元素，matrix中的每一个元素代表单元格在cells中的索引

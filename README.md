@@ -1,111 +1,103 @@
 <div align="center">
-
-<h1>AppBuilder-SDK</h1>
+<img src='docs/image/logo.png' alt='logo' width='700' >
+<br>
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
-![Supported Python versions](https://img.shields.io/badge/python-3.8+-orange.svg)
+![Supported Python versions](https://img.shields.io/badge/python-3.9+-orange.svg)
 ![Supported OSs](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
-
-AppBuilder SDK面向开发者提供AI原生应用一站式开发工具，包括基础云资源、AI能力引擎、千帆大模型以及相关能力组件，提升AI原生应用开发效率。
-
-</div>
-<div align="center">
-<h1>AppBuilder-SDK微信交流群</h1>
-<img src='docs/image/wechat_group.png' alt='wechat' width='200' >
-
 </div>
 
-## News
-* **[云端快速创建RAG、Agent、GBI等应用](https://console.bce.baidu.com/ai_apaas/app)**
-* **[官方组件列表](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#%E5%BC%80%E5%8F%91%E7%BB%84%E4%BB%B6)**
-* **2023.12.19 v0.1.0版本发布**：[Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.1.0)
-  * 初始版本发布，基础云组件支持包括BES；AI能力引擎语音、视觉类10个能力，大模型相关RAG、文本生成能力19个。
-* **2024.01.03 v0.2.0版本发布** [Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.2.0)
-  * 核心升级点GBI相关组件新增，v0.1.0遗留问题修复
-* **2024.01.26 v0.3.0版本发布** [Release Notes](https://github.com/baidubce/app-builder/releases/tag/0.3.0)
-  * 新增组件：新增了百度搜索rag组件（RAGwithBaiduSearch)。[Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/rag_with_baidusearch.ipynb)
-  * 模型列表获取：与千帆大模型平台模型名打通，可动态获取当前账号模型名，并在组件中使用[获取模型列表](https://github.com/baidubce/app-builder/blob/master/README.md#%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8)
-  * 可通过官方镜像开发和运行实例代码[二次开发](https://github.com/baidubce/app-builder/blob/master/README.md#%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91)
-* **2024.02.27 v0.4.0版本发布** [Release Note](https://github.com/baidubce/app-builder/releases/tag/0.4.0)
-  * AppBuilder Console SDK发布[知识集合Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/console_dataset.ipynb)，[RAG调用Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/console_rag.ipynb)
-  * 大模型组件新增：Excel2Figure(基于Excel信息画图表)
-  * AI能力引擎组件新增&更新：植物识别、动物识别、表格文字识别V2、手写文字识别、二维码识别、身份证混贴识别、文档矫正识别、图像内容理解、流式TTS
-  * AgentRuntime：新增[Cookbook](https://github.com/baidubce/app-builder/blob/master/cookbooks/agent_runtime.ipynb)
-* **2024.03.13 v0.4.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.4.1)
-  * 支持以下功能进行FunctionCall调用：动植物识别、表格文字识别、条形码及二维码识别、身份证混贴识别、手写文字识别、text2image、excel2figure
-* **2024.03.20 v0.5.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.0)
-  * AgentBuilder ConsoleSDK发布 [Agent调用CookBook](https://github.com/baidubce/app-builder/blob/0.5.0/cookbooks/agent_builder.ipynb)
-  * AI能力引擎组件新增：向量检索-VDB
-  * 支持以下功能进行FunctionCall调用并新增[CookBook](https://github.com/baidubce/app-builder/blob/master/cookbooks/general_ocr.ipynb)：文本翻译-通用版、通用物体和场景识别-高级版、通用文字识别-高精度版、短语音识别-极速版
-* **2024.03.21 v0.5.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.5.1)
-  * 问题修复：修复了在Python 3.8 及以下环境无法使用AgentBuilder ConsoleSDK的问题。同时，在即将发布的0.6.0版本中，将不再提供对Python 3.8及以下环境的支持，请升级Python版本到3.9
-* **2024.04.12 v0.6.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.6.0)
-  * AppBuilder Console SDK 支持 JAVA 语言 [AppBuilder Java ConsoleSDK](./java/README.md)
-  * AppBuilder Console SDK 支持 GO 语言 [AppBuilder GO ConsoleSDK](./go/README.md)
-  * 首页README更新，提供免费的公共试用TOKEN，方便开发者快速体验
+简体中文 | [English](./docs/README_en.md) | [日本語](./docs/README_ja.md)
 
-## 教程与文档
-
-* **预备步骤**
-  * [认证鉴权](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6)
-  * [开通组件权限](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#2%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)
-* **API文档**
-  * [API Docs](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz)
+<br>
 
 
-## 快速安装
+## 什么是AppBuilder-SDK
 
-执行如下命令，快速安装Python语言的最新版本AppBuilder-SDK（要求Python >= 3.9)。
+百度智能云千帆AppBuilder-SDK是[百度智能云千帆AppBuilder](https://appbuilder.cloud.baidu.com/)面向AI原生应用开发者提供的一站式开发平台的客户端SDK。
 
-```shell
-pip install --upgrade appbuilder-sdk
+### AppBuilder-SDK 有哪些功能？
+
+百度智能云千帆AppBuilder-SDK提供了以下AI应用开发者的必备功能：
+
+- **调用**
+    - 调用大模型，可自由调用您在[百度智能云千帆大模型平台](https://qianfan.cloud.baidu.com/)的模型，开发并调优prompt
+    - 调用能力组件，提供40+个源于百度生态的[优质组件](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)，赋能Agent应用
+    - 调用AI原生应用，通过[AppBuilderClient](/docs/basic_module/appbuilder_client.md)可访问并管理在百度智能云千帆AppBuilder[网页端](https://console.bce.baidu.com/ai_apaas/app)发布的AI原生应用，并可注册本地函数联动端云组件
+- **编排**
+    - 配置知识库，通过[KnowledgeBase](/docs/basic_module/knowledgebase.md)管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
+    - 编排工作流，提供了`Message`、`Component`、`AgentRuntime`多级工作流抽象，实现工作流编排，并可与LangChain、OpenAI等业界生态能力打通
+- **监控**
+    - 提供了可视化Tracing、详细DebugLog等监控工具，助力开发者在生产环境应用
+- **部署**
+    - `AgentRuntime`支持部署为基于`Flask`与`gunicorn`的API服务
+    - `AgentRuntime`支持部署为基于`Chainlit`的对话框交互前端
+    - 提供了`appbuilder_bce_deploy`工具，可快速部署程序到百度云，提供公网API服务，联动AppBuilder工作流
+
+### 使用 AppBuilder-SDK 可以构建什么应用？
+
+#### **产业级RAG应用**
+
+AppBuilder-SDK提供多类型组件，覆盖以下构建产业级`RAG`应用的完整步骤：
+- 文档解析（Parser）
+- 文档切片（Chunker）
+- 切片向量化（Embedding）
+- 索引构建（Indexing）
+- 切片召回（Retrieval）
+- 答案生成（Answer Generation）
+
+AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时提供经过深度优化的大模型高级能力组件，可以组合下表提供的原子能力组件，构建个性化的RAG应用[RAG 原子能力 CookBook](./cookbooks/end2end_application/rag/rag.ipynb)：
+
+
+| 阶段 |组件名称 | 组件类型 |组件链接 |
+|--------|--------|--------|---|
+| 文档解析 | 文档矫正增强 (DocCropEnhance) | 基础能力组件 | [链接](./appbuilder/core/components/doc_crop_enhance/README.md) |
+| 文档解析 | 文档格式转换 (DocFormatConverter) | 基础能力组件 | [链接](./appbuilder/core/components/doc_format_converter/README.md)|
+| 文档解析 | 文档解析（DocParser）| 基础能力组件 | [链接](./appbuilder/core/components/doc_parser/README.md) |
+| 文档解析 | 表格抽取组件（ExtractTableFromDoc）| 基础能力组件 | [链接](./appbuilder/core/components/extract_table/README.md) |
+| 文档解析 | 通用文字识别-高精度版（GeneralOCR）| 基础能力组件 | [链接](./appbuilder/core/components/general_ocr/README.md) |
+| 文档切片 | 文档切分（DocSplitter）| 基础能力组件 | [链接](./appbuilder/core/components/doc_splitter/README.md) |
+| 切片向量化 | 向量计算（Embedding） | 基础能力组件 | [链接](./appbuilder/core/components/embeddings/README.md) |
+| 索引构建及切片召回 | 向量检索-VectorDB（BaiduVectorDBRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/baidu_vdb/README.md) |
+| 索引构建及切片召回 | 向量检索-BES（BaiduElasticSearchRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/bes/README.md) |
+| 文档切片及答案生成 | 问答对挖掘（QAPairMining）| 高级能力组件 | [链接](./appbuilder/core/components/llms/qa_pair_mining/README.md) |
+| 文档切片及答案生成 | 相似问生成（SimilarQuestion）| 高级能力组件 | [链接](./appbuilder/core/components/llms/similar_question/README.md) |
+| 答案生成| 标签抽取（TagExtraction）| 高级能力组件 | [链接](./appbuilder/core/components/llms/tag_extraction/README.md) |
+| 答案生成 | 复杂Query判定（IsComplexQuery）| 高级能力组件 | [链接](./appbuilder/core/components/llms/is_complex_query/README.md) |
+| 答案生成 | 复杂Query分解（QueryDecomposition）| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_decomposition/README.md) |
+| 答案生成 | 多轮改写 (QueryRewrite)| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_rewrite/README.md) |
+| 答案生成 | 阅读理解问答（MRC）| 高级能力组件 | [链接](./appbuilder/core/components/llms/mrc/README.md) |
+| 答案生成 | 幻觉检测（Hallucination Detection）| 高级能力组件 | [链接](./appbuilder/core/components/llms/hallucination_detection/README.md) |
+
+
+> 功能预告：在AppBuiler-SDK 1.0.0版本中，AppBuilder-SDK可联动AppBuilder平台，自定义离线与在线处理的能力及Pipeline，构建更加灵活、可沉淀、可复用的产业级`RAG`应用，敬请期待
+
+
+
+##  如何安装AppBuilder-SDK
+
+#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.6 (2024-10-26)
+
+百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/quick_start/changelog.md)
+
+- `Python`版本安装，要求Python版本 >= `3.9`
+
+```bash
+python3 -m pip install --upgrade appbuilder-sdk
 ```
-如果在本地无法跑通appbuilder-sdk包，也可以使用我们的官方镜像来安装和运行，具体方案参考**二次开发**部分。
-
-## 快速使用
-
-使用AppBuilder SDK之前，请首先申请并设置鉴权参数。具体请参考[认证鉴权](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6)。
-
-在本示例中，我们提供了一个访问和QPS受限的试用Token，供您快速体验AppBuilder SDK。当您需要使用AppBuilder SDK进行开发时，请替换为您的Token。
-
-``` python
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
-```
-
-## 模型列表
-
-AppBuilder提供获取千帆模型列表的函数，在运行具体组件之前，可以先获取当前账号下可以使用的模型列表，代码如下：
-``` python
-import appbuilder
-import os
-
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
-models = appbuilder.get_model_list(api_type_filter=["chat"], is_available=True)
-print(", ".join(models))
-```
-
-填写自己的Token，获取模型列表输出示例如下：
-``` shell
-ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-3.5-4K-0205, ERNIE-3.5-8K-0205, ERNIE-3.5-8K-1222, ERNIE-Speed, ERNIE-Speed-128K（预览版）, ERNIE-Lite-8K, ERNIE-Tiny-8K, ERNIE-Character-8K, EB-turbo-AppBuilder专用版, Qianfan-Chinese-Llama-2-7B, Qianfan-Chinese-Llama-2-13B, Gemma-7B-It, Yi-34B-Chat, Mixtral-8x7B-Instruct, Llama-2-7B-Chat, Llama-2-13B-Chat, Llama-2-70B-Chat, XuanYuan-70B-Chat-4bit, ChatGLM2-6B-32K, ChatLaw, BLOOMZ-7B, Qianfan-BLOOMZ-7B-compressed, AquilaChat-7B, ERNIE-Bot-8K, ERNIE-Lite-8K-0922（原ERNIE-Bot-turbo-0922）
-```
-
-为方便用户更容易使用模型，以下是一些模型的短名称
-| 千帆模型名                   | AppBuilder-SDK短名 |
-|----------------------------|------------------|
-| ERNIE-Bot 4.0              |       eb-4       |
-| ERNIE-Bot                  |       eb         |
-| ERNIE-Bot-turbo            |       eb-turbo   |
-| EB-turbo-AppBuilder专用版   |       ernie_speed_appbuilder           |
-| ERNIE Speed-AppBuilder   |       ernie_speed_appbuilder           |
+- `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明](/docs/quick_start/install.md)
 
 
-### 典型示例
+## 快速开始你的AI原生应用开发之旅
+> - 请在`>=3.9`的Python环境安装`appbuilder-sdk`后使用该端到端应用示例
+> - 示例中提供了试用Token，访问和QPS受限，正式使用请替换为您的个人Token
 
-AppBuilder包括基于大模型构建AI原生应用的各类范式，包括基于Prompt模版的文本生成、检索增强的生成、使用外部工具的文本生成等。
 
-#### 空模版(Playground)
+### 1. 调用大模型
+- 使用`Playground`组件可自由调用，您在百度智能云千帆大模型平台有权限的任何模型，并可自定义`prompt`模板 与 模型参数
+
+#### 代码示例
+
 ```python
 import appbuilder
 import os
@@ -113,156 +105,212 @@ import os
 # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-# 空模版组件
+# 定义prompt模板
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
-playground = appbuilder.Playground(prompt_template=template_str, model="ERNIE Speed-AppBuilder")
 
-# 定义输入，调用空模版组件
-input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
-print(playground(input, stream=False, temperature=1e-10))
+# 定义输入，调用playground组件
+input = appbuilder.Message({"role": "java工程师", "question": "请简要回答java语言的内存回收机制是什么，要求100字以内"})
 
-```
+playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Appbuilder-Speed-8k")
 
-#### 文本生成(Text Completion)
-```python
-import appbuilder
-import os
-
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
-
-# 相似问生成组件
-similar_q = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
-
-# 定义输入，调用相似问生成
-input = appbuilder.Message("我想吃冰淇淋，哪里的冰淇淋比较好吃？")
-print(similar_q(input))
+# 以打字机的方式，流式展示大模型回答内容
+output = playground(input, stream=True, temperature=1e-10)
+for stream_message in output.content:
+    print(stream_message)
+    
+# 流式输出结束后，可再次打印完整的大模型对话结果，除回答内容外，还包括token的用量情况
+print(output.model_dump_json(indent=4))
 
 ```
-
-#### 检索增强问答
-```python
-import appbuilder
-import os
-
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
-
-# 此处填写线上Agent应用ID，可在【AppBuilder网页端-我的应用界面】查看
-# 本示例提供的Agent应用为：地理小达人
-# 网页已部署的应用链接为「地理小达人」：https://appbuilder.baidu.com/s/x1tSF
-# 以下示例代码展示了如何代码态调用并集成到您的应用中的能力
-app_id = "42eb211a-14b9-43d2-9fae-193c8760ef26"
-agent_builder = appbuilder.AgentBuilder(app_id)
-conversation_id = agent_builder.create_conversation()
-
-answer = agent_builder.run(conversation_id, "中国的首都在哪里")
-print(answer.content)
-```
-
-## 应用服务化
-
-AppBuilder-SDK提供对组件的服务化能力。通过定义Agent，开发者可以快速启动Chainlit、Flask等服务化的Demo或API提供快速体验环境。
-
-在需要部署服务的环境中，开发者需要首先手动安装 Chainlit 库
+#### 回答展示
 
 ```shell
-pip install chainlit
+Java语言的
+内存回收机制是通过垃圾回收器（Garbage Collector）来实现的。
+垃圾回收器会自动检测不再使用的对象，并释放其占用的内存空间，从而确保系统的内存不会被耗尽。
+Java提供了多种垃圾回收器，如串行回收器、并行回收器、CMS回收器和G1回收器等，以满足不同场景下的性能需求
+。
+
+{
+    "content": "Java语言的内存回收机制是通过垃圾回收器（Garbage Collector）来实现的。垃圾回收器会自动检测不再使用的对象，并释放其占用的内存空间，从而确保系统的内存不会被耗尽。Java提供了多种垃圾回收器，如串行回收器、并行回收器、CMS回收器和G1回收器等，以满足不同场景下的性能需求。",
+    "name": "msg",
+    "mtype": "dict",
+    "id": "2bbee989-40e3-45e4-9802-e144cdc829a9",
+    "extra": {},
+    "token_usage": {
+        "prompt_tokens": 35,
+        "completion_tokens": 70,
+        "total_tokens": 105
+    }
+}
 ```
-而后，使用AppBuilder的Agent服务化功能，即可快速部署服务
+
+### 2. 调用能力组件
+- SDK提供了40+个源于百度生态的优质组件，列表可见[组件列表](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1), 调用前需要申领[免费试用额度](https://console.bce.baidu.com/ai/#/ai/apaas/overview/resource/getFree)
+- 示例中的组件为`RAG with Baidu Search增强版`, 结合百度搜索的搜索引擎技术和ERNIE模型的语义理解能力，可以更准确地理解用户的搜索意图，并提供与搜索查询相关性更高的搜索结果
+
+#### 代码示例
+```python
+import appbuilder
+import os
+
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Appbuilder-Speed-8k")
+
+input = appbuilder.Message("9.11和9.8哪个大")
+result = rag_with_baidu_search_pro.run(
+    message=input,
+    instruction=appbuilder.Message("你是专业知识助手"))
+
+# 输出运行结果
+print(result.model_dump_json(indent=4))
+```
+
+#### 回答展示
+```shell
+{
+    "content": "9.11小于9.8。在比较两个小数的大小时，需要逐位比较它们的数值，包括整数部分和小数部分。对于9.11和9.8，整数部分都是9，所以需要在小数部分进行比较。小数点后的第一位是1和8，显然1小于8，所以9.11小于9.8。",
+    "name": "msg",
+    "mtype": "dict",
+    "id": "eb31b7de-dd6a-485f-adb9-1f7921a6f4bf",
+    "extra": {
+        "search_baidu": [
+            {
+                "content": "大模型‘智商’受质疑:9.11 vs 9...",
+                "icon": "https://appbuilder.bj.bcebos.com/baidu-search-rag-pro/icon/souhu.ico",
+                "url": "https://m.sohu.com/a/793754123_121924584/",
+                "ref_id": "2",
+                "site_name": "搜狐网",
+                "title": "大模型‘智商’受质疑:9.11 vs 9.8的比较揭示AI理解能力的..."
+            },
+            {
+                "content": "究竟|9.11比9.8大?大模型们为何会...",
+                "icon": "https://appbuilder.bj.bcebos.com/baidu-search-rag-pro/icon/tencent.svg.png",
+                "url": "https://new.qq.com/rain/a/20240717A07JLV00",
+                "ref_id": "4",
+                "site_name": "腾讯网",
+                "title": "究竟|9.11比9.8大?大模型们为何会在小学数学题上集体..."
+            },
+            ...
+        ]
+    },
+    "token_usage": {
+        "completion_tokens": 77,
+        "prompt_tokens": 2008,
+        "total_tokens": 2085
+    }
+}
+```
+
+
+### 3. 调用AI原生应用
+- 示例中的应用为：[说唱导师](https://appbuilder.baidu.com/s/3qfjXy7k)，点击该连接在网页端试用
+
+#### 代码示例
 
 ```python
 import appbuilder
+import os
 
-# 空模版组件
-playground = appbuilder.Playground(
-    prompt_template="{query}",
-    model="ERNIE Speed-AppBuilder"
-)
+# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-# 使用 AgentRuntime 来服务化playground组件
-agent = appbuilder.AgentRuntime(component=playground)
+# 从AppBuilder网页获取并传入应用ID，以下为说唱导师应用ID
+app_id = "4678492a-5864-472e-810a-654538d3503c"
 
-# 启动chainlit demo，会自动在浏览器打开体验对话框页面
-agent.chainlit_demo(port=8091)
+app_builder_client = appbuilder.AppBuilderClient(app_id)
+conversation_id = app_builder_client.create_conversation()
+
+answer = app_builder_client.run(conversation_id, "以“上班狼狈却又追逐梦想“为主题进行一首说唱创作，保持押韵, 控制在200字以内")
+print(answer.content.answer)
 ```
 
-## 二次开发
-当前面向开发者提供开放的数据结构，包括Message和Component，方便开发者融入个人已有的大模型应用程序。此部分仍在不断建设中。
-二次开发可以采用官方提供的开发镜像，便于快速安装各种依赖库。
-``` shell
-docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.1.0
+#### 回答展示
+```shell
+好的，我们来以“上班狼狈却又追逐梦想”为主题，进行一段简短的说唱创作。这里是一个简单的示例，你可以根据自己的感觉进行调整：
+
+Intro:
+朝九晚五，生活重压，
+狼狈上班，却心怀梦想，
+每一天，都是新的挑战，
+为了那未来，我奋发向前。
+
+Verse 1:
+穿上西装，打好领带，
+步入人群，去追逐名利，
+虽然狼狈，却不曾言败，
+因为心中，有梦想在激励。
+
+Hook:
+上班狼狈，却不曾放弃，
+追逐梦想，是我心中的火炬，
+照亮前路，指引我前行，
+无论多难，我都要坚持到底。
+
+这首小曲儿以“上班狼狈却又追逐梦想”为主题，通过押韵的方式表达了上班族虽然生活艰辛，但依然怀揣梦想，勇往直前的精神。希望你喜欢！
 ```
 
-### 消息(Message)
-- 构建大模型应用的统一数据结构，基于Pydantic构建，在不同的Component之间流动。Message基类的默认字段是content，类型是Any。
-```python
-from appbuilder import Message
-input_dict = Message({"query": "红烧肉怎么做"})
-input_list = Message(["text1", "text2", "text3"])
-input_str = Message("红烧肉怎么做")
-```
+#### 更多示例
 
-### 组件(Component)
-- 所有能力单元的标准结构，以Message结构作为输入输出，内部执行逻辑可在本地执行或调用云端服务，以下是官方组件的实现示例。
-```python
-class SimilarQuestionMeta(ComponentArguments):
-    """ SimilarQuestionMeta
-    """
-    message: Message = Field(..., 
-                             variable_name="query", 
-                             description="输入消息，用于模型的输入，一般为问题。")
+- 更多AI原生应用示例，请浏览[应用广场](https://console.bce.baidu.com/ai_apaas/appCenter)
+- 更多代码Cookbook，请浏览 [Cookbooks](./cookbooks/README.md)，我们有以下cookbook推荐您优先阅读：
+
+| 应用类型 |应用链接 | 推荐理由 |
+|--|--|--|
+| 基础能力组件 | [通用文字识别](/cookbooks/components/general_ocr.ipynb) | 体验百度AI开放平台提供的通用文字识别-高精度版的精准识别结果 |
+| 基础能力组件 | [基础组件服务化](/cookbooks/components/agent_runtime.ipynb) | 基础组件可通过flask实现服务化部署 或 通过chainlit实现可交互的前端部署，集成到您的系统中 |
+| 流程编排 |  [Assistant SDK](/cookbooks/pipeline/assistant_function_call.ipynb) | 学习如何纯代码态搭建一个Agent应用，并实现自定义工作流程及FunctionCall |
+| 端到端应用 |  [AppBuilder Client SDK](/cookbooks/agent_builder.ipynb) | 使用AppBuilder网页端创建并发布一个Agent应用后，通过AppBuilderClient SDK集成到你的系统中 |
+| 端到端应用 |  [通过AppBuilder-ToolCall功能实现端云组件联动的Agent](/cookbooks/end2end_application/agent/tool_call.ipynb) | 学习Agent、FunctionCall的知识，并构造调用本地组件的Agent |
+| 端到端应用 |  [简历筛选小助手](/cookbooks/end2end_application/rag/rag.ipynb) | 通过对本地简历库的简历进行解析、切片、创建索引，实现基于JD进行简历筛选，并对筛选的Top1简历进行总结 |
+| 端到端应用 |  [企业级问答系统](/cookbooks/end2end_application/rag/qa_system_2_dialogue.ipynb) | 学习如何通过SDK与网页平台搭配，实现离线知识库生产与在线问答 |
+| 进阶应用 |  [使用appbuilder_bce_deploy部署公有云服务](/cookbooks/advanced_application/cloud_deploy.ipynb) | 一键将自己的服务部署到百度智能云，部署后可以自动生成公网ip，联动工作流的API节点 |
+| 进阶应用 |  [使用appbuilder_trace_server实现对使用状态的跟踪](/cookbooks/appbuilder_trace/trace.ipynb) | 使用Appbuilder-SDK Trace功能实现对组件、应用调用情况的追踪|
 
 
-class SimilarQuestion(CompletionBaseComponent):
-    """ 基于输入的问题, 挖掘出与该问题相关的类似问题。广泛用于客服、问答等场景。
-    Examples:
+## 百度智能云千帆AppBuilder-SDK 能力全景图
+<div align="center">
+<img src='docs/image/structure-cn.png' alt='wechat' width='800' >
+</div>
 
-        .. code-block:: python
-            import os
-            import appbuilder
 
-            os.environ["APPBUILDER_TOKEN"] = "..."
+## 用户文档
 
-            qa_mining = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
+- [快速开始](/docs/quick_start/README.md)
+    - [安装说明](/docs/quick_start/install.md)
+    - [版本说明](/docs/quick_start/changelog.md)
+- [基础功能](/docs/basic_module/README.md)
+    - [基础能力组件](/docs/basic_module/components.md)
+    - [流程编排](/docs/basic_module/assistant_sdk.md)
+    - [端到端应用](/docs/basic_module/appbuilder_client.md)
+- [进阶实践](/docs/advanced_application/README.md)
+    - [Cookbooks](/cookbooks/README.md)
+    - [AppBuilder Trace](https://github.com/baidubce/app-builder/blob/master/docs/trace/README.md)
+- [服务化部署](/docs/service/README.md)
+    - [API调用](/docs/service/flask.md)
+    - [交互式前端](/docs/service/chainlit.md)
+    - [公有云部署](/docs/service/cloud.md)
+- [二次开发](/docs/develop_guide/README.md)
 
-            msg = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
-            msg = appbuilder.Message(msg)
-            answer = qa_mining(msg)
 
-            print("Answer: \n{}".format(answer.content))
-    """
-    name = "similar_question"
-    version = "v1"
-    meta = SimilarQuestionMeta
+## 开源社区与活动
+<div align="center">
+<h3>百度智能云千帆AppBuilder-SDK微信交流群</h3>
+<img src='docs/image/wechat_group.png' alt='wechat' width='200' >
+</div>
 
-    def __init__(self, model=None):
-        """初始化SimilarQuestionMeta任务。
-        
-        Args:
-            model (str|None): 模型名称，用于指定要使用的千帆模型。
-        
-        Returns:
-            None
-        
-        """
-        super().__init__(SimilarQuestionMeta, model=model)
+- [Github Issue](https://github.com/baidubce/app-builder/issues):  提交安装/使用问题、报告bug、建议新特性、沟通开发计划等
 
-    def run(self, message, stream=False, temperature=1e-10):
-        """
-        给定输入（message）到模型运行，同时指定运行参数，并返回结果。
+- [百度智能云千帆社区](https://cloud.baidu.com/qianfandev)：
+    - [千帆杯新手训练营 - 多类型主题练习赛](https://cloud.baidu.com/qianfandev/aimatch)
+    - [千帆杯AI原生应用创意挑战赛 - 教育生态行业赛](https://cloud.baidu.com/qianfandev/topic/269711)
+    - [千帆杯AI原生应用创意挑战赛 - 效率工具常规赛](https://cloud.baidu.com/qianfandev/topic/269599)
 
-        参数:
-            message (obj:`Message`): 输入消息，用于模型的主要输入内容。这是一个必需的参数。
-            stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
-            temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
 
-        返回:
-            obj:`Message`: 模型运行后的输出消息。
-        """
-        return super().run(message=message, stream=stream, temperature=temperature)
-```
 
 ## License
 
 AppBuilder-SDK遵循Apache-2.0开源协议。
+

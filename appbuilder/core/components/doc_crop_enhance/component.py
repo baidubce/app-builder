@@ -22,6 +22,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.doc_crop_enhance.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._exception import *
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 enhance_type_set = [0, 1, 2, 3]
 
@@ -33,7 +34,7 @@ class DocCropEnhance(Component):
 
        Examples:
 
-       ... code-block:: python
+       .. code-block:: python
 
            import appbuilder
 
@@ -45,25 +46,29 @@ class DocCropEnhance(Component):
                out = self.component.run(appbuilder.Message(content={"raw_image": f.read()}))
            print(out.content)
 
-        """
+    """
+    
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, enhance_type: int = 0, timeout: float = None, retry: int = 0) -> Message:
-        r""" 文档矫正增强
-
-            参数:
-                message (obj: `Message`): 输入图片或图片url下载地址用于执行操作. 举例: Message(content={"raw_image": b"...",
-                "enhance_type": 3})或 Message(content={"url": "https://image/download/url"}).
-                enhance_type(int, 可选) 选择是否开启图像增强功能，如开启可选择增强效果，可选值如下：
-                    - enhance_type = 0：默认值，不开启增强功能
-                    - enhance_type = 1：去阴影
-                    - enhance_type = 2：增强并锐化
-                    - enhance_type = 3：黑白滤镜。
-                timeout (float, 可选): HTTP超时时间
-                retry (int, 可选)： HTTP重试次数
-
-                返回: message (obj: `Message`): 识别结果. 举例: Message(name=msg, content={'image_processed': '...',
-                'points': [{'x': 220, 'y': 705}, {'x': 240, 'y': 0}, {'x': 885, 'y': 2}, {'x': 980, 'y': 759}]},
-                mtype=dict)
+        r"""
+        文档矫正增强
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行操作。举例: Message(content={"raw_image": b"...",
+            "enhance_type": 3})或 Message(content={"url": "https://image/download/url"})。
+            enhance_type (int, 可选): 选择是否开启图像增强功能，如开启可选择增强效果，可选值如下：
+                - 0：默认值，不开启增强功能
+                - 1：去阴影
+                - 2：增强并锐化
+                - 3：黑白滤镜。
+            timeout (float, 可选): HTTP超时时间
+            retry (int, 可选): HTTP重试次数
+        
+        Returns:
+            Message: 识别结果。举例: Message(name=msg, content={'image_processed': '...',
+            'points': [{'x': 220, 'y': 705}, {'x': 240, 'y': 0}, {'x': 885, 'y': 2}, {'x': 980, 'y': 759}]},
+            mtype=dict)
         """
         inp = DocCropEnhanceInMsg(**message.content)
         req = DocCropEnhanceRequest()
@@ -73,7 +78,7 @@ class DocCropEnhance(Component):
             req.url = inp.url
         req.scan_type = 3
         if enhance_type not in enhance_type_set:
-            raise InvalidRequestArgumentError(f"enhance_type only support {enhance_type_set}")
+            raise InvalidRequestArgumentError(f"mismatched argument enhance_type, expected enhance_type in {enhance_type_set}")
         req.enhance_type = enhance_type
         result = self._recognize(req, timeout, retry)
         result_dict = proto.Message.to_dict(result)
@@ -89,7 +94,7 @@ class DocCropEnhance(Component):
                        response (obj: `DocCropEnhanceResponse`): 文档矫正增强返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request argument error, one of image or url must be set")
 
         req = json.dumps(DocCropEnhanceRequest.to_dict(request))
         if self.http_client.retry.total != retry:

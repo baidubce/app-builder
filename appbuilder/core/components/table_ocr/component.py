@@ -23,6 +23,7 @@ from appbuilder.core.components.table_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class TableOCR(Component):
@@ -32,7 +33,7 @@ class TableOCR(Component):
 
        Examples:
 
-       ... code-block:: python
+       .. code-block:: python
 
            import appbuilder
            # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
@@ -50,7 +51,7 @@ class TableOCR(Component):
     manifests = [
         {
             "name": "table_ocr",
-            "description": "需要识别图片中的表格内容，使用该工具",
+            "description": "需要识别图片中的表格内容，使用该工具, 但不支持html后缀文件的识别",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -68,27 +69,32 @@ class TableOCR(Component):
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 表格文字识别
-
-                    参数:
-                       message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                       或 Message(content={"url": "https://image/download/url"}).
-                       timeout (float, 可选): HTTP超时时间
-                       retry (int, 可选)： HTTP重试次数
-
-                     返回: message (obj: `Message`): 识别结果. 举例: Message(name=msg, content={'tables_result': [{
-                     'table_location': [{'x': 15, 'y': 15}, {'x': 371, 'y': 15}, {'x': 371, 'y': 98}, {'x': 15,
-                     'y': 98}], 'header': [], 'body': [{'cell_location': [{'x': 15, 'y': 15}, {'x': 120, 'y': 15},
-                     {'x': 120, 'y': 58}, {'x': 15, 'y': 58}], 'row_start': 0, 'row_end': 1, 'col_start': 0,
-                     'col_end': 1, 'words': '参数'}, {'cell_location': [{'x': 120, 'y': 15}, {'x': 371, 'y': 15},
-                     {'x': 371, 'y': 58}, {'x': 120, 'y': 58}], 'row_start': 0, 'row_end': 1, 'col_start': 1,
-                     'col_end': 2, 'words': '值'}, {'cell_location': [{'x': 15, 'y': 58}, {'x': 120, 'y': 58},
-                     {'x': 120, 'y': 98}, {'x': 15, 'y': 98}], 'row_start': 1, 'row_end': 2, 'col_start': 0,
-                     'col_end': 1, 'words': 'Content-Type'}, {'cell_location': [{'x': 120, 'y': 58}, {'x': 371,
-                     'y': 58}, {'x': 371, 'y': 98}, {'x': 120, 'y': 98}], 'row_start': 1, 'row_end': 2, 'col_start':
-                     1, 'col_end': 2, 'words': 'application/x-www-form-urlencoded'}], 'footer': []}]}, mtype=dict)
-
+        """
+        表格文字识别
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作。
+                举例: Message(content={"raw_image": b"..."})
+                或 Message(content={"url": "https://image/download/url"})。
+            timeout (float, 可选): HTTP超时时间。
+            retry (int, 可选): HTTP重试次数。
+        
+        Returns:
+            message (Message): 识别结果。
+                举例: Message(name=msg, content={'tables_result': [{
+                'table_location': [{'x': 15, 'y': 15}, {'x': 371, 'y': 15}, {'x': 371, 'y': 98}, {'x': 15,
+                'y': 98}], 'header': [], 'body': [{'cell_location': [{'x': 15, 'y': 15}, {'x': 120, 'y': 15},
+                {'x': 120, 'y': 58}, {'x': 15, 'y': 58}], 'row_start': 0, 'row_end': 1, 'col_start': 0,
+                'col_end': 1, 'words': '参数'}, {'cell_location': [{'x': 120, 'y': 15}, {'x': 371, 'y': 15},
+                {'x': 371, 'y': 58}, {'x': 120, 'y': 58}], 'row_start': 0, 'row_end': 1, 'col_start': 1,
+                'col_end': 2, 'words': '值'}, {'cell_location': [{'x': 15, 'y': 58}, {'x': 120, 'y': 58},
+                {'x': 120, 'y': 98}, {'x': 15, 'y': 98}], 'row_start': 1, 'row_end': 2, 'col_start': 0,
+                'col_end': 1, 'words': 'Content-Type'}, {'cell_location': [{'x': 120, 'y': 58}, {'x': 371,
+                'y': 58}, {'x': 371, 'y': 98}, {'x': 120, 'y': 98}], 'row_start': 1, 'row_end': 2, 'col_start':
+                1, 'col_end': 2, 'words': 'application/x-www-form-urlencoded'}], 'footer': []}]}, mtype=dict)
+        
         """
         inp = TableOCRInMsg(**message.content)
         req = TableOCRRequest()
@@ -103,7 +109,7 @@ class TableOCR(Component):
         return Message(content=out.model_dump())
 
     def _recognize(self, request: TableOCRRequest, timeout: float = None,
-                   retry: int = 0) -> TableOCRResponse:
+                   retry: int = 0, request_id: str = None) -> TableOCRResponse:
         r"""调用底层接口进行表格文字识别
                    参数:
                        request (obj: `TableOCRRequest`) : 表格文字识别输入参数
@@ -111,15 +117,17 @@ class TableOCR(Component):
                        response (obj: `TableOCRResponse`): 表格文字识别返回结果
                """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError(
+                "request format error, one of image or url must be set")
 
         data = TableOCRRequest.to_dict(request)
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/ocr/v1/table")
-        response = self.http_client.session.post(url, headers=headers, data=data, timeout=timeout)
+        response = self.http_client.session.post(
+            url, headers=headers, data=data, timeout=timeout)
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
@@ -146,9 +154,14 @@ class TableOCR(Component):
 
     def get_table_markdown(self, tables_result):
         """
-        根据识别到的表格等结果转化成markdown
-        :param tables_result:
-        :return:
+        将表格识别结果转换为Markdown格式。
+        
+        Args:
+            tables_result (list): 表格识别结果列表，每个元素是一个包含表格数据的字典，其中包含表格体（body）等字段。
+        
+        Returns:
+            list: 包含Markdown格式表格的字符串列表。
+        
         """
         markdowns = []
         for table in tables_result:
@@ -174,8 +187,30 @@ class TableOCR(Component):
             markdowns.append(markdown_table)
         return markdowns
 
+    @components_run_stream_trace
     def tool_eval(self, name: str, streaming: bool, **kwargs):
+        """
+        对传入文件进行处理，并返回处理结果。
+        
+        Args:
+            name (str): 工具的名称。
+            streaming (bool): 是否为流式处理。若为True，则以生成器形式返回结果；若为False，则直接返回结果。
+            **kwargs: 关键字参数，包含以下参数：
+                traceid (str): 请求的唯一标识符。
+                file_names (List[str]): 文件名列表，表示需要处理的文件名。
+                files (List[str]): 同file_names，用于兼容老版本接口。
+                file_urls (Dict[str, str]): 文件名和对应URL的映射字典。
+        
+        Returns:
+            若streaming为True，则以生成器形式返回处理结果，每个元素为包含type和text的字典，type固定为"text"，text为处理结果的JSON字符串。
+            若streaming为False，则直接返回处理结果的JSON字符串。
+        
+        Raises:
+            InvalidRequestArgumentError: 若传入文件名在file_urls中未找到对应的URL，则抛出此异常。
+        
+        """
         result = {}
+        traceid = kwargs.get("traceid")
         file_names = kwargs.get("file_names", None)
         if not file_names:
             file_names = kwargs.get("files")
@@ -186,11 +221,13 @@ class TableOCR(Component):
             else:
                 file_url = file_urls.get(file_name, None)
             if file_url is None:
-                raise InvalidRequestArgumentError(f"file {file_name} url does not exist")
+                raise InvalidRequestArgumentError(
+                    f"request format error, file {file_name} url does not exist"
+                )
             req = TableOCRRequest()
             req.url = file_url
             req.cell_contents = "false"
-            resp = self._recognize(req)
+            resp = self._recognize(req, request_id=traceid)
             tables_result = proto.Message.to_dict(resp)["tables_result"]
             markdowns = self.get_table_markdown(tables_result)
             result[file_name] = markdowns

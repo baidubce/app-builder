@@ -1,4 +1,3 @@
-"""QueryRewrite"""
 # Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,52 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
 """
 多轮改写
 """
 from appbuilder.core.components.llms.base import CompletionBaseComponent
-from appbuilder.core.message import Message
-from appbuilder.core.component import ComponentArguments
-from pydantic import BaseModel, Field
 from typing import Optional
-from enum import Enum
-import appbuilder
-
-class RewriteTypeChoices(Enum):
-    """"""
-    user_assistant_user = "带机器人回复"
-    user_user = "仅用户查询"
-
-    def to_chinese(self):
-        """
-        将RewriteTypeChoices枚举类中的值转换为中文描述。
-        
-        Args:
-            无参数
-        
-        Returns:
-            返回一个字典，键是RewriteTypeChoices枚举类的成员，值为对应的中文描述字符串。
-        
-        """
-        descriptions = {
-            RewriteTypeChoices.user_assistant_user: "带机器人回复",
-            RewriteTypeChoices.user_user: "仅用户查询",
-        }
-        return descriptions[self]
-
-
-class QueryRewriteArgs(ComponentArguments):
-    """多轮改写配置"""
-    message: Message = Field(..., 
-                             variable_name="query",
-                             description="输入消息，用于模型的主要输入内容，例如'['我应该怎么办理护照？', '您可以查询官网或人工咨询', \
-                                         '我需要准备哪些材料？', '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', '在哪里办']'")
-    rewrite_type: RewriteTypeChoices = Field(...,  
-                                             variable_name="rewrite_type",
-                                             description="改写类型选项，可选值为 '带机器人回复'(改写时参考user查询历史和assistant回复历史)，\
-                                                         '仅用户查询'(改写时参考user查询历史)。 默认是'带机器人回复'. ")
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace
+from .base import QueryRewriteArgs
 
 
 class QueryRewrite(CompletionBaseComponent):
@@ -66,18 +26,18 @@ class QueryRewrite(CompletionBaseComponent):
 
     Examples:
 
-        .. code-block:: python
+    .. code-block:: python
 
-            import appbuilder
-            os.environ["APPBUILDER_TOKEN"] = '...'
+        import appbuilder
+        os.environ["APPBUILDER_TOKEN"] = '...'
 
-            query_rewrite = appbuilder.QueryRewrite(model="ERNIE Speed-AppBuilder")
-            answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？', 
-                                                     '您可以查询官网或人工咨询', 
-                                                     '我需要准备哪些材料？', 
-                                                     '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', 
-                                                     '在哪里办']), 
-                                                     rewrite_type="带机器人回复")
+        query_rewrite = appbuilder.QueryRewrite(model="Qianfan-Appbuilder-Speed-8k")
+        answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？', 
+                                                    '您可以查询官网或人工咨询', 
+                                                    '我需要准备哪些材料？', 
+                                                    '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', 
+                                                    '在哪里办']), 
+                                                    rewrite_type="带机器人回复")
                         
     """
 
@@ -107,32 +67,38 @@ class QueryRewrite(CompletionBaseComponent):
         super().__init__(
                 QueryRewriteArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
+    @components_run_trace
     def run(self, message, rewrite_type="带机器人回复", stream=False, temperature=1e-10, top_p=0):
         """
-        使用给定的输入运行模型并返回结果。输入列表长度不超过10，字符总长度不超过5000.
+        使用给定的输入运行模型并返回结果。
         
-        变量:
+        Args:
             message (obj:`Message`): 输入消息，用于模型的主要输入内容。这是一个必需的参数。
-            rewrite_type (str, optional): 改写类型选项，可选值为 '带机器人回复'(改写时参考user查询历史和assistant回复历史)，
-                                         '仅用户查询'(改写时参考user查询历史)。 默认是"带机器人回复。
-            stream (bool, optional): 指定是否以流式形式返回响应。默认为 False。
-            temperature(float, optional): 模型配置的温度参数，用于调整模型的生成概率。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 1e-10。
-            top_p(float, optional): 影响输出文本的多样性，取值越大，生成文本的多样性越强。取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。默认值为 0。
-
-        返回:
+            rewrite_type (str, 可选): 改写类型选项，可选值为 '带机器人回复'(改写时参考user查询历史和assistant回复历史)，
+                                      '仅用户查询'(改写时参考user查询历史)。默认为"带机器人回复"。
+            stream (bool, 可选): 指定是否以流式形式返回响应。默认为 False。
+            temperature (float, 可选): 模型配置的温度参数，用于调整模型的生成概率。
+                                       取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。
+                                       默认值为 1e-10。
+            top_p (float, 可选): 影响输出文本的多样性，取值越大，生成文本的多样性越强。
+                                 取值范围为 0.0 到 1.0，其中较低的值使生成更确定性，较高的值使生成更多样性。
+                                 默认值为 0。
+        
+        Returns:
             obj:`Message`: 模型运行后的输出消息。
         
+        Raises:
+            ValueError: 如果输入消息为空或不符合要求，将抛出 ValueError 异常。
+        
         """
-
-
         if message is None:
-            raise ValueError("输入消息不能为空")
+            raise ValueError("input message is required")
 
         sum_len = sum(len(item) for item in message.content)
         if len(message.content) > 10 or len(message.content) % 2 == 0:
-            raise ValueError("非法输入，目前支持5轮以下改写，合法输入列表元素个数为低于10的奇数、即1、3、5、9")
+            raise ValueError(f"illegal input，expected len(message.content) in {1,3,5,9}, got {len(message.content)}")
         if sum_len > 4000:
-            raise ValueError("非法输入，字符总长度不超过5000")
+            raise ValueError(f"illegal input, expected length <= 4000, got {sum_len}")
         if rewrite_type == "带机器人回复":
             converted_input = ''.join([f"{'User:' if i % 2 == 0 else 'Assistant:'}\
                                        {message.content[i]}\n" for i in range(len(message.content))])

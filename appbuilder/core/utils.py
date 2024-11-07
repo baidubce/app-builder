@@ -41,7 +41,9 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
     """
     api_type_set = {"chat", "completions", "embeddings", "text2image"}
     if api_type_filter and not set(api_type_filter).issubset(api_type_set):
-        raise TypeNotSupportedException(f"api_type_filter only support {api_type_set}")
+        raise TypeNotSupportedException(
+            f"mismatched argument api_type_filter, expected in {api_type_set}"
+        )
     request = GetModelListRequest()
     request.apiTypefilter = api_type_filter
     model = Models(secret_key=secret_key)
@@ -62,7 +64,7 @@ def convert_cloudhub_url(client: HTTPClient, qianfan_url: str) -> str:
     cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1"
     index = str.find(qianfan_url, qianfan_url_prefix)
     if index == -1:
-        raise ValueError(f"{qianfan_url} is not a valid qianfan url")
+        raise ValueError(f"url format error, {qianfan_url} is not a valid qianfan url")
     url_suffix = qianfan_url[index + len(qianfan_url_prefix):]
     return "{}/{}{}".format(client.gateway, cloudhub_url_prefix, url_suffix)
 

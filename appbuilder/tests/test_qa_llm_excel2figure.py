@@ -14,19 +14,56 @@
 
 import unittest
 import os
-import time
 import appbuilder
-import requests
-from parameterized import parameterized, param
 import appbuilder
+class LoadConfig(object):
+    """
+    config
+    """
+    def __init__(self):
+        """
+        初始化函数，读取配置文件并设置实例属性。
+        """
+        self.token = os.environ.get("APPBUILDER_TOKEN", "")
+        self.console_url = os.environ.get("GATEWAY_URL", "https://appbuilder.baidu.com")
+        self.cookie =  os.environ.get("COOKIE", "")
+        self.csrftoken = os.environ.get('CSRFTOKEN', "")
 
-from pytest_config import LoadConfig
-conf = LoadConfig()
+        log.info("token: %s" % self.token)
+        log.info("console_url: %s" % self.console_url)
+        log.info("cookie: %s" % self.cookie)
+        log.info("csrftoken: %s" % self.csrftoken)
 
-from pytest_utils import Utils
-util = Utils()
+import random
+import string
+import os
+
+class Utils(object):
+    """
+    utils 方法父类
+    """
+    @staticmethod
+    def get_random_string(str_len, prefix=None):
+        """
+        生成随机字符串，可指定前缀
+        """
+        gen_name = ''.join(
+            random.choice(string.ascii_letters + string.digits) for _ in range(str_len)
+        )
+        if prefix:
+            name = str(prefix) + gen_name
+        else:
+            name = gen_name
+        return name
+
+    @staticmethod
+    def get_data_file(filename):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        full_file_path = os.path.join(current_dir, "data", filename)
+        return full_file_path
 
 from appbuilder.utils.logger_util import get_logger
+from appbuilder.core._exception import ModelNotSupportedException
 log = get_logger(__name__)
 
 text = "用户:喂我想查一下我的话费\n坐席:好的女士您话费余的话还有87.49元钱\n用户:好的知道了谢谢\n坐席:嗯不客气祝您生活愉快再见"
@@ -40,7 +77,7 @@ err_file_bos_url = ("https://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/[�
                     "bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-02-21T09%3A51%3A14Z/-1/host/1802a9c9142ef328d6"
                     )
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestExcel2figure(unittest.TestCase):
     # @parameterized.expand([
     #     param("ERNIE-Bot 4.0", "2020年各个月份的利润分别是多少？使用条形图绘制出来", file_bos_url),
@@ -65,63 +102,73 @@ class TestExcel2figure(unittest.TestCase):
     #     if model_name == "ERNIE-Bot 4.0":
     #         assert content, "未获取到图片地址"
     #     time.sleep(1)
-
-    @parameterized.expand([
-        # 模型名称错误
-            param(
-                "aaa", "2020年各个月份的利润分别是多少？使用条形图绘制出来", file_bos_url, "Model",
-                "Model[aaa] not available! You can query available models through: appbuilder.get_model_list()"),
-            param("ERNIE-Bot 4.0", "", file_bos_url, "query",
-                         "1 validation error for Excel2FigureArgs"
-                         ),
-            param("ERNIE-Bot 4.0", "2020年各个月份的利润分别是多少？使用条形图绘制出来", "", "excel_file_url",
-                         "1 validation error for Excel2FigureArgs"
-                         ),
-            param(
-                "ERNIE-Bot 4.0", "2019年各个月份的利润分别是多少？2020年各个月份的利润分别是多少？2021年各个月份的利润"
-                                 "分别是多少？2022年各个月份的利润分别是多少？2019年各个省份的利润分别是多少？2020年各个省份的利润"
-                                 "分别是多少？2021年各个省份的利润分别是多少？2022年各个省份的利润分别是多少？2019年各个地区的利润"
-                                 "分别是多少？2020年各个地区的利润分别是多少？2021年各个地区的利润分别是多少？2022年各个地区的利润"
-                                 "分别是多少？2019年各个月份的利润分别是多少？2020年各个月份的利润分别是多少？2021年各个月份的利润"
-                                 "分别是多少？2022年各个月份的利润分别是多少？2019年各个省份的利润分别是多少？2020年各个省份的利润"
-                                 "分别是多少？2021年各个省份的利润分别是多少？2022年各个省份的利润分别是多少？2019年各个月份的利润"
-                                 "分别是多少？2020年各个月份的利润分别是多少？2021年各个月份的利润"
-                                 "分别是多少？2022年各个月份的利润分别是多少？2019年各个省份的利润分别是多少？2020年各个省份的利润"
-                                 "分别是多少？2021年各个省份的利润分别是多少？2022年各个省份的利润分别是多少？2019年各个地区的利润"
-                                 "分别是多少？2020年各个地区的利润分别是多少？2021年各个地区的利润分别是多少？2022年各个地区的利润"
-                                 "分别是多少？2019年各个月份的利润分别是多少？2020年各个月份的利润分别是多少？2021年各个月份的利润"
-                                 "分别是多少？2022年各个月份的利润分别是多少？2019年各个省份的利润分别是多少？2020年各个省份的利润"
-                                 "分别是多少？2021年各个省份的利润分别是多少？2022年各个省份的利润分别是多少？2019年各个地区的利润"
-                                 "使用条形图绘制出来", file_bos_url, "query",
-                "String should have at most 400 characters"),
-    ])
-    def test_abnormal_case(self, model_name, query, excel_file_url, err_param, err_msg):
+            
+    def test_abnormal_case(self):
         """
         异常用例
         """
-        try:
-            builder = appbuilder.Excel2Figure(model=model_name)
-            if query == "":
-                res = builder(builder.run(appbuilder.Message({
-                    "excel_file_url": excel_file_url,
-                })))
-            elif excel_file_url == "":
-                res = builder(builder.run(appbuilder.Message({
-                    "query": query,
-                })))
-            else:
-                res = builder(builder.run(appbuilder.Message({
-                    "query": query,
-                    "excel_file_url": excel_file_url,
-                })))
-            content = res.content
-            log.info(content)
-            assert False, "未捕获到错误信息"
-        except Exception as e:
-            # assert isinstance(e, eval(err_type)), "捕获的异常不是预期的类型 实际:{}, 预期:{}".format(e, err_type)
-            assert err_param in str(e), "捕获的异常参数类型不正确"
-            assert err_msg in str(e), "捕获的异常消息不正确"
+        # test Model[aaa] not available
+        with self.assertRaises(ModelNotSupportedException):
+            builder = appbuilder.Excel2Figure(model="aaa")
 
-    
+        # test query and excel_file_url error
+        test_list=[
+            {
+                "excel_file_url": file_bos_url
+            },
+            {
+                "query": "2020年各个月份的利润分别是多少？使用条形图绘制出来",
+            }
+        ]
+        for item in test_list:
+            try:
+                builder = appbuilder.Excel2Figure(model="ERNIE-Bot 4.0")
+                res = builder(builder.run(appbuilder.Message(item)))
+            except Exception as e:
+                assert "1 validation error for Excel2FigureArgs" in str(e)
+
+        try:
+            builder = appbuilder.Excel2Figure(model="ERNIE-Bot 4.0")
+            res = builder(builder.run(appbuilder.Message({
+                "query": "2020年各个月份的利润分别是多少？使用条形图绘制出来"*30,
+                "excel_file_url": file_bos_url
+            })))
+        except Exception as e:
+            assert "1 validation error for Excel2FigureArgs" in str(e)
+            
+    def test_check_model_and_get_model_url(self):
+        with self.assertRaises(ModelNotSupportedException):
+            e2f=appbuilder.Excel2Figure(model="Yi-34B-Chat")
+        with self.assertRaises(ValueError):
+            e2f=appbuilder.Excel2Figure(model="")
+
+    def test_run(self):
+        e2f=appbuilder.Excel2Figure(model="Llama-2-7B-Chat")   
+        msg=appbuilder.Message({
+            "query": "2019年各个月份的利润分别是多少？",
+            "excel_file_url": file_bos_url
+        })
+        result_msg=e2f.run(msg)
+        
+    def test_tool_eval(self):
+        e2f=appbuilder.Excel2Figure(model="Llama-2-7B-Chat")   
+        # with self.assertRaises(RuntimeError) as context:
+        te=e2f.tool_eval(
+                streaming=False,
+                origin_query="",
+                file_urls={'test1':'test1','test2':'test2'}
+                )
+        with self.assertRaises(RuntimeError):
+            next(te)
+
+        te=e2f.tool_eval(
+                streaming=False,
+                origin_query="2019年各个月份的利润分别是多少？",
+                file_urls={'[测试]超市收入明细表格.xlsx':file_bos_url}
+                )
+        with self.assertRaises(RuntimeError): 
+            res=next(te)
+        
+        
 if __name__ == '__main__':
     unittest.main()

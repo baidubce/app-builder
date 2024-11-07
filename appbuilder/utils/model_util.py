@@ -18,6 +18,7 @@ from typing import Optional, MutableSequence
 
 import appbuilder
 from appbuilder.core._client import HTTPClient
+from appbuilder.utils.trace.tracer_wrapper import list_trace
 
 r"""模型名称到简称的映射.
 """
@@ -29,7 +30,7 @@ model_name_mapping = [
     ("ERNIE-Bot-turbo", "eb-turbo"),
     ("EB-turbo-AppBuilder专用版", "eb-turbo-appbuilder"),
     ("EB-turbo-AppBuilder专用版", "ernie_speed_appbuilder"),
-    ("EB-turbo-AppBuilder专用版", "ERNIE Speed-AppBuilder"),
+    ("EB-turbo-AppBuilder专用版", "Qianfan-Appbuilder-Speed-8k"),
 ]
 
 class RemoteModel(object):
@@ -61,7 +62,7 @@ class RemoteModel(object):
          """
         # TODO(chengmo): 使用logging 替换 print，解决print多次的问题
         if short_name == "eb-turbo-appbuilder":
-            print("Deprecate warning: model [eb-turbo-appbuilder] is deprecated, please use [ERNIE Speed-AppBuilder]")
+            print("Deprecate warning: model [eb-turbo-appbuilder] is deprecated, please use [Qianfan-Appbuilder-Speed-8k]")
 
         if short_name in self.short_names:
             return self.remote_name
@@ -298,6 +299,7 @@ class Models:
         """
         self.http_client = client or HTTPClient(secret_key, gateway)
 
+    @list_trace
     def list(self, request: GetModelListRequest = None, timeout: float = None,
              retry: int = 0) -> GetModelListResponse:
         """

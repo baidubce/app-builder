@@ -21,9 +21,9 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.plant_recognize.model import *
 from typing import Generator, Union
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
+from .model import TOP_NUM, BAIKE_NUM
 
-TOP_NUM = 1
-BAIKE_NUM = 0
 
 
 class PlantRecognition(Component):
@@ -33,13 +33,14 @@ class PlantRecognition(Component):
     Examples:
 
     .. code-block:: python
+    
         import os
         import requests
         import appbuilder
 
         # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
         os.environ["GATEWAY_URL"] = "..."
-os.environ["APPBUILDER_TOKEN"] = "..."
+        os.environ["APPBUILDER_TOKEN"] = "..."
         image_url = "https://bj.bcebos.com/v1/appbuilder/palnt_recognize_test.jpg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-23T09%3A51%3A03Z%2F-1%2Fhost%2Faa2217067f78f0236c8262cdd89a4b4f4b2188d971ca547c53d01742af4a2cbe"
 
         # 从BOS存储读取样例文件
@@ -88,17 +89,19 @@ os.environ["APPBUILDER_TOKEN"] = "..."
     ]
 
     @HTTPClient.check_param
+    @components_run_trace
     def run(self, message: Message, timeout: float = None, retry: int = 0) -> Message:
-        r""" 输入图片并识别其中的植物
-
-             参数:
-                message (obj: `Message`): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
-                或 Message(content={"url": "https://image/download/uel"}).
-                timeout (float, 可选): HTTP超时时间
-                retry (int, 可选)： HTTP重试次数
-
-              返回:
-                 message (obj: `Message`): 模型识别结果.
+        """
+        输入图片并识别其中的植物
+        
+        Args:
+            message (Message): 输入图片或图片url下载地址用于执行识别操作. 举例: Message(content={"raw_image": b"..."})
+            或 Message(content={"url": "https://image/download/uel"}).
+            timeout (float, optional): HTTP超时时间，默认为None
+            retry (int, optional): HTTP重试次数，默认为0
+        
+        Returns:
+            Message: 模型识别结果
         """
         inp = PlantRecognitionInMsg(**message.content)
         request = PlantRecognitionRequest()
@@ -114,8 +117,13 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         out = PlantRecognitionOutMsg(plant_score_list=plant_score_list)
         return Message(content=out.model_dump())
 
-    def __recognize(self, request: PlantRecognitionRequest, timeout: float = None, retry: int = 0) \
-            -> PlantRecognitionResponse:
+    def __recognize(
+        self,
+        request: PlantRecognitionRequest,
+        timeout: float = None,
+        retry: int = 0,
+        request_id: str = None,
+    ) -> PlantRecognitionResponse:
         r"""调用底层接口植物识别
 
             参数:
@@ -125,11 +133,11 @@ os.environ["APPBUILDER_TOKEN"] = "..."
                 response (obj: `PlantRecognitionResponse`): 植物识别返回结果
         """
         if not request.image and not request.url:
-            raise ValueError("one of image or url must be set")
+            raise ValueError("request format error, one of image or url must be set")
         data = PlantRecognitionRequest.to_dict(request)
         if retry != self.http_client.retry.total:
             self.http_client.retry.total = retry
-        headers = self.http_client.auth_header()
+        headers = self.http_client.auth_header(request_id)
         headers['content-type'] = 'application/x-www-form-urlencoded'
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/plant")
         response = self.http_client.session.post(url, data=data, timeout=timeout, headers=headers)
@@ -140,28 +148,37 @@ os.environ["APPBUILDER_TOKEN"] = "..."
         self.__class__.__check_service_error(request_id, data)
         return PlantRecognitionResponse(data, request_id=request_id)
 
-    def tool_eval(self, name: str, streaming: bool,
-                  origin_query: str, **kwargs) -> Union[Generator[str, None, None], str]:
-        r"""用于工具的执行，通过调用底层接口进行植物识别
-            参数:
-                name (str): 工具名
-                streaming (bool): 是否流式返回
-                origin_query (str): 用户原始query
-                **kwargs: 工具调用的额外关键字参数
-
-            返回：
-                Union[Generator[str, None, None], str]: 植物识别结果，包括识别出的植物类别和相应的置信度信息
+    @components_run_stream_trace
+    def tool_eval(
+        self, 
+        name: str, 
+        streaming: bool,
+        origin_query: str,
+        **kwargs,
+    ) -> Union[Generator[str, None, None], str]:
         """
+        用于工具的执行，通过调用底层接口进行植物识别
+        
+        Args:
+            name (str): 工具名
+            streaming (bool): 是否流式返回
+            origin_query (str): 用户原始query
+            **kwargs: 工具调用的额外关键字参数
+        
+        Returns:
+            Union[Generator[str, None, None], str]: 植物识别结果，包括识别出的植物类别和相应的置信度信息
+        """
+        traceid = kwargs.get("traceid")
         img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls)
+        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
         if streaming:
             yield rec_res
         else:
             return rec_res
 
-    def _recognize_w_post_process(self, img_name, img_url, file_urls):
+    def _recognize_w_post_process(self, img_name, img_url, file_urls, request_id=None):
         r"""调底层接口对图片或图片url进行植物识别，并返回类别及其置信度
             参数:
                img_name (str): 图片文件名
@@ -179,7 +196,7 @@ os.environ["APPBUILDER_TOKEN"] = "..."
             req.url = img_url
         req.top_num = TOP_NUM
         req.baike_num = BAIKE_NUM
-        result = self.__recognize(req)
+        result = self.__recognize(req, request_id=request_id)
         result_dict = proto.Message.to_dict(result)
         rec_res = "模型识别结果为：\n"
         for rec_info in result_dict['result']:

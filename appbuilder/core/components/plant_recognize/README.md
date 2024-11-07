@@ -18,7 +18,7 @@
 
 示例图片为
 
-![示例图片](./image/palnt_recognize_test.jpg)
+![示例图片](https://bj.bcebos.com/v1/appbuilder/palnt_recognize_test.jpg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-23T09%3A51%3A03Z%2F-1%2Fhost%2Faa2217067f78f0236c8262cdd89a4b4f4b2188d971ca547c53d01742af4a2cbe)
 
 ```python
 import os

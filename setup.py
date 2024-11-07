@@ -25,16 +25,42 @@ from setuptools import setup, find_packages
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-setup(
-    name='appbuilder-sdk',
-    version='0.6.0',
-    author='dongdaxiang',
-    author_email='dongdaxiang@baidu.com',
-    packages=find_packages(),
-    install_requires=requirements,
-    python_requires='>=3.8',
-    extras_require={
-        'serve': ['chainlit~=1.0.200', 'flask~=2.3.2', 'flask-restful==0.3.9']
-    }
-)
+packages = find_packages()
+package_data = {}
+for package in packages:
+    if package.startswith('appbuilder.utils'):
+        package_data[package] = ["*.md"]
 
+serve_require = ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9", "arize-phoenix==4.5.0"]
+trace_require = ["SQLAlchemy==2.0.31"]
+test_require = ["python-dotenv"]
+langchain_require = ["langchain==0.3.0", "datamodel-code-generator==0.25.8"]
+all_require = serve_require + trace_require + test_require + langchain_require
+
+setup(
+    name="appbuilder-sdk",
+    # NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
+    version="0.9.6",
+    author="dongdaxiang",
+    author_email="dongdaxiang@baidu.com",
+    packages=packages,
+    package_data=package_data,
+    install_requires=requirements,
+    python_requires=">=3.9",
+    extras_require={
+        "serve": serve_require,
+        "trace": trace_require,
+        "test": test_require,
+        "langchain": langchain_require,
+        "all": all_require
+    },
+    entry_points={
+        "console_scripts": [
+            "appbuilder_bce_deploy=appbuilder.utils.bce_deploy:deploy",
+            "appbuilder_trace_server=appbuilder.utils.trace.phoenix_wrapper:runtime_main"
+        ]
+    },
+    description="百度智能云千帆AppBuilder-SDK",
+    long_description="百度智能云千帆AppBuilder, 开箱即用的组件与框架, 高效开发你的AI原生应用, 更多信息请登录: https://appbuilder.cloud.baidu.com/",
+    url="https://github.com/baidubce/app-builder",
+)

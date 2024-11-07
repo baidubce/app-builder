@@ -1,7 +1,3 @@
-"""
-base
-"""
-
 # Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -76,3 +72,13 @@ class EmbeddingBaseComponent(Component):
 
         # embedding don't need be async, just return it
         return self.batch(texts)
+    
+
+class EmbeddingArgs(ComponentArguments):
+    """
+    ernie bot embedding配置
+
+    Attributes:
+        text (Union[Message[str], str]): 输入文本
+    """
+    text: Union[Message[str], str]

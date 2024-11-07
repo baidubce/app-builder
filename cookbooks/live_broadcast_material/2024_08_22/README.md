@@ -1,0 +1,9 @@
+- AppBuilderClient-Tool Call
+  - [本地调用内网tool工具](tool_call_1.ipynb)
+  - [调用Agent执行本地命令](tool_call_2.ipynb)
+  - [使用AppBuilderEventHandler简化tool_call操作](tool_call_3.ipynb)
+  - [使用AppBuilderEventHandler生成图片并下载到本地](tool_call_4.ipynb)
+- Appbuilder DEBUG&Trace
+  - [Appbuilder DEBUG&Trace](trace.ipynb)
+- Appbuilder knowledgebase
+  - [Appbuilder knowledgebase](knowledgebase.ipynb)

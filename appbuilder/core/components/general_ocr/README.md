@@ -17,7 +17,7 @@
 
 以下是一个简单的例子来演示如何开始使用GeneralOCR组件：
 
-示例图片为![示例图片](./image/general_ocr_test.png)
+示例图片为![示例图片](https://bj.bcebos.com/v1/appbuilder/general_ocr_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae857a27513734d765495f89ffa5f73)
 
 ```python
 import os

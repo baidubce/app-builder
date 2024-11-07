@@ -31,7 +31,7 @@ print(out.content)
 
 生成的"上海的经典风景"图片如下
 
-![示例图片](./image/shanghai.png)
+![示例图片](https://bj.bcebos.com/v1/appbuilder-sdk-components/shanghai.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-05-30T03%3A08%3A30Z%2F-1%2Fhost%2F64296a40b3f01d39776129e0b4ce732b1784f2f91e3afcf9dd7c1de8c3df6a0a)
 
 
 ## 参数说明

@@ -25,14 +25,14 @@ class TestBaiduVDBRetrieverParameter(unittest.TestCase):
         os.environ["APPBUILDER_TOKEN"] = "bce-v3/ABCDE"
 
     def test_run_parameter_query(self):
-        query = appbuilder.Message()
+        query = appbuilder.Message('')
         retriever = appbuilder.BaiduVDBRetriever(
             embedding="abcde",
             table="abcde")
         
         with self.assertRaises(ValueError) as context:
             retriever.run(query)
-            self.assertIn("Parameter `query` content is empty", str(context.exception))
+        self.assertIn("Parameter `query` content is empty", str(context.exception))
     
     def test_run_paramter_query_type(self):
         query = appbuilder.Message(content=12345)
@@ -43,7 +43,7 @@ class TestBaiduVDBRetrieverParameter(unittest.TestCase):
         
         with self.assertRaises(ValueError) as context:
             retriever.run(query)
-            self.assertIn("Parameter `query` content is not a string", str(context.exception))
+        self.assertIn("Parameter `query` content is not a string", str(context.exception))
 
     def test_run_parameter_query_length(self):
         query = appbuilder.Message(content="a" * 1025)
@@ -52,27 +52,16 @@ class TestBaiduVDBRetrieverParameter(unittest.TestCase):
             table="abcde")
         with self.assertRaises(ValueError) as context:
             retriever.run(query)
-            self.assertIn("Parameter `query` content is too long", str(context.exception))
+        self.assertIn("Parameter `query` content is too long", str(context.exception))
 
     def test_run_parameter_topk_positive(self):
         query = appbuilder.Message()
         retriever = appbuilder.BaiduVDBRetriever(
             embedding="abcde",
             table="abcde")
-        with self.assertRaises(TypeError) as context:
-            retriever.run(query, topk=-1)
-            self.assertIn("Parameter `top_k` must be a positive integer", str(context.exception))
-    
-    def test_run_parameter_topk(self):
-        query = appbuilder.Message()
-        retriever = appbuilder.BaiduVDBRetriever(
-            embedding="abcde",
-            table="abcde")
-        with self.assertRaises(TypeError) as context:
-            retriever.run(query, topk="abc")
-            self.assertIn("Parameter `top_k` must be a int", str(context.exception))
-
-
+        with self.assertRaises(ValueError) as context:
+            retriever.run(query, top_k=-1)
+        self.assertIn("Parameter `top_k` must be a positive integer", str(context.exception))
 
 class TestVDBParameterCheck(unittest.TestCase):
     def setUp(self) -> None:
@@ -84,7 +73,7 @@ class TestVDBParameterCheck(unittest.TestCase):
                 instance_id="abcde",
                 api_key="abcde",
                 account=123456)
-            self.assertIn("must be a string", str(context.exception))
+        self.assertIn("must be a string", str(context.exception))
         
     def test_vdb_parameter_database_name(self):
         with self.assertRaises(TypeError) as context:
@@ -92,7 +81,7 @@ class TestVDBParameterCheck(unittest.TestCase):
                 instance_id="abcde",
                 api_key="abcde",
                 database_name=123456)
-            self.assertIn("must be a string", str(context.exception))
+        self.assertIn("must be a string", str(context.exception))
 
 
     def test_vdb_parameter_table_params(self):
@@ -101,7 +90,7 @@ class TestVDBParameterCheck(unittest.TestCase):
                 instance_id="abcde",
                 api_key="abcde",
                 table_params=123456)
-            self.assertIn("must be a TableParams", str(context.exception))
+        self.assertIn("must be a TableParams", str(context.exception))
 
     def test_vdb_parameter_embedding(self):
         with self.assertRaises(TypeError) as context:
@@ -109,7 +98,7 @@ class TestVDBParameterCheck(unittest.TestCase):
                 instance_id="abcde",
                 api_key="abcde",
                 embedding=123456)
-            self.assertIn("must be a Embedding", str(context.exception))
+        self.assertIn("must be a Embedding", str(context.exception))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,26 @@
+{
+    "type": "function",
+    "function": {
+        "name": "get_cur_whether",
+        "description": "这是一个获得指定地点天气的工具",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "省，市名，例如：河北省"
+                },
+                "unit": {
+                    "type": "string",
+                    "enum": [
+                        "摄氏度",
+                        "华氏度"
+                    ]
+                }
+            },
+            "required": [
+                "location"
+            ]
+        }
+    }
+}

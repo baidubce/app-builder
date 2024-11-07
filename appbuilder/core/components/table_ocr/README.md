@@ -25,7 +25,7 @@
 
 示例图片为
 
-![示例图片](./image/table_ocr_test.png)
+![示例图片](https://bj.bcebos.com/v1/appbuilder/table_ocr_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A37%3A09Z%2F-1%2Fhost%2Fab528a5a9120d328dc6d18c6064079145ff4698856f477b820147768fc2187d3)
 
 ```python
 import os

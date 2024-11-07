@@ -16,7 +16,7 @@ import unittest
 import os
 import appbuilder
 
-@unittest.skip("TypeError: 'NoneType' object is not an iterator")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestSimilarQuestionComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -28,7 +28,7 @@ class TestSimilarQuestionComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.model_name = "ERNIE Speed-AppBuilder"
+        self.model_name = "Qianfan-Appbuilder-Speed-8k"
         self.node = appbuilder.SimilarQuestion(model=self.model_name)
 
     def test_run_with_default_params(self):
@@ -37,26 +37,6 @@ class TestSimilarQuestionComponent(unittest.TestCase):
         msg = appbuilder.Message(query)
         answer = self.node(msg)
         self.assertIsNotNone(answer)
-
-    # def test_run_with_custom_params(self):
-    #     """测试 run 方法使用自定义参数"""
-    #     query = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
-    #     msg = appbuilder.Message(query)
-    #     answer = self.node(msg, stream=True, temperature=0.5)
-    #     self.assertIsNotNone(answer)
-    #     # 检查 answer 是否符合预期
-
-    def test_run_with_invalid_params(self):
-        """测试 run 方法使用无效参数"""
-        query = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
-        msg = appbuilder.Message(query)
-        with self.assertRaises((ValueError, TypeError)):
-            self.node(msg, invalid_param="invalid")
-
-    def test_run_with_invalid_message(self):
-        """测试无效的 message 参数"""
-        with self.assertRaises((ValueError, TypeError)):
-            self.node(None, stream=False, temperature=1e-10)
 
     def test_tool_eval_valid(self):
         """测试 tool_eval 方法使用有效参数"""

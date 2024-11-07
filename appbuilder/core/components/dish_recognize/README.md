@@ -18,7 +18,7 @@
 
 示例图片为：
 
-![菜品识别示例图片](./image/dish_recognize_test.jpg)
+![菜品识别示例图片](https://bj.bcebos.com/v1/appbuilder/dish_recognize_test.jpg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A58%3A25Z%2F-1%2Fhost%2F7b8fc08b2be5adfaeaa4e3a0bb0d1a1281b10da3d6b798e116cce3e37feb3438)
 
 ```python
 import os

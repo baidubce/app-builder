@@ -18,26 +18,30 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"time"
 )
 
 func NewRAG(appID string, config *SDKConfig) (*RAG, error) {
 	if len(appID) == 0 {
-		return nil, fmt.Errorf("appID is empty")
+		return nil, errors.New("appID is empty")
 	}
 	if config == nil {
-		return nil, fmt.Errorf("invalid config")
+		return nil, errors.New("invalid config")
 	}
-	return &RAG{appID: appID, sdkConfig: config, client: &http.Client{Timeout: 500 * time.Second}}, nil
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 500 * time.Second}
+	}
+	return &RAG{appID: appID, sdkConfig: config, client: client}, nil
 }
 
 type RAG struct {
 	appID     string
 	sdkConfig *SDKConfig
-	client    *http.Client
+	client    HTTPClient
 }
 
 func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator, error) {
@@ -60,7 +64,8 @@ func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator
 		req["response_mode"] = "streaming"
 	}
 	data, _ := json.Marshal(req)
-	request.Body = io.NopCloser(bytes.NewReader(data))
+	request.Body = NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
 	resp, err := t.client.Do(&request)
 	if err != nil {
 		return nil, err
@@ -72,7 +77,6 @@ func (t *RAG) Run(conversationID string, query string, stream bool) (RAGIterator
 	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
 	if stream {
 		return &RAGStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
-	} else {
-		return &RAGOnceIterator{body: resp.Body, requestID: requestID}, nil
 	}
+	return &RAGOnceIterator{body: resp.Body, requestID: requestID}, nil
 }

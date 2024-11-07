@@ -1,7 +1,21 @@
-# 百度搜索
+# 百度搜索RAG（deprecate）
 
 ## 简介
 百度搜索（BaiduSearch），通过百度搜索引擎搜索相关内容。
+现推荐使用RagWithBaiduSearchPro
+|              | 旧组件（百度搜索RAG）| 新组件（百度搜索RAG_PRO） 
+|--------------|------------------ |------------------
+| 指令         |        ☑️         |        ☑️               
+| 拒绝回答开关   |       ☑️         |        ❌                
+| 高亮开关      |       ☑️         |         ❌                
+| 友好度开关    |       ☑️          |        ❌           
+| 澄清开关    |       ☑️          |        ❌         
+| 溯源开关      |       ☑️         |         ☑️               
+| 流式请求      |       ☑️         |         ☑️               
+| temperature  |          ☑️          |        ☑️               
+| top_p        |          ☑️          |        ☑️               
+| 检索个数      |       ❌         |         ☑️               
+| 检索类型（网页、视频等） |    ❌     |        ☑️         
 
 ### 功能介绍
 百度搜索是最大的中文搜索引擎，帮助用户在海量信息中找到最需要的内容。
@@ -24,7 +38,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 创建rag_with_baidusearch对象
-rag_with_baidusearch_component = appbuilder.RAGWithBaiduSearch(model="ERNIE Speed-AppBuilder")
+rag_with_baidusearch_component = appbuilder.RAGWithBaiduSearch(model="Qianfan-Appbuilder-Speed-8k")
 
 # 运行rag_with_baidusearch基本组件
 msg = appbuilder.Message("残疾人怎么办相关证件")
@@ -97,7 +111,7 @@ os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 创建rag_with_baidusearch对象, 并初始化人设指令
 rag_with_baidusearch_component = appbuilder.RAGWithBaiduSearch(
-        model="ERNIE Speed-AppBuilder", 
+        model="Qianfan-Appbuilder-Speed-8k", 
         instruction=appbuilder.Message("你是问答助手，在回答问题前需要加上: 很高兴为您解答"))
 
 
@@ -113,16 +127,21 @@ print(result)
 
 ### 返回参数说明
 
-返回的message中extra字段包含了BaiduSearch结果，具体字段说明如下：
+返回的message中具体字段说明如下：
 
-| 字段      | 字段说明   |
-|---------|--------|
-| content | 网页内容摘要 |
-| url     | 网页链接   |
-| ref_id  | 序号     |
-| title   | 标题     |
-| icon    | 网站图标 |
-| site_name | 网站名 |
+| 字段            | 字段说明   |
+|---------------|--------|
+| name          | 名称     | 
+| mtype         | 类型     | 
+| content       | 内容     |  
+| extra         | 引用     | 
+| +search_baidu | 百度搜索结果 |
+| ++content     | 网页内容摘要 |
+| ++url         | 网页链接   |
+| ++ref_id      | 序号     |
+| ++title       | 标题     |
+| ++icon        | 网站图标   |
+| ++site_name   | 网站名    |
 
 
 ### 典型返回样例
