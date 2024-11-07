@@ -114,6 +114,8 @@ from .core.components.handwrite_ocr.component import HandwriteOCR
 from .core.components.image_understand.component import ImageUnderstand
 from .core.components.mix_card_ocr.component import MixCardOCR
 from .core.components.document_understanding.component import DocumentUnderstanding
+from .core.components.tree_mind.component import TreeMind
+
 __COMPONENTS__ = [
     "RagWithBaiduSearchPro",
     "RAGWithBaiduSearch",
@@ -164,6 +166,7 @@ __COMPONENTS__ = [
     "ImageUnderstand",
     "MixCardOCR",
     "DocumentUnderstanding",
+    "TreeMind"
 ] # NOQA
 
 from appbuilder.core.message import Message
