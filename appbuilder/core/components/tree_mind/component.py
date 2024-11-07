@@ -72,7 +72,7 @@ class TreeMind(Component):
         headers = self.http_client.auth_header(kwargs.get("traceid"))
 
         headers['Content-Type'] = 'application/json'
-        tree_mind_url = self.http_client.service_url("/v1/component/component/treemind")
+        tree_mind_url = self.http_client.service_url("/v1/component/component/query_mind_open")
 
         payload = TreeMindRequest.model_dump(request)
 
