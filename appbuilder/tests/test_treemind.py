@@ -27,9 +27,6 @@ class TestTreeMindComponent(unittest.TestCase):
         Returns:
             None.
         """
-        # 从环境变量中提取CarExpert组件的TOKEN
-        os.environ["APPBUILDER_TOKEN"] = "Bearer bce-v3/ALTAK-6AGZK6hjSpZmEclEuAWje/6d2d2ffc438f9f2ba66e23b21de69d96e7e5713a"
-        os.environ["GATEWAY_URL"] = "http://10.138.138.29"
         self.tm = TreeMind()
         self.query = "生成一份年度总结的思维导图"
         
@@ -39,7 +36,7 @@ class TestTreeMindComponent(unittest.TestCase):
         result = self.tm.tool_eval(query=self.query)
         self.assertIsNotNone(result)
         for r in result:
-            # print(r)
+            print(r)
             self.assertIsNotNone(r)
             self.assertIn(r["type"],["text", "urls"])
 
@@ -48,7 +45,7 @@ class TestTreeMindComponent(unittest.TestCase):
         """
         msg = Message(content=self.query)
         result = self.tm.run(msg)
-        # print(result)
+        print(result)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, Message)
 
