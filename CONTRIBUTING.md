@@ -40,7 +40,7 @@ To run all existing test cases together, run
 
 ```
 pip install -e .[all]
-sh appbuilder/tests/run_python_test.sh
+sh python/tests/run_python_test.sh
 ```
 
 If you only want to run specific test file, e.g.:
