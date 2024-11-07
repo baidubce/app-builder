@@ -9,6 +9,7 @@ import os
 import unittest
 import appbuilder
 
+from appbuilder.core._exception import AppBuilderServerException
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestRagBaiduSearch(unittest.TestCase):
@@ -70,6 +71,26 @@ class TestRagBaiduSearch(unittest.TestCase):
 
         self.assertTrue(flag_content and flag_ref_content)
 
+
+    def test_rag_with_baidu_search_component_RAGWithBaiduSearch(self):
+        rwbs=appbuilder.RAGWithBaiduSearch(model='ERNIE-Bot 4.0')
+
+        # test_get_search_input
+        text='text'
+        res_text=rwbs._get_search_input(text)
+        self.assertEqual(res_text, 'text')
+        text='UTF-8是一种变长字节表示的Unicode字符集编码方式，它可以使用1到4个字节来表示一个字符。'
+        res_text=rwbs._get_search_input(text)
+        self.assertEqual(res_text, 'UTF-8是一种变长字节表示的Unicode字符集编码方式，它可')
+
+        # test run
+        message=appbuilder.Message()
+        message.content="""
+        appbuilderappbuilderappbuilderappbuilderappbuilderappbuilderappbuilderappbuilder
+        appbuilderappbuilderappbuilderappbuilderappbuilderappbuilderappbuilderappbuilder
+        """
+        with self.assertRaises(AppBuilderServerException):
+            rwbs.run(message=message)
 
 if __name__ == '__main__':
     unittest.main()
