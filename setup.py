@@ -25,8 +25,9 @@ from setuptools import setup, find_packages
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-packages = find_packages()
+packages = [p.replace("python", "appbuilder") for p in find_packages()]
 package_data = {}
+
 for package in packages:
     if package.startswith('appbuilder.utils'):
         package_data[package] = ["*.md"]
@@ -45,6 +46,7 @@ setup(
     author_email="dongdaxiang@baidu.com",
     packages=packages,
     package_data=package_data,
+    package_dir={"appbuilder": "python"}, 
     install_requires=requirements,
     python_requires=">=3.9",
     extras_require={
