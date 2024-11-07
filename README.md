@@ -111,7 +111,7 @@ template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}
 # 定义输入，调用playground组件
 input = appbuilder.Message({"role": "java工程师", "question": "请简要回答java语言的内存回收机制是什么，要求100字以内"})
 
-playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Appbuilder-Speed-8k")
+playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8k")
 
 # 以打字机的方式，流式展示大模型回答内容
 output = playground(input, stream=True, temperature=1e-10)
@@ -157,7 +157,7 @@ import os
 # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Appbuilder-Speed-8k")
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Agent-Speed-8k")
 
 input = appbuilder.Message("9.11和9.8哪个大")
 result = rag_with_baidu_search_pro.run(

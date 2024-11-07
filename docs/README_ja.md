@@ -79,7 +79,7 @@ template_str = "あなたは{role}の役割を果たします。私の質問に�
 # 入力を定義し、playgroundコンポーネントを呼び出します。
 input = appbuilder.Message({"role": "Javaエンジニア", "question": "Java言語のメモリ回収メカニズムについて簡単に説明してください。100文字以内でお願いします。"})
 
-playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Appbuilder-Speed-8k")
+playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8k")
 
 # タイプライターのように、ストリーム形式で大規模モデルの回答内容を表示します。
 output = playground(input, stream=True, temperature=1e-10)
@@ -124,7 +124,7 @@ import os
 # 環境変数にTOKENを設定します。以下のTOKENはアクセスとQPSが制限された試用TOKENです。正式な使用には個人のTOKENに置き換えてください。
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Appbuilder-Speed-8k")
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Agent-Speed-8k")
 
 input = appbuilder.Message("9.11と9.8のどちらが大きいですか？")
 result = rag_with_baidu_search_pro.run(

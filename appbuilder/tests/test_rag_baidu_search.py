@@ -11,7 +11,7 @@ class TestRagBaiduSearch(unittest.TestCase):
         return rag_with_baidu_search class
         """
         # 设置环境变量和初始化TestMRCComponent实例
-        self.model_name = "Qianfan-Appbuilder-Speed-8k"
+        self.model_name = "Qianfan-Agent-Speed-8k"
         self.rag_with_baidu_search = appbuilder.RAGWithBaiduSearch(model=self.model_name)
 
     def test_rag_with_baidu_search(self):
