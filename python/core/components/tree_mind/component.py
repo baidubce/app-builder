@@ -129,7 +129,7 @@ class TreeMind(Component):
         img_link, jump_link = self._post(query, **kwargs)
 
         result = {
-            "result": "思维导图已经为您生成好了，您可以点击'img_link'对应的链接查看，如果您觉得这个思维导图还不够完美，或者您的想法需要更自由地表达，点击'edit_link'对应的链接，对思维导图变形、变色、变内容、甚至可以添加新的元素".format(img_link=img_link, jump_link=jump_link),
+            "result": "思维导图已经为您生成好了，您可以点击'img_link'对应的链接查看，如果您觉得这个思维导图还不够完美，或者您的想法需要更自由地表达，点击'edit_link'对应的链接，对思维导图变形、变色、变内容、甚至可以添加新的元素",
             "img_link": img_link,
             "edit_link": jump_link
         }
