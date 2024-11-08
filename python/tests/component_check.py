@@ -160,6 +160,7 @@ class MainfestMatchToolEvalRule(RuleBase):
             for param_name, param in signature.parameters.items():
                 if param_name == 'kwargs' or param_name == 'args' or param_name == 'self':
                     continue
+                tool_eval_input_params.append(param_name)
                 if param_name not in required_params:
                     check_pass_flag = False
                     ileagal_params.append(param_name)
