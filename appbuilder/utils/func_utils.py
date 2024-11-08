@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
+ # Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 import warnings
 from functools import wraps
 import inspect
+
 
 def deprecated(reason=None, version=None):
     """This is a decorator which can be used to mark functions
@@ -41,24 +42,196 @@ def deprecated(reason=None, version=None):
             return func(*args, **kwargs)
         return new_func
     return decorator
+    
+class Singleton(type):
+    _instances = {}
 
-def function_to_json(func) -> dict:
-    """
-    将Python函数转换为可序列化为JSON的字典格式，包含函数的名称、描述和参数签名。
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(
+                Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+    
+import re
+from enum import Enum
+from textwrap import dedent
+from typing import Tuple
 
-    参数:
-        func: 需要转换的函数。
+class DocstringsFormat(Enum):
+    """Python docstring format."""
 
-    返回:
-        表示函数签名的字典格式。
+    AUTO = "auto"
+    GOOGLE = "google"
+    # https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings
+    SPHINX = "sphinx"
+    NUMPY = "numpy"
 
-    抛出:
-        ValueError: 如果函数没有文档字符串。
-    """
-    # 检查文档字符串
+def _get_function_docs(func: callable) -> Tuple:
     if not func.__doc__:
-        raise ValueError(f"Function '{func.__name__}' is missing a docstring description.")
+        return None
 
+    return _parse_function_doc(func.__doc__)
+
+def _parse_function_doc(docstring: str) -> Tuple:
+    fist_line, rest = docstring.split("\n", 1) if "\n" in docstring else (docstring, "")
+    # we dedent the first line separately,because its common that it often starts right after """
+    fist_line = fist_line.strip()
+    if fist_line:
+        fist_line += "\n"
+    docs = fist_line + dedent(rest)
+    return docs
+
+def _find_and_parse_params_from_docstrings(docstring: str, format: DocstringsFormat) -> str:
+    """
+    Find Args section in docstring.
+    """
+
+    if format == DocstringsFormat.AUTO or format == DocstringsFormat.GOOGLE:
+        # auto here means more more free format than google
+        args_section_start_regex_pattern = r"(^|\n)(Args|Arguments|Parameters)\s*:?\s*\n"
+        args_section_end_regex_pattern = r"(^|\n)([A-Z][a-z]+)\s*:?\s*\n"
+        returns_section_start_pattern = r"(^|\n)(Returns|Ret)\s*:?\s*\n"
+        return_param_start_parser_regex = r"(^|\n)\s+(?P<type>[^\)]*)\s*:\s*(?=[^\n]+)"
+        if format == DocstringsFormat.GOOGLE:
+            param_start_parser_regex = (
+                r"(^|\n)\s+(?P<name>[\*]{0,2}[a-zA-Z_][a-zA-Z0-9_]*)\s*(\((?P<type>[^\)]*)\))?\s*:\s*(?=[^\n]+)"
+            )
+        else:
+            param_start_parser_regex = (
+                r"(^|\n)\s+(?P<name>[\*]{0,2}[a-zA-Z_][a-zA-Z0-9_]*)\s*(\((?P<type>[^\)]*)\))?\s*(-|:)\s*(?=[^\n]+)"
+            )
+    elif format == DocstringsFormat.NUMPY:
+        args_section_start_regex_pattern = r"(^|\n)(Args|Arguments|Parameters)\s*\n\s*---+\s*\n"
+        args_section_end_regex_pattern = r"(^|\n)([A-Z][a-z]+)\s*\n\s*---+\s*\n"
+        param_start_parser_regex = (
+            r"(^|\n)\s*(?P<name>[a-zA-Z_][a-zA-Z0-9_]*)(\s*:\s*(?P<type>[^\)]*)\s*)?\n\s+(?=[^\n]+)"
+        )
+    elif format == DocstringsFormat.SPHINX:
+        args_section_start_regex_pattern = None  # we will look for :param everywhere
+        args_section_end_regex_pattern = r"(\n)\s*:[a-z]"
+        param_start_parser_regex = (
+            r"(^|\n)\s*:param\s+(?P<type>[^\)]*)\s+(?P<name>[a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*(?=[^\n]+)"
+        )
+
+    params = _parse_params(
+        docstring,
+        args_section_start_regex_pattern,
+        args_section_end_regex_pattern,
+        param_start_parser_regex,
+        has_name=True,
+    )
+
+    returns_param_name = "default"
+    returns = _parse_params(
+        docstring,
+        returns_section_start_pattern,
+        args_section_end_regex_pattern,
+        return_param_start_parser_regex,
+        has_name=False,
+        param_name=returns_param_name,
+    )
+
+    if not params and format == DocstringsFormat.AUTO:
+        # try other options
+        options = [DocstringsFormat.NUMPY, DocstringsFormat.SPHINX]
+        for option in options:
+            params, returns = _find_and_parse_params_from_docstrings(docstring, option)
+            if params:
+                return params, returns[returns_param_name] if returns_param_name in returns else {}
+    else:
+        return params, returns[returns_param_name] if returns_param_name in returns else {}
+
+
+def _parse_params(
+    docstring,
+    args_section_start_regex_pattern,
+    args_section_end_regex_pattern,
+    param_start_parser_regex,
+    has_name=True,
+    param_name="default",
+):
+    optional_pattern = r",\s+optional\s*"
+    args_section = None
+    args_section_start = 0
+    args_section_end = None
+
+    if args_section_start_regex_pattern:
+        match = re.search(args_section_start_regex_pattern, docstring)
+        if match:
+            args_section_start = match.end()
+            if args_section_end_regex_pattern:
+                match = re.search(args_section_end_regex_pattern, docstring[args_section_start:])
+                if match:
+                    args_section_end = match.start() + args_section_start
+            if not args_section_end:
+                args_section_end = len(docstring)
+            args_section = docstring[args_section_start:args_section_end]
+        else:
+            args_section = None
+    else:
+        args_section = docstring
+
+    params = {}
+    if args_section:
+        last_param = None
+        last_param_end = None
+        for param_start_match in re.finditer(param_start_parser_regex, args_section):
+            if last_param_end is not None:
+                last_param["description"] = args_section[last_param_end : param_start_match.start()].strip()
+
+            param_name = param_start_match.group("name") if has_name else param_name
+            param_name = param_name.lstrip("*")
+
+            param_type = param_start_match.group("type")
+            param_required = True
+            if param_type and re.search(optional_pattern, param_type):
+                param_required = False
+                param_type = re.sub(optional_pattern, "", param_type).strip()
+            last_param = {"type": param_type or "", "description": None, "required": param_required}
+            last_param_end = param_start_match.end()
+            params[param_name] = last_param
+
+        if last_param_end is not None:
+            section_end = None
+            if args_section_start_regex_pattern is None and args_section_end_regex_pattern:
+                # this is handling SPHINX, we didnt parse the start so we cant parse the end until all the params are consumed... now we can parse the end after the last param
+                section_end_match = re.search(args_section_end_regex_pattern, docstring[last_param_end:])
+                if section_end_match:
+                    section_end = last_param_end + section_end_match.start()
+            if not section_end:
+                section_end = len(docstring)
+            last_param["description"] = args_section[last_param_end:section_end].strip()
+    return params
+
+from pydantic import BaseModel, Field, ValidationError, field_validator
+from typing import Dict, List, Literal, Any, Optional
+import inspect
+
+class PropertyModel(BaseModel):
+    type: str
+    description: Optional[str] = None
+
+
+
+class ParametersModel(BaseModel):
+    type: Literal["object"]
+    properties: Dict[str, PropertyModel]
+    required: List[str]
+
+
+
+class FunctionModel(BaseModel):
+    type: Literal["function"]
+    function: Dict[str, Any]
+
+def function_to_json(func) -> FunctionModel:
+    """
+    将Python函数转换为Pydantic的BaseModel实例，描述函数的签名，包括名称、描述和参数。
+    通过解析注释来提取类型和描述信息。
+    
+    Args:
+        func: 要转换的函数。
+    """
     type_map = {
         str: "string",
         int: "integer",
@@ -69,84 +242,80 @@ def function_to_json(func) -> dict:
         type(None): "null",
     }
 
-    signature = inspect.signature(func)
+    # 获取函数签名
+    try:
+        signature = inspect.signature(func)
+    except ValueError as e:
+        raise ValueError(f"无法获取函数 {func.__name__} 的签名: {str(e)}")
 
-    parameters = {}
+    # 解析注释中的参数和返回值信息
+    doc = _get_function_docs(func)
+    doc_params, _ = _find_and_parse_params_from_docstrings(docstring=doc, format=DocstringsFormat.GOOGLE)
+
+    # 解析参数信息
+    properties = {}
+    required = []
     for param in signature.parameters.values():
-        param_type = type_map.get(param.annotation, "string")
-        parameters[param.name] = {"type": param_type}
+        # 提取参数类型，默认使用 "string" 作为基础类型
+        param_type = type_map.get(param.annotation)
+        
+        # 先从 doc_params 获取类型，如果没有定义则使用 param_type
+        doc_param_info = doc_params.get(param.name, {})
+        doc_type = doc_param_info.get("type", None)
+        print("param_type", param_type)
+        print("doc_type", doc_type)
+        
+        # 设置参数信息，优先使用 docstring 类型，其次使用函数签名中的类型
+        param_info = {
+            "type": param_type if param_type is not None else doc_type,   # 强制使用 param_type 作为默认值
+            "description": doc_param_info.get("description", None),    # 来自 docstring 的描述
+        }
+        print("type",param_info["type"])
+        # 验证类型字段是否有有效值
+        if not param_info["type"]:
+            raise ValueError(f"参数 '{param.name}' 缺少类型信息，请在函数签名或注释中指定类型。")
+        
+        # 添加到属性字典中
+        properties[param.name] = PropertyModel(**param_info)
 
-    required = [
-        param.name
-        for param in signature.parameters.values()
-        if param.default == inspect._empty
-    ]
+        # 将无默认值的参数作为必传参数
+        if param.default == inspect._empty:
+            required.append(param.name)
 
-    return {
-        "type": "function",
-        "function": {
+    # 生成参数模型
+    parameters_model = ParametersModel(
+        type="object",
+        properties=properties,
+        required=required
+    )
+
+    # 生成 FunctionModel 实例
+    function_model = FunctionModel(
+        type="function",
+        function={
             "name": func.__name__,
-            "description": func.__doc__,
-            "parameters": {
-                "type": "object",
-                "properties": parameters,
-                "required": required,
-            },
-        },
-    }
+            "description": func.__doc__ or "",
+            "parameters": parameters_model.dict(),
+        }
+    )
 
-def convert_and_call(func, str_args: dict):
+    return function_model
+# 使用示例函数
+def get_current_weather(location: str, unit: str) -> str:
     """
-    根据函数的签名，将字符串类型的参数转换为目标类型，并调用该函数。
+    查询指定中国城市的当前天气。
 
-    参数:
-        func (Callable): 目标函数。
-        str_args (dict): 字符串形式的参数字典。
+    Args:
+        location (str): 城市名称，例如："北京"
+        unit (int): 温度单位，可选 "celsius" 或 "fahrenheit"
 
-    返回:
-        Any: 函数调用的返回值。
-
-    抛出:
-        ValueError: 如果参数不能转换为目标类型。
+    Returns:
+        Dict[str, str]: Returns a dict.
     """
-    # 获取函数的签名
-    signature = inspect.signature(func)
-    
-    # 将字符串参数转换为对应类型
-    converted_args = {}
-    for name, param in signature.parameters.items():
-        if name in str_args:
-            # 获取目标类型
-            param_type = param.annotation
-            
-            # 尝试转换参数
-            try:
-                if param_type is int:
-                    converted_args[name] = int(str_args[name])
-                elif param_type is float:
-                    converted_args[name] = float(str_args[name])
-                elif param_type is bool:
-                    converted_args[name] = str_args[name].lower() in ['true', '1', 't', 'yes']
-                elif param_type is list:
-                    converted_args[name] = eval(str_args[name])  # 将字符串解析为列表
-                elif param_type is dict:
-                    converted_args[name] = eval(str_args[name])  # 将字符串解析为字典
-                else:
-                    converted_args[name] = str_args[name]  # 保持字符串形式
-            except (ValueError, SyntaxError, TypeError) as e:
-                raise ValueError(f"无法将参数 '{name}' 转换为类型 {param_type}: {e}")
-        else:
-            # 如果参数在str_args中不存在，使用默认值
-            converted_args[name] = param.default
-    
-    # 调用函数并返回结果
-    return func(**converted_args)
-    
-class Singleton(type):
-    _instances = {}
+    return "北京今天25度"
 
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(
-                Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
+# 获取结果并转换为字典
+model = function_to_json(get_current_weather)
+result = model.dict()
+
+print(result)
