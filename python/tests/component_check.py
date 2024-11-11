@@ -14,13 +14,14 @@
 import os
 import json
 import inspect
-from jsonschema import validate, ValidationError
+import jsonschema
+from jsonschema import validate, ValidationError, SchemaError
 from pydantic import BaseModel
 from typing import Generator
 from appbuilder.utils.func_utils import Singleton
 from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
 from component_tool_eval_cases import component_tool_eval_cases
-from component_output_schemas import components_tool_eval_output_type_maps
+from component_output_schemas import type_to_json_schemas, components_tool_eval_output_type_maps
 
 
 class CheckInfo(BaseModel):
@@ -177,6 +178,7 @@ class MainfestMatchToolEvalRule(RuleBase):
             for param_name, param in signature.parameters.items():
                 if param_name == 'kwargs' or param_name == 'args' or param_name == 'self':
                     continue
+                tool_eval_input_params.append(param_name)
                 if param_name not in required_params:
                     check_pass_flag = False
                     ileagal_params.append(param_name)
@@ -263,44 +265,58 @@ class ToolEvalOutputJsonRule(RuleBase):
     def __init__(self):
         super().__init__()
         self.rule_name = 'ToolEvalOutputJsonRule'
-        self.output_types = ["text", "image"]
+        self.output_types = list(type_to_json_schemas.keys())
+        self.output_chemas = list(type_to_json_schemas.values())
 
-    def _check(self, outputs, output_schema, invalid_details):
-        if isinstance(outputs, Generator):
-            out = next(outputs)
-            mod = "流式"
-        else:
-            out = outputs
-            mod = "非流式"
-        try:
-            validate(instance=out, schema=output_schema)
-        except ValidationError as e:
-            invalid_details.append("{}ToolEval返回值不符合JSON Schema要求: {}\n".format(mod, str(e)))
+    def _check(self, mode, outputs, output_schemas):
+        invalid_details = []
+        if "content" not in outputs:
+            invalid_details.append("返回内容缺少content")
+            return invalid_details
+        contents = outputs["content"]
+        for content in contents:
+            if "type" not in content:
+                invalid_details.append("返回content缺少type")
+                return invalid_details
+            out_type = content["type"]
+            if out_type not in self.output_types:
+                invalid_details.append("返回content.type={} 不是合法的输出类型".format(out_type))
+                return invalid_details
+            out_schema = type_to_json_schemas[out_type]
+            if out_schema not in output_schemas:
+                invalid_details.append("{} 不是该组件期望的输出类型".format(out_schema['$schema']))
+                return invalid_details
+            try:
+                validate(instance=outputs, schema=out_schema)
+            except SchemaError as e:
+                invalid_details.append("{}ToolEval返回值不符合JSON Schema: {}要求: {}\n".format(mode, out_schema["$schema"]))
+            return invalid_details
 
     def check(self, component_cls) -> CheckInfo:
         invalid_details = []
         component_cls_name = component_cls.__name__
-        assert component_cls_name in components_tool_eval_output_type_maps, "{} 没有注册到 components_output_maps 中".format(component_cls_name)
-        output_json_schema = components_tool_eval_output_type_maps[component_cls_name]
-        non_stream_output_json_schema = output_json_schema[0]
-        stream_output_json_schema = output_json_schema[1]
-        input_dict = component_tool_eval_cases[component_cls_name]
-        component_obj = component_cls()
-        stream_outputs = component_obj.tool_eval(**input_dict)
-        non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-        self._check(stream_outputs, stream_output_json_schema, invalid_details) #校验流式输出
-        self._check(non_stream_outputs, non_stream_output_json_schema, invalid_details)  #校验非流式输出
-        if len(invalid_details) > 0:
-            return CheckInfo(
-                check_rule_name=self.rule_name,
-                check_result=True,
-                check_detail="")
+        if component_cls_name not in components_tool_eval_output_type_maps:
+            invalid_details.append("{} 没有注册到 components_output_maps 中".format(component_cls_name))
         else:
+            output_json_schemas = components_tool_eval_output_type_maps[component_cls_name]
+            input_dict = component_tool_eval_cases[component_cls_name]
+            component_obj = component_cls()
+            stream_outputs = component_obj.tool_eval(**input_dict)
+            for stream_output in stream_outputs:
+                invalid_details.extend(self._check("流式", stream_output, output_json_schemas)) #校验流式输出
+            # non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
+            # invalid_details.extend(self._check("非流式", non_stream_outputs, output_json_schemas))  #校验非流式输出
+        if len(invalid_details) > 0:
             return CheckInfo(
                 check_rule_name=self.rule_name,
                 check_result=False,
                 check_detail=",".join(invalid_details))
-            
+        else:
+            return CheckInfo(
+                check_rule_name=self.rule_name,
+                check_result=True,
+                check_detail="")
+                
 
 register_component_check_rule("ManifestValidRule", ManifestValidRule)
 register_component_check_rule("MainfestMatchToolEvalRule", MainfestMatchToolEvalRule)
