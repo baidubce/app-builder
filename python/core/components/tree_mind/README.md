@@ -34,7 +34,9 @@ out = treemind.run(msg)
 print(out.content)
 
 >>>
-{'result': '思维导图已经为您生成好了，您可以点击'img_link'对应的链接查看，如果您觉得这个思维导图还不够完美，或者您的想法需要更自由地表达，点击'edit_link'对应的链接，对思维导图变形、变色、变内容、甚至可以添加新的元素, 'img_link': 'https://static.shutu.cn/shutu/static/open6e/2024/05/24/dbd67eddec13f3a6a75857b9c6e06d85.jpeg', 'edit_link': 'https://gapi.shutu.cn/ai/edit-mind-url?works_guid=open5ab4af46187ff7c138fcd95de09efe92_bdappbuilder'}
+{'result': '思维导图已经为您生成好了，您可以点击'img_link'对应的链接查看，如果您觉得这个思维导图还不够完美，或者您的想法需要更自由地表达，点击'edit_link'对应的链接，对思维导图变形、变色、变内容、甚至可以添加新的元素,    
+'img_link': 'https://static.shutu.cn/shutu/static/open6e/2024/05/24/dbd67eddec13f3a6a75857b9c6e06d85.jpeg',    
+'edit_link': 'https://gapi.shutu.cn/ai/edit-mind-url?works_guid=open5ab4af46187ff7c138fcd95de09efe92_bdappbuilder'}
 ```
 
 生成的思维导图:<br/>![图片url](https://bj.bcebos.com/appbuilder-sdk-components/TreeMind-年终总结思维导图.jpeg)
@@ -59,6 +61,6 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 ### 响应参数
 
-| 参数名称        |参数类型 | 描述   | 示例 ｜
+| 参数名称        |参数类型 | 描述   | 示例值 |
 |-------------|--------|------|------|
 | resp | obj:`Message` | 组件返回结果 | Message(name=msg, content={'result': '生成的思维导图：xxx。思维导图已经为您生成好了，如果您觉得这个思维导图还不够完美，或者您的想法需要更自由地表达，点击编辑按钮，对思维导图变形、变色、变内容、甚至可以添加新的元素，您可以通过这个链接编辑：xxx。', 'img_link': 'xxx', 'edit_link': 'xxx'}, mtype=dict)  |
