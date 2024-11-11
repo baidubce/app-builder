@@ -245,7 +245,6 @@ class TestAgentRuntime(unittest.TestCase):
             assert str(e) == "函数 func 缺少文档字符串", "未抛出预期的 ValueError 或信息不匹配"
 
     def test_priority(self):
-        from typing import Literal
         def get_current_weather(location: str, unit: int) -> str:
             """获取指定中国城市的当前天气信息。
 
@@ -262,7 +261,6 @@ class TestAgentRuntime(unittest.TestCase):
         function_model = appbuilder.function_to_model(get_current_weather)
         parameters = function_model.function["parameters"]
         properties = parameters["properties"]
-        # name 参数
         assert "unit" in properties, "'unit' parameter missing"
         # 描述和函数签名不一致的时候，以函数签名为准
         assert properties["unit"]["type"] == 'integer', "'unit' type does not match 'integer'"
@@ -283,10 +281,10 @@ class TestAgentRuntime(unittest.TestCase):
         function_model = appbuilder.function_to_model(get_current_weather)
         parameters = function_model.function["parameters"]
         properties = parameters["properties"]
-        # name 参数
         assert "unit" in properties, "'unit' parameter missing"
         # 描述和函数签名不一致的时候，以函数签名为准
         assert properties["unit"]["type"] == 'string', "'unit' type does not match 'string'"
+
   
 if __name__ == '__main__':
     unittest.main()
