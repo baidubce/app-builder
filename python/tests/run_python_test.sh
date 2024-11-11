@@ -83,9 +83,10 @@ echo "--------------------------"
 # 首先获取appbuilder-sdk的python lib的安装目录
 python_lib=$(python3 -m pip show appbuilder-sdk | grep Location | awk '{print $2}')
 # 再获取git clone的目录, 当前目录为 app-builder/python/tests, 取 app-builder/目录
-git_dir=$(pwd | sed 's/appbuilder\/tests//')
+git_dir=$(pwd | sed 's/python\/tests//')
 # 批量替换coverage.xml文件中的python_lib为git_dir，并将源文件备份一个orignal.xml后缀
 python3 -u sed_str.py coverage.xml $python_lib $git_dir
+sed -i 's/appbuilder/python/g' coverage.xml
 # 最后进行增量代码覆盖率测试
 echo "增量代码覆盖率为："
 diff-cover coverage.xml --compare-branch=upstream/master   --html-report coverage_diff.html --fail-under=90
