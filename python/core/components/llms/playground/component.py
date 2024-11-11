@@ -67,8 +67,8 @@ class Playground(CompletionBaseComponent):
             PlaygroundArgs, model=model, secret_key=secret_key, gateway=gateway, lazy_certification=lazy_certification)
 
         if prompt_template is None:
-            prompt_template = "{query}"
-        self.prompt_template = prompt_template
+            prompt_template_01 = "{query}"
+        self.prompt_template = prompt_template_01
 
         self.variable_names = self.__parse__(prompt_template)
 
