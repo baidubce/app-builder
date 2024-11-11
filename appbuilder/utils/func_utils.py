@@ -12,9 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import warnings
-from functools import wraps
+import re
 import inspect
+import warnings
+from enum import Enum
+from functools import wraps
+from textwrap import dedent
+from pydantic import BaseModel, ValidationError
+from typing import Dict, List, Literal, Any, Optional, Tuple
+
 
 
 def deprecated(reason=None, version=None):
@@ -52,11 +58,6 @@ class Singleton(type):
                 Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
     
-import re
-from enum import Enum
-from textwrap import dedent
-from typing import Tuple
-
 class DocstringsFormat(Enum):
     """Python docstring format."""
 
@@ -203,22 +204,14 @@ def _parse_params(
             last_param["description"] = args_section[last_param_end:section_end].strip()
     return params
 
-from pydantic import BaseModel, Field, ValidationError, field_validator
-from typing import Dict, List, Literal, Any, Optional
-import inspect
-
 class PropertyModel(BaseModel):
     type: str
     description: Optional[str] = None
-
-
 
 class ParametersModel(BaseModel):
     type: Literal["object"]
     properties: Dict[str, PropertyModel]
     required: List[str]
-
-
 
 class FunctionModel(BaseModel):
     type: Literal["function"]
@@ -262,15 +255,12 @@ def function_to_json(func) -> FunctionModel:
         # 先从 doc_params 获取类型，如果没有定义则使用 param_type
         doc_param_info = doc_params.get(param.name, {})
         doc_type = doc_param_info.get("type", None)
-        print("param_type", param_type)
-        print("doc_type", doc_type)
-        
+
         # 设置参数信息，优先使用 docstring 类型，其次使用函数签名中的类型
         param_info = {
-            "type": param_type if param_type is not None else doc_type,   # 强制使用 param_type 作为默认值
-            "description": doc_param_info.get("description", None),    # 来自 docstring 的描述
+            "type": param_type if param_type is not None else doc_type,   # 优先使用函数签名中类型 param_type
+            "description": doc_param_info.get("description", None),       # 从docstring中提取参数描述
         }
-        print("type",param_info["type"])
         # 验证类型字段是否有有效值
         if not param_info["type"]:
             raise ValueError(f"参数 '{param.name}' 缺少类型信息，请在函数签名或注释中指定类型。")
@@ -300,22 +290,24 @@ def function_to_json(func) -> FunctionModel:
     )
 
     return function_model
-# 使用示例函数
-def get_current_weather(location: str, unit: str) -> str:
-    """
-    查询指定中国城市的当前天气。
 
-    Args:
-        location (str): 城市名称，例如："北京"
-        unit (int): 温度单位，可选 "celsius" 或 "fahrenheit"
+if __name__ == "__main__":
+    # 使用示例函数
+    def get_current_weather(location: str, unit: str) -> str:
+        """
+        查询指定中国城市的当前天气。
 
-    Returns:
-        Dict[str, str]: Returns a dict.
-    """
-    return "北京今天25度"
+        Args:
+            location (str): 城市名称，例如："北京"
+            unit (int): 温度单位，可选 "celsius" 或 "fahrenheit"
 
-# 获取结果并转换为字典
-model = function_to_json(get_current_weather)
-result = model.dict()
+        Returns:
+            Dict[str, str]: Returns a dict.
+        """
+        return "北京今天25度"
 
-print(result)
+    # 获取结果并转换为字典
+    model = function_to_json(get_current_weather)
+    result = model.dict()
+
+    print(result)
