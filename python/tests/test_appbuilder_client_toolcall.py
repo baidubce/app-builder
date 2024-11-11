@@ -98,7 +98,7 @@ class TestAgentRuntime(unittest.TestCase):
         msg = client.run(
         conversation_id=conversation_id,
         query="今天北京的天气怎么样？",
-        tools = [appbuilder.function_to_json(f) for f in functions]
+        tools = [appbuilder.function_to_model(f).dict() for f in functions]
         )
         print(msg.model_dump_json(indent=4))
         # 获取最后的事件和工具调用信息
