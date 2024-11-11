@@ -217,7 +217,7 @@ class FunctionModel(BaseModel):
     type: Literal["function"]
     function: Dict[str, Any]
 
-def function_to_json(func) -> FunctionModel:
+def function_to_model(func) -> FunctionModel:
     """
     将Python函数转换为Pydantic的BaseModel实例，描述函数的签名，包括名称、描述和参数。
     通过解析注释来提取类型和描述信息。
@@ -236,10 +236,10 @@ def function_to_json(func) -> FunctionModel:
     }
 
     # 获取函数签名
-    try:
-        signature = inspect.signature(func)
-    except ValueError as e:
-        raise ValueError(f"无法获取函数 {func.__name__} 的签名: {str(e)}")
+    signature = inspect.signature(func)
+
+    if func.__doc__ is None:
+        raise ValueError(f"函数 {func.__name__} 缺少文档字符串")
 
     # 解析注释中的参数和返回值信息
     doc = _get_function_docs(func)
@@ -255,7 +255,7 @@ def function_to_json(func) -> FunctionModel:
         # 先从 doc_params 获取类型，如果没有定义则使用 param_type
         doc_param_info = doc_params.get(param.name, {})
         doc_type = doc_param_info.get("type", None)
-
+        
         # 设置参数信息，优先使用 docstring 类型，其次使用函数签名中的类型
         param_info = {
             "type": param_type if param_type is not None else doc_type,   # 优先使用函数签名中类型 param_type
@@ -285,29 +285,9 @@ def function_to_json(func) -> FunctionModel:
         function={
             "name": func.__name__,
             "description": func.__doc__ or "",
-            "parameters": parameters_model.dict(),
+            "parameters": parameters_model.model_dump(),
         }
     )
 
     return function_model
 
-if __name__ == "__main__":
-    # 使用示例函数
-    def get_current_weather(location: str, unit: str) -> str:
-        """
-        查询指定中国城市的当前天气。
-
-        Args:
-            location (str): 城市名称，例如："北京"
-            unit (int): 温度单位，可选 "celsius" 或 "fahrenheit"
-
-        Returns:
-            Dict[str, str]: Returns a dict.
-        """
-        return "北京今天25度"
-
-    # 获取结果并转换为字典
-    model = function_to_json(get_current_weather)
-    result = model.dict()
-
-    print(result)

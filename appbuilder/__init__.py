@@ -170,7 +170,7 @@ from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
 
 from appbuilder.utils.logger_util import logger
-from appbuilder.utils.func_utils import function_to_json,convert_and_call
+from appbuilder.utils.func_utils import function_to_model
 
 from appbuilder.core.utils import get_model_list
 
