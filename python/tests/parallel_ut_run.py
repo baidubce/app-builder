@@ -42,7 +42,7 @@ parent_path = os.path.dirname(current_path)
 """
 
 # Coverage 运行命令
-COVERAGE_CMD = ["coverage", "run", "--pylib", "--source=appbuilder.core,appbuilder.utils", "--parallel-mode"]
+COVERAGE_CMD = ["coverage", "run", "--pylib", "--source=python.core,python.utils", "--parallel-mode"]
 
 # 需要跳过的单测用例
 SKIP_UNITTEST = []
