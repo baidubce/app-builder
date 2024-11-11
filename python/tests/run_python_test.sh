@@ -91,9 +91,9 @@ sed -i 's/appbuilder/python/g' coverage.xml
 echo "增量代码覆盖率为："
 diff-cover coverage.xml --compare-branch=upstream/master   --html-report coverage_diff.html --fail-under=90
 cover_result=$?
-# echo "coverage_diff.html:"
-# cat coverage_diff.html
-# echo "-----------------------------------------------"
+echo "coverage_diff.html:"
+cat coverage_diff.html
+echo "-----------------------------------------------"
 echo "coverage.xml:"
 cat coverage.xml
 echo "-----------------------------------------------"
