@@ -571,4 +571,4 @@ class TestToolDefinitionDecorator(unittest.TestCase):
         assert view.parameters[0].example is None
 
 if __name__ == "__main__":
-    pytest.main()
+    unittest.main()
