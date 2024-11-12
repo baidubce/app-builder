@@ -13,7 +13,57 @@ nav:
   - 基础:
     - 模型:
       - 获取模型列表: BasisModule/Model/get_model_list.md
-    # - 组件:
+    - 组件:
+      - 语义匹配（Matching）: BasisModule/Components/matching/README.md
+      - 表格文字识别 (TableOCR): BasisModule/Components/table_ocr/README.md
+      - 文件生成PPT（PPTGenerationFromFile）: BasisModule/Components/ppt_generation_from_file/README.md
+      - GBI 选表: BasisModule/Components/gbi/select_table/README.md
+      - GBI 问表: BasisModule/Components/gbi/nl2sql/README.md
+      - Excel转图表（Excel2Figure）: BasisModule/Components/excel2figure/README.md
+      - 向量计算（Embedding）: BasisModule/Components/embeddings/README.md
+      - 论文生成PPT（PPTGenerationFromPaper）: BasisModule/Components/ppt_generation_from_paper/README.md
+      - 地标识别（LandmarkRecognition）: BasisModule/Components/landmark_recognize/README.md
+      - 手写文字识别 （HandwriteOCR）: BasisModule/Components/handwrite_ocr/README.md
+      - 通用文字识别-高精度版（GeneralOCR）: BasisModule/Components/general_ocr/README.md
+      - 文本翻译-通用版（Translation）: BasisModule/Components/translate/README.md
+      - 百度搜索RAG（deprecate）: BasisModule/Components/rag_with_baidu_search/README.md
+      - 文档切分（DocSplitter）: BasisModule/Components/doc_splitter/README.md
+      - 表格抽取组件（ExtractTableFromDoc）: BasisModule/Components/extract_table/README.md
+      - 向量检索: BasisModule/Components/retriever/README.md
+      - 文本精排（Reranker）: BasisModule/Components/retriever/reranker/README.md
+      - 向量检索-VectorDB（BaiduVectorDBRetriever）: BasisModule/Components/retriever/baidu_vdb/README.md
+      - 向量检索-BES（BaiduElasticSearchRetriever）: BasisModule/Components/retriever/bes/README.md
+      - 通用物体和场景识别-高级版（ObjectRecognition）: BasisModule/Components/object_recognize/README.md
+      - 文档解析（DocParser）: BasisModule/Components/doc_parser/README.md
+      - 文档格式转换 (DocFormatConverter): BasisModule/Components/doc_format_converter/README.md
+      - 身份证混贴识别（MixCardOCR）: BasisModule/Components/mix_card_ocr/README.md
+      - 短语音识别-极速版 (Automatic Speech Recognition): BasisModule/Components/asr/README.md
+      - 文生图 (Text2Image): BasisModule/Components/text_to_image/README.md
+      - 长文档内容理解（DocumentUnderstanding）: BasisModule/Components/document_understanding/README.md
+      - 短文本在线合成（TTS）: BasisModule/Components/tts/README.md
+      - 植物识别（PlantRecognition）: BasisModule/Components/plant_recognize/README.md
+      - 树图 (TreeMind): BasisModule/Components/tree_mind/README.md
+      - 菜品识别（DishRecognition）: BasisModule/Components/dish_recognize/README.md
+      - 指令生成PPT（PPTGenerationFromInstruction）: BasisModule/Components/ppt_generation_from_instruction/README.md
+      - 动物识别 (AnimalRecognition): BasisModule/Components/animal_recognize/README.md
+      - 百度搜索RAG_PRO: BasisModule/Components/rag_with_baidu_search_pro/README.md
+      - 二维码识别 (QRcodeOCR): BasisModule/Components/qrcode_ocr/README.md
+      - 复杂Query判定（IsComplexQuery）: BasisModule/Components/llms/is_complex_query/README.md
+      - 空应用（Playground）: BasisModule/Components/llms/playground/README.md
+      - 口语化Query生成（Oral Query Generation）: BasisModule/Components/llms/oral_query_generation/README.md
+      - 阅读理解问答（MRC）: BasisModule/Components/llms/mrc/README.md
+      - 多轮改写 (QueryRewrite): BasisModule/Components/llms/query_rewrite/README.md
+      - 风格写作（StyleWriting）: BasisModule/Components/llms/style_writing/README.md
+      - 复杂Query分解（QueryDecomposition）: BasisModule/Components/llms/query_decomposition/README.md
+      - 会话小结（DialogSummary）: BasisModule/Components/llms/dialog_summary/README.md
+      - 幻觉检测（Hallucination Detection）: BasisModule/Components/llms/hallucination_detection/README.md
+      - 相似问生成（SimilarQuestion）: BasisModule/Components/llms/similar_question/README.md
+      - 标签抽取（TagExtraction）: BasisModule/Components/llms/tag_extraction/README.md
+      - 问答对挖掘（QAPairMining）: BasisModule/Components/llms/qa_pair_mining/README.md
+      - 风格转写 (StyleRewrite): BasisModule/Components/llms/style_rewrite/README.md
+      - 自然语言转pandas (nl2pandas): BasisModule/Components/llms/nl2pandas/README.md
+      - 文档矫正增强 (DocCropEnhance): BasisModule/Components/doc_crop_enhance/README.md
+      - 图像内容理解 （ImageUnderstand）: BasisModule/Components/image_understand/README.md
     - 监控:
       - TRACE基础功能: BasisModule/Trace/basic.md
       - TRACE拓展功能: BasisModule/Trace/phoenix_method.md

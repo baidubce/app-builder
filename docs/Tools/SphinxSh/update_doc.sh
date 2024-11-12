@@ -23,6 +23,22 @@ python3 -u setup.py bdist_wheel
 python3 -m pip install dist/*.whl
 # 更新builde目录
 rm -rf build
+
+# 检查appbuilder目录是否已存在
+if [ -d "appbuilder" ]; then
+    echo "Error: Directory 'appbuilder' already exists."
+    exit 1
+fi
+
+# 检查python目录是否存在，如果存在则重命名为appbuilder
+if [ -d "python" ]; then
+    mv python appbuilder
+    echo "Directory 'python' has been renamed to 'appbuilder'."
+else
+    echo "Directory 'python' does not exist."
+    find . -name "*.py" -exec sed -i '' 's/# @HTTPClient\.check_param/@HTTPClient.check_param/g' {} \; || { echo "恢复装饰器失败"; exit 1; }
+    exit 1
+fi
 cd docs/Tools/SphinxSh
 echo "=========================安装依赖========================="
 
@@ -91,10 +107,9 @@ echo "当前路径: $(pwd)"
 export PATH=/path/to/your/python:$PATH
 # 执行 make markdown
 make markdown || { echo "make markdown 命令失败"; exit 1; }
-# 执行 make html
-make html || { echo "make html 命令失败"; exit 1; }
 # 迁移目录文档
 cp PythonAPI.md build/markdown/
+cp -r build/markdown/ ../../API-Reference/Python
 echo "=============在doc目录下执行命令 make markdown 完成=============="
 
 
@@ -117,7 +132,30 @@ find . -maxdepth 1 -type f -name '*.rst' ! -name 'index.rst' -exec rm {} \;|| { 
 cd ..
 echo "删除  doc/source 下除index.rst的所有.rst文件完成"
 rm -rf /build/doctrees/*
+cd ../../..
+if [ -d "appbuilder" ]; then
+    mv appbuilder python
+    echo "Directory 'appbuilder' has been renamed to 'python'."
+else
+    echo "Directory 'appbuilder' does not exist."
+    exit 1
+fi
+cd docs/Tools/SphinxSh
 echo "======================清理多余文件完成======================"
+
+# 10、拷贝组件README.md文件到docs/BasisModule/Components目录
+echo "====拷贝组件README.md文件到docs/BasisModule/Components目录===="
+echo "当前路径:"
+pwd
+cd ../../..
+cp -r python/core/components/* docs/BasisModule/Components
+cd docs/BasisModule/Components
+find . -type f -name "*.py" -exec rm {} +
+cd ../../Tools/SphinxSh
+# 运行mkdocs更改文件
+python3 get_components_md.py
+
+echo "====拷贝组件README.md文件到docs/BasisModule/Components目录完成===="
 
 
 echo "========================更新文档完成========================"

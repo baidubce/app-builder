@@ -8,14 +8,14 @@
 
 基类：`object`
 
-#### create(name: str, description: str, model: str | None = 'ERNIE-4.0-8K', response_format: str | None = 'text', instructions: str | None = '你是百度制作的AI助手', thought_instructions: str | None = '', chat_instructions: str | None = '', tools: list[AssistantTool] | None = [], file_ids: list[str] | None = [], metadata: dict | None = {}) → AssistantCreateResponse
+#### create(name: str, description: str, model: str | None = 'ERNIE-4.0T-8K', response_format: str | None = 'text', instructions: str | None = '你是百度制作的AI助手', thought_instructions: str | None = '', chat_instructions: str | None = '', tools: list[AssistantTool] | None = [], file_ids: list[str] | None = [], metadata: dict | None = {}) → AssistantCreateResponse
 
 创建助手实例
 
 * **参数:**
   * **name** (*str*) -- 助手名称
   * **description** (*str*) -- 助手描述
-  * **model** (*Optional* *[**str* *]* *,* *optional*) -- 模型名称. Defaults to "ERNIE-4.0-8K".
+  * **model** (*Optional* *[**str* *]* *,* *optional*) -- 模型名称. Defaults to "ERNIE-4.0T-8K".
   * **response_format** (*Optional* *[**str* *]* *,* *optional*) -- 响应格式. Defaults to 'text'.
   * **instructions** (*Optional* *[**str* *]* *,* *optional*) -- 指令. Defaults to "".
   * **thought_instructions** (*Optional* *[**str* *]* *,* *optional*) -- 思考指令. Defaults to "".

@@ -116,6 +116,20 @@ print(message.content)
 * **返回类型:**
   response (str)
 
+### appbuilder.core.console.appbuilder_client.appbuilder_client.describe_apps(marker: str | None = None, maxKeys: int = 10, secret_key: str | None = None, gateway: str | None = None) → list[AppOverview]
+
+该接口查询用户下状态为已发布的应用列表
+
+* **参数:**
+  * **maxKeys** (*int* *,* *optional*) -- 返回结果的最大数量，默认值为10，最大为100。
+  * **marker** (*str* *,* *optional*) -- 起始位置，即从哪个游标开始查询，默认值为空字符串。
+  * **secret_key** (*Optional* *[**str* *]* *,* *optional*) -- 认证密钥。如果未指定，则使用默认的密钥。默认值为None。
+  * **gateway** (*Optional* *[**str* *]* *,* *optional*) -- 网关地址。如果未指定，则使用默认的地址。默认值为None。
+* **返回:**
+  应用列表。
+* **返回类型:**
+  DescribeAppsResponse
+
 ### appbuilder.core.console.appbuilder_client.appbuilder_client.get_all_apps()
 
 获取所有应用列表。

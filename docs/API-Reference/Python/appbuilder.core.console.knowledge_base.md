@@ -54,7 +54,7 @@ print("文档列表: ", list_res)
 * **返回类型:**
   CreateChunkResponse
 
-#### create_documents(id: str | None = None, contentFormat: str = '', source: DocumentSource | None = None, processOption: DocumentProcessOption | None = None, client_token: str | None = None)
+#### create_documents(id: str | None = None, contentFormat: str = '', source: DocumentSource | None = None, processOption: DocumentProcessOption | None = None, client_token: str | None = None) → KnowledgeBaseCreateDocumentsResponse
 
 创建文档
 
@@ -65,9 +65,11 @@ print("文档列表: ", list_res)
   * **processOption** (*data_class.DocumentProcessOption* *,* *optional*) -- 文档处理选项。默认值为None。
   * **client_token** (*str* *,* *optional*) -- 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
 * **返回:**
-  响应数据，包含请求ID: requestId
+  创建知识库文档的响应消息，返回一个KnowledgeBaseCreateDocumentsResponse对象，包含以下属性：
+  - requestId (str): 请求ID
+  - documentIds (list[str]): 文档ID列表
 * **返回类型:**
-  dict
+  KnowledgeBaseCreateDocumentsResponse
 
 #### *classmethod* create_knowledge(knowledge_name: str) → [KnowledgeBase](#appbuilder.core.console.knowledge_base.knowledge_base.KnowledgeBase)
 
@@ -273,7 +275,7 @@ Deprecated: use create_knowledge_base instead
 * **返回类型:**
   dict
 
-#### upload_documents(file_path: str, content_format: str = 'rawText', id: str | None = None, processOption: DocumentProcessOption | None = None, client_token: str | None = None)
+#### upload_documents(file_path: str, content_format: str = 'rawText', id: str | None = None, processOption: DocumentProcessOption | None = None, client_token: str | None = None) → KnowledgeBaseUploadDocumentsResponse
 
 上传文档
 
@@ -284,9 +286,11 @@ Deprecated: use create_knowledge_base instead
   * **processOption** (*data_class.DocumentProcessOption* *,* *optional*) -- 文档处理选项。默认值为None。
   * **client_token** (*str* *,* *optional*) -- 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
 * **返回:**
-  响应数据，包含请求ID: requestId
+  创建知识库文档的响应消息，返回一个KnowledgeBaseUploadDocumentsResponse对象，包含以下属性：
+  - requestId (str): 请求ID
+  - documentId (str): 文档ID
 * **返回类型:**
-  dict
+  KnowledgeBaseUploadDocumentsResponse
 
 #### upload_file(file_path: str, client_token: str | None = None) → KnowledgeBaseUploadFileResponse
 

@@ -11,6 +11,7 @@
       * [`AppBuilderClient.run()`](appbuilder.core.console.appbuilder_client.md#appbuilder.core.console.appbuilder_client.appbuilder_client.AppBuilderClient.run)
       * [`AppBuilderClient.run_with_handler()`](appbuilder.core.console.appbuilder_client.md#appbuilder.core.console.appbuilder_client.appbuilder_client.AppBuilderClient.run_with_handler)
       * [`AppBuilderClient.upload_local_file()`](appbuilder.core.console.appbuilder_client.md#appbuilder.core.console.appbuilder_client.appbuilder_client.AppBuilderClient.upload_local_file)
+    * [`describe_apps()`](appbuilder.core.console.appbuilder_client.md#appbuilder.core.console.appbuilder_client.appbuilder_client.describe_apps)
     * [`get_all_apps()`](appbuilder.core.console.appbuilder_client.md#appbuilder.core.console.appbuilder_client.appbuilder_client.get_all_apps)
     * [`get_app_list()`](appbuilder.core.console.appbuilder_client.md#appbuilder.core.console.appbuilder_client.appbuilder_client.get_app_list)
   * [appbuilder.core.console.appbuilder_client.data_class module](appbuilder.core.console.appbuilder_client.md#module-appbuilder.core.console.appbuilder_client.event_handler)

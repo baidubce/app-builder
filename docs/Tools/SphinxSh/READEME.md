@@ -8,6 +8,11 @@
 - 执行成功后，在docs/Tools/SphinxSh/build/markdown目录下查看生成的文档是否无误
 - 迁移所有生成的文档到docs/API-Reference/Python目录下
 
+## 脚本功能
+
+- 依据注释自动生成文档，并将文档迁移到docs/API-Reference/Python目录下
+- 将组件README.md文件按照目录格式迁移到BasisModule/Components目录下，为mkdocs生成文档提供基础链接
+
 ## 代码注释规范
 
 - 注释使用google规范
