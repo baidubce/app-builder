@@ -17,8 +17,7 @@ from typing import Optional, Union
 from inspect import Parameter,Signature,Annotated
 from appbuilder.utils.tool_definition_signature import get_signature_view, _parse_annotation, _parse_internal_annotation, _parse_parameter
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestToolDefinitionSignature(unittest.TestCase):
 
     # 示例函数，包含多种类型的参数注解和返回类型
