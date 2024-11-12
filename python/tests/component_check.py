@@ -270,23 +270,23 @@ class ToolEvalOutputJsonRule(RuleBase):
     def _check(self, mode, outputs, output_schemas):
         invalid_details = []
         if "content" not in outputs:
-            invalid_details.append("ToolEval返回值不符合规范：返回内容缺少content")
+            invalid_details.append("{}ToolEval返回值不符合规范：返回内容缺少content".format(mode))
             return invalid_details
 
         contents = outputs["content"]
         for content in contents:
             if "type" not in content:
-                invalid_details.append("ToolEval返回值不符合规范：返回content缺少type")
+                invalid_details.append("{}ToolEval返回值不符合规范：返回content缺少type".format(mode))
                 continue
             
             out_type = content["type"]
             if out_type not in self.output_types:
-                invalid_details.append("ToolEval返回值不符合JSON Schema：返回content.type={} 不是合法的输出类型".format(out_type))
+                invalid_details.append("{}ToolEval返回值不符合JSON Schema：返回content.type={} 不是合法的输出类型".format(mode, out_type))
                 continue
             
             out_schema = type_to_json_schemas[out_type]
             if out_schema not in output_schemas:
-                invalid_details.append("ToolEval返回值不符合JSON Schema：{} 不是该组件期望的Json Schema输出类型".format(out_schema['$schema']))
+                invalid_details.append("{}ToolEval返回值不符合JSON Schema：{} 不是该组件期望的Json Schema输出类型".format(mode, out_schema['$schema']))
                 continue
             
             try:
@@ -310,11 +310,12 @@ class ToolEvalOutputJsonRule(RuleBase):
                 invalid_details.append("ToolEval执行失败: {}".format(e))
 
 
-            for stream_output in stream_outputs:
+            for stream_output in stream_outputs: #校验流式输出
                 iter_invalid_detail = self._check("流式", stream_output, output_json_schemas)
                 invalid_details.extend(iter_invalid_detail)
-            # non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-            # invalid_details.extend(self._check("非流式", non_stream_outputs, output_json_schemas))  #校验非流式输出
+            non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
+            invalid_details.extend(self._check("非流式", non_stream_outputs, output_json_schemas))  #校验非流式输出
+            
         if len(invalid_details) > 0:
             return CheckInfo(
                 check_rule_name=self.rule_name,

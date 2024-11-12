@@ -241,8 +241,9 @@ class Component:
             kwargs: keyword arguments
         """
         result_content = []
-        for iter_result in self.tool_eval(*args, **kwargs):
-            result_content.append(iter_result["content"])
+        stream_result = self.tool_eval(*args, **kwargs)
+        for iter_result in stream_result:
+            result_content.append(iter_result["content"][0])
         result = {"role": "tool", "content": result_content}
         return result
 
