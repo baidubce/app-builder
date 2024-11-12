@@ -33,6 +33,8 @@ class TestTreeMindComponent(unittest.TestCase):
     def test_treemind_component_tool_eval(self):
         """测试tool_eval方法的返回值是否正确
         """
+        import time
+        time.sleep(1)
         result = self.tm.tool_eval(query=self.query)
         self.assertIsNotNone(result)
         for r in result:

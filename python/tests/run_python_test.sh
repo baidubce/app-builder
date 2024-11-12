@@ -86,10 +86,12 @@ python_lib=$(python3 -m pip show appbuilder-sdk | grep Location | awk '{print $2
 git_dir=$(pwd | sed 's/python\/tests//')
 # 批量替换coverage.xml文件中的python_lib为git_dir，并将源文件备份一个orignal.xml后缀
 python3 -u sed_str.py coverage.xml $python_lib $git_dir
+sed -i 's|/appbuilder|python|g' coverage.xml
 # 最后进行增量代码覆盖率测试
 echo "增量代码覆盖率为："
 diff-cover coverage.xml --compare-branch=upstream/master   --html-report coverage_diff.html --fail-under=90
 cover_result=$?
+
 
 echo "--------------------------"
 echo "CI 流水线运行结果如下: "
