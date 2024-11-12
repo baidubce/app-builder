@@ -1,6 +1,7 @@
 from appbuilder import FunctionView, function, function_parameter, function_return
+import unittest
 
-
+#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 def test_disable_docstring():
     @function(description="anotated function", disable_docstring=True)
     @function_parameter(name="param", description="a parameter", type="str", default_value="default_val")
@@ -133,3 +134,6 @@ def test_only_function_decorator():
     assert view.returns[0].type_ == "int"
     assert view.returns[0].required is True
     assert view.returns[0].example is None
+
+if __name__ == "__main__":
+    unittest.main()

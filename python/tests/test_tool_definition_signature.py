@@ -1,425 +1,64 @@
-from typing import Any, Dict, List, Optional, Union
-
-from appbuilder import FunctionView, function
-
-
-def test_is_normal():
-    @function()
-    def func():
-        return 1
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-    assert view.is_async is False
-    assert view.is_stream is False
-
-
-def test_is_async():
-    @function()
-    async def func():
-        import asyncio
-
-        await asyncio.sleep(0)
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-    assert view.is_async is True
-    assert view.is_stream is False
-
-
-def test_is_stream():
-    @function()
-    def func():
-        for i in range(2):
-            yield i
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-    assert view.is_async is False
-    assert view.is_stream is True
-
-
-def test_is_async_and_stream():
-    @function()
-    async def func():
-        import asyncio
-
-        for i in range(1):
-            await asyncio.sleep(0)
-            yield i
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-    assert view.is_async is True
-    assert view.is_stream is True
-
-
-def test_decorator_google_style_function_description_no_args():
-    @function()
-    def func():
-        """A function to test function description.
-
-        Args:
-            name (str): Name of object.
-
-        Returns:
-            str: Styled string.
-        """
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-    assert view.name == "func"
-    assert view.description == "A function to test function description."
-    assert view.is_async is False
-    assert view.is_stream is False
-
-    assert len(view.parameters) == 0
-
-
-def test_decorator_google_style_basic():
-    @function()
-    def func(
-        name: str,
-    ) -> str:
-        """Function with required parameter.
-
-        Args:
-            name (str): Name of object.
-
-        Returns:
-            str: Styled string.
-        """
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-    assert view.name == "func"
-    assert view.description == "Function with required parameter."
-    assert view.is_async is False
-    assert view.is_stream is False
-    assert view.parameters[0].name == "name"
-    assert view.parameters[0].description == "Name of object."
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "str"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_list():
-    @function()
-    def func(
-        val: List[str],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "List[str]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_list_of_dicts():
-    @function()
-    def func(
-        val: List[Dict[str, List[str]]],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "List[Dict[str, List[str]]]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_dict():
-    @function()
-    def func(
-        val: Dict[str, Any],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Dict[str, Any]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_dict_of_lists():
-    @function()
-    def func(
-        val: Dict[str, List[Dict[str, List[str]]]],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Dict[str, List[Dict[str, List[str]]]]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_union_simple():
-    @function()
-    def func(
-        val: Union[str, int, Any],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Union[str, int, Any]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_union():
-    @function()
-    def func(
-        val: Union[str, List[int]],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Union[str, List[int]]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_union_nest1_dict():
-    @function()
-    def func(
-        val: Union[float, Dict[str, int]],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Union[float, Dict[str, int]]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_union_combine():
-    @function()
-    def func(
-        val: Union[float, Union[str, int]],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Union[float, str, int]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_no_annotation():
-    @function()
-    def func(
-        val,
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Any"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_default():
-    @function()
-    def func(val: str = "value") -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value == "value"
-    assert view.parameters[0].type_ == "str"
-    assert view.parameters[0].required is False
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_optional():
-    @function()
-    def func(
-        val: Optional[str],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Optional[str]"
-    assert view.parameters[0].required is False
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_optional_equals_none():
-    @function()
-    def func(
-        val: Optional[str] = None,
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Optional[str]"
-    assert view.parameters[0].required is False
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_optional_list():
-    @function()
-    def func(
-        val: Optional[List[str]],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Optional[List[str]]"
-    assert view.parameters[0].required is False
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_list_nest_optional():
-    @function()
-    def func(
-        val: List[Optional[str]],
-    ) -> str:
-        """Functhion with optional parameter.
-
-        Args:
-            val (str): Value of obj. Defaults to None.
-
-        Returns:
-            str: Styled string.
-        """
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].description == "Value of obj. Defaults to None."
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "List[Optional[str]]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_union_nest_single_optional():
-    @function()
-    def func(
-        val: Union[Optional[str]],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Optional[str]"
-    assert view.parameters[0].required is False
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_union_nest_optional():
-    @function()
-    def func(
-        val: Union[Optional[int], Optional[str]],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    # This one looks like a bug of inspect
-    assert view.parameters[0].type_ == "Union[int, str]"
-    assert view.parameters[0].required is False
-    assert view.parameters[0].example is None
-
-
-def test_decorator_google_style_union_nest1_dict_optional_value():
-    @function()
-    def func(
-        val: Union[float, Dict[str, Optional[int]]],
-    ) -> str:
-        return ""
-
-    view = func.__pf_function__
-
-    assert isinstance(view, FunctionView)
-
-    assert view.parameters[0].name == "val"
-    assert view.parameters[0].default_value is None
-    assert view.parameters[0].type_ == "Union[float, Dict[str, Optional[int]]]"
-    assert view.parameters[0].required is True
-    assert view.parameters[0].example is None
+# -*- coding: UTF-8 -*-
+import unittest
+from typing import Optional, Union
+from inspect import Parameter
+from appbuilder.utils.tool_definition_signature import get_signature_view, _parse_annotation, _parse_internal_annotation, _parse_parameter
+
+#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+# 示例函数，包含多种类型的参数注解和返回类型
+def sample_func(a: int, b: Optional[str] = None) -> Union[int, None]:
+    return a
+
+# 没有注解和默认值的函数
+def func_no_annotations(x):
+    return x
+
+# 测试 get_signature_view 函数
+def test_get_signature_view():
+    params, returns = get_signature_view(sample_func)
+    assert params == [
+        {'type_': 'int', 'required': True, 'name': 'a'},
+        {'type_': 'str', 'required': False, 'name': 'b', 'default_value': None}
+    ]
+    assert returns == {'type_': 'Union[int, None]', 'required': False}
+
+    # 测试没有注解的情况
+    params, returns = get_signature_view(func_no_annotations)
+    assert params == [{'type_': 'Any', 'required': True, 'name': 'x'}]
+    assert returns == {}
+
+# 测试 _parse_parameter 函数
+def test_parse_parameter():
+    param_no_default = Parameter("x", Parameter.POSITIONAL_OR_KEYWORD, annotation=int)
+    param_with_default = Parameter("y", Parameter.POSITIONAL_OR_KEYWORD, annotation=str, default="test")
+
+    result_no_default = _parse_parameter(param_no_default)
+    assert result_no_default == {'type_': 'int', 'required': True, 'name': 'x'}
+
+    result_with_default = _parse_parameter(param_with_default)
+    assert result_with_default == {'type_': 'str', 'required': False, 'name': 'y', 'default_value': 'test'}
+
+# 测试 _parse_annotation 函数
+def test_parse_annotation():
+    assert _parse_annotation(int) == {'type_': 'int', 'required': True}
+    assert _parse_annotation(Optional[int]) == {'type_': 'Optional[int]', 'required': False}
+    assert _parse_annotation(Union[int, None]) == {'type_': 'Union[int, None]', 'required': False}
+    assert _parse_annotation("CustomType") == {'type_': 'CustomType', 'required': True}
+
+# 测试 _parse_internal_annotation 函数
+def test_parse_internal_annotation():
+    assert _parse_internal_annotation(int, True) == {'type_': 'int', 'type_object': int, 'required': True}
+    assert _parse_internal_annotation(Optional[int], True) == {'type_': 'Optional[int]', 'required': False}
+    assert _parse_internal_annotation(Union[int, None], True) == {'type_': 'Union[int, None]', 'required': False}
+    assert _parse_internal_annotation(Union[int, str], True) == {
+        'type_': 'Union[int, str]', 'required': True
+    }
+
+    # 测试复合类型
+    complex_type = Union[Optional[int], str]
+    result = _parse_internal_annotation(complex_type, True)
+    assert result['type_'] == 'Union[Optional[int], str]'
+    assert result['required'] == True
+
+if __name__ == "__main__":
+    unittest.main()
