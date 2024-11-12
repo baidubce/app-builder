@@ -21,7 +21,7 @@ from typing import Generator
 from appbuilder.utils.func_utils import Singleton
 from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
 from component_tool_eval_cases import component_tool_eval_cases
-from component_output_schemas import type_to_json_schemas, components_tool_eval_output_type_maps
+from component_output_schemas import type_to_json_schemas, components_tool_eval_output_json_maps
 
 
 class CheckInfo(BaseModel):
@@ -266,25 +266,24 @@ class ToolEvalOutputJsonRule(RuleBase):
         super().__init__()
         self.rule_name = 'ToolEvalOutputJsonRule'
         self.output_types = list(type_to_json_schemas.keys())
-        self.output_chemas = list(type_to_json_schemas.values())
 
     def _check(self, mode, outputs, output_schemas):
         invalid_details = []
         if "content" not in outputs:
-            invalid_details.append("返回内容缺少content")
+            invalid_details.append("ToolEval返回值不符合JSON Schema：返回内容缺少content")
             return invalid_details
         contents = outputs["content"]
         for content in contents:
             if "type" not in content:
-                invalid_details.append("返回content缺少type")
+                invalid_details.append("ToolEval返回值不符合JSON Schema：返回content缺少type")
                 return invalid_details
             out_type = content["type"]
             if out_type not in self.output_types:
-                invalid_details.append("返回content.type={} 不是合法的输出类型".format(out_type))
+                invalid_details.append("ToolEval返回值不符合JSON Schema：返回content.type={} 不是合法的输出类型".format(out_type))
                 return invalid_details
             out_schema = type_to_json_schemas[out_type]
             if out_schema not in output_schemas:
-                invalid_details.append("{} 不是该组件期望的输出类型".format(out_schema['$schema']))
+                invalid_details.append("ToolEval返回值不符合JSON Schema：{} 不是该组件期望的Json Schema输出类型".format(out_schema['$schema']))
                 return invalid_details
             try:
                 validate(instance=outputs, schema=out_schema)
@@ -295,10 +294,10 @@ class ToolEvalOutputJsonRule(RuleBase):
     def check(self, component_cls) -> CheckInfo:
         invalid_details = []
         component_cls_name = component_cls.__name__
-        if component_cls_name not in components_tool_eval_output_type_maps:
-            invalid_details.append("{} 没有注册到 components_output_maps 中".format(component_cls_name))
+        if component_cls_name not in components_tool_eval_output_json_maps:
+            invalid_details.append("{} 没有注册到 components_tool_eval_output_json_maps 中".format(component_cls_name))
         else:
-            output_json_schemas = components_tool_eval_output_type_maps[component_cls_name]
+            output_json_schemas = components_tool_eval_output_json_maps[component_cls_name]
             input_dict = component_tool_eval_cases[component_cls_name]
             component_obj = component_cls()
             stream_outputs = component_obj.tool_eval(**input_dict)

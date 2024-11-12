@@ -11,8 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
+import copy
 base_schema = {
   "$schema": "base template",
   "type": "object",
@@ -25,32 +24,13 @@ base_schema = {
       "items": {
         "type": "object",
         "properties": {
-          # "key": {
-          #   "type": "string"
-          # },
-          # "event_id": {
-          #   "type": "string"
-          # },
-          # "sequence_id": {
-          #   "type": "integer"
-          # },
           "type": {
-            "enum": ["text", "code", "file", "url", "oral_text", "references", "image", "chart", "audio"]
+            "type": "string"
           },
           "visible_scope": {
             "enum": ["llm", "user", "all"]
           },
-          # "raw_data": {
-          #   "type": "object"
-          # },
-          # "usage": {
-          #   "type": "object"
-          # },
-          # "metrics": {
-          #   "type": "object"
-          # }
         },
-        # "required": ["event_id", "sequence_id", "type"]
         "required": ["type"]
       }
     }
@@ -58,22 +38,28 @@ base_schema = {
   "required": ["content"]
 }
 
-text_schema = base_schema.copy()
+text_schema = copy.deepcopy(base_schema)
 text_schema["$schema"] = "text_schema"
-text_schema["properties"]["content"]["items"]["properties"]["type"] = "text"
+text_schema["properties"]["content"]["items"]["properties"]["type"] = {
+    "type": "string",
+    "enum": ["text"]
+}
 text_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "type": "object",
   "properties": {
-    "info": {
-      "type": "string"
-    }
+      "info": {
+          "type": "string"
+      }
   },
   "required": ["info"]
 }
 
-code_schema = base_schema.copy()
+code_schema = copy.deepcopy(base_schema)
 code_schema["$schema"] = "code_schema"
-code_schema["properties"]["content"]["items"]["properties"]["type"] = "code"
+code_schema["properties"]["content"]["items"]["properties"]["type"] = {
+    "type": "string",
+    "enum": ["code"]
+}
 code_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "type": "object",
   "properties": {
@@ -84,9 +70,12 @@ code_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "required": ["code"]
 }
 
-file_schema = base_schema.copy()
+file_schema = copy.deepcopy(base_schema)
 file_schema["$schema"] = "file_schema"
-file_schema["properties"]["content"]["items"]["properties"]["type"] = "file"
+file_schema["properties"]["content"]["items"]["properties"]["type"] = {
+    "type": "string",
+    "enum": ["file"]
+}
 file_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "type": "object",
   "properties": {
@@ -100,9 +89,12 @@ file_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "required": ["filename", "url"]
 }
 
-url_schema = base_schema.copy()
+url_schema = copy.deepcopy(base_schema)
 url_schema["$schema"] = "url_schema"
-url_schema["properties"]["content"]["items"]["properties"]["type"] = "url"
+url_schema["properties"]["content"]["items"]["properties"]["type"] = {
+    "type": "string",
+    "enum": ["url"]
+}
 url_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "type": "object",
   "properties": {
@@ -113,9 +105,12 @@ url_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "required": ["url"]
 }
 
-oral_text_schema = base_schema.copy()
+oral_text_schema = copy.deepcopy(base_schema)
 oral_text_schema["$schema"] = "oral_text_schema"
-oral_text_schema["properties"]["content"]["items"]["properties"]["type"] = "oral_text"
+oral_text_schema["properties"]["content"]["items"]["properties"]["type"] = {
+    "type": "string",
+    "enum": ["oral_text"]
+}
 oral_text_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "type": "object",
   "properties": {
@@ -126,7 +121,7 @@ oral_text_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "required": ["info"]
 }
 
-references_schema = base_schema.copy()
+references_schema = copy.deepcopy(base_schema)
 references_schema["$schema"] = "references_schema"
 references_schema["properties"]["content"]["items"]["properties"]["type"] = "references"
 references_schema["properties"]["content"]["items"]["properties"]["text"] = {
@@ -169,9 +164,12 @@ references_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "required": ["type", "resource_type", "doc_id", "icon", "site_name", "content", "title", "mock_id", "from", "image_url", "video_url"]
 }
 
-image_schema = base_schema.copy()
+image_schema = copy.deepcopy(base_schema)
 image_schema["$schema"] = "image_schema"
-image_schema["properties"]["content"]["items"]["properties"]["type"] = "image"
+image_schema["properties"]["content"]["items"]["properties"]["type"] = {
+    "type": "string",
+    "enum": ["image"]
+}
 image_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "type": "object",
   "properties": {
@@ -185,9 +183,12 @@ image_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "required": ["filename", "url"]
 }
 
-chart_schema = base_schema.copy()
+chart_schema = copy.deepcopy(base_schema)
 chart_schema["$schema"] = "chart_schema"
-chart_schema["properties"]["content"]["items"]["properties"]["type"] = "chart"
+chart_schema["properties"]["content"]["items"]["properties"]["type"] = {
+    "type": "string",
+    "enum": ["chart"]
+}
 chart_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "type": "object",
   "properties": {
@@ -201,9 +202,12 @@ chart_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "required": ["filename", "url"]
 }
 
-audio_schema = base_schema.copy()
+audio_schema = copy.deepcopy(base_schema)
 audio_schema["$schema"] = "audio_schema"
-audio_schema["properties"]["content"]["items"]["properties"]["type"] = "audio"
+audio_schema["properties"]["content"]["items"]["properties"]["type"] = {
+    "type": "string",
+    "enum": ["audio"]
+}
 audio_schema["properties"]["content"]["items"]["properties"]["text"] = {
   "type": "object",
   "properties": {
@@ -220,8 +224,8 @@ audio_schema["properties"]["content"]["items"]["properties"]["text"] = {
 type_to_json_schemas = {
   "text": text_schema,
   'code': code_schema,
-  "files": file_schema, #files or file
-  "urls": url_schema, #urls or url
+  "files": file_schema,
+  "urls": url_schema,
   "oral_text": oral_text_schema,
   "references": references_schema,
   "image": image_schema,
@@ -229,7 +233,7 @@ type_to_json_schemas = {
   "audio": audio_schema
 }
 
-components_tool_eval_output_type_maps = {
+components_tool_eval_output_json_maps = {
     "AnimalRecognition": [text_schema],
     "TreeMind": [text_schema, url_schema]
 }
