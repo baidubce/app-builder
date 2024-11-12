@@ -120,7 +120,7 @@ os.environ["APPBUILDER_TOKEN"] = 'YOUR_APPBUILDER_TOKEN'
 class PlaygroundWithHistory(Component):
     def __init__(self):
         super().__init__()
-        self.query_rewrite = QueryRewrite(model="ERNIE Speed-AppBuilder")
+        self.query_rewrite = QueryRewrite(model="Qianfan-Agent-Speed-8k")
         self.play = Playground(
             prompt_template="{query}",
             model="eb-4"

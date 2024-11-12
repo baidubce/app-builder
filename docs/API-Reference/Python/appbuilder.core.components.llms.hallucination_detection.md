@@ -9,7 +9,7 @@
 基类：`CompletionBaseComponent`
 
 幻觉检测。输入<query, context, answer>，判断answer中是否存在幻觉。
- *注：该组件推荐使用ERNIE Speed-AppBuilder模型。*
+ *注：该组件推荐使用Qianfan-Agent-Speed-8k模型。*
 
 Examples:
 

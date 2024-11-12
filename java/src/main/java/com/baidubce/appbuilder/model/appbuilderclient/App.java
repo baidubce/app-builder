@@ -4,6 +4,9 @@ public class App {
     private String id;
     private String name;
     private String description;
+    private String appType;
+    private boolean isPublic;
+    private Integer updateTime;
 
     // getters
     public String getId() {
@@ -29,5 +32,29 @@ public class App {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAppType() {
+        return appType;
+    }
+
+    public void setAppType(String appType) {
+        this.appType = appType;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
+
+    public Integer getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Integer updateTime) {
+        this.updateTime = updateTime;
     }
 }

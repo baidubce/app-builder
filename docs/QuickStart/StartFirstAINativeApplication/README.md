@@ -42,7 +42,7 @@ ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-3.5-4K-0205, ERNIE-3.5-8K-0205, ERNIE-3.5-8K-122
 | ERNIE-Bot                  |       eb         |
 | ERNIE-Bot-turbo            |       eb-turbo   |
 | EB-turbo-AppBuilder专用版   |       ernie_speed_appbuilder           |
-| ERNIE Speed-AppBuilder   |       ernie_speed_appbuilder           |
+| Qianfan-Agent-Speed-8k   |       ernie_speed_appbuilder           |
 
 
 
@@ -56,7 +56,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8
 
 # 空模版组件
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
-playground = appbuilder.Playground(prompt_template=template_str, model="ERNIE Speed-AppBuilder")
+playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8k")
 
 # 定义输入，调用空模版组件
 input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
@@ -73,7 +73,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
 # 相似问生成组件
-similar_q = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
+similar_q = appbuilder.SimilarQuestion(model="Qianfan-Agent-Speed-8k")
 
 # 定义输入，调用相似问生成
 input = appbuilder.Message("我想吃冰淇淋，哪里的冰淇淋比较好吃？")
@@ -118,7 +118,7 @@ import appbuilder
 # 空模版组件
 playground = appbuilder.Playground(
     prompt_template="{query}",
-    model="ERNIE Speed-AppBuilder"
+    model="Qianfan-Agent-Speed-8k"
 )
 
 # 使用 AgentRuntime 来服务化playground组件

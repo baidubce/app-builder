@@ -1,11 +1,11 @@
 # 获取AppBuilder已发布的应用列表
 
 ## 简介
-该接口可获取用户在 AppBuilder已发布的应用列表，包括模型名称、模型描述、模型的ID
+该接口可获取用户在 AppBuilder已发布的应用列表，包括应用名称、应用描述、应用的ID、应用类型、应用发布状态等
 
 ## Python基本用法
 
-### 获取app_list接口 `appbuilder.get_app_list()`
+### 获取app_list接口 `appbuilder.describe_apps()`
 
 #### 鉴权配置
 使用组件之前，请首先申请并设置鉴权参数，可参考[组件使用流程](https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5)。
@@ -18,19 +18,24 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 | 参数名称       | 参数类型   | 描述      | 示例值        |
 |------------|--------|---------|------------|
-| limit | int | 返回结果的最大数量，默认值为10, 最大值为100 | 10 |
-| after | str | 分页游标，返回结果中第一个应用的游标值，接口会返回该应用及之后的应用，用于分页查询。默认值为空字符串。 | app_id |
-| before | str | 返回结果中最后一个应用的游标值，与after原理一致，用于分页查询。默认值为空字符串。 | app_id |
+| maxKeys | int | 返回结果的最大数量，默认值为10, 最大值为100 | 10 |
+| marker | str | 分页游标，返回结果中第一个应用的游标值，接口会返回该应用及之后的应用，用于分页查询。默认值为空字符串。 | app_id |
 
 #### 返回参数
 
-`get_app_list`方法返回类型为 `list[AppOverview]`,其中 `AppOverview` 结构如下：
+`describe_apps`方法返回类型为 `list[AppOverview]`,其中 `AppOverview` 结构如下：
 
 ```python
 class AppOverview(BaseModel):
     id: str = Field("", description="应用ID")
     name: str = Field("", description="应用名称")
     description: str = Field("", description="应用简介")
+    appType: Optional[str] = Field(
+        None,
+        description="应用类型:agent、chatflow。agent:自主规划Agent, chatflow:工作流Agent。"
+    )
+    isPublished: Optional[bool] = Field(None, description="是否已发布")
+    updateTime: Optional[int] = Field(None, description="更新时间。时间戳，单位秒")
 ```
 
 
@@ -43,7 +48,7 @@ import appbuilder
 # 设置环境变量和初始化
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
-app_list = appbuilder.get_app_list()
+app_list = appbuilder.describe_apps()
 print(app_list)
 ```
 
@@ -64,6 +69,12 @@ class AppOverview(BaseModel):
     id: str = Field("", description="应用ID")
     name: str = Field("", description="应用名称")
     description: str = Field("", description="应用简介")
+    appType: Optional[str] = Field(
+        None,
+        description="应用类型:agent、chatflow。agent:自主规划Agent, chatflow:工作流Agent。"
+    )
+    isPublished: Optional[bool] = Field(None, description="是否已发布")
+    updateTime: Optional[int] = Field(None, description="更新时间。时间戳，单位秒")
 ```
 
 #### 代码示例
@@ -85,36 +96,50 @@ print("创建的app总数为:{}".format(len(all_apps)))
 ## Java基本用法
 
 #### 接口参数及返回值
-与 `python appbuilder.get_app_list()`设计一致
+与 `python appbuilder.describe_apps()`设计一致
 
 #### 代码示例
 
 ```java
 public void GetAppsTest() throws IOException, AppBuilderServerException {
-    AppList builder = new AppList();
-    AppListRequest request = new AppListRequest();
-    request.setLimit(10);
-    assertNotNull(builder.getAppList(request)[0].getId());
+    AppList appList = new AppList();
+    AppsDescribeRequest request = new AppsDescribeRequest();
+    assertNotNull(appList.describeApps(request).getData()[0].getId());
 }
 ```
 
 ## Go基本用法
 
 #### 接口参数及返回值
-与 `python appbuilder.get_app_list()`设计一致
+与 `python appbuilder.describe_apps()`设计一致
 
 #### 代码示例
 
 ```go
-package appbuilder
+import (
+	"fmt"
+	"os"
 
-apps, err := GetAppList(GetAppListRequest{
-    Limit: 10,
-}, config)
-if err != nil {
-    t.Fatalf("get apps failed: %v", err)
+	"github.com/baidubce/app-builder/go/appbuilder"
+)
+
+func main() {
+  // 设置APPBUILDER_TOKEN、GATEWAY_URL环境变量
+	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
+
+	config, err := appbuilder.NewSDKConfig("", "")
+	if err != nil {
+    fmt.Println("failed new sdk config: ", err)
+		return
+	}
+
+	maxKeys := 10
+	apps, err := appbuilder.DescribeApps(appbuilder.DescribeAppsRequest{MaxKeys: &maxKeys}, config)
+	if err != nil {
+    fmt.Println("get apps failed: ", err)
+	}
+	fmt.Println(len(apps.Data))
 }
-fmt.Println(len(apps))
 ```
 
 ## 高级用法
@@ -124,3 +149,4 @@ fmt.Println(len(apps))
 
 ## 更新记录和贡献
 * 千帆模型列表获取能力 (2024-7)
+* 接口结构升级(2024-11)

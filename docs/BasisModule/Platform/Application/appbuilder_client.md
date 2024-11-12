@@ -636,7 +636,6 @@ class AppBuilderClientDemo {
 
         AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest(appId, conversationId);
         request2.setToolOutputs(ToolCallID, "北京今天35度");
-        request2.setToolOutputs(new AppBuilderClientRunRequest.ToolOutput[] {output});
         AppBuilderClientIterator itor2 = builder.run(request2);
         while (itor2.hasNext()) {
             AppBuilderClientResult result = itor2.next();

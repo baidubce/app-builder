@@ -229,17 +229,17 @@ public class Knowledgebase extends Component {
         return respBody;
     }
 
-    public void createDocuments(DocumentsCreateRequest request)
+    public DocumentsCreateResponse createDocuments(DocumentsCreateRequest request)
             throws IOException, AppBuilderServerException {
-        innerCreateDocuments(request, java.util.UUID.randomUUID().toString());
+        return innerCreateDocuments(request, java.util.UUID.randomUUID().toString());
     }
 
-    public void createDocuments(DocumentsCreateRequest request, String clientToken)
+    public DocumentsCreateResponse createDocuments(DocumentsCreateRequest request, String clientToken)
             throws IOException, AppBuilderServerException {
-        innerCreateDocuments(request, clientToken);
+        return innerCreateDocuments(request, clientToken);
     }
 
-    private void innerCreateDocuments(DocumentsCreateRequest request, String clientToken)
+    private DocumentsCreateResponse innerCreateDocuments(DocumentsCreateRequest request, String clientToken)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.KNOWLEDGEBASE_CREATE_DOCUMENTS_URL;
 
@@ -249,19 +249,24 @@ public class Knowledgebase extends Component {
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
         httpClient.execute(postRequest, null);
+
+        HttpResponse<DocumentsCreateResponse> response = httpClient.execute(postRequest,
+                DocumentsCreateResponse.class);
+        DocumentsCreateResponse respBody = response.getBody();
+        return respBody;
     }
 
-    public void uploadDocuments(String filePath, DocumentsCreateRequest request)
+    public DocumentsUploadResponse uploadDocuments(String filePath, DocumentsCreateRequest request)
             throws IOException, AppBuilderServerException {
-        innerUploadDocuments(filePath, request, java.util.UUID.randomUUID().toString());
+        return innerUploadDocuments(filePath, request, java.util.UUID.randomUUID().toString());
     }
 
-    public void uploadDocuments(String filePath, DocumentsCreateRequest request, String clientToken)
+    public DocumentsUploadResponse uploadDocuments(String filePath, DocumentsCreateRequest request, String clientToken)
             throws IOException, AppBuilderServerException {
-        innerUploadDocuments(filePath, request, clientToken);
+        return innerUploadDocuments(filePath, request, clientToken);
     }
 
-    private void innerUploadDocuments(String filePath, DocumentsCreateRequest request, String clientToken)
+    private DocumentsUploadResponse innerUploadDocuments(String filePath, DocumentsCreateRequest request, String clientToken)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.KNOWLEDGEBASE_UPLOAD_DOCUMENTS_URL;
 
@@ -274,7 +279,10 @@ public class Knowledgebase extends Component {
 
         url = url + "&clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, builder.build());
-        httpClient.execute(postRequest, null);
+        HttpResponse<DocumentsUploadResponse> response = httpClient.execute(postRequest,
+                DocumentsUploadResponse.class);
+        DocumentsUploadResponse respBody = response.getBody();
+        return respBody;
     }
 
     public String createChunk(String documentId, String content)

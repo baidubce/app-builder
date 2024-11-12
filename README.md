@@ -51,23 +51,23 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 
 | 阶段 |组件名称 | 组件类型 |组件链接 |
 |--------|--------|--------|---|
-| 文档解析 | 文档矫正增强 (DocCropEnhance) | 基础能力组件 | [链接](./appbuilder/core/components/doc_crop_enhance/README.md) |
-| 文档解析 | 文档格式转换 (DocFormatConverter) | 基础能力组件 | [链接](./appbuilder/core/components/doc_format_converter/README.md)|
-| 文档解析 | 文档解析（DocParser）| 基础能力组件 | [链接](./appbuilder/core/components/doc_parser/README.md) |
-| 文档解析 | 表格抽取组件（ExtractTableFromDoc）| 基础能力组件 | [链接](./appbuilder/core/components/extract_table/README.md) |
-| 文档解析 | 通用文字识别-高精度版（GeneralOCR）| 基础能力组件 | [链接](./appbuilder/core/components/general_ocr/README.md) |
-| 文档切片 | 文档切分（DocSplitter）| 基础能力组件 | [链接](./appbuilder/core/components/doc_splitter/README.md) |
-| 切片向量化 | 向量计算（Embedding） | 基础能力组件 | [链接](./appbuilder/core/components/embeddings/README.md) |
-| 索引构建及切片召回 | 向量检索-VectorDB（BaiduVectorDBRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/baidu_vdb/README.md) |
-| 索引构建及切片召回 | 向量检索-BES（BaiduElasticSearchRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/bes/README.md) |
-| 文档切片及答案生成 | 问答对挖掘（QAPairMining）| 高级能力组件 | [链接](./appbuilder/core/components/llms/qa_pair_mining/README.md) |
-| 文档切片及答案生成 | 相似问生成（SimilarQuestion）| 高级能力组件 | [链接](./appbuilder/core/components/llms/similar_question/README.md) |
-| 答案生成| 标签抽取（TagExtraction）| 高级能力组件 | [链接](./appbuilder/core/components/llms/tag_extraction/README.md) |
-| 答案生成 | 复杂Query判定（IsComplexQuery）| 高级能力组件 | [链接](./appbuilder/core/components/llms/is_complex_query/README.md) |
-| 答案生成 | 复杂Query分解（QueryDecomposition）| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_decomposition/README.md) |
-| 答案生成 | 多轮改写 (QueryRewrite)| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_rewrite/README.md) |
-| 答案生成 | 阅读理解问答（MRC）| 高级能力组件 | [链接](./appbuilder/core/components/llms/mrc/README.md) |
-| 答案生成 | 幻觉检测（Hallucination Detection）| 高级能力组件 | [链接](./appbuilder/core/components/llms/hallucination_detection/README.md) |
+| 文档解析 | 文档矫正增强 (DocCropEnhance) | 基础能力组件 | [链接](./python/core/components/doc_crop_enhance/README.md) |
+| 文档解析 | 文档格式转换 (DocFormatConverter) | 基础能力组件 | [链接](./python/core/components/doc_format_converter/README.md)|
+| 文档解析 | 文档解析（DocParser）| 基础能力组件 | [链接](./python/core/components/doc_parser/README.md) |
+| 文档解析 | 表格抽取组件（ExtractTableFromDoc）| 基础能力组件 | [链接](./python/core/components/extract_table/README.md) |
+| 文档解析 | 通用文字识别-高精度版（GeneralOCR）| 基础能力组件 | [链接](./python/core/components/general_ocr/README.md) |
+| 文档切片 | 文档切分（DocSplitter）| 基础能力组件 | [链接](./python/core/components/doc_splitter/README.md) |
+| 切片向量化 | 向量计算（Embedding） | 基础能力组件 | [链接](./python/core/components/embeddings/README.md) |
+| 索引构建及切片召回 | 向量检索-VectorDB（BaiduVectorDBRetriever） | 基础能力组件 | [链接](./python/core/components/retriever/baidu_vdb/README.md) |
+| 索引构建及切片召回 | 向量检索-BES（BaiduElasticSearchRetriever） | 基础能力组件 | [链接](./python/core/components/retriever/bes/README.md) |
+| 文档切片及答案生成 | 问答对挖掘（QAPairMining）| 高级能力组件 | [链接](./python/core/components/llms/qa_pair_mining/README.md) |
+| 文档切片及答案生成 | 相似问生成（SimilarQuestion）| 高级能力组件 | [链接](./python/core/components/llms/similar_question/README.md) |
+| 答案生成| 标签抽取（TagExtraction）| 高级能力组件 | [链接](./python/core/components/llms/tag_extraction/README.md) |
+| 答案生成 | 复杂Query判定（IsComplexQuery）| 高级能力组件 | [链接](./python/core/components/llms/is_complex_query/README.md) |
+| 答案生成 | 复杂Query分解（QueryDecomposition）| 高级能力组件 | [链接](./python/core/components/llms/query_decomposition/README.md) |
+| 答案生成 | 多轮改写 (QueryRewrite)| 高级能力组件 | [链接](./python/core/components/llms/query_rewrite/README.md) |
+| 答案生成 | 阅读理解问答（MRC）| 高级能力组件 | [链接](./python/core/components/llms/mrc/README.md) |
+| 答案生成 | 幻觉检测（Hallucination Detection）| 高级能力组件 | [链接](./python/core/components/llms/hallucination_detection/README.md) |
 
 
 > 功能预告：在AppBuiler-SDK 1.0.0版本中，AppBuilder-SDK可联动AppBuilder平台，自定义离线与在线处理的能力及Pipeline，构建更加灵活、可沉淀、可复用的产业级`RAG`应用，敬请期待
@@ -111,7 +111,7 @@ template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}
 # 定义输入，调用playground组件
 input = appbuilder.Message({"role": "java工程师", "question": "请简要回答java语言的内存回收机制是什么，要求100字以内"})
 
-playground = appbuilder.Playground(prompt_template=template_str, model="ERNIE Speed-AppBuilder")
+playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8k")
 
 # 以打字机的方式，流式展示大模型回答内容
 output = playground(input, stream=True, temperature=1e-10)
@@ -157,7 +157,7 @@ import os
 # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE Speed-AppBuilder")
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Agent-Speed-8k")
 
 input = appbuilder.Message("9.11和9.8哪个大")
 result = rag_with_baidu_search_pro.run(

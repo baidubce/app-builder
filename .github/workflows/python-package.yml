@@ -83,7 +83,7 @@ jobs:
 
         # 比较当前分支与 merge_base 之间的差异
         changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
-        changed_files_py_sh=$(git diff --name-only --diff-filter=ACMRT $merge_base -- $(find appbuilder -type f \( -name '*.py' -o -name '*.sh' \)))
+        changed_files_py_sh=$(git diff --name-only --diff-filter=ACMRT $merge_base -- $(find python -type f \( -name '*.py' -o -name '*.sh' \)))
         
         echo "发生更改的文件为:"
         echo "$changed_files"
@@ -144,7 +144,7 @@ jobs:
           echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Test with unittest部分..."
           cd cicd/app-builder
           pwd
-          sh appbuilder/tests/run_python_test.sh
+          sh python/tests/run_python_test.sh
         fi
   Go-Test-CI:
     runs-on: ubuntu-latest
