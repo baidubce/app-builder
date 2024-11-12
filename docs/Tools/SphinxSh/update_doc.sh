@@ -78,7 +78,7 @@ echo "=======执行命令 sphinx-apidoc -o source ../appbuilder/======="
 echo "当前路径:"
 pwd
 sphinx-apidoc -o source ../../../appbuilder/
-# 删除test目录内容
+# 删除多余文档目录
 rm ./source/appbuilder.tests.*
 rm ./source/appbuilder.utils.*
 rm ./source/appbuilder.core.assistant.type.rst
