@@ -152,7 +152,7 @@ class Component:
     @components_run_trace
     def batch(self, *args, **kwargs) -> List[Message]:
         r"""
-        batch method,待子类重写实现
+        batch method
 
         Args:
             args: list of arguments
@@ -184,7 +184,7 @@ class Component:
 
     def tool_desc(self) -> List[str]:
         r"""
-        tool_desc method,待子类重写实现
+        tool_desc method
 
         Args:
             None
@@ -196,7 +196,7 @@ class Component:
 
     def tool_name(self) -> List[str]:
         r"""
-        tool_name method,待子类重写实现
+        tool_name method
 
         Args:
             None
