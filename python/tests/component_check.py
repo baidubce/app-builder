@@ -270,26 +270,30 @@ class ToolEvalOutputJsonRule(RuleBase):
     def _check(self, mode, outputs, output_schemas):
         invalid_details = []
         if "content" not in outputs:
-            invalid_details.append("ToolEval返回值不符合JSON Schema：返回内容缺少content")
+            invalid_details.append("ToolEval返回值不符合规范：返回内容缺少content")
             return invalid_details
+
         contents = outputs["content"]
         for content in contents:
             if "type" not in content:
-                invalid_details.append("ToolEval返回值不符合JSON Schema：返回content缺少type")
-                return invalid_details
+                invalid_details.append("ToolEval返回值不符合规范：返回content缺少type")
+                continue
+            
             out_type = content["type"]
             if out_type not in self.output_types:
                 invalid_details.append("ToolEval返回值不符合JSON Schema：返回content.type={} 不是合法的输出类型".format(out_type))
-                return invalid_details
+                continue
+            
             out_schema = type_to_json_schemas[out_type]
             if out_schema not in output_schemas:
                 invalid_details.append("ToolEval返回值不符合JSON Schema：{} 不是该组件期望的Json Schema输出类型".format(out_schema['$schema']))
-                return invalid_details
+                continue
+            
             try:
-                validate(instance=outputs, schema=out_schema)
-            except SchemaError as e:
-                invalid_details.append("{}ToolEval返回值不符合JSON Schema: {}要求: {}\n".format(mode, out_schema["$schema"]))
-            return invalid_details
+                validate(instance=content, schema=out_schema)
+            except Exception as e:
+                invalid_details.append("{}ToolEval返回值不符合JSON Schema: {}\n".format(mode, e.message))
+        return invalid_details
 
     def check(self, component_cls) -> CheckInfo:
         invalid_details = []
@@ -300,9 +304,15 @@ class ToolEvalOutputJsonRule(RuleBase):
             output_json_schemas = components_tool_eval_output_json_maps[component_cls_name]
             input_dict = component_tool_eval_cases[component_cls_name]
             component_obj = component_cls()
-            stream_outputs = component_obj.tool_eval(**input_dict)
+            try:
+                stream_outputs = component_obj.tool_eval(**input_dict)
+            except Exception as e:
+                invalid_details.append("ToolEval执行失败: {}".format(e))
+
+
             for stream_output in stream_outputs:
-                invalid_details.extend(self._check("流式", stream_output, output_json_schemas)) #校验流式输出
+                iter_invalid_detail = self._check("流式", stream_output, output_json_schemas)
+                invalid_details.extend(iter_invalid_detail)
             # non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
             # invalid_details.extend(self._check("非流式", non_stream_outputs, output_json_schemas))  #校验非流式输出
         if len(invalid_details) > 0:
