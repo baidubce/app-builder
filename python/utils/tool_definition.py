@@ -6,15 +6,8 @@ import re
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-try:
-    from pydantic.v1 import BaseModel as PydanticBaseModel # noqa: F403 # type: ignore
-except ImportError:
-    from pydantic import BaseModel as PydanticBaseModel
-
-try:
-    from pydantic.v1 import create_model
-except ImportError:
-    from pydantic import create_model 
+from pydantic.v1 import BaseModel as PydanticBaseModel # noqa: F403 # type: ignore
+from pydantic.v1 import create_model
 
 from dataclasses_json import config
 from dataclasses import dataclass
