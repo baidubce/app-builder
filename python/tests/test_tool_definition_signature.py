@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
-import unittest
+import pytest
 from typing import Optional, Union
 from inspect import Parameter
 from appbuilder.utils.tool_definition_signature import get_signature_view, _parse_annotation, _parse_internal_annotation, _parse_parameter
 
-#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+
 # 示例函数，包含多种类型的参数注解和返回类型
 def sample_func(a: int, b: Optional[str] = None) -> Union[int, None]:
     return a
@@ -61,4 +61,4 @@ def test_parse_internal_annotation():
     assert result['required'] == True
 
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main()
