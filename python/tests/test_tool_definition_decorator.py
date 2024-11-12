@@ -13,7 +13,6 @@ import os
 import unittest
 from appbuilder import FunctionView, function, function_parameter, function_return
 from typing import Any, Dict, List, Optional, Union
-import pytest
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestToolDefinitionDecorator(unittest.TestCase):

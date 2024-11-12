@@ -13,8 +13,8 @@
 # limitations under the License.
 import os
 import unittest
-from typing import Optional, Union
-from inspect import Parameter,Signature,Annotated
+from typing import Optional, Union, Annotated
+from inspect import Parameter,Signature
 from appbuilder.utils.tool_definition_signature import get_signature_view, _parse_annotation, _parse_internal_annotation, _parse_parameter
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
