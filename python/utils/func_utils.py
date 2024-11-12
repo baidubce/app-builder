@@ -23,8 +23,8 @@ from typing import Dict, List, Literal, Any, Optional, Tuple
 
 from appbuilder.utils.tool_definition_docstring import (
     DocstringsFormat,
-    _parse_function_description_from_docstrings,
-    get_docstring_view,
+    _find_and_parse_params_from_docstrings,
+    _get_function_docs,
 )
 
 def deprecated(reason=None, version=None):
