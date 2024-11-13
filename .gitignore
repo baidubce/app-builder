@@ -154,3 +154,6 @@ go/coverage_diff.html
 .gitignore
 go/appbuilder/coverage_full.html
 go/appbuilder/coverage_diff.html
+*.py_res
+*.html
+*.png
