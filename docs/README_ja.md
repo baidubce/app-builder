@@ -253,7 +253,7 @@ print(answer.content.answer)
   - 基本:
       - モデル:
           - [モデルリストの取得](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
-      - [コンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [コンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
       - 監視:
           - [TRACE基本機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
           - [TRACE拡張機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
