@@ -38,7 +38,18 @@ class TestKnowLedge(unittest.TestCase):
         delete_res = knowledge.delete_document(document_id=add_res.document_ids[0])
         all_doc = knowledge.get_all_documents()
         self.assertIsInstance(all_doc, list)
-    
+
+    def test_jsonl_knowledage(self):
+        dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+        knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
+
+        upload_res = knowledge.upload_file("./data/qa_demo.jsonl")
+        add_res = knowledge.add_document(content_type="qa", file_ids=[upload_res.id])
+        list_res = knowledge.get_documents_list()
+        delete_res = knowledge.delete_document(document_id=add_res.document_ids[0])
+        all_doc = knowledge.get_all_documents()
+        self.assertIsInstance(all_doc, list)
+
     def test_get_documents_number_raise(self):
         knowledge = appbuilder.KnowledgeBase()
         with self.assertRaises(ValueError):
@@ -136,10 +147,8 @@ class TestKnowLedge(unittest.TestCase):
             knowledge_base_id=knowledge_base_id, name="test"
         )
 
-
         if self.whether_create_knowledge_base:
             knowledge.delete_knowledge_base(knowledge_base_id)
-
 
 
 if __name__ == "__main__":
