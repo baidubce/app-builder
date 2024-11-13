@@ -5,4 +5,4 @@
     - [知识库管理 KnowledgeBase SDK](../../BasisModule/Platform/KnowledgeBase/knowledgebase.md)
 - AI基础能力组件 SDK：支持Python
     - [获取模型列表](../../BasisModule/Model/get_model_list.md)
-    - [基础能力组件](../../docs/BasisModule/Platform/CustomComponents/components.md)
+    - [基础能力组件](../../BasisModule/Platform/CustomComponents/components.md)
