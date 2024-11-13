@@ -1,5 +1,5 @@
 <div align="center">
-<img src='docs/Image/logo.png' alt='logo' width='700' >
+<img src='docs/image/logo.png' alt='logo' width='700' >
 <br>
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
@@ -272,7 +272,7 @@ Hook:
 
 ## 百度智能云千帆AppBuilder-SDK 能力全景图
 <div align="center">
-<img src='docs/Image/structure-cn.png' alt='wechat' width='800' >
+<img src='docs/image/structure-cn.png' alt='wechat' width='800' >
 </div>
 
 
@@ -339,7 +339,7 @@ Hook:
 ## 开源社区与活动
 <div align="center">
 <h3>百度智能云千帆AppBuilder-SDK微信交流群</h3>
-<img src='docs/Image/wechat_group.png' alt='wechat' width='200' >
+<img src='docs/image/wechat_group.png' alt='wechat' width='200' >
 </div>
 
 - [Github Issue](https://github.com/baidubce/app-builder/issues):  提交安装/使用问题、报告bug、建议新特性、沟通开发计划等
