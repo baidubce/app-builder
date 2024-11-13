@@ -53,9 +53,37 @@ class TestUtils(unittest.TestCase):
         for event in sse_client.events():
             pass
 
+        # test_close
+        sse_client.close()
+
+    def test_sse_util_SSEClient_DEBUG(self):
         logger.setLoglevel("DEBUG")
+        mock_event_source = MagicMock()
+        mock_event_source.__iter__.return_value = iter(
+            [b"data: Test event 1\n\n", b"data: Last incomplete event"]
+        )
+        sse_client = SSEClient(event_source=mock_event_source)
+        event_generator = sse_client._read()
+        self.assertEqual(next(event_generator), b"data: Test event 1\n\n")
+        self.assertEqual(next(event_generator), b"data: Last incomplete event")
+        # 测试是否抛出 StopIteration 异常，表示没有更多事件
+        with self.assertRaises(StopIteration):
+            next(event_generator)
+
+        # test_events
+        mock_event_source.__iter__.return_value = iter(
+            [
+                b": Test event 1\n\n",
+                b"test: Test event 2\n\n",
+                b"data:Testevent3\n\n",
+                b"data\n\n",
+                b"event:Testevent5\n\n",
+            ]
+        )
+        sse_client = SSEClient(event_source=mock_event_source)
         for event in sse_client.events():
             pass
+
         # test_close
         sse_client.close()
 
