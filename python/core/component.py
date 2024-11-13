@@ -13,7 +13,6 @@
 # limitations under the License.
 
 """Component模块包括组件基类，用户自定义组件需要继承Component类，并至少实现run方法"""
-import asyncio
 import json
 
 from enum import Enum
@@ -23,7 +22,6 @@ from typing import Dict, List, Optional, Any
 from appbuilder.core.utils import ttl_lru_cache
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class ComponentArguments(BaseModel):
@@ -134,6 +132,26 @@ class Component:
         r"""implement __call__ method"""
         return self.run(*inputs, **kwargs)
 
+    def run(self, *inputs, **kwargs):
+        """
+        run method,待子类重写实现
+
+        Args:
+            inputs: list of arguments
+            kwargs: keyword arguments
+        """
+        raise NotImplementedError
+
+    def batch(self, *args, **kwargs) -> List[Message]:
+        r"""
+        batch method,待子类重写实现
+
+        Args:
+            args: list of arguments
+            kwargs: keyword arguments
+        """
+        return None
+
     async def arun(self, *args, **kwargs) -> Optional[Message]:
         r"""
         arun method,待子类重写实现
@@ -142,37 +160,17 @@ class Component:
             args: list of arguments
             kwargs: keyword arguments
         """
-        return NotImplementedError
+        return None
 
-    @components_run_trace
-    def run(self, *args, **kwargs):
-        result = asyncio.run(self.arun(*args, **kwargs))
-        return result
-        
-    @components_run_trace
-    def batch(self, *args, **kwargs) -> List[Message]:
-        r"""
-        batch method
-
-        Args:
-            args: list of arguments
-            kwargs: keyword arguments
-        """
-        results = [self.run(inp, **kwargs) for inp in args]
-        return results
-
-    @components_run_trace
     async def abatch(self, *args, **kwargs) -> List[Message]:
         r"""
-        abatch method
+        abatch method,待子类重写实现
 
         Args:
             args: list of arguments
             kwargs: keyword arguments
         """
-        tasks = [self.arun(input, **kwargs) for input in args]
-        results = await asyncio.gather(*tasks)
-        return results
+        return None
 
     def _trace(self, **data) -> None:
         r"""pass"""
@@ -184,7 +182,7 @@ class Component:
 
     def tool_desc(self) -> List[str]:
         r"""
-        tool_desc method
+        tool_desc method,待子类重写实现
 
         Args:
             None
@@ -196,7 +194,7 @@ class Component:
 
     def tool_name(self) -> List[str]:
         r"""
-        tool_name method
+        tool_name method,待子类重写实现
 
         Args:
             None
@@ -206,46 +204,15 @@ class Component:
         """
         return [manifest["name"] for manifest in self.manifests]
 
-    async def a_tool_eval(self, **kwargs):
+    def tool_eval(self, **kwargs):
         r"""
-        a_tool_eval method,待子类重写实现
-        """
-        raise NotImplementedError
-
-    @components_run_stream_trace
-    def tool_eval(self, *args, **kwargs):
-        async def inner():
-            async for item in self.a_tool_eval(*args, **kwargs):
-                yield item
-
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
-        try:
-            gen = inner()
-            while True:
-                try:
-                    x = loop.run_until_complete(gen.__anext__())
-                    yield x
-                except StopAsyncIteration:
-                    break
-        finally:
-            loop.close()
-
-    @components_run_trace
-    def non_stream_tool_eval(self, *args,**kwargs):
-        r"""
-        非流式tool_eval方法
+        tool_eval method,待子类重写实现
 
         Args:
             kwargs: keyword arguments
         """
-        result_content = []
-        stream_result = self.tool_eval(*args, **kwargs)
-        for iter_result in stream_result:
-            result_content.append(iter_result["content"][0])
-        result = {"role": "tool", "content": result_content}
-        return result
+        if len(self.manifests) > 0:
+            raise NotImplementedError
 
     def create_langchain_tool(self, tool_name="", **kwargs):
         r"""
@@ -351,3 +318,5 @@ class Component:
                 final_result += step.get("text", "")
         return final_result
 
+        
+        
