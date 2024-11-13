@@ -14,6 +14,7 @@
 """
 SSE Client util
 """
+from appbuilder.utils.logger_util import logger
 import logging
 
 class SSEClient:
@@ -27,7 +28,7 @@ class SSEClient:
         事件源应为二进制流，并具有 close() 方法。
         这通常是实现 io.BinaryIOBase 的东西，比如 httplib 或 urllib3HTTPResponse 对象。
         """
-        logging.info(f'Initialized SSE client from event source {event_source}')
+        logger.info(f'Initialized SSE client from event source {event_source}')
         self._event_source = event_source
         self._char_enc = char_enc
 
@@ -67,13 +68,13 @@ class SSEClient:
                 # ignored.
                 if not line.strip() or line.startswith(':'):
                     continue
-                logging.debug(f"raw line: {line}")
+                logger.debug(f"raw line: {line}")
                 data = line.split(':', 1)
                 field = data[0]
                 # Ignore unknown fields.
                 if field not in event.__dict__:
                     event.raw += line
-                    logging.info(f'Saw invalid field {field} while parsing Server Side Event')
+                    logger.info(f'Saw invalid field {field} while parsing Server Side Event')
                     continue
 
                 if len(data) > 1:
@@ -111,10 +112,10 @@ class SSEClient:
             # Empty event names default to 'message'
             event.event = event.event or 'message'
             # Dispatch the event
-            if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-                logging.debug(f'Dispatching {event.debug_str}...')
+            if logger.getEffectiveLevel() == logging.DEBUG:
+                logger.debug(f'Dispatching {event.debug_str}...')
             else:
-                logging.info(f'Dispatching {event}...')
+                logger.info(f'Dispatching {event}...')
             yield event
 
     def close(self):
