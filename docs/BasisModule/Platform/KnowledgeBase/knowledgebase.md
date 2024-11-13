@@ -266,7 +266,7 @@ knowledge.delete_knowledge_base("da51a988-cbe7-4b24-aa5b-768985e8xxxx")
 | 参数名称      | 参数类型              | 是否必传                               | 描述                                                         | 示例值           |
 | ------------- | --------------------- | -------------------------------------- | ------------------------------------------------------------ | ---------------- |
 | id            | string                | 是                                     | 知识库id                                                     | "正确的知识库ID" |
-| contentFormat | string                | 是                                     | 文档格式：rawText (允许配置后续分割策略), qa(不支持配置后续分割策略) | "rawText"        |
+| contentFormat | string                | 是                                     | 文档格式：rawText (允许配置后续分割策略)              | "rawText"        |
 | source        | DocumentSource        | 是                                     | 数据来源                                                     |                  |
 | processOption | DocumentProcessOption | 当contentFormat参数配置为rawText时必传 | 文档处理策略                                                 |                  |
 
@@ -363,7 +363,7 @@ knowledge.create_documents(
 | 参数名称       | 参数类型              | 是否必传 | 描述                                                         | 示例值           |
 | -------------- | --------------------- | -------- | ------------------------------------------------------------ | ---------------- |
 | file_path      | string                | 是       | 文件路径                                                     | "正确的文件路径" |
-| content_format | string                | 否       | 文档格式：rawText (允许配置后续分割策略), qa(不支持配置后续分割策略) | "rawText"        |
+| content_format | string                | 否       | 文档格式：rawText (允许配置后续分割策略) | "rawText"        |
 | id             | string                | 是       | 知识库ID                                                     | "正确的知识库ID" |
 | processOption  | DocumentProcessOption | 是       | 文档处理策略                                                 |                  |
 

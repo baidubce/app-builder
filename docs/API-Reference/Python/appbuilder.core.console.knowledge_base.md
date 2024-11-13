@@ -60,7 +60,7 @@ print("文档列表: ", list_res)
 
 * **参数:**
   * **id** (*Optional* *[**str* *]* *,* *optional*) -- 知识库ID，如果不指定则使用当前实例的knowledge_id属性。默认值为None。
-  * **contentFormat** (*str* *,* *optional*) -- 文档内容格式，可以是"rawText", "qa"之一。默认值为""。
+  * **contentFormat** (*str* *,* *optional*) -- 文档内容格式，可以是"rawText"。默认值为""。
   * **source** (*data_class.DocumentSource* *,* *optional*) -- 文档源数据。默认值为None。
   * **processOption** (*data_class.DocumentProcessOption* *,* *optional*) -- 文档处理选项。默认值为None。
   * **client_token** (*str* *,* *optional*) -- 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。

@@ -213,8 +213,7 @@ class KnowledgeBaseCreateDocumentsRequest(BaseModel):
     source: DocumentSource = Field(..., description="文档来源")
     contentFormat: str = Field(
         ...,
-        description="文档内容格式, (rawText 普通文件上传 | qa 问答对)",
-        enum=["rawText", "qa"],
+        description="文档内容格式, (rawText 普通文件上传)"
     )
     processOption: Optional[DocumentProcessOption] = Field(
         None, description="文档处理选项"
