@@ -4,7 +4,7 @@
 
 RAG是基于线上RAG应用的问答组件，可以使用该组件利用线上RAG应用进行问答。<br>
 <span style="color:red">
-⚠️本组件仅适用于2024-04-02之前创建的历史RAG应用，最新创建的AgentBuilder应用，请参考[AgentBuilder应用](agent_builder.md)
+⚠️本组件仅适用于2024-04-02之前创建的历史RAG应用，最新创建的AgentBuilder应用，请参考[AppBuilder应用](../../../BasisModule/Platform/Application/appbuilder_client.md)
 进行调用。
 </span>
 

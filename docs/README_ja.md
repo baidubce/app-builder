@@ -1,5 +1,5 @@
 <div align="center">
-<img src='Image/logo.png' alt='logo' width='700' >
+<img src='image/logo.png' alt='logo' width='700' >
 <br>
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
@@ -46,14 +46,14 @@ Baidu AI Cloud Qianfan AppBuilder-SDKは、AIアプリケーション開発者�
 
 #### Baidu AI Cloud Qianfan AppBuilder SDKの最新バージョンは0.9.6（2024-10-26）です
 
-Baidu AI Cloud Qianfan AppBuilder SDKのリリースノートについては、[バージョン説明](/docs/quick_start/changelog.md)をご覧ください。
+Baidu AI Cloud Qianfan AppBuilder SDKのリリースノートについては、[バージョン説明](DevelopGuide/ChangeLog/changelog.md)をご覧ください。
 
 - 最新の安定バージョンの`Python`をインストールすることをお勧めします。
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
-- `Java`および`Go`バージョンのインストールや`Docker`イメージの使用については、[インストール手順](/docs/quick_start/install.md)をご覧ください。
+- `Java`および`Go`バージョンのインストールや`Docker`イメージの使用については、[インストール手順](QuickStart/StartFirstAINativeApplication/install.md)をご覧ください。
 
 
 ## 最初のAIネイティブアプリケーションをすぐに開始しましょう！
@@ -236,32 +236,73 @@ print(answer.content.answer)
 
 ## Baidu AI Cloud Qianfan AppBuilder SDKの機能全景
 <div align="center">
-<img src='Image/structure-en.png' alt='wechat' width='800' >
+<img src='image/structure-en.png' alt='wechat' width='800' >
 </div>
 
 
 ## ユーザードキュメント
 
-- [クイックスタート](/docs/quick_start/README.md)
-    - [インストール手順](/docs/quick_start/install.md)
-    - [リリースノート](/docs/quick_start/changelog.md)
-- [基本コンポーネント](/docs/basic_module/README.md)
-    - [基本機能コンポーネント](/docs/basic_module/components.md)
-    - [プロセスオーケストレーション](/docs/basic_module/assistant_sdk.md)
-    - [エンドツーエンドアプリケーション](/docs/basic_module/appbuilder_client.md)
-- [高度な実践](/docs/advanced_application/README.md)
-    - [Cookbooks](/cookbooks/README.md)
-- [サービスデプロイメント](/docs/service/README.md)
-    - [API呼び出し](/docs/service/flask.md)
-    - [インタラクティブフロントエンド](/docs/service/chainlit.md)
-    - [クラウドデプロイメント](/docs/service/cloud.md)
-- [二次開発](/docs/develop_guide/README.md)
+- [ホームページ](https://github.com/baidubce/app-builder/blob/master/docs/README.md)
+    - クイックスタート: 
+        - 最初のAIネイティブアプリケーションを開始する: 
+            - [インストール](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/install.md)
+            - [クイックスタートガイド](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/README.md)
+        - 産業実践アプリケーション例: 
+            - [SDK使用例](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/ExamplesOfIndustrialPracticeApplications/README.md)
+        - [現在SDKがサポートしているプログラミング言語](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/CurrentlySupportedProgrammingLanguages/README.md)
+  - 基本:
+      - モデル:
+          - [モデルリストの取得](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
+      - [コンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+      - 監視:
+          - [TRACE基本機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
+          - [TRACE拡張機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+      - デプロイ:
+          - [インタラクティブなフロントエンドデプロイ](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
+          - [パブリッククラウドデプロイ](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
+          - [API アクセス](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
+          - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
+          - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
+      - プラットフォーム:
+          - アプリケーション:
+              - [AppBuilderClientコンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
+              - [AppBuilderで公開されたアプリケーションリストの取得](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
+          - ナレッジベース:
+              - [ナレッジベースコンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
+          - カスタムコンポーネント:
+              - [基本機能コンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
+  - アプリケーション:
+      - エージェント:
+          - [基本知識](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [公式コンポーネントの使用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [非同期およびストリーミングを使用してクライアント呼び出しを加速する](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - RAG:
+          - [基本知識](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
+          - [ナレッジベース管理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [Reference情報処理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - ワークフロー:
+          - [基本知識](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [Workflowを使ってRAGアプリケーションをゼロから組み立てる](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [Workflowを使ってAgentアプリケーションをゼロから組み立てる](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+  - 開発者ガイド:
+      - [コードの貢献方法](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
+      - [バージョンアップログ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
+      - [よくある質問FAQ](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [ログ管理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [エラーメッセージ](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [環境パラメータ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
+  - APIリファレンス:
+      - [Python APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/PythonAPI.md)
+      - [Java APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [Go APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
 
 
 ## オープンソースコミュニティと活動
 <div align="center">
 <h3>AppBuilder-SDK WeChatグループQRコード</h3>
-<img src='Image/wechat_group.png' alt='wechat' width='200' >
+<img src='image/wechat_group.png' alt='wechat' width='200' >
 </div>
 
 - [Github Issue](https://github.com/baidubce/app-builder/issues):  インストール/使用の問題を提出し、バグを報告し、新機能を提案し、開発計画をコミュニケーションします。

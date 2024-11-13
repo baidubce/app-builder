@@ -1,5 +1,5 @@
 <div align="center">
-<img src='Image/logo.png' alt='logo' width='700' >
+<img src='image/logo.png' alt='logo' width='700' >
 <br>
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
@@ -49,14 +49,14 @@ Baidu AI Cloud Qianfan AppBuilder-SDK offers the following essential features fo
 
 #### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.6 (2024-10-26)
 
-Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/quick_start/changelog.md)
+Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/DevelopGuide/ChangeLog/changelog.md)
 
 - We recommend installing the latest stable version of `Python`
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
-- For installation of `Java` and `Go` versions, as well as using `Docker` images, please refer to the [Installation Instructions](/docs/quick_start/install.md)
+- For installation of `Java` and `Go` versions, as well as using `Docker` images, please refer to the [Installation Instructions](/docs/QuickStart/StartFirstAINativeApplication/install.md)
 
 
 ## Quickly start your first AI native application!
@@ -240,32 +240,72 @@ Hook:
 
 ## Panorama of Baidu AI Cloud Qianfan AppBuilder SDK capability
 <div align="center">
-<img src='Image/structure-en.png' alt='wechat' width='800' >
+<img src='image/structure-en.png' alt='wechat' width='800' >
 </div>
 
 
 ## User Documentation
 
-- [Quick start](/docs/quick_start/README.md)
-    - [Installation instructions](/docs/quick_start/install.md)
-    - [Release note](/docs/quick_start/changelog.md)
-- [Basic components](/docs/basic_module/README.md)
-    - [Basic Ability Components](/docs/basic_module/components.md)
-    - [Process orchestration](/docs/basic_module/assistant_sdk.md)
-    - [End-to-end applications](/docs/basic_module/appbuilder_client.md)
-- [Advanced Practice](/docs/advanced_application/README.md)
-    - [Cookbooks](/cookbooks/README.md)
-- [Service deployment](/docs/service/README.md)
-    - [API calls](/docs/service/flask.md)
-    - [Interactive front-end](/docs/service/chainlit.md)
-    - [Cloud deployment](/docs/service/cloud.md)
-- [Secondary development](/docs/develop_guide/README.md)
-
+- [Home](https://github.com/baidubce/app-builder/blob/master/docs/README.md)
+    - Quick Start:
+        - Start your first AI-native application:
+            - [Installation](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/install.md)
+            - [Quick Start Guide](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/README.md)
+        - Industrial practice application examples:
+            - [SDK usage examples](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/ExamplesOfIndustrialPracticeApplications/README.md)
+        - [Currently supported programming languages by SDK](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/CurrentlySupportedProgrammingLanguages/README.md)
+  - Basics:
+      - Models:
+          - [Get model list](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
+      - [Components](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+      - Monitoring:
+          - [TRACE basic functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
+          - [TRACE extended functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+      - Deployment:
+          - [Interactive front-end deployment](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
+          - [Public cloud deployment](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
+          - [API access](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
+          - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
+          - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
+      - Platform:
+          - Applications:
+              - [AppBuilderClient component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
+              - [Get the list of applications published by AppBuilder](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
+          - Knowledge Base:
+              - [Knowledge Base component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
+          - Custom Components:
+              - [Basic capabilities component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
+  - Applications:
+      - Agent:
+          - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [Using official components](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [Using asynchronous and streaming accelerated client calls](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - RAG:
+          - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
+          - [Knowledge Base Management](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [Reference Information Processing](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - Workflow:
+          - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [Assembling a RAG application from scratch using Workflow](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [Assembling an Agent application from scratch using Workflow](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+  - Developer Guide:
+      - [How to contribute code](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
+      - [Version upgrade log](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
+      - [FAQ](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [Log Management](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [Error messages](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [Environmental parameters](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
+  - API Reference:
+      - [Python API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/PythonAPI.md)
+      - [Java API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [Go API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
 
 ## Open source community and activities
 <div align="center">
 <h3>AppBuilder-SDK WeChat Group QR Code</h3>
-<img src='Image/wechat_group.png' alt='wechat' width='200' >
+<img src='image/wechat_group.png' alt='wechat' width='200' >
 </div>
 
 - [Github Issue](https://github.com/baidubce/app-builder/issues):  Submit installation/usage issues, report bugs, suggest new features, communicate development plans, etc
