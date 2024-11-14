@@ -14,6 +14,7 @@ import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.AppsDescribeRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.Event;
+import com.baidubce.appbuilder.model.appbuilderclient.EventContent;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -137,8 +138,8 @@ public class AppBuilderClientTest {
             AppBuilderClientResult result = itor.next();
             for (Event event : result.getEvents()) {
                 System.out.println(event.getContentType());
-                if (event.getContentType().equals("chatflow_interrupt")) {
-                    assertEquals(event.getEventType(), "chatflow");
+                if (event.getContentType().equals(EventContent.ChatflowInterruptContentType)) {
+                    assertEquals(event.getEventType(), Event.ChatflowEventType);
                     interruptEventId = event.getDetail().get("interrupt_event_id").toString();
                 }
             }
@@ -154,7 +155,7 @@ public class AppBuilderClientTest {
         while (itor2.hasNext()) {
             AppBuilderClientResult result2 = itor2.next();
             for (Event event : result2.getEvents()) {
-                if (event.getContentType().equals("publish_message")) {
+                if (event.getContentType().equals(EventContent.PublishMessageContentType)) {
                     message = event.getDetail().get("message").toString();
                 }
             }
