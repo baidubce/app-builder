@@ -574,7 +574,7 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 	input := make(map[string]any)
 	input["city"] = "北京"
 	end_user_id := "go_user_id_0"
-	i, err := client.RunWithToolCall(AppBuilderClientRunRequest{
+	i, err := client.RunV2(AppBuilderClientRunRequest{
 		ConversationID: conversationID,
 		AppID:          appID,
 		Query:          "你能干什么",
@@ -600,6 +600,106 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 			log(string(evJSON))
 		}
 	}
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		fmt.Println(logBuffer.String())
+	} else { // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+	}
+}
+
+func TestAppBuilderClientRunChatflow(t *testing.T) {
+	var logBuffer bytes.Buffer
+
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	appID := "4403205e-fb83-4fac-96d8-943bdb63796f"
+	client, err := NewAppBuilderClient(appID, config)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new AgentBuidler instance failed")
+	}
+
+	conversationID, err := client.CreateConversation()
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("create conversation failed: %v", err)
+	}
+
+	i, err := client.RunV2(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "查天气",
+		Stream:         true,
+	})
+
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("run failed:%v", err)
+	}
+
+	var interruptId string
+	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == ChatflowInterruptContentType {
+				if ev.EventType != ChatflowEventType {
+					t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+					t.Fatalf("event type error:%v", err)
+				}
+
+				deatil := ev.Detail.(ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				break
+			}
+		}
+	}
+
+	if len(interruptId) == 0 {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("interrupt id is empty")
+	}
+
+	i2, err := client.RunV2(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "我先查个航班动态",
+		Stream:         true,
+		Action:         NewResumeAction(interruptId),
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("run failed:%v", err)
+	}
+
+	var message string
+	for answer, err := i2.Next(); err == nil; answer, err = i2.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == PublishMessageContentType {
+				if ev.EventType != ChatflowEventType {
+					t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+					t.Fatalf("event type error:%v", err)
+				}
+
+				detail := ev.Detail.(PublishMessageDetail)
+				message = detail.Message
+				break
+			}
+		}
+	}
+	if len(message) == 0 {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("message is empty")
+	}
+	fmt.Println(message)
 
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {

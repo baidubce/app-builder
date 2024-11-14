@@ -138,8 +138,6 @@ public class AppBuilderClientTest {
             for (Event event : result.getEvents()) {
                 System.out.println(event.getContentType());
                 if (event.getContentType().equals("chatflow_interrupt")) {
-                    System.out.println("11111");
-                    System.out.println(event.getDetail());
                     assertEquals(event.getEventType(), "chatflow");
                     interruptEventId = event.getDetail().get("interrupt_event_id").toString();
                 }
