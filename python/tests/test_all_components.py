@@ -81,7 +81,7 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
             component_names = error_df["Component Name"].tolist()
             for component_name in component_names:
                 if component_name in self.whitelist_components:
-                    print("{}zu白名单中，暂时忽略报错。".format(component_name))
+                    print("{}在白名单中，暂时忽略报错。".format(component_name), flush=True)
                 else:
                     raise AppbuilderBuildexException(f"组件 {component_name} 未在白名单中，请检查是否需要添加到白名单。")
 
