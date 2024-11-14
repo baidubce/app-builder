@@ -302,22 +302,25 @@ class ToolEvalOutputJsonRule(RuleBase):
             invalid_details.append("{} 没有注册到 components_tool_eval_output_json_maps 中".format(component_cls_name))
         else:
             output_json_schemas = components_tool_eval_output_json_maps[component_cls_name]
-            input_dict = component_tool_eval_cases[component_cls_name]
-            component_obj = component_cls()
-            
-            try:
-                stream_outputs = component_obj.tool_eval(**input_dict)
-                for stream_output in stream_outputs: #校验流式输出
-                    iter_invalid_detail = self._check("流式", stream_output, output_json_schemas)
-                    invalid_details.extend(iter_invalid_detail)
-            except Exception as e:
-                invalid_details.append("ToolEval执行失败: {}".format(e))
+            if component_cls_name not in component_tool_eval_cases:
+                invalid_details.append("{} 没有添加测试case到 component_tool_eval_cases 中".format(component_cls_name))
+            else:
+                input_dict = component_tool_eval_cases[component_cls_name]
+                component_obj = component_cls()
+                
+                try:
+                    stream_outputs = component_obj.tool_eval(**input_dict)
+                    for stream_output in stream_outputs: #校验流式输出
+                        iter_invalid_detail = self._check("流式", stream_output, output_json_schemas)
+                        invalid_details.extend(iter_invalid_detail)
+                except Exception as e:
+                    invalid_details.append("ToolEval执行失败: {}".format(e))
 
-            try:
-                non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-                invalid_details.extend(self._check("非流式", non_stream_outputs, output_json_schemas))  #校验非流式输出
-            except Exception as e:
-                invalid_details.append("NonStreamToolEval执行失败: {}".format(e))
+                try:
+                    non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
+                    invalid_details.extend(self._check("非流式", non_stream_outputs, output_json_schemas))  #校验非流式输出
+                except Exception as e:
+                    invalid_details.append("NonStreamToolEval执行失败: {}".format(e))
             
         if len(invalid_details) > 0:
             return CheckInfo(

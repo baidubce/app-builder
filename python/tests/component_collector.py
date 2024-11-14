@@ -78,6 +78,7 @@ def get_component_white_list():
 
 def get_all_components():
     from appbuilder import __COMPONENTS__
+    # __COMPONENTS__ = ["AnimalRecognition"]
 
     components = {}
     for component in __COMPONENTS__:
