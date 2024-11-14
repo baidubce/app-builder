@@ -26,9 +26,15 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"time"
 )
+
+type AppbuilderClient interface {
+	CreateConversation() (string, error)
+	Run(conversationID string, query string, fileIDS []string, stream bool)
+}
 
 // Deprecated: 将废弃，请使用DescribeApps替代
 func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
@@ -250,52 +256,22 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 	return val.(string), nil
 }
 
-func (t *AppBuilderClient) Run(conversationID string, query string, fileIDS []string, stream bool) (AppBuilderClientIterator, error) {
-	if len(conversationID) == 0 {
-		return nil, errors.New("conversationID mustn't be empty")
+func (t *AppBuilderClient) Run(param ...interface{}) (AppBuilderClientIterator, error) {
+	if len(param) == 0 {
+		return nil, errors.New("no arguments provided")
 	}
-	m := map[string]any{
-		"app_id":          t.appID,
-		"conversation_id": conversationID,
-		"query":           query,
-		"file_ids":        fileIDS,
-		"stream":          stream,
-	}
-	request := http.Request{}
+	var err error
+	var req AppBuilderClientRunRequest
 
-	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/runs")
-	if err != nil {
-		return nil, err
+	if reflect.TypeOf(param[0]) == reflect.TypeOf(AppBuilderClientRunRequest{}) {
+		req = param[0].(AppBuilderClientRunRequest)
+	} else {
+		req, err = t.buildAppBuilderClientRunRequest(param...)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	request.URL = serviceURL
-	request.Method = "POST"
-	header := t.sdkConfig.AuthHeaderV2()
-	header.Set("Content-Type", "application/json")
-	request.Header = header
-	data, _ := json.Marshal(m)
-	request.Body = NopCloser(bytes.NewReader(data))
-	request.ContentLength = int64(len(data)) // 手动设置长度
-
-	t.sdkConfig.BuildCurlCommand(&request)
-
-	resp, err := t.client.Do(&request)
-	if err != nil {
-		return nil, err
-	}
-
-	requestID, err := checkHTTPResponse(resp)
-	if err != nil {
-		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
-	}
-	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
-	if stream {
-		return &AppBuilderClientStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
-	}
-	return &AppBuilderClientOnceIterator{body: resp.Body}, nil
-}
-
-func (t *AppBuilderClient) RunV2(req AppBuilderClientRunRequest) (AppBuilderClientIterator, error) {
 	if len(req.ConversationID) == 0 {
 		return nil, errors.New("conversationID mustn't be empty")
 	}
@@ -330,6 +306,38 @@ func (t *AppBuilderClient) RunV2(req AppBuilderClientRunRequest) (AppBuilderClie
 		return &AppBuilderClientStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
 	}
 	return &AppBuilderClientOnceIterator{body: resp.Body}, nil
+}
+
+func (t *AppBuilderClient) buildAppBuilderClientRunRequest(param ...interface{}) (AppBuilderClientRunRequest, error) {
+	conversationID, ok := param[0].(string)
+	if !ok {
+		return AppBuilderClientRunRequest{}, errors.New("conversationID must be string type")
+	}
+	query, ok := param[1].(string)
+	if !ok {
+		return AppBuilderClientRunRequest{}, errors.New("query must be string type")
+	}
+
+	var fileIDS []string
+	if param[2] != nil {
+		fileIDS, ok = param[2].([]string)
+		if !ok {
+			fileIDS = nil
+		}
+	}
+
+	stream, ok := param[3].(bool)
+	if !ok {
+		stream = false
+	}
+
+	return AppBuilderClientRunRequest{
+		AppID:          t.appID,
+		ConversationID: conversationID,
+		Query:          query,
+		Stream:         stream,
+		FileIDs:        fileIDS,
+	}, nil
 }
 
 func (t *AppBuilderClient) RunWithToolCall(req AppBuilderClientRunRequest) (AppBuilderClientIterator, error) {

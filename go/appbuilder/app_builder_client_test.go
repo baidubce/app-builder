@@ -574,7 +574,7 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 	input := make(map[string]any)
 	input["city"] = "北京"
 	end_user_id := "go_user_id_0"
-	i, err := client.RunV2(AppBuilderClientRunRequest{
+	i, err := client.Run(AppBuilderClientRunRequest{
 		ConversationID: conversationID,
 		AppID:          appID,
 		Query:          "你能干什么",
@@ -635,7 +635,7 @@ func TestAppBuilderClientRunChatflow(t *testing.T) {
 		t.Fatalf("create conversation failed: %v", err)
 	}
 
-	i, err := client.RunV2(AppBuilderClientRunRequest{
+	i, err := client.Run(AppBuilderClientRunRequest{
 		ConversationID: conversationID,
 		AppID:          appID,
 		Query:          "查天气",
@@ -668,7 +668,7 @@ func TestAppBuilderClientRunChatflow(t *testing.T) {
 		t.Fatalf("interrupt id is empty")
 	}
 
-	i2, err := client.RunV2(AppBuilderClientRunRequest{
+	i2, err := client.Run(AppBuilderClientRunRequest{
 		ConversationID: conversationID,
 		AppID:          appID,
 		Query:          "我先查个航班动态",

@@ -58,6 +58,7 @@ type AppBuilderClientRunRequest struct {
 	Stream         bool         `json:"stream"`
 	EndUserID      *string      `json:"end_user_id"`
 	ConversationID string       `json:"conversation_id"`
+	FileIDs        []string     `json:"file_ids"`
 	Tools          []Tool       `json:"tools"`
 	ToolOutputs    []ToolOutput `json:"tool_outputs"`
 	ToolChoice     *ToolChoice  `json:"tool_choice"`
