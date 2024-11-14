@@ -173,7 +173,7 @@ from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
 
 from appbuilder.utils.logger_util import logger
-from appbuilder.utils.func_utils import function_to_model
+from appbuilder.utils.func_utils import function_to_model,decorator_to_model
 from appbuilder.utils.tool_definition_decorator import FunctionView, function, function_parameter, function_return
 
 from appbuilder.core.utils import get_model_list
