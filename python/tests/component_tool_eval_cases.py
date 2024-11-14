@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class AnimalRecognitionCase1:
+class AnimalRecognitionCase:
     def inputs(self):
         return {
             "img_name": "",
@@ -24,7 +24,7 @@ class AnimalRecognitionCase1:
     def outputs(self):
         return {"text": ["熊猫"]}
 
-class ASRCase1:
+class ASRCase:
     def inputs(self):
         return {
             "file_url": "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
@@ -34,14 +34,14 @@ class ASRCase1:
     def outputs(self):
         return {"text": ["北京科技馆"]}
 
-class TreeMindCase1:
+class TreeMindCase:
     def inputs(self):
         return {"query": "生成一份年度总结的思维导图"}
     
 
 
 component_tool_eval_cases = {
-    "AnimalRecognition": AnimalRecognitionCase1,
-    "ASR": ASRCase1,
-    "TreeMind": TreeMindCase1
+    "AnimalRecognition": AnimalRecognitionCase,
+    "ASR": ASRCase,
+    "TreeMind": TreeMindCase
 }
