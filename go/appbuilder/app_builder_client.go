@@ -31,11 +31,6 @@ import (
 	"time"
 )
 
-type AppbuilderClient interface {
-	CreateConversation() (string, error)
-	Run(conversationID string, query string, fileIDS []string, stream bool)
-}
-
 // Deprecated: 将废弃，请使用DescribeApps替代
 func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	request := http.Request{}
