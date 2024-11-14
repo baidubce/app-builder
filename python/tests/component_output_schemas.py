@@ -19,11 +19,51 @@ base_item_schema = {
     "type": {
       "type": "string"
     },
+    "name": {
+      "type": "string"
+    },
+    "text": {
+      "type": "object"
+    },
     "visible_scope": {
       "enum": ["llm", "user", "all"]
     },
+    "raw_data": {
+      "type": "object"
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+          "prompt_tokens": {
+              "type": "integer"
+          },
+          "completion_tokens": {
+              "type": "integer"
+          },
+          "total_tokens": {
+              "type": "integer"
+          },
+          "name": {
+              "type": "string"
+          }
+      },
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "first_token_time(s)": {
+          "type": "number"
+        },
+        "total_time(s)": {
+          "type": "number"
+        },
+        "memory_used(MB)": {
+          "type": "number"
+        }
+      }
+    }
   },
-  "required": ["type"]
+  "required": ["type", "text"]
 }
 
 text_schema = copy.deepcopy(base_item_schema)

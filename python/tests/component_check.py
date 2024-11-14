@@ -307,17 +307,17 @@ class ToolEvalOutputJsonRule(RuleBase):
             
             try:
                 stream_outputs = component_obj.tool_eval(**input_dict)
+                for stream_output in stream_outputs: #校验流式输出
+                    iter_invalid_detail = self._check("流式", stream_output, output_json_schemas)
+                    invalid_details.extend(iter_invalid_detail)
             except Exception as e:
                 invalid_details.append("ToolEval执行失败: {}".format(e))
-            for stream_output in stream_outputs: #校验流式输出
-                iter_invalid_detail = self._check("流式", stream_output, output_json_schemas)
-                invalid_details.extend(iter_invalid_detail)
 
-            # try:
-            #     non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-            # except Exception as e:
-            #     invalid_details.append("NonStreamToolEval执行失败: {}".format(e))
-            # invalid_details.extend(self._check("非流式", non_stream_outputs, output_json_schemas))  #校验非流式输出
+            try:
+                non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
+                invalid_details.extend(self._check("非流式", non_stream_outputs, output_json_schemas))  #校验非流式输出
+            except Exception as e:
+                invalid_details.append("NonStreamToolEval执行失败: {}".format(e))
             
         if len(invalid_details) > 0:
             return CheckInfo(
