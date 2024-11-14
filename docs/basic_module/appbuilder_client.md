@@ -233,7 +233,9 @@ print(answer)
 
 #### Run方法带ToolCall调用示例
 
-方式1:直接使用JsonSchema格式描述tools来进行ToolCall调用
+以下示例展示了三种方式来使用 ToolCall 进行调用，并演示了如何在 AppBuilder 环境中配置和执行会话调用。
+
+**方式1：使用 JSONSchema 格式直接描述 tools 调用**
 
 ```python
 import appbuilder
@@ -283,9 +285,9 @@ msg_2 = client.run(
 print(msg_2.model_dump_json(indent=4))
 ```
 
-方式2:使用function_to_model传函数对象的方式进行ToolCall的调用
+**方式2: 使用 function_to_model 将函数对象传递为 ToolCall 的调用**
 
-```
+```python
 import appbuilder
 from appbuilder.core.console.appbuilder_client import data_class
 import os
@@ -347,39 +349,64 @@ msg_2 = client.run(
 print(msg_2.model_dump_json(indent=4))
 ```
 
-方式3:使用装饰器的方式进行描述
+**方式3: 使用装饰器进行描述**
 
-```
+```python
+import os
 import appbuilder
 from appbuilder.core.console.appbuilder_client import data_class
-import os
+from appbuilder import decorator_to_model, function, function_parameter, function_return
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 # 设置环境变量
-os.environ["APPBUILDER_TOKEN"] = "..."
-app_id = "..."  # 已发布AppBuilder应用的ID
+os.environ["APPBUILDER_TOKEN"] = ""
+app_id = ""  # 已发布AppBuilder应用的ID
 # 初始化智能体
 client = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = client.create_conversation()
 #注意：要使用此方法要为函数写好注释。最好按照谷歌规范来写
 
+@function(description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。",disable_docstring=True)
+@function_parameter(name="location", example="北京", description="城市名，例如：北京。")
+@function_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
+@function_return(description="天气情况描述", example="北京今天25度")
 #定义示例函数
 def get_current_weather(location: str, unit: str) -> str:
-  """获取指定中国城市的当前天气信息。
-
-  仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。
-
-  Args:
-      location (str): 城市名，例如："北京"。
-      unit (int): 温度单位，支持 "celsius" 或 "fahrenheit"。
-
-  Returns:
-      str: 天气情况描述
-  """
   return "北京今天25度"
 
-d
+print(get_current_weather.__pf_function__)
+print(decorator_to_model(get_current_weather.__pf_function__).model_dump())
+#定义函数列表
+functions = [get_current_weather]
+function_map = {f.__name__: f for f in functions}
+#调用大模型
+msg = client.run(
+  conversation_id=conversation_id,
+  query="今天北京的天气怎么样？",
+  tools = [decorator_to_model(get_current_weather.__pf_function__).model_dump()]
+  )
+print(msg.model_dump_json(indent=4))
+# 获取最后的事件和工具调用信息
+event = msg.content.events[-1]
+tool_call = event.tool_calls[-1]
+
+# 获取函数名称和参数
+name = tool_call.function.name
+args = tool_call.function.arguments
+
+# 将函数名称映射到具体的函数并执行
+raw_result = function_map[name](**args)
+
+# 传递工具的输出
+msg_2 = client.run(
+    conversation_id=conversation_id,
+    tool_outputs=[{
+        "tool_call_id": tool_call.id,
+        "output": str(raw_result)
+    }],
+)
+print(msg_2.model_dump_json(indent=4))
 ```
 
 
