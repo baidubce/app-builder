@@ -155,6 +155,10 @@ def decorator_to_model(function_view) -> FunctionModel:
     required_fields = []
 
     for param in function_view.parameters:
+        # 验证类型字段是否有有效值
+        if not param.type_:
+            raise ValueError(f"参数 '{param.name}' 缺少类型信息，请在函数签名或注释中指定类型。")
+
         # 定义每个参数的属性模型
         parameters[param.name] = PropertyModel(
             type=param.type_,
@@ -170,7 +174,9 @@ def decorator_to_model(function_view) -> FunctionModel:
         properties=parameters,
         required=required_fields
     )
-
+    if not function_view.description:
+        raise ValueError(f"函数 {function_view.name} 缺少描述")
+    
     # 构建 FunctionModel
     function_model = FunctionModel(
         type="function",

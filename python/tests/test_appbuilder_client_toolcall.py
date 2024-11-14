@@ -76,7 +76,7 @@ class TestAgentRuntime(unittest.TestCase):
         print(msg_2.model_dump_json(indent=4))
 
         
-        """测试functions2tools功能"""
+        """测试functions2model功能"""
         #定义本地函数
         def get_current_weather(location: str, unit: str) -> str:
             """获取指定中国城市的当前天气信息。
@@ -120,7 +120,48 @@ class TestAgentRuntime(unittest.TestCase):
                 "output": str(raw_result)
             }],
         )
-        print(msg_2.model_dump_json(indent=4))   
+        print(msg_2.model_dump_json(indent=4))  
+
+
+        """测试装饰器功能功能""" 
+        @appbuilder.function(description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。",disable_docstring=True)
+        @appbuilder.function_parameter(name="location", example="北京", description="城市名，例如：北京。")
+        @appbuilder.function_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
+        @appbuilder.function_return(description="天气情况描述", example="北京今天25度")
+        #定义示例函数
+        def get_current_weather(location: str, unit: str) -> str:
+            return "北京今天25度"
+
+        #定义函数列表
+        functions = [get_current_weather]
+        function_map = {f.__name__: f for f in functions}
+        #调用大模型
+        msg = client.run(
+        conversation_id=conversation_id,
+        query="今天北京的天气怎么样？",
+        tools = [appbuilder.decorator_to_model(get_current_weather.__pf_function__).model_dump()]
+        )
+        print(msg.model_dump_json(indent=4))
+        # 获取最后的事件和工具调用信息
+        event = msg.content.events[-1]
+        tool_call = event.tool_calls[-1]
+
+        # 获取函数名称和参数
+        name = tool_call.function.name
+        args = tool_call.function.arguments
+
+        # 将函数名称映射到具体的函数并执行
+        raw_result = function_map[name](**args)
+
+        # 传递工具的输出
+        msg_2 = client.run(
+            conversation_id=conversation_id,
+            tool_outputs=[{
+                "tool_call_id": tool_call.id,
+                "output": str(raw_result)
+            }],
+        )
+        print(msg_2.model_dump_json(indent=4))
         
 
 if __name__ == '__main__':
