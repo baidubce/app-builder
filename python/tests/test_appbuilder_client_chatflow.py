@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+import os
 import appbuilder
 
 
@@ -59,13 +60,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
         self.assertIsNotNone(interrupt_event_id)
         msg2 = builder.run(conversation_id=conversation_id,
                            query="我先查个航班动态", stream=True,
-                           action={"action_type": "resume",
-                                   "parameters": {
-                                       "interrupt_event": {
-                                           "id": interrupt_event_id,
-                                           "type": "chat"
-                                       }
-                                   }})
+                           action=self.create_action(interrupt_event_id))
         publish_message = None
         for ans2 in msg2.content:
             for event in ans2.events:
@@ -73,6 +68,15 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                     publish_message = event.detail.get("message")
         print(publish_message)
         self.assertIsNotNone(publish_message)
+
+    def create_action(self, interrupt_event_id):
+        return {"action_type": "resume",
+                "parameters": {
+                    "interrupt_event": {
+                        "id": interrupt_event_id,
+                        "type": "chat"
+                    }
+                }}
 
 
 if __name__ == "__main__":
