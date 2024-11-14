@@ -162,7 +162,41 @@ class TestAgentRuntime(unittest.TestCase):
             }],
         )
         print(msg_2.model_dump_json(indent=4))
+
+        @appbuilder.function()
+        @appbuilder.function_parameter(name="location", example="北京", description="城市名，例如：北京。")
+        @appbuilder.function_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
+        @appbuilder.function_return(description="天气情况描述", example="北京今天25度")
+        #定义示例函数
+        def get_current_weather(location: str, unit: str) -> str:
+            return "北京今天25度"
+            
+        try:
+            appbuilder.decorator_to_model(get_current_weather.__pf_function__)
+        except ValueError as e:
+            # 使用 assert 检查是否抛出 ValueError，且包含 "缺少描述" 的信息
+            assert "缺少描述" in str(e), f"Expected '缺少描述' in error message, but got: {str(e)}"
+        else:
+            # 如果未抛出异常，测试应失败
+            assert False, "Expected ValueError but no exception was raised"
         
+        @appbuilder.function(description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。",disable_docstring=True)
+        @appbuilder.function_parameter(name="location", example="北京", description="城市名，例如：北京。")
+        @appbuilder.function_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
+        @appbuilder.function_return(description="天气情况描述", example="北京今天25度")
+        #定义示例函数
+        def get_current_weather(location: str, unit) -> str:
+            return "北京今天25度"
+
+        try:
+        # 调用 decorator_to_model 将 get_current_weather 转换为模型
+            appbuilder.decorator_to_model(get_current_weather.__pf_function__)
+        except ValueError as e:
+            # 断言异常信息包含“缺少类型信息”，表示参数缺少类型注解
+            assert "缺少类型信息" in str(e), f"Expected '缺少类型信息' in error message, but got: {str(e)}"
+        else:
+            # 如果未抛出异常，测试失败
+            assert False, "Expected ValueError for missing parameter type but no exception was raised"
 
 if __name__ == '__main__':
     unittest.main()
