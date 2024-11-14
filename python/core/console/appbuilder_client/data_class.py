@@ -23,21 +23,26 @@ class Function(BaseModel):
     description: str = Field(..., description="工具描述")
     parameters: dict = Field(..., description="工具参数, json_schema格式")
 
+
 class Tool(BaseModel):
     type: str = "function"
     function: Function = Field(..., description="工具信息")
+
 
 class ToolOutput(BaseModel):
     tool_call_id: str = Field(..., description="工具调用ID")
     output: str = Field(..., description="工具输出")
 
+
 class FunctionCallDetail(BaseModel):
     name: str = Field(..., description="函数的名称")
     arguments: dict = Field(..., description="模型希望您传递给函数的参数")
 
+
 class ToolCall(BaseModel):
     id: str = Field(..., description="工具调用ID")
-    type: str = Field("function", description="需要输出的工具调用的类型。就目前而言，这始终是function")
+    type: str = Field(
+        "function", description="需要输出的工具调用的类型。就目前而言，这始终是function")
     function: FunctionCallDetail = Field(..., description="函数定义")
 
 
@@ -62,6 +67,25 @@ class ToolChoice(BaseModel):
     )
 
 
+class ActionInterruptEvent(BaseModel):
+    id: str = Field(..., description="要回复的'信息收集节点'中断事件ID")
+    type: str = Field(..., description="要回复的'信息收集节点'中断事件类型，当前仅chat")
+
+
+class ActionParameters(BaseModel):
+    interrupt_event: ActionInterruptEvent = Field(
+        ..., description="要回复的'信息收集节点'中断事件")
+
+
+class Action(BaseModel):
+    action_type: str = Field(...,
+                             description="action类型,目前可用值'resume', 用于回复信息收集节点的消息")
+    parameters: ActionParameters = Field(
+        ...,
+        description="对话时要进行的特殊操作。如回复工作流agent中'信息收集节点'的消息。",
+    )
+
+
 class AppBuilderClientRequest(BaseModel):
     """会话请求参数
         属性:
@@ -80,6 +104,7 @@ class AppBuilderClientRequest(BaseModel):
     tool_outputs: Optional[list[ToolOutput]] = None
     tool_choice: Optional[ToolChoice] = None
     end_user_id: Optional[str] = None
+    action: Optional[Action] = None
 
 
 class Usage(BaseModel):
@@ -296,10 +321,12 @@ class CreateConversationResponse(BaseModel):
 
 
 class AppBuilderClientAppListRequest(BaseModel):
-    limit: int = Field(default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
+    limit: int = Field(
+        default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
     after: str = Field(
         default="", description="用于分页的游标。after 是一个应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 结束，那么你后续的调用可以包含 after=app_id_123 以获取列表的下一页数据。")
     before: str = Field(default="", description="用于分页的游标。与after相反，填写它将获取前一页数据")
+
 
 class AppOverview(BaseModel):
     id: str = Field("", description="应用ID")
@@ -312,14 +339,19 @@ class AppOverview(BaseModel):
     isPublished: Optional[bool] = Field(None, description="是否已发布")
     updateTime: Optional[int] = Field(None, description="更新时间。时间戳，单位秒")
 
+
 class AppBuilderClientAppListResponse(BaseModel):
     request_id: str = Field("", description="请求ID")
     data: Optional[list[AppOverview]] = Field(
         [], description="应用概览列表")
 
+
 class DescribeAppsRequest(BaseModel):
-    maxKeys: int = Field(default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
-    marker: str = Field(default=None, description="用于分页的游标。marker 是应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 开始，那么可以使用 marker=app_id_123 来获取列表的下一页数据")
+    maxKeys: int = Field(
+        default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
+    marker: str = Field(
+        default=None, description="用于分页的游标。marker 是应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 开始，那么可以使用 marker=app_id_123 来获取列表的下一页数据")
+
 
 class DescribeAppsResponse(BaseModel):
     requestId: str = Field("", description="请求ID")
