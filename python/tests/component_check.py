@@ -321,13 +321,13 @@ class ToolEvalOutputJsonRule(RuleBase):
             "code": code_output,
         }
         
-    def _check_text_and_code(self, component_cls_name, output_dict):
+    def _check_text_and_code(self, component_case, output_dict):
         """检查输出的内容是否符合预期，只检查text(包含oral_text)和code
         """
-        if "output" not in component_tool_eval_cases[component_cls_name]:
+        if not hasattr(component_case,"outputs"):
             return []
 
-        expected_output = component_tool_eval_cases[component_cls_name]["output"]
+        expected_output = component_case.outputs()
         expected_output_texts = []
         expected_output_oral_texts = []
         expected_output_codes = []
@@ -360,7 +360,11 @@ class ToolEvalOutputJsonRule(RuleBase):
             error_message += "应包含oral_text:{}".format(", ".join(lost_oral_texts))
         if len(lost_code) > 0:
             error_message += "应包含code:{}".format(", ".join(lost_code))
-        return ["ToolEval返回内容与预期不符: " + error_message]
+            
+        if error_message != "":
+            return ["ToolEval返回内容与预期不符: " + error_message]
+        else:
+            return []
         
     def check(self, component_cls) -> CheckInfo:
         invalid_details = []
@@ -372,7 +376,8 @@ class ToolEvalOutputJsonRule(RuleBase):
             if component_cls_name not in component_tool_eval_cases:
                 invalid_details.append("{} 没有添加测试case到 component_tool_eval_cases 中".format(component_cls_name))
             else:
-                input_dict = component_tool_eval_cases[component_cls_name]["input"]
+                component_case = component_tool_eval_cases[component_cls_name]()
+                input_dict = component_case.inputs()
                 component_obj = component_cls()
                 
                 try:
@@ -386,7 +391,7 @@ class ToolEvalOutputJsonRule(RuleBase):
                         stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
                         stream_output_dict["code"] += iter_output_dict["code"]
                     if len(invalid_details) == 0:
-                        invalid_details.extend(self._check_text_and_code(component_cls_name, stream_output_dict))
+                        invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
                 except Exception as e:
                     invalid_details.append("ToolEval执行失败: {}".format(e))
 
@@ -396,7 +401,7 @@ class ToolEvalOutputJsonRule(RuleBase):
                     invalid_details.extend(["非流式" + error_message for error_message in non_stream_invalid_details]) 
                     if len(invalid_details) == 0:
                         non_stream_output_dict = self._gather_iter_outputs(non_stream_outputs)
-                        invalid_details.extend(self._check_text_and_code(component_cls_name, non_stream_output_dict))
+                        invalid_details.extend(self._check_text_and_code(component_case, non_stream_output_dict))
                 except Exception as e:
                     invalid_details.append(" NonStreamToolEval执行失败: {}".format(e))
                     
