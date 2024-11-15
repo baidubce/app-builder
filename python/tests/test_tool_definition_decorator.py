@@ -123,7 +123,7 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
-        assert view.description is None
+        assert view.description == ""
         assert view.is_async is False
         assert view.is_stream is False
 
