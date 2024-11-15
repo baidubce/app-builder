@@ -11,19 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import os
 import unittest
-from appbuilder import FunctionView, function, function_parameter, function_return
+from appbuilder import FunctionView, manifest, manifest_parameter, manifest_return
 from typing import Any, Dict, List, Optional, Union
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestToolDefinitionDecorator(unittest.TestCase):
     def test_disable_docstring(self):
-        @function(description="anotated function", disable_docstring=True)
-        @function_parameter(name="param", description="a parameter", type="str", default_value="default_val")
-        @function_return(description="a result", default_value="default_result")
+        @manifest(description="anotated function", disable_docstring=True)
+        @manifest_parameter(name="param", description="a parameter", type="str", default_value="default_val")
+        @manifest_return(description="a result", default_value="default_result")
         def func(param: str) -> str:
             return param
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
@@ -47,9 +47,9 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
 
     def test_combine(self):
-        @function()
-        @function_parameter(name="param", example="[1,2,3]")
-        @function_return(description="Sum of param as list of number without odds.", example="6")
+        @manifest()
+        @manifest_parameter(name="param", example="[1,2,3]")
+        @manifest_return(description="Sum of param as list of number without odds.", example="6")
         def func(param: str = "[]") -> int:
             """An example function.
 
@@ -61,7 +61,7 @@ class TestToolDefinitionDecorator(unittest.TestCase):
             """
             return param
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
@@ -85,9 +85,9 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
 
     def test_reversed_decorators(self):
-        @function_parameter(name="param", example="[1,2,3]", description="DECORATOR A list of numbers.")
-        @function_return(description="DECORATOR The sum of parameter.", example="6")
-        @function()
+        @manifest_parameter(name="param", example="[1,2,3]", description="DECORATOR A list of numbers.")
+        @manifest_return(description="DECORATOR The sum of parameter.", example="6")
+        @manifest()
         def func(param: str = "[]") -> int:
             """An example function.
 
@@ -99,7 +99,7 @@ class TestToolDefinitionDecorator(unittest.TestCase):
             """
             return param
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
@@ -127,7 +127,7 @@ class TestToolDefinitionDecorator(unittest.TestCase):
         def func(param: str = "[]") -> int:
             return param
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"

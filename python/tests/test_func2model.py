@@ -41,12 +41,12 @@ class TestAgentRuntime(unittest.TestCase):
                 str: Styled string.
             """
             return ""
-        function_model = appbuilder.function_to_model(google_style)
+        function_manifest = appbuilder.function_to_manifest(google_style)
 
         # 断言顶层的结构
-        assert function_model.type == "function", "Type does not match 'function'"
-        assert function_model.function["name"] == "google_style", "Function name does not match 'google_style'"
-        assert function_model.function["description"] == """Google style docstring.
+        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert function_manifest.function["name"] == "google_style", "Function name does not match 'google_style'"
+        assert function_manifest.function["description"] == """Google style docstring.
 
             Args:
                 name (str): Name of object.
@@ -60,7 +60,7 @@ class TestAgentRuntime(unittest.TestCase):
             """, "Description does not match"
 
         # 断言参数结构
-        parameters = function_model.function["parameters"]
+        parameters = function_manifest.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -115,11 +115,11 @@ class TestAgentRuntime(unittest.TestCase):
                 Dict[str, str]: Returns a dict.
             """
             return ""
-        function_model = appbuilder.function_to_model(func)
+        function_manifest = appbuilder.function_to_manifest(func)
         # 断言顶层的结构
-        assert function_model.type == "function", "Type does not match 'function'"
-        assert function_model.function["name"] == "func", "Function name does not match 'func'"
-        assert function_model.function["description"] == """Google style docstring.
+        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert function_manifest.function["name"] == "func", "Function name does not match 'func'"
+        assert function_manifest.function["description"] == """Google style docstring.
 
             Args:
                 bad param (str): Bad parameter, name contains whitespace.
@@ -132,7 +132,7 @@ class TestAgentRuntime(unittest.TestCase):
             """, "Description does not match"
 
         # 断言参数结构
-        parameters = function_model.function["parameters"]
+        parameters = function_manifest.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -174,11 +174,11 @@ class TestAgentRuntime(unittest.TestCase):
             """
             return ""
         
-        function_model = appbuilder.function_to_model(func)
+        function_manifest = appbuilder.function_to_manifest(func)
         # 断言顶层的结构
-        assert function_model.type == "function", "Type does not match 'function'"
-        assert function_model.function["name"] == "func", "Function name does not match 'func'"
-        assert function_model.function["description"] == """Google style docstring.
+        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert function_manifest.function["name"] == "func", "Function name does not match 'func'"
+        assert function_manifest.function["description"] == """Google style docstring.
 
             Args:
                 name (str): Name of object.
@@ -186,7 +186,7 @@ class TestAgentRuntime(unittest.TestCase):
             """, "Description does not match"
 
         # 断言参数结构
-        parameters = function_model.function["parameters"]
+        parameters = function_manifest.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -203,7 +203,7 @@ class TestAgentRuntime(unittest.TestCase):
         assert parameters["required"] == ["name"], "'required' does not match ['name']"
 
         #断言没有["parameters"][1]的参数了
-        assert not ("parameters" in function_model.function and len(function_model.function["parameters"]) == 1)
+        assert not ("parameters" in function_manifest.function and len(function_manifest.function["parameters"]) == 1)
 
 
     def test_google_style_no_args_no_return(self):
@@ -221,7 +221,7 @@ class TestAgentRuntime(unittest.TestCase):
 
         #断言这里会抛出参数类型缺失导致的ValueError异常
         try:
-            function_model = appbuilder.function_to_model(func)
+            function_manifest = appbuilder.function_to_manifest(func)
         except ValueError as e:
             print(e)
             assert str(e) == "参数 'args' 缺少类型信息，请在函数签名或注释中指定类型。"
@@ -240,7 +240,7 @@ class TestAgentRuntime(unittest.TestCase):
 
         # 断言这里会抛出缺少文档字符串的 ValueError 异常
         try:
-            function_model = appbuilder.function_to_model(func)
+            function_manifest = appbuilder.function_to_manifest(func)
         except ValueError as e:
             assert str(e) == "函数 func 缺少文档字符串", "未抛出预期的 ValueError 或信息不匹配"
 
@@ -258,8 +258,8 @@ class TestAgentRuntime(unittest.TestCase):
                 str: 天气情况描述
             """
             return ""
-        function_model = appbuilder.function_to_model(get_current_weather)
-        parameters = function_model.function["parameters"]
+        function_manifest = appbuilder.function_to_manifest(get_current_weather)
+        parameters = function_manifest.function["parameters"]
         properties = parameters["properties"]
         assert "unit" in properties, "'unit' parameter missing"
         # 描述和函数签名不一致的时候，以函数签名为准
@@ -278,8 +278,8 @@ class TestAgentRuntime(unittest.TestCase):
                 str: 天气情况描述
             """
             return ""
-        function_model = appbuilder.function_to_model(get_current_weather)
-        parameters = function_model.function["parameters"]
+        function_manifest = appbuilder.function_to_manifest(get_current_weather)
+        parameters = function_manifest.function["parameters"]
         properties = parameters["properties"]
         assert "unit" in properties, "'unit' parameter missing"
         # 描述和函数签名不一致的时候，以函数签名为准

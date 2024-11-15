@@ -14,11 +14,6 @@ from dataclasses import dataclass
 from dataclasses import field as Field
 from dataclasses_json import DataClassJsonMixin
 
-from appbuilder.utils.tool_definition_docstring import (
-    DocstringsFormat,
-    _parse_function_description_from_docstrings,
-    get_docstring_view,
-)
 from appbuilder.utils.tool_definition_signature import get_signature_view
 
 class BaseModel(DataClassJsonMixin):
@@ -267,30 +262,25 @@ class FunctionView(BaseModel):
         super().__init__()
 
 
-def function(
+def manifest(
     *,
     description: Optional[str] = None,
     name: Optional[str] = None,
     is_async: Optional[bool] = None,
     is_stream: Optional[bool] = None,
-    disable_docstring: Optional[bool] = False,
-    docstring_format: Optional[DocstringsFormat] = DocstringsFormat.GOOGLE,
     return_direct: Optional[bool] = False,
 ):
     """
-    Decorator for functions.  Use some information to extract meta about function.
+    Decorator for functions. Use some information to extract meta about function.
     Priority as follows:
     1. User provided value via arguments
     2. Function signature + annotations
-    3. Docstring
 
     Args:
-        description (str, optional): The functionality of the function, general user guildline.
+        description (str, optional): The functionality of the function, general user guideline.
         name (str, optional): The name of the function.
         is_async (bool, optional): Whether the function is asynchronous.
         is_stream (bool, optional): Whether the function is returning Iterator/AsyncIterator.
-        disable_docstring (bool, optional): True to disable FunctionView extract meta from docstring.
-        docstring_format (DocstringsFormat, optional): The format of the docstring,
         return_direct (bool, optional): Compatible with LangChain BaseTool.return_direct.
     """
 
@@ -299,11 +289,6 @@ def function(
 
         # Get meta from signature
         sig_params, sig_returns = get_signature_view(func=func)
-
-        # Get meta from docstring
-        doc_params, doc_returns = get_docstring_view(
-            func=func, format=docstring_format, disable_docstring=disable_docstring
-        )
 
         # Get meta from decorator
         dec_params = func.__pf_function_parameters__ if hasattr(func, "__pf_function_parameters__") else {}
@@ -315,21 +300,18 @@ def function(
         final_parameters = []
         for p in sig_params:
             k = p["name"]
-            a = doc_params[k] if k in doc_params else {}
-            # Annotated parameters overwrites the docstring parameters if key is the same.
-            b = {**a, **p}
-            # Decorator parameters overwrites the annotated parameters if there is any value, minimize decorator to write.
+            # Use decorator parameters to override annotations
             c = dec_params[k] if k in dec_params else {}
-            b["type_schema"] = schema.get(k, {})
-            result = _merge_dict_parameter_view(b, c)
+            p["type_schema"] = schema.get(k, {})
+            result = _merge_dict_parameter_view(p, c)
             final_parameters.append(result)
 
-        final_return = {**doc_returns, **sig_returns}
+        final_return = {**sig_returns}
         final_return = _merge_dict_parameter_view(final_return, dec_returns)
 
         # Use provided value if not None, otherwise use reflection.
         final_name = name or func.__name__
-        final_desc = description or _parse_function_description_from_docstrings(func.__doc__)
+        final_desc = description or ""
 
         # inspect.iscoroutinefunction(func) is not enough to check if it's async generator.
         # https://github.com/python/cpython/issues/81371
@@ -367,7 +349,7 @@ def function(
         )
 
         # Attach view to function.
-        func.__pf_function__ = view
+        func.__ab_manifest__ = view
 
         # Compatible to semantic kernel 0.9
         func.__kernel_function__ = True
@@ -405,7 +387,7 @@ def _merge_dict_parameter_view(dict: Dict[str, Any], view: ParameterView) -> Dic
     return dict
 
 
-def function_parameter(
+def manifest_parameter(
     *,
     name: str,
     description: str = None,
@@ -485,7 +467,7 @@ def function_parameter(
     return decorator
 
 
-def function_return(
+def manifest_return(
     *,
     description: str = None,
     default_value: str = None,

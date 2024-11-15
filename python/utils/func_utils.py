@@ -21,12 +21,6 @@ from textwrap import dedent
 from pydantic import BaseModel, ValidationError
 from typing import Dict, List, Literal, Any, Optional, Tuple
 
-from appbuilder.utils.tool_definition_docstring import (
-    DocstringsFormat,
-    _find_and_parse_params_from_docstrings,
-    _get_function_docs,
-)
-
 def deprecated(reason=None, version=None):
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
@@ -75,7 +69,7 @@ class FunctionModel(BaseModel):
     type: Literal["function"]
     function: Dict[str, Any]
 
-def function_to_model(func) -> FunctionModel:
+def function_to_manifest(func) -> FunctionModel:
     """
     将Python函数转换为Pydantic的BaseModel实例，描述函数的签名，包括名称、描述和参数。
     通过解析注释来提取类型和描述信息。
@@ -99,10 +93,6 @@ def function_to_model(func) -> FunctionModel:
     if func.__doc__ is None:
         raise ValueError(f"函数 {func.__name__} 缺少文档字符串")
 
-    # 解析注释中的参数和返回值信息
-    doc = _get_function_docs(func)
-    doc_params, _ = _find_and_parse_params_from_docstrings(docstring=doc, format=DocstringsFormat.GOOGLE)
-
     # 解析参数信息
     properties = {}
     required = []
@@ -110,14 +100,9 @@ def function_to_model(func) -> FunctionModel:
         # 提取参数类型，默认使用 "string" 作为基础类型
         param_type = type_map.get(param.annotation)
 
-        # 先从 doc_params 获取类型，如果没有定义则使用 param_type
-        doc_param_info = doc_params.get(param.name, {})
-        doc_type = doc_param_info.get("type", None)
-
         # 设置参数信息，优先使用 docstring 类型，其次使用函数签名中的类型
         param_info = {
-            "type": param_type if param_type is not None else doc_type,   # 优先使用函数签名中类型 param_type
-            "description": doc_param_info.get("description", None),       # 从docstring中提取参数描述
+            "type": param_type,   # 优先使用函数签名中类型 param_type
         }
         # 验证类型字段是否有有效值
         if not param_info["type"]:
@@ -138,7 +123,7 @@ def function_to_model(func) -> FunctionModel:
     )
 
     # 生成 FunctionModel 实例
-    function_model = FunctionModel(
+    function_manifest = FunctionModel(
         type="function",
         function={
             "name": func.__name__,
@@ -147,9 +132,9 @@ def function_to_model(func) -> FunctionModel:
         }
     )
 
-    return function_model
+    return function_manifest
 
-def decorator_to_model(function_view) -> FunctionModel:
+def decorator_to_manifest(function_view) -> FunctionModel:
     # 提取参数信息
     parameters = {}
     required_fields = []
@@ -178,7 +163,7 @@ def decorator_to_model(function_view) -> FunctionModel:
         raise ValueError(f"函数 {function_view.name} 缺少描述")
     
     # 构建 FunctionModel
-    function_model = FunctionModel(
+    function_manifest = FunctionModel(
         type="function",
         function={
             "name": function_view.name,
@@ -191,4 +176,4 @@ def decorator_to_model(function_view) -> FunctionModel:
         }
     )
 
-    return function_model
+    return function_manifest

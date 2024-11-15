@@ -13,18 +13,18 @@
 # limitations under the License.
 import unittest
 from typing import Any, Dict, List, Optional, Union
-from appbuilder import FunctionView, function
+from appbuilder import FunctionView, manifest
 
 #@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_is_normal(self):
-        @function()
+        @manifest()
         def func():
             return 1
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.is_async is False
@@ -32,13 +32,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_is_async(self):
-        @function()
+        @manifest()
         async def func():
             import asyncio
 
             await asyncio.sleep(0)
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.is_async is True
@@ -46,12 +46,12 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_is_stream(self):
-        @function()
+        @manifest()
         def func():
             for i in range(2):
                 yield i
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.is_async is False
@@ -59,7 +59,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_is_async_and_stream(self):
-        @function()
+        @manifest()
         async def func():
             import asyncio
 
@@ -67,7 +67,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
                 await asyncio.sleep(0)
                 yield i
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.is_async is True
@@ -75,7 +75,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_function_description_no_args(self):
-        @function()
+        @manifest()
         def func():
             """A function to test function description.
 
@@ -87,7 +87,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
             """
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
@@ -99,7 +99,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_basic(self):
-        @function()
+        @manifest()
         def func(
             name: str,
         ) -> str:
@@ -113,7 +113,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
             """
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
@@ -129,13 +129,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_list(self):
-        @function()
+        @manifest()
         def func(
             val: List[str],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -147,13 +147,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_list_of_dicts(self):
-        @function()
+        @manifest()
         def func(
             val: List[Dict[str, List[str]]],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -165,13 +165,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_dict(self):
-        @function()
+        @manifest()
         def func(
             val: Dict[str, Any],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -183,13 +183,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_dict_of_lists(self):
-        @function()
+        @manifest()
         def func(
             val: Dict[str, List[Dict[str, List[str]]]],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -201,13 +201,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_union_simple(self):
-        @function()
+        @manifest()
         def func(
             val: Union[str, int, Any],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -219,13 +219,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_union(self):
-        @function()
+        @manifest()
         def func(
             val: Union[str, List[int]],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -237,13 +237,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_union_nest1_dict(self):
-        @function()
+        @manifest()
         def func(
             val: Union[float, Dict[str, int]],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -255,13 +255,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_union_combine(self):
-        @function()
+        @manifest()
         def func(
             val: Union[float, Union[str, int]],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -273,13 +273,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_no_annotation(self):
-        @function()
+        @manifest()
         def func(
             val,
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -291,11 +291,11 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_default(self):
-        @function()
+        @manifest()
         def func(val: str = "value") -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
         assert view.parameters[0].name == "val"
@@ -306,13 +306,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_optional(self):
-        @function()
+        @manifest()
         def func(
             val: Optional[str],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -324,13 +324,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_optional_equals_none(self):
-        @function()
+        @manifest()
         def func(
             val: Optional[str] = None,
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -342,13 +342,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_optional_list(self):
-        @function()
+        @manifest()
         def func(
             val: Optional[List[str]],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -360,7 +360,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_list_nest_optional(self):
-        @function()
+        @manifest()
         def func(
             val: List[Optional[str]],
         ) -> str:
@@ -374,7 +374,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
             """
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -387,13 +387,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_union_nest_single_optional(self):
-        @function()
+        @manifest()
         def func(
             val: Union[Optional[str]],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -405,13 +405,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_union_nest_optional(self):
-        @function()
+        @manifest()
         def func(
             val: Union[Optional[int], Optional[str]],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 
@@ -424,13 +424,13 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
 
     def test_decorator_google_style_union_nest1_dict_optional_value(self):
-        @function()
+        @manifest()
         def func(
             val: Union[float, Dict[str, Optional[int]]],
         ) -> str:
             return ""
 
-        view = func.__pf_function__
+        view = func.__ab_manifest__
 
         assert isinstance(view, FunctionView)
 

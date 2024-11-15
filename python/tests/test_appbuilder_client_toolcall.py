@@ -98,7 +98,7 @@ class TestAgentRuntime(unittest.TestCase):
         msg = client.run(
         conversation_id=conversation_id,
         query="今天北京的天气怎么样？",
-        tools = [appbuilder.function_to_model(f).dict() for f in functions]
+        tools = [appbuilder.function_to_manifest(f).model_dump() for f in functions]
         )
         print(msg.model_dump_json(indent=4))
         # 获取最后的事件和工具调用信息
@@ -139,7 +139,7 @@ class TestAgentRuntime(unittest.TestCase):
         msg = client.run(
         conversation_id=conversation_id,
         query="今天北京的天气怎么样？",
-        tools = [appbuilder.decorator_to_model(get_current_weather.__pf_function__).model_dump()]
+        tools = [appbuilder.decorator_to_manifest(get_current_weather.__ab_manifest__).model_dump()]
         )
         print(msg.model_dump_json(indent=4))
         # 获取最后的事件和工具调用信息
@@ -172,7 +172,7 @@ class TestAgentRuntime(unittest.TestCase):
             return "北京今天25度"
 
         try:
-            appbuilder.decorator_to_model(get_current_weather.__pf_function__)
+            appbuilder.decorator_to_manifest(get_current_weather.__ab_manifest__)
         except ValueError as e:
             # 使用 assert 检查是否抛出 ValueError，且包含 "缺少描述" 的信息
             assert "缺少描述" in str(e), f"Expected '缺少描述' in error message, but got: {str(e)}"
