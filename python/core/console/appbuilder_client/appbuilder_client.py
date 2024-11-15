@@ -320,6 +320,7 @@ class AppBuilderClient(Component):
                          tools: list[data_class.Tool] = None,
                          stream: bool = False,
                          event_handler=None,
+                         action_func=None,
                          **kwargs):
         r"""运行智能体应用，并通过事件处理器处理事件
 
@@ -330,6 +331,8 @@ class AppBuilderClient(Component):
             tools(list[data_class.Tools], 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
             stream (bool): 是否流式响应
             event_handler (EventHandler): 事件处理器
+            action_func (Callable): 动作处理函数，用于处理动作
+            
             kwargs: 其他参数
 
         Returns:
@@ -343,6 +346,7 @@ class AppBuilderClient(Component):
             file_ids=file_ids,
             tools=tools,
             stream=stream,
+            action_func=action_func,
             **kwargs
         )
 

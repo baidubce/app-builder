@@ -84,6 +84,18 @@ class Action(BaseModel):
         ...,
         description="对话时要进行的特殊操作。如回复工作流agent中'信息收集节点'的消息。",
     )
+    
+    @classmethod
+    def create_resume_action(cls, event_id):
+        return {
+            "action_type": "resume",
+            "parameters": {
+                "interrupt_event": {
+                    "id": event_id,
+                    "type": "chat"
+                }
+            }
+        }
 
 
 class AppBuilderClientRequest(BaseModel):

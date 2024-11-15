@@ -35,6 +35,7 @@ class AppBuilderClientRunContext(object):
         self.need_tool_submit = False
         self.is_complete = False
         self.current_thought = ""
+        self.current_interrupt_event_id = None
 
 
 class AppBuilderEventHandler(object):
@@ -49,6 +50,7 @@ class AppBuilderEventHandler(object):
                  tools=None,
                  stream: bool = False,
                  event_handler=None,
+                 action_func=None,
                  **kwargs):
         """
         初始化类实例并设置相关参数。
@@ -61,6 +63,7 @@ class AppBuilderEventHandler(object):
             tools (list, optional): 工具列表，默认为None。
             stream (bool, optional): 是否使用流式处理，默认为False。
             event_handler (callable, optional): 事件处理函数，默认为None。
+            action_func (callable, optional): 动作函数，默认为None。
             **kwargs: 其他可选参数。
         
         Returns:
@@ -78,6 +81,8 @@ class AppBuilderEventHandler(object):
         self._is_complete = False
         self._need_tool_call = False
         self._last_tool_output = None
+        self._action_func = action_func
+        self._interrupt_event_id = None
 
         self._iterator = self.__run_process__() if not self._stream else self.__stream_run_process__()
 
@@ -100,7 +105,7 @@ class AppBuilderEventHandler(object):
                 res = self._submit_tool_output()
                 self.__event_process__(res)
             yield res
-        
+
         self.reset_state()
 
     def __event_process__(self, run_response):
@@ -120,9 +125,9 @@ class AppBuilderEventHandler(object):
             event = run_response.content.events[-1]
         except Exception as e:
             raise ValueError(e)
-        
+
         event_status = event.status
-        
+
         if event.status == 'success':
             self._is_complete = True
         elif event.status == 'interrupt':
@@ -136,9 +141,11 @@ class AppBuilderEventHandler(object):
             "interrupt": self.interrupt,
             "success": self.success,
         }
-        
+
         run_context = AppBuilderClientRunContext()
         self._update_run_context(run_context, run_response.content)
+        self.handle_event_type(run_context, run_response.content)
+        self.handle_content_type(run_context, run_response.content)
         if event_status in context_func_map:
             func = context_func_map[event_status]
             func_res = func(run_context, run_response.content)
@@ -198,9 +205,9 @@ class AppBuilderEventHandler(object):
                 event = msg.events[-1]
             except Exception as e:
                 raise ValueError(e)
-            
+
             event_status = event.status
-            
+
             if event.status == 'success':
                 self._is_complete = True
             elif event.status == 'interrupt':
@@ -214,9 +221,11 @@ class AppBuilderEventHandler(object):
                 "interrupt": self.interrupt,
                 "success": self.success,
             }
-            
+
             run_context = AppBuilderClientRunContext()
             self._update_run_context(run_context, msg)
+            self.handle_event_type(run_context, msg)
+            self.handle_content_type(run_context, msg)
             if event_status in context_func_map:
                 func = context_func_map[event_status]
                 func_res = func(run_context, msg)
@@ -236,7 +245,7 @@ class AppBuilderEventHandler(object):
             else:
                 logger.warning(
                     "Unknown status: {}, response data: {}".format(event_status, run_response))
-            
+
             yield msg
 
     def _update_run_context(self, run_context, run_response):
@@ -265,12 +274,17 @@ class AppBuilderEventHandler(object):
             pass
 
     def _run(self):
+        action = None
+        if self._action_func is not None and self._interrupt_event_id is not None:
+            action = self._action_func(self._interrupt_event_id)
+
         res = self._appbuilder_client.run(
             conversation_id=self._conversation_id,
             query=self._query,
             file_ids=self._file_ids,
             stream=self._stream,
-            tools=self._tools
+            tools=self._tools,
+            action=action
         )
         return res
 
@@ -297,7 +311,7 @@ class AppBuilderEventHandler(object):
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         if exc_type is not None:
             raise exc_val
-        
+
         return
 
     def reset_state(self):
@@ -323,6 +337,8 @@ class AppBuilderEventHandler(object):
         self._is_complete = False
         self._need_tool_call = False
         self._iterator = None
+        self._interrupt_event_id = None
+        self._action_func = None
 
     def until_done(self):
         """
@@ -338,6 +354,16 @@ class AppBuilderEventHandler(object):
         for _ in self._iterator:
             pass
 
+    def handle_content_type(self, run_context, run_response):
+        # 用户可重载该方法，用于处理不同类型的content_type
+        event = run_response.events[-1]
+        if event.content_type == "chatflow_interrupt":
+            self._interrupt_event_id = event.detail.get("interrupt_event_id")
+
+    def handle_event_type(self, run_context, run_response):
+        # 用户可重载该方法，用于处理不同类型的event_type
+        pass
+
     def interrupt(self, run_context, run_response):
         # 用户可重载该方法，当event_status为interrupt时，会调用该方法
         pass
@@ -349,7 +375,7 @@ class AppBuilderEventHandler(object):
     def running(self, run_context, run_response):
         # 用户可重载该方法，当event_status为running时，会调用该方法
         pass
-    
+
     def error(self, run_context, run_response):
         # 用户可重载该方法，当event_status为error时，会调用该方法
         pass
