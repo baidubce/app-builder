@@ -324,7 +324,7 @@ function_map = {f.__name__: f for f in functions}
 msg = client.run(
   conversation_id=conversation_id,
   query="今天北京的天气怎么样？",
-  tools = [appbuilder.function_to_model(f).model_dump() for f in functions]
+  tools = [appbuilder.function_to_manifest(f).model_dump() for f in functions]
   )
 print(msg.model_dump_json(indent=4))
 # 获取最后的事件和工具调用信息
@@ -355,7 +355,7 @@ print(msg_2.model_dump_json(indent=4))
 import os
 import appbuilder
 from appbuilder.core.console.appbuilder_client import data_class
-from appbuilder import decorator_to_model, function, function_parameter, function_return
+from appbuilder import decorator_to_manifest, manifest, manifest_parameter, manifest_return
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 # 设置环境变量
@@ -366,17 +366,17 @@ client = appbuilder.AppBuilderClient(app_id)
 # 创建会话
 conversation_id = client.create_conversation()
 
-#使用function装饰描述函数，function_parameter装饰器描述参数，function_return装饰器描述函数返回值。
-@function(description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。",disable_docstring=True)
-@function_parameter(name="location", example="北京", description="城市名，例如：北京。")
-@function_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
-@function_return(description="天气情况描述", example="北京今天25度")
+#使用manifest装饰描述函数，manifest_parameter装饰器描述参数，manifest_return装饰器描述函数返回值。
+@manifest(description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。")
+@manifest_parameter(name="location", example="北京", description="城市名，例如：北京。")
+@manifest_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
+@manifest_return(description="天气情况描述", example="北京今天25度")
 #定义示例函数
 def get_current_weather(location: str, unit: str) -> str:
   return "北京今天25度"
 
-print(get_current_weather.__pf_function__)
-print(decorator_to_model(get_current_weather.__pf_function__).model_dump())
+print(get_current_weather.__ab_manifest__)
+print(decorator_to_manifest(get_current_weather.__ab_manifest__).model_dump())
 #定义函数列表
 functions = [get_current_weather]
 function_map = {f.__name__: f for f in functions}
@@ -384,7 +384,7 @@ function_map = {f.__name__: f for f in functions}
 msg = client.run(
   conversation_id=conversation_id,
   query="今天北京的天气怎么样？",
-  tools = [decorator_to_model(get_current_weather.__pf_function__).model_dump()]
+  tools = [decorator_to_manifest(get_current_weather.__ab_manifest__).model_dump()]
   )
 print(msg.model_dump_json(indent=4))
 # 获取最后的事件和工具调用信息
