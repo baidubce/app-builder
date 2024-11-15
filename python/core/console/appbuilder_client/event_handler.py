@@ -372,12 +372,13 @@ class AppBuilderEventHandler(object):
 
         """
         self._query = query or self._query
-        self._file_ids = file_ids or self._file_ids
-        self._tools = tools or self._tools
         self._stream = stream or self._stream
-        self._event_handler = event_handler or self._event_handler
-        self._kwargs = kwargs or self._kwargs
-        self._action_func = action_func or self._action_func
+        
+        self._file_ids = file_ids
+        self._tools = tools
+        self._event_handler = event_handler 
+        self._kwargs = kwargs
+        self._action_func = action_func
 
         # 重置部分状态
         self._is_complete = False
