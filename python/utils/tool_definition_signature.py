@@ -26,7 +26,16 @@ TYPE_MAPPING = {
 
 
 def get_signature_view(func):
-    """Get signature view of a function."""
+    """
+    获取函数的签名视图。
+    
+    Args:
+        func (function): 目标函数。
+    
+    Returns:
+        tuple: 包含两个元素的元组，第一个元素为函数参数的解析结果列表，第二个元素为函数返回值的解析结果字典。
+    
+    """
 
     signature = inspect.signature(func)
     _parameters = [_parse_parameter(param) for param in signature.parameters.values() if param.name != "self"]

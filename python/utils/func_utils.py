@@ -55,14 +55,34 @@ class Singleton(type):
         return cls._instances[cls]
 
 class PropertyModel(BaseModel):
+    """参数属性模型，用于描述函数参数的类型和元数据。
+
+    Attributes:
+        type (Any): 参数的类型。
+    """
     type: Any
 
+
 class ParametersModel(BaseModel):
+    """函数参数模型，用于定义函数的参数结构。
+
+    Attributes:
+        type (Literal["object"]): 表示参数集合的类型，固定为 "object"。
+        properties (Dict[str, PropertyModel]): 参数的具体属性映射，其中键是参数名，值是对应的属性模型。
+        required (List[str]): 必须提供的参数列表。
+    """
     type: Literal["object"]
     properties: Dict[str, PropertyModel]
     required: List[str]
 
+
 class FunctionModel(BaseModel):
+    """函数模型，用于描述函数的元信息。
+
+    Attributes:
+        type (Literal["function"]): 表示模型的类型，固定为 "function"。
+        function (Dict[str, Any]): 函数的详细信息，包括名称、描述、参数、返回值等。
+    """
     type: Literal["function"]
     function: Dict[str, Any]
 
@@ -131,6 +151,19 @@ def function_to_manifest(func) -> FunctionModel:
     return function_manifest
 
 def decorator_to_manifest(function_view) -> FunctionModel:
+    """
+    将函数视图转换为函数模型。
+    
+    Args:
+        function_view (FunctionView): 函数视图对象。
+    
+    Returns:
+        FunctionModel: 函数模型对象。
+    
+    Raises:
+        ValueError: 如果函数视图的参数缺少类型信息或函数缺少描述，则引发 ValueError 异常。
+    
+    """
     # 提取参数信息
     parameters = {}
     required_fields = []
