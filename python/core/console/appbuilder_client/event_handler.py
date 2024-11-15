@@ -106,8 +106,8 @@ class AppBuilderEventHandler(object):
                 res = self._submit_tool_output()
                 self.__event_process__(res)
             yield res
-
-        self.reset_state()
+        if self._need_tool_call and self._is_complete:
+            self.reset_state()
 
     def __event_process__(self, run_response):
         """
@@ -344,6 +344,7 @@ class AppBuilderEventHandler(object):
         self._need_tool_call = False
         self._iterator = None
         self._action_func = None
+        self._interrupt_event_id = None
 
     def new_dialog(
         self,

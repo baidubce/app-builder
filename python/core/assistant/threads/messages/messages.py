@@ -243,4 +243,3 @@ class Messages(object):
         self._http_client.check_assistant_response(request_id, data)
         response = thread_type.AssistantMessageFilesResponse(**data)
         return response 
-              

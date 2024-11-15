@@ -75,10 +75,10 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                     break
         self.assertTrue(has_multiple_dialog_event)
 
-    def test_appbuilder_client_run_with_handler(self):
+    def test_appbuilder_client_run_with_handler_stream(self):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
-        appbuilder.logger.setLevel("DEBUG")
+        appbuilder.logger.setLevel("ERROR")
         builder = appbuilder.AppBuilderClient(self.app_id)
         conversation_id = builder.create_conversation()
 
@@ -105,6 +105,31 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                     has_multiple_dialog_event = True
                     break
         self.assertTrue(has_multiple_dialog_event)
+
+    def test_appbuilder_client_run_with_handler(self):
+        if len(self.app_id) == 0:
+            self.skipTest("self.app_id is empty")
+        appbuilder.logger.setLevel("DEBUG")
+        builder = appbuilder.AppBuilderClient(self.app_id)
+        conversation_id = builder.create_conversation()
+
+        event_handler = AppBuilderEventHandler()
+        res = builder.run_with_handler(
+            conversation_id,
+            "查天气",
+            stream=False,
+            event_handler=event_handler,
+        )
+        for data in res:
+            pass
+
+        event_handler.new_dialog(
+            query="北京的",
+            action_func=data_class.Action.create_resume_action,
+        )
+
+        for data in event_handler:
+            pass
 
 
 if __name__ == "__main__":
