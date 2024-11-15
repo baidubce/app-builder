@@ -289,7 +289,6 @@ print(msg_2.model_dump_json(indent=4))
 
 ```python
 import appbuilder
-from appbuilder.core.console.appbuilder_client import data_class
 import os
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
@@ -354,7 +353,6 @@ print(msg_2.model_dump_json(indent=4))
 ```python
 import os
 import appbuilder
-from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder import decorator_to_manifest, manifest, manifest_parameter, manifest_return
 
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
@@ -375,8 +373,7 @@ conversation_id = client.create_conversation()
 def get_current_weather(location: str, unit: str) -> str:
   return "北京今天25度"
 
-print(get_current_weather.__ab_manifest__)
-print(decorator_to_manifest(get_current_weather.__ab_manifest__).model_dump())
+print(json.dumps(decorator_to_manifest(get_current_weather.__ab_manifest__).model_dump(), indent=4, ensure_ascii=False))
 #定义函数列表
 functions = [get_current_weather]
 function_map = {f.__name__: f for f in functions}

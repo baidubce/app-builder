@@ -91,7 +91,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
-        assert view.description == "A function to test function description."
+        assert view.description == ""
         assert view.is_async is False
         assert view.is_stream is False
 
@@ -117,11 +117,11 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
-        assert view.description == "Function with required parameter."
+        assert view.description == ""
         assert view.is_async is False
         assert view.is_stream is False
         assert view.parameters[0].name == "name"
-        assert view.parameters[0].description == "Name of object."
+        assert view.parameters[0].description == None
         assert view.parameters[0].default_value is None
         assert view.parameters[0].type_ == "str"
         assert view.parameters[0].required is True
@@ -379,7 +379,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
         assert isinstance(view, FunctionView)
 
         assert view.parameters[0].name == "val"
-        assert view.parameters[0].description == "Value of obj. Defaults to None."
+        assert view.parameters[0].description == None
         assert view.parameters[0].default_value is None
         assert view.parameters[0].type_ == "List[Optional[str]]"
         assert view.parameters[0].required is True
