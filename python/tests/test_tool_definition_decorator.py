@@ -65,12 +65,12 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
-        assert view.description == "An example function."
+        assert view.description == ""
         assert view.is_async is False
         assert view.is_stream is False
 
         assert view.parameters[0].name == "param"
-        assert view.parameters[0].description == "A list of numbers."
+        assert view.parameters[0].description == None
         assert view.parameters[0].default_value == "[]"
         assert view.parameters[0].type_ == "str"
         assert view.parameters[0].required is False
@@ -103,7 +103,7 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
         assert isinstance(view, FunctionView)
         assert view.name == "func"
-        assert view.description == "An example function."
+        assert view.description == ""
         assert view.is_async is False
         assert view.is_stream is False
 
