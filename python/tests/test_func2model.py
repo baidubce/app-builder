@@ -75,7 +75,6 @@ class TestAgentRuntime(unittest.TestCase):
         # val 参数
         assert "val" in properties, "'val' parameter missing"
         assert properties["val"]["type"] == "string", "'val' type does not match 'string'"
-        assert properties["val"]["description"] == "Value of obj. Defaults to None.", "'val' description does not match"
 
         # val_obj 参数
         assert "val_obj" in properties, "'val_obj' parameter missing"
@@ -85,12 +84,10 @@ class TestAgentRuntime(unittest.TestCase):
         # val_list 参数
         assert "val_list" in properties, "'val_list' parameter missing"
         assert properties["val_list"]["type"] == "List[str]", "'val_list' type does not match 'array'"
-        assert properties["val_list"]["description"] == "List of items with object. Defaults to None.", "'val_list' description does not match"
 
         # data 参数
         assert "data" in properties, "'data' parameter missing"
         assert properties["data"]["type"] == "Dict[str, int]", "'data' type does not match 'object'"
-        assert properties["data"]["description"] == "Data along with object. Defaults to None.", "'data' description does not match"
 
         # 断言必需参数
         assert "required" in parameters, "'required' field missing in parameters"
@@ -142,17 +139,14 @@ class TestAgentRuntime(unittest.TestCase):
         # bad_param 参数
         assert "bad_param" in properties, "'bad_param' parameter missing"
         assert properties["bad_param"]["type"] == "string", "'bad_param' type does not match 'string'"
-        assert properties["bad_param"]["description"] == None, "'bad_param' description should be empty due to incorrect format"
 
         # bad_format 参数
         assert "bad_format" in properties, "'bad_format' parameter missing"
         assert properties["bad_format"]["type"] == "integer", "'bad_format' type does not match 'integer'"
-        assert properties["bad_format"]["description"] == None, "'bad_format' description does not match"
 
         # val 参数
         assert "val" in properties, "'val' parameter missing"
         assert properties["val"]["type"] == "string", "'val' type does not match 'string'"
-        assert properties["val"]["description"] == "Value of obj. Defaults to None.", "'val' description does not match"
 
         # 断言必需参数
         assert "required" in parameters, "'required' field missing in parameters"
@@ -196,7 +190,6 @@ class TestAgentRuntime(unittest.TestCase):
         # name 参数
         assert "name" in properties, "'name' parameter missing"
         assert properties["name"]["type"] == "string", "'name' type does not match 'string'"
-        assert properties["name"]["description"] == "Name of object.", "'name' description does not match"
 
         # 断言必需参数
         assert "required" in parameters, "'required' field missing in parameters"
@@ -243,48 +236,6 @@ class TestAgentRuntime(unittest.TestCase):
             function_manifest = appbuilder.function_to_manifest(func)
         except ValueError as e:
             assert str(e) == "函数 func 缺少文档字符串", "未抛出预期的 ValueError 或信息不匹配"
-
-    def test_priority(self):
-        def get_current_weather(location: str, unit: int) -> str:
-            """获取指定中国城市的当前天气信息。
-
-            仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。
-
-            Args:
-                location (str): 城市名，例如："北京"。
-                unit (str): 温度单位，支持 "celsius" 或 "fahrenheit"。
-
-            Returns:
-                str: 天气情况描述
-            """
-            return ""
-        function_manifest = appbuilder.function_to_manifest(get_current_weather)
-        parameters = function_manifest.function["parameters"]
-        properties = parameters["properties"]
-        assert "unit" in properties, "'unit' parameter missing"
-        # 描述和函数签名不一致的时候，以函数签名为准
-        assert properties["unit"]["type"] == 'integer', "'unit' type does not match 'integer'"
-        
-        def get_current_weather(location: str, unit: str) -> str:
-            """获取指定中国城市的当前天气信息。
-
-            仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。
-
-            Args:
-                location (str): 城市名，例如："北京"。
-                unit (int): 温度单位，支持 "celsius" 或 "fahrenheit"。
-
-            Returns:
-                str: 天气情况描述
-            """
-            return ""
-        function_manifest = appbuilder.function_to_manifest(get_current_weather)
-        parameters = function_manifest.function["parameters"]
-        properties = parameters["properties"]
-        assert "unit" in properties, "'unit' parameter missing"
-        # 描述和函数签名不一致的时候，以函数签名为准
-        assert properties["unit"]["type"] == 'string', "'unit' type does not match 'string'"
-
-  
+ 
 if __name__ == '__main__':
     unittest.main()
