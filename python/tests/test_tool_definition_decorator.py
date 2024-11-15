@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional, Union
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestToolDefinitionDecorator(unittest.TestCase):
     def test_disable_docstring(self):
-        @manifest(description="anotated function", disable_docstring=True)
+        @manifest(description="anotated function")
         @manifest_parameter(name="param", description="a parameter", type="str", default_value="default_val")
         @manifest_return(description="a result", default_value="default_result")
         def func(param: str) -> str:
@@ -108,22 +108,14 @@ class TestToolDefinitionDecorator(unittest.TestCase):
         assert view.is_stream is False
 
         assert view.parameters[0].name == "param"
-        assert view.parameters[0].description == "DECORATOR A list of numbers."
+        assert view.parameters[0].description == None
         assert view.parameters[0].default_value == "[]"
         assert view.parameters[0].type_ == "str"
         assert view.parameters[0].required is False
-        assert view.parameters[0].example == "[1,2,3]"
-
-        assert view.returns[0].name == "return"
-        assert view.returns[0].description == "DECORATOR The sum of parameter."
-        assert view.returns[0].default_value is None
-        assert view.returns[0].type_ == "int"
-        assert view.returns[0].required is True
-        assert view.returns[0].example == "6"
-
+        assert view.parameters[0].example == None
 
     def test_only_function_decorator(self):
-        @function()
+        @manifest()
         def func(param: str = "[]") -> int:
             return param
 

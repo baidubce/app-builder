@@ -365,6 +365,7 @@ client = appbuilder.AppBuilderClient(app_id)
 conversation_id = client.create_conversation()
 
 #使用manifest装饰描述函数，manifest_parameter装饰器描述参数，manifest_return装饰器描述函数返回值。
+#需要注意装饰器的顺序！
 @manifest(description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。")
 @manifest_parameter(name="location", example="北京", description="城市名，例如：北京。")
 @manifest_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
