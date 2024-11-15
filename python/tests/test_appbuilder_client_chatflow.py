@@ -60,46 +60,51 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                 if event.content_type == "chatflow_interrupt":
                     assert event.event_type == "chatflow"
                     interrupt_event_id = event.detail.get("interrupt_event_id")
+                    break
 
         self.assertIsNotNone(interrupt_event_id)
         msg2 = builder.run(conversation_id=conversation_id,
-                           query="我先查个航班动态", stream=True,
+                           query="北京的", stream=True,
                            action=data_class.Action.create_resume_action(interrupt_event_id))
-        publish_message = None
-        for ans2 in msg2.content:
-            for event in ans2.events:
-                if event.content_type == "publish_message":
-                    publish_message = event.detail.get("message")
-        self.assertIsNotNone(publish_message)
+        has_multiple_dialog_event = False
+        for ans in msg2.content:
+            for event in ans.events:
+                if event.content_type == "multiple_dialog_event":
+                    assert event.event_type == "chatflow"
+                    has_multiple_dialog_event = True
+                    break
+        self.assertTrue(has_multiple_dialog_event)
 
     def test_appbuilder_client_run_with_handler(self):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
-        appbuilder.logger.setLevel("ERROR")
+        appbuilder.logger.setLevel("DEBUG")
         builder = appbuilder.AppBuilderClient(self.app_id)
         conversation_id = builder.create_conversation()
 
-        builder.run_with_handler(
+        event_handler = AppBuilderEventHandler()
+        res = builder.run_with_handler(
             conversation_id,
             "查天气",
             stream=True,
-            event_handler=AppBuilderEventHandler(),
+            event_handler=event_handler,
         )
+        for data in res:
+            pass
 
-        res2 = builder.run_with_handler(
-            conversation_id,
-            "我先查个航班动态",
-            stream=True,
-            event_handler=AppBuilderEventHandler(),
+        event_handler.new_dialog(
+            query="北京的",
             action_func=data_class.Action.create_resume_action,
         )
 
-        publish_message = None
-        for data in res2:
+        has_multiple_dialog_event = False
+        for data in event_handler:
             for event in data.events:
-                if event.content_type == "publish_message":
-                    publish_message = event.detail.get("message")
-        self.assertIsNotNone(publish_message)
+                if event.content_type == "multiple_dialog_event":
+                    assert event.event_type == "chatflow"
+                    has_multiple_dialog_event = True
+                    break
+        self.assertTrue(has_multiple_dialog_event)
 
 
 if __name__ == "__main__":
