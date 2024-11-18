@@ -116,7 +116,7 @@ class ImageUnderstand(Component):
         request.output_CHN = True
         if inp.language == "en":
             request.output_CHN = False
-        response = self.__recognize(request, timeout, retry)
+        response, _ = self.__recognize(request, timeout, retry)
         out = ImageUnderstandOutMsg(description=response.result.description_to_llm)
         return Message(content=out.model_dump())
 

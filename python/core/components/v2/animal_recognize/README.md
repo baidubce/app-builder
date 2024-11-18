@@ -61,16 +61,20 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 调用参数
 | 参数名称    | 参数类型    | 是否必须 | 描述                          | 示例值                                            |
 |---------|---------|------|-----------------------------|------------------------------------------------|
-| message | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"raw_image": b"待识别的图片字节流数据"}) |
+| message    | obj:`Message` | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数       |     |
+| +content   | Dict   | 是    | 消息内容                              |  {"raw_image": ...., "url": "http://xxx.png"}  |
+| ++raw_image  | Bytes | 是    | 输入的图片数据，图片数据需要base64编码 | - |
+| ++url     | String | 否    | 图像下载链接                     | -  |
 |timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 | retry   | Integer | 否    | HTTP重试次数                    | 3                                              |
 
 ### 响应参数
 | 参数名称   | 参数类型    | 描述   | 示例值                                   |
 |--------|---------|------|---------------------------------------|
-| result | Array[] | 返回结果 | [{"name":"国宝大熊猫","score":"0.975161"}] |
-| +name  | String  | 动物名称 | "国宝大熊猫"                               |
-| +score | String  | 	置信度 | "0.975161"                            |
+|  message | obj:`Message`  | 动物识别输出内容 | - |
+| +content | Dict | 返回结果 | "result": [{"name":"国宝大熊猫","score":"0.975161"}] |
+| ++name  | String  | 动物名称 | "国宝大熊猫"                               |
+| ++score | String  | 	置信度 | "0.975161"                            |
 ### 响应示例
 ```json
 {
