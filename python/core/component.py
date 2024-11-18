@@ -28,7 +28,7 @@ from appbuilder.core.message import Message
 class ComponentArguments(BaseModel):
     """
     ComponentArguments define Component meta fields
-    
+
     Attributes:
         name (str): component name.
         tool_desc (dict): component description.
@@ -58,6 +58,7 @@ class ComponentArguments(BaseModel):
                 inputs[variable_name] = str(value)
         return inputs
 
+
 class Content(BaseModel):
     name: str = Field(default="",
                       description="介绍当前yield内容的阶段名， 使用name的必要条件，是同一组件会输出不同type的content，并且需要加以区分，方便前端渲染与用户展示")
@@ -74,11 +75,13 @@ class Content(BaseModel):
     text: dict = Field(default={},
                        description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
+
 class ComponentOutput(BaseModel):
-    role: str = Field(default="tool", 
+    role: str = Field(default="tool",
                       description="role是区分当前消息来源的重要字段，对于绝大多数组件而言，都是填写tool，标明role所在的消息来源为组件。部分思考及问答组件，role需要填写为assistant")
     content: list[None, Content] = Field(default=[],
-                          description="content是当前组件返回内容的主要payload，List[Content]，每个Content Dict 包括了当前输出的一个元素")
+                                         description="content是当前组件返回内容的主要payload，List[Content]，每个Content Dict 包括了当前输出的一个元素")
+
 
 class Component:
     """
@@ -117,18 +120,18 @@ class Component:
         self.lazy_certification = lazy_certification
         if not self.lazy_certification:
             self.set_secret_key_and_gateway(self.secret_key, self.gateway)
- 
+
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
         """
         设置密钥和网关地址。
-        
+
         Args:
             secret_key (Optional[str], optional): 密钥，默认为None。如果未指定，则使用实例当前的密钥。
             gateway (str, optional): 网关地址，默认为空字符串。如果未指定，则使用实例当前的网关地址。
-        
+
         Returns:
             None
-        
+
         """
         self.secret_key = secret_key
         self.gateway = gateway
@@ -138,13 +141,13 @@ class Component:
     def http_client(self):
         """
         获取 HTTP 客户端实例。
-        
+
         Args:
             无
-        
+
         Returns:
             HTTPClient: HTTP 客户端实例。
-        
+
         """
         if self._http_client is None:
             self._http_client = HTTPClient(self.secret_key, self.gateway)
@@ -153,25 +156,25 @@ class Component:
     def __call__(self, *inputs, **kwargs):
         r"""implement __call__ method"""
         return self.run(*inputs, **kwargs)
-    
-    def tool_eval(self,*input, **kwargs) -> Generator[dict, ComponentOutput]:
+
+    def tool_eval(self, *input, **kwargs) -> Generator[dict, ComponentOutput]:
         """
-        对给定的输入执行工具评估。
-        
+        对给定的输入执行工具的FunctionCall。
+
         Args:
             *input: 一个可变数量的参数，代表输入数据。
             **kwargs: 关键字参数，可以包含任意数量的键值对，用于传递额外的参数。
-        
+
         Returns:
             Generator[dict, ComponentOutput]: 生成器，生成字典和ComponentOutput类型的对象。
-        
+
         Raises:
             NotImplementedError: 如果子类没有实现此方法，则抛出此异常。
-        
+
         """
         raise NotImplementedError
 
-    def run(self, *inputs, **kwargs):
+    def run(self, *inputs, **kwargs) -> Message:
         """
         run method,待子类重写实现
 
@@ -184,31 +187,31 @@ class Component:
     def batch(self, *args, **kwargs) -> List[Message]:
         """
         批量处理输入并返回结果列表。
-        
+
         Args:
             *args: 可变数量的输入参数，每个参数将依次被处理。
             **kwargs: 关键字参数，这些参数将被传递给每个输入的处理函数。
-        
+
         Returns:
             List[Message]: 包含处理结果的列表，每个元素对应一个输入参数的处理结果。
-        
+
         """
 
         results = [self.run(inp, **kwargs) for inp in args]
         return results
-    
+
     def non_stream_tool_eval(self, *args, **kwargs) -> Union[ComponentOutput, dict]:
         """
         对工具评估结果进行非流式处理。
-        
+
         Args:
             *args: 可变参数，具体参数依赖于调用的工具评估函数。
             **kwargs: 关键字参数，具体参数依赖于调用的工具评估函数。
-        
+
         Returns:
             Union[ComponentOutput, dict]: 返回包含评估结果的 ComponentOutput 对象或字典。
                 如果评估结果为空，则返回包含评估结果的字典。
-        
+
         """
         result = ComponentOutput()
         result_content = []
@@ -217,7 +220,7 @@ class Component:
             result_content += iter_result.content
         result.content = result_content
         return result
-    
+
     async def atool_eval(self, *args, **kwargs) -> Optional[dict,]:
         r"""
         atool_eval method,待子类重写实现
@@ -296,24 +299,27 @@ class Component:
         except ImportError:
             raise ImportError(
                 "Please install langchain to use create_langchain_tool.")
-        
+
         # NOTE(chengmo): 可以支持LangChain的组件，必须要求具备mainfest
         if self.manifests == []:
-            raise ValueError("Compnent {} No manifests found. Cannot convert it into LangChain Tool".format(type(self)))
+            raise ValueError(
+                "Compnent {} No manifests found. Cannot convert it into LangChain Tool".format(type(self)))
 
         langchain_tool_json_schema = {}
         # NOTE(chengmo): 虽然现阶段，组件的mainfest列表中最多只有一个元素，但是需要兼容后期可能的多Tool的情况
         if len(self.manifests) > 1:
             if tool_name == "":
-                raise ValueError("Multiple tools found, please use 'tool_name' specify which one to use.")
+                raise ValueError(
+                    "Multiple tools found, please use 'tool_name' specify which one to use.")
 
             for manifest in self.manifests:
                 if manifest["name"] == tool_name:
                     langchain_tool_json_schema = manifest
                     break
-            
+
             if langchain_tool_json_schema == {}:
-                raise ValueError("Tool {} not found in mainfest.".format(tool_name))
+                raise ValueError(
+                    "Tool {} not found in mainfest.".format(tool_name))
         else:
             langchain_tool_json_schema = self.manifests[0]
 
@@ -341,7 +347,8 @@ class Component:
                 schema,
                 name_override=langchain_tool_name)
         except Exception as e:
-            raise RuntimeError("Failed to generate Pydantic model for tool schema: {}".format(e))
+            raise RuntimeError(
+                "Failed to generate Pydantic model for tool schema: {}".format(e))
 
         return StructuredTool.from_function(
             func=langchain_tool_func,
@@ -350,17 +357,17 @@ class Component:
             args_schema=langchain_tool_model,
             return_direct=False
         )
-    
+
     def _has_implemented_tool_eval(self):
         has_tool_eval = False
         try:
             # 调用self.tool_eval方法，如果抛出NotImplementedError异常，则说明没有实现tool_eval方法
-            self.tool_eval(**{'name':"", "streaming":False})
+            self.tool_eval(**{'name': "", "streaming": False})
         except NotImplementedError:
             has_tool_eval = False
         else:
             has_tool_eval = True
-        
+
         return has_tool_eval
 
     def _langchain_run_implement(self, **kwargs):
@@ -375,7 +382,7 @@ class Component:
         res = self.tool_eval(**kwargs)
 
         final_result = ""
-        
+
         # TODO(chengmo): 在组件标准化管理前，复用DTE对流式组件的处理逻辑
         for step in res:
             if isinstance(step, str):
@@ -383,6 +390,3 @@ class Component:
             else:
                 final_result += step.get("text", "")
         return final_result
-
-        
-        
