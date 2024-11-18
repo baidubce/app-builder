@@ -19,7 +19,8 @@ from enum import Enum
 
 from pydantic import BaseModel
 from pydantic import Field
-from typing import Dict, List, Optional, Any, Generator, Union
+from typing import (
+    Dict, List, Optional, Any, Generator, Union, AsyncGenerator)
 from appbuilder.core.utils import ttl_lru_cache
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
@@ -79,7 +80,7 @@ class Content(BaseModel):
 class ComponentOutput(BaseModel):
     role: str = Field(default="tool",
                       description="role是区分当前消息来源的重要字段，对于绝大多数组件而言，都是填写tool，标明role所在的消息来源为组件。部分思考及问答组件，role需要填写为assistant")
-    content: list[None, Content] = Field(default=[],
+    content: list[Content] = Field(default=[],
                                          description="content是当前组件返回内容的主要payload，List[Content]，每个Content Dict 包括了当前输出的一个元素")
 
 
@@ -157,7 +158,7 @@ class Component:
         r"""implement __call__ method"""
         return self.run(*inputs, **kwargs)
 
-    def tool_eval(self, *input, **kwargs) -> Generator[dict, ComponentOutput]:
+    def tool_eval(self, *input, **kwargs) -> Generator:
         """
         对给定的输入执行工具的FunctionCall。
 
@@ -221,7 +222,7 @@ class Component:
         result.content = result_content
         return result
 
-    async def atool_eval(self, *args, **kwargs) -> Optional[dict,]:
+    async def atool_eval(self, *args, **kwargs) -> AsyncGenerator:
         r"""
         atool_eval method,待子类重写实现
 
