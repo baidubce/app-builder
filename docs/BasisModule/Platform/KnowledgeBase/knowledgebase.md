@@ -653,7 +653,7 @@ my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
 
-doc_list = knowledge.get_all_documents(my_knowledge_base_id)
+doc_list = my_knowledge.get_all_documents(my_knowledge_base_id)
 for message in doc_list:
     print(message)
 ```
