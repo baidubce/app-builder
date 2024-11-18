@@ -18,7 +18,8 @@ import json
 from enum import Enum
 
 from pydantic import BaseModel
-from typing import Dict, List, Optional, Any
+from pydantic import Field
+from typing import Dict, List, Optional, Any, Generator, Union
 from appbuilder.core.utils import ttl_lru_cache
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.message import Message
@@ -57,6 +58,27 @@ class ComponentArguments(BaseModel):
                 inputs[variable_name] = str(value)
         return inputs
 
+class Content(BaseModel):
+    name: str = Field(default="",
+                      description="介绍当前yield内容的阶段名， 使用name的必要条件，是同一组件会输出不同type的content，并且需要加以区分，方便前端渲染与用户展示")
+    visible_scope: str = Field(default="all",
+                               description="为了界面展示明确的说明字段，三种取值：llm、user、all。llm为思考模型可见，类似function calling结果中submit的执行结果，user为终端用户可见，all包含上述两者")
+    raw_data: dict = Field(default={},
+                           description="raw_data是原始数据，可以是任何格式，比如json、html等，具体由开发者决定，用户上游请求结果透传，内部系统返回的信息，例如API节点收到的resp，大模型节点的MB resp")
+    usage: dict = Field(default={},
+                        description="大模型的token用量, ")
+    metrics: dict = Field(default={},
+                          description="耗时、性能、内存等trace及debug所需信息")
+    type: str = Field(default="text",
+                      description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio该字段的取值决定了下面text字段的内容结构")
+    text: dict = Field(default={},
+                       description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
+
+class ComponentOutput(BaseModel):
+    role: str = Field(default="tool", 
+                      description="role是区分当前消息来源的重要字段，对于绝大多数组件而言，都是填写tool，标明role所在的消息来源为组件。部分思考及问答组件，role需要填写为assistant")
+    content: list[None, Content] = Field(default=[],
+                          description="content是当前组件返回内容的主要payload，List[Content]，每个Content Dict 包括了当前输出的一个元素")
 
 class Component:
     """
@@ -131,6 +153,23 @@ class Component:
     def __call__(self, *inputs, **kwargs):
         r"""implement __call__ method"""
         return self.run(*inputs, **kwargs)
+    
+    def tool_eval(self,*input, **kwargs) -> Generator[dict, ComponentOutput]:
+        """
+        对给定的输入执行工具评估。
+        
+        Args:
+            *input: 一个可变数量的参数，代表输入数据。
+            **kwargs: 关键字参数，可以包含任意数量的键值对，用于传递额外的参数。
+        
+        Returns:
+            Generator[dict, ComponentOutput]: 生成器，生成字典和ComponentOutput类型的对象。
+        
+        Raises:
+            NotImplementedError: 如果子类没有实现此方法，则抛出此异常。
+        
+        """
+        raise NotImplementedError
 
     def run(self, *inputs, **kwargs):
         """
@@ -143,8 +182,45 @@ class Component:
         raise NotImplementedError
 
     def batch(self, *args, **kwargs) -> List[Message]:
+        """
+        批量处理输入并返回结果列表。
+        
+        Args:
+            *args: 可变数量的输入参数，每个参数将依次被处理。
+            **kwargs: 关键字参数，这些参数将被传递给每个输入的处理函数。
+        
+        Returns:
+            List[Message]: 包含处理结果的列表，每个元素对应一个输入参数的处理结果。
+        
+        """
+
+        results = [self.run(inp, **kwargs) for inp in args]
+        return results
+    
+    def non_stream_tool_eval(self, *args, **kwargs) -> Union[ComponentOutput, dict]:
+        """
+        对工具评估结果进行非流式处理。
+        
+        Args:
+            *args: 可变参数，具体参数依赖于调用的工具评估函数。
+            **kwargs: 关键字参数，具体参数依赖于调用的工具评估函数。
+        
+        Returns:
+            Union[ComponentOutput, dict]: 返回包含评估结果的 ComponentOutput 对象或字典。
+                如果评估结果为空，则返回包含评估结果的字典。
+        
+        """
+        result = ComponentOutput()
+        result_content = []
+        for iter_result in self.tool_eval(*args, **kwargs):
+            result.role = iter_result.role
+            result_content += iter_result.content
+        result.content = result_content
+        return result
+    
+    async def atool_eval(self, *args, **kwargs) -> Optional[dict,]:
         r"""
-        batch method,待子类重写实现
+        atool_eval method,待子类重写实现
 
         Args:
             args: list of arguments
@@ -203,16 +279,6 @@ class Component:
             list of strings
         """
         return [manifest["name"] for manifest in self.manifests]
-
-    def tool_eval(self, **kwargs):
-        r"""
-        tool_eval method,待子类重写实现
-
-        Args:
-            kwargs: keyword arguments
-        """
-        if len(self.manifests) > 0:
-            raise NotImplementedError
 
     def create_langchain_tool(self, tool_name="", **kwargs):
         r"""
