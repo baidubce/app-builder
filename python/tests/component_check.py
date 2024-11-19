@@ -291,8 +291,8 @@ class ToolEvalOutputJsonRule(RuleBase):
         if len(self._check_pre_format(outputs)) > 0 :
             return invalid_details
     
-        for content in outputs["content"]: 
-            out_type = content["type"]
+        for content in outputs.content: 
+            out_type = content.type
             out_schema = type_to_json_schemas[out_type]
             if out_schema not in output_schemas:
                 invalid_details.append("ToolEval返回值不符合JSON Schema：{} 不是该组件期望的Json Schema输出类型".format(out_schema['$schema']))
@@ -307,14 +307,14 @@ class ToolEvalOutputJsonRule(RuleBase):
         text_output = ""
         oral_text_output = ""
         code_output = ""
-        for content in outputs["content"]:
-            out_type = content["type"]
+        for content in outputs.content:
+            out_type = content.type
             if out_type == "text":
-                text_output += content["text"]["info"]
+                text_output += content.text.info
             elif out_type == "oral_text":
-                oral_text_output += content["oral_text"]["info"]
+                oral_text_output += content.oral_text.info
             elif out_type == "code":
-                code_output += content["code"]["code"]
+                code_output += content.code.code
         return {
             "text": text_output,
             "oral_text": oral_text_output,
