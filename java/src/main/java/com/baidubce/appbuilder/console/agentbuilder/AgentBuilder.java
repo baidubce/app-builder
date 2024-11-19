@@ -93,15 +93,15 @@ public class AgentBuilder extends Component {
     }
 
     /**
-     * 运行AgentBuilder，根据输入的问题、会话ID、文件ID数组以及是否以流模式返回结果，返回AgentBuilderIterator迭代器。
+     * 运行AgentBuilder任务
      *
-     * @param query          查询字符串
-     * @param conversationId 会话ID
-     * @param fileIds        文件ID数组
-     * @param stream         是否以流的形式返回结果
-     * @return AgentBuilderIterator 迭代器，包含 AgentBuilder 的运行结果
-     * @throws IOException               如果在 I/O 操作过程中发生错误
-     * @throws AppBuilderServerException 如果 AppBuilder 服务器返回错误
+     * @param query           查询内容
+     * @param conversationId  会话ID
+     * @param fileIds         文件ID数组
+     * @param stream          是否启用流式传输
+     * @return AgentBuilderIterator 包含任务执行结果的迭代器
+     * @throws IOException                  IO异常
+     * @throws AppBuilderServerException AppBuilder服务器异常
      */
     public AgentBuilderIterator run(String query, String conversationId, String[] fileIds, boolean stream) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.AGENTBUILDER_RUN_URL;

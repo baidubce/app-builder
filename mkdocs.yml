@@ -105,7 +105,7 @@ nav:
     - 环境参数: DevelopGuide/EnvironmentalParameters/env.md
   - API Reference:
     - Python API Reference: API-Reference/Python/PythonAPI.md
-    # - Java API Reference: 
+    - Java API Reference: API-Reference/Java/JavaAPI.md
     # - Go API Reference: 
 
 # 主题设置

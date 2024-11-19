@@ -1,0 +1,10 @@
+com.baidubce.appbuilder.console.agentbuilder
+com.baidubce.appbuilder.console.appbuilderclient
+com.baidubce.appbuilder.console.dataset
+com.baidubce.appbuilder.console.knowledgebase
+com.baidubce.appbuilder.console.rag
+com.baidubce.appbuilder.model.agentbuilder
+com.baidubce.appbuilder.model.appbuilderclient
+com.baidubce.appbuilder.model.dataset
+com.baidubce.appbuilder.model.knowledgebase
+com.baidubce.appbuilder.model.rag

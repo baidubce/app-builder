@@ -37,12 +37,12 @@ public class Dataset extends Component {
     }
 
     /**
-     * 创建数据集
+     * 创建一个数据集
      *
      * @param datasetName 数据集名称
-     * @return 返回创建成功后的数据集ID
-     * @throws IOException               当请求失败时抛出IOException
-     * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
+     * @return 数据集ID
+     * @throws IOException 如果发生I/O异常
+     * @throws AppBuilderServerException 如果发生AppBuilder服务器异常
      */
     public String createDataset(String datasetName) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.DATASET_CREATE_URL;
@@ -66,9 +66,9 @@ public class Dataset extends Component {
      * 上传文档
      *
      * @param filePath 文件路径
-     * @return 上传成功后的文档ID
-     * @throws IOException               当文件上传失败时抛出IOException
-     * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
+     * @return 上传成功的文档ID
+     * @throws IOException IO异常
+     * @throws AppBuilderServerException 应用构建服务器异常
      */
     private String uploadDocument(String filePath) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.DATASET_UPLOAD_FILE_URL;
@@ -89,14 +89,15 @@ public class Dataset extends Component {
     }
 
     /**
-     * 向数据集中添加文档
+     * 向数据集添加文档。
      *
-     * @param filePaths           要添加的文档文件路径列表
+     * @param filePaths         要添加的文档路径列表
      * @param isCustomProcessRule 是否使用自定义处理规则
-     * @param customProcessRule   自定义处理规则，当isCustomProcessRule为true时，该参数不为空
-     * @param isEnhanced          是否开启增强模式
-     * @throws IOException               当文件上传失败时抛出IOException
-     * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
+     * @param customProcessRule 自定义处理规则（如果isCustomProcessRule为true，则此参数不能为空）
+     * @param isEnhanced        是否进行增强处理
+     * @return 添加的文档ID数组
+     * @throws IOException       如果发生IO异常
+     * @throws AppBuilderServerException 如果请求失败或返回结果错误
      */
     public String[] addDocuments(List<String> filePaths, boolean isCustomProcessRule, Map<String,
             Object> customProcessRule, boolean isEnhanced) throws IOException, AppBuilderServerException {
@@ -132,12 +133,12 @@ public class Dataset extends Component {
     /**
      * 获取文档列表
      *
-     * @param page    页码
-     * @param limit   每页文档数量
-     * @param keywork 搜索关键字
-     * @return 文档列表
-     * @throws IOException               当请求失败时抛出IOException
-     * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
+     * @param page    当前页码
+     * @param limit   每页数量
+     * @param keywork 关键词
+     * @return DocumentListResponse 文档列表响应对象
+     * @throws IOException               如果发送HTTP请求时发生I/O异常
+     * @throws AppBuilderServerException 如果服务器返回错误代码
      */
     public DocumentListResponse getDocumentList(int page, int limit, String keywork) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.DATASET_GET_FILE_LIST_URL;
@@ -162,11 +163,11 @@ public class Dataset extends Component {
     }
 
     /**
-     * 从数据集中删除文档
+     * 删除文档
      *
-     * @param documentId 要删除的文档ID
-     * @throws IOException               当请求失败时抛出IOException
-     * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
+     * @param documentId 文档ID
+     * @throws IOException 当与服务器通信发生错误时抛出
+     * @throws AppBuilderServerException 当服务器响应状态码不为0时抛出
      */
     public void deleteDocument(String documentId) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.DATASET_DELETE_FILE_URL;
@@ -188,11 +189,11 @@ public class Dataset extends Component {
     }
 
     /**
-     * 从数据集中批量删除多个文档
+     * 删除指定文档。
      *
-     * @param documentIds 要删除的文档ID数组
-     * @throws IOException               当请求失败时抛出IOException
-     * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
+     * @param documentIds 文档ID数组
+     * @throws IOException 如果在删除文档时发生I/O异常
+     * @throws AppBuilderServerException 如果在删除文档时发生服务器异常
      */
     public void deleteDocuments(String[] documentIds) throws IOException, AppBuilderServerException {
         for (String documentId : documentIds) {

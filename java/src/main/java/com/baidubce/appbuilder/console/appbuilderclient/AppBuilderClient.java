@@ -46,6 +46,13 @@ public class AppBuilderClient extends Component {
         return innerCreateConversation();
     }
 
+    /**
+     * 创建对话
+     *
+     * @return 对话ID
+     * @throws IOException 如果发生I/O错误
+     * @throws AppBuilderServerException 如果发生AppBuilder服务器错误
+     */
     private String innerCreateConversation() throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CREATE_CONVERSATION_URL;
         if (this.appID == null || this.appID.isEmpty()) {
@@ -65,19 +72,28 @@ public class AppBuilderClient extends Component {
     }
 
     /**
-     * 上传本地文件到指定会话中
+     * 上传本地文件
      *
      * @param conversationId 会话ID
-     * @param filePath 文件路径
-     * @return 上传后的文件ID
-     * @throws IOException 当请求失败时抛出IOException
-     * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
+     * @param filePath       文件路径
+     * @return 上传结果
+     * @throws IOException            文件上传过程中发生的I/O异常
+     * @throws AppBuilderServerException 应用构建服务器异常
      */
     public String uploadLocalFile(String conversationId, String filePath)
             throws IOException, AppBuilderServerException {
         return innerUploadLocalFile(conversationId, filePath);
     }
 
+    /**
+     * 上传本地文件
+     *
+     * @param conversationId 会话ID
+     * @param filePath       文件路径
+     * @return 文件ID
+     * @throws IOException              当发生输入输出异常时抛出
+     * @throws AppBuilderServerException 当AppBuilder服务器异常时抛出
+     */
     private String innerUploadLocalFile(String conversationId, String filePath)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.UPLOAD_FILE_URL;
@@ -100,15 +116,15 @@ public class AppBuilderClient extends Component {
     }
 
     /**
-     * 运行AgentBuilder，根据输入的问题、会话ID、文件ID数组以及是否以流模式返回结果，返回AgentBuilderIterator迭代器。
+     * 运行AppBuilderClient请求
      *
-     * @param query 查询字符串
+     * @param query 请求查询字符串
      * @param conversationId 会话ID
      * @param fileIds 文件ID数组
-     * @param stream 是否以流的形式返回结果
-     * @return AgentBuilderIterator 迭代器，包含 AgentBuilder 的运行结果
-     * @throws IOException 如果在 I/O 操作过程中发生错误
-     * @throws AppBuilderServerException 如果 AppBuilder 服务器返回错误
+     * @param stream 是否以流的方式传输数据
+     * @return AppBuilderClientIterator对象，用于迭代返回的结果
+     * @throws IOException 如果发生I/O异常
+     * @throws AppBuilderServerException 如果AppBuilder服务发生异常
      */
     public AppBuilderClientIterator run(String query, String conversationId, String[] fileIds,
             boolean stream) throws IOException, AppBuilderServerException {
@@ -131,6 +147,14 @@ public class AppBuilderClient extends Component {
         return new AppBuilderClientIterator(response.getBody());
     }
 
+    /**
+     * 运行指定的AppBuilder客户端请求
+     *
+     * @param requestBody 包含AppBuilder客户端运行请求的请求体
+     * @return 返回一个包含AppBuilder客户端响应的迭代器
+     * @throws IOException 如果发生I/O错误
+     * @throws AppBuilderServerException 如果发生AppBuilder服务器错误
+     */
     public AppBuilderClientIterator run(AppBuilderClientRunRequest requestBody)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.AGENTBUILDER_RUN_URL;
