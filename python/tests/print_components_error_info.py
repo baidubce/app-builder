@@ -48,6 +48,11 @@ def read_error_file(filename):
 
 
 if __name__ == "__main__":
+    print("旧组件：")
     filename = 'components_error_info.txt' 
+    kv_dict, header = read_error_file(filename)
+    print(pretty_print_dict(kv_dict, header=header))
+    print("v2组件：")
+    filename = 'v2_components_error_info.txt' 
     kv_dict, header = read_error_file(filename)
     print(pretty_print_dict(kv_dict, header=header))

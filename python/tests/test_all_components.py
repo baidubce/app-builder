@@ -90,11 +90,9 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
 
 
     def test_all_components(self):
-        print("-----------------------开始测试旧组件------------------------")
         self._test_component(self.all_components, self.whitelist_components, 'components_error_info.txt')
 
     def test_v2_components(self):
-        print("-----------------------开始测试v2组件------------------------")
         self._test_component(self.v2_components, [], 'v2_components_error_info.txt')
 
 
