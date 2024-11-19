@@ -338,9 +338,9 @@ class AssistantRunRequest(BaseModel):
     assistant_id: Optional[str] = Field(default="")
     metadata: Optional[dict] =  Field(default={}, max_length=16)
     response_format: ResponseFormat = Field(default=ResponseFormat.TEXT)
-    instructions: Optional[str] = Field(default="", max_length=4096)
-    thought_instructions: Optional[str] = Field(default="", max_length=4096)
-    chat_instructions: Optional[str] = Field(default="", max_length=4096)
+    instructions: Optional[str] = Field(default= None, max_length=4096)
+    thought_instructions: Optional[str] = Field(default=None, max_length=4096)
+    chat_instructions: Optional[str] = Field(default=None, max_length=4096)
     stream: Optional[bool] = False
     model_parameters: Optional[AssistantModelParameters] = AssistantModelParameters()
     class Config:
@@ -362,6 +362,7 @@ class AssistantSubmitToolOutputsRequest(BaseModel):
 class AssistantRunCancelRequest(BaseModel):
     thread_id: str = Field(default="", min_length=1)
     run_id: str = Field(default="", min_length=1)
+    sync:bool = False
 
 
 class RunListOrderEnum(str, Enum):
