@@ -100,14 +100,18 @@ def get_all_unittest_file():
     Returns:
         list (list[str]): 返回一个列表，包含所有以test开头的.py文件的完整路径名。如果没有找到任何文件，则返回一个空列表。
     """
-    for root, _, fs in os.walk(current_path):
-        for f in fs:
-            file = f.split(".")[-1]
-            prefix = f.split(".")[0].split("_")[0]
-            if file == "py" and prefix == "test":
-                fullname = os.path.join(root, f)
-                choose_test_case(fullname)
+    def check_test_case(test_path):
+        for root, _, fs in os.walk(test_path):
+            for f in fs:
+                file = f.split(".")[-1]
+                prefix = f.split(".")[0].split("_")[0]
+                if file == "py" and prefix == "test":
+                    fullname = os.path.join(root, f)
+                    choose_test_case(fullname)
 
+    check_test_case(current_path)
+    check_test_case(os.path.join(parent_path, "v2"))
+    
     logger.info("\n需要跳过的单测用例：{}个".format(len(SKIP_UNITTEST)))
     for idx, case in enumerate(SKIP_UNITTEST):
         logger.info("--> {}. {}".format(idx+1, case))
