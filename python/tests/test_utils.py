@@ -17,7 +17,7 @@ import unittest
 from unittest.mock import MagicMock
 from appbuilder.utils.sse_util import SSEClient,Event
 from appbuilder.utils.model_util import RemoteModel,Models
-from appbuilder.utils.logger_util import LoggerWithLoggerId,_setup_logging
+from appbuilder.utils.logger_util import LoggerWithLoggerId,_setup_logging,logger
 from threading import current_thread 
 
 # 创建一个logger类
@@ -40,7 +40,7 @@ class TestUtils(unittest.TestCase):
         # 测试是否抛出 StopIteration 异常，表示没有更多事件
         with self.assertRaises(StopIteration):
             next(event_generator)
-        
+
         # test_events
         mock_event_source.__iter__.return_value = iter([
             b': Test event 1\n\n',
@@ -52,26 +52,56 @@ class TestUtils(unittest.TestCase):
         sse_client = SSEClient(event_source=mock_event_source)
         for event in sse_client.events():
             pass
+
         # test_close
         sse_client.close()
-        
+
+    def test_sse_util_SSEClient_DEBUG(self):
+        logger.setLoglevel("DEBUG")
+        mock_event_source = MagicMock()
+        mock_event_source.__iter__.return_value = iter(
+            [b"data: Test event 1\n\n", b"data: Last incomplete event"]
+        )
+        sse_client = SSEClient(event_source=mock_event_source)
+        event_generator = sse_client._read()
+        self.assertEqual(next(event_generator), b"data: Test event 1\n\n")
+        self.assertEqual(next(event_generator), b"data: Last incomplete event")
+        # 测试是否抛出 StopIteration 异常，表示没有更多事件
+        with self.assertRaises(StopIteration):
+            next(event_generator)
+
+        # test_events
+        mock_event_source.__iter__.return_value = iter(
+            [
+                b": Test event 1\n\n",
+                b"test: Test event 2\n\n",
+                b"data:Testevent3\n\n",
+                b"data\n\n",
+                b"event:Testevent5\n\n",
+            ]
+        )
+        sse_client = SSEClient(event_source=mock_event_source)
+        for event in sse_client.events():
+            pass
+
+        # test_close
+        sse_client.close()
+
     def test_sse_util_Event(self):
         # test_str_
         event_str=str(Event(id='id',retry=10))
         assert event_str.startswith('message')
-        
+
     def test_model_util_RemoteModel(self):
         # test_get_remote_name_by_short_name
         rm=RemoteModel(remote_name='test_remote')
         rm.get_remote_name_by_short_name(short_name="eb-turbo-appbuilder")
-    
+
     def test_model_util_Models(self):
         # test_list
         models=Models()
         models.list(retry=-1)
-        
-            
+
+
 if __name__ == '__main__':
     unittest.main()
-        
-        

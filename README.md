@@ -23,9 +23,9 @@
 - **调用**
     - 调用大模型，可自由调用您在[百度智能云千帆大模型平台](https://qianfan.cloud.baidu.com/)的模型，开发并调优prompt
     - 调用能力组件，提供40+个源于百度生态的[优质组件](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)，赋能Agent应用
-    - 调用AI原生应用，通过[AppBuilderClient](/docs/basic_module/appbuilder_client.md)可访问并管理在百度智能云千帆AppBuilder[网页端](https://console.bce.baidu.com/ai_apaas/app)发布的AI原生应用，并可注册本地函数联动端云组件
+    - 调用AI原生应用，通过[AppBuilderClient](/docs/BasisModule/Platform/Application/appbuilder_client.md)可访问并管理在百度智能云千帆AppBuilder[网页端](https://console.bce.baidu.com/ai_apaas/app)发布的AI原生应用，并可注册本地函数联动端云组件
 - **编排**
-    - 配置知识库，通过[KnowledgeBase](/docs/basic_module/knowledgebase.md)管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
+    - 配置知识库，通过[KnowledgeBase](/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
     - 编排工作流，提供了`Message`、`Component`、`AgentRuntime`多级工作流抽象，实现工作流编排，并可与LangChain、OpenAI等业界生态能力打通
 - **监控**
     - 提供了可视化Tracing、详细DebugLog等监控工具，助力开发者在生产环境应用
@@ -78,14 +78,14 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 
 #### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.6 (2024-10-26)
 
-百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/quick_start/changelog.md)
+百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/DevelopGuide/ChangeLog/changelog.md)
 
 - `Python`版本安装，要求Python版本 >= `3.9`
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
-- `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明](/docs/quick_start/install.md)
+- `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明](/docs/QuickStart/StartFirstAINativeApplication/install.md)
 
 
 ## 快速开始你的AI原生应用开发之旅
@@ -278,21 +278,62 @@ Hook:
 
 ## 用户文档
 
-- [快速开始](/docs/quick_start/README.md)
-    - [安装说明](/docs/quick_start/install.md)
-    - [版本说明](/docs/quick_start/changelog.md)
-- [基础功能](/docs/basic_module/README.md)
-    - [基础能力组件](/docs/basic_module/components.md)
-    - [流程编排](/docs/basic_module/assistant_sdk.md)
-    - [端到端应用](/docs/basic_module/appbuilder_client.md)
-- [进阶实践](/docs/advanced_application/README.md)
-    - [Cookbooks](/cookbooks/README.md)
-    - [AppBuilder Trace](https://github.com/baidubce/app-builder/blob/master/docs/trace/README.md)
-- [服务化部署](/docs/service/README.md)
-    - [API调用](/docs/service/flask.md)
-    - [交互式前端](/docs/service/chainlit.md)
-    - [公有云部署](/docs/service/cloud.md)
-- [二次开发](/docs/develop_guide/README.md)
+## Github 文档
+- [首页](https://github.com/baidubce/app-builder/blob/master/docs/README.md)
+    - 快速上手: 
+        - 开始你的第一个AI原生应用: 
+            - [安装](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/install.md)
+            - [快速开始](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/README.md)
+        - 产业实践应用范例: 
+            - [SDK使用示例](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/ExamplesOfIndustrialPracticeApplications/README.md)
+        - [SDK当前支持的编程语言](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/CurrentlySupportedProgrammingLanguages/README.md)
+  - 基础:
+      - 模型:
+          - [获取模型列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
+      - [组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+      - 监控:
+          - [TRACE基础功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
+          - [TRACE拓展功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+      - 部署:
+          - [交互式前端部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
+          - [公有云部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
+          - [API 访问](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
+          - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
+          - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
+      - 平台:
+          - 应用:
+              - [AppBuilderClient组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
+              - [获取AppBuilder已发布的应用列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
+          - 知识库:
+              - [知识库组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
+          - 自定义组件:
+              - [基础能力组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
+  - 应用:
+      - Agent:
+          - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [使用官方组件](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [使用异步和流式加速客户端调用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - RAG:
+          - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
+          - [知识库管理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [Reference信息处理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - Workflow:
+          - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [从零使用Workflow组装一个RAG应用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+          - [从零使用Workflow组装一个Agent应用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+  - 开发者指南:
+      - [如何贡献代码](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
+      - [版本升级日志](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
+      - [常见问题FAQ](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [日志管理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [错误信息](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [环境参数](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
+  - API Reference:
+      - [Python API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/PythonAPI.md)
+      - [Java API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [Go API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
 
 
 ## 开源社区与活动
