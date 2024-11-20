@@ -19,6 +19,7 @@ public class AppBuilderClientRunRequest {
     private ToolOutput[] ToolOutputs;
     @SerializedName("tool_choice")
     private ToolChoice ToolChoice;
+    private Action action;
 
     public AppBuilderClientRunRequest() {
     }
@@ -123,6 +124,14 @@ public class AppBuilderClientRunRequest {
         this.ToolChoice = toolChoice;
     }
 
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
     public static class Tool {
         private String type;
         private Function function;
@@ -189,9 +198,9 @@ public class AppBuilderClientRunRequest {
         private String type;
         private Function function;
 
-        public ToolChoice(String type, Function function) { 
-            this.type=type;
-            this.function=function;
+        public ToolChoice(String type, Function function) {
+            this.type = type;
+            this.function = function;
         }
 
         public String getType() {
@@ -217,6 +226,67 @@ public class AppBuilderClientRunRequest {
 
             public Map<String, Object> getInput() {
                 return input;
+            }
+        }
+    }
+    
+    public static class Action {
+        @SerializedName("action_type")
+        private String actionType;
+        private Parameters parameters;
+
+        // 回复消息节点构造方法
+        public static Action createAction(String interruptId) {
+            return createAction("resume", interruptId, "chat");
+        }
+
+        public static Action createAction(String actionType, String id, String type) {
+            Parameters.InterruptEvent interruptEvent = new Parameters.InterruptEvent(id, type);
+            Parameters parameters = new Parameters(interruptEvent);
+            return new Action(actionType, parameters);
+        }
+
+        public Action(String actionType, Parameters parameters) {
+            this.actionType = actionType;
+            this.parameters = parameters;
+        }
+
+        public String getActionType() {
+            return actionType;
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+
+        public static class Parameters {
+            @SerializedName("interrupt_event")
+            private InterruptEvent interruptEvent;
+
+            public Parameters(InterruptEvent interruptEvent) {
+                this.interruptEvent = interruptEvent;
+            }
+
+            public InterruptEvent getInterruptEvent() {
+                return interruptEvent;
+            }
+
+            public static class InterruptEvent {
+                private String id;
+                private String type;
+
+                public InterruptEvent(String id, String type) {
+                    this.id = id;
+                    this.type = type;
+                }
+
+                public String getId() {
+                    return id;
+                }
+
+                public String getType() {
+                    return type;
+                }
             }
         }
     }

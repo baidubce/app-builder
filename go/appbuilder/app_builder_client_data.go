@@ -23,25 +23,33 @@ import (
 )
 
 const (
-	CodeContentType         = "code"
-	TextContentType         = "text"
-	ImageContentType        = "image"
-	RAGContentType          = "rag"
-	FunctionCallContentType = "function_call"
-	AudioContentType        = "audio"
-	VideoContentType        = "video"
-	StatusContentType       = "status"
+	CodeContentType              = "code"
+	TextContentType              = "text"
+	ImageContentType             = "image"
+	RAGContentType               = "rag"
+	FunctionCallContentType      = "function_call"
+	AudioContentType             = "audio"
+	VideoContentType             = "video"
+	StatusContentType            = "status"
+	ChatflowInterruptContentType = "chatflow_interrupt"
+	PublishMessageContentType    = "publish_message"
+)
+
+const (
+	ChatflowEventType = "chatflow"
 )
 
 var TypeToStruct = map[string]reflect.Type{
-	CodeContentType:         reflect.TypeOf(CodeDetail{}),
-	TextContentType:         reflect.TypeOf(TextDetail{}),
-	ImageContentType:        reflect.TypeOf(ImageDetail{}),
-	RAGContentType:          reflect.TypeOf(RAGDetail{}),
-	FunctionCallContentType: reflect.TypeOf(FunctionCallDetail{}),
-	AudioContentType:        reflect.TypeOf(AudioDetail{}),
-	VideoContentType:        reflect.TypeOf(VideoDetail{}),
-	StatusContentType:       reflect.TypeOf(StatusDetail{}),
+	CodeContentType:              reflect.TypeOf(CodeDetail{}),
+	TextContentType:              reflect.TypeOf(TextDetail{}),
+	ImageContentType:             reflect.TypeOf(ImageDetail{}),
+	RAGContentType:               reflect.TypeOf(RAGDetail{}),
+	FunctionCallContentType:      reflect.TypeOf(FunctionCallDetail{}),
+	AudioContentType:             reflect.TypeOf(AudioDetail{}),
+	VideoContentType:             reflect.TypeOf(VideoDetail{}),
+	StatusContentType:            reflect.TypeOf(StatusDetail{}),
+	ChatflowInterruptContentType: reflect.TypeOf(ChatflowInterruptDetail{}),
+	PublishMessageContentType:    reflect.TypeOf(PublishMessageDetail{}),
 }
 
 type AppBuilderClientRunRequest struct {
@@ -50,9 +58,11 @@ type AppBuilderClientRunRequest struct {
 	Stream         bool         `json:"stream"`
 	EndUserID      *string      `json:"end_user_id"`
 	ConversationID string       `json:"conversation_id"`
+	FileIDs        []string     `json:"file_ids"`
 	Tools          []Tool       `json:"tools"`
 	ToolOutputs    []ToolOutput `json:"tool_outputs"`
 	ToolChoice     *ToolChoice  `json:"tool_choice"`
+	Action         *Action      `json:"action"`
 }
 
 type Tool struct {
@@ -79,6 +89,36 @@ type ToolChoice struct {
 type ToolChoiceFunction struct {
 	Name  string                 `json:"name"`
 	Input map[string]interface{} `json:"input"`
+}
+
+type Action struct {
+	ActionType string           `json:"action_type"`
+	Paramters  *ActionParamters `json:"parameters"`
+}
+
+type ActionParamters struct {
+	InterruptEvent *ActionInterruptEvent `json:"interrupt_event"`
+}
+
+type ActionInterruptEvent struct {
+	ID   string `json:"id"`
+	Type string `json:"type"`
+}
+
+func NewResumeAction(eventId string) *Action {
+	return NewAction("resume", eventId, "chat")
+}
+
+func NewAction(actionType string, eventId string, eventType string) *Action {
+	return &Action{
+		ActionType: actionType,
+		Paramters: &ActionParamters{
+			InterruptEvent: &ActionInterruptEvent{
+				ID:   eventId,
+				Type: eventType,
+			},
+		},
+	}
 }
 
 type AgentBuilderRawResponse struct {
@@ -122,7 +162,7 @@ type Event struct {
 	EventType   string
 	ContentType string
 	Usage       Usage
-	Detail      any // 将any替换为interface{}
+	Detail      any
 	ToolCalls   []ToolCall
 }
 
@@ -184,6 +224,16 @@ type VideoDetail struct {
 }
 
 type StatusDetail struct{}
+
+type ChatflowInterruptDetail struct {
+	InterruptEventID   string `json:"interrupt_event_id"`
+	InterruptEventType string `json:"interrupt_event_type"`
+}
+
+type PublishMessageDetail struct {
+	Message   string `json:"message"`
+	MessageID string `json:"message_id"`
+}
 
 type DefaultDetail struct {
 	URLS  []string `json:"urls"`

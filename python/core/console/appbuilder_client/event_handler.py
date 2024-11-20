@@ -21,13 +21,13 @@ class AppBuilderClientRunContext(object):
     def __init__(self) -> None:
         """
         初始化方法。
-        
+
         Args:
             无参数。
-        
+
         Returns:
             None
-        
+
         """
         self.current_event = None
         self.current_tool_calls = None
@@ -41,18 +41,21 @@ class AppBuilderEventHandler(object):
     def __init__(self):
         pass
 
-    def init(self,
-                 appbuilder_client,
-                 conversation_id,
-                 query,
-                 file_ids=None,
-                 tools=None,
-                 stream: bool = False,
-                 event_handler=None,
-                 **kwargs):
+    def init(
+        self,
+        appbuilder_client,
+        conversation_id,
+        query,
+        file_ids=None,
+        tools=None,
+        stream: bool = False,
+        event_handler=None,
+        action=None,
+        **kwargs
+    ):
         """
         初始化类实例并设置相关参数。
-        
+
         Args:
             appbuilder_client (object): AppBuilder客户端实例对象。
             conversation_id (str): 对话ID。
@@ -61,11 +64,12 @@ class AppBuilderEventHandler(object):
             tools (list, optional): 工具列表，默认为None。
             stream (bool, optional): 是否使用流式处理，默认为False。
             event_handler (callable, optional): 事件处理函数，默认为None。
+            action (object, optional): 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
             **kwargs: 其他可选参数。
-        
+
         Returns:
             None
-        
+
         """
         self._appbuilder_client = appbuilder_client
         self._conversation_id = conversation_id
@@ -78,19 +82,21 @@ class AppBuilderEventHandler(object):
         self._is_complete = False
         self._need_tool_call = False
         self._last_tool_output = None
+        self._action = action
 
-        self._iterator = self.__run_process__() if not self._stream else self.__stream_run_process__()
+        self._iterator = self.__run_process__(
+        ) if not self._stream else self.__stream_run_process__()
 
     def __run_process__(self):
         """
         运行进程，并在每次执行后生成结果。
-        
+
         Args:
             无参数。
-        
+
         Returns:
             Generator: 生成器，每次执行后返回结果。
-        
+
         """
         while not self._is_complete:
             if not self._need_tool_call:
@@ -100,19 +106,19 @@ class AppBuilderEventHandler(object):
                 res = self._submit_tool_output()
                 self.__event_process__(res)
             yield res
-        
-        self.reset_state()
+        if self._need_tool_call and self._is_complete:
+            self.reset_state()
 
     def __event_process__(self, run_response):
         """
         处理事件响应。
-        
+
         Args:
             run_response (RunResponse): 运行时响应对象。
-        
+
         Returns:
             None
-        
+
         Raises:
             ValueError: 当解析事件时发生异常或工具输出为空时。
         """
@@ -120,9 +126,9 @@ class AppBuilderEventHandler(object):
             event = run_response.content.events[-1]
         except Exception as e:
             raise ValueError(e)
-        
+
         event_status = event.status
-        
+
         if event.status == 'success':
             self._is_complete = True
         elif event.status == 'interrupt':
@@ -136,9 +142,11 @@ class AppBuilderEventHandler(object):
             "interrupt": self.interrupt,
             "success": self.success,
         }
-        
+
         run_context = AppBuilderClientRunContext()
         self._update_run_context(run_context, run_response.content)
+        self.handle_event_type(run_context, run_response.content)
+        self.handle_content_type(run_context, run_response.content)
         if event_status in context_func_map:
             func = context_func_map[event_status]
             func_res = func(run_context, run_response.content)
@@ -150,11 +158,13 @@ class AppBuilderEventHandler(object):
                 else:
                     if not isinstance(func_res[0], data_class.ToolOutput):
                         try:
-                            check_tool_output = data_class.ToolOutput(**func_res[0])
+                            check_tool_output = data_class.ToolOutput(
+                                **func_res[0])
                         except Exception as e:
-                            logger.error("func interrupt's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]")
+                            logger.error(
+                                "func interrupt's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]")
                             raise ValueError(e)
-                self._last_tool_output =func_res
+                self._last_tool_output = func_res
         else:
             logger.warning(
                 "Unknown status: {}, response data: {}".format(event_status, run_response))
@@ -162,13 +172,13 @@ class AppBuilderEventHandler(object):
     def __stream_run_process__(self):
         """
         流式运行处理函数
-        
+
         Args:
             无参数。
-        
+
         Returns:
             Generator[Any, None, None]: 返回处理结果的生成器。
-        
+
         """
         while not self._is_complete:
             if not self._need_tool_call:
@@ -176,18 +186,18 @@ class AppBuilderEventHandler(object):
             else:
                 res = self._submit_tool_output()
             for msg in self.__stream_event_process__(res):
-                yield msg    
+                yield msg
 
     def __stream_event_process__(self, run_response):
         """
         处理流事件，并调用对应的方法
-        
+
         Args:
             run_response: 包含流事件信息的响应对象
-        
+
         Returns:
             None
-        
+
         Raises:
             ValueError: 当处理事件时发生异常或中断时工具输出为空时
         """
@@ -198,9 +208,9 @@ class AppBuilderEventHandler(object):
                 event = msg.events[-1]
             except Exception as e:
                 raise ValueError(e)
-            
+
             event_status = event.status
-            
+
             if event.status == 'success':
                 self._is_complete = True
             elif event.status == 'interrupt':
@@ -214,9 +224,11 @@ class AppBuilderEventHandler(object):
                 "interrupt": self.interrupt,
                 "success": self.success,
             }
-            
+
             run_context = AppBuilderClientRunContext()
             self._update_run_context(run_context, msg)
+            self.handle_event_type(run_context, msg)
+            self.handle_content_type(run_context, msg)
             if event_status in context_func_map:
                 func = context_func_map[event_status]
                 func_res = func(run_context, msg)
@@ -228,32 +240,34 @@ class AppBuilderEventHandler(object):
                     else:
                         if not isinstance(func_res[0], data_class.ToolOutput):
                             try:
-                                check_tool_output = data_class.ToolOutput(**func_res[0])
+                                check_tool_output = data_class.ToolOutput(
+                                    **func_res[0])
                             except Exception as e:
-                                logger.info("func interrupt's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]")
+                                logger.info(
+                                    "func interrupt's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]")
                                 raise ValueError(e)
-                    self._last_tool_output =func_res
+                    self._last_tool_output = func_res
             else:
                 logger.warning(
                     "Unknown status: {}, response data: {}".format(event_status, run_response))
-            
+
             yield msg
 
     def _update_run_context(self, run_context, run_response):
         """
         更新运行上下文。
-        
+
         Args:
             run_context (dict): 运行上下文字典。
             run_response (object): 运行响应对象。
-        
+
         Returns:
             None
-        
+
         """
         run_context.current_event = run_response.events[-1]
         run_context.current_tool_calls = run_context.current_event.tool_calls
-        run_context.current_status =  run_context.current_event.status
+        run_context.current_status = run_context.current_event.status
         run_context.need_tool_submit = run_context.current_status == 'interrupt'
         run_context.is_complete = run_context.current_status == 'success'
         try:
@@ -270,7 +284,8 @@ class AppBuilderEventHandler(object):
             query=self._query,
             file_ids=self._file_ids,
             stream=self._stream,
-            tools=self._tools
+            tools=self._tools,
+            action=self._action,
         )
         return res
 
@@ -297,19 +312,19 @@ class AppBuilderEventHandler(object):
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         if exc_type is not None:
             raise exc_val
-        
+
         return
 
     def reset_state(self):
         """
         重置该对象的状态，将所有实例变量设置为默认值。
-        
+
         Args:
             无
-        
+
         Returns:
             无
-        
+
         """
         self._appbuilder_client = None
         self._conversation_id = None
@@ -324,19 +339,72 @@ class AppBuilderEventHandler(object):
         self._need_tool_call = False
         self._iterator = None
 
+    def new_dialog(
+        self,
+        query=None,
+        file_ids=None,
+        tools=None,
+        action=None,
+        stream: bool = None,
+        event_handler=None,
+        **kwargs
+    ):
+        """
+        重置handler部分参数，用于复用该handler进行多轮对话。
+
+        Args:
+            query (str): 用户输入的查询语句。
+            file_ids (list, optional): 文件ID列表，默认为None。
+            tools (list, optional): 工具列表，默认为None。
+            stream (bool, optional): 是否使用流式处理，默认为False。
+            action (object, optional): 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
+            event_handler (callable, optional): 事件处理函数，默认为None。
+            **kwargs: 其他可选参数。
+
+        Returns:
+            None
+
+        """
+        self._query = query or self._query
+        self._stream = stream or self._stream
+
+        self._file_ids = file_ids
+        self._tools = tools
+        self._event_handler = event_handler
+        self._kwargs = kwargs
+        self._action = action
+
+        # 重置部分状态
+        self._is_complete = False
+        self._need_tool_call = False
+        self._last_tool_output = None
+        self._iterator = (
+            self.__run_process__()
+            if not self._stream
+            else self.__stream_run_process__()
+        )
+
     def until_done(self):
         """
         迭代并遍历内部迭代器中的所有元素，直到迭代器耗尽。
-        
+
         Args:
             无参数。
-        
+
         Returns:
             无返回值。
-        
+
         """
         for _ in self._iterator:
             pass
+
+    def handle_content_type(self, run_context, run_response):
+        # 用户可重载该方法，用于处理不同类型的content_type
+        pass
+
+    def handle_event_type(self, run_context, run_response):
+        # 用户可重载该方法，用于处理不同类型的event_type
+        pass
 
     def interrupt(self, run_context, run_response):
         # 用户可重载该方法，当event_status为interrupt时，会调用该方法
@@ -349,7 +417,7 @@ class AppBuilderEventHandler(object):
     def running(self, run_context, run_response):
         # 用户可重载该方法，当event_status为running时，会调用该方法
         pass
-    
+
     def error(self, run_context, run_response):
         # 用户可重载该方法，当event_status为error时，会调用该方法
         pass
