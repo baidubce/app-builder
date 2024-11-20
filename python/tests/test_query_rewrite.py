@@ -32,7 +32,7 @@ class TestQueryRewriteComponent(unittest.TestCase):
             无返回值。
         """
         # 设置环境变量和初始化TranslateComponent实例
-        self.model_name = "Qianfan-Agent-Speed-8k"
+        self.model_name = "ERNIE-3.5-8K"
         self.node = appbuilder.QueryRewrite(model=self.model_name)
 
     def test_run_with_default_params(self):

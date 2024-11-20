@@ -54,7 +54,7 @@ class TestAppBuilderComponentsTrace(unittest.TestCase):
                               "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
                               "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
         self.asr = appbuilder.ASR()
-        self.play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model='eb-4')
+        self.play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model="ERNIE-3.5-8K")
         model_name = "ERNIE-3.5-8K"
         secret_key = os.getenv('SECRET_KEY', None)
         self.hallucination_detection = appbuilder.HallucinationDetection(model=model_name, secret_key=secret_key)
