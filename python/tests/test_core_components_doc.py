@@ -16,7 +16,7 @@ import unittest
 import copy
 
 from appbuilder.core.components.doc_crop_enhance.component import DocCropEnhance
-from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter, ChunkSplitter, TitleSplitter
+from appbuilder.core.components.doc_splitter.component import DocSplitter, ChunkSplitter, TitleSplitter
 from appbuilder.core.message import Message
 from appbuilder.core.components.doc_parser.base import ParseResult, ParaNode,Position
 from appbuilder.core.components.doc_format_converter.component import DocFormatConverter
