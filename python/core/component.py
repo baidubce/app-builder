@@ -60,6 +60,59 @@ class ComponentArguments(BaseModel):
         return inputs
 
 
+class Text(BaseModel):
+    info: str = Field(default="", description="具体文本内容")
+
+
+class Code(BaseModel):
+    code: str = Field(default="", description="代码片段")
+
+
+class Files(BaseModel):
+    filename: str = Field(default="", description="文件名")
+    url: str = Field(default="", description="文件url")
+
+
+class Urls(BaseModel):
+    url: str = Field(default="", description="链接地址")
+
+
+class OralText(BaseModel):
+    info: str = Field(default="", description="口语化文本内容")
+
+
+class References(BaseModel):
+    type: str = Field(default="", description="类型")
+    resource_type: str = Field(default="", description="资源类型")
+    icon: str = Field(default="", description="站点图标")
+    site_name: str = Field(default="", description="站点名")
+    source: str = Field(default="", description="来源")
+    doc_id: str = Field(default="", description="文档id")
+    title: str = Field(default="", description="标题")
+    content: str = Field(default="", description="内容")
+    image_content: str = Field(default="", description="图片内容")
+    mock_id: Optional[str] = Field(default="", description="模拟数据id")
+    image_url: str = Field(default="", description="图片url")
+    video_url: str = Field(default="", description="视频url")
+
+
+class Image(BaseModel):
+    filename: str = Field(default="", description="图片名称")
+    url: str = Field(default="", description="图片url")
+    byte: Optional[bytes] = Field(default=b'', description="图片二进制数据")
+
+
+class Chart(BaseModel):
+    filename: str = Field(default="", description="图表名称")
+    url: str = Field(default="", description="图表url")
+
+
+class Audio(BaseModel):
+    filename: str = Field(default="", description="音频名称")
+    url: str = Field(default="", description="音频url")
+    byte: Optional[bytes] = Field(default=b'', description="音频二进制数据")
+    
+
 class Content(BaseModel):
     name: str = Field(default="",
                       description="介绍当前yield内容的阶段名， 使用name的必要条件，是同一组件会输出不同type的content，并且需要加以区分，方便前端渲染与用户展示")
@@ -73,7 +126,7 @@ class Content(BaseModel):
                           description="耗时、性能、内存等trace及debug所需信息")
     type: str = Field(default="text",
                       description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio该字段的取值决定了下面text字段的内容结构")
-    text: dict = Field(default={},
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio] = Field(default={},
                        description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
 

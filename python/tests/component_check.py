@@ -310,11 +310,11 @@ class ToolEvalOutputJsonRule(RuleBase):
         for content in outputs.content:
             out_type = content.type
             if out_type == "text":
-                text_output += content.text["info"]
+                text_output += content.text.info
             elif out_type == "oral_text":
-                oral_text_output += content.oral_text["info"]
+                oral_text_output += content.oral_text.info
             elif out_type == "code":
-                code_output += content.code["code"]
+                code_output += content.code.code
         return {
             "text": text_output,
             "oral_text": oral_text_output,
@@ -397,7 +397,7 @@ class ToolEvalOutputJsonRule(RuleBase):
 
                 try:
                     non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-                    non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs, output_json_schemas)  #校验非流式输出
+                    non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs.model_dump(), output_json_schemas)  #校验非流式输出
                     invalid_details.extend(["非流式" + error_message for error_message in non_stream_invalid_details]) 
                     if len(invalid_details) == 0:
                         non_stream_output_dict = self._gather_iter_outputs(non_stream_outputs)
