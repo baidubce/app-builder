@@ -13,6 +13,8 @@ import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.AppsDescribeRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.Event;
+import com.baidubce.appbuilder.model.appbuilderclient.EventContent;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,12 +23,14 @@ import static org.junit.Assert.*;
 
 public class AppBuilderClientTest {
     String appId;
+    String chatflowAppId;
 
     @Before
     public void setUp() {
         System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN"));
         System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
         appId = "aa8af334-df27-4855-b3d1-0d249c61fc08";
+        chatflowAppId = "4403205e-fb83-4fac-96d8-943bdb63796f";
     }
 
     @Test
@@ -119,5 +123,43 @@ public class AppBuilderClientTest {
             AppBuilderClientResult result = itor.next();
             System.out.println(result);
         }
+    }
+
+    @Test
+    public void AppBuilderClientRunChatflowTest() throws IOException, AppBuilderServerException {
+        AppBuilderClient builder = new AppBuilderClient(chatflowAppId);
+        String conversationId = builder.createConversation();
+        assertNotNull(conversationId);
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "查天气", true);
+        AppBuilderClientIterator itor = builder.run(request);
+        assertTrue(itor.hasNext());
+        String interruptEventId = "";
+        while (itor.hasNext()) {
+            AppBuilderClientResult result = itor.next();
+            for (Event event : result.getEvents()) {
+                System.out.println(event.getContentType());
+                if (event.getContentType().equals(EventContent.ChatflowInterruptContentType)) {
+                    assertEquals(event.getEventType(), Event.ChatflowEventType);
+                    interruptEventId = event.getDetail().get("interrupt_event_id").toString();
+                }
+            }
+        }
+        
+        assert interruptEventId != null && !interruptEventId.isEmpty();
+        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "我先查个航班动态",
+                true);
+        request2.setAction(AppBuilderClientRunRequest.Action.createAction(interruptEventId));
+        AppBuilderClientIterator itor2 = builder.run(request2);
+        assertTrue(itor2.hasNext());
+        String message = "";
+        while (itor2.hasNext()) {
+            AppBuilderClientResult result2 = itor2.next();
+            for (Event event : result2.getEvents()) {
+                if (event.getContentType().equals(EventContent.PublishMessageContentType)) {
+                    message = event.getDetail().get("message").toString();
+                }
+            }
+        }
+        assert message != null && !message.isEmpty();
     }
 }
