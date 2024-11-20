@@ -291,8 +291,8 @@ class ToolEvalOutputJsonRule(RuleBase):
         if len(self._check_pre_format(outputs)) > 0 :
             return invalid_details
     
-        for content in outputs.content: 
-            out_type = content.type
+        for content in outputs["content"]: 
+            out_type = content["type"]
             out_schema = type_to_json_schemas[out_type]
             if out_schema not in output_schemas:
                 invalid_details.append("ToolEval返回值不符合JSON Schema：{} 不是该组件期望的Json Schema输出类型".format(out_schema['$schema']))
@@ -384,7 +384,7 @@ class ToolEvalOutputJsonRule(RuleBase):
                     stream_output_dict = {"text": "", "oral_text":"", "code": ""}
                     stream_outputs = component_obj.tool_eval(**input_dict)
                     for stream_output in stream_outputs: #校验流式输出
-                        iter_invalid_detail = self._check_jsonschema(stream_output, output_json_schemas)
+                        iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
                         invalid_details.extend(["流式" + error_message for error_message in iter_invalid_detail])
                         iter_output_dict = self._gather_iter_outputs(stream_output)
                         stream_output_dict["text"] += iter_output_dict["text"]
