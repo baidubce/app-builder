@@ -15,7 +15,7 @@ class TestPlayground(unittest.TestCase):
             无返回值，方法中执行了环境变量的赋值操作。
         """
 
-        self.model_name = "eb-4"
+        self.model_name = "ERNIE-3.5-8K"
         self.play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model=self.model_name)
 
     def test_run_with_valid_message(self):

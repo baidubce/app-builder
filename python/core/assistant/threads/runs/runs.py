@@ -51,9 +51,9 @@ class Runs():
             thread: Optional[thread_type.AssistantThread] = None,
             model: Optional[str] = None,
             response_format: Optional[str] = "text",
-            instructions: Optional[str] = "",
-            thought_instructions: Optional[str] = "",
-            chat_instructions: Optional[str] = "",
+            instructions: Optional[str] = None,
+            thought_instructions: Optional[str] = None,
+            chat_instructions: Optional[str] = None,
             tools: Optional[list[assistant_type.AssistantTool]] = [],
             metadata: Optional[dict] = {},
             tool_output: Optional[thread_type.ToolOutput] = None,
@@ -68,9 +68,9 @@ class Runs():
             thread (Optional[thread_type.AssistantThread], optional): 对话信息. Defaults to None.
             model (Optional[str], optional): 模型名称. Defaults to None.
             response_format (Optional[str], optional): 返回格式. Defaults to "text".
-            instructions (Optional[str], optional): 指令信息. Defaults to "".
-            thought_instructions (Optional[str], optional): 思考指令信息. Defaults to "".
-            chat_instructions (Optional[str], optional): 闲聊指令信息. Defaults to "".
+            instructions (Optional[str], optional): 指令信息. Defaults to None.
+            thought_instructions (Optional[str], optional): 思考指令信息. Defaults to None.
+            chat_instructions (Optional[str], optional): 闲聊指令信息. Defaults to None.
             tools (Optional[list[assistant_type.AssistantTool]], optional): 工具列表. Defaults to [].
             metadata (Optional[dict], optional): 元数据. Defaults to {}.
             tool_output (Optional[thread_type.ToolOutput], optional): 工具输出. Defaults to None.
@@ -149,9 +149,9 @@ class Runs():
                    thread: Optional[thread_type.AssistantThread] = None,
                    model: Optional[str] = None,
                    response_format: Optional[str] = "text",
-                   instructions: Optional[str] = "",
-                   thought_instructions: Optional[str] = "",
-                   chat_instructions: Optional[str] = "",
+                   instructions: Optional[str] = None,
+                   thought_instructions: Optional[str] = None,
+                   chat_instructions: Optional[str] = None,
                    tools: Optional[list[assistant_type.AssistantTool]] = [],
                    metadata: Optional[dict] = {},
                    tool_output: Optional[thread_type.ToolOutput] = None,
@@ -168,9 +168,9 @@ class Runs():
             thread (Optional[thread_type.AssistantThread], optional): 线程对象，用于恢复历史对话。默认为None。
             model (Optional[str], optional): 使用的模型名称。默认为None。
             response_format (Optional[str], optional): 响应格式，支持"text"和"json"两种格式。默认为"text"。
-            instructions (Optional[str], optional): 指令文本。默认为空字符串。
-            thought_instructions (Optional[str], optional): 思考指令文本。默认为空字符串。
-            chat_instructions (Optional[str], optional): 聊天指令文本。默认为空字符串。
+            instructions (Optional[str], optional): 指令文本。默认为 None。
+            thought_instructions (Optional[str], optional): 思考指令文本。默认为 None。
+            chat_instructions (Optional[str], optional): 聊天指令文本。默认为 None。
             tools (Optional[list[assistant_type.AssistantTool]], optional): 使用的工具列表。默认为空列表。
             metadata (Optional[dict], optional): 元数据字典。默认为空字典。
             tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象。默认为None。
@@ -249,9 +249,9 @@ class Runs():
                    thread: Optional[thread_type.AssistantThread] = None,
                    model: Optional[str] = None,
                    response_format: Optional[str] = "text",
-                   instructions: Optional[str] = "",
-                   thought_instructions: Optional[str] = "",
-                   chat_instructions: Optional[str] = "",
+                   instructions: Optional[str] = None,
+                   thought_instructions: Optional[str] = None,
+                   chat_instructions: Optional[str] = None,
                    tools: Optional[list[assistant_type.AssistantTool]] = [],
                    metadata: Optional[dict] = {},
                    tool_output: Optional[thread_type.ToolOutput] = None,
@@ -268,9 +268,9 @@ class Runs():
             thread (Optional[thread_type.AssistantThread], optional): 线程对象，用于恢复历史对话。默认为None。
             model (Optional[str], optional): 使用的模型名称。默认为None。
             response_format (Optional[str], optional): 响应格式，支持"text"和"json"两种格式。默认为"text"。
-            instructions (Optional[str], optional): 指令文本。默认为空字符串。
-            thought_instructions (Optional[str], optional): 思考指令文本。默认为空字符串。
-            chat_instructions (Optional[str], optional): 聊天指令文本。默认为空字符串。
+            instructions (Optional[str], optional): 指令文本。默认为 None。
+            thought_instructions (Optional[str], optional): 思考指令文本。默认为 None。
+            chat_instructions (Optional[str], optional): 聊天指令文本。默认为 None。
             tools (Optional[list[assistant_type.AssistantTool]], optional): 使用的工具列表。默认为空列表。
             metadata (Optional[dict], optional): 元数据字典。默认为空字典。
             tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象。默认为None。
@@ -315,9 +315,9 @@ class Runs():
                    thread: Optional[thread_type.AssistantThread] = None,
                    model: Optional[str] = None,
                    response_format: Optional[str] = "text",
-                   instructions: Optional[str] = "",
-                   thought_instructions: Optional[str] = "",
-                   chat_instructions: Optional[str] = "",
+                   instructions: Optional[str] = None,
+                   thought_instructions: Optional[str] = None,
+                   chat_instructions: Optional[str] = None,
                    tools: Optional[list[assistant_type.AssistantTool]] = [],
                    metadata: Optional[dict] = {},
                    tool_output: Optional[thread_type.ToolOutput] = None,
@@ -335,9 +335,9 @@ class Runs():
             thread (Optional[thread_type.AssistantThread], optional): 会话线程对象，默认为None. 默认为 None.
             model (Optional[str], optional): 模型标识符，默认为None. 默认为 None.
             response_format (Optional[str], optional): 响应格式，可选值为"text"或"json"，默认为"text". 默认为 "text".
-            instructions (Optional[str], optional): 主要指令，默认为空字符串. 默认为 "".
-            thought_instructions (Optional[str], optional): 思维指令，默认为空字符串. 默认为 "".
-            chat_instructions (Optional[str], optional): 聊天指令，默认为空字符串. 默认为 "".
+            instructions (Optional[str], optional): 主要指令，默认为空字符串. 默认为 None.
+            thought_instructions (Optional[str], optional): 思维指令，默认为空字符串. 默认为 None.
+            chat_instructions (Optional[str], optional): 聊天指令，默认为空字符串. 默认为 None.
             tools (Optional[list[assistant_type.AssistantTool]], optional): 助手工具列表，默认为空列表. 默认为 [].
             metadata (Optional[dict], optional): 元数据字典，默认为空字典. 默认为 {}.
             tool_output (Optional[thread_type.ToolOutput], optional): 工具输出对象，默认为None. 默认为 None.
@@ -453,24 +453,26 @@ class Runs():
         return resp
 
     @assistent_tool_trace
-    def cancel(self, run_id: str, thread_id: str) -> thread_type.RunResult:
+    def cancel(self, run_id: str, thread_id: str, sync: bool = False) -> thread_type.RunResult:
         """
         取消指定线程的运行
-
+        
         Args:
             run_id (str): 运行的ID
             thread_id (str): 线程的ID
-
+            sync (bool, optional): 是否同步执行. 默认为False.
+        
         Returns:
             thread_type.RunResult: 取消运行的结果
-
+        
         """
         headers = self._http_client.auth_header()
         url = self._http_client.service_url("/v2/threads/runs/cancel")
 
         req = thread_type.AssistantRunCancelRequest(
             run_id=run_id,
-            thread_id=thread_id
+            thread_id=thread_id,
+            sync = sync
         )
 
         response = self._http_client.session.post(
