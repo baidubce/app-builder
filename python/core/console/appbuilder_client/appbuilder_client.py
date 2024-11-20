@@ -411,6 +411,7 @@ class AppBuilderClient(Component):
                     action=action,
                 )
                 yield event_handler
+        event_handler.reset_state()
 
     @staticmethod
     def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:

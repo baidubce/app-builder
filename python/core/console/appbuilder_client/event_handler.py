@@ -35,7 +35,6 @@ class AppBuilderClientRunContext(object):
         self.need_tool_submit = False
         self.is_complete = False
         self.current_thought = ""
-        self.current_interrupt_event_id = None
 
 
 class AppBuilderEventHandler(object):
@@ -83,7 +82,6 @@ class AppBuilderEventHandler(object):
         self._is_complete = False
         self._need_tool_call = False
         self._last_tool_output = None
-        self._interrupt_event_id = None
         self._action = action
 
         self._iterator = self.__run_process__(
@@ -340,9 +338,6 @@ class AppBuilderEventHandler(object):
         self._is_complete = False
         self._need_tool_call = False
         self._iterator = None
-        self._interrupt_event_id = None
-    
-    
 
     def new_dialog(
         self,
@@ -375,7 +370,7 @@ class AppBuilderEventHandler(object):
 
         self._file_ids = file_ids
         self._tools = tools
-        self._event_handler = event_handler 
+        self._event_handler = event_handler
         self._kwargs = kwargs
         self._action = action
 
