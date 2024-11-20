@@ -23,7 +23,7 @@ class TestMRC(unittest.TestCase):
         return mrc class
         '''
         # 设置环境变量和初始化TestMRCComponent实例
-        self.model_name = "Qianfan-Agent-Speed-8k"
+        self.model_name = "ERNIE-3.5-8K"
         self.mrc = appbuilder.MRC(model=self.model_name)
 
     def test_mrc_with_custom_context_list(self):

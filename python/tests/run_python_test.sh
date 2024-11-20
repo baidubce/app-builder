@@ -57,6 +57,7 @@ python3 -m pip uninstall -y pydantic
 python3 -m pip install pydantic==2.7.4
 python3 -m pip install langchain==0.3.0
 python3 -m pip install datamodel-code-generator==0.25.8
+python3 -m pip install jsonschema
 cd python/tests/
 
 

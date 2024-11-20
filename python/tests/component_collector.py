@@ -69,6 +69,7 @@ COMPONENT_WHITE_LIST = [
     "ImageUnderstand",
     "MixCardOCR",
     "DocumentUnderstanding",
+    "TreeMind"
 ]
 
 

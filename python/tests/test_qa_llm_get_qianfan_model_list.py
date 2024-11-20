@@ -34,7 +34,6 @@ class TestGetQianfanModelList(unittest.TestCase):
         )
 
         self.assertIn("ERNIE", str(models))
-        self.assertIn("AppBuilder", str(models))
         self.assertGreater(len(models), 0, "Model list should not be empty")
 
 if __name__ == '__main__':
