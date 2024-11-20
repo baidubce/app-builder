@@ -124,7 +124,7 @@ class Content(BaseModel):
                         description="大模型的token用量, ")
     metrics: dict = Field(default={},
                           description="耗时、性能、内存等trace及debug所需信息")
-    type: str = Field(default="text",
+    type: str = Field(default="text", 
                       description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio该字段的取值决定了下面text字段的内容结构")
     text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio] = Field(default=Text,
                        description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
