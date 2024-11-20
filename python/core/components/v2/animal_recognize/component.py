@@ -18,7 +18,7 @@ import base64
 import json
 
 from appbuilder.core.component import Component, ComponentOutput
-from appbuilder.core.components.animal_recognize.model import *
+from appbuilder.core.components.v2.animal_recognize.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException

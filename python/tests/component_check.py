@@ -14,7 +14,7 @@
 import os
 import json
 import inspect
-import jsonschema
+import time
 from jsonschema import validate, ValidationError, SchemaError
 from pydantic import BaseModel
 from typing import Generator
@@ -395,6 +395,7 @@ class ToolEvalOutputJsonRule(RuleBase):
                 except Exception as e:
                     invalid_details.append("ToolEval执行失败: {}".format(e))
 
+                time.sleep(2)
                 try:
                     non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
                     non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs.model_dump(), output_json_schemas)  #校验非流式输出
