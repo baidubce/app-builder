@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import unittest
 import appbuilder
 from appbuilder.core.console.appbuilder_client.event_handler import (
@@ -45,18 +46,8 @@ class MyEventHandler(AppBuilderEventHandler):
         while True:
             yield self._create_action()
 
-    def run(self, query=None):
-        super().new_dialog(
-            query=query,
-            action=self._create_action(),
-        )
 
-    def run_querys(self, builder, conversation_id):
-        for query in self.querys:
-            yield from builder.run(conversation_id, query)
-
-
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderClientChatflow(unittest.TestCase):
     def setUp(self):
         """

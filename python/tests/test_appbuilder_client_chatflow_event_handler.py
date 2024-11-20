@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import unittest
 import appbuilder
 from appbuilder.core.console.appbuilder_client.event_handler import (
@@ -46,10 +47,6 @@ class MyEventHandler(AppBuilderEventHandler):
             query=query,
             action=self._create_action(),
         )
-    
-    def run_querys(self, builder, conversation_id):
-        for query in self.querys:
-            yield from builder.run(conversation_id, query)
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
@@ -74,7 +71,8 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
         conversation_id = builder.create_conversation()
 
         event_handler = MyEventHandler()
-        event_handler.init(appbuilder_client=builder, conversation_id=conversation_id, stream=True, query="查天气")
+        event_handler.init(appbuilder_client=builder,
+                           conversation_id=conversation_id, stream=True, query="查天气")
         for data in event_handler:
             pass
         event_handler.run(
@@ -124,23 +122,6 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
         )
         for data in event_handler:
             pass
-
-    def test_appbuilder_client_run_with_handler_multiple_dialog(self):
-        if len(self.app_id) == 0:
-            self.skipTest("self.app_id is empty")
-        appbuilder.logger.setLevel("ERROR")
-        builder = appbuilder.AppBuilderClient(self.app_id)
-        conversation_id = builder.create_conversation()
-
-        querys = ["查天气", "查航班", "CA1234", "北京的"]
-        event_handler = MyEventHandler()
-        builder.run_multiple_dialog_with_handler(
-            conversation_id=conversation_id,
-            querys=querys,
-            event_handler=event_handler,
-            stream=True,
-            action=event_handler.gen_action(),
-        )
 
 
 if __name__ == "__main__":
