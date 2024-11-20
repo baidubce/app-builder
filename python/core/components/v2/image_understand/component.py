@@ -20,7 +20,7 @@ from appbuilder.core.component import Component, ComponentOutput
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.core.components.v2.image_understand.model import *
+from appbuilder.core.components.image_understand.model import *
 from typing import Generator, Union
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
