@@ -17,7 +17,7 @@ my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
 
-list_res = my_knowledge.get_documents_list(my_knowledge_base_id)
+list_res = my_knowledge.get_documents_list()
 print("文档列表: ", list_res)
 ```
 
