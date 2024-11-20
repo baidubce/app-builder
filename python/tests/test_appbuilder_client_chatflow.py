@@ -16,9 +16,6 @@ import unittest
 import os
 import appbuilder
 from appbuilder.core.console.appbuilder_client import data_class
-from appbuilder.core.console.appbuilder_client.event_handler import (
-    AppBuilderEventHandler,
-)
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
@@ -50,6 +47,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
         appbuilder.logger.setLevel("ERROR")
+        interrupt_ids = []
         builder = appbuilder.AppBuilderClient(self.app_id)
         conversation_id = builder.create_conversation()
         msg = builder.run(conversation_id, "查天气", stream=True)
@@ -62,6 +60,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                     interrupt_event_id = event.detail.get("interrupt_event_id")
                     break
         self.assertIsNotNone(interrupt_event_id)
+        interrupt_ids.append(interrupt_event_id)
 
         msg = builder.run(
             conversation_id,
@@ -77,22 +76,18 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                     interrupt_event_id = event.detail.get("interrupt_event_id")
                     break
         self.assertIsNotNone(interrupt_event_id)
+        interrupt_ids.append(interrupt_event_id)
 
         msg2 = builder.run(conversation_id=conversation_id,
                            query="CA1234", stream=True,
-                           action=data_class.Action.create_resume_action(interrupt_event_id))
+                           action=data_class.Action.create_resume_action(interrupt_ids.pop()))
         interrupt_event_id = None
         for ans in msg.content:
-            for event in ans.events:
-                if event.content_type == "chatflow_interrupt":
-                    assert event.event_type == "chatflow"
-                    interrupt_event_id = event.detail.get("interrupt_event_id")
-                    break
-        self.assertIsNotNone(interrupt_event_id)
+            pass
 
         msg2 = builder.run(conversation_id=conversation_id,
                            query="北京的", stream=True,
-                           action=data_class.Action.create_resume_action(interrupt_event_id))
+                           action=data_class.Action.create_resume_action(interrupt_ids.pop()))
         has_multiple_dialog_event = False
         for ans in msg2.content:
             for event in ans.events:

@@ -78,7 +78,6 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
             action=event_handler.gen_action(),
         )
         for data in event_handler:
-            print(data)
             for ans in data:
                 pass
 
