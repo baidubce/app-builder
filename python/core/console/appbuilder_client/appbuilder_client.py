@@ -356,61 +356,61 @@ class AppBuilderClient(Component):
 
     def run_multiple_dialog_with_handler(self,
                                          conversation_id: str,
-                                         querys: iter = None,
+                                         queries: iter = None,
                                          file_ids: iter = None,
                                          tools: iter = None,
                                          stream: bool = False,
                                          event_handler=None,
-                                         action: iter = None,
+                                         actions: iter = None,
                                          **kwargs):
         r"""运行智能体应用，并通过事件处理器处理事件
 
         Args:
             conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
-            querys (iter): 查询字符串可迭代对象
+            queries (iter): 查询字符串可迭代对象
             file_ids (iter): 文件ID列表
             tools(iter, 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
             stream (bool): 是否流式响应
             event_handler (EventHandler): 事件处理器
-            action(iter) 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
+            actions(iter) 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
 
             kwargs: 其他参数
         Returns:
             EventHandler: 事件处理器
         """
         assert event_handler is not None, "event_handler is None"
-        assert querys is not None, "querys is None"
+        assert queries is not None, "queries is None"
 
-        query_queue = iter(querys)
+        iter_queries = iter(queries)
+        iter_file_ids = iter(file_ids) if file_ids else iter([])
+        iter_tools = iter(tools) if tools else iter([])
+        iter_actions = iter(actions) if actions else iter([])
 
-        next_file_ids = next(file_ids, None) if file_ids else None
-        next_tools = next(tools, None) if tools else None
-        next_action = next(action, None) if action else None
+        for index, query in enumerate(iter_queries):
+            file_id = next(iter_file_ids, None)
+            tool = next(iter_tools, None)
+            action = next(iter_actions, None)
 
-        event_handler.init(
-            appbuilder_client=self,
-            conversation_id=conversation_id,
-            query=next(query_queue),
-            file_ids=next_file_ids,
-            tools=next_tools,
-            stream=stream,
-            action=next_action,
-            **kwargs,
-        )
-        yield event_handler
-        for query in query_queue:
-            next_file_ids = next(file_ids, None) if file_ids else None
-            next_tools = next(tools, None) if tools else None
-            next_action = next(action, None) if action else None
-
-            event_handler.new_dialog(
-                query=query,
-                file_ids=next_file_ids,
-                tools=next_tools,
-                stream=stream,
-                action=next_action,
-            )
-            yield event_handler
+            if index == 0:
+                yield from self.run_with_handler(
+                    conversation_id=conversation_id,
+                    query=query,
+                    file_ids=file_id,
+                    tools=tool,
+                    stream=stream,
+                    event_handler=event_handler,
+                    action=action,
+                    **kwargs,
+                )
+            else:
+                event_handler.new_dialog(
+                    query=query,
+                    file_ids=file_id,
+                    tools=tool,
+                    stream=stream,
+                    action=action,
+                )
+                yield event_handler
 
     @staticmethod
     def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:

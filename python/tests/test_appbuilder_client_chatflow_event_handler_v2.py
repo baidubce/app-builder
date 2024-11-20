@@ -64,18 +64,18 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
     def test_appbuilder_client_run_with_handler_multiple_dialog(self):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
-        appbuilder.logger.setLevel("ERROR")
+        appbuilder.logger.setLevel("DEBUG")
         builder = appbuilder.AppBuilderClient(self.app_id)
         conversation_id = builder.create_conversation()
 
-        querys = ["查天气", "查航班", "CA1234", "北京的"]
+        queries = ["查天气", "查航班", "CA1234", "北京的"]
         event_handler = MyEventHandler()
         event_handler = builder.run_multiple_dialog_with_handler(
             conversation_id=conversation_id,
-            querys=querys,
+            queries=queries,
             event_handler=event_handler,
             stream=True,
-            action=event_handler.gen_action(),
+            actions=event_handler.gen_action(),
         )
         for data in event_handler:
             for ans in data:
