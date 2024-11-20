@@ -12,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .baiduvdb_retriever import BaiduVDBVectorStoreIndex
-from .baiduvdb_retriever import BaiduVDBRetriever
-from .baiduvdb_retriever import TableParams
+from .component import BaiduVDBVectorStoreIndex
+from .component import BaiduVDBRetriever
+from .component import TableParams

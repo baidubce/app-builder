@@ -12,5 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .bes_retriever import BESVectorStoreIndex
-from .bes_retriever import BESRetriever
+from .component import BESVectorStoreIndex
+from .component import BESRetriever
