@@ -14,7 +14,6 @@
 from pydantic import BaseModel
 from typing import Dict, List, Literal, Any
 
-from appbuilder.core.manifest.models import Manifest, ParametersModel, PropertyModel
 from appbuilder.core.manifest.manifest_decorator import ManifestView
 from appbuilder.core.manifest.manifest_function_signature import get_signature
 
