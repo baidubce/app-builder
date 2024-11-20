@@ -310,11 +310,11 @@ class ToolEvalOutputJsonRule(RuleBase):
         for content in outputs.content:
             out_type = content.type
             if out_type == "text":
-                text_output += content.text.info
+                text_output += content.text["info"]
             elif out_type == "oral_text":
-                oral_text_output += content.oral_text.info
+                oral_text_output += content.oral_text["info"]
             elif out_type == "code":
-                code_output += content.code.code
+                code_output += content.code["code"]
         return {
             "text": text_output,
             "oral_text": oral_text_output,
