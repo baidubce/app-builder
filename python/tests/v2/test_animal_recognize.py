@@ -48,6 +48,10 @@ class TestAnimalRecognition(unittest.TestCase):
         output = self.animal_recognition.run(message)
         # Assert output is not None
         self.assertIsNotNone(output)
+        self.assertIsInstance(output, appbuilder.Message)
+        self.assertIsInstance(output.content["result"], list)
+        self.assertIsInstance(output.content["result"][0]["name"], str)
+        
 
     def test_run_with_url(self):
         """
@@ -70,6 +74,7 @@ class TestAnimalRecognition(unittest.TestCase):
         output = self.animal_recognition.run(message)
         # Assert output is not None
         self.assertIsNotNone(output)
+        self.assertIsInstance(output, appbuilder.Message)
 
     def test_run_with_timeout_and_retry(self):
         """

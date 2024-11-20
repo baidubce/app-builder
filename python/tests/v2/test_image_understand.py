@@ -54,6 +54,8 @@ class TestImageUnderstand(unittest.TestCase):
         inp = Message(content={"url": self.image_url, "question": "图像内容是什么？"})
         msg = self.image_understand.run(inp)
         self.assertIsNotNone(msg.content)
+        self.assertIsInstance(msg, Message)
+        self.assertIsInstance(msg.content["description"], str)
         time.sleep(1)
 
     def test_run_with_raw_image(self):
