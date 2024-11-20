@@ -122,7 +122,7 @@ class TestAgentRuntime(unittest.TestCase):
 
 
         """测试装饰器功能功能""" 
-        @appbuilder.manifest(description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。",disable_docstring=True)
+        @appbuilder.manifest(description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。")
         @appbuilder.manifest_parameter(name="location", example="北京", description="城市名，例如：北京。")
         @appbuilder.manifest_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
         @appbuilder.manifest_return(description="天气情况描述", example="北京今天25度")
