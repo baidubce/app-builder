@@ -20,7 +20,7 @@ from appbuilder import Message
 class TestDialogSummaryComponent(unittest.TestCase):
 
     def test_run(self):
-        model_name = "ernie_speed_appbuilder"
+        model_name = "ERNIE-3.5-8K"
         text = ("客户：你好，我购买的新笔记本电脑出现了无法连接无线网络的问题。客服：你好，很抱歉听到你遇到了"
                 "网络问题。请问你尝试过重新启动路由器和笔记本电脑吗？客户：是的，我已经尝试过，但问题仍然存在。客服："
                 "明白了。请问其他设备是否能够成功连接到同一网络？客户：是的，我的手机和平板电脑都可以正常连接。客服："

@@ -19,7 +19,7 @@ import os
 from appbuilder.core.components.llms.style_rewrite.base import StyleChoices
 import appbuilder
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestStyleRewriteComponent(unittest.TestCase):
     def setUp(self):
         """
@@ -31,7 +31,7 @@ class TestStyleRewriteComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.model_name = "Qianfan-Agent-Speed-8k"
+        self.model_name = "ERNIE-3.5-8K"
         self.node = appbuilder.StyleRewrite(model=self.model_name)
         self.sc=StyleChoices.YINGXIAO
 
