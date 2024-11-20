@@ -257,6 +257,7 @@ print(answer.content.answer)
       - 監視:
           - [TRACE基本機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
           - [TRACE拡張機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+          - [Debug機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/Debug.md)
       - デプロイ:
           - [インタラクティブなフロントエンドデプロイ](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
           - [パブリッククラウドデプロイ](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
@@ -295,7 +296,7 @@ print(answer.content.answer)
       - [環境パラメータ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
   - APIリファレンス:
       - [Python APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/PythonAPI.md)
-      - [Java APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [Java APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Java/JavaAPI.md)
       - [Go APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
 
 
