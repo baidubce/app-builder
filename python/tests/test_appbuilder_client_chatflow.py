@@ -82,8 +82,14 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                            query="CA1234", stream=True,
                            action=data_class.Action.create_resume_action(interrupt_ids.pop()))
         interrupt_event_id = None
-        for ans in msg.content:
-            pass
+        for ans in msg2.content:
+            for event in ans.events:
+                if event.content_type == "chatflow_interrupt":
+                    assert event.event_type == "chatflow"
+                    interrupt_event_id = event.detail.get("interrupt_event_id")
+                    break
+        self.assertIsNotNone(interrupt_event_id)
+        interrupt_ids.append(interrupt_event_id)
 
         msg2 = builder.run(conversation_id=conversation_id,
                            query="北京的", stream=True,

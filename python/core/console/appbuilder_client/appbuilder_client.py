@@ -355,19 +355,19 @@ class AppBuilderClient(Component):
         return event_handler
 
     def run_multiple_dialog_with_handler(self,
-                         conversation_id: str,
-                         querys: list[str] = None,
-                         file_ids: iter = None,
-                         tools: iter = None,
-                         stream: bool = False,
-                         event_handler=None,
-                         action: iter = None,
-                         **kwargs):
+                                         conversation_id: str,
+                                         querys: iter = None,
+                                         file_ids: iter = None,
+                                         tools: iter = None,
+                                         stream: bool = False,
+                                         event_handler=None,
+                                         action: iter = None,
+                                         **kwargs):
         r"""运行智能体应用，并通过事件处理器处理事件
 
         Args:
             conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
-            querys (list[str]): 查询字符串数组
+            querys (iter): 查询字符串可迭代对象
             file_ids (iter): 文件ID列表
             tools(iter, 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
             stream (bool): 是否流式响应
@@ -379,12 +379,10 @@ class AppBuilderClient(Component):
             EventHandler: 事件处理器
         """
         assert event_handler is not None, "event_handler is None"
-        assert len(querys) > 0, "querys is empty"
+        assert querys is not None, "querys is None"
 
-        query_queue = queue.Queue()
-        for q in querys:
-            query_queue.put(q)
-        
+        query_queue = iter(querys)
+
         next_file_ids = next(file_ids, None) if file_ids else None
         next_tools = next(tools, None) if tools else None
         next_action = next(action, None) if action else None
@@ -392,7 +390,7 @@ class AppBuilderClient(Component):
         event_handler.init(
             appbuilder_client=self,
             conversation_id=conversation_id,
-            query=query_queue.get(),
+            query=next(query_queue),
             file_ids=next_file_ids,
             tools=next_tools,
             stream=stream,
@@ -400,19 +398,19 @@ class AppBuilderClient(Component):
             **kwargs,
         )
         yield event_handler
-        while not query_queue.empty():
+        for query in query_queue:
             next_file_ids = next(file_ids, None) if file_ids else None
             next_tools = next(tools, None) if tools else None
             next_action = next(action, None) if action else None
-            
+
             event_handler.new_dialog(
-                query=query_queue.get(),
+                query=query,
                 file_ids=next_file_ids,
                 tools=next_tools,
                 stream=stream,
                 action=next_action,
             )
-            yield  event_handler
+            yield event_handler
 
     @staticmethod
     def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:
