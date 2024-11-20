@@ -11,8 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import os
 import unittest
-from appbuilder import FunctionView, manifest, manifest_parameter, manifest_return
-from typing import Any, Dict, List, Optional, Union
+from appbuilder import ManifestView, manifest, manifest_parameter, manifest_return
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestToolDefinitionDecorator(unittest.TestCase):
@@ -25,7 +24,7 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.name == "func"
         assert view.description == "anotated function"
         assert view.is_async is False
@@ -63,7 +62,7 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.name == "func"
         assert view.description == ""
         assert view.is_async is False
@@ -101,7 +100,7 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.name == "func"
         assert view.description == ""
         assert view.is_async is False
@@ -121,7 +120,7 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.name == "func"
         assert view.description == ""
         assert view.is_async is False

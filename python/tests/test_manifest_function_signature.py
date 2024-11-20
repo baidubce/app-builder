@@ -13,7 +13,7 @@
 # limitations under the License.
 import unittest
 from typing import Any, Dict, List, Optional, Union
-from appbuilder import FunctionView, manifest
+from appbuilder import ManifestView, manifest
 
 #@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestToolDefinitionSignature(unittest.TestCase):
@@ -26,7 +26,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.is_async is False
         assert view.is_stream is False
 
@@ -40,7 +40,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.is_async is True
         assert view.is_stream is False
 
@@ -53,7 +53,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.is_async is False
         assert view.is_stream is True
 
@@ -69,7 +69,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.is_async is True
         assert view.is_stream is True
 
@@ -89,7 +89,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.name == "func"
         assert view.description == ""
         assert view.is_async is False
@@ -115,7 +115,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.name == "func"
         assert view.description == ""
         assert view.is_async is False
@@ -137,7 +137,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -155,7 +155,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -173,7 +173,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -191,7 +191,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -209,7 +209,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -227,7 +227,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -245,7 +245,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -263,7 +263,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -281,7 +281,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -297,7 +297,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value == "value"
         assert view.parameters[0].type_ == "str"
@@ -314,7 +314,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -332,7 +332,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -350,7 +350,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -376,7 +376,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].description == None
@@ -395,7 +395,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -413,7 +413,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None
@@ -432,7 +432,7 @@ class TestToolDefinitionSignature(unittest.TestCase):
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, FunctionView)
+        assert isinstance(view, ManifestView)
 
         assert view.parameters[0].name == "val"
         assert view.parameters[0].default_value is None

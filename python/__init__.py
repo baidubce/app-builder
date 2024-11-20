@@ -173,8 +173,8 @@ from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
 
 from appbuilder.utils.logger_util import logger
-from appbuilder.utils.func_utils import function_to_manifest,decorator_to_manifest
-from appbuilder.utils.tool_definition_decorator import FunctionView, manifest, manifest_parameter, manifest_return
+from appbuilder.core.manifest.func_utils import function_to_manifest,decorator_to_manifest
+from appbuilder.core.manifest.manifest_decorator import ManifestView, manifest, manifest_parameter, manifest_return
 
 from appbuilder.core.utils import get_model_list
 
