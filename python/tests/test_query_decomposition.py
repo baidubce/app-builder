@@ -29,7 +29,7 @@ class TestQueryDecompositionComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.model_name = "Qianfan-Agent-Speed-8k"
+        self.model_name = "ERNIE-3.5-8K"
         self.node = appbuilder.QueryDecomposition(model=self.model_name)
 
     def test_run_with_default_params(self):

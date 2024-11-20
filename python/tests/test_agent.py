@@ -128,7 +128,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试在component有效时运行 """
         component = Playground(
             prompt_template="{query}",
-            model="eb-4"
+            model="ERNIE-3.5-8K"
         )
         agent = AgentRuntime(component=component)
 
@@ -142,7 +142,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试在消息有效时处理 """
         component = Playground(
             prompt_template="{query}",
-            model="eb-4"
+            model="ERNIE-3.5-8K"
         )
         agent = appbuilder.AgentRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
@@ -153,7 +153,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试在消息有效时处理 """
         component = Playground(
             prompt_template="{query}",
-            model="eb-4"
+            model="ERNIE-3.5-8K"
         )
         agent = AgentRuntime(component=component)
         message = Message({"query": "你好"})
