@@ -14,9 +14,14 @@
 import os
 import json
 import inspect
+import jsonschema
+from jsonschema import validate, ValidationError, SchemaError
 from pydantic import BaseModel
+from typing import Generator
 from appbuilder.utils.func_utils import Singleton
 from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
+from component_tool_eval_cases import component_tool_eval_cases
+from component_output_schemas import type_to_json_schemas, components_tool_eval_output_json_maps
 
 
 class CheckInfo(BaseModel):
@@ -145,13 +150,26 @@ class MainfestMatchToolEvalRule(RuleBase):
             properties = manifest['parameters']['properties']
             required_params = []
             anyOf = manifest['parameters'].get('anyOf', None)
+            required_exists = False
             if anyOf:
                 for anyOf_dict in anyOf:
-                    required_params += anyOf_dict['required']
+                    if 'required' in anyOf_dict:
+                        required_exists = True
+                        required_params += anyOf_dict['required']
+                    
             if not anyOf:
-                required_params += manifest['parameters']['required']
+                if 'required' in manifest['parameters']:
+                    required_exists = True
+                    required_params += manifest['parameters']['required']
 
-
+            if not required_exists:
+                check_pass_flag = False
+                invalid_details.append("mainfest 未定义required参数")
+                return CheckInfo(
+                    check_rule_name=self.rule_name,
+                    check_result=check_pass_flag,
+                    check_detail=",".join(invalid_details))
+            
             # 交互检查
             tool_eval_input_params = []
             print("required_params: {}".format(required_params))
@@ -240,7 +258,166 @@ class ToolEvalInputNameRule(RuleBase):
             check_detail="以下ToolEval方法参数名称是系统保留字段，请更换：{}".format("，".join(invalid_details)) if len(invalid_details) > 0 else "")
 
 
+class ToolEvalOutputJsonRule(RuleBase):
+    """
+    检查tool_eval的输出结果是否符合对应的json schema
+    """
+    def __init__(self):
+        super().__init__()
+        self.rule_name = 'ToolEvalOutputJsonRule'
+        self.output_types = list(type_to_json_schemas.keys())
+
+    def _check_pre_format(self, outputs):
+        invalid_details = []
+        if "content" not in outputs:
+            invalid_details.append("ToolEval返回值不符合规范：返回内容缺少content")
+            return invalid_details
+        
+        for content in outputs["content"]:
+            if "type" not in content:
+                invalid_details.append("ToolEval返回值不符合规范：返回content缺少type")
+                break
+            
+            out_type = content["type"]
+            if out_type not in self.output_types:
+                invalid_details.append("ToolEval返回值不符合JSON Schema：返回content.type={} 不是合法的输出类型".format(out_type))
+                break
+        return invalid_details
+        
+    def _check_jsonschema(self, outputs, output_schemas):
+        """检查输出格式是否符合对应的json schema
+        """
+        invalid_details = []
+        if len(self._check_pre_format(outputs)) > 0 :
+            return invalid_details
+    
+        for content in outputs["content"]: 
+            out_type = content["type"]
+            out_schema = type_to_json_schemas[out_type]
+            if out_schema not in output_schemas:
+                invalid_details.append("ToolEval返回值不符合JSON Schema：{} 不是该组件期望的Json Schema输出类型".format(out_schema['$schema']))
+                continue
+            try:
+                validate(instance=content, schema=out_schema)
+            except Exception as e:
+                invalid_details.append("ToolEval返回值不符合JSON Schema: {}\n".format(e.message))
+        return invalid_details
+
+    def _gather_iter_outputs(self, outputs):
+        text_output = ""
+        oral_text_output = ""
+        code_output = ""
+        for content in outputs["content"]:
+            out_type = content["type"]
+            if out_type == "text":
+                text_output += content["text"]["info"]
+            elif out_type == "oral_text":
+                oral_text_output += content["oral_text"]["info"]
+            elif out_type == "code":
+                code_output += content["code"]["code"]
+        return {
+            "text": text_output,
+            "oral_text": oral_text_output,
+            "code": code_output,
+        }
+        
+    def _check_text_and_code(self, component_case, output_dict):
+        """检查输出的内容是否符合预期，只检查text(包含oral_text)和code
+        """
+        if not hasattr(component_case,"outputs"):
+            return []
+
+        expected_output = component_case.outputs()
+        expected_output_texts = []
+        expected_output_oral_texts = []
+        expected_output_codes = []
+        if "text" in expected_output:
+            expected_output_texts = expected_output["text"] 
+        if "oral_text" in expected_output:
+            expected_output_oral_texts = expected_output["oral_text"] 
+        if "code" in expected_output:
+            expected_output_codes = expected_output["code"]
+    
+        lost_texts = []
+        lost_oral_texts = []
+        lost_code = []
+        for expected_output_text in expected_output_texts:
+            if expected_output_text not in output_dict["text"]:
+                lost_texts.append(expected_output_text)
+
+        for expected_output_oral_text in expected_output_oral_texts:
+            if expected_output_oral_text not in output_dict["oral_text"]:
+                lost_oral_texts.append(expected_output_oral_text)
+
+        for expected_output_code in expected_output_codes:
+            if expected_output_code not in output_dict["code"]:
+                lost_code.append(expected_output_code)
+
+        error_message = ""
+        if len(lost_texts) > 0:
+            error_message += "应包含text:{}".format(", ".join(lost_texts))
+        if len(lost_oral_texts) > 0:
+            error_message += "应包含oral_text:{}".format(", ".join(lost_oral_texts))
+        if len(lost_code) > 0:
+            error_message += "应包含code:{}".format(", ".join(lost_code))
+            
+        if error_message != "":
+            return ["ToolEval返回内容与预期不符: " + error_message]
+        else:
+            return []
+        
+    def check(self, component_cls) -> CheckInfo:
+        invalid_details = []
+        component_cls_name = component_cls.__name__
+        if component_cls_name not in components_tool_eval_output_json_maps:
+            invalid_details.append("{} 没有注册到 components_tool_eval_output_json_maps 中".format(component_cls_name))
+        else:
+            output_json_schemas = components_tool_eval_output_json_maps[component_cls_name]
+            if component_cls_name not in component_tool_eval_cases:
+                invalid_details.append("{} 没有添加测试case到 component_tool_eval_cases 中".format(component_cls_name))
+            else:
+                component_case = component_tool_eval_cases[component_cls_name]()
+                input_dict = component_case.inputs()
+                component_obj = component_cls()
+                
+                try:
+                    stream_output_dict = {"text": "", "oral_text":"", "code": ""}
+                    stream_outputs = component_obj.tool_eval(**input_dict)
+                    for stream_output in stream_outputs: #校验流式输出
+                        iter_invalid_detail = self._check_jsonschema(stream_output, output_json_schemas)
+                        invalid_details.extend(["流式" + error_message for error_message in iter_invalid_detail])
+                        iter_output_dict = self._gather_iter_outputs(stream_output)
+                        stream_output_dict["text"] += iter_output_dict["text"]
+                        stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
+                        stream_output_dict["code"] += iter_output_dict["code"]
+                    if len(invalid_details) == 0:
+                        invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
+                except Exception as e:
+                    invalid_details.append("ToolEval执行失败: {}".format(e))
+
+                try:
+                    non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
+                    non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs, output_json_schemas)  #校验非流式输出
+                    invalid_details.extend(["非流式" + error_message for error_message in non_stream_invalid_details]) 
+                    if len(invalid_details) == 0:
+                        non_stream_output_dict = self._gather_iter_outputs(non_stream_outputs)
+                        invalid_details.extend(self._check_text_and_code(component_case, non_stream_output_dict))
+                except Exception as e:
+                    invalid_details.append(" NonStreamToolEval执行失败: {}".format(e))
+                    
+        if len(invalid_details) > 0:
+            return CheckInfo(
+                check_rule_name=self.rule_name,
+                check_result=False,
+                check_detail=",".join(invalid_details))
+        else:
+            return CheckInfo(
+                check_rule_name=self.rule_name,
+                check_result=True,
+                check_detail="")
+                
 
 register_component_check_rule("ManifestValidRule", ManifestValidRule)
 register_component_check_rule("MainfestMatchToolEvalRule", MainfestMatchToolEvalRule)
 register_component_check_rule("ToolEvalInputNameRule", ToolEvalInputNameRule)
+register_component_check_rule("ToolEvalOutputJsonRule", ToolEvalOutputJsonRule)
