@@ -16,6 +16,7 @@
 import os
 import json
 import uuid
+import queue
 from typing import Optional
 from appbuilder.core.component import Message, Component
 from appbuilder.core.console.appbuilder_client import data_class
@@ -267,9 +268,10 @@ class AppBuilderClient(Component):
             tool_outputs(list[data_class.ToolOutput]): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
             tool_choice(data_class.ToolChoice): 控制大模型使用组件的方式，默认为None
             end_user_id (str): 用户ID，用于区分不同用户
+            action(data_class.Action): 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
             kwargs: 其他参数
 
-        Returns: 
+        Returns:
             message (Message): 对话结果，一个Message对象，使用message.content获取内容。
         """
 
@@ -320,7 +322,7 @@ class AppBuilderClient(Component):
                          tools: list[data_class.Tool] = None,
                          stream: bool = False,
                          event_handler=None,
-                         action_func=None,
+                         action=None,
                          **kwargs):
         r"""运行智能体应用，并通过事件处理器处理事件
 
@@ -331,8 +333,8 @@ class AppBuilderClient(Component):
             tools(list[data_class.Tools], 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
             stream (bool): 是否流式响应
             event_handler (EventHandler): 事件处理器
-            action_func (Callable): 动作处理函数，用于处理动作
-            
+            action(dataclass.Action) 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
+
             kwargs: 其他参数
 
         Returns:
@@ -346,11 +348,71 @@ class AppBuilderClient(Component):
             file_ids=file_ids,
             tools=tools,
             stream=stream,
-            action_func=action_func,
+            action=action,
             **kwargs
         )
 
         return event_handler
+
+    def run_multiple_dialog_with_handler(self,
+                         conversation_id: str,
+                         querys: list[str] = None,
+                         file_ids: iter = None,
+                         tools: iter = None,
+                         stream: bool = False,
+                         event_handler=None,
+                         action: iter = None,
+                         **kwargs):
+        r"""运行智能体应用，并通过事件处理器处理事件
+
+        Args:
+            conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+            querys (list[str]): 查询字符串数组
+            file_ids (iter): 文件ID列表
+            tools(iter, 可选): 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
+            stream (bool): 是否流式响应
+            event_handler (EventHandler): 事件处理器
+            action(iter) 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
+
+            kwargs: 其他参数
+        Returns:
+            EventHandler: 事件处理器
+        """
+        assert event_handler is not None, "event_handler is None"
+        assert len(querys) > 0, "querys is empty"
+
+        query_queue = queue.Queue()
+        for q in querys:
+            query_queue.put(q)
+        
+        next_file_ids = next(file_ids, None) if file_ids else None
+        next_tools = next(tools, None) if tools else None
+        next_action = next(action, None) if action else None
+
+        event_handler.init(
+            appbuilder_client=self,
+            conversation_id=conversation_id,
+            query=query_queue.get(),
+            file_ids=next_file_ids,
+            tools=next_tools,
+            stream=stream,
+            action=next_action,
+            **kwargs,
+        )
+        yield event_handler
+        while not query_queue.empty():
+            next_file_ids = next(file_ids, None) if file_ids else None
+            next_tools = next(tools, None) if tools else None
+            next_action = next(action, None) if action else None
+            
+            event_handler.new_dialog(
+                query=query_queue.get(),
+                file_ids=next_file_ids,
+                tools=next_tools,
+                stream=stream,
+                action=next_action,
+            )
+            yield  event_handler
 
     @staticmethod
     def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:

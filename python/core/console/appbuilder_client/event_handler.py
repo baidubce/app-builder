@@ -42,16 +42,18 @@ class AppBuilderEventHandler(object):
     def __init__(self):
         pass
 
-    def init(self,
-             appbuilder_client,
-             conversation_id,
-             query,
-             file_ids=None,
-             tools=None,
-             stream: bool = False,
-             event_handler=None,
-             action_func=None,
-             **kwargs):
+    def init(
+        self,
+        appbuilder_client,
+        conversation_id,
+        query,
+        file_ids=None,
+        tools=None,
+        stream: bool = False,
+        event_handler=None,
+        action=None,
+        **kwargs
+    ):
         """
         初始化类实例并设置相关参数。
 
@@ -63,7 +65,7 @@ class AppBuilderEventHandler(object):
             tools (list, optional): 工具列表，默认为None。
             stream (bool, optional): 是否使用流式处理，默认为False。
             event_handler (callable, optional): 事件处理函数，默认为None。
-            action_func (callable, optional): 动作函数，默认为None。
+            action (object, optional): 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
             **kwargs: 其他可选参数。
 
         Returns:
@@ -81,8 +83,8 @@ class AppBuilderEventHandler(object):
         self._is_complete = False
         self._need_tool_call = False
         self._last_tool_output = None
-        self._action_func = action_func
         self._interrupt_event_id = None
+        self._action = action
 
         self._iterator = self.__run_process__(
         ) if not self._stream else self.__stream_run_process__()
@@ -279,18 +281,13 @@ class AppBuilderEventHandler(object):
             pass
 
     def _run(self):
-        action = None
-        if self._action_func is not None and self._interrupt_event_id is not None:
-            action = self._action_func(self._interrupt_event_id)
-            self._interrupt_event_id = None
-
         res = self._appbuilder_client.run(
             conversation_id=self._conversation_id,
             query=self._query,
             file_ids=self._file_ids,
             stream=self._stream,
             tools=self._tools,
-            action=action
+            action=self._action,
         )
         return res
 
@@ -343,17 +340,18 @@ class AppBuilderEventHandler(object):
         self._is_complete = False
         self._need_tool_call = False
         self._iterator = None
-        self._action_func = None
         self._interrupt_event_id = None
+    
+    
 
     def new_dialog(
         self,
         query=None,
         file_ids=None,
         tools=None,
+        action=None,
         stream: bool = None,
         event_handler=None,
-        action_func=None,
         **kwargs
     ):
         """
@@ -364,8 +362,8 @@ class AppBuilderEventHandler(object):
             file_ids (list, optional): 文件ID列表，默认为None。
             tools (list, optional): 工具列表，默认为None。
             stream (bool, optional): 是否使用流式处理，默认为False。
+            action (object, optional): 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
             event_handler (callable, optional): 事件处理函数，默认为None。
-            action_func (callable, optional): 动作函数，默认为None。
             **kwargs: 其他可选参数。
 
         Returns:
@@ -374,12 +372,12 @@ class AppBuilderEventHandler(object):
         """
         self._query = query or self._query
         self._stream = stream or self._stream
-        
+
         self._file_ids = file_ids
         self._tools = tools
         self._event_handler = event_handler 
         self._kwargs = kwargs
-        self._action_func = action_func
+        self._action = action
 
         # 重置部分状态
         self._is_complete = False
@@ -407,9 +405,7 @@ class AppBuilderEventHandler(object):
 
     def handle_content_type(self, run_context, run_response):
         # 用户可重载该方法，用于处理不同类型的content_type
-        event = run_response.events[-1]
-        if event.content_type == "chatflow_interrupt":
-            self._interrupt_event_id = event.detail.get("interrupt_event_id")
+        pass
 
     def handle_event_type(self, run_context, run_response):
         # 用户可重载该方法，用于处理不同类型的event_type
