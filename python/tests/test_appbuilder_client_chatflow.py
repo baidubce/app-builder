@@ -61,8 +61,35 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                     assert event.event_type == "chatflow"
                     interrupt_event_id = event.detail.get("interrupt_event_id")
                     break
-
         self.assertIsNotNone(interrupt_event_id)
+
+        msg = builder.run(
+            conversation_id,
+            "查航班",
+            stream=True,
+            action=data_class.Action.create_resume_action(interrupt_event_id),
+        )
+        interrupt_event_id = None
+        for ans in msg.content:
+            for event in ans.events:
+                if event.content_type == "chatflow_interrupt":
+                    assert event.event_type == "chatflow"
+                    interrupt_event_id = event.detail.get("interrupt_event_id")
+                    break
+        self.assertIsNotNone(interrupt_event_id)
+
+        msg2 = builder.run(conversation_id=conversation_id,
+                           query="CA1234", stream=True,
+                           action=data_class.Action.create_resume_action(interrupt_event_id))
+        interrupt_event_id = None
+        for ans in msg.content:
+            for event in ans.events:
+                if event.content_type == "chatflow_interrupt":
+                    assert event.event_type == "chatflow"
+                    interrupt_event_id = event.detail.get("interrupt_event_id")
+                    break
+        self.assertIsNotNone(interrupt_event_id)
+
         msg2 = builder.run(conversation_id=conversation_id,
                            query="北京的", stream=True,
                            action=data_class.Action.create_resume_action(interrupt_event_id))
