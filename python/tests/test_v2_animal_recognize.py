@@ -16,9 +16,10 @@ import unittest
 import requests
 import appbuilder
 from appbuilder.core.components.v2 import AnimalRecognition
+from appbuilder.core.components.v2.animal_recognize.model import AnimalRecognitionModel
 import os
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestAnimalRecognition(unittest.TestCase):
     def setUp(self):
         """
