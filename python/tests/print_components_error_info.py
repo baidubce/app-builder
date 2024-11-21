@@ -1,3 +1,5 @@
+import os
+
 def pretty_print_dict(kv_dict, header=["Key", "Value"]):
     spacing = 2
     max_k = 25
@@ -48,6 +50,13 @@ def read_error_file(filename):
 
 
 if __name__ == "__main__":
-    filename = 'components_error_info.txt' 
-    kv_dict, header = read_error_file(filename)
-    print(pretty_print_dict(kv_dict, header=header))
+    if os.path.exists('components_error_info.txt'):
+        print("旧组件:")
+        filename = 'components_error_info.txt' 
+        kv_dict, header = read_error_file(filename)
+        print(pretty_print_dict(kv_dict, header=header))
+    if os.path.exists('v2_components_error_info.txt'):
+        print("v2组件:")
+        filename = 'v2_components_error_info.txt' 
+        kv_dict, header = read_error_file(filename)
+        print(pretty_print_dict(kv_dict, header=header))

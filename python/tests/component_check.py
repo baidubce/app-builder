@@ -14,7 +14,7 @@
 import os
 import json
 import inspect
-import jsonschema
+import time
 from jsonschema import validate, ValidationError, SchemaError
 from pydantic import BaseModel
 from typing import Generator
@@ -307,14 +307,14 @@ class ToolEvalOutputJsonRule(RuleBase):
         text_output = ""
         oral_text_output = ""
         code_output = ""
-        for content in outputs["content"]:
-            out_type = content["type"]
+        for content in outputs.content:
+            out_type = content.type
             if out_type == "text":
-                text_output += content["text"]["info"]
+                text_output += content.text.info
             elif out_type == "oral_text":
-                oral_text_output += content["oral_text"]["info"]
+                oral_text_output += content.oral_text.info
             elif out_type == "code":
-                code_output += content["code"]["code"]
+                code_output += content.code.code
         return {
             "text": text_output,
             "oral_text": oral_text_output,
@@ -384,7 +384,7 @@ class ToolEvalOutputJsonRule(RuleBase):
                     stream_output_dict = {"text": "", "oral_text":"", "code": ""}
                     stream_outputs = component_obj.tool_eval(**input_dict)
                     for stream_output in stream_outputs: #校验流式输出
-                        iter_invalid_detail = self._check_jsonschema(stream_output, output_json_schemas)
+                        iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
                         invalid_details.extend(["流式" + error_message for error_message in iter_invalid_detail])
                         iter_output_dict = self._gather_iter_outputs(stream_output)
                         stream_output_dict["text"] += iter_output_dict["text"]
@@ -395,9 +395,10 @@ class ToolEvalOutputJsonRule(RuleBase):
                 except Exception as e:
                     invalid_details.append("ToolEval执行失败: {}".format(e))
 
+                time.sleep(2)
                 try:
                     non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-                    non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs, output_json_schemas)  #校验非流式输出
+                    non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs.model_dump(), output_json_schemas)  #校验非流式输出
                     invalid_details.extend(["非流式" + error_message for error_message in non_stream_invalid_details]) 
                     if len(invalid_details) == 0:
                         non_stream_output_dict = self._gather_iter_outputs(non_stream_outputs)
