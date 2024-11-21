@@ -20,8 +20,9 @@ from pydantic import BaseModel
 from typing import Generator
 from appbuilder.utils.func_utils import Singleton
 from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
-from component_tool_eval_cases import component_tool_eval_cases
-from component_output_schemas import type_to_json_schemas, components_tool_eval_output_json_maps
+from appbuilder.tests.component_tool_eval_cases import component_tool_eval_cases
+from appbuilder.tests.component_schemas import type_to_json_schemas
+from appbuilder.tests.component_output_schemas import components_tool_eval_output_json_maps
 
 
 class CheckInfo(BaseModel):
