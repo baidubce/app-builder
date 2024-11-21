@@ -102,16 +102,22 @@ class TestToolDefinitionDecorator(unittest.TestCase):
 
         assert isinstance(view, ManifestView)
         assert view.name == "func"
-        assert view.description == ""
         assert view.is_async is False
         assert view.is_stream is False
 
         assert view.parameters[0].name == "param"
-        assert view.parameters[0].description == None
+        assert view.parameters[0].description == "DECORATOR A list of numbers."
         assert view.parameters[0].default_value == "[]"
         assert view.parameters[0].type_ == "str"
         assert view.parameters[0].required is False
-        assert view.parameters[0].example == None
+        assert view.parameters[0].example == "[1,2,3]"
+
+        assert view.returns[0].name == "return"
+        assert view.returns[0].description == "DECORATOR The sum of parameter."
+        assert view.returns[0].default_value is None
+        assert view.returns[0].type_ == "int"
+        assert view.returns[0].required is True
+        assert view.returns[0].example == "6"
 
     def test_only_function_decorator(self):
         @manifest()
