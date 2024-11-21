@@ -92,7 +92,7 @@ def decorator_to_manifest(manifest_view:ManifestView) -> Manifest:
         # 定义每个参数的属性模型
         parameters[param.name] = PropertyModel(
             type=param.type_,
-            description=param.description
+            description=param.description or None,
         )
         # 检查参数是否是必填项
         if param.required:
@@ -101,7 +101,7 @@ def decorator_to_manifest(manifest_view:ManifestView) -> Manifest:
     # 创建 ParametersModel
     parameters_model = ParametersModel(
         type="object",
-        properties=parameters,
+        properties={k: v.model_dump(exclude_none=False) for k, v in parameters.items()},
         required=required_fields
     )
     if not manifest_view.description:
@@ -113,7 +113,7 @@ def decorator_to_manifest(manifest_view:ManifestView) -> Manifest:
         function={
             "name": manifest_view.name,
             "description": manifest_view.description,
-            "parameters": parameters_model.dict(),  # 转换为字典格式
+            "parameters": parameters_model.model_dump(exclude_none=False),  # 转换为字典格式
             "returns": {
                 "type": manifest_view.returns[0].type_,
                 "description": manifest_view.returns[0].description

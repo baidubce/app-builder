@@ -1,10 +1,12 @@
 import unittest
 import appbuilder
 import os
+import json
 from typing import Any, Dict, List, Optional
-
+from appbuilder.core.manifest.models import Manifest, ParameterView, ParameterViewKind
+from appbuilder import ManifestView, manifest, manifest_parameter, manifest_return
 #@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
-class TestAgentRuntime(unittest.TestCase):
+class TestManifest(unittest.TestCase):
     def setUp(self):
         """
         设置环境变量。
@@ -241,6 +243,100 @@ class TestAgentRuntime(unittest.TestCase):
             function_manifest = appbuilder.function_to_manifest(func)
         except ValueError as e:
             assert str(e) == "函数 func 缺少文档字符串", "未抛出预期的 ValueError 或信息不匹配"
+
+    def test_decorator_google_style_basic(self):
+        @manifest()
+        def func(
+            name: str,
+        ) -> str:
+            """Function with required parameter.
+
+            Args:
+                name (str): Name of object.
+
+            Returns:
+                str: Styled string.
+            """
+            return ""
+
+        view = func.__ab_manifest__
+
+        assert isinstance(view, ManifestView)
+        assert view.name == "func"
+        assert view.description == ""
+        assert view.is_async is False
+        assert view.is_stream is False
+        assert view.parameters[0].name == "name"
+        assert view.parameters[0].description == None
+        assert view.parameters[0].default_value is None
+        assert view.parameters[0].type_ == "str"
+        assert view.parameters[0].required is True
+        assert view.parameters[0].example is None
+
+    def test_missing_type(self):
+        """测试参数缺少类型信息是否抛出 ValueError 异常。"""
+        parameters = [
+            ParameterView(
+                name="param1",
+                description="参数1描述",
+                type_=None,
+                required=True,
+                kind=ParameterViewKind.ARGUMENT,
+            )
+        ]
+        returns = [
+            ParameterView(
+                name="return1",
+                description="返回值描述",
+                type_="boolean",
+                required=True,
+                kind=ParameterViewKind.RETURN,
+            )
+        ]
+
+        manifest_view = appbuilder.ManifestView(
+            name="test_function",
+            description="这是一个测试函数",
+            parameters=parameters,
+            returns=returns,
+        )
+
+        with self.assertRaises(ValueError) as context:
+            appbuilder.decorator_to_manifest(manifest_view)
+        self.assertIn("参数 'param1' 缺少类型信息", str(context.exception))
+
+    def test_missing_description(self):
+        """测试函数缺少描述是否抛出 ValueError 异常。"""
+        parameters = [
+            ParameterView(
+                name="param1",
+                description="参数1描述",
+                type_="string",
+                required=True,
+                kind=ParameterViewKind.ARGUMENT,
+            )
+        ]
+        returns = [
+            ParameterView(
+                name="return1",
+                description="返回值描述",
+                type_="boolean",
+                required=True,
+                kind=ParameterViewKind.RETURN,
+            )
+        ]
+
+        manifest_view = appbuilder.ManifestView(
+            name="test_function",
+            description=None,
+            parameters=parameters,
+            returns=returns,
+        )
+
+        with self.assertRaises(ValueError) as context:
+            appbuilder.decorator_to_manifest(manifest_view)
+        self.assertIn("函数 test_function 缺少描述", str(context.exception))
+
  
 if __name__ == '__main__':
     unittest.main()
