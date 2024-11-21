@@ -33,7 +33,7 @@ def function_description(cls, func):
 def update_function_description(func, description):
     """Update function description."""
     func.__dict__["__kernel_function_description__"] = description or ""
-    func.__dict__["__pf_func_description__"] = description or ""
+    func.__dict__["__ab_manifest_description__"] = description or ""
 
 
 def get_function_schema_with_inspect(method):
