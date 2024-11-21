@@ -14,7 +14,7 @@ import unittest
 from appbuilder import ManifestView, manifest, manifest_parameter, manifest_return
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
-class TestToolDefinitionDecorator(unittest.TestCase):
+class TestManifestDecorator(unittest.TestCase):
     def test_disable_docstring(self):
         @manifest(description="anotated function")
         @manifest_parameter(name="param", description="a parameter", type="str", default_value="default_val")
