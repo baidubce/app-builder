@@ -1,7 +1,9 @@
+import os
 import unittest
 from appbuilder.core.component import Component
 from appbuilder.core.component import ComponentOutput
 
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestBaseComponent(unittest.TestCase):
     def setUp(self) -> None:
         self.component = Component()
