@@ -17,7 +17,7 @@ from typing import Any, Dict, Optional
 from pydantic.v1 import BaseModel as PydanticBaseModel # noqa: F403 # type: ignore
 from pydantic.v1 import create_model
 
-from appbuilder.core.manifest.manifest_function_signature import get_signature
+from appbuilder.core.manifest.manifest_signature import get_signature
 from appbuilder.core.manifest.models import ParameterViewKind, ParameterView, ManifestView
 
 # The following two functions are here to allow dynamically updating function description.

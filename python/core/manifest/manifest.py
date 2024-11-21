@@ -1,5 +1,5 @@
 from appbuilder.core.manifest.models import Manifest, ParametersModel, PropertyModel
-from appbuilder.core.manifest.manifest_function_signature import get_signature
+from appbuilder.core.manifest.manifest_signature import get_signature
 from appbuilder.core.manifest.manifest_decorator import ManifestView
 
 def function_to_manifest(func) -> Manifest:

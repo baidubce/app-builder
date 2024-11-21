@@ -4,9 +4,6 @@ from typing import Optional
 FUNCTION_NAME_REGEX = r"^[0-9A-Za-z_\u4e00-\u9fff]*$"
 FUNCTION_PARAM_NAME_REGEX = r"^[0-9A-Za-z_\u4e00-\u9fff]*$"
 
-def _exclude(value):
-    return True
-
 def validate_function_name(value: Optional[str]) -> None:
     """
     Validates that the function name is valid.

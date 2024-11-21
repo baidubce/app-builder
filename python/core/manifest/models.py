@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from dataclasses import field as Field
 from dataclasses_json import DataClassJsonMixin
 
-from appbuilder.core.manifest.manifest_utils import _exclude, validate_function_param_name, validate_function_name
+from appbuilder.core.manifest.validate import validate_function_param_name, validate_function_name
 
 class BaseModel(DataClassJsonMixin):
     """Base model for all models."""
@@ -103,7 +103,7 @@ class ParameterView(BaseModel):
     description: str = None
     default_value: str = None
     type_: str = None
-    type_object: Optional[Any] = Field(default=None, metadata=config(exclude=_exclude))
+    type_object: Optional[Any] = Field(default=None, metadata = config(exclude=lambda value: True))
     type_schema: Dict = Field(default=None)
     required: bool = True
     example: str = None
