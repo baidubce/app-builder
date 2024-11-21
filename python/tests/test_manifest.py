@@ -5,7 +5,8 @@ import json
 from typing import Any, Dict, List, Optional
 from appbuilder.core.manifest.models import Manifest, ParameterView, ParameterViewKind
 from appbuilder import ManifestView, manifest, manifest_parameter, manifest_return
-#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestManifest(unittest.TestCase):
     def setUp(self):
         """
