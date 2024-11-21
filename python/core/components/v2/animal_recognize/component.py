@@ -188,16 +188,8 @@ class AnimalRecognition(Component):
         rec_res = "模型识别结果为：\n"
         for rec_info in result_dict['result']:
             rec_res += "类别: {} 置信度: {}\n".format(rec_info['name'], rec_info['score'])
-        result = {
-            "role": "tool",
-            "content": [{
-                "type": "text",
-                "text": {"info": rec_res},
-                "raw_data": raw_data,
-                "visible_scope": "all"
-            }]
-        }
-        yield ComponentOutput(**result)
+        output = self.create_output(type="text", text=rec_res, raw_data=raw_data)
+        yield output
 
     @staticmethod
     def _check_service_error(request_id: str, data: dict):

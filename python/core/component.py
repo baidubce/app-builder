@@ -444,3 +444,67 @@ class Component:
             else:
                 final_result += step.get("text", "")
         return final_result
+
+    def create_output(self, type, text, role="tool", name="", visible_scope="all", raw_data={}, usage={}, metrics={}):
+        """create_text_output
+
+        Args:
+            type (str): 类型，包括"text", "code", "files", "urls", "oral_text", "references", "image", "chart", "audio"
+            text (str|dict): text字段，可输入str或dict
+            role (str, optional): 当前消息来源. Defaults to "tool".
+            name (str, optional): 当前yield内容的step name. Defaults to "".
+            visible_scope (str, optional): 界面展示明确的说明字段. Defaults to "all".
+            raw_data (dict, optional): 内部信息，由开发者请求透传. Defaults to {}.
+            usage (dict, optional): 大模型的token用量. Defaults to {}.
+            metrics (dict, optional): 耗时、性能、内存等trace及debug所需信息. Defaults to {}.
+
+        Returns:
+            ComponentOutput: 组件输出
+        """
+        if isinstance(text, str):
+            if type == "text":
+                text = {"info": text}
+            elif type == "code":
+                text = {"code": text}
+            elif type == "urls":
+                text = {"url": text}
+            elif type == "oral_text":
+                text = {"info": text}
+            else:
+                raise ValueError("Only when type=text/code/urls/oral_text, string text is allowed! Please give dict text")
+        else:
+            if type == "text":
+                key_list = ["info"]
+            elif type == "code":
+                key_list = ["code"]
+            elif type == "oral_text":
+                key_list = ["info"]
+            elif type == "urls":
+                key_list = ["url"]
+            elif type == "files":
+                key_list = ["filename", "url"]
+            elif type == "references":
+                key_list = ["type", "resource_type", "icon", "site_name", "source", "doc_id", "title", "content", "image_content", "image_url", "video_url"]
+            elif type == "image":
+                key_list = ["filename", "url"]
+            elif type == "chart":
+                key_list = ["filename", "url"]
+            elif type == "audio":
+                key_list = ["filename", "url"]
+            else:
+                raise ValueError("Unknown type: {}".format(type))
+            assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
+            
+        result = {
+            "role": role,
+            "content": [{
+                "type": type,
+                "name": name,
+                "text": text,
+                "visible_scope": visible_scope,
+                "raw_data": raw_data,
+                "usage": usage,
+                "metrics": metrics
+            }]
+        }
+        return ComponentOutput(**result)

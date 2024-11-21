@@ -191,31 +191,10 @@ class ImageUnderstand(Component):
         traceid = kwargs.get("traceid")
         file_urls = kwargs.get("file_urls", {})
         rec_res, raw_data = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
-        llm_result = {
-            "role": "tool",
-            "content": [
-                {
-                    "type": "text",
-                    "name": "text_1",
-                    "text": {"info": rec_res},
-                    "raw_data": raw_data,
-                    "visible_scope": 'llm',
-                }
-
-            ]
-        }
-        yield ComponentOutput(**llm_result)
-        user_result = {
-            "role": "tool",
-            "content": [{
-                "type": "text",
-                "name": "text_2",
-                "text": {"info": ""},
-                "raw_data": raw_data,
-                "visible_scope": 'user',
-            }]
-        }
-        yield ComponentOutput(**user_result)
+        llm_result = self.create_output(type="text", text=rec_res, name="text_1", raw_data=raw_data, visible_scope='llm')
+        yield llm_result
+        user_result = self.create_output(type="text", text="", name="text_2", raw_data=raw_data, visible_scope='user')
+        yield user_result
 
     def _recognize_w_post_process(
         self,
