@@ -131,6 +131,14 @@ public class AppBuilderClient extends Component {
         return new AppBuilderClientIterator(response.getBody());
     }
 
+    /**
+     * 执行应用构建客户端运行请求
+     *
+     * @param requestBody 请求体，包含运行所需的所有信息
+     * @return 返回包含构建客户端响应的迭代器
+     * @throws IOException 如果在执行请求时发生I/O错误
+     * @throws AppBuilderServerException 如果应用构建服务器返回错误响应
+     */
     public AppBuilderClientIterator run(AppBuilderClientRunRequest requestBody)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.AGENTBUILDER_RUN_URL;

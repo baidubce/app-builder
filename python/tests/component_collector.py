@@ -76,16 +76,14 @@ COMPONENT_WHITE_LIST = [
 def get_component_white_list():
     return COMPONENT_WHITE_LIST
 
-def get_all_components():
-    from appbuilder import __COMPONENTS__
-
+def get_components(components_list, import_prefix):
     components = {}
-    for component in __COMPONENTS__:
+    for component in components_list:
         if component in SKIP_COMPONENTS:
             continue
 
         try:
-            component_obj = eval("appbuilder."+component)
+            component_obj = eval(import_prefix+component)
             components[component]= {
                 "obj": component_obj,
                 "import_error": ""
@@ -99,6 +97,18 @@ def get_all_components():
 
     return components
 
+def get_all_components():
+    from appbuilder import __COMPONENTS__
+    all_components = get_components(__COMPONENTS__, "appbuilder.")
+    return all_components
+
+def get_v2_components():
+    from appbuilder.core.components.v2 import __V2_COMPONENTS__
+    v2_components = get_components(__V2_COMPONENTS__, "appbuilder.core.components.v2.")
+    return v2_components
+
 if __name__ == '__main__':
     all_components = get_all_components()
-    print(all_components)
+    v2_components = get_v2_components()
+    print("all_components: ", all_components)
+    print("v2_components: ", v2_components)

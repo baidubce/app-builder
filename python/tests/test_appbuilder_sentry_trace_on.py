@@ -72,7 +72,7 @@ class TestAppbuilderForSentryOff(unittest.TestCase):
         # 启动事务
         with sentry_sdk.start_transaction(op="task", name="UT-Components-trace-test"):
             # test Components run
-            play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model='eb-4')
+            play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model="ERNIE-3.5-8K")
             msg = appbuilder.Message({
                 "name": "小明",
                 "bot_name": "机器人",

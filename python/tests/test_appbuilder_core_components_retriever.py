@@ -17,7 +17,7 @@ import subprocess
 import sys
 import time 
 
-from appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever import _try_import,BaiduVDBVectorStoreIndex
+from appbuilder.core.components.retriever.baidu_vdb.component import _try_import,BaiduVDBVectorStoreIndex
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")

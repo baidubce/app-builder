@@ -155,6 +155,9 @@ cd ../../Tools/SphinxSh
 # 运行mkdocs更改文件
 python3 get_components_md.py
 
+# 更改API目录文件结构
+python3 update_lib.py
+
 echo "====拷贝组件README.md文件到docs/BasisModule/Components目录完成===="
 
 

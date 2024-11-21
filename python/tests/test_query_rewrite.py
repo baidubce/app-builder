@@ -32,7 +32,7 @@ class TestQueryRewriteComponent(unittest.TestCase):
             无返回值。
         """
         # 设置环境变量和初始化TranslateComponent实例
-        self.model_name = "Qianfan-Agent-Speed-8k"
+        self.model_name = "ERNIE-3.5-8K"
         self.node = appbuilder.QueryRewrite(model=self.model_name)
 
     def test_run_with_default_params(self):
@@ -54,7 +54,7 @@ class TestQueryRewriteComponent(unittest.TestCase):
 
     def test_run_with_stream_and_temperature(self):
         """测试不同的 stream 和 temperature 参数值"""
-        node = appbuilder.QueryRewrite("Qianfan-Agent-Speed-8k")
+        node = appbuilder.QueryRewrite("ERNIE-3.5-8K")
         query = ['我应该怎么办理护照？', '您可以查询官网或人工咨询', '我需要准备哪些材料？', '身份证、免冠照片一张以及填写完整的《中国公民因私出国（境）申请表》', '在哪里办']
         msg = appbuilder.Message(query)
         answer = node(msg, rewrite_type="带机器人回复", stream=False, temperature=0.5)

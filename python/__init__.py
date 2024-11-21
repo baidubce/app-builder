@@ -83,14 +83,14 @@ from .core.components.text_to_image.component import Text2Image
 from .core.components.landmark_recognize.component import LandmarkRecognition
 from .core.components.tts.component import TTS
 from .core.components.extract_table.component import ExtractTableFromDoc
-from .core.components.doc_parser.doc_parser import DocParser, ParserConfig
-from .core.components.doc_splitter.doc_splitter import DocSplitter
-from .core.components.retriever.bes.bes_retriever import BESRetriever
-from .core.components.retriever.bes.bes_retriever import BESVectorStoreIndex
-from .core.components.retriever.baidu_vdb.baiduvdb_retriever import BaiduVDBVectorStoreIndex
-from .core.components.retriever.baidu_vdb.baiduvdb_retriever import BaiduVDBRetriever
-from .core.components.retriever.baidu_vdb.baiduvdb_retriever import TableParams
-from .core.components.retriever.reranker.rerank import Reranker
+from .core.components.doc_parser.component import DocParser, ParserConfig
+from .core.components.doc_splitter.component import DocSplitter
+from .core.components.retriever.bes.component import BESRetriever
+from .core.components.retriever.bes.component import BESVectorStoreIndex
+from .core.components.retriever.baidu_vdb.component import BaiduVDBVectorStoreIndex
+from .core.components.retriever.baidu_vdb.component import BaiduVDBRetriever
+from .core.components.retriever.baidu_vdb.component import TableParams
+from .core.components.retriever.reranker.component import Reranker
 from .core.components.ppt_generation_from_instruction.component import PPTGenerationFromInstruction
 from .core.components.ppt_generation_from_paper.component import PPTGenerationFromPaper
 from .core.components.ppt_generation_from_file.component import PPTGenerationFromFile

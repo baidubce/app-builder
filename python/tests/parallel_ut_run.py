@@ -107,7 +107,7 @@ def get_all_unittest_file():
             if file == "py" and prefix == "test":
                 fullname = os.path.join(root, f)
                 choose_test_case(fullname)
-
+    
     logger.info("\n需要跳过的单测用例：{}个".format(len(SKIP_UNITTEST)))
     for idx, case in enumerate(SKIP_UNITTEST):
         logger.info("--> {}. {}".format(idx+1, case))
