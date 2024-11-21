@@ -32,6 +32,7 @@ class PropertyModel(PydanticBaseModel):
 
     Attributes:
         type (Any): 参数的类型。
+        description (Optional[str]): 参数的描述信息。
     """
     type: Any
     description: Optional[str]
