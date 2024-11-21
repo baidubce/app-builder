@@ -294,6 +294,7 @@ Hook:
       - 监控:
           - [TRACE基础功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
           - [TRACE拓展功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+          - [Debug功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/Debug.md)
       - 部署:
           - [交互式前端部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
           - [公有云部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
@@ -332,7 +333,7 @@ Hook:
       - [环境参数](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
   - API Reference:
       - [Python API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/PythonAPI.md)
-      - [Java API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+      - [Java API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Java/JavaAPI.md)
       - [Go API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
 
 

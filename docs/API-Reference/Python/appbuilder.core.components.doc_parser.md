@@ -2,11 +2,11 @@
 
 ## Submodules
 
-## appbuilder.core.components.doc_parser.doc_parser module
+## appbuilder.core.components.doc_parser.component module
 
 文档解析
 
-### *class* appbuilder.core.components.doc_parser.doc_parser.DocParser(meta: [ComponentArguments](appbuilder.core.md#appbuilder.core.component.ComponentArguments) | None = ComponentArguments(name='', tool_desc={}), secret_key: str | None = None, gateway: str = '', lazy_certification: bool = False)
+### *class* appbuilder.core.components.doc_parser.component.DocParser(meta: [ComponentArguments](appbuilder.core.md#appbuilder.core.component.ComponentArguments) | None = ComponentArguments(name='', tool_desc={}), secret_key: str | None = None, gateway: str = '', lazy_certification: bool = False)
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 

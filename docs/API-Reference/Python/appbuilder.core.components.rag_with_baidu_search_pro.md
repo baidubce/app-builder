@@ -157,7 +157,3 @@ This replaces Model._\_fields_\_ from Pydantic V1.
 #### temperature *: Annotated[float, None, Interval(gt=None, ge=0, lt=None, le=1), None, None]*
 
 #### top_p *: Annotated[float, None, Interval(gt=None, ge=0, lt=None, le=1), None, None]*
-
-## appbuilder.core.components.rag_with_baidu_search_pro.parse_rag_pro_response module
-
-init

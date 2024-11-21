@@ -2,11 +2,11 @@
 
 ## Submodules
 
-## appbuilder.core.components.doc_splitter.doc_splitter module
+## appbuilder.core.components.doc_splitter.component module
 
 对文档进行段落切分
 
-### *class* appbuilder.core.components.doc_splitter.doc_splitter.ChunkSplitter(max_segment_length=800, overlap=200, separators=['。', '！', '？', '.', '!', '?', '……', '|\\n'], join_symbol='', \*\*kwargs)
+### *class* appbuilder.core.components.doc_splitter.component.ChunkSplitter(max_segment_length=800, overlap=200, separators=['。', '！', '？', '.', '!', '?', '……', '|\\n'], join_symbol='', \*\*kwargs)
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
@@ -66,7 +66,7 @@ res_paras = splitter(parse_result)
 print(res_paras.content)
 ```
 
-### *class* appbuilder.core.components.doc_splitter.doc_splitter.DocSplitter(splitter_type, max_segment_length=800, overlap=200, separators=['。', '！', '？', '.', '!', '?', '……', '|\\n'], join_symbol='', \*\*kwargs)
+### *class* appbuilder.core.components.doc_splitter.component.DocSplitter(splitter_type, max_segment_length=800, overlap=200, separators=['。', '！', '？', '.', '!', '?', '……', '|\\n'], join_symbol='', \*\*kwargs)
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
@@ -106,7 +106,7 @@ print(res_paras.content)
   * **ValueError** -- 如果ParseResult不包含原始值，抛出异常
   * **ValueError** -- 如果splitter_type不是split_by_chunk或split_by_title，抛出异常
 
-### *class* appbuilder.core.components.doc_splitter.doc_splitter.TitleSplitter(meta: [ComponentArguments](appbuilder.core.md#appbuilder.core.component.ComponentArguments) | None = ComponentArguments(name='', tool_desc={}), secret_key: str | None = None, gateway: str = '', lazy_certification: bool = False)
+### *class* appbuilder.core.components.doc_splitter.component.TitleSplitter(meta: [ComponentArguments](appbuilder.core.md#appbuilder.core.component.ComponentArguments) | None = ComponentArguments(name='', tool_desc={}), secret_key: str | None = None, gateway: str = '', lazy_certification: bool = False)
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
