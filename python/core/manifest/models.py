@@ -34,7 +34,7 @@ class PropertyModel(PydanticBaseModel):
         type (Any): 参数的类型。
     """
     type: Any
-    description: str
+    description: Optional[str]
 
 
 class ParametersModel(PydanticBaseModel):
