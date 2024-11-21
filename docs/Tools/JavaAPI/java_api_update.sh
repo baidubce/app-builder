@@ -5,7 +5,7 @@ rm -rf docs/API-Reference/Java/*
 
 # 2、生成Java API文档
 cd java
-javadoc -d doc -sourcepath src/main/java -subpackages com.baidubce.appbuilder -exclude com.baidubce.appbuilder.base -encoding UTF-8 -charset UTF-8
+javadoc -d doc -sourcepath src/main/java -subpackages com.baidubce.appbuilder -exclude com.baidubce.appbuilder.base -encoding UTF-8 -charset UTF-8 -public
 
 # 3、迁移文档到docs目录，并删除java/doc目录
 cd ..

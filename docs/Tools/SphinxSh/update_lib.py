@@ -15,7 +15,6 @@ def process_line_for_assistant(line):
 
         new_name = parts[0].split(' module')[0].split('.')[-1]
         if new_name in open_module:
-            print(f"- [{new_name}]({parts[-1]}")
             return f"- [{new_name}]({parts[-1]}"
         else:
             return None
@@ -28,7 +27,18 @@ def process_line_for_components(line):
     if 'module' in line.lower() and 'subpackages' not in line.lower() and 'submodules' not in line.lower():
         parts = line.split('](')
         new_names = parts[0].split(' module')[0].split('.')
-        print(new_names)
+        if len(new_names) == 5:
+            return f"- [{new_names[-2]}]({parts[-1]}"
+        else: 
+            if new_names[-3] == 'llms':
+                return f"- [LLM({new_names[-2]})]({parts[-1]}"
+            elif new_names[-3] == 'retriever':
+                return f"- [Retriever({new_names[-2]})]({parts[-1]}"
+            elif new_names[-3] == 'gbi':
+                return f"- [GBI({new_names[-2]})]({parts[-1]}"
+    else:
+        # 如果行中没有"module"，返回None表示应该删除该行
+        return None
 
 def process_file_for_assistant(input_filename, output_filename):
     with open(input_filename, 'r') as file:
@@ -60,7 +70,7 @@ def process_file_for_components(input_filename, output_filename):
         for line in new_lines:
             file.write(line + '\n')
 
-    # mv_new_md(input_filename, output_filename)
+    mv_new_md(input_filename, output_filename)
 
 
 if __name__ == "__main__":
