@@ -69,11 +69,11 @@ def process_line_for_components(line):
             return f"- [{new_names[-2]}]({parts[-1]}"
         else: 
             if new_names[-3] == 'llms':
-                return f"- [LLM({new_names[-2]})]({parts[-1]}"
+                return f"- [{new_names[-2]}--(LLM)]({parts[-1]}"
             elif new_names[-3] == 'retriever':
-                return f"- [Retriever({new_names[-2]})]({parts[-1]}"
+                return f"- [{new_names[-2]}--(retriever)]({parts[-1]}"
             elif new_names[-3] == 'gbi':
-                return f"- [GBI({new_names[-2]})]({parts[-1]}"
+                return f"- [{new_names[-2]}--(GBI)]({parts[-1]}"
     else:
         # 如果行中没有"module"，返回None表示应该删除该行
         return None
