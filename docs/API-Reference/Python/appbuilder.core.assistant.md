@@ -1,5 +1,0 @@
-- [assistants](appbuilder.core.assistant.assistants.md#module-appbuilder.core.assistant.assistants.assistants)
-- [files](appbuilder.core.assistant.assistants.md#module-appbuilder.core.assistant.assistants.files)
-- [messages](appbuilder.core.assistant.threads.messages.md#module-appbuilder.core.assistant.threads.messages.messages)
-- [runs](appbuilder.core.assistant.threads.runs.md#module-appbuilder.core.assistant.threads.runs.runs)
-- [threads](appbuilder.core.assistant.threads.md#module-appbuilder.core.assistant.threads.threads)

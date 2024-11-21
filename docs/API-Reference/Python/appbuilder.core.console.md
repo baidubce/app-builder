@@ -1,4 +1,0 @@
-- [appbuilder_client](appbuilder.core.console.appbuilder_client.md#module-appbuilder.core.console.appbuilder_client.appbuilder_client)
-- [dataset](appbuilder.core.console.dataset.md#module-appbuilder.core.console.dataset.dataset)
-- [knowledge_base](appbuilder.core.console.knowledge_base.md)
-- [rag](appbuilder.core.console.rag.md#module-appbuilder.core.console.rag.rag)
