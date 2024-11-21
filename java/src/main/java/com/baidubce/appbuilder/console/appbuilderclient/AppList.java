@@ -23,6 +23,16 @@ public class AppList extends Component {
         super();
     }
 
+    /**
+     * @deprecated 该方法已被弃用，请改用新方法
+     *
+     * 根据请求获取应用列表
+     *
+     * @param request 请求参数
+     * @return 应用列表数组
+     * @throws IOException 如果发生输入输出异常
+     * @throws AppBuilderServerException 如果发生应用构建服务器异常
+     */
     @Deprecated
     public App[] getAppList(AppListRequest request) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.APP_LIST_URL;
@@ -34,6 +44,14 @@ public class AppList extends Component {
         return respBody.getData();
     }
     
+    /**
+     * 描述应用程序信息
+     *
+     * @param request 包含应用程序描述信息的请求对象
+     * @return 包含应用程序描述信息的响应对象
+     * @throws IOException 如果发生I/O异常
+     * @throws AppBuilderServerException 如果发生AppBuilder服务器异常
+     */
     public AppsDescribeResponse describeApps(AppsDescribeRequest request) 
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.APPS_DESCRIBE_URL;
