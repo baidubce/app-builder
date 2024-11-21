@@ -66,7 +66,7 @@ print(message.content)
 * **返回类型:**
   response (str)
 
-#### run(conversation_id: str, query: str = '', file_ids: list = [], stream: bool = False, tools: list[Tool] = None, tool_outputs: list[ToolOutput] = None, tool_choice: ToolChoice = None, end_user_id: str = None, \*\*kwargs) → [Message](appbuilder.core.md#appbuilder.core.message.Message)
+#### run(conversation_id: str, query: str = '', file_ids: list = [], stream: bool = False, tools: list[Tool] = None, tool_outputs: list[ToolOutput] = None, tool_choice: ToolChoice = None, end_user_id: str = None, action: Action = None, \*\*kwargs) → [Message](appbuilder.core.md#appbuilder.core.message.Message)
 
 运行智能体应用
 
@@ -79,13 +79,32 @@ print(message.content)
   * **tool_outputs** (*list* *[**data_class.ToolOutput* *]*) -- 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
   * **tool_choice** (*data_class.ToolChoice*) -- 控制大模型使用组件的方式，默认为None
   * **end_user_id** (*str*) -- 用户ID，用于区分不同用户
+  * **action** (*data_class.Action*) -- 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
   * **kwargs** -- 其他参数
 * **返回:**
   对话结果，一个Message对象，使用message.content获取内容。
 * **返回类型:**
   message ([Message](appbuilder.core.md#appbuilder.core.message.Message))
 
-#### run_with_handler(conversation_id: str, query: str = '', file_ids: list = [], tools: list[Tool] | None = None, stream: bool = False, event_handler=None, \*\*kwargs)
+#### run_multiple_dialog_with_handler(conversation_id: str, queries: iter | None = None, file_ids: iter | None = None, tools: iter | None = None, stream: bool = False, event_handler=None, actions: iter | None = None, \*\*kwargs)
+
+运行智能体应用，并通过事件处理器处理事件
+
+* **参数:**
+  * **conversation_id** (*str*) -- 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+  * **queries** (*iter*) -- 查询字符串可迭代对象
+  * **file_ids** (*iter*) -- 文件ID列表
+  * **tools** (*iter* *,*  *可选*) -- 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
+  * **stream** (*bool*) -- 是否流式响应
+  * **event_handler** (*EventHandler*) -- 事件处理器
+  * **actions** (*iter*)
+  * **kwargs** -- 其他参数
+* **返回:**
+  事件处理器
+* **返回类型:**
+  EventHandler
+
+#### run_with_handler(conversation_id: str, query: str = '', file_ids: list = [], tools: list[Tool] | None = None, stream: bool = False, event_handler=None, action=None, \*\*kwargs)
 
 运行智能体应用，并通过事件处理器处理事件
 
@@ -96,6 +115,7 @@ print(message.content)
   * **tools** (*list* *[**data_class.Tools* *]* *,*  *可选*) -- 一个Tools组成的列表，其中每个Tools对应一个工具的配置, 默认为None
   * **stream** (*bool*) -- 是否流式响应
   * **event_handler** (*EventHandler*) -- 事件处理器
+  * **action** (*dataclass.Action*)
   * **kwargs** -- 其他参数
 * **返回:**
   事件处理器
@@ -171,7 +191,11 @@ print(message.content)
 
 #### error(run_context, run_response)
 
-#### init(appbuilder_client, conversation_id, query, file_ids=None, tools=None, stream: bool = False, event_handler=None, \*\*kwargs)
+#### handle_content_type(run_context, run_response)
+
+#### handle_event_type(run_context, run_response)
+
+#### init(appbuilder_client, conversation_id, query, file_ids=None, tools=None, stream: bool = False, event_handler=None, action=None, \*\*kwargs)
 
 初始化类实例并设置相关参数。
 
@@ -183,11 +207,27 @@ print(message.content)
   * **tools** (*list* *,* *optional*) -- 工具列表，默认为None。
   * **stream** (*bool* *,* *optional*) -- 是否使用流式处理，默认为False。
   * **event_handler** (*callable* *,* *optional*) -- 事件处理函数，默认为None。
+  * **action** (*object* *,* *optional*) -- 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
   * **\*\*kwargs** -- 其他可选参数。
 * **返回:**
   None
 
 #### interrupt(run_context, run_response)
+
+#### new_dialog(query=None, file_ids=None, tools=None, action=None, stream: bool | None = None, event_handler=None, \*\*kwargs)
+
+重置handler部分参数，用于复用该handler进行多轮对话。
+
+* **参数:**
+  * **query** (*str*) -- 用户输入的查询语句。
+  * **file_ids** (*list* *,* *optional*) -- 文件ID列表，默认为None。
+  * **tools** (*list* *,* *optional*) -- 工具列表，默认为None。
+  * **stream** (*bool* *,* *optional*) -- 是否使用流式处理，默认为False。
+  * **action** (*object* *,* *optional*) -- 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
+  * **event_handler** (*callable* *,* *optional*) -- 事件处理函数，默认为None。
+  * **\*\*kwargs** -- 其他可选参数。
+* **返回:**
+  None
 
 #### preparing(run_context, run_response)
 

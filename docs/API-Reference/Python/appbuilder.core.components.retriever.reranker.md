@@ -2,11 +2,11 @@
 
 ## Submodules
 
-## appbuilder.core.components.retriever.reranker.rerank module
+## appbuilder.core.components.retriever.reranker.component module
 
 Reranker 文本精排
 
-### *class* appbuilder.core.components.retriever.reranker.rerank.Reranker(model='bce-reranker-base')
+### *class* appbuilder.core.components.retriever.reranker.component.Reranker(model='bce-reranker-base')
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 

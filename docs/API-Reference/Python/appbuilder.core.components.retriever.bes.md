@@ -2,11 +2,11 @@
 
 ## Submodules
 
-## appbuilder.core.components.retriever.bes.bes_retriever module
+## appbuilder.core.components.retriever.bes.component module
 
 基于baidu ES的retriever
 
-### *class* appbuilder.core.components.retriever.bes.bes_retriever.BESRetriever(embedding, index_name, bes_client, index_type='hnsw')
+### *class* appbuilder.core.components.retriever.bes.component.BESRetriever(embedding, index_name, bes_client, index_type='hnsw')
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
@@ -45,7 +45,7 @@ res = retriever(query)
 
 #### tool_desc *: Dict[str, Any]* *= {'description': 'a retriever based on Baidu ElasticSearch'}*
 
-### *class* appbuilder.core.components.retriever.bes.bes_retriever.BESVectorStoreIndex(cluster_id, user_name, password, embedding=None, index_name=None, index_type='hnsw', prefix='/rpc/2.0/cloud_hub')
+### *class* appbuilder.core.components.retriever.bes.component.BESVectorStoreIndex(cluster_id, user_name, password, embedding=None, index_name=None, index_type='hnsw', prefix='/rpc/2.0/cloud_hub')
 
 基类：`object`
 
@@ -70,7 +70,7 @@ BES向量存储检索工具
 * **返回:**
   转化后的retriever对象
 * **返回类型:**
-  [BESRetriever](#appbuilder.core.components.retriever.bes.bes_retriever.BESRetriever)
+  [BESRetriever](#appbuilder.core.components.retriever.bes.component.BESRetriever)
 
 #### base_es_url *: str* *= '/v1/bce/bes/cluster/'*
 

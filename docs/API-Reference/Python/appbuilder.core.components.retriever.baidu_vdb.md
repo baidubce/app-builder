@@ -2,11 +2,11 @@
 
 ## Submodules
 
-## appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever module
+## appbuilder.core.components.retriever.baidu_vdb.component module
 
 基于Baidu VDB的retriever
 
-### *class* appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.BaiduVDBRetriever(embedding, table)
+### *class* appbuilder.core.components.retriever.baidu_vdb.component.BaiduVDBRetriever(embedding, table)
 
 基类：[`Component`](appbuilder.core.md#appbuilder.core.component.Component)
 
@@ -50,7 +50,7 @@ res = retriever(query)
 
 #### tool_desc *: Dict[str, Any]* *= {'description': 'a retriever based on Baidu VectorDB'}*
 
-### *class* appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.BaiduVDBVectorStoreIndex(instance_id: str, api_key: str, account: str = 'root', database_name: str = 'AppBuilderDatabase', table_params: ~appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.TableParams = <appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.TableParams object>, embedding=None)
+### *class* appbuilder.core.components.retriever.baidu_vdb.component.BaiduVDBVectorStoreIndex(instance_id: str, api_key: str, account: str = 'root', database_name: str = 'AppBuilderDatabase', table_params: ~appbuilder.core.components.retriever.baidu_vdb.component.TableParams = <appbuilder.core.components.retriever.baidu_vdb.component.TableParams object>, embedding=None)
 
 基类：`object`
 
@@ -77,7 +77,7 @@ Baidu VDB向量存储检索工具
 * **返回:**
   转化后的retriever对象
 * **返回类型:**
-  [BaiduVDBRetriever](#appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.BaiduVDBRetriever)
+  [BaiduVDBRetriever](#appbuilder.core.components.retriever.baidu_vdb.component.BaiduVDBRetriever)
 
 #### *property* client *: Any*
 
@@ -110,7 +110,7 @@ Baidu VDB向量存储检索工具
 
 #### vdb_uri_prefix *= b'/api/v1/bce/vdb/instance/'*
 
-### *class* appbuilder.core.components.retriever.baidu_vdb.baiduvdb_retriever.TableParams(dimension: int, table_name: str = 'AppBuilderTable', replication: int = 3, partition: int = 1, index_type: str = 'HNSW', metric_type: str = 'L2', drop_exists: bool = False, vector_params: Dict | None = None)
+### *class* appbuilder.core.components.retriever.baidu_vdb.component.TableParams(dimension: int, table_name: str = 'AppBuilderTable', replication: int = 3, partition: int = 1, index_type: str = 'HNSW', metric_type: str = 'L2', drop_exists: bool = False, vector_params: Dict | None = None)
 
 基类：`object`
 
