@@ -25,8 +25,8 @@ from appbuilder.core.manifest.models import ParameterViewKind, ParameterView, Ma
 def function_description(cls, func):
     """Get the description of a function."""
 
-    if hasattr(func, "__pf_function__"):
-        view = func.__pf_function__
+    if hasattr(func, "__ab_manifest__"):
+        view = func.__ab_manifest__
         return view.description if view else ""
 
 
@@ -97,9 +97,9 @@ def manifest(
         sig_params, sig_returns = get_signature(func=func)
 
         # Get meta from decorator
-        dec_params = func.__pf_function_parameters__ if hasattr(func, "__pf_function_parameters__") else {}
+        dec_params = func.__ab_manifest_parameters__ if hasattr(func, "__ab_manifest_parameters__") else {}
         dec_params = {item.name: item for item in dec_params}
-        dec_returns = func.__pf_function_returns__[0] if hasattr(func, "__pf_function_returns__") else {}
+        dec_returns = func.__ab_manifest_returns__[0] if hasattr(func, "__ab_manifest_returns__") else {}
 
         # get schema from inspect
         schema = get_function_schema_with_inspect(method=func) or {}
@@ -233,22 +233,22 @@ def manifest_parameter(
         # @function
         # @function_parameter
         # @function_parameter
-        if hasattr(func, "__pf_function_parameters__"):
-            current_views = func.__pf_function_parameters__
+        if hasattr(func, "__ab_manifest_parameters__"):
+            current_views = func.__ab_manifest_parameters__
         else:
             current_views = []
         current_views.append(new_view)
-        func.__pf_function_parameters__ = current_views
+        func.__ab_manifest_parameters__ = current_views
 
         # function_parameter runs after function, merge ParameterView in ManifestView
-        if hasattr(func, "__pf_function__"):
+        if hasattr(func, "__ab_manifest__"):
             new_list = _update_list(
                 new_view,
-                func.__pf_function__.parameters,
+                func.__ab_manifest__.parameters,
                 lambda item, new_item: item.name == new_item.name,
                 lambda item, new_item: ParameterView.merge(item, new_item),
             )
-            func.__pf_function__.parameters = new_list
+            func.__ab_manifest__.parameters = new_list
 
         # Compatible to semantic kernel 0.9
         if hasattr(func, "__kernel_function_parameters__"):
@@ -307,13 +307,13 @@ def manifest_return(
         )
 
         # function_return runs after function, merge ParameterView in ManifestView
-        if hasattr(func, "__pf_function__"):
-            current_view = func.__pf_function__.returns[0]
+        if hasattr(func, "__ab_manifest__"):
+            current_view = func.__ab_manifest__.returns[0]
             merged_view = ParameterView.merge(current_view, new_view)
-            func.__pf_function__.returns = [merged_view]
+            func.__ab_manifest__.returns = [merged_view]
         else:
             merged_view = new_view
-        func.__pf_function_returns__ = [merged_view]
+        func.__ab_manifest_returns__ = [merged_view]
 
         # Compatible to semantic kernel 0.9
         func.__kernel_function_return_type__ = merged_view.type_
