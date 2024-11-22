@@ -11,44 +11,42 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import os
 import unittest
-from appbuilder import ManifestView, manifest, manifest_parameter, manifest_return
+from appbuilder import Manifest, manifest, manifest_parameter
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestManifestDecorator(unittest.TestCase):
     def test_disable_docstring(self):
         @manifest(description="anotated function")
-        @manifest_parameter(name="param", description="a parameter", type="str", default_value="default_val")
-        @manifest_return(description="a result", default_value="default_result")
+        @manifest_parameter(name="param", description="a parameter", type="str")
         def func(param: str) -> str:
             return param
 
-        view = func.__ab_manifest__
+        function_manifest = func.__ab_manifest__
 
-        assert isinstance(view, ManifestView)
-        assert view.name == "func"
-        assert view.description == "anotated function"
-        assert view.is_async is False
-        assert view.is_stream is False
+        # 断言顶层的结构
+        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert function_manifest.function["name"] == "func", "Function name does not match 'func'"
+        assert function_manifest.function["description"] == "anotated function", "Description does not match"
 
-        assert view.parameters[0].name == "param"
-        assert view.parameters[0].description == "a parameter"
-        assert view.parameters[0].default_value == "default_val"
-        assert view.parameters[0].type_ == "str"
-        assert view.parameters[0].required is True
-        assert view.parameters[0].example is None
+        # 断言参数结构
+        parameters = function_manifest.function["parameters"]
+        assert parameters["type"] == "object", "Parameters type does not match 'object'"
+        assert "properties" in parameters, "Properties not found in parameters"
 
-        assert view.returns[0].name == "return"
-        assert view.returns[0].description == "a result"
-        assert view.returns[0].default_value == "default_result"
-        assert view.returns[0].type_ == "str"
-        assert view.returns[0].required is True
-        assert view.returns[0].example is None
+        # 断言具体参数
+        properties = parameters["properties"]
+        assert "param" in properties, "'param' parameter missing"
+        assert properties["param"]["type"] == "str", "'param' type does not match 'str'"
+        assert properties["param"]["description"] == "a parameter", "'param' description does not match"
+
+        # 断言必需参数
+        assert "required" in parameters, "'required' field missing in parameters"
+        assert parameters["required"] == ["param"], "'required' does not match ['param']"
 
 
     def test_combine(self):
         @manifest()
-        @manifest_parameter(name="param", example="[1,2,3]")
-        @manifest_return(description="Sum of param as list of number without odds.", example="6")
+        @manifest_parameter(name="param")
         def func(param: str = "[]") -> int:
             """An example function.
 
@@ -60,32 +58,40 @@ class TestManifestDecorator(unittest.TestCase):
             """
             return param
 
-        view = func.__ab_manifest__
+        # 获取装饰器生成的 Manifest
+        function_manifest = func.__ab_manifest__
 
-        assert isinstance(view, ManifestView)
-        assert view.name == "func"
-        assert view.description == ""
-        assert view.is_async is False
-        assert view.is_stream is False
+        # 断言顶层结构
+        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert function_manifest.function["name"] == "func", "Function name does not match 'func'"
+        assert function_manifest.function["description"] == """An example function.
 
-        assert view.parameters[0].name == "param"
-        assert view.parameters[0].description == None
-        assert view.parameters[0].default_value == "[]"
-        assert view.parameters[0].type_ == "str"
-        assert view.parameters[0].required is False
-        assert view.parameters[0].example == "[1,2,3]"
+            Args:
+                param (str): A list of numbers.
 
-        assert view.returns[0].name == "return"
-        assert view.returns[0].description == "Sum of param as list of number without odds."
-        assert view.returns[0].default_value is None
-        assert view.returns[0].type_ == "int"
-        assert view.returns[0].required is True
-        assert view.returns[0].example == "6"
+            Returns:
+                int: The sum of parameter.
+            """, "Description does not match"
+
+        # 断言参数结构
+        parameters = function_manifest.function["parameters"]
+        assert parameters["type"] == "object", "Parameters type does not match 'object'"
+        assert "properties" in parameters, "Properties not found in parameters"
+
+        # 断言具体参数
+        properties = parameters["properties"]
+        assert "param" in properties, "'param' parameter missing"
+        assert properties["param"]["type"] == "str", "'param' type does not match 'str'"
+        assert "description" in properties["param"], "'param' description missing"
+        assert properties["param"]["description"] == None, "'param' description does not match"
+
+        # 断言必需参数
+        assert "required" in parameters, "'required' field missing in parameters"
+        assert "param" not in parameters["required"], "'param' should not be required as it has a default value"
 
 
     def test_reversed_decorators(self):
-        @manifest_parameter(name="param", example="[1,2,3]", description="DECORATOR A list of numbers.")
-        @manifest_return(description="DECORATOR The sum of parameter.", example="6")
+        @manifest_parameter(name="param", description="DECORATOR A list of numbers.")
         @manifest()
         def func(param: str = "[]") -> int:
             """An example function.
@@ -98,53 +104,64 @@ class TestManifestDecorator(unittest.TestCase):
             """
             return param
 
-        view = func.__ab_manifest__
+        # 获取装饰器生成的 Manifest
+        function_manifest = func.__ab_manifest__
 
-        assert isinstance(view, ManifestView)
-        assert view.name == "func"
-        assert view.is_async is False
-        assert view.is_stream is False
+        # 断言顶层结构
+        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert function_manifest.function["name"] == "func", "Function name does not match 'func'"
+        assert function_manifest.function["description"] == """An example function.
 
-        assert view.parameters[0].name == "param"
-        assert view.parameters[0].description == "DECORATOR A list of numbers."
-        assert view.parameters[0].default_value == "[]"
-        assert view.parameters[0].type_ == "str"
-        assert view.parameters[0].required is False
-        assert view.parameters[0].example == "[1,2,3]"
+            Args:
+                param (str): A list of numbers.
 
-        assert view.returns[0].name == "return"
-        assert view.returns[0].description == "DECORATOR The sum of parameter."
-        assert view.returns[0].default_value is None
-        assert view.returns[0].type_ == "int"
-        assert view.returns[0].required is True
-        assert view.returns[0].example == "6"
+            Returns:
+                int: The sum of parameter.
+            """, "Description does not match"
+
+        # 断言参数结构
+        parameters = function_manifest.function["parameters"]
+        assert parameters["type"] == "object", "Parameters type does not match 'object'"
+        assert "properties" in parameters, "Properties not found in parameters"
+
+        # 断言具体参数
+        properties = parameters["properties"]
+        assert "param" in properties, "'param' parameter missing"
+        assert properties["param"]["type"] == "str", "'param' type does not match 'str'"
+
+        # 断言必需参数
+        assert "required" in parameters, "'required' field missing in parameters"
+        assert "param" in parameters["required"], "'param' should not be required as it has a default value"
 
     def test_only_function_decorator(self):
         @manifest()
         def func(param: str = "[]") -> int:
+            " "
             return param
 
         view = func.__ab_manifest__
 
-        assert isinstance(view, ManifestView)
-        assert view.name == "func"
-        assert view.description == ""
-        assert view.is_async is False
-        assert view.is_stream is False
+        # 获取装饰器生成的 Manifest
+        function_manifest = func.__ab_manifest__
 
-        assert view.parameters[0].name == "param"
-        assert view.parameters[0].description is None
-        assert view.parameters[0].default_value == "[]"
-        assert view.parameters[0].type_ == "str"
-        assert view.parameters[0].required is False
-        assert view.parameters[0].example is None
+        # 断言顶层结构
+        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert function_manifest.function["name"] == "func", "Function name does not match 'func'"
+        assert function_manifest.function["description"] == " ", "Description should be None when not explicitly provided"
 
-        assert view.returns[0].name == "return"
-        assert view.returns[0].description is None
-        assert view.returns[0].default_value is None
-        assert view.returns[0].type_ == "int"
-        assert view.returns[0].required is True
-        assert view.returns[0].example is None
+        # 断言参数结构
+        parameters = function_manifest.function["parameters"]
+        assert parameters["type"] == "object", "Parameters type does not match 'object'"
+        assert "properties" in parameters, "Properties not found in parameters"
+
+        # 断言具体参数
+        properties = parameters["properties"]
+        assert "param" in properties, "'param' parameter missing"
+        assert properties["param"]["type"] == "str", "'param' type does not match 'str'"
+
+        # 检查是否为必需参数
+        assert "required" in parameters, "'required' field missing in parameters"
+        assert "param" not in parameters["required"], "'param' should not be required as it has a default value"
 
 if __name__ == "__main__":
     unittest.main()
