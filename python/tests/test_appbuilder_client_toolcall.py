@@ -2,8 +2,7 @@ import unittest
 import appbuilder
 import os
 
-
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
+#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL","")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """
@@ -96,7 +95,7 @@ class TestAgentRuntime(unittest.TestCase):
         msg = client.run(
         conversation_id=conversation_id,
         query="今天北京的天气怎么样？",
-        tools = [appbuilder.function_to_manifest(f).model_dump() for f in functions]
+        tools = [appbuilder.Manifest.from_function(f).model_dump() for f in functions]
         )
         print(msg.model_dump_json(indent=4))
         # 获取最后的事件和工具调用信息
@@ -123,9 +122,8 @@ class TestAgentRuntime(unittest.TestCase):
 
         """测试装饰器功能功能""" 
         @appbuilder.manifest(description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。")
-        @appbuilder.manifest_parameter(name="location", example="北京", description="城市名，例如：北京。")
-        @appbuilder.manifest_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
-        @appbuilder.manifest_return(description="天气情况描述", example="北京今天25度")
+        @appbuilder.manifest_parameter(name="location", description="城市名，例如：北京。")
+        @appbuilder.manifest_parameter(name="unit", description="温度单位，支持 'celsius' 或 'fahrenheit'")
         #定义示例函数
         def get_current_weather(location: str, unit: str) -> str:
             return "北京今天25度"
@@ -137,7 +135,7 @@ class TestAgentRuntime(unittest.TestCase):
         msg = client.run(
         conversation_id=conversation_id,
         query="今天北京的天气怎么样？",
-        tools = [appbuilder.decorator_to_manifest(get_current_weather.__ab_manifest__).model_dump()]
+        tools = [get_current_weather.__ab_manifest__.model_dump()]
         )
         print(msg.model_dump_json(indent=4))
         # 获取最后的事件和工具调用信息
@@ -161,19 +159,32 @@ class TestAgentRuntime(unittest.TestCase):
         )
         print(msg_2.model_dump_json(indent=4))
 
-        @appbuilder.manifest()
-        @appbuilder.manifest_parameter(name="location", example="北京", description="城市名，例如：北京。")
-        @appbuilder.manifest_parameter(name="unit", example="celsius", description="温度单位，支持 'celsius' 或 'fahrenheit'")
-        @appbuilder.manifest_return(description="天气情况描述", example="北京今天25度")
-        #定义示例函数
-        def get_current_weather(location: str, unit: str) -> str:
-            return "北京今天25度"
-
         try:
-            appbuilder.decorator_to_manifest(get_current_weather.__ab_manifest__)
+            @appbuilder.manifest()
+            @appbuilder.manifest_parameter(name="location", description="城市名，例如：北京。")
+            @appbuilder.manifest_parameter(name="unit", description="温度单位，支持 'celsius' 或 'fahrenheit'")
+            #定义示例函数
+            def get_current_weather(location: str, unit: str) -> str:
+                return "北京今天25度"
+            
         except ValueError as e:
             # 使用 assert 检查是否抛出 ValueError，且包含 "缺少描述" 的信息
             assert "缺少描述" in str(e), f"Expected '缺少描述' in error message, but got: {str(e)}"
+        else:
+            # 如果未抛出异常，测试应失败
+            assert False, "Expected ValueError but no exception was raised"
+
+        try:
+            @appbuilder.manifest()
+            @appbuilder.manifest_parameter(name="location", description="城市名，例如：北京。")
+            @appbuilder.manifest_parameter(name="unit", description="温度单位，支持 'celsius' 或 'fahrenheit'")
+            #定义示例函数
+            def get_current_weather(location: str, unit) -> str:
+                return "北京今天25度"
+            
+        except ValueError as e:
+            # 使用 assert 检查是否抛出 ValueError，且包含 "缺少描述" 的信息
+            assert "缺少类型信息" in str(e), f"Expected '缺少类型信息' in error message, but got: {str(e)}"
         else:
             # 如果未抛出异常，测试应失败
             assert False, "Expected ValueError but no exception was raised"
