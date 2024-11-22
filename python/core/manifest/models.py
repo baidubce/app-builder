@@ -35,7 +35,7 @@ class PropertyModel(BaseModel):
         return cls(
             name=a.name,
             description=(b.description or a.description),
-            type_=(b.type_ or a.type_),
+            type=(b.type or a.type),
             required=(b.required if b.required is not None else a.required),
         )
 

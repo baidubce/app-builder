@@ -125,7 +125,7 @@ def manifest(
 
         # 确定函数的最终名称和描述
         final_name = name or func.__name__
-        final_desc = description or ""       
+        final_desc = description or func.__doc__       
 
         if not final_desc:
             raise ValueError(f"函数 {final_name} 缺少描述")
@@ -200,13 +200,28 @@ def manifest_parameter(
 
         # function_parameter runs after function, merge ParameterView in ManifestView
         if hasattr(func, "__ab_manifest__"):
-            new_list = _update_list(
-                new_view,
-                func.__ab_manifest__.parameters,
-                lambda item, new_item: item.name == new_item.name,
-                lambda item, new_item: PropertyModel.merge(item, new_item),
-            )
-            func.__ab_manifest__.parameters = new_list
+            # 获取现有的 parameters
+            parameters_dict = func.__ab_manifest__.function.get("parameters", {})
+            parameters_model = ParametersModel(**parameters_dict)
+
+            # 更新 properties
+            existing_property = parameters_model.properties.get(new_view.name)
+            if existing_property:
+                merged_property = PropertyModel.merge(existing_property, new_view)
+                parameters_model.properties[new_view.name] = merged_property
+            else:
+                parameters_model.properties[new_view.name] = new_view
+
+            # 更新 required 字段
+            if new_view.required:
+                if new_view.name not in parameters_model.required:
+                    parameters_model.required.append(new_view.name)
+            else:
+                if new_view.name in parameters_model.required:
+                    parameters_model.required.remove(new_view.name)
+
+            # 更新 func.__ab_manifest__.function["parameters"]
+            func.__ab_manifest__.function["parameters"] = parameters_model.model_dump()
 
         # Compatible to semantic kernel 0.9
         if hasattr(func, "__kernel_function_parameters__"):
