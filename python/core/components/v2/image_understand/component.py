@@ -188,8 +188,8 @@ class ImageUnderstand(Component):
         Returns:
             Union[Generator[str, None, None], str]: 图片内容理解结果
         """
-        traceid = kwargs.get("traceid")
-        file_urls = kwargs.get("file_urls", {})
+        traceid = kwargs.get("_sys_traceid")
+        file_urls = kwargs.get("_sys_file_urls", {})
         rec_res, raw_data = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
         llm_result = self.create_output(type="text", text=rec_res, name="text_1", raw_data=raw_data, visible_scope='llm')
         yield llm_result
