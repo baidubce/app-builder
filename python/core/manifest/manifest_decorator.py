@@ -93,14 +93,13 @@ def manifest(
         # Get meta from decorator
         dec_params_list = func.__ab_manifest_parameters__ if hasattr(func, "__ab_manifest_parameters__") else []
         dec_params = {item.name: item for item in dec_params_list}
-        print(dec_params)
 
         properties = {}
         required_fields = []
         for param in sig_params:
             dec_param = dec_params.get(param["name"])
             param_type = param.get("type_") or getattr(dec_param, "type", None)
-            
+
             param_info = {
                 "name": param["name"],  # 参数名称
                 "type": param_type,
