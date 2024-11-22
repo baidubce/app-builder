@@ -60,7 +60,7 @@ def _parse_parameter(param: Parameter) -> Dict[str, Any]:
     if param.annotation != Parameter.empty:
         ret = _parse_annotation(param.annotation)
     else:
-        ret["type_"] = "Any"
+        ret["type_"] = None
         ret["required"] = True  # 默认为 True
 
     ret["name"] = param.name
@@ -77,7 +77,7 @@ def _parse_parameter(param: Parameter) -> Dict[str, Any]:
 def _parse_annotation(annotation: Any) -> Dict[str, Any]:
     # The keys of this dict are compatible with semantic-kernel, do not change them
     if annotation == Signature.empty:
-        return {"type_": "Any", "required": True}
+        return {"type_": None, "required": True}
     if isinstance(annotation, str):
         return {"type_": annotation, "required": True}
     ret = _parse_internal_annotation(annotation, True)

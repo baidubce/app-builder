@@ -11,34 +11,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from enum import Enum
-from pydantic import BaseModel as PydanticBaseModel # noqa: F403 # type: ignore
+from pydantic import BaseModel,Field
 from typing import Dict, List, Literal, Any, Optional
 
-from dataclasses_json import config
-from dataclasses import dataclass
-from dataclasses import field as Field
-from dataclasses_json import DataClassJsonMixin
-
 from appbuilder.core.manifest.validate import validate_function_param_name, validate_function_name
+from appbuilder.core.manifest.manifest_signature import get_signature
 
-class BaseModel(DataClassJsonMixin):
-    """Base model for all models."""
-
-    pass
-
-class PropertyModel(PydanticBaseModel):
+class PropertyModel(BaseModel):
     """参数属性模型，用于描述函数参数的类型和元数据。
 
     Attributes:
-        type (Any): 参数的类型。
+        type (Optional[str]): 参数的类型。
         description (Optional[str]): 参数的描述信息。
     """
-    type: Any
+    name: str
+    type: Optional[str]
     description: Optional[str]
+    required: bool = True
+
+    @classmethod
+    def merge(cls, a: "PropertyModel", b: "PropertyModel") -> "PropertyModel":
+        """Merge two parameter views."""
+        return cls(
+            name=a.name,
+            description=(b.description or a.description),
+            type_=(b.type_ or a.type_),
+            required=(b.required if b.required is not None else a.required),
+        )
 
 
-class ParametersModel(PydanticBaseModel):
+class ParametersModel(BaseModel):
     """函数参数模型，用于定义函数的参数结构。
 
     Attributes:
@@ -51,7 +53,7 @@ class ParametersModel(PydanticBaseModel):
     required: List[str]
 
 
-class Manifest(PydanticBaseModel):
+class Manifest(BaseModel):
     """函数模型，用于描述函数的元信息。
 
     Attributes:
@@ -61,141 +63,77 @@ class Manifest(PydanticBaseModel):
     type: Literal["function"]
     function: Dict[str, Any]
 
-class ParameterViewKind(str, Enum):
-    """
-    The kind of a parameter.
+    @classmethod
+    def from_function(cls, func) -> "Manifest":
+        """
+        利用 manifest_signature.py 提供的 get_signature 方法解析函数的签名和参数信息，
+        并生成一个 Manifest 实例。
 
+        Args:
+            func: 要转换的函数。
 
-    Args:
-        ARGUMENT: The parameter is a function argument.
-        RETURN: The parameter is a function return.
-        PATH: The parameter is a OpenAPI path parameter.
-        QUERY: The parameter is a OpenAPI query parameter.
-        HEADER: The parameter is a OpenAPI header parameter.
-        COOKIE: The parameter is a OpenAPI cookie parameter.
-    """
+        Returns:
+            Manifest: 包含函数元信息的模型。
+        """
+        if func.__doc__ is None:
+            raise ValueError(f"函数 {func.__name__} 缺少文档字符串")
 
-    ARGUMENT = "argument"
-    RETURN = "return"
-    PATH = "path"
-    QUERY = "query"
-    HEADER = "header"
-    COOKIE = "cookie"
-    BODY = "body"
+        # 使用 manifest_signature 提取函数签名信息
+        sig_params, sig_returns = get_signature(func)
 
-@dataclass
-class ParameterView(BaseModel):
-    """
-    View of a function parameter.
+        # 构造参数模型
+        properties = {}
+        required = []
 
-    Args:
-        name (str): The name of the parameter.
-        description (str): The description of the parameter.
-        default_value (str): The default value of the parameter.
-        type_ (str): The type of the parameter.
-        type_object (Any): The type object of the parameter.
-        type_schema (Dict): The json schema of the parameter.
-        required (bool): Whether the parameter is required.
-        example (str): The example of the parameter.
-        kind (str): The kind of the parameter. For python function it is argument or return.
-          For OpenAPI it is location like query, path, header, cookie, body.
-    """
+        for param in sig_params:
+            param_info = {
+                "name": param["name"],  # 参数名称
+                "type": param.get("type_", None),  # 类型
+                "description": param.get("description", None),  # 描述
+                "required": param.get("required", False),  # 是否必需
+            }
 
-    name: str
-    description: str = None
-    default_value: str = None
-    type_: str = None
-    type_object: Optional[Any] = Field(default=None, metadata = config(exclude=lambda value: True))
-    type_schema: Dict = Field(default=None)
-    required: bool = True
-    example: str = None
-    kind: str = None
+            # 验证类型字段是否有有效值
+            if not param_info["type"]:
+                raise ValueError(f"参数 '{param['name']}' 缺少类型信息，请在函数签名中指定类型。")
 
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        default_value: str = None,
-        type_: str = "str",
-        type_object: Any = None,
-        type_schema: Dict[str, Any] = None,
-        required: bool = True,
-        example: str = None,
-        kind: str = ParameterViewKind.ARGUMENT,
-    ):
-        """Initialize a ParameterView."""
-        validate_function_param_name(name)
-        self.name = name
-        self.description = description
-        self.default_value = default_value
-        self.type_ = type_
-        self.type_object = type_object
-        self.type_schema = type_schema
-        self.required = required
-        self.example = example
-        self.kind = kind
-        super().__init__()
+            # 构造 PropertyModel
+            properties[param["name"]] = PropertyModel(
+                name=param_info["name"],
+                type=param_info["type"],
+                description=param_info["description"],
+                required=param_info["required"],
+            )
 
-    def as_semantic_kernel_parameter(self) -> dict:
-        return {
-            "name": self.name,
-            "description": self.description,
-            "default_value": self.default_value,
-            "type": self.type_,
-            "required": self.required,
+            # 记录必需参数
+            if param_info["required"]:
+                required.append(param["name"])
+
+        # 构造返回值描述
+        return_info = {
+            "type": sig_returns.get("type_", None),
+            "description": sig_returns.get("description", None),
         }
 
-    @classmethod
-    def merge(cls, a: "ParameterView", b: "ParameterView") -> "ParameterView":
-        """Merge two parameter views."""
-        return cls(
-            name=a.name,
-            description=(b.description or a.description),
-            default_value=(b.default_value or a.default_value),
-            type_=(b.type_ or a.type_),
-            required=(b.required if b.required is not None else a.required),
-            example=(b.example or a.example),
-            kind=(b.kind or a.kind),
+        if not return_info["type"]:
+            raise ValueError(f"函数 {func.__name__} 缺少返回值类型，请在函数签名中指定返回类型。")
+
+        # 构造 ParametersModel
+        parameters_model = ParametersModel(
+            type="object",
+            properties=properties,
+            required=required,
         )
 
-@dataclass
-class ManifestView(BaseModel):
-    """View of a function."""
+        # 构造 Manifest 对象
+        function_manifest = cls(
+            type="function",
+            function={
+                "name": func.__name__,
+                "description": func.__doc__.strip(),  # 去掉多余的空格
+                "parameters": parameters_model.model_dump(),
+                "returns": return_info,
+            },
+        )
 
-    name: str
-    description: str
-    parameters: List[ParameterView] = Field(default_factory=list)
-    returns: Optional[List[ParameterView]] = Field(default_factory=list)
-    is_async: bool = False
-    is_stream: bool = False
-    return_direct: bool = False
-
-    _name_to_params: Dict[str, ParameterView] = Field(default_factory=dict)
-
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        parameters: List[ParameterView],
-        returns: Optional[List[ParameterView]] = None,
-        is_async: bool = False,
-        is_stream: bool = False,
-        return_direct: bool = False,
-    ) -> None:
-        """Initialize a ManifestView."""
-        validate_function_name(name)
-        self.name = name
-        self.description = description
-        self.parameters = parameters
-        self.returns = returns
-        self.is_async = is_async
-        self.is_stream = is_stream
-        self.return_direct = return_direct
-
-        _name_to_params = {}
-        for item in parameters:
-            _name_to_params[item.name] = item
-        self._name_to_params = _name_to_params
-
-        super().__init__()
-
+        return function_manifest
