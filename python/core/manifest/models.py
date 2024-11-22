@@ -109,15 +109,6 @@ class Manifest(BaseModel):
             if param_info["required"]:
                 required.append(param["name"])
 
-        # 构造返回值描述
-        return_info = {
-            "type": sig_returns.get("type_", None),
-            "description": sig_returns.get("description", None),
-        }
-
-        if not return_info["type"]:
-            raise ValueError(f"函数 {func.__name__} 缺少返回值类型，请在函数签名中指定返回类型。")
-
         # 构造 ParametersModel
         parameters_model = ParametersModel(
             type="object",
@@ -130,9 +121,8 @@ class Manifest(BaseModel):
             type="function",
             function={
                 "name": func.__name__,
-                "description": func.__doc__.strip(),  # 去掉多余的空格
+                "description": func.__doc__,  # 去掉多余的空格
                 "parameters": parameters_model.model_dump(),
-                "returns": return_info,
             },
         )
 
