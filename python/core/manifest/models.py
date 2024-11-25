@@ -14,10 +14,6 @@
 from pydantic import BaseModel, Field
 from typing import Dict, List, Literal, Any, Optional
 
-from appbuilder.core.manifest.validate import (
-    validate_function_param_name,
-    validate_function_name,
-)
 from appbuilder.core.manifest.manifest_signature import get_signature
 
 
