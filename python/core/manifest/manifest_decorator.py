@@ -20,61 +20,6 @@ from pydantic.v1 import create_model
 from appbuilder.core.manifest.manifest_signature import get_signature
 from appbuilder.core.manifest.models import Manifest, PropertyModel, ParametersModel
 
-
-# The following two functions are here to allow dynamically updating function description.
-# Check tool/builtin/openapi_plugin.py for example.
-def function_description(cls, func):
-    """Get the description of a function."""
-
-    if hasattr(func, "__ab_manifest__"):
-        view = func.__ab_manifest__
-        return view.description if view else ""
-
-
-def update_function_description(func, description):
-    """Update function description."""
-    func.__dict__["__kernel_function_description__"] = description or ""
-    func.__dict__["__ab_manifest_description__"] = description or ""
-
-
-def get_function_schema_with_inspect(method):
-    (
-        args,
-        _,
-        varkw,
-        defaults,
-        kwonlyargs,
-        kwonlydefaults,
-        annotations,
-    ) = inspect.getfullargspec(method)
-    if len(args) > 0 and (args[0] == "self" or args[0] == "cls"):
-        args = args[1:]  # remove self or cls
-
-    if args or varkw:
-        if defaults is None:
-            defaults = ()
-        non_default_args_count = len(args) - len(defaults)
-        defaults = (...,) * non_default_args_count + defaults
-
-        keyword_only_params = {
-            param: kwonlydefaults.get(param, Any) for param in kwonlyargs
-        }
-        params = {
-            param: (annotations.get(param, Any), default)
-            for param, default in zip(args, defaults)
-        }
-        return create_model(
-            "func",
-            **params,
-            **keyword_only_params,
-            __base__=PydanticBaseModel,
-            __config__=None,
-            __doc__="",
-        ).schema()["properties"]
-    else:  # method has no arguments
-        return None
-
-
 def manifest(
     *,
     description: Optional[str] = None,
