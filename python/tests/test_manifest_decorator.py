@@ -23,19 +23,19 @@ class TestManifestDecorator(unittest.TestCase):
         def func(param: str) -> str:
             return param
 
-        function_manifest = func.__ab_manifest__
+        manifest_from_function = func.__ab_manifest__
 
         # 断言顶层的结构
-        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert manifest_from_function.type == "function", "Type does not match 'function'"
         assert (
-            function_manifest.function["name"] == "func"
+            manifest_from_function.function["name"] == "func"
         ), "Function name does not match 'func'"
         assert (
-            function_manifest.function["description"] == "anotated function"
+            manifest_from_function.function["description"] == "anotated function"
         ), "Description does not match"
 
         # 断言参数结构
-        parameters = function_manifest.function["parameters"]
+        parameters = manifest_from_function.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -68,15 +68,15 @@ class TestManifestDecorator(unittest.TestCase):
             return param
 
         # 获取装饰器生成的 Manifest
-        function_manifest = func.__ab_manifest__
+        manifest_from_function = func.__ab_manifest__
 
         # 断言顶层结构
-        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert manifest_from_function.type == "function", "Type does not match 'function'"
         assert (
-            function_manifest.function["name"] == "func"
+            manifest_from_function.function["name"] == "func"
         ), "Function name does not match 'func'"
         assert (
-            function_manifest.function["description"]
+            manifest_from_function.function["description"]
             == """An example function.
 
             Args:
@@ -88,7 +88,7 @@ class TestManifestDecorator(unittest.TestCase):
         ), "Description does not match"
 
         # 断言参数结构
-        parameters = function_manifest.function["parameters"]
+        parameters = manifest_from_function.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -122,15 +122,15 @@ class TestManifestDecorator(unittest.TestCase):
             return param
 
         # 获取装饰器生成的 Manifest
-        function_manifest = func.__ab_manifest__
+        manifest_from_function = func.__ab_manifest__
 
         # 断言顶层结构
-        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert manifest_from_function.type == "function", "Type does not match 'function'"
         assert (
-            function_manifest.function["name"] == "func"
+            manifest_from_function.function["name"] == "func"
         ), "Function name does not match 'func'"
         assert (
-            function_manifest.function["description"]
+            manifest_from_function.function["description"]
             == """An example function.
 
             Args:
@@ -142,7 +142,7 @@ class TestManifestDecorator(unittest.TestCase):
         ), "Description does not match"
 
         # 断言参数结构
-        parameters = function_manifest.function["parameters"]
+        parameters = manifest_from_function.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -166,19 +166,19 @@ class TestManifestDecorator(unittest.TestCase):
         view = func.__ab_manifest__
 
         # 获取装饰器生成的 Manifest
-        function_manifest = func.__ab_manifest__
+        manifest_from_function = func.__ab_manifest__
 
         # 断言顶层结构
-        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert manifest_from_function.type == "function", "Type does not match 'function'"
         assert (
-            function_manifest.function["name"] == "func"
+            manifest_from_function.function["name"] == "func"
         ), "Function name does not match 'func'"
         assert (
-            function_manifest.function["description"] == " "
+            manifest_from_function.function["description"] == " "
         ), "Description should be None when not explicitly provided"
 
         # 断言参数结构
-        parameters = function_manifest.function["parameters"]
+        parameters = manifest_from_function.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 

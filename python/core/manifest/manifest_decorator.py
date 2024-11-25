@@ -103,7 +103,7 @@ def manifest(
         # Attach view to function.
         func.__ab_manifest__ = view
 
-        # Compatible to semantic kernel 0.9
+        # Compatible to semantic kernel 0.9 ~ 1.6 according to this url: https://github.com/microsoft/semantic-kernel/blob/main/python/semantic_kernel/functions/kernel_function_decorator.py
         func.__kernel_function__ = True
         func.__kernel_function_description__ = final_desc
         func.__kernel_function_name__ = final_name
@@ -178,7 +178,7 @@ def manifest_parameter(
             # 更新 func.__ab_manifest__.function["parameters"]
             func.__ab_manifest__.function["parameters"] = parameters_model.model_dump()
 
-        # Compatible to semantic kernel 0.9
+        # Compatible to semantic kernel 0.9 ~ 1.6 according to this url: https://github.com/microsoft/semantic-kernel/blob/main/python/semantic_kernel/functions/kernel_function_decorator.py
         if hasattr(func, "__kernel_function_parameters__"):
             item = {
                 "name": name,

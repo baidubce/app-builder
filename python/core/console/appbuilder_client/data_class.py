@@ -113,7 +113,7 @@ class AppBuilderClientRequest(BaseModel):
     conversation_id: str
     file_ids: Optional[list[str]] = None
     app_id: str
-    tools: Optional[list[Manifest]] = None
+    tools: Optional[list[Tool|Manifest]] = None
     tool_outputs: Optional[list[ToolOutput]] = None
     tool_choice: Optional[ToolChoice] = None
     end_user_id: Optional[str] = None

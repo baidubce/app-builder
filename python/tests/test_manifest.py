@@ -47,15 +47,15 @@ class TestManifest(unittest.TestCase):
             """
             return ""
 
-        function_manifest = appbuilder.Manifest.from_function(google_style)
+        manifest_from_function = appbuilder.Manifest.from_function(google_style)
 
         # 断言顶层的结构
-        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert manifest_from_function.type == "function", "Type does not match 'function'"
         assert (
-            function_manifest.function["name"] == "google_style"
+            manifest_from_function.function["name"] == "google_style"
         ), "Function name does not match 'google_style'"
         assert (
-            function_manifest.function["description"]
+            manifest_from_function.function["description"]
             == """Google style docstring.
 
             Args:
@@ -71,7 +71,7 @@ class TestManifest(unittest.TestCase):
         ), "Description does not match"
 
         # 断言参数结构
-        parameters = function_manifest.function["parameters"]
+        parameters = manifest_from_function.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -135,14 +135,14 @@ class TestManifest(unittest.TestCase):
             """
             return ""
 
-        function_manifest = appbuilder.Manifest.from_function(func)
+        manifest_from_function = appbuilder.Manifest.from_function(func)
         # 断言顶层的结构
-        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert manifest_from_function.type == "function", "Type does not match 'function'"
         assert (
-            function_manifest.function["name"] == "func"
+            manifest_from_function.function["name"] == "func"
         ), "Function name does not match 'func'"
         assert (
-            function_manifest.function["description"]
+            manifest_from_function.function["description"]
             == """Google style docstring.
 
             Args:
@@ -157,7 +157,7 @@ class TestManifest(unittest.TestCase):
         ), "Description does not match"
 
         # 断言参数结构
-        parameters = function_manifest.function["parameters"]
+        parameters = manifest_from_function.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -203,14 +203,14 @@ class TestManifest(unittest.TestCase):
             """
             return ""
 
-        function_manifest = appbuilder.Manifest.from_function(func)
+        manifest_from_function = appbuilder.Manifest.from_function(func)
         # 断言顶层的结构
-        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert manifest_from_function.type == "function", "Type does not match 'function'"
         assert (
-            function_manifest.function["name"] == "func"
+            manifest_from_function.function["name"] == "func"
         ), "Function name does not match 'func'"
         assert (
-            function_manifest.function["description"]
+            manifest_from_function.function["description"]
             == """Google style docstring.
 
             Args:
@@ -220,7 +220,7 @@ class TestManifest(unittest.TestCase):
         ), "Description does not match"
 
         # 断言参数结构
-        parameters = function_manifest.function["parameters"]
+        parameters = manifest_from_function.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -237,8 +237,8 @@ class TestManifest(unittest.TestCase):
 
         # 断言没有["parameters"][1]的参数了
         assert not (
-            "parameters" in function_manifest.function
-            and len(function_manifest.function["parameters"]) == 1
+            "parameters" in manifest_from_function.function
+            and len(manifest_from_function.function["parameters"]) == 1
         )
 
     def test_no_doc(self):
@@ -255,7 +255,7 @@ class TestManifest(unittest.TestCase):
 
         # 断言这里会抛出缺少文档字符串的 ValueError 异常
         try:
-            function_manifest = appbuilder.Manifest.from_function(func)
+            manifest_from_function = appbuilder.Manifest.from_function(func)
         except ValueError as e:
             assert (
                 str(e) == "函数 func 缺少文档字符串"
@@ -277,20 +277,20 @@ class TestManifest(unittest.TestCase):
             return ""
 
         # 获取装饰器生成的 Manifest
-        function_manifest = func.__ab_manifest__
+        manifest_from_function = func.__ab_manifest__
 
         # 断言顶层的结构
-        assert function_manifest.type == "function", "Type does not match 'function'"
+        assert manifest_from_function.type == "function", "Type does not match 'function'"
         assert (
-            function_manifest.function["name"] == "func"
+            manifest_from_function.function["name"] == "func"
         ), "Function name does not match 'func'"
         assert (
-            function_manifest.function["description"]
+            manifest_from_function.function["description"]
             == "Function with required parameter."
         ), "Description does not match"
 
         # 断言参数结构
-        parameters = function_manifest.function["parameters"]
+        parameters = manifest_from_function.function["parameters"]
         assert parameters["type"] == "object", "Parameters type does not match 'object'"
         assert "properties" in parameters, "Properties not found in parameters"
 
@@ -321,8 +321,8 @@ class TestManifest(unittest.TestCase):
         # 定义示例函数
         def get_current_weather(location: str, unit) -> str:
             return "北京今天25度"
-        func_manifest = appbuilder.Manifest.from_function(get_current_weather)
-        assert func_manifest.function.get("description") is not None
+        manifest_from_function = appbuilder.Manifest.from_function(get_current_weather)
+        assert manifest_from_function.function.get("description") is not None
 
 
 if __name__ == "__main__":

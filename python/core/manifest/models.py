@@ -120,7 +120,7 @@ class Manifest(BaseModel):
         )
 
         # 构造 Manifest 对象
-        function_manifest = cls(
+        manifest = cls(
             type="function",
             function={
                 "name": func.__name__,
@@ -129,4 +129,4 @@ class Manifest(BaseModel):
             },
         )
 
-        return function_manifest
+        return manifest
