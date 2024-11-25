@@ -321,8 +321,8 @@ class TestManifest(unittest.TestCase):
         # 定义示例函数
         def get_current_weather(location: str, unit) -> str:
             return "北京今天25度"
-        func_manifest = appbuilder.Manifest.from_function(get_current_weather).model_dump()
-        assert func_manifest.get("function").get("description") is not None
+        func_manifest = appbuilder.Manifest.from_function(get_current_weather)
+        assert func_manifest.function.get("description") is not None
 
 
 if __name__ == "__main__":

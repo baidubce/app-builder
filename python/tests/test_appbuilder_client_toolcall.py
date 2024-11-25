@@ -99,7 +99,7 @@ class TestAgentRuntime(unittest.TestCase):
             conversation_id=conversation_id,
             query="今天北京的天气怎么样？",
             tools=[
-                appbuilder.Manifest.from_function(f).model_dump() for f in functions
+                appbuilder.Manifest.from_function(f) for f in functions
             ],
         )
         print(msg.model_dump_json(indent=4))
@@ -144,7 +144,7 @@ class TestAgentRuntime(unittest.TestCase):
             conversation_id=conversation_id,
             query="今天北京的天气怎么样？",
             tools=[
-                appbuilder.Manifest.from_function(f).model_dump() for f in functions
+                appbuilder.Manifest.from_function(f) for f in functions
             ],
         )
         print(msg.model_dump_json(indent=4))

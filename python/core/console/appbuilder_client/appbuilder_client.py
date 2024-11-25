@@ -19,6 +19,7 @@ import uuid
 import queue
 from typing import Optional
 from appbuilder.core.component import Message, Component
+from appbuilder.core.manifest.models import Manifest
 from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
@@ -250,7 +251,7 @@ class AppBuilderClient(Component):
             query: str = "",
             file_ids: list = [],
             stream: bool = False,
-            tools: list[data_class.Tool] = None,
+            tools: list[Manifest]= None,
             tool_outputs: list[data_class.ToolOutput] = None,
             tool_choice: data_class.ToolChoice = None,
             end_user_id: str = None,
