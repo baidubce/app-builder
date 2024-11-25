@@ -89,7 +89,7 @@ file_schema = copy.deepcopy(base_item_schema)
 file_schema["$schema"] = "file_schema"
 file_schema["properties"]["type"] = {
     "type": "string",
-    "enum": ["file"]
+    "enum": ["files"]
 }
 file_schema["properties"]["text"] = {
   "type": "object",
@@ -108,7 +108,7 @@ url_schema = copy.deepcopy(base_item_schema)
 url_schema["$schema"] = "url_schema"
 url_schema["properties"]["type"] = {
     "type": "string",
-    "enum": ["url"]
+    "enum": ["urls"]
 }
 url_schema["properties"]["text"] = {
   "type": "object",
@@ -138,7 +138,10 @@ oral_text_schema["properties"]["text"] = {
 
 references_schema = copy.deepcopy(base_item_schema)
 references_schema["$schema"] = "references_schema"
-references_schema["properties"]["type"] = "references"
+references_schema["properties"]["type"] = {
+    "type": "string",
+    "enum": ["references"]
+}
 references_schema["properties"]["text"] = {
   "type": "object",
   "properties": {
@@ -193,6 +196,10 @@ image_schema["properties"]["text"] = {
     },
     "url": {
       "type": "string"
+    },
+    "byte": {
+        "type": "string",
+        "format": "bytes"
     }
   },
   "required": ["filename", "url"]
@@ -231,6 +238,10 @@ audio_schema["properties"]["text"] = {
     },
     "url": {
       "type": "string"
+    },
+    "byte": {
+        "type": "string",
+        "format": "bytes"
     }
   },
   "required": ["filename", "url"]
