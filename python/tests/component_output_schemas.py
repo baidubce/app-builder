@@ -265,5 +265,6 @@ components_tool_eval_output_json_maps = {
     "AnimalRecognition": [text_schema],
     "ASR": [text_schema],
     "TreeMind": [text_schema, url_schema],
-    "ImageUnderstand": [text_schema]
+    "ImageUnderstand": [text_schema],
+    "Text2Image": [url_schema]
 }

@@ -50,6 +50,19 @@ class TestText2Image(unittest.TestCase):
         self.assertIsInstance(out, appbuilder.Message)
 
     def test_tool_eval(self):
+        """
+        测试 tool_eval 方法的正确性。
+        
+        Args:
+            self: 测试类的实例。
+        
+        Returns:
+            无返回值。
+        
+        Raises:
+            无异常抛出。
+        
+        """
         result = self.text2Image.tool_eval(query = "上海的经典风景")
         for res in result:
             self.assertIsInstance(res, ComponentOutput)
