@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,12 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .animal_recognize.component import AnimalRecognition
-from .image_understand.component import  ImageUnderstand
-from .text_to_image.component import Text2Image
 
-__V2_COMPONENTS__ = [
-    "AnimalRecognition",
-    "ImageUnderstand",
-    "Text2Image",
-] # NOQA
