@@ -12,6 +12,7 @@
 import os
 import unittest
 from appbuilder import Manifest, manifest, manifest_parameter
+from appbuilder.core.manifest.manifest_decorator import _merge_dict, _update_list
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
@@ -192,6 +193,23 @@ class TestManifestDecorator(unittest.TestCase):
             "param" not in parameters["required"]
         ), "'param' should not be required as it has a default value"
 
+    def test_merge_dict(self):
+        self.assertEqual(_merge_dict({}, {}), {})
+        self.assertEqual(_merge_dict({}, {"a": 1}), {"a": 1})
+
+    def test_update_list(self):
+        def condition(item, new_item):
+            return item['id'] == new_item['id']
+
+        def replacer(item, new_item):
+            item.update(new_item)
+            return item
+
+        existing_item = {'id': 1, 'value': 'a'}
+        new_item = {'id': 1, 'value': 'b'}
+        list = [existing_item]
+        expected_result = [new_item]
+        self.assertEqual(_update_list(new_item, list, condition, replacer), expected_result)
 
 if __name__ == "__main__":
     unittest.main()
