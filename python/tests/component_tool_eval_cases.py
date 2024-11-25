@@ -50,9 +50,14 @@ class ImageUnderstandCase:
     def outputs(self):
         return {"text": ["熊猫"]}
 
+class Text2ImageCase:
+    def inputs(self):
+        return {"query": "生成一张熊猫图片"}
+
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
     "ImageUnderstand": ImageUnderstandCase,
     "ASR": ASRCase,
-    "TreeMind": TreeMindCase
+    "TreeMind": TreeMindCase,
+    "Text2Image": Text2ImageCase
 }
