@@ -161,8 +161,8 @@ class AnimalRecognition(Component):
         Returns:
             Union[Generator[str, None, None], str]: 动物识别结果，包括识别出的动物类别和相应的置信度信息。
         """
-        traceid = kwargs.get("traceid")
-        file_urls = kwargs.get("file_urls", {})
+        traceid = kwargs.get("_sys_traceid")
+        file_urls = kwargs.get("_sys_file_urls", {})
         yield from self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
 
     def _recognize_w_post_process(self, img_name, img_url, file_urls, request_id=None) -> str:

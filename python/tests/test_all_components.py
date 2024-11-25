@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import unittest
+import os
 import numpy as np
 import pandas as pd
 
@@ -32,7 +33,7 @@ def write_error_data(txt_file_path, error_df,error_stats):
             file.write(f"错误信息: {error}, 出现次数: {count}\n")
     print(f"\n错误信息已写入: {txt_file_path}")
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
     def setUp(self) -> None:
         self.all_components = get_all_components()

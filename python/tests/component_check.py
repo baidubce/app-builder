@@ -20,8 +20,9 @@ from pydantic import BaseModel
 from typing import Generator
 from appbuilder.utils.func_utils import Singleton
 from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
+from appbuilder.tests.component_schemas import type_to_json_schemas
 from component_tool_eval_cases import component_tool_eval_cases
-from component_output_schemas import type_to_json_schemas, components_tool_eval_output_json_maps
+from component_tool_eval_schemas import components_tool_eval_output_json_maps
 
 
 class CheckInfo(BaseModel):
@@ -265,7 +266,6 @@ class ToolEvalOutputJsonRule(RuleBase):
     def __init__(self):
         super().__init__()
         self.rule_name = 'ToolEvalOutputJsonRule'
-        self.output_types = list(type_to_json_schemas.keys())
 
     def _check_pre_format(self, outputs):
         invalid_details = []
@@ -279,7 +279,7 @@ class ToolEvalOutputJsonRule(RuleBase):
                 break
             
             out_type = content["type"]
-            if out_type not in self.output_types:
+            if out_type not in type_to_json_schemas:
                 invalid_details.append("ToolEval返回值不符合JSON Schema：返回content.type={} 不是合法的输出类型".format(out_type))
                 break
         return invalid_details
