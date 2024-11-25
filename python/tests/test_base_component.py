@@ -42,6 +42,10 @@ class TestBaseComponent(unittest.TestCase):
         self.assertIsInstance(output1.content[0].text, Urls)
         output2 = self.component.create_output(type="chart", text={"filename": "file.jpg", "url": "http://www.baidu.com"})
         self.assertIsInstance(output2.content[0].text, Chart)
+        with self.assertRaises(ValueError):
+            output = self.component.create_output(type="files", text=["http://www.baidu.com"])
+        with self.assertRaises(ValueError):
+            output = self.component.create_output(type="test", text={"filename": "file.txt", "url": ["http://www.baidu.com"]})
         
         
         
