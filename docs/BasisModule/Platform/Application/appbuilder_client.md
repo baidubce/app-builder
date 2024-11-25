@@ -373,7 +373,7 @@ conversation_id = client.create_conversation()
 def get_current_weather(location: str, unit: str) -> str:
   return "北京今天25度"
 
-print(json.dumps((get_current_weather.__ab_manifest__).model_dump(), indent=4, ensure_ascii=False))
+print(json.dumps(appbuilder.Manifest.from_function(get_current_weather).model_dump(), indent=4, ensure_ascii=False))
 #定义函数列表
 functions = [get_current_weather]
 function_map = {f.__name__: f for f in functions}
@@ -381,7 +381,7 @@ function_map = {f.__name__: f for f in functions}
 msg = client.run(
   conversation_id=conversation_id,
   query="今天北京的天气怎么样？",
-  tools = [(get_current_weather.__ab_manifest__).model_dump()]
+  tools = [appbuilder.Manifest.from_function(f).model_dump() for f in functions]
   )
 print(msg.model_dump_json(indent=4))
 # 获取最后的事件和工具调用信息

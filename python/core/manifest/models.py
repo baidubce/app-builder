@@ -78,15 +78,15 @@ class Manifest(BaseModel):
         Returns:
             Manifest: 包含函数元信息的模型。
         """
-        if func.__doc__ is None:
-            raise ValueError(f"函数 {func.__name__} 缺少文档字符串")
-
         # 使用 manifest_signature 提取函数签名信息
         sig_params, sig_returns = get_signature(func)
 
         # 构造参数模型
         properties = {}
         required = []
+
+        if hasattr(func, "__ab_manifest__"):
+            return func.__ab_manifest__
 
         for param in sig_params:
             param_info = {
@@ -98,9 +98,7 @@ class Manifest(BaseModel):
 
             # 验证类型字段是否有有效值
             if not param_info["type"]:
-                raise ValueError(
-                    f"参数 '{param['name']}' 缺少类型信息，请在函数签名中指定类型。"
-                )
+                param_info["type"] = "Any"
 
             # 构造 PropertyModel
             properties[param["name"]] = PropertyModel(

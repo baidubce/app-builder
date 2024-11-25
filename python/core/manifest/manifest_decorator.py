@@ -122,12 +122,6 @@ def manifest(
                 ),  # 是否必需
             }
 
-            # 验证类型字段是否有有效值
-            if not param_info["type"]:
-                raise ValueError(
-                    f"参数 '{param['name']}' 缺少类型信息，请在函数签名中指定类型。"
-                )
-
             # 构造 PropertyModel
             properties[param["name"]] = PropertyModel(
                 name=param_info["name"],
@@ -143,9 +137,6 @@ def manifest(
         # 确定函数的最终名称和描述
         final_name = name or func.__name__
         final_desc = description or func.__doc__
-
-        if not final_desc:
-            raise ValueError(f"函数 {final_name} 缺少描述")
 
         parameters_model = ParametersModel(
             type="object",
@@ -208,9 +199,9 @@ def manifest_parameter(
         )
         # Update parameter view lists for function_parameter decorator.
         # This will be merged into ManifestView if function decorator runs last like:
-        # @function
-        # @function_parameter
-        # @function_parameter
+        # @manifest
+        # @manifest_parameter
+        # @manifest_parameter
         if hasattr(func, "__ab_manifest_parameters__"):
             current_views = func.__ab_manifest_parameters__
         else:
@@ -218,7 +209,6 @@ def manifest_parameter(
         current_views.append(new_view)
         func.__ab_manifest_parameters__ = current_views
 
-        # function_parameter runs after function, merge ParameterView in ManifestView
         if hasattr(func, "__ab_manifest__"):
             # 获取现有的 parameters
             parameters_dict = func.__ab_manifest__.function.get("parameters", {})

@@ -63,27 +63,19 @@ def get_signature(func):
 
 def _parse_parameter(param: Parameter) -> Dict[str, Any]:
     ret = {}
-    if param.annotation != Parameter.empty:
+    if param != Parameter.empty:
         ret = _parse_annotation(param.annotation)
-    else:
-        ret["type_"] = None
-        ret["required"] = True  # 默认为 True
-
     ret["name"] = param.name
-
     if param.default != Parameter.empty:
         ret["default_value"] = param.default
         ret["required"] = False
-    else:
-        ret["required"] = ret.get("required", True)
-
     return ret
 
 
-def _parse_annotation(annotation: Any) -> Dict[str, Any]:
-    # The keys of this dict are compatible with semantic-kernel, do not change them
+def _parse_annotation(annotation: Parameter) -> Dict[str, Any]:
+    # The keys of this dict is compatible with semantic-kernel, do not change them
     if annotation == Signature.empty:
-        return {"type_": None, "required": True}
+        return {"type_": "Any", "required": True}
     if isinstance(annotation, str):
         return {"type_": annotation, "required": True}
     ret = _parse_internal_annotation(annotation, True)

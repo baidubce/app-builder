@@ -241,31 +241,6 @@ class TestManifest(unittest.TestCase):
             and len(function_manifest.function["parameters"]) == 1
         )
 
-    def test_google_style_no_args_no_return(self):
-        def func(
-            name: str,
-            /,
-            *args,
-            val: str = None,
-            val_obj: Optional[Any] = None,
-            data: Dict[str, int] = None,
-            **kwargs,
-        ) -> str:
-            """Google style docstring."""
-            return ""
-
-        # 断言这里会抛出参数类型缺失导致的ValueError异常
-        try:
-            function_manifest = appbuilder.Manifest.from_function(func)
-        except ValueError as e:
-            # 使用 assert 检查是否抛出 ValueError，且包含 "缺少描述" 的信息
-            assert "缺少类型信息" in str(
-                e
-            ), f"Expected '缺少类型信息' in error message, but got: {str(e)}"
-        else:
-            # 如果未抛出异常，测试应失败
-            assert False, "Expected ValueError but no exception was raised"
-
     def test_no_doc(self):
         def func(
             name: str,
@@ -333,53 +308,21 @@ class TestManifest(unittest.TestCase):
         assert "required" in parameters, "'required' field missing in parameters"
         assert parameters["required"] == ["name"], "'required' does not match ['name']"
 
-    def test_missing_type(self):
-        """测试参数缺少类型信息是否抛出 ValueError 异常。"""
-        try:
-
-            @appbuilder.manifest()
-            @appbuilder.manifest_parameter(
-                name="location", description="城市名，例如：北京。"
-            )
-            @appbuilder.manifest_parameter(
-                name="unit", description="温度单位，支持 'celsius' 或 'fahrenheit'"
-            )
-            # 定义示例函数
-            def get_current_weather(location: str, unit) -> str:
-                return "北京今天25度"
-
-        except ValueError as e:
-            # 使用 assert 检查是否抛出 ValueError，且包含 "缺少描述" 的信息
-            assert "缺少类型信息" in str(
-                e
-            ), f"Expected '缺少类型信息' in error message, but got: {str(e)}"
-        else:
-            # 如果未抛出异常，测试应失败
-            assert False, "Expected ValueError but no exception was raised"
-
-    def test_missing_description(self):
-        """测试函数缺少描述是否抛出 ValueError 异常。"""
-        try:
-
-            @appbuilder.manifest()
-            @appbuilder.manifest_parameter(
-                name="location", description="城市名，例如：北京。"
-            )
-            @appbuilder.manifest_parameter(
-                name="unit", description="温度单位，支持 'celsius' 或 'fahrenheit'"
-            )
-            # 定义示例函数
-            def get_current_weather(location: str, unit: str) -> str:
-                return "北京今天25度"
-
-        except ValueError as e:
-            # 使用 assert 检查是否抛出 ValueError，且包含 "缺少描述" 的信息
-            assert "缺少描述" in str(
-                e
-            ), f"Expected '缺少描述' in error message, but got: {str(e)}"
-        else:
-            # 如果未抛出异常，测试应失败
-            assert False, "Expected ValueError but no exception was raised"
+    def test_manifest_decorator(self):
+        @appbuilder.manifest(
+            description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。"
+        )
+        @appbuilder.manifest_parameter(
+            name="location", description="城市名，例如：北京。"
+        )
+        @appbuilder.manifest_parameter(
+            name="unit", description="温度单位，支持 'celsius' 或 'fahrenheit'"
+        )
+        # 定义示例函数
+        def get_current_weather(location: str, unit) -> str:
+            return "北京今天25度"
+        func_manifest = appbuilder.Manifest.from_function(get_current_weather).model_dump()
+        assert func_manifest.get("function").get("description") is not None
 
 
 if __name__ == "__main__":
