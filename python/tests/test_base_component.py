@@ -1,7 +1,7 @@
 import os
 import unittest
 from appbuilder.core.component import Component
-from appbuilder.core.component import ComponentOutput
+from appbuilder.core.component import ComponentOutput, Urls, Chart
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestBaseComponent(unittest.TestCase):
@@ -36,6 +36,13 @@ class TestBaseComponent(unittest.TestCase):
         self.assertIsInstance(output6, ComponentOutput)
         self.assertIsInstance(output7, ComponentOutput)
         self.assertIsInstance(output8, ComponentOutput)
+
+    def test_valid_output_type_with_same_key(self):
+        output1 = self.component.create_output(type="urls", text={"url": "http://www.baidu.com"})
+        self.assertIsInstance(output1.content[0].text, Urls)
+        output2 = self.component.create_output(type="chart", text={"filename": "file.jpg", "url": "http://www.baidu.com"})
+        self.assertIsInstance(output2.content[0].text, Chart)
+        
         
         
     def test_invalid_output_type_json(self):

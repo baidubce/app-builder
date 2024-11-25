@@ -18,7 +18,7 @@ import json
 from enum import Enum
 
 from pydantic import BaseModel
-from pydantic import Field
+from pydantic import Field, field_validator
 from typing import (
     Dict, List, Optional, Any, Generator, Union, AsyncGenerator)
 from appbuilder.core.utils import ttl_lru_cache
@@ -126,8 +126,31 @@ class Content(BaseModel):
                           description="耗时、性能、内存等trace及debug所需信息")
     type: str = Field(default="text", 
                       description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio该字段的取值决定了下面text字段的内容结构")
-    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio] = Field(default=Text,
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio] = Field(default=Text, 
                        description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
+
+    @field_validator('text', mode='before')
+    def set_text(cls, v, values, **kwargs):
+        if values.data['type'] == 'text':
+            return Text(**v)
+        elif values.data['type'] == 'code':
+            return Code(**v)
+        elif values.data['type'] == 'files':
+            return Files(**v)
+        elif values.data['type'] == 'urls':
+            return Urls(**v)
+        elif values.data['type'] == 'oral_text':
+            return OralText(**v)
+        elif values.data['type'] == 'references':
+            return References(**v)
+        elif values.data['type'] == 'image':
+            return Image(**v)
+        elif values.data['type'] == 'chart':
+            return Chart(**v)
+        elif values.data['type'] == 'audio':
+            return Audio(**v)
+        else:
+            raise ValueError(f"Invalid value for 'type': {values['type']}")
 
 
 class ComponentOutput(BaseModel):
@@ -472,7 +495,7 @@ class Component:
                 text = {"info": text}
             else:
                 raise ValueError("Only when type=text/code/urls/oral_text, string text is allowed! Please give dict text")
-        else:
+        elif isinstance(text, dict):
             if type == "text":
                 key_list = ["info"]
             elif type == "code":
@@ -494,6 +517,8 @@ class Component:
             else:
                 raise ValueError("Unknown type: {}".format(type))
             assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
+        else:
+            raise ValueError("text must be str or dict")
 
         assert role in ["tool", "assistant"], "role must be 'tool' or 'assistant'"
         result = {
