@@ -50,9 +50,6 @@ SKIP_UNITTEST = []
 # 可以CPU并行的单测用例
 CPU_PARALLEL_RUN_UNITTEST = []
 
-# CPU上仅能串行执行的单测用例
-CPU_SERIAL_RUN_UNITTEST = []
-
 # 分类未知，故在CPU上串行执行的单测用例
 UNKNOWN_UNITTEST = []
 
@@ -69,7 +66,6 @@ def choose_test_case(file):
     """
     skip_case_str = '@unittest.skip('
     cpu_parallel_str = '@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL"'
-    cpu_serial_str = '@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL"'
 
     with open(file, 'r') as f:
         all_line = f.readlines()
@@ -80,10 +76,6 @@ def choose_test_case(file):
 
         if list(set([line.strip().find(cpu_parallel_str) for line in all_line])) != [-1]:
             CPU_PARALLEL_RUN_UNITTEST.append(file.split("/")[-1])
-            return
-
-        if list(set([line.strip().find(cpu_serial_str) for line in all_line])) != [-1]:
-            CPU_SERIAL_RUN_UNITTEST.append(file.split("/")[-1])
             return
 
         UNKNOWN_UNITTEST.append(file.split("/")[-1])
@@ -117,12 +109,7 @@ def get_all_unittest_file():
     for idx, case in enumerate(CPU_PARALLEL_RUN_UNITTEST):
         logger.info("--> {}. {}".format(idx+1, case))
 
-    logger.info(
-        "\nCPU串行执行的单测用例：{}个".format(len(CPU_SERIAL_RUN_UNITTEST)))
-    for idx, case in enumerate(CPU_SERIAL_RUN_UNITTEST):
-        logger.info("--> {}. {}".format(idx+1, case))
-
-    logger.info("\n运行模式未知，串行执行的单测用例：{}个".format(len(UNKNOWN_UNITTEST)))
+    logger.info("\nCPU串行执行的单测用例：{}个".format(len(UNKNOWN_UNITTEST)))
     for idx, case in enumerate(UNKNOWN_UNITTEST):
         logger.info("--> {}. {}".format(idx+1, case))
 
@@ -278,71 +265,13 @@ def run_cpu_parallel_unittest():
 
     return success_cases, failed_cases, end_time - begin_time
 
-
-
-def run_cpu_serial_unittest():
-    """
-    运行CPU_SERIAL模式下的单元测试,包括并行和串行两种方式,记录并打印成功和失败的情况及耗时
-    
-    Args:
-        无
-    
-    Returns:
-        success_cases (list): 成功运行的测试用例列表
-        failed_cases (list): 失败运行的测试用例列表
-        total_time (float): 运行总耗时（单位：秒）
-    """
-    os.environ["TEST_CASE"] = "CPU_SERIAL"
+def run_unknown_unittest():
+    os.environ["TEST_CASE"] = "UNKNOWN"
     logger.info("\n================ CPU_SERIAL ================\n")
 
     begin_time = time.time()
     success_cases, failed_cases, total_case_time = parallel_execute_unittest(
-        CPU_SERIAL_RUN_UNITTEST, 1)
-
-    logger.info("\n CPU_SERIAL 运行成功单测：{} 个".format(len(success_cases)))
-
-    if len(failed_cases) > 0:
-        logger.info("\n以下单测失败，将重试运行 2 次")
-        for case in failed_cases:
-            logger.info("retry case --> {}".format(case))
-        retry_success_cases, retry_failed_cases, retry_case_time = parallel_execute_unittest(
-            failed_cases, 1)
-
-        total_case_time += retry_case_time
-
-        for success in retry_success_cases:
-            failed_cases.remove(success)
-
-        if len(retry_failed_cases) > 0:
-            logger.info("\n以下单测失败，将重试运行 1 次")
-            for case in retry_failed_cases:
-                logger.info("retry case --> {}".format(case))
-            second_success_cases, second_failed_cases, second_case_time = parallel_execute_unittest(
-                retry_failed_cases, 1)
-            total_case_time += second_case_time
-            for success in second_success_cases:
-                failed_cases.remove(success)
-
-    end_time = time.time()
-    logger.info("\n CPU_SERIAL 运行失败单测： {} 个".format(len(failed_cases)))
-    for failed in failed_cases:
-        logger.info("--> {}".format(failed))
-
-    logger.info("\n CPU_SERIAL 单测并行运行总计耗时 {} s".format(
-        end_time - begin_time))
-    logger.info("\n CPU_SERIAL 单测串行运行总计耗时 {} s".format(
-        total_case_time))
-
-    return success_cases, failed_cases, end_time - begin_time
-
-
-def run_unknown_unittest():
-    os.environ["TEST_CASE"] = "UNKNOWN"
-    logger.info("\n================ UNKNOWN ================\n")
-
-    begin_time = time.time()
-    success_cases, failed_cases, total_case_time = parallel_execute_unittest(
-        UNKNOWN_UNITTEST, 2)
+        UNKNOWN_UNITTEST, 1)
 
     logger.info("\n UNKNOWN 运行成功单测：{} 个".format(len(success_cases)))
 
@@ -391,8 +320,7 @@ def create_unittest_report():
     total_failed_cases = []
     total_ut_time = 0
 
-    test_suite = [run_cpu_parallel_unittest,
-                  run_cpu_serial_unittest, run_unknown_unittest]
+    test_suite = [run_cpu_parallel_unittest, run_unknown_unittest]
     for suite in test_suite:
         success_cases, failed_cases, suite_time = suite()
         total_success_cases += success_cases
