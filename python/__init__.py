@@ -174,6 +174,9 @@ from appbuilder.core.user_session import UserSession
 
 from appbuilder.utils.logger_util import logger
 
+from appbuilder.core.manifest.manifest_decorator import manifest, manifest_parameter
+from appbuilder.core.manifest.models import Manifest
+
 from appbuilder.core.utils import get_model_list
 
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient
