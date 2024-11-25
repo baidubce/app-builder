@@ -16,7 +16,6 @@ import unittest
 from appbuilder.core.message import Message
 from appbuilder import TreeMind
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestTreeMindComponent(unittest.TestCase):
     def setUp(self):
         """

@@ -104,8 +104,7 @@ def get_all_unittest_file():
     for idx, case in enumerate(SKIP_UNITTEST):
         logger.info("--> {}. {}".format(idx+1, case))
 
-    logger.info(
-        "\nCPU并行的单测用例：{}个".format(len(CPU_PARALLEL_RUN_UNITTEST)))
+    logger.info("\nCPU并行的单测用例：{}个".format(len(CPU_PARALLEL_RUN_UNITTEST)))
     for idx, case in enumerate(CPU_PARALLEL_RUN_UNITTEST):
         logger.info("--> {}. {}".format(idx+1, case))
 

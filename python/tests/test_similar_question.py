@@ -16,7 +16,6 @@ import unittest
 import os
 import appbuilder
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestSimilarQuestionComponent(unittest.TestCase):
     def setUp(self):
         """

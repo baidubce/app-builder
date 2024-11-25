@@ -28,7 +28,6 @@ class Response:
     def json(self):
             return json.loads(self.text)
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestCoreClient(unittest.TestCase):
     def setUp(self):
         # 保存原始环境变量

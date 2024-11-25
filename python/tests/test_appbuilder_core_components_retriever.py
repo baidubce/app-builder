@@ -20,7 +20,6 @@ import time
 from appbuilder.core.components.retriever.baidu_vdb.component import _try_import,BaiduVDBVectorStoreIndex
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppbuilderCoreComponentsRetriever__try_import(unittest.TestCase):
     def test_baidu_vdb_baiduvdb_retriever_try_import(self):
         subprocess.check_call([sys.executable, "-m", "pip", "uninstall", "-y", "pymochow"])

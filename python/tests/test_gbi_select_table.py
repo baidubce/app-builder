@@ -68,7 +68,6 @@ PROMPT_TEMPLATE = """
 问题:{query}
 回答:
 """
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestGBISelectTable(unittest.TestCase):
 
     def setUp(self):

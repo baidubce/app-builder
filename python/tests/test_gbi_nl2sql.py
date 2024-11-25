@@ -69,7 +69,6 @@ PROMPT_TEMPLATE = """
   当前问题："{query}"
   回答：
 """
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestGBINL2Sql(unittest.TestCase):
 
     def setUp(self):
