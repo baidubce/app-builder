@@ -109,7 +109,7 @@ class Text2Image(Component):
         
         """
         prompt=message.content["prompt"]
-        img_urls, raw_date = self._recognize(
+        img_urls, raw_date = self.__recognize(
                             prompt =  prompt,
                             width = width,
                             height = height,
@@ -125,7 +125,7 @@ class Text2Image(Component):
                             request_id = request_id
                             )
         if len(img_urls) == 0:
-            raise RiskInputException(f'prompt：{prompt} 中可能存在敏感词')
+            raise RiskInputException(f'prompt{prompt} 中可能存在敏感词')
         out = Text2ImageOutMessage(img_urls=img_urls)
         return Message(content=out.model_dump())
 
@@ -167,7 +167,7 @@ class Text2Image(Component):
         text_check = kwargs.get("text_check", 1)
         request_id = traceid
         
-        img_urls, raw_date = self._recognize(
+        img_urls, raw_date = self.__recognize(
                             prompt = prompt,
                             width = width,
                             height = height,
@@ -189,7 +189,7 @@ class Text2Image(Component):
         for url_number in range(len(img_urls)):
             yield self.create_output(type = 'urls', text = img_urls[url_number], name=f"url_{url_number + 1}", raw_data = raw_date)
 
-    def _recognize(
+    def __recognize(
         self,
         prompt: str,
         width: int = 1024,
@@ -205,6 +205,28 @@ class Text2Image(Component):
         text_check: Optional[int] = 1,
         request_id: Optional[str] = None
         ):
+        """
+        识别并生成图片。
+        
+        Args:
+            prompt (str): 提示文本，用于生成图片。
+            width (int, optional): 图片宽度，默认为1024。
+            height (int, optional): 图片高度，默认为1024。
+            image_num (int, optional): 生成图片的数量，默认为1。
+            image (str, optional): 传入图片路径，默认为None。
+            url (str, optional): 图片URL，默认为None。
+            pdf_file (str, optional): PDF文件路径，默认为None。
+            pdf_file_num (str, optional): 需要转换的PDF页数，默认为None。
+            change_degree (int, optional): 图片旋转角度，默认为None。
+            text_content (str, optional): 文本内容，默认为None。
+            task_time_out (int, optional): 任务超时时间，默认为None。
+            text_check (int, optional): 文本校验选项，默认为1。
+            request_id (str, optional): 请求ID，默认为None。
+        
+        Returns:
+            tuple: 包含生成的图片URL列表和返回数据的元组。
+        
+        """
         headers = self._http_client.auth_header()
         headers["Content-Type"] = "application/json"
         api_url = self._http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
@@ -251,40 +273,6 @@ class Text2Image(Component):
             img_urls = self._extract_img_urls(text2ImageQueryResponse)
 
             return img_urls, data
-
-    @HTTPClient.check_param
-    def _submitText2ImageTask(
-        self,
-        request: Text2ImageSubmitRequest,
-        timeout: float = None,
-        retry: int = 0,
-        request_id: str = None,
-    ) -> Text2ImageSubmitResponse:
-        """
-        使用给定的输入并返回文生图的任务信息。
-        
-        Args:
-            request (obj:`Text2ImageSubmitRequest`): 输入请求，这是一个必需的参数。
-            timeout (float, optional): 请求的超时时间。默认为None。
-            retry (int, optional): 请求的重试次数。默认为0。
-            request_id (str, optional): 请求的唯一标识符。默认为None。
-        
-        Returns:
-            obj:`Text2ImageSubmitResponse`: 接口返回的输出消息。
-        
-        """
-        url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
-        data = request.model_dump()
-        headers = self.http_client.auth_header(request_id)
-        headers['content-type'] = 'application/json'
-        if retry != self.http_client.retry.total:
-            self.http_client.retry.total = retry
-        response = self.http_client.session.post(url, json=data, headers=headers, timeout=timeout)
-        self.http_client.check_response_header(response)
-        data = response.json()
-        self.http_client.check_response_json(data)
-        response = Text2ImageSubmitResponse(**data)
-        return response
 
     def _queryText2ImageData(
         self,
