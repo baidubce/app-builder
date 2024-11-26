@@ -335,6 +335,7 @@ func (t *AppBuilderClient) buildAppBuilderClientRunRequest(param ...interface{})
 	}, nil
 }
 
+// Deprecated: Run方法已兼容此方法
 func (t *AppBuilderClient) RunWithToolCall(req AppBuilderClientRunRequest) (AppBuilderClientIterator, error) {
 	if len(req.ConversationID) == 0 {
 		return nil, errors.New("conversationID mustn't be empty")

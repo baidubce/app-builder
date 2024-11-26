@@ -847,132 +847,23 @@ class AppBuilderClientDemo {
 #### 方法入参
 无
 #### 方法出参
-| 参数名称     | 参数类型 | 描述                                         | 示例值 |
-| ------------ | -------- | -------------------------------------------- | ------ |
-| conversation | str      | 创建成功的对话对象，后续操作都基于该对象进行 |        |
+| 参数名称       | 参数类型 | 描述                                         | 示例值 |
+| -------------- | -------- | -------------------------------------------- | ------ |
+| ConversationId | str      | 创建成功的对话对象，后续操作都基于该对象进行 |        |
 
 
-### ```Run()```
-#### Run方法入参
-
-| 参数名称       | 参数类型     | 是否必须 | 描述                                                                             | 示例值               |
-| -------------- | ------------ | -------- | -------------------------------------------------------------------------------- | -------------------- |
-| conversationID | string       | 是       | 对话ID，可以通过CreateConversation()获取                                         |                      |
-| query          | string       | 是       | query内容                                                                        | "汽车性能参数怎么样" |
-| stream         | bool         | 是       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |                      |
-| file_ids       | list[String] | 否       | 对话可引用的文档ID                                                               |                      |
-
-#### Run方法出参
-
-| 参数名称                 | 参数类型                 | 描述                                    | 示例值 |
-| ------------------------ | ------------------------ | --------------------------------------- | ------ |
-| AppBuilderClientIterator | AppBuilderClientIterator | 回答迭代器，流式/非流式均统一返回该类型 |        |
-| error                    | error                    | 存在错误时error不为nil，反之            |        |
-
-#### 迭代AgentBuilderIterator
-
-| 参数名称      | 参数类型    | 描述                 | 示例值                                                                                  |
-| ------------- | ----------- | -------------------- | --------------------------------------------------------------------------------------- |
-| +Answer       | string      | 智能体应用返回的回答 |                                                                                         |
-| +Events       | []Event     | 事件列表             |                                                                                         |
-| +Events[0]    | Event       | 具体事件内容         |                                                                                         |
-| ++Code        | string      | 错误码               |                                                                                         |
-| ++Message     | string      | 错误具体消息         |                                                                                         |
-| ++Status      | string      | 事件状态             | 状态描述，preparing（准备运行）running（运行中）error（执行错误） done（执行完成）      |
-| ++EventType   | string      | 事件类型             |                                                                                         |
-| ++ContentType | string      | 内容类型             | 可选值包括：code text, image, status,image, function_call, rag, audio、video等          |
-| ++Detail      | interface{} | 事件输出详情         | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                       |
-| ++Usage       | Usage       | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K') |
-
-
-#### 示例代码
-
-
-```Go
-package main
-
-import (
-	"errors"
-	"fmt"
-	"io"
-	"os"
-
-	"github.com/baidubce/app-builder/go/appbuilder"
-)
-
-func main() {
-	// 设置APPBUILDER_TOKEN、GATEWAY_URL_V2环境变量
-	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
-	// 默认可不填，默认值是 https://qianfan.baidubce.com
-	os.Setenv("GATEWAY_URL_V2", "")
-	config, err := appbuilder.NewSDKConfig("", "")
-	if err != nil {
-		fmt.Println("new config failed: ", err)
-		return
-	}
-	// 初始化实例
-	appID := "请填写正确的应用ID"
-	builder, err := appbuilder.NewAppBuilderClient(appID, config)
-	if err != nil {
-		fmt.Println("new agent builder failed: ", err)
-		return
-	}
-	// 创建对话ID
-	conversationID, err := builder.CreateConversation()
-	if err != nil {
-		fmt.Println("create conversation failed: ", err)
-		return
-	}
-	// 与创建应用时绑定的知识库不同之处在于，
-	// 所上传文件仅在本次会话ID下发生作用，如果创建新的会话ID，上传的文件自动失效
-	// 而知识库在不同的会话ID下均有效
-	fileID, err := builder.UploadLocalFile(conversationID, "/path/to/cv.pdf")
-	if err != nil {
-		fmt.Println("upload local file failed:", err)
-		return
-	}
-	// 执行流式对话
-    // 注意file_ids不是必填项，如果不需要引用特定的文档，则将[]string{fileID}更换为nil即可
-    // 同时还需要将上文的fileID, err := builder.UploadLocalFile(conversationID,  "/path/to/cv.pdf")代码
-    // 更换为 _, err = client.UploadLocalFile(conversationID,  "/path/to/cv.pdf"),否则会报错
-	i, err := builder.Run(conversationID, "描述简历中的候选人情况", []string{fileID}, true)
-	if err != nil {
-		fmt.Println("run failed: ", err)
-		return
-	}
-
-	completedAnswer := ""
-	var answer *appbuilder.AppBuilderClientAnswer
-	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
-		completedAnswer = completedAnswer + answer.Answer
-		for _, ev := range answer.Events {
-			evJSON, _ := json.Marshal(ev)
-			fmt.Println(string(evJSON))
-		}
-	}
-	// 迭代正常结束err应为io.EOF
-	if errors.Is(err, io.EOF) {
-		fmt.Println("run success")
-		fmt.Println("智能体回答内容： ", completedAnswer)
-	} else {
-		fmt.Println("run failed:", err)
-	}
-}
-```
-
-### ```RunWithToolCall()```
-
+### `Run()`
 #### Run方法入参`AppBuilderClientRunRequest`
 
-| 参数名称       | 参数类型   | 是否必须 | 描述                                                                             | 示例值               |
-| -------------- | ---------- | -------- | -------------------------------------------------------------------------------- | -------------------- |
-| ConversationID | string     | 是       | 对话ID，可以通过CreateConversation()获取                                         |                      |
-| Query          | string     | 是       | query内容                                                                        | "汽车性能参数怎么样" |
+| 参数名称       | 参数类型   | 是否必须 | 描述                                                         | 示例值               |
+| -------------- | ---------- | -------- | ------------------------------------------------------------ | -------------------- |
+| ConversationID | string     | 是       | 对话ID，可以通过CreateConversation()获取                     |                      |
+| Query          | string     | 是       | query内容                                                    | "汽车性能参数怎么样" |
 | Stream         | bool       | 是       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |                      |
-| AppID          | string     | 是       | 应用ID，线上Agent应用的ID                                                        |                      |
-| Tools          | []Tool     | 否       | 一个列表，其中每个字典对应一个工具的配置                                         |                      |
-| ToolOuptus     | []ToolOupt | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述                           |                      |
-| ToolChoice     | ToolChoice | 否       | 控制大模型使用组件的方式，仅对自主规划Agent生效。                                |                      |
+| AppID          | string     | 是       | 应用ID，线上Agent应用的ID                                    |                      |
+| Tools          | []Tool     | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                      |
+| ToolOuptus     | []ToolOupt | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                      |
+| ToolChoice     | ToolChoice | 否       | 控制大模型使用组件的方式，仅对自主规划Agent生效。            |                      |
 
 `Tool`、`ToolOutput`、`ToolChoice`定义如下：
 
@@ -1026,7 +917,61 @@ type ToolChoiceFunction struct {
 | ++Detail      | interface{} | 事件输出详情         | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                       |
 | ++Usage       | Usage       | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K') |
 
-#### ToolCall示例代码
+
+#### Run示例代码
+
+
+```Go
+// 安装说明：
+// go get github.com/baidubce/app-builder/go/appbuilder
+
+package main
+
+import (
+    "errors"
+    "fmt"
+    "io"
+    "os"
+
+    "github.com/baidubce/app-builder/go/appbuilder"
+)
+
+func main() {
+    // 设置环境中的TOKEN，以下TOKEN请替换为您的个人TOKEN，个人TOKEN可通过该页面【获取鉴权参数】或控制台页【密钥管理】处获取
+    os.Setenv("APPBUILDER_TOKEN", "bce-v3/ALTAK-xxx90ea58")
+    // 从AppBuilder控制台【个人空间】-【应用】网页获取已发布应用的ID
+    appID := "4678492a-xxx-654538d3503c"
+    config, err := appbuilder.NewSDKConfig("", "")
+    if err != nil {
+        fmt.Println("new config failed: ", err)
+        return
+    }
+
+    builder, err := appbuilder.NewAppBuilderClient(appID, config)
+    if err != nil {
+        fmt.Println("new agent builder failed: ", err)
+        return
+    }
+    conversationID, err := builder.CreateConversation()
+    if err != nil {
+        fmt.Println("create conversation failed: ", err)
+        return
+    }
+
+    i, err := builder.Run(conversationID, "你好，你能做什么？", nil, false)
+    if err != nil {
+        fmt.Println("run failed: ", err)
+        return
+    }
+
+	var answer *appbuilder.AppBuilderClientAnswer
+	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
+		fmt.Println(answer.Answer)
+	}
+}
+```
+
+#### ToolCall功能示例代码
 
 ```go
 package main
@@ -1094,7 +1039,7 @@ func main() {
         return
 	}
 
-	i, err := client.RunWithFunctionCall(appbuilder.AppBuilderClientRunRequest{
+	i, err := client.Run(appbuilder.AppBuilderClientRunRequest{
 		AppID:          appID,
 		Query:          "今天北京的天气怎么样?",
 		ConversationID: conversationID,
@@ -1115,7 +1060,7 @@ func main() {
 		}
 	}
 
-	i2, err := client.RunWithFunctionCall(appbuilder.AppBuilderClientRunRequest{
+	i2, err := client.Run(appbuilder.AppBuilderClientRunRequest{
 		ConversationID: conversationID,
 		AppID:          appID,
 		ToolOutputs: []appbuilder.ToolOutput{
@@ -1197,7 +1142,7 @@ func main() {
 	input := make(map[string]any)
 	input["city"] = "北京"
 	end_user_id := "go_toolchoice_demo"
-	i, err := client.RunWithToolCall(AppBuilderClientRunRequest{
+	i, err := client.Run(AppBuilderClientRunRequest{
 		ConversationID: conversationID,
 		AppID:          appID,
 		Query:          "",
