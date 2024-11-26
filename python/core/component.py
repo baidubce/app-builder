@@ -60,28 +60,28 @@ class ComponentArguments(BaseModel):
         return inputs
 
 
-class Text(BaseModel):
+class Text(BaseModel, extra='allow'):
     info: str = Field(default="", description="具体文本内容")
 
 
-class Code(BaseModel):
+class Code(BaseModel, extra='allow'):
     code: str = Field(default="", description="代码片段")
 
 
-class Files(BaseModel):
+class Files(BaseModel, extra='allow'):
     filename: str = Field(default="", description="文件名")
     url: str = Field(default="", description="文件url")
 
 
-class Urls(BaseModel):
+class Urls(BaseModel, extra='allow'):
     url: str = Field(default="", description="链接地址")
 
 
-class OralText(BaseModel):
+class OralText(BaseModel, extra='allow'):
     info: str = Field(default="", description="口语化文本内容")
 
 
-class References(BaseModel):
+class References(BaseModel, extra='allow'):
     type: str = Field(default="", description="类型")
     resource_type: str = Field(default="", description="资源类型")
     icon: str = Field(default="", description="站点图标")
@@ -96,32 +96,32 @@ class References(BaseModel):
     video_url: str = Field(default="", description="视频url")
 
 
-class Image(BaseModel):
+class Image(BaseModel, extra='allow'):
     filename: str = Field(default="", description="图片名称")
     url: str = Field(default="", description="图片url")
     byte: Optional[bytes] = Field(default=b'', description="图片二进制数据")
 
 
-class Chart(BaseModel):
+class Chart(BaseModel, extra='allow'):
     filename: str = Field(default="", description="图表名称")
     url: str = Field(default="", description="图表url")
 
 
-class Audio(BaseModel):
+class Audio(BaseModel, extra='allow'):
     filename: str = Field(default="", description="音频名称")
     url: str = Field(default="", description="音频url")
     byte: Optional[bytes] = Field(default=b'', description="音频二进制数据")
 
 
-class PlanStep(BaseModel):
+class PlanStep(BaseModel, extra='allow'):
     name: str = Field(default="", description="step名")
     arguments: dict = Field(default={}, description="step参数")
     
-class Plan(BaseModel):
+class Plan(BaseModel, extra='allow'):
     detail: str = Field(default="", description="计划详情")
     steps: list[PlanStep] = Field(default=[], description="步骤列表")
 
-class FunctionCall(BaseModel):
+class FunctionCall(BaseModel, extra='allow'):
     thought: str = Field(default="", description="思考结果")
     name: str = Field(default="", description="工具名")
     arguments: dict = Field(default={}, description="参数列表")
@@ -538,7 +538,7 @@ class Component:
                 key_list = ["thought", "name", "arguments"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
-            assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
+            # assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
         else:
             raise ValueError("text must be str or dict")
 
