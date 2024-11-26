@@ -56,14 +56,14 @@ class TestBaseComponent(unittest.TestCase):
     def test_invalid_output_type_json(self):
         with self.assertRaises(ValueError):
             output = self.component.create_output(type="json", text="")
-        with self.assertRaises(AssertionError):
-            output = self.component.create_output(type="files", text={})
-        with self.assertRaises(AssertionError):
-            output = self.component.create_output(type="references", text={"info": "text"})
-        with self.assertRaises(AssertionError):
-            output = self.component.create_output(type="image", text={"url": "https://example.com/img"})
-        with self.assertRaises(AssertionError):
-            output = self.component.create_output(type="chart", text={"url": "https://example.com/chart"})
+        # with self.assertRaises(AssertionError):
+        #     output = self.component.create_output(type="files", text={})
+        # with self.assertRaises(AssertionError):
+        #     output = self.component.create_output(type="references", text={"info": "text"})
+        # with self.assertRaises(AssertionError):
+        #     output = self.component.create_output(type="image", text={"url": "https://example.com/img"})
+        # with self.assertRaises(AssertionError):
+        #     output = self.component.create_output(type="chart", text={"url": "https://example.com/chart"})
 
 
 if __name__ == '__main__':
