@@ -247,6 +247,62 @@ audio_schema["properties"]["text"] = {
   "required": ["filename", "url"]
 }
 
+
+plan_schema = copy.deepcopy(base_item_schema)
+plan_schema["$schema"] = "plan_schema"
+plan_schema["properties"]["type"] = {
+    "type": "string",
+    "enum": ["plan"]
+}
+plan_schema["properties"]["text"] = {
+  "type": "object",
+  "properties": {
+    "detail": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+          "type": "object",
+          "properties": {
+              "name": {"type": "string"},
+              "arguments": {
+                "type": "object",
+                "additionalProperties": True
+              }
+          },
+          "required": ["name", "arguments"]
+      }
+    }
+  },
+  "required": ["detail", "steps"]
+}
+
+
+function_call_schema = copy.deepcopy(base_item_schema)
+function_call_schema["$schema"] = "function_call_schema"
+function_call_schema["properties"]["type"] = {
+    "type": "string",
+    "enum": ["function_call"]
+}
+function_call_schema["properties"]["text"] = {
+  "type": "object",
+  "properties": {
+    "thought": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+    },
+    "arguments": {
+      "type": "object",
+      "additionalProperties": True
+    }
+  },
+  "required": ["thought", "name", "arguments"],
+}
+
+
 type_to_json_schemas = {
   "text": text_schema,
   'code': code_schema,
@@ -256,5 +312,7 @@ type_to_json_schemas = {
   "references": references_schema,
   "image": image_schema,
   "chart": chart_schema,
-  "audio": audio_schema
+  "audio": audio_schema,
+  "plan": plan_schema,
+  "function_call": function_call_schema,
 }

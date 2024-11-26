@@ -28,6 +28,8 @@ class TestBaseComponent(unittest.TestCase):
         output6 = self.component.create_output(type="image", text={"filename": "file.png", "url": "http://www.baidu.com"})
         output7 = self.component.create_output(type="chart", text={"filename": "file.jpg", "url": "http://www.baidu.com"})
         output8 = self.component.create_output(type="audio", text={"filename": "file.mp3", "url": "http://www.baidu.com"})
+        output9 = self.component.create_output(type="plan", text={"detail": "hello", "steps":[{"name": "1", "arguments": {"query": "a", "chat_history": "world"}}]})
+        output10 = self.component.create_output(type="function_call", text={"thought": "hello", "name": "AppBuilder", "arguments": {"query": "a", "chat_history": "world"}})
         self.assertIsInstance(output1, ComponentOutput)
         self.assertIsInstance(output2, ComponentOutput)
         self.assertIsInstance(output3, ComponentOutput)
@@ -36,6 +38,8 @@ class TestBaseComponent(unittest.TestCase):
         self.assertIsInstance(output6, ComponentOutput)
         self.assertIsInstance(output7, ComponentOutput)
         self.assertIsInstance(output8, ComponentOutput)
+        self.assertIsInstance(output9, ComponentOutput)
+        self.assertIsInstance(output10, ComponentOutput)
 
     def test_valid_output_type_with_same_key(self):
         output1 = self.component.create_output(type="urls", text={"url": "http://www.baidu.com"})
