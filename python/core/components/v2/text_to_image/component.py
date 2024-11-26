@@ -152,7 +152,7 @@ class Text2Image(Component):
             RiskInputException: 如果查询字符串中包含敏感词，则抛出此异常。
         
         """
-        traceid = kwargs.get("traceid")
+        request_id = kwargs.get("request_id", None)
         prompt = query
         width = kwargs.get("width", 1024)
         height = kwargs.get("height", 1024)
@@ -165,9 +165,8 @@ class Text2Image(Component):
         text_content = kwargs.get("text_content", None)
         task_time_out = kwargs.get("task_time_out", None)
         text_check = kwargs.get("text_check", 1)
-        request_id = traceid
         
-        img_urls, raw_date = self.__recognize(
+        img_urls, raw_data = self.__recognize(
                             prompt = prompt,
                             width = width,
                             height = height,
@@ -187,7 +186,7 @@ class Text2Image(Component):
             raise RiskInputException(f'query：{query} 中可能存在敏感词')
 
         for url_number in range(len(img_urls)):
-            yield self.create_output(type = 'urls', text = img_urls[url_number], name=f"url_{url_number + 1}", raw_data = raw_date)
+            yield self.create_output(type = 'urls', text = img_urls[url_number], name=f"url_{url_number + 1}", raw_data = raw_data)
 
     def __recognize(
         self,
