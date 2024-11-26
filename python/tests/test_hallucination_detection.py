@@ -38,7 +38,6 @@ TEST_CONTEXT = \
 TEST_ANSWER = '澳门新麻蒲烤肉店并不是每天开门，周日休息。'
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestHallucinationDetectionComponent(unittest.TestCase):
     def setUp(self):
         """

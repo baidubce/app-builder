@@ -17,7 +17,6 @@ import requests
 import appbuilder
 import os
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAnimalRecognition(unittest.TestCase):
     def setUp(self):
         """

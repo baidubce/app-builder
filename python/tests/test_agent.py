@@ -14,8 +14,6 @@ from appbuilder import (
     AppBuilderClient
 )
 
-
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAgentRuntime(unittest.TestCase):
     def setUp(self):
         """

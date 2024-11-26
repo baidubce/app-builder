@@ -49,7 +49,6 @@ class MyEventHandler(AppBuilderEventHandler):
         )
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderClientChatflow(unittest.TestCase):
     def setUp(self):
         """

@@ -20,7 +20,6 @@ from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrument
 from appbuilder.utils.trace.phoenix_wrapper import runtime_main,stop_phoenix,launch_phoenix
 from appbuilder.core.console.appbuilder_client import get_app_list
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderTrace(unittest.TestCase):
     def setUp(self):
         """

@@ -2,7 +2,7 @@ import unittest
 import os
 import appbuilder
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+
 def get_cur_whether(location:str, unit:str):
     return "{} 的当前温度是30 {}".format(location, unit)
 
@@ -61,10 +61,6 @@ class TestFunctionCall(unittest.TestCase):
             step_id=last_step_id,
         )
         self.assertEqual(step.id, last_step_id)
-    
-    
-
-
         
 
 if __name__ == '__main__':

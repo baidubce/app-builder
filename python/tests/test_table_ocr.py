@@ -19,7 +19,6 @@ import os
 
 from appbuilder.core._exception import InvalidRequestArgumentError 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestTableOCR(unittest.TestCase):
     def setUp(self):
         """

@@ -20,7 +20,6 @@ import time
 
 from appbuilder.core.components.llms.style_writing.component import StyleQueryChoices, LengthChoices
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestStyleWritingComponent(unittest.TestCase):
     def setUp(self):
         """

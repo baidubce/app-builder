@@ -18,7 +18,6 @@ import appbuilder
 from appbuilder.core.console.appbuilder_client import data_class
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderClientChatflow(unittest.TestCase):
     def setUp(self):
         """

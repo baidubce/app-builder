@@ -37,7 +37,6 @@ TEST_CONTEXT = \
 '时候也需特别注意火侯，这样吃起来才会有外脆内Q的口感！')
 TEST_ANSWER = '澳门新麻蒲烤肉店并不是每天开门，周日休息。'
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderComponentsTrace(unittest.TestCase):
     def setUp(self):
         """

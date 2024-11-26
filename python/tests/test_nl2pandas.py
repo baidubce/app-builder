@@ -19,7 +19,6 @@ import appbuilder
 from appbuilder.core.message import Message
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestNl2pandasComponent(unittest.TestCase):
     def setUp(self):
         """

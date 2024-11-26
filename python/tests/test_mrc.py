@@ -16,7 +16,6 @@ import unittest
 import appbuilder
 import time
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestMRC(unittest.TestCase):
     def setUp(self):
         '''

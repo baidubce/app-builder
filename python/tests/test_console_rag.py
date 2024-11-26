@@ -17,7 +17,6 @@ import os
 
 from appbuilder.core.console.rag.rag import RAG
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestRag(unittest.TestCase):
 
     def setUp(self):

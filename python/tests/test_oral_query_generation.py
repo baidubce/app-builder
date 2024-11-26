@@ -23,7 +23,6 @@ TEST_TEXT = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
              '，实时视频分享您的生活。')
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestOralQueryGenerationComponent(unittest.TestCase):
     def setUp(self):
         """

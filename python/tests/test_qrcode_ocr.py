@@ -19,7 +19,6 @@ import appbuilder
 
 from appbuilder.core._exception import InvalidRequestArgumentError 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestQRcodeOCR(unittest.TestCase):
     def setUp(self):
         """
