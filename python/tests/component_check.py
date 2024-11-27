@@ -148,6 +148,7 @@ class MainfestMatchToolEvalRule(RuleBase):
                 raise ValueError("No manifests found")
             manifest = manifests[0]
             properties = manifest['parameters']['properties']
+            manifest_var = properties.keys()
             required_params = []
             anyOf = manifest['parameters'].get('anyOf', None)
             required_exists = False
@@ -179,7 +180,7 @@ class MainfestMatchToolEvalRule(RuleBase):
                 if param_name == 'kwargs' or param_name == 'args' or param_name == 'self':
                     continue
                 tool_eval_input_params.append(param_name)
-                if param_name not in required_params:
+                if param_name not in manifest_var:
                     check_pass_flag = False
                     ileagal_params.append(param_name)
 
