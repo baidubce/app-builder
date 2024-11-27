@@ -27,6 +27,9 @@ class Case():
     def schemas(self):
         return NotImplementedError()
 
+    def envs(self):
+        return {}
+
     
 class AnimalRecognitionCase(Case):
     def inputs(self):
