@@ -14,10 +14,8 @@
 
 from .animal_recognize.component import AnimalRecognition
 from .image_understand.component import  ImageUnderstand
-from .text_to_image.component import Text2Image
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
     "ImageUnderstand",
-    "Text2Image",
 ] # NOQA

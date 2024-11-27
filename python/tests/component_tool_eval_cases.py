@@ -89,6 +89,5 @@ component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
     "ImageUnderstand": ImageUnderstandCase,
     "ASR": ASRCase,
-    "TreeMind": TreeMindCase,
-    "Text2Image": Text2ImageCase
+    "TreeMind": TreeMindCase
 }
