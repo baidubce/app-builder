@@ -486,11 +486,12 @@ class Component:
                 final_result += step.get("text", "")
         return final_result
 
-    def create_output(self, type, text, role="tool", name="", visible_scope="all", raw_data={}, usage={}, metrics={}):
+    @classmethod
+    def create_output(cls, type, text, role="tool", name="", visible_scope="all", raw_data={}, usage={}, metrics={}):
         """create_text_output
 
         Args:
-            type (str): 类型，包括"text", "code", "files", "urls", "oral_text", "references", "image", "chart", "audio"
+            type (str): 类型，包括"text", "code", "files", "urls", "oral_text", "references", "image", "chart", "audio", "plan", "function_call"
             text (str|dict): text字段，可输入str或dict
             role (str, optional): 当前消息来源. Defaults to "tool".
             name (str, optional): 当前yield内容的step name. Defaults to "".
