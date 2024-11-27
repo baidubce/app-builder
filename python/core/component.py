@@ -486,6 +486,7 @@ class Component:
                 final_result += step.get("text", "")
         return final_result
 
+    @classmethod
     def create_output(self, type, text, role="tool", name="", visible_scope="all", raw_data={}, usage={}, metrics={}):
         """create_text_output
 

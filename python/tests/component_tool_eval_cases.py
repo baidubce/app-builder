@@ -11,8 +11,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from appbuilder.tests.component_schemas import text_schema, url_schema, image_schema, code_schema, file_schema, oral_text_schema, references_schema, chart_schema, audio_schema, plan_schema, function_call_schema
 
-class AnimalRecognitionCase:
+class Case():
+    def init_args(self):
+        return {}
+
+    def inputs(self):
+        return NotImplementedError()
+
+    def outputs(self):
+        return {}
+
+    def schemas(self):
+        return NotImplementedError()
+
+    
+class AnimalRecognitionCase(Case):
     def inputs(self):
         return {
             "img_name": "",
@@ -24,7 +39,10 @@ class AnimalRecognitionCase:
     def outputs(self):
         return {"text": ["熊猫"]}
 
-class ASRCase:
+    def schemas(self):
+        return [text_schema]
+
+class ASRCase(Case):
     def inputs(self):
         return {
             "file_url": "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
@@ -34,11 +52,17 @@ class ASRCase:
     def outputs(self):
         return {"text": ["北京科技馆"]}
 
-class TreeMindCase:
+    def schemas(self):
+        return [text_schema]
+
+class TreeMindCase(Case):
     def inputs(self):
         return {"query": "生成一份年度总结的思维导图"}
+
+    def schemas(self):
+        return [text_schema, url_schema]
     
-class ImageUnderstandCase:
+class ImageUnderstandCase(Case):
     def inputs(self):
         return {
             "img_url": "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
@@ -50,9 +74,15 @@ class ImageUnderstandCase:
     def outputs(self):
         return {"text": ["熊猫"]}
 
-class Text2ImageCase:
+    def schemas(self):
+        return [text_schema]
+
+class Text2ImageCase(Case):
     def inputs(self):
         return {"query": "生成一张熊猫图片"}
+
+    def schemas(self):
+        return [url_schema]
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,

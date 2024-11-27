@@ -22,7 +22,6 @@ from appbuilder.utils.func_utils import Singleton
 from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
 from appbuilder.tests.component_schemas import type_to_json_schemas
 from component_tool_eval_cases import component_tool_eval_cases
-from component_tool_eval_schemas import components_tool_eval_output_json_maps
 
 
 class CheckInfo(BaseModel):
@@ -288,7 +287,7 @@ class ToolEvalOutputJsonRule(RuleBase):
         """检查输出格式是否符合对应的json schema
         """
         invalid_details = []
-        if len(self._check_pre_format(outputs)) > 0 :
+        if len(invalid_details:=self._check_pre_format(outputs)) > 0 :
             return invalid_details
     
         for content in outputs["content"]: 
@@ -369,42 +368,40 @@ class ToolEvalOutputJsonRule(RuleBase):
     def check(self, component_cls) -> CheckInfo:
         invalid_details = []
         component_cls_name = component_cls.__name__
-        if component_cls_name not in components_tool_eval_output_json_maps:
-            invalid_details.append("{} 没有注册到 components_tool_eval_output_json_maps 中".format(component_cls_name))
+        if component_cls_name not in component_tool_eval_cases:
+            invalid_details.append("{} 没有添加测试case到 component_tool_eval_cases 中".format(component_cls_name))
         else:
-            output_json_schemas = components_tool_eval_output_json_maps[component_cls_name]
-            if component_cls_name not in component_tool_eval_cases:
-                invalid_details.append("{} 没有添加测试case到 component_tool_eval_cases 中".format(component_cls_name))
-            else:
-                component_case = component_tool_eval_cases[component_cls_name]()
-                input_dict = component_case.inputs()
-                component_obj = component_cls()
-                
-                try:
-                    stream_output_dict = {"text": "", "oral_text":"", "code": ""}
-                    stream_outputs = component_obj.tool_eval(**input_dict)
-                    for stream_output in stream_outputs: #校验流式输出
-                        iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
-                        invalid_details.extend(["流式" + error_message for error_message in iter_invalid_detail])
-                        iter_output_dict = self._gather_iter_outputs(stream_output)
-                        stream_output_dict["text"] += iter_output_dict["text"]
-                        stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
-                        stream_output_dict["code"] += iter_output_dict["code"]
-                    if len(invalid_details) == 0:
-                        invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
-                except Exception as e:
-                    invalid_details.append("ToolEval执行失败: {}".format(e))
+            component_case = component_tool_eval_cases[component_cls_name]()
+            input_dict = component_case.inputs()
+            output_json_schemas = component_case.schemas()
+            init_args = component_case.init_args()
+            component_obj = component_cls(**init_args)
+            
+            try:
+                stream_output_dict = {"text": "", "oral_text":"", "code": ""}
+                stream_outputs = component_obj.tool_eval(**input_dict)
+                for stream_output in stream_outputs: #校验流式输出
+                    iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
+                    invalid_details.extend(["流式" + error_message for error_message in iter_invalid_detail])
+                    iter_output_dict = self._gather_iter_outputs(stream_output)
+                    stream_output_dict["text"] += iter_output_dict["text"]
+                    stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
+                    stream_output_dict["code"] += iter_output_dict["code"]
+                if len(invalid_details) == 0:
+                    invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
+            except Exception as e:
+                invalid_details.append("ToolEval执行失败: {}".format(e))
 
-                time.sleep(2)
-                try:
-                    non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-                    non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs.model_dump(), output_json_schemas)  #校验非流式输出
-                    invalid_details.extend(["非流式" + error_message for error_message in non_stream_invalid_details]) 
-                    if len(invalid_details) == 0:
-                        non_stream_output_dict = self._gather_iter_outputs(non_stream_outputs)
-                        invalid_details.extend(self._check_text_and_code(component_case, non_stream_output_dict))
-                except Exception as e:
-                    invalid_details.append(" NonStreamToolEval执行失败: {}".format(e))
+            time.sleep(2)
+            try:
+                non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
+                non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs.model_dump(), output_json_schemas)  #校验非流式输出
+                invalid_details.extend(["非流式" + error_message for error_message in non_stream_invalid_details]) 
+                if len(invalid_details) == 0:
+                    non_stream_output_dict = self._gather_iter_outputs(non_stream_outputs)
+                    invalid_details.extend(self._check_text_and_code(component_case, non_stream_output_dict))
+            except Exception as e:
+                invalid_details.append(" NonStreamToolEval执行失败: {}".format(e))
                     
         if len(invalid_details) > 0:
             return CheckInfo(
