@@ -64,3 +64,7 @@
   * 新增长文档内容理解组件
   * 优化requirements，去除部分组件的版本限制
   * 简化报错堆栈，去除冗余的Trace信息
+* **2024.11.27 v0.9.7版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.7)
+  * 新增TreeMind组件
+  * 新增工作流Agent回复“信息收集节点”功能，支持多轮对话事件处理
+  * Python的ToolCall功能支持通过函数定义、装饰器的形式等生成ToolCall参数
