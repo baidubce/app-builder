@@ -47,7 +47,7 @@ Baidu AI Cloud Qianfan AppBuilder-SDK offers the following essential features fo
 
 ##  How to install？
 
-#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.6 (2024-10-26)
+#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.7 (2024-11-27)
 
 Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/DevelopGuide/ChangeLog/changelog.md)
 
@@ -128,7 +128,7 @@ import os
 # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Agent-Speed-8k")
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE-Lite-AppBuilder-8K")
 
 input = appbuilder.Message("9.11和9.8哪个大")
 result = rag_with_baidu_search_pro.run(

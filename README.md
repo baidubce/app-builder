@@ -76,7 +76,7 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 
 ##  如何安装AppBuilder-SDK
 
-#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.6 (2024-10-26)
+#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.7 (2024-11-27)
 
 百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/DevelopGuide/ChangeLog/changelog.md)
 
@@ -157,7 +157,7 @@ import os
 # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Agent-Speed-8k")
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE-Lite-AppBuilder-8K")
 
 input = appbuilder.Message("9.11和9.8哪个大")
 result = rag_with_baidu_search_pro.run(

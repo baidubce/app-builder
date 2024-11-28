@@ -88,13 +88,13 @@ class Text2ImageCase(Case):
     def schemas(self):
         return [url_schema]
 
-
 class StypeRewriteCase(Case):
     def inputs(self):
         return {"query": "文心大模型发布新版"}
 
     def schemas(self):
         return [text_schema]
+
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,

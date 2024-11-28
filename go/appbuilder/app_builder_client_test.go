@@ -648,58 +648,117 @@ func TestAppBuilderClientRunChatflow(t *testing.T) {
 	}
 
 	var interruptId string
+	interruptStack := make([]string, 0)
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		for _, ev := range answer.Events {
+			if ev.ContentType == PublishMessageContentType {
+				detail := ev.Detail.(PublishMessageDetail)
+				message := detail.Message
+				fmt.Println(message)
+				break
+			}
 			if ev.ContentType == ChatflowInterruptContentType {
-				if ev.EventType != ChatflowEventType {
-					t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-					t.Fatalf("event type error:%v", err)
-				}
-
 				deatil := ev.Detail.(ChatflowInterruptDetail)
 				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
 				break
 			}
 		}
 	}
-
 	if len(interruptId) == 0 {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("interrupt id is empty")
 	}
 
+	interruptId = ""
 	i2, err := client.Run(AppBuilderClientRunRequest{
 		ConversationID: conversationID,
 		AppID:          appID,
 		Query:          "我先查个航班动态",
 		Stream:         true,
-		Action:         NewResumeAction(interruptId),
+		Action:         NewResumeAction(interruptStack[len(interruptStack)-1]),
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("run failed:%v", err)
 	}
-
-	var message string
+	interruptStack = interruptStack[:len(interruptStack)-1]
 	for answer, err := i2.Next(); err == nil; answer, err = i2.Next() {
 		for _, ev := range answer.Events {
 			if ev.ContentType == PublishMessageContentType {
-				if ev.EventType != ChatflowEventType {
-					t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-					t.Fatalf("event type error:%v", err)
-				}
-
 				detail := ev.Detail.(PublishMessageDetail)
-				message = detail.Message
+				message := detail.Message
+				fmt.Println(message)
+				break
+			}
+			if ev.ContentType == ChatflowInterruptContentType {
+				deatil := ev.Detail.(ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
 				break
 			}
 		}
 	}
-	if len(message) == 0 {
+	if len(interruptId) == 0 {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("message is empty")
+		t.Fatalf("interrupt id is empty")
 	}
-	fmt.Println(message)
+
+	interruptId = ""
+	i3, err := client.Run(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "CA1234",
+		Stream:         true,
+		Action:         NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("run failed:%v", err)
+	}
+	interruptStack = interruptStack[:len(interruptStack)-1]
+	for answer, err := i3.Next(); err == nil; answer, err = i3.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == TextContentType {
+				detail := ev.Detail.(TextDetail)
+				text := detail.Text
+				fmt.Println(text)
+				break
+			}
+			if ev.ContentType == ChatflowInterruptContentType {
+				deatil := ev.Detail.(ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("interrupt id is empty")
+	}
+
+	i4, err := client.Run(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "北京的",
+		Stream:         true,
+		Action:         NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("run failed:%v", err)
+	}
+	for answer, err := i4.Next(); err == nil; answer, err = i4.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == TextContentType {
+				detail := ev.Detail.(TextDetail)
+				text := detail.Text
+				fmt.Println(text)
+				break
+			}
+		}
+	}
 
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {
