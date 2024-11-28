@@ -450,7 +450,9 @@ answer = app_builder_client.run(
 
 #### Run方法回复工作流Agent “信息收集节点”使用示例：
 
-使用[“飞行客服小助手”](https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr)作为工作流Agent的示例应用
+使用[“飞行客服小助手”](https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr)作为工作流Agent的示例应用。
+
+**方式1：** SDK直接进行对话（不推荐）
 
 ```python
 import appbuilder
@@ -530,6 +532,154 @@ for ans in msg4.content:
             has_multiple_dialog_event = True
             break
 
+```
+
+**方式2: **实现自己的EventHandler，更方便地进行对话（推荐）
+
+```python
+import os
+import appbuilder
+from appbuilder.core.console.appbuilder_client.event_handler import (
+    AppBuilderEventHandler,
+)
+
+
+class MyEventHandler(AppBuilderEventHandler):
+    def __init__(self):
+        super().__init__()
+        self.interrupt_ids = []
+
+    def handle_content_type(self, run_context, run_response):
+        interrupt_event_id = None
+        event = run_response.events[-1]
+        if event.content_type == "chatflow_interrupt":
+            interrupt_event_id = event.detail.get("interrupt_event_id")
+        if interrupt_event_id is not None:
+            self.interrupt_ids.append(interrupt_event_id)
+
+    def _create_action(self):
+        if len(self.interrupt_ids) == 0:
+            return None
+        event_id = self.interrupt_ids.pop()
+        return {
+            "action_type": "resume",
+            "parameters": {"interrupt_event": {"id": event_id, "type": "chat"}},
+        }
+
+    def run(self, query=None):
+        super().new_dialog(
+            query=query,
+            action=self._create_action(),
+        )
+
+
+def main():
+    # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+    # 设置环境变量
+    os.environ["APPBUILDER_TOKEN"] = "..."
+    appbuilder.logger.setLoglevel("DEBUG")
+
+    # 飞行客服小助手的应用id
+    app_id = "..."
+    # 初始化智能体
+    client = appbuilder.AppBuilderClient(app_id)
+    conversation_id = client.create_conversation()
+
+    event_handler = MyEventHandler()
+    event_handler.init(
+        appbuilder_client=client,
+        conversation_id=conversation_id,
+        stream=True,
+        query="查天气",
+    )
+    for data in event_handler:
+        pass
+    event_handler.run(
+        query="查航班",
+    )
+    for data in event_handler:
+        pass
+    event_handler.run(
+        query="CA1234",
+    )
+    for data in event_handler:
+        pass
+    event_handler.run(
+        query="北京的",
+    )
+    for data in event_handler:
+        pass
+
+
+if __name__ == "__main__":
+    main()
+```
+
+**方式3:** 实现自己的EventHandler，更方便地进行多轮对话（推荐）
+
+```python
+import os
+import appbuilder
+from appbuilder.core.console.appbuilder_client.event_handler import (
+    AppBuilderEventHandler,
+)
+
+
+class MyEventHandler(AppBuilderEventHandler):
+    def __init__(self):
+        super().__init__()
+        self.interrupt_ids = []
+
+    def handle_content_type(self, run_context, run_response):
+        interrupt_event_id = None
+        event = run_response.events[-1]
+        if event.content_type == "chatflow_interrupt":
+            interrupt_event_id = event.detail.get("interrupt_event_id")
+        if interrupt_event_id is not None:
+            self.interrupt_ids.append(interrupt_event_id)
+
+    def _create_action(self):
+        if len(self.interrupt_ids) == 0:
+            return None
+        event_id = self.interrupt_ids.pop()
+        return {
+            "action_type": "resume",
+            "parameters": {"interrupt_event": {"id": event_id, "type": "chat"}},
+        }
+
+    def gen_action(self):
+        while True:
+            yield self._create_action()
+
+
+def main():
+    # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+    # 设置环境变量
+    os.environ["APPBUILDER_TOKEN"] = "..."
+    appbuilder.logger.setLoglevel("DEBUG")
+
+    # 飞行客服小助手的应用id
+    app_id = "..."
+    # 初始化智能体
+    client = appbuilder.AppBuilderClient(app_id)
+    conversation_id = client.create_conversation()
+
+    queries = ["查天气", "查航班", "CA1234", "北京的"]
+    event_handler = MyEventHandler()
+    event_handler = client.run_multiple_dialog_with_handler(
+        conversation_id=conversation_id,
+        queries=queries,
+        event_handler=event_handler,
+        stream=True,
+        actions=event_handler.gen_action(),
+    )
+    for data in event_handler:
+        for ans in data:
+            pass
+
+
+if __name__ == "__main__":
+    main()
 ```
 
 
