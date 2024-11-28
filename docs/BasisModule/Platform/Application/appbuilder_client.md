@@ -450,7 +450,7 @@ answer = app_builder_client.run(
 
 #### Run方法回复工作流Agent “信息收集节点”使用示例：
 
-使用“飞行客服小助手”（https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr）作为工作流Agent的示例应用
+使用[“飞行客服小助手”](https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr)作为工作流Agent的示例应用
 
 ```python
 import appbuilder
@@ -928,7 +928,7 @@ class AppBuilderClientDemo {
 
 #### Run方法回复工作流Agent “信息收集节点”使用示例：
 
-使用“飞行客服小助手”（https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr）作为工作流Agent的示例应用
+使用[“飞行客服小助手”](https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr)作为工作流Agent的示例应用
 
 ```java
 package org.example;
@@ -1377,7 +1377,7 @@ func main() {
 
 #### Run方法回复工作流Agent “信息收集节点”使用示例：
 
-使用“飞行客服小助手”（https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr）作为工作流Agent的示例应用
+使用[“飞行客服小助手”](https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr)作为工作流Agent的示例应用
 
 ```go
 package main
