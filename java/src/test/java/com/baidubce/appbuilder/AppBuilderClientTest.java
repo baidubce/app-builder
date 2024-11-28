@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
+
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
@@ -133,33 +135,91 @@ public class AppBuilderClientTest {
         AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "查天气", true);
         AppBuilderClientIterator itor = builder.run(request);
         assertTrue(itor.hasNext());
+        Stack<String> interruptStack = new Stack<String>();
         String interruptEventId = "";
         while (itor.hasNext()) {
             AppBuilderClientResult result = itor.next();
             for (Event event : result.getEvents()) {
-                System.out.println(event.getContentType());
+                if (event.getContentType().equals(EventContent.PublishMessageContentType)) {
+                    String message = event.getDetail().get("message").toString();
+                    System.out.println(message);
+                }
                 if (event.getContentType().equals(EventContent.ChatflowInterruptContentType)) {
                     assertEquals(event.getEventType(), Event.ChatflowEventType);
                     interruptEventId = event.getDetail().get("interrupt_event_id").toString();
+                    interruptStack.push(interruptEventId);
+                    break;
                 }
             }
         }
-        
         assert interruptEventId != null && !interruptEventId.isEmpty();
+
+        interruptEventId = "";
         AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "我先查个航班动态",
                 true);
-        request2.setAction(AppBuilderClientRunRequest.Action.createAction(interruptEventId));
+        request2.setAction(AppBuilderClientRunRequest.Action.createAction(interruptStack.pop()));
         AppBuilderClientIterator itor2 = builder.run(request2);
         assertTrue(itor2.hasNext());
-        String message = "";
         while (itor2.hasNext()) {
             AppBuilderClientResult result2 = itor2.next();
             for (Event event : result2.getEvents()) {
                 if (event.getContentType().equals(EventContent.PublishMessageContentType)) {
-                    message = event.getDetail().get("message").toString();
+                    String message = event.getDetail().get("message").toString();
+                    System.out.println(message);
+                }
+                if (event.getContentType().equals(EventContent.ChatflowInterruptContentType)) {
+                    assertEquals(event.getEventType(), Event.ChatflowEventType);
+                    interruptEventId = event.getDetail().get("interrupt_event_id").toString();
+                    interruptStack.push(interruptEventId);
+                    break;
                 }
             }
         }
-        assert message != null && !message.isEmpty();
+        assert interruptEventId != null && !interruptEventId.isEmpty();
+
+        interruptEventId = "";
+        AppBuilderClientRunRequest request3 = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "CA1234",
+                true);
+        request3.setAction(AppBuilderClientRunRequest.Action.createAction(interruptStack.pop()));
+        AppBuilderClientIterator itor3 = builder.run(request3);
+        assertTrue(itor3.hasNext());
+        while (itor3.hasNext()) {
+            AppBuilderClientResult result3 = itor3.next();
+            for (Event event : result3.getEvents()) {
+                if (event.getContentType().equals(EventContent.TextContentType)) {
+                    String text = event.getDetail().get("text").toString();
+                    System.out.println(text);
+                }
+                if (event.getContentType().equals(EventContent.ChatflowInterruptContentType)) {
+                    assertEquals(event.getEventType(), Event.ChatflowEventType);
+                    interruptEventId = event.getDetail().get("interrupt_event_id").toString();
+                    interruptStack.push(interruptEventId);
+                    break;
+                }
+            }
+        }
+        assert interruptEventId != null && !interruptEventId.isEmpty();
+
+        boolean hasMultipleContentType = false;
+        AppBuilderClientRunRequest request4 = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "北京的",
+                true);
+        request4.setAction(AppBuilderClientRunRequest.Action.createAction(interruptStack.pop()));
+        AppBuilderClientIterator itor4 = builder.run(request4);
+        assertTrue(itor4.hasNext());
+        while (itor4.hasNext()) {
+            AppBuilderClientResult result4 = itor4.next();
+            for (Event event : result4.getEvents()) {
+                if (event.getContentType().equals(EventContent.TextContentType)) {
+                    String text = event.getDetail().get("text").toString();
+                    System.out.println(text);
+                }
+                if (event.getContentType().equals(EventContent.MultipleDialogEventContentType)) {
+                    assertEquals(event.getEventType(), Event.ChatflowEventType);
+                    hasMultipleContentType = true;
+                    break;
+                }
+            }
+        }
+        assertTrue(hasMultipleContentType);
     }
 }
