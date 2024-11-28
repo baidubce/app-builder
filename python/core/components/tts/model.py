@@ -17,7 +17,6 @@ import proto
 
 from pydantic import BaseModel
 
-
 class TTSRequest(proto.Message):
     r"""文本转语音请求参数.
 
@@ -32,7 +31,14 @@ class TTSRequest(proto.Message):
             pit(int, 可选): 语音音调，默认是5中等音调，取值范围在0~15之间，如果选择模型为paddlespeech-tts，参数自动失效.
             vol(int, 音量): 语音音量，默认是5中等音量，取值范围在0~15之间，如果选择模型为paddlespeech-tts，参数自动失效.
             per(int, 可选): 语音人物特征，默认是0,可选值包括度小宇=1 度小美=0 度逍遥（基础）=3 度丫丫=4 度逍遥（精品）=5003
-                度小鹿=5118 度博文=106 度小童=110 度小萌=111 度米朵=103 度小娇=5，如果选择模型为paddlespeech-tts，参数自动失效.
+                度小鹿=5118 度博文=106 度小童=110 度小萌=111 度米朵=103 度小娇=5
+                度逍遥-情感男声=4003 度博文-专业男主播=4106 度小贤-电台男主播=4115
+                度小鹿-甜美女声=4119 度灵儿-清激女声=4105 度小乔-活泼女声=4117
+                度小雯-活力女主播=4100 度米朵-可爱女声=4103 度姗姗-娱乐女声=4144
+                度小贝-知识女主播=4278 度清风-配音男声=4143 度小新-专业女主播=4140
+                度小彦-知识男主播=4129 度星河-广告男声=4149 度小清-广告女声=4254
+                度博文-综艺男声=4206 南方-电台女主播=4226，
+                如果选择模型为paddlespeech-tts，参数自动失效.
             aue(int, 可选): 语音格式, 默认是3(mp3)  4(pcm-16k) 5(pcm-8k) 6-wav.
             tp_project_id(str): paddlespeech-tts项目ID
             tp_per_id(str): paddlespeech-tts音频ID
@@ -110,9 +116,13 @@ class TTSRequest(proto.Message):
     def validate_baidu_tts(self):
         """检查baidu-tts模型请求参数"""
         self.__validate()
-        if self.per not in {0, 1, 3, 4, 5, 103, 106, 110, 111, 5003, 5118}:
+
+        _BAIDU_VALID_PER = {0, 1, 3, 4, 5, 103, 106, 110, 111, 4003, 4106, 4115, 4119,
+            4105, 4117, 4100, 4103, 4144, 4278, 4143, 4140, 4129, 4149, 4254, 4206, 4226, 5003, 5118}
+
+        if self.per not in _BAIDU_VALID_PER:
             raise ValueError(
-                f"per value is illegal, exepcted in {0, 1, 3, 4, 5, 103, 106, 110, 111, 5003, 5118}, got {self.per}"
+                f"per value is illegal, expected in {_BAIDU_VALID_PER}, got {self.per}"
             )
         if self.aue == 0:
             self.aue = 3
