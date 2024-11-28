@@ -534,7 +534,7 @@ for ans in msg4.content:
 
 ```
 
-**方式2: ** 实现自己的EventHandler，更方便地进行对话（推荐）
+**方式2：** 实现自己的EventHandler，更方便地进行对话（推荐）
 
 ```python
 import os
