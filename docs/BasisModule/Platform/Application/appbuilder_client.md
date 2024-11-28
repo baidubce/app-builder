@@ -1374,3 +1374,169 @@ func main() {
 	}
 }
 ```
+
+#### Run方法回复工作流Agent “信息收集节点”使用示例：
+
+使用“飞行客服小助手”（https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr）作为工作流Agent的示例应用
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/baidubce/app-builder/go/appbuilder"
+)
+
+func main() {
+	// 设置APPBUILDER_TOKEN、GATEWAY_URL_V2环境变量
+	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
+	// 默认可不填，默认值是 https://qianfan.baidubce.com
+	os.Setenv("GATEWAY_URL_V2", "")
+	config, err := appbuilder.NewSDKConfig("", "")
+	if err != nil {
+		fmt.Println("new config failed: ", err)
+		return
+	}
+	// 初始化实例
+	appID := "请填写正确的应用ID"
+	client, err := appbuilder.NewAppBuilderClient(appID, config)
+	if err != nil {
+		fmt.Println("new agent builder failed: ", err)
+		return
+	}
+	// 创建对话ID
+	conversationID, err := client.CreateConversation()
+	if err != nil {
+		fmt.Println("create conversation failed: ", err)
+		return
+	}
+	i, err := client.Run(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "查天气",
+		Stream:         true,
+	})
+
+	if err != nil {
+		fmt.Println("run failed: ", err)
+		return
+	}
+
+	var interruptId string
+	interruptStack := make([]string, 0)
+	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == appbuilder.PublishMessageContentType {
+				detail := ev.Detail.(appbuilder.PublishMessageDetail)
+				message := detail.Message
+				fmt.Println(message)
+				break
+			}
+			if ev.ContentType == appbuilder.ChatflowInterruptContentType {
+				deatil := ev.Detail.(appbuilder.ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		fmt.Println("interrupt id is empty")
+		return
+	}
+
+	interruptId = ""
+	i2, err := client.Run(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "我先查个航班动态",
+		Stream:         true,
+		Action:         appbuilder.NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		fmt.Println("run failed:", err)
+		return
+	}
+	interruptStack = interruptStack[:len(interruptStack)-1]
+	for answer, err := i2.Next(); err == nil; answer, err = i2.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == appbuilder.PublishMessageContentType {
+				detail := ev.Detail.(appbuilder.PublishMessageDetail)
+				message := detail.Message
+				fmt.Println(message)
+				break
+			}
+			if ev.ContentType == appbuilder.ChatflowInterruptContentType {
+				deatil := ev.Detail.(appbuilder.ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		fmt.Println("interrupt id is empty")
+		return
+	}
+
+	interruptId = ""
+	i3, err := client.Run(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "CA1234",
+		Stream:         true,
+		Action:         appbuilder.NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		fmt.Println("run failed:", err)
+		return
+	}
+	interruptStack = interruptStack[:len(interruptStack)-1]
+	for answer, err := i3.Next(); err == nil; answer, err = i3.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == appbuilder.TextContentType {
+				detail := ev.Detail.(appbuilder.TextDetail)
+				text := detail.Text
+				fmt.Println(text)
+				break
+			}
+			if ev.ContentType == appbuilder.ChatflowInterruptContentType {
+				deatil := ev.Detail.(appbuilder.ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		fmt.Println("interrupt id is empty")
+		return
+	}
+
+	i4, err := client.Run(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "北京的",
+		Stream:         true,
+		Action:         appbuilder.NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		fmt.Println("run failed:", err)
+		return
+	}
+	for answer, err := i4.Next(); err == nil; answer, err = i4.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == appbuilder.TextContentType {
+				detail := ev.Detail.(appbuilder.TextDetail)
+				text := detail.Text
+				fmt.Println(text)
+				break
+			}
+		}
+	}
+}
+
+```
+
