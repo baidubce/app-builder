@@ -60,29 +60,32 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
 
 #### 方法参数
 
-| 参数名称        | 参数类型           | 是否必须 | 描述                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 示例值            |
-| --------------- | ------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| conversation_id | String             | 是       | 会话ID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                   |
-| query           | String             | 否       | query问题内容                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | "今天天气怎么样?" |
-| file_ids        | list[String]       | 否       | 对话可引用的文档ID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                   |
-| stream          | Bool               | 否       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延                                                                                                                                                                                                                                                                                                                                                                                                                        | False             |
-| end_user_id     | String             | 否       | 终端用户ID，限制6 - 64字符                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                   |
-| tools           | List[Tool]         | 否       | 一个列表，其中每个字典对应一个工具的配置                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                   |
-| tools[0]        | Tool               | 否       | 工具配置                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                   |
+| 参数名称        | 参数类型           | 是否必须 | 描述                                                         | 示例值            |
+| --------------- | ------------------ | -------- | ------------------------------------------------------------ | ----------------- |
+| conversation_id | String             | 是       | 会话ID                                                       |                   |
+| query           | String             | 否       | query问题内容                                                | "今天天气怎么样?" |
+| file_ids        | list[String]       | 否       | 对话可引用的文档ID                                           |                   |
+| stream          | Bool               | 否       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 | False             |
+| end_user_id     | String             | 否       | 终端用户ID，限制6 - 64字符                                   |                   |
+| tools           | List[Tool]         | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                   |
+| tools[0]        | Tool               | 否       | 工具配置                                                     |                   |
 | +type           | String             | 否       | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 |                   |
-| +function       | Function           | 否       | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写                                                                                                                                                                                                                                                                                                                                                                                                                                      |                   |
-| ++name          | String             | 否       | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。                                                                                                                                                                                                                                                                                                                                                                                                                 |                   |
-| ++description   | String             | 否       | 工具描述                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                   |
-| ++parameters    | Dict               | 否       | 工具参数, json_schema格式                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                   |
-| tool_outputs    | List[ToolOutput]   | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                   |
-| tool_outputs[0] | ToolOutput         | 否       | 工具执行结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                   |
-| +tool_call_id   | String             | 否       | 工具调用ID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                   |
-| +output         | String             | 否       | 工具输出                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                   |
-| tool_choice     | ToolChoice         | 否       | 控制大模型使用组件的方式，仅对自主规划Agent生效。                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                   |
-| +type           | String             | 否       | auto/function，auto表示由LLM自动判断调什么组件；function表示由用户指定调用哪个组件。                                                                                                                                                                                                                                                                                                                                                                                                                    |                   |
-| +function       | ToolChoiceFunction | 否       | 组件对象，包括组件的英文名称和入参                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                   |
-| ++name          | String             | 否       | 组件的英文名称（唯一标识）                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                   |
-| ++input         | String             | 否       | 组件入参，当组件没有入参时填入空对象{}                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                   |
+| +function       | Function           | 否       | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写 |                   |
+| ++name          | String             | 否       | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。 |                   |
+| ++description   | String             | 否       | 工具描述                                                     |                   |
+| ++parameters    | Dict               | 否       | 工具参数, json_schema格式                                    |                   |
+| tool_outputs    | List[ToolOutput]   | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                   |
+| tool_outputs[0] | ToolOutput         | 否       | 工具执行结果                                                 |                   |
+| +tool_call_id   | String             | 否       | 工具调用ID                                                   |                   |
+| +output         | String             | 否       | 工具输出                                                     |                   |
+| tool_choice     | ToolChoice         | 否       | 控制大模型使用组件的方式，仅对自主规划Agent生效。            |                   |
+| +type           | String             | 否       | auto/function，auto表示由LLM自动判断调什么组件；function表示由用户指定调用哪个组件。 |                   |
+| +function       | ToolChoiceFunction | 否       | 组件对象，包括组件的英文名称和入参                           |                   |
+| ++name          | String             | 否       | 组件的英文名称（唯一标识）                                   |                   |
+| ++input         | String             | 否       | 组件入参，当组件没有入参时填入空对象{}                       |                   |
+| action          | Action             | 否       | 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息 |                   |
+| +action_type    | String             | 是       | 要执行的操作。<br/>可选值为：<br/>resume：回复“信息收集节点” 的消息 |                   |
+| +parameters     | Object             | 是       | 执行操作时所需的参数                                         |                   |
 
 #### Run方法非流式返回值
 
@@ -443,6 +446,244 @@ answer = app_builder_client.run(
 )
 ```
 
+
+
+#### Run方法回复工作流Agent “信息收集节点”使用示例：
+
+使用[“飞行客服小助手”](https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr)作为工作流Agent的示例应用。
+
+**方式1：** SDK直接进行对话（不推荐）
+
+```python
+import appbuilder
+import os
+from appbuilder.core.console.appbuilder_client import data_class
+
+# 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+# 设置环境变量
+os.environ["APPBUILDER_TOKEN"] = (
+    "..."
+)
+appbuilder.logger.setLoglevel("ERROR")
+
+# 飞行客服小助手的应用id
+app_id = "..."
+# 初始化智能体
+client = appbuilder.AppBuilderClient(app_id)
+# 创建会话
+conversation_id = client.create_conversation()
+interrupt_ids = []
+
+msg = client.run(conversation_id, "查天气", stream=True)
+interrupt_event_id = None
+for ans in msg.content:
+    for event in ans.events:
+        if event.content_type == "publish_message":
+            print(event.detail.get("message"))
+        if event.content_type == "chatflow_interrupt":
+            interrupt_event_id = event.detail.get("interrupt_event_id")
+            break
+interrupt_ids.append(interrupt_event_id)
+
+msg2 = client.run(
+    conversation_id,
+    "查航班",
+    stream=True,
+    action=data_class.Action.create_resume_action(interrupt_event_id),
+)
+interrupt_event_id = None
+for ans in msg2.content:
+    for event in ans.events:
+        if event.content_type == "publish_message":
+            print(event.detail.get("message"))
+        if event.content_type == "chatflow_interrupt":
+            interrupt_event_id = event.detail.get("interrupt_event_id")
+            break
+        interrupt_ids.append(interrupt_event_id)
+
+msg3 = client.run(
+    conversation_id=conversation_id,
+    query="CA1234",
+    stream=True,
+    action=data_class.Action.create_resume_action(interrupt_ids.pop()),
+)
+interrupt_event_id = None
+for ans in msg3.content:
+    for event in ans.events:
+        if event.content_type == "text":
+            print(event.detail.get("text"))
+        if event.content_type == "chatflow_interrupt":
+            interrupt_event_id = event.detail.get("interrupt_event_id")
+            break
+interrupt_ids.append(interrupt_event_id)
+
+msg4 = client.run(
+    conversation_id=conversation_id,
+    query="北京的",
+    stream=True,
+    action=data_class.Action.create_resume_action(interrupt_ids.pop()),
+)
+has_multiple_dialog_event = False
+for ans in msg4.content:
+    for event in ans.events:
+        if event.content_type == "text":
+            print(event.detail.get("text"))
+        if event.content_type == "multiple_dialog_event":
+            has_multiple_dialog_event = True
+            break
+
+```
+
+**方式2：** 实现自己的EventHandler，更方便地进行对话（推荐）
+
+```python
+import os
+import appbuilder
+from appbuilder.core.console.appbuilder_client.event_handler import (
+    AppBuilderEventHandler,
+)
+
+
+class MyEventHandler(AppBuilderEventHandler):
+    def __init__(self):
+        super().__init__()
+        self.interrupt_ids = []
+
+    def handle_content_type(self, run_context, run_response):
+        interrupt_event_id = None
+        event = run_response.events[-1]
+        if event.content_type == "chatflow_interrupt":
+            interrupt_event_id = event.detail.get("interrupt_event_id")
+        if interrupt_event_id is not None:
+            self.interrupt_ids.append(interrupt_event_id)
+
+    def _create_action(self):
+        if len(self.interrupt_ids) == 0:
+            return None
+        event_id = self.interrupt_ids.pop()
+        return {
+            "action_type": "resume",
+            "parameters": {"interrupt_event": {"id": event_id, "type": "chat"}},
+        }
+
+    def run(self, query=None):
+        super().new_dialog(
+            query=query,
+            action=self._create_action(),
+        )
+
+
+def main():
+    # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+    # 设置环境变量
+    os.environ["APPBUILDER_TOKEN"] = "..."
+    appbuilder.logger.setLoglevel("DEBUG")
+
+    # 飞行客服小助手的应用id
+    app_id = "..."
+    # 初始化智能体
+    client = appbuilder.AppBuilderClient(app_id)
+    conversation_id = client.create_conversation()
+
+    event_handler = MyEventHandler()
+    event_handler.init(
+        appbuilder_client=client,
+        conversation_id=conversation_id,
+        stream=True,
+        query="查天气",
+    )
+    for data in event_handler:
+        pass
+    event_handler.run(
+        query="查航班",
+    )
+    for data in event_handler:
+        pass
+    event_handler.run(
+        query="CA1234",
+    )
+    for data in event_handler:
+        pass
+    event_handler.run(
+        query="北京的",
+    )
+    for data in event_handler:
+        pass
+
+
+if __name__ == "__main__":
+    main()
+```
+
+**方式3:** 实现自己的EventHandler，更方便地进行多轮对话（推荐）
+
+```python
+import os
+import appbuilder
+from appbuilder.core.console.appbuilder_client.event_handler import (
+    AppBuilderEventHandler,
+)
+
+
+class MyEventHandler(AppBuilderEventHandler):
+    def __init__(self):
+        super().__init__()
+        self.interrupt_ids = []
+
+    def handle_content_type(self, run_context, run_response):
+        interrupt_event_id = None
+        event = run_response.events[-1]
+        if event.content_type == "chatflow_interrupt":
+            interrupt_event_id = event.detail.get("interrupt_event_id")
+        if interrupt_event_id is not None:
+            self.interrupt_ids.append(interrupt_event_id)
+
+    def _create_action(self):
+        if len(self.interrupt_ids) == 0:
+            return None
+        event_id = self.interrupt_ids.pop()
+        return {
+            "action_type": "resume",
+            "parameters": {"interrupt_event": {"id": event_id, "type": "chat"}},
+        }
+
+    def gen_action(self):
+        while True:
+            yield self._create_action()
+
+
+def main():
+    # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+    # 设置环境变量
+    os.environ["APPBUILDER_TOKEN"] = "..."
+    appbuilder.logger.setLoglevel("DEBUG")
+
+    # 飞行客服小助手的应用id
+    app_id = "..."
+    # 初始化智能体
+    client = appbuilder.AppBuilderClient(app_id)
+    conversation_id = client.create_conversation()
+
+    queries = ["查天气", "查航班", "CA1234", "北京的"]
+    event_handler = MyEventHandler()
+    event_handler = client.run_multiple_dialog_with_handler(
+        conversation_id=conversation_id,
+        queries=queries,
+        event_handler=event_handler,
+        stream=True,
+        actions=event_handler.gen_action(),
+    )
+    for data in event_handler:
+        for ans in data:
+            pass
+
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
 ## Java基本用法
 
 ### ```new AppBuilderClient(appId)```
@@ -473,27 +714,30 @@ answer = app_builder_client.run(
 
 #### Run方法入参`AppBuilderCientRunRequest`
 
-| 参数名称        | 参数类型           | 是否必须 | 描述                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 示例值               |
-| --------------- | ------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| query           | String             | 是       | query内容                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | "汽车性能参数怎么样" |
-| conversationId  | String             | 是       | 对话id，可以通过createConversation()获取                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                      |
-| stream          | boolean            | 是       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延                                                                                                                                                                                                                                                                                                                                                                                                                        |                      |
-| tools           | List[Tool]         | 否       | 一个列表，其中每个字典对应一个工具的配置                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                      |
-| tools[0]        | Tool               | 否       | 工具配置                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                      |
+| 参数名称        | 参数类型           | 是否必须 | 描述                                                         | 示例值               |
+| --------------- | ------------------ | -------- | ------------------------------------------------------------ | -------------------- |
+| query           | String             | 是       | query内容                                                    | "汽车性能参数怎么样" |
+| conversationId  | String             | 是       | 对话id，可以通过createConversation()获取                     |                      |
+| stream          | boolean            | 是       | 为true时则流式返回，为false时则一次性返回所有内容, 推荐设为true，降低首token时延 |                      |
+| tools           | List[Tool]         | 否       | 一个列表，其中每个字典对应一个工具的配置                     |                      |
+| tools[0]        | Tool               | 否       | 工具配置                                                     |                      |
 | +type           | String             | 否       | 枚举：<br/>**file_retrieval**: 知识库检索工具能够理解文档内容，支持用户针对文档内容的问答。<br/>**code_interpreter**: 代码解释器, 代码解释器能够生成并执行代码，从而协助用户解决复杂问题，涵盖科学计算（包括普通数学计算题）、数据可视化、文件编辑处理（图片、PDF文档、视频、音频等）、文件格式转换（如WAV、MP3、text、SRT、PNG、jpg、MP4、GIF、MP3等）、数据分析&清洗&处理（文件以excel、csv格式为主）、机器学习&深度学习建模&自然语言处理等多个领域。<br/>**function**: 支持fucntion call模式调用工具 |                      |
-| +function       | Function           | 否       | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写                                                                                                                                                                                                                                                                                                                                                                                                                                      |                      |
-| ++name          | String             | 否       | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。                                                                                                                                                                                                                                                                                                                                                                                                                 |                      |
-| ++description   | String             | 否       | 工具描述                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                      |
-| ++parameters    | Dict               | 否       | 工具参数, json_schema格式                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                      |
-| tool_outputs    | List[ToolOutput]   | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                      |
-| tool_outputs[0] | ToolOutput         | 否       | 工具执行结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                      |
-| +tool_call_id   | String             | 否       | 工具调用ID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                      |
-| +output         | String             | 否       | 工具输出                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                      |
-| tool_choice     | ToolChoice         | 否       | 控制大模型使用组件的方式，仅对自主规划Agent生效。                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                      |
-| +type           | String             | 否       | auto/function，auto表示由LLM自动判断调什么组件；function表示由用户指定调用哪个组件。                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |
-| +function       | ToolChoiceFunction | 否       | 组件对象，包括组件的英文名称和入参                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                      |
-| ++name          | String             | 否       | 组件的英文名称（唯一标识）                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                      |
-| ++input         | String             | 否       | 组件入参，当组件没有入参时填入空对象{}                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                      |
+| +function       | Function           | 否       | Function工具描述<br/>仅当**type为**`**function**` 时需要且必须填写 |                      |
+| ++name          | String             | 否       | 函数名<br/>只允许数字、大小写字母和中划线和下划线，最大长度为64个字符。一次运行中唯一。 |                      |
+| ++description   | String             | 否       | 工具描述                                                     |                      |
+| ++parameters    | Dict               | 否       | 工具参数, json_schema格式                                    |                      |
+| tool_outputs    | List[ToolOutput]   | 否       | 内容为本地的工具执行结果，以自然语言/json dump str描述       |                      |
+| tool_outputs[0] | ToolOutput         | 否       | 工具执行结果                                                 |                      |
+| +tool_call_id   | String             | 否       | 工具调用ID                                                   |                      |
+| +output         | String             | 否       | 工具输出                                                     |                      |
+| tool_choice     | ToolChoice         | 否       | 控制大模型使用组件的方式，仅对自主规划Agent生效。            |                      |
+| +type           | String             | 否       | auto/function，auto表示由LLM自动判断调什么组件；function表示由用户指定调用哪个组件。 |                      |
+| +function       | ToolChoiceFunction | 否       | 组件对象，包括组件的英文名称和入参                           |                      |
+| ++name          | String             | 否       | 组件的英文名称（唯一标识）                                   |                      |
+| ++input         | String             | 否       | 组件入参，当组件没有入参时填入空对象{}                       |                      |
+| action          | Action             | 否       | 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息 |                      |
+| +action_type    | String             | 是       | 要执行的操作。<br/>可选值为：<br/>resume：回复“信息收集节点” 的消息 |                      |
+| +parameters     | Object             | 是       | 执行操作时所需的参数                                         |                      |
 
 #### Run方法出参
 | 参数名称                 | 参数类型                 | 描述                                                                             | 示例值 |
@@ -831,6 +1075,116 @@ class AppBuilderClientDemo {
 }
 
 ```
+
+#### Run方法回复工作流Agent “信息收集节点”使用示例：
+
+使用[“飞行客服小助手”](https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr)作为工作流Agent的示例应用
+
+```java
+package org.example;
+
+import java.io.IOException;
+import java.util.*;
+
+import com.google.gson.annotations.SerializedName;
+
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.Event;
+import com.baidubce.appbuilder.base.utils.json.JsonUtils;
+
+class AppBuilderClientDemo {
+
+    public static void main(String[] args) throws IOException, AppBuilderServerException {
+        System.setProperty("APPBUILDER_TOKEN", "请设置正确的应用密钥");
+        String chatflowAppId = "请设置正确的应用ID";
+        AppBuilderClient builder = new AppBuilderClient(chatflowAppId);
+        String conversationId = builder.createConversation();
+
+				AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "查天气", true);
+        Stack<String> interruptStack = new Stack<String>();
+        AppBuilderClientIterator itor = builder.run(request);
+        String interruptEventId = "";
+        while (itor.hasNext()) {
+            AppBuilderClientResult result = itor.next();
+            for (Event event : result.getEvents()) {
+                if (event.getContentType().equals(EventContent.PublishMessageContentType)) {
+                    String message = event.getDetail().get("message").toString();
+                    System.out.println(message);
+                }
+                if (event.getContentType().equals(EventContent.ChatflowInterruptContentType)) {
+                    interruptEventId = event.getDetail().get("interrupt_event_id").toString();
+                    interruptStack.push(interruptEventId);
+                    break;
+                }
+            }
+        }
+      
+        interruptEventId = "";
+        AppBuilderClientRunRequest request2 = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "我先查个航班动态", true);
+        request2.setAction(AppBuilderClientRunRequest.Action.createAction(interruptStack.pop()));
+        AppBuilderClientIterator itor2 = builder.run(request2);
+        while (itor2.hasNext()) {
+            AppBuilderClientResult result2 = itor2.next();
+            for (Event event : result2.getEvents()) {
+                if (event.getContentType().equals(EventContent.PublishMessageContentType)) {
+                    String message = event.getDetail().get("message").toString();
+                    System.out.println(message);
+                }
+                if (event.getContentType().equals(EventContent.ChatflowInterruptContentType)) {
+                    interruptEventId = event.getDetail().get("interrupt_event_id").toString();
+                    interruptStack.push(interruptEventId);
+                    break;
+                }
+            }
+        }
+      
+        interruptEventId = "";
+        AppBuilderClientRunRequest request3 = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "CA1234", true);
+        request3.setAction(AppBuilderClientRunRequest.Action.createAction(interruptStack.pop()));
+        AppBuilderClientIterator itor3 = builder.run(request3);
+        while (itor3.hasNext()) {
+            AppBuilderClientResult result3 = itor3.next();
+            for (Event event : result3.getEvents()) {
+                if (event.getContentType().equals(EventContent.TextContentType)) {
+                    String text = event.getDetail().get("text").toString();
+                    System.out.println(text);
+                }
+                if (event.getContentType().equals(EventContent.ChatflowInterruptContentType)) {
+                    interruptEventId = event.getDetail().get("interrupt_event_id").toString();
+                    interruptStack.push(interruptEventId);
+                    break;
+                }
+            }
+        }
+      
+        boolean hasMultipleContentType = false;
+        AppBuilderClientRunRequest request4 = new AppBuilderClientRunRequest(chatflowAppId, conversationId, "北京的",
+                true);
+        request4.setAction(AppBuilderClientRunRequest.Action.createAction(interruptStack.pop()));
+        AppBuilderClientIterator itor4 = builder.run(request4);
+        while (itor4.hasNext()) {
+            AppBuilderClientResult result4 = itor4.next();
+            for (Event event : result4.getEvents()) {
+                if (event.getContentType().equals(EventContent.TextContentType)) {
+                    String text = event.getDetail().get("text").toString();
+                    System.out.println(text);
+                }
+                if (event.getContentType().equals(EventContent.MultipleDialogEventContentType)) {
+                    hasMultipleContentType = true;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+```
+
+
 
 ## Go基本用法
 
@@ -1170,3 +1524,169 @@ func main() {
 	}
 }
 ```
+
+#### Run方法回复工作流Agent “信息收集节点”使用示例：
+
+使用[“飞行客服小助手”](https://cloud.baidu.com/doc/AppBuilder/s/cm38k8nqr)作为工作流Agent的示例应用
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/baidubce/app-builder/go/appbuilder"
+)
+
+func main() {
+	// 设置APPBUILDER_TOKEN、GATEWAY_URL_V2环境变量
+	os.Setenv("APPBUILDER_TOKEN", "请设置正确的应用密钥")
+	// 默认可不填，默认值是 https://qianfan.baidubce.com
+	os.Setenv("GATEWAY_URL_V2", "")
+	config, err := appbuilder.NewSDKConfig("", "")
+	if err != nil {
+		fmt.Println("new config failed: ", err)
+		return
+	}
+	// 初始化实例
+	appID := "请填写正确的应用ID"
+	client, err := appbuilder.NewAppBuilderClient(appID, config)
+	if err != nil {
+		fmt.Println("new agent builder failed: ", err)
+		return
+	}
+	// 创建对话ID
+	conversationID, err := client.CreateConversation()
+	if err != nil {
+		fmt.Println("create conversation failed: ", err)
+		return
+	}
+	i, err := client.Run(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "查天气",
+		Stream:         true,
+	})
+
+	if err != nil {
+		fmt.Println("run failed: ", err)
+		return
+	}
+
+	var interruptId string
+	interruptStack := make([]string, 0)
+	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == appbuilder.PublishMessageContentType {
+				detail := ev.Detail.(appbuilder.PublishMessageDetail)
+				message := detail.Message
+				fmt.Println(message)
+				break
+			}
+			if ev.ContentType == appbuilder.ChatflowInterruptContentType {
+				deatil := ev.Detail.(appbuilder.ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		fmt.Println("interrupt id is empty")
+		return
+	}
+
+	interruptId = ""
+	i2, err := client.Run(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "我先查个航班动态",
+		Stream:         true,
+		Action:         appbuilder.NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		fmt.Println("run failed:", err)
+		return
+	}
+	interruptStack = interruptStack[:len(interruptStack)-1]
+	for answer, err := i2.Next(); err == nil; answer, err = i2.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == appbuilder.PublishMessageContentType {
+				detail := ev.Detail.(appbuilder.PublishMessageDetail)
+				message := detail.Message
+				fmt.Println(message)
+				break
+			}
+			if ev.ContentType == appbuilder.ChatflowInterruptContentType {
+				deatil := ev.Detail.(appbuilder.ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		fmt.Println("interrupt id is empty")
+		return
+	}
+
+	interruptId = ""
+	i3, err := client.Run(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "CA1234",
+		Stream:         true,
+		Action:         appbuilder.NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		fmt.Println("run failed:", err)
+		return
+	}
+	interruptStack = interruptStack[:len(interruptStack)-1]
+	for answer, err := i3.Next(); err == nil; answer, err = i3.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == appbuilder.TextContentType {
+				detail := ev.Detail.(appbuilder.TextDetail)
+				text := detail.Text
+				fmt.Println(text)
+				break
+			}
+			if ev.ContentType == appbuilder.ChatflowInterruptContentType {
+				deatil := ev.Detail.(appbuilder.ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		fmt.Println("interrupt id is empty")
+		return
+	}
+
+	i4, err := client.Run(appbuilder.AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "北京的",
+		Stream:         true,
+		Action:         appbuilder.NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		fmt.Println("run failed:", err)
+		return
+	}
+	for answer, err := i4.Next(); err == nil; answer, err = i4.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == appbuilder.TextContentType {
+				detail := ev.Detail.(appbuilder.TextDetail)
+				text := detail.Text
+				fmt.Println(text)
+				break
+			}
+		}
+	}
+}
+
+```
+
