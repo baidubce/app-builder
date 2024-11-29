@@ -136,4 +136,4 @@ class StyleRewrite(CompletionBaseComponent):
         top_p = model_configs.get("top_p", 0.0)
         message = super().run(message=msg, style=style, stream=False, temperature=temperature, top_p=top_p, request_id=traceid)
         
-        yield self.create_output(type="text", text=str(message.content))
+        yield self.create_output(type="text", text=str(message.content), name="text", usage=message.token_usage)
