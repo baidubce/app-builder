@@ -89,6 +89,9 @@ class Text2ImageCase(Case):
         return [url_schema]
 
 class StypeRewriteCase(Case):
+    def init_args(self):
+        return {"model_name": "Qianfan-Agent-Speed-8k"}
+    
     def inputs(self):
         return {"query": "文心大模型发布新版"}
 
