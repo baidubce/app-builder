@@ -197,6 +197,7 @@ class Component:
         secret_key: Optional[str] = None,
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         r"""Component初始化方法.
 

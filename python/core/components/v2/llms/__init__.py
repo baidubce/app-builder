@@ -12,12 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .animal_recognize.component import AnimalRecognition
-from .image_understand.component import  ImageUnderstand
-from .llms.style_rewrite.component import StyleRewrite
 
-__V2_COMPONENTS__ = [
-    "AnimalRecognition",
-    "ImageUnderstand",
-    "StyleRewrite"
-] # NOQA
