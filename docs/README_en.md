@@ -129,7 +129,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
 rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE-4.0-8K")
-"ERNIE-4.0-8K"
+
 input = appbuilder.Message("9.11和9.8哪个大")
 result = rag_with_baidu_search_pro.run(
     message=input,
