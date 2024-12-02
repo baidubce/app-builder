@@ -26,30 +26,6 @@ from appbuilder.core.components.v2 import StyleRewrite as StyleRewriteV2
 logging.basicConfig(level=logging.INFO)
 
 class TestAppbuilderForSentryOff(unittest.TestCase):
-    def setUp(self):
-        try:
-            subprocess.check_output(['python3','-m','pip', 'install', 'sentry-sdk==1.44.1'])
-        except Exception as e:
-            print('pip uninstall sentry-sdk failed')
-
-        os.environ["ENABLE_SENTRY_TRACE"] = "true"
-        os.environ["SENTRY_DSN"] = "test"
-        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
-
-        # 启动跟踪器(仅测试Sentry Trace功能)
-        tracer = AppbuilderInstrumentor()
-        tracer._instrument()
-    
-    def tearDown(self):
-        # 清理测试环境
-        try:
-            subprocess.check_output(['python3','-m','pip', 'uninstall', 'sentry-sdk', '-y'])
-        except Exception as e:
-            print('pip uninstall sentry-sdk failed')
-        del os.environ["ENABLE_SENTRY_TRACE"]
-        del os.environ["SENTRY_DSN"]
-        del os.environ["APPBUILDER_TRACE_DEBUG"]
-
     def test_sentry_normal(self):
         """
         测试Sentry的追踪功能是否正常。
@@ -64,6 +40,18 @@ class TestAppbuilderForSentryOff(unittest.TestCase):
             ImportError: 如果未安装sentry-sdk库，则抛出此异常。
         
         """
+        try:
+            subprocess.check_output(['python3','-m','pip', 'install', 'sentry-sdk==1.44.1'])
+        except Exception as e:
+            print('pip uninstall sentry-sdk failed')
+
+        os.environ["ENABLE_SENTRY_TRACE"] = "true"
+        os.environ["SENTRY_DSN"] = "test"
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
+
+        # 启动跟踪器(仅测试Sentry Trace功能)
+        tracer = AppbuilderInstrumentor()
+        tracer._instrument()
         # 启动Sentry
         try:
             import sentry_sdk
@@ -89,15 +77,26 @@ class TestAppbuilderForSentryOff(unittest.TestCase):
             run_out = sr.run(message=msg, style=style)
             print(run_out)
             sr = StyleRewrite(model="Qianfan-Agent-Speed-8k")
-            tool_eval_out = sr.non_stream_tool_eval(name="name", query=text, style=style)
-            print(tool_eval_out)
-
+            tool_eval_out = sr.tool_eval(name="name", query=text, style=style, streaming=True)
+            for res in tool_eval_out:
+                print(res)
 
             # test Components v2 tool_eval
             sr_v2 = StyleRewriteV2(model="Qianfan-Agent-Speed-8k")
             text = "成都是个包容的城市"
             style = "直播话术"
             tool_eval_out = sr_v2.tool_eval(query=text, style=style)
+            for res in tool_eval_out:
+                print(res)
+
+        # 清理测试环境
+        try:
+            subprocess.check_output(['python3','-m','pip', 'uninstall', 'sentry-sdk', '-y'])
+        except Exception as e:
+            print('pip uninstall sentry-sdk failed')
+        del os.environ["ENABLE_SENTRY_TRACE"]
+        del os.environ["SENTRY_DSN"]
+        del os.environ["APPBUILDER_TRACE_DEBUG"]
         
 
 if __name__ == '__main__':

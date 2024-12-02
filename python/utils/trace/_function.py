@@ -774,7 +774,7 @@ def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
             with sentry_sdk.start_span(op=_tool_name(args=args), description=_tool_name(args=args)) as new_span:  
                 new_span.set_data("Span-kind",'tool')
                 if isinstance(item, ComponentOutput):
-                    new_span.set_attribute("output.value", "{}".format(item.model_dump_json(indent=4)))
+                    new_span.set_data("output.value", "{}".format(item.model_dump_json(indent=4)))
                 else:
                     new_span.set_data("output-value", "{}".format(json.dumps(item, ensure_ascii=False)))
                     if isinstance(item, dict):
