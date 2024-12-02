@@ -20,8 +20,7 @@ import requests
 import logging
 
 import appbuilder
-from appbuilder import AppBuilderTracer, AppbuilderInstrumentor
-from appbuilder.utils.trace._function import _components_run_trace_with_sentry,_components_stream_run_trace_with_sentry
+from appbuilder import AppbuilderInstrumentor, StyleRewrite
 
 logging.basicConfig(level=logging.INFO)
 
@@ -93,6 +92,13 @@ class TestAppbuilderForSentryOff(unittest.TestCase):
             result = asr.tool_eval(name="asr", streaming=True, file_url=audio_file_url)
             for res in result:
                 print(f"ASR Tool_Eval Result: {res}")
+
+            # 组件V2版本Sentry追踪测试
+            sr = StyleRewrite(model="Qianfan-Agent-Speed-8k")
+            text = "成都是个包容的城市"
+            style = "直播话术"
+            out = sr.non_stream_tool_eval(query=text, style=style)
+            print(out)
 
         # 清理测试环境
         try:
