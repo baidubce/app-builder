@@ -19,7 +19,6 @@ nav:
       - 文件生成PPT（PPTGenerationFromFile）: BasisModule/Components/ppt_generation_from_file/README.md
       - GBI 选表: BasisModule/Components/gbi/select_table/README.md
       - GBI 问表: BasisModule/Components/gbi/nl2sql/README.md
-      - Excel转图表（Excel2Figure）: BasisModule/Components/excel2figure/README.md
       - 向量计算（Embedding）: BasisModule/Components/embeddings/README.md
       - 论文生成PPT（PPTGenerationFromPaper）: BasisModule/Components/ppt_generation_from_paper/README.md
       - 地标识别（LandmarkRecognition）: BasisModule/Components/landmark_recognize/README.md

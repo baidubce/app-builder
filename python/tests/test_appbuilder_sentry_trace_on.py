@@ -20,8 +20,8 @@ import requests
 import logging
 
 import appbuilder
-from appbuilder import AppBuilderTracer, AppbuilderInstrumentor
-from appbuilder.utils.trace._function import _components_run_trace_with_sentry,_components_stream_run_trace_with_sentry
+from appbuilder import AppbuilderInstrumentor, StyleRewrite
+from appbuilder.core.components.v2 import StyleRewrite as StyleRewriteV2
 
 logging.basicConfig(level=logging.INFO)
 
@@ -40,7 +40,6 @@ class TestAppbuilderForSentryOff(unittest.TestCase):
             ImportError: 如果未安装sentry-sdk库，则抛出此异常。
         
         """
-        # 配置测试环境
         try:
             subprocess.check_output(['python3','-m','pip', 'install', 'sentry-sdk==1.44.1'])
         except Exception as e:
@@ -48,6 +47,7 @@ class TestAppbuilderForSentryOff(unittest.TestCase):
 
         os.environ["ENABLE_SENTRY_TRACE"] = "true"
         os.environ["SENTRY_DSN"] = "test"
+        os.environ["APPBUILDER_TRACE_DEBUG"] = "true"
 
         # 启动跟踪器(仅测试Sentry Trace功能)
         tracer = AppbuilderInstrumentor()
@@ -67,38 +67,37 @@ class TestAppbuilderForSentryOff(unittest.TestCase):
             logging.info("Patch_sentry_sdk_trace_id is initialized successfully.")
         except Exception as e:
             print(e)
-
         # 启动事务
         with sentry_sdk.start_transaction(op="task", name="UT-Components-trace-test"):
             # test Components run
-            play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model="ERNIE-3.5-8K")
-            msg = appbuilder.Message({
-                "name": "小明",
-                "bot_name": "机器人",
-                "bot_type": "聊天机器人",
-                "bot_function": "聊天",
-                "bot_question": "你好吗？"
-            })
+            sr = StyleRewrite(model="Qianfan-Agent-Speed-8k")
+            text = "成都是个包容的城市"
+            style = "直播话术"
+            msg = appbuilder.Message(content=text)
+            run_out = sr.run(message=msg, style=style)
+            print(run_out)
+            sr = StyleRewrite(model="Qianfan-Agent-Speed-8k")
+            tool_eval_out = sr.tool_eval(name="name", query=text, style=style, streaming=True)
+            for res in tool_eval_out:
+                print(res)
 
-            answer = play.run(message=msg, stream=False, temperature=1)
-            print(f"Playground Answer: {answer}")
-
-            # test Components tool_eval
-            audio_file_url = ("https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1"
-                                "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost"
-                                "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411")
-            asr = appbuilder.ASR()
-            raw_audio = requests.get(audio_file_url).content
-            inp = appbuilder.Message(content={"raw_audio": raw_audio})
-            result = asr.tool_eval(name="asr", streaming=True, file_url=audio_file_url)
-            for res in result:
-                print(f"ASR Tool_Eval Result: {res}")
+            # test Components v2 tool_eval
+            sr_v2 = StyleRewriteV2(model="Qianfan-Agent-Speed-8k")
+            text = "成都是个包容的城市"
+            style = "直播话术"
+            tool_eval_out = sr_v2.tool_eval(query=text, style=style)
+            for res in tool_eval_out:
+                print(res)
 
         # 清理测试环境
         try:
             subprocess.check_output(['python3','-m','pip', 'uninstall', 'sentry-sdk', '-y'])
         except Exception as e:
             print('pip uninstall sentry-sdk failed')
+        del os.environ["ENABLE_SENTRY_TRACE"]
+        del os.environ["SENTRY_DSN"]
+        del os.environ["APPBUILDER_TRACE_DEBUG"]
+        
 
 if __name__ == '__main__':
     unittest.main()

@@ -20,6 +20,7 @@ from pydantic import BaseModel
 from appbuilder import Message
 
 from appbuilder import AppbuilderTraceException
+from appbuilder.core.component import ComponentOutput
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -723,7 +724,7 @@ def _components_stream_run_trace_with_opentelemetry(tracer, func, *args, **kwarg
         Generator: 组件流函数返回值的生成器
     
     """
-    with tracer.start_as_current_span(_tool_name(args = args)) as span:  
+    with tracer.start_as_current_span(_tool_name(args = args)) as span:
         start_time = time.time()
         span.set_attribute("openinference.span.kind",'tool')
         _input(args = args, kwargs = kwargs, span=span)
@@ -731,16 +732,22 @@ def _components_stream_run_trace_with_opentelemetry(tracer, func, *args, **kwarg
         for item in func(*args, **kwargs):  
             with tracer.start_as_current_span('Component-Stream') as new_span:  
                 new_span.set_attribute("openinference.span.kind",'tool')
-                new_span.set_attribute("output.value", "{}".format(json.dumps(item, ensure_ascii=False)))
-                if isinstance(item, dict):
-                    run_list.append(item.get('text', None))
+                if isinstance(item, ComponentOutput):
+                    new_span.set_attribute("output.value", "{}".format(item.model_dump_json(indent=4)))
                 else:
-                    run_list.append(str(item))
-            yield item
+                    new_span.set_attribute("output.value", "{}".format(json.dumps(item, ensure_ascii=False)))
+                    if isinstance(item, dict):
+                        run_list.append(item.get('text', None))
+                    else:
+                        run_list.append(str(item))
+                yield item
         end_time = time.time()  
         _time(start_time = start_time,end_time = end_time,span = span)
-        result_str = ''.join(str(res) for res in run_list)
-        span.set_attribute("output.value",result_str)
+        if run_list:
+            result_str = ''.join(str(res) for res in run_list)
+            span.set_attribute("output.value",result_str)
+        else:
+            span.set_attribute("output.value","流式运行结束")
 
 def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
      """
@@ -766,15 +773,21 @@ def _components_stream_run_trace_with_sentry(func, *args, **kwargs):
         for item in func(*args, **kwargs):  
             with sentry_sdk.start_span(op=_tool_name(args=args), description=_tool_name(args=args)) as new_span:  
                 new_span.set_data("Span-kind",'tool')
-                new_span.set_data("output-value", "{}".format(json.dumps(item, ensure_ascii=False)))
-                if isinstance(item, dict):
-                    text = item.get('text', None)
-                    run_list.append(text)
+                if isinstance(item, ComponentOutput):
+                    new_span.set_data("output.value", "{}".format(item.model_dump_json(indent=4)))
                 else:
-                    run_list.append(str(item))
-            yield item
-        result_str = ''.join(str(res) for res in run_list)
-        span.set_data("output-value",result_str)
+                    new_span.set_data("output-value", "{}".format(json.dumps(item, ensure_ascii=False)))
+                    if isinstance(item, dict):
+                        text = item.get('text', None)
+                        run_list.append(text)
+                    else:
+                        run_list.append(str(item))
+                yield item
+        if run_list: 
+            result_str = ''.join(str(res) for res in run_list)
+            span.set_data("output-value",result_str)
+        else:
+            span.set_data("output-value","流式运行结束")
                 
 
 def _list_trace(tracer, func, *args, **kwargs):

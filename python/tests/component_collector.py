@@ -22,7 +22,6 @@ SKIP_COMPONENTS = [
 COMPONENT_WHITE_LIST = [
     "RagWithBaiduSearchPro",
     "RAGWithBaiduSearch",
-    "Excel2Figure",
     "MRC",
     "OralQueryGeneration",
     "QAPairMining",
