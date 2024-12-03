@@ -17,8 +17,9 @@ import unittest
 import appbuilder
 from appbuilder.core.components.v2 import GeneralOCR
 from appbuilder.core.component import ComponentOutput
+from appbuilder.core._exception import InvalidRequestArgumentError
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestGeneralOCR(unittest.TestCase):
     def setUp(self) -> None:
         self.com = GeneralOCR()
@@ -43,6 +44,15 @@ class TestGeneralOCR(unittest.TestCase):
         for res in result:
             assert isinstance(res, ComponentOutput)
             print(res.content)
+
+    def test_error_tool_eval(self):
+        result = self.com.tool_eval(img_url='', img_name='')
+        with self.assertRaises(InvalidRequestArgumentError):
+            list(result)
+
+        result = self.com.tool_eval(img_url='', img_name='test.jpg')
+        with self.assertRaises(InvalidRequestArgumentError):
+            list(result)
 
 if __name__ == "__main__":
     unittest.main()
