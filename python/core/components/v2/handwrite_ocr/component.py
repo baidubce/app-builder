@@ -15,7 +15,7 @@ import base64
 from typing import Optional
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
-from appbuilder.core.components.handwrite_ocr.model import *
+from appbuilder.core.components.v2.handwrite_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core import utils
@@ -190,7 +190,7 @@ class HandwriteOCR(Component):
                """
         if not request.image and not request.url:
             raise ValueError("request format error, one of image or url must be set")
-        data = HandwriteOCRRequest.to_dict(request)
+        data = request.model_dump()
         if self.http_client.retry.total != retry:
             self.http_client.retry.total = retry
         headers = self.http_client.auth_header(request_id)
@@ -202,7 +202,7 @@ class HandwriteOCR(Component):
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
         self.__class__._check_service_error(request_id, data)
-        ocr_response = HandwriteOCRResponse(data)
+        ocr_response = HandwriteOCRResponse(**data)
         ocr_response.request_id = request_id
         return ocr_response
 

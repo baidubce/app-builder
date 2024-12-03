@@ -15,10 +15,9 @@
 """手写文字识别数据类"""
 import proto
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-
-class HandwriteOCRRequest(proto.Message):
+class HandwriteOCRRequest(BaseModel):
     """ 手写文字识别组件请求参数
     属性:
         image (str):
@@ -55,49 +54,18 @@ class HandwriteOCRRequest(proto.Message):
              - "true"：检测，涂改痕迹部分用“☰”返回；
              - "false"：不检测
     """
-    image: str = proto.Field(
-        proto.STRING,
-        number=1,
-    )
-    url: str = proto.Field(
-        proto.STRING,
-        number=2,
-    )
-    pdf_file: str = proto.Field(
-        proto.STRING,
-        number=3,
-    )
-    pdf_file_num: str = proto.Field(
-        proto.STRING,
-        number=4,
-    )
-    ofd_file: str = proto.Field(
-        proto.STRING,
-        number=5,
-    )
-    ofd_file_num: str = proto.Field(
-        proto.STRING,
-        number=6,
-    )
-    recognize_granularity: str = proto.Field(
-        proto.STRING,
-        number=7,
-    )
-    probability: str = proto.Field(
-        proto.STRING,
-        number=8,
-    )
-    detect_direction: str = proto.Field(
-        proto.STRING,
-        number=9,
-    )
-    detect_alteration: str = proto.Field(
-        proto.STRING,
-        number=10,
-    )
+    image: str = Field(None, description="图像内容的base64编码")
+    url: str = Field(None, description="图像的URL地址，经过base64编码")
+    pdf_file: str = Field(None, description="PDF文件内容的base64编码")
+    pdf_file_num: str = Field(None, description="PDF文件的页数")
+    ofd_file: str = Field(None, description="OFD（Open Format Document）文件内容的base64编码")
+    ofd_file_num: str = Field(None, description="OFD文件的页数")
+    recognize_granularity: str = Field("small", description="识别粒度")
+    probability: str = Field("false", description="是否输出置信度")
+    detect_direction: str = Field("false", description="是否检测文本方向")
+    detect_alteration: str = Field("false", description="是否检测涂改痕迹")
 
-
-class HandwriteLocation(proto.Message):
+class HandwriteLocation(BaseModel):
     """ 手写体位置信息.
 
         属性:
@@ -106,42 +74,24 @@ class HandwriteLocation(proto.Message):
             width (int): 表示定位位置的长方形的宽度
             height (int): 表示定位位置的长方形的高度
          """
-    left: int = proto.Field(
-        proto.INT32,
-        number=1,
-    )
-    top: int = proto.Field(
-        proto.INT32,
-        number=2,
-    )
-    width: int = proto.Field(
-        proto.INT32,
-        number=3,
-    )
-    height: int = proto.Field(
-        proto.INT32,
-        number=4,
-    )
+    left: Optional[int] = Field(None, description="表示定位位置的长方形左上顶点的水平坐标")
+    top: Optional[int] = Field(None, description="表示定位位置的长方形左上顶点的垂直坐   标")
+    width: Optional[int] = Field(None, description="表示定位位置的长方形的宽度")
+    height: Optional[int] = Field(None, description="表示定位位置的长方形的高度")
 
 
-class HandwriteWordResult(proto.Message):
-    """ 手写文字识别结果列表
+class HandwriteWordResult(BaseModel):
+    """ 手写文字识别结果
 
         属性:
             words (str): 识别出的文本
             location (Location): 文本位置信息
      """
-    words: str = proto.Field(
-        proto.STRING,
-        number=1,
-    )
-    location = proto.Field(
-        HandwriteLocation,
-        number=2,
-    )
+    words: str = Field(None, description="识别出的文本")
+    location: Optional[HandwriteLocation] = Field(None, description="文本位置信息")
 
 
-class HandwriteProbability(proto.Message):
+class HandwriteProbability(BaseModel):
     """手写体置信度
 
        属性:
@@ -149,22 +99,12 @@ class HandwriteProbability(proto.Message):
             variance (float): 每行置信度的方差
             min (float)：每行的最小置信度
     """
-
-    average: float = proto.Field(
-        proto.FLOAT,
-        number=1,
-    )
-    variance: float = proto.Field(
-        proto.FLOAT,
-        number=2,
-    )
-    min: float = proto.Field(
-        proto.FLOAT,
-        number=3,
-    )
+    average: Optional[float] = Field(None, description="每行的平均置信度")
+    variance: Optional[float] = Field(None, description="每行置信度的方差")
+    min: Optional[float] = Field(None, description="每行的最小置信度")
 
 
-class HandwriteOCRResponse(proto.Message):
+class HandwriteOCRResponse(BaseModel):
     """手写文字识别结果
 
         属性:
@@ -173,38 +113,18 @@ class HandwriteOCRResponse(proto.Message):
             words_result_num (int): 必填。识别结果的数量
             words_result (List[WordResult]): 识别结果的数组
             probability（Probability）：当probability=true 时返回该字段，表示识别结果中每一行的置信度值
-            direction (int): 当detect_direction=true返回改字段，1（未定义）、
+            direction (int): 当
+            detect_direction=true返回改字段，1（未定义）、
             0（正向）、1（逆时针90度）、2（逆时针180度）、3（逆时针270度）
             pdf_file_size (str): 输入PDF文件的总页数。当pdf_file参数有效时返回
     """
-    request_id: str = proto.Field(
-        proto.STRING,
-        number=1,
-    )
-    log_id: int = proto.Field(
-        proto.UINT64,
-        number=2,
-    )
-    words_result_num: int = proto.Field(
-        proto.UINT32,
-        number=3,
-    )
-    words_result = proto.RepeatedField(
-        HandwriteWordResult,
-        number=4,
-    )
-    probability = proto.Field(
-        HandwriteProbability,
-        number=5
-    )
-    direction: int = proto.Field(
-        proto.INT32,
-        number=6,
-    )
-    pdf_file_size: str = proto.Field(
-        proto.STRING,
-        number=7,
-    )
+    request_id: str = Field(None, description="请求ID")
+    log_id: int = Field(None, description="用于问题跟踪的唯一日志ID")
+    words_result_num: int = Field(None, description="必填。识别结果的数量")
+    words_result: List[HandwriteWordResult] = Field(None, description="识别结果的数组")
+    probability: Optional[HandwriteProbability] = Field(None, description="当probability=true 时返回该字段，表示识别结果中每一行的置信度值")
+    direction: int = Field(None, description="当detect_direction=true返回改字段，1(未定义）、0（正向）、1（逆时针90度）、2（逆时针180度）、3（逆时针270度）")
+    pdf_file_size: str = Field(None, description="输入PDF文件的总页数。当pdf_file参数有效时返回")
 
 
 class HandwriteOCRInMsg(BaseModel):

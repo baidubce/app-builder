@@ -23,7 +23,7 @@ from appbuilder.core._exception import InvalidRequestArgumentError
 from appbuilder.core.components.v2 import HandwriteOCR
 
 
-class TestPlantRecognition(unittest.TestCase):
+class TestHandWriteOCR(unittest.TestCase):
 
     def setUp(self):
         """
