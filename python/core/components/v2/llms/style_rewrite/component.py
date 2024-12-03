@@ -65,10 +65,10 @@ class StyleRewrite(CompletionBaseComponent):
 
     def __init__(
             self,
-            model=None,
+            model: str="Qianfan-Agent-Speed-8K",
             secret_key: Optional[str] = None,
             gateway: str = "",
-            lazy_certification: bool = False,
+            lazy_certification: bool = True,
     ):
         """初始化StyleRewrite模型。
         

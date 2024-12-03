@@ -147,33 +147,15 @@ class MainfestMatchToolEvalRule(RuleBase):
             if not manifests or len(manifests) == 0:
                 raise ValueError("No manifests found")
             manifest = manifests[0]
-            properties = manifest['parameters']['properties']
-            manifest_var = properties.keys()
-            required_params = []
-            anyOf = manifest['parameters'].get('anyOf', None)
-            required_exists = False
-            if anyOf:
-                for anyOf_dict in anyOf:
-                    if 'required' in anyOf_dict:
-                        required_exists = True
-                        required_params += anyOf_dict['required']
-                    
-            if not anyOf:
-                if 'required' in manifest['parameters']:
-                    required_exists = True
-                    required_params += manifest['parameters']['required']
-
-            if not required_exists:
-                check_pass_flag = False
-                invalid_details.append("mainfest 未定义required参数")
-                return CheckInfo(
-                    check_rule_name=self.rule_name,
-                    check_result=check_pass_flag,
-                    check_detail=",".join(invalid_details))
-            
+            if 'parameters' in manifest and 'properties' in manifest['parameters']:
+                properties = manifest['parameters']['properties']
+                manifest_var = properties.keys()
+            else:
+                manifest_var = []
+                
             # 交互检查
             tool_eval_input_params = []
-            print("required_params: {}".format(required_params))
+            print("required_params: {}".format(manifest_var))
             signature = inspect.signature(component_cls.tool_eval)
             ileagal_params = []
             for param_name, param in signature.parameters.items():
@@ -188,7 +170,7 @@ class MainfestMatchToolEvalRule(RuleBase):
                 invalid_details.append("tool_eval 参数 {} 不在 mainfest 参数列表中".format(",".join(ileagal_params)))
 
             ileagal_params =[]
-            for required_param in required_params:
+            for required_param in manifest_var:
                 if required_param not in tool_eval_input_params:
                     check_pass_flag = False
                     ileagal_params.append(required_param)
