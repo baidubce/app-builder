@@ -88,7 +88,7 @@ class Text2ImageCase(Case):
     def schemas(self):
         return [url_schema]
 
-class StypeRewriteCase(Case):
+class StyleRewriteCase(Case):
     def init_args(self):
         return {"model": "Qianfan-Agent-Speed-8k"}
     
@@ -99,10 +99,40 @@ class StypeRewriteCase(Case):
         return [text_schema]
 
 
+class HallucinationDetectionCase(Case):
+    def inputs(self):
+        return {
+            "query": '澳门新麻蒲烤肉店每天开门吗？',
+            "context": ('澳门美食： 澳门新麻蒲韩国烤肉店\n'
+                        '在澳门一年四季之中除了火锅，烤肉也相当受欢迎。提到韩烧，有一间令我印象最深刻，就是号称韩国第一的烤肉店－新麻蒲韩国烤肉店，光是韩国的分店便多'
+                        '达四百多间，海外分店更是遍布世界各地，2016年便落户澳门筷子基区，在原本已经食肆林立的地方一起百花齐放！店内的装修跟韩国分店还完度几乎没差，让'
+                        '食客彷如置身于韩国的感觉，还要大赞其抽风系统不俗，离开时身上都不会沾上烤肉味耶！\n'
+                        '时间：周一至周日 下午5:00 - 上午3:00\n'
+                        '电话：＋853 2823 4012\n'
+                        '地址：澳门筷子基船澳街海擎天第三座地下O号铺96号\n'
+                        '必食推介:\n'
+                        '护心肉二人套餐\n'
+                        '来新麻蒲必试的有两样东西，现在差不多每间烤肉店都有炉边烤蛋，但大家知道吗？原来新麻蒲就是炉边烤蛋的开创者，既然是始祖，这已经是个非吃不可的理'
+                        '由！还有一款必试的就是护心肉，即是猪的横隔膜与肝中间的部分，每头猪也只有200克这种肉，非常珍贵，其味道吃起来有种独特的肉香味，跟牛护心肉一样'
+                        '精彩！\n'
+                        '秘制猪皮\n'
+                        '很多怕胖的女生看到猪皮就怕怕，但其实猪皮含有大量胶原蛋白，营养价值很高呢！这里红通通的猪皮还经过韩国秘制酱汁处理过，会有一点点辣味。烤猪皮的'
+                        '时候也需特别注意火侯，这样吃起来才会有外脆内Q的口感！'),
+            "answer": '澳门新麻蒲烤肉店并不是每天开门，周日休息。'
+        }
+
+    def schemas(self):
+        return [text_schema]
+
+    def outputs(self):
+        return {"text": ["存在幻觉"]}
+
+
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
     "ImageUnderstand": ImageUnderstandCase,
     "ASR": ASRCase,
     "TreeMind": TreeMindCase,
-    "StyleRewrite": StypeRewriteCase
+    "StyleRewrite": StyleRewriteCase,
+    "HallucinationDetection": HallucinationDetectionCase
 }
