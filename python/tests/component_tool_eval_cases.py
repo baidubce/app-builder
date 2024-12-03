@@ -98,6 +98,22 @@ class StyleRewriteCase(Case):
     def schemas(self):
         return [text_schema]
 
+class QRcodeOCRCase(Case):
+    def inputs(self):
+        image_url = "https://bj.bcebos.com/v1/appbuilder/qrcode_ocr_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-" \
+                    "01-24T12%3A45%3A13Z%2F-1%2Fhost%2Ffc43d07b41903aeeb5a023131ba6" \
+                    "e74ab057ce26d50e966dc31ff083e6a9c41b"
+        return {
+            "file_names": ["text"],
+            "file_urls": {"text": image_url}
+        }
+
+    def schemas(self):
+        return [text_schema]
+
+    def outputs(self):
+        return {"text": ["ocr文字识别"]}
 
 class HallucinationDetectionCase(Case):
     def inputs(self):
@@ -134,5 +150,6 @@ component_tool_eval_cases = {
     "ASR": ASRCase,
     "TreeMind": TreeMindCase,
     "StyleRewrite": StyleRewriteCase,
-    "HallucinationDetection": HallucinationDetectionCase
+    "HallucinationDetection": HallucinationDetectionCase,
+    "QRcodeOCR": QRcodeOCRCase,
 }
