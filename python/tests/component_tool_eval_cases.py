@@ -176,6 +176,18 @@ class MixCardOCRCase(Case):
 
     def outputs(self):
         return {"text": ["北京市公安局"]}
+class TranslationCase(Case):
+    def inputs(self):
+        return {
+            "q": "你好",
+            "to_lang": "en",
+            }
+
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["Hello"]}
 
 
 component_tool_eval_cases = {
@@ -188,4 +200,5 @@ component_tool_eval_cases = {
     "QRcodeOCR": QRcodeOCRCase,
     "HandwriteOCR": HandWriteOCRCase,
     "MixCardOCR": MixCardOCRCase,
+    "Translation": TranslationCase
 }
