@@ -22,6 +22,7 @@ from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.core._exception import AppbuilderBuildexException
 from component_collector import  get_all_components, get_v2_components, get_component_white_list
 from appbuilder.tests.base_rules import ComponentCheckBase
+import component_check
 
 def check_component_with_retry(component_import_res_tuple):
     """
