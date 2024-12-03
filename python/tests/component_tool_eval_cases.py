@@ -159,6 +159,23 @@ class HandWriteOCRCase(Case):
 
     def outputs(self):
         return {"text": ["银杏树"]}
+    
+class MixCardOCRCase(Case):
+    def inputs(self):
+        image_url=("https://bj.bcebos.com/v1/appbuilder/test_mix_card_ocr.jpeg?"
+                        "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T06"
+                        "%3A18%3A11Z%2F-1%2Fhost%2F695b8041c1ded194b9e80dbe"
+                        "1865e4393da5a3515e90d72d81ef18296bd29598")
+        return {
+            "file_names": ["test"],
+            "file_urls": {"test": image_url}
+        }
+    
+    def schemas(self):
+        return [text_schema]
+
+    def outputs(self):
+        return {"text": ["北京市公安局"]}
 
 
 component_tool_eval_cases = {
@@ -170,4 +187,5 @@ component_tool_eval_cases = {
     "HallucinationDetection": HallucinationDetectionCase,
     "QRcodeOCR": QRcodeOCRCase,
     "HandwriteOCR": HandWriteOCRCase,
+    "MixCardOCR": MixCardOCRCase,
 }

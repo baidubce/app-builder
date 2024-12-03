@@ -140,11 +140,11 @@ class HandwriteOCR(Component):
         if not sys_file_urls:
             sys_file_urls = kwargs.get('_sys_file_urls', {})
 
-        for file_name in file_names:
+        for file_name in sys_file_names:
             if utils.is_url(file_name):
                 file_url = file_name
             else:
-                file_url = file_urls.get(file_name, None)
+                file_url = sys_file_urls.get(file_name, None)
             if file_url is None:
                 raise InvalidRequestArgumentError(f"request format error, file {file_name} url does not exist")
             req = HandwriteOCRRequest()
