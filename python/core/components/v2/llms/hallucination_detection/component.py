@@ -153,7 +153,7 @@ class HallucinationDetection(CompletionBaseComponent):
                                                                                       request.params,
                                                                                       headers,
                                                                                       response))
-        return self.gene_response(response, stream), response
+        return self.gene_response(response, stream)
 
     @components_run_trace
     def run(self, message, stream=False, temperature=1e-10, top_p=0.0):
@@ -186,14 +186,14 @@ class HallucinationDetection(CompletionBaseComponent):
         model_config = self.get_model_config(model_config_inputs)
 
         request = self.gene_request(query, inputs, response_mode, user_id, model_config)
-        response, raw_data = self.completion(self.version, self.base_url, request)
+        response = self.completion(self.version, self.base_url, request)
 
         if response.error_no != 0:
             raise AppBuilderServerException(service_err_code=response.error_no, service_err_message=response.error_msg)
 
         result = response.to_message()
 
-        return result, raw_data
+        return result
 
     @components_run_stream_trace
     def tool_eval(self, 
