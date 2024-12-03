@@ -218,4 +218,5 @@ component_tool_eval_cases = {
     "HandwriteOCR": HandWriteOCRCase,
     "MixCardOCR": MixCardOCRCase,
     "Translation": TranslationCase,
+    "GeneralOCR": GeneralOCRCase,
 }
