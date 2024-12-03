@@ -7,7 +7,10 @@ import os
 from appbuilder.tests.base_rules import ComponentCheckBase
 from appbuilder.core._exception import AppbuilderBuildexException
 from component_collector import  get_all_components, get_v2_components, get_component_white_list
-import component_check
+from appbuilder.tests.base_rules import register_component_check_rule
+from appbuilder.tests.base_rules import ManifestValidRule, MainfestMatchToolEvalRule, ToolEvalInputNameRule, ToolEvalOutputJsonRule
+from component_tool_eval_cases import component_tool_eval_cases
+
 
 def check_component_with_retry(component_import_res_tuple):
     """
@@ -75,7 +78,7 @@ def write_error_data(txt_file_path, error_df, error_stats):
             file.write(f"错误信息: {error}, 出现次数: {count}\n")
     print(f"\n错误信息已写入: {txt_file_path}")
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
     """
     组件manifests和tool_eval入参测试类
@@ -99,6 +102,11 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
         self.all_components = get_all_components()
         self.v2_components = get_v2_components()
         self.whitelist_components = get_component_white_list()
+        register_component_check_rule("ManifestValidRule", ManifestValidRule, {})
+        register_component_check_rule("MainfestMatchToolEvalRule", MainfestMatchToolEvalRule, {})
+        register_component_check_rule("ToolEvalInputNameRule", ToolEvalInputNameRule, {})
+        register_component_check_rule("ToolEvalOutputJsonRule", ToolEvalOutputJsonRule, \
+            {"component_tool_eval_cases": component_tool_eval_cases})
 
     def _test_component(self, components, whitelist_components, txt_file_path):
         """测试所有组件的manifests和tool_eval入参
