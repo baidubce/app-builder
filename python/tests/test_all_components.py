@@ -1,27 +1,12 @@
-# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-import unittest
+from multiprocessing import Pool
 import os
 import numpy as np
 import pandas as pd
-from multiprocessing import Pool
-
-from appbuilder.core.component import Component
-from appbuilder.core.components.llms.base import CompletionBaseComponent
+import unittest
+import os
 from appbuilder.core._exception import AppbuilderBuildexException
+from appbuilder_sdk_ext.tests.component_check import ComponentCheckBase
 from component_collector import  get_all_components, get_v2_components, get_component_white_list
-from appbuilder.tests.base_rules import ComponentCheckBase
 import component_check
 
 def check_component_with_retry(component_import_res_tuple):
@@ -74,7 +59,13 @@ def check_component_with_retry(component_import_res_tuple):
 
     return error_data
 
-def write_error_data(txt_file_path, error_df,error_stats):
+def write_error_data(txt_file_path, error_df, error_stats):
+    """将组件错误信息写入文件
+
+    Args:
+        error_df (Union[pd.DataFrame, None]): 错误信息表格
+        error_stats (dict): 错误统计信息
+    """
     with open(txt_file_path, 'w') as file:
         file.write("Component Name\tError Message\n")
         for _, row in error_df.iterrows():
@@ -84,15 +75,38 @@ def write_error_data(txt_file_path, error_df,error_stats):
             file.write(f"错误信息: {error}, 出现次数: {count}\n")
     print(f"\n错误信息已写入: {txt_file_path}")
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
+    """
+    组件manifests和tool_eval入参测试类
+    Args:
+        无
+    
+    Returns:
+        无返回值
+    
+    Raises:
+        无
+        
+    """
     def setUp(self) -> None:
+        """初始化测试用例，设置component名单和白名单，并初始化ComponentCheckBase实例
+        Args:
+            无
+        Returns:
+            无
+        """
         self.all_components = get_all_components()
         self.v2_components = get_v2_components()
         self.whitelist_components = get_component_white_list()
-        self.component_check_base = ComponentCheckBase()
 
     def _test_component(self, components, whitelist_components, txt_file_path):
+        """测试所有组件的manifests和tool_eval入参
+        Args:
+            无
+        Raises:
+            AppbuilderBuildexException: 如果有任何组件不在白名单中，则抛出异常
+        """
         error_data = []
         error_stats ={}
          
@@ -103,6 +117,7 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
             # 合并每个进程返回的错误数据
             for result in results:
                 error_data.extend(result)
+
 
         error_df = pd.DataFrame(error_data) if len(error_data) > 0 else None
 
@@ -129,11 +144,12 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
         else:
             print("\n所有组件测试通过，无错误信息。")
 
-
     def test_all_components(self):
+        """测试旧版本组件"""
         self._test_component(self.all_components, self.whitelist_components, 'components_error_info.txt')
 
     def test_v2_components(self):
+        """测试v2版本组件"""
         self._test_component(self.v2_components, [], 'v2_components_error_info.txt')
 
 
