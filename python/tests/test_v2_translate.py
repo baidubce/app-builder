@@ -18,7 +18,7 @@ from appbuilder.core.components.v2 import Translation
 from appbuilder.core.component import ComponentOutput
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
-class TestStyleRewrite(unittest.TestCase):
+class TestTranslation(unittest.TestCase):
     def setUp(self) -> None:
         self.com = Translation()
 

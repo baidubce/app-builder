@@ -172,7 +172,6 @@ class Translation(Component):
             InvalidRequestArgumentError: 如果参数 `q` 未设置，则引发此异常。
         
         """
-       
         traceid = kwargs.get("_sys_traceid", None)
         text = q
         req = TranslateRequest()
@@ -188,4 +187,5 @@ class Translation(Component):
             "翻译结果": "\n ".join(item["dst"] for item in trans_result)
         }
         res = json.dumps(res, ensure_ascii=False, indent=4)
-        yield self.create_output(type="text", text=res, raw_data=raw_data)
+        yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope='llm')
+        yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope='user')

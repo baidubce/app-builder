@@ -15,10 +15,8 @@ import base64
 import json
 import os.path
 
-from appbuilder.core import utils
+
 from appbuilder.core._client import HTTPClient
-
-
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
 from appbuilder.core.components.general_ocr.model import *
@@ -49,7 +47,6 @@ class GeneralOCR(Component):
      """
     name = "general_ocr"
     version = "v1"
-
     manifests = [
         {
             "name": "general_ocr",
@@ -106,7 +103,7 @@ class GeneralOCR(Component):
             request.url = inp.url
         request.detect_direction = "true"
         request.language_type = language_type
-        result = self._recognize(request, timeout, retry)
+        result, _ = self._recognize(request, timeout, retry)
         result_dict = proto.Message.to_dict(result)
         out = GeneralOCROutMsg(**result_dict)
         return Message(content=out.model_dump())
@@ -143,7 +140,7 @@ class GeneralOCR(Component):
         self.__class__._check_service_error(request_id, data)
         ocr_response = GeneralOCRResponse.from_json(payload=json.dumps(data))
         ocr_response.request_id = request_id
-        return ocr_response
+        return ocr_response, data
 
     @staticmethod
     def _check_service_error(request_id: str, data: dict):
@@ -161,7 +158,12 @@ class GeneralOCR(Component):
             )
 
     @components_run_stream_trace
-    def tool_eval(self, name: str, streaming: bool, **kwargs):
+    def tool_eval(
+        self, 
+        img_name: str,
+        img_url: str,
+        **kwargs
+        ):
         r"""
         根据给定的参数执行OCR识别功能。
         
@@ -182,12 +184,11 @@ class GeneralOCR(Component):
             InvalidRequestArgumentError: 如果请求格式错误（例如未设置文件名或指定文件名对应的URL不存在），则抛出此异常。
         
         """
-        traceid = kwargs.get("traceid")
-        img_url = kwargs.get("img_url", None)
+        traceid = kwargs.get("_sys_traceid")
         language_type = kwargs.get("language_type", 'CHN_ENG')
         if not img_url:
-            file_urls = kwargs.get("file_urls", {})
-            img_path = kwargs.get("img_name", None)
+            file_urls = kwargs.get("_sys_file_urls", {})
+            img_path = img_name
             if not img_path:
                 raise InvalidRequestArgumentError(
                     "request format error, file name is not set")
@@ -199,21 +200,11 @@ class GeneralOCR(Component):
         req = GeneralOCRRequest(url=img_url)
         req.detect_direction = "true"
         req.language_type = language_type
-        result = proto.Message.to_dict(self._recognize(req, request_id=traceid))
+        result_response, raw_data = self._recognize(req, request_id=traceid)
+        result = proto.Message.to_dict(result_response)
         results = {
             "识别结果": " \n".join(item["words"] for item in result["words_result"])
         }
         res = json.dumps(results, ensure_ascii=False, indent=4)
-        if streaming:
-            yield {
-                "type": "text",
-                "text": res,
-                "visible_scope": 'llm',
-            }
-            yield {
-                "type": "text",
-                "text": "",
-                "visible_scope": 'user',
-            }
-        else:
-            return res
+        yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
+        yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")

@@ -189,6 +189,23 @@ class TranslationCase(Case):
     def outputs(self):
         return {"text": ["Hello"]}
 
+class GeneralOCRCase(Case):
+    def inputs(self):
+        return {
+            "img_url": "https://bj.bcebos.com/v1/appbuilder/general_ocr_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
+                    "11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae" \
+                    "857a27513734d765495f89ffa5f73",
+            "img_name": "test_img.jpg"
+        }
+
+    def outputs(self):
+        return {"text": ["识别结果"]}
+
+    def schemas(self):
+        return [text_schema]
+
+   
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
@@ -200,5 +217,5 @@ component_tool_eval_cases = {
     "QRcodeOCR": QRcodeOCRCase,
     "HandwriteOCR": HandWriteOCRCase,
     "MixCardOCR": MixCardOCRCase,
-    "Translation": TranslationCase
+    "Translation": TranslationCase,
 }
