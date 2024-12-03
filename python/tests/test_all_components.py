@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import unittest
 import os
+from appbuilder.tests.base_rules import ComponentCheckBase
 from appbuilder.core._exception import AppbuilderBuildexException
-from appbuilder_sdk_ext.tests.component_check import ComponentCheckBase
 from component_collector import  get_all_components, get_v2_components, get_component_white_list
 import component_check
 
