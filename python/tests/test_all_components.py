@@ -1,29 +1,80 @@
-# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-import unittest
+from multiprocessing import Pool
 import os
 import numpy as np
 import pandas as pd
-
-from appbuilder.core.component import Component
-from appbuilder.core.components.llms.base import CompletionBaseComponent
+import unittest
+import os
+from appbuilder.tests.component_check import ComponentCheckBase
+from appbuilder.tests.component_check import register_component_check_rule
+from appbuilder.tests.component_check import ManifestValidRule, MainfestMatchToolEvalRule, ToolEvalInputNameRule, ToolEvalOutputJsonRule
 from appbuilder.core._exception import AppbuilderBuildexException
 from component_collector import  get_all_components, get_v2_components, get_component_white_list
-from appbuilder.tests.component_check import ComponentCheckBase
+from component_tool_eval_cases import component_tool_eval_cases
+
+register_component_check_rule("ManifestValidRule", ManifestValidRule, {})
+register_component_check_rule("MainfestMatchToolEvalRule", MainfestMatchToolEvalRule, {})
+register_component_check_rule("ToolEvalInputNameRule", ToolEvalInputNameRule, {})
+register_component_check_rule("ToolEvalOutputJsonRule", ToolEvalOutputJsonRule, \
+    {"component_tool_eval_cases": component_tool_eval_cases})
 
 
-def write_error_data(txt_file_path, error_df,error_stats):
+def check_component_with_retry(component_import_res_tuple):
+    """
+    使用重试机制检查组件。测试用例失败后会重试两次。
+    
+    Args:
+        component_import_res_tuple (tuple): 包含组件和导入结果的元组。
+    
+    Returns:
+        list: 包含错误信息的数据列表。
+    
+    """
+    component, import_res = component_import_res_tuple
+    component_check_base = ComponentCheckBase()
+    
+    error_data = []
+    max_retries = 2  # 设置最大重试次数
+    attempts = 0
+
+    while attempts <= max_retries:
+        if import_res["import_error"] != "":
+            error_data.append({"Component Name": component, "Error Message": import_res["import_error"]})
+            print("组件名称:{} 错误信息:{}".format(component, import_res["import_error"]))
+            break
+
+        component_obj = import_res["obj"]
+        try:
+            # 此处的self.component_check_base.notify需要根据实际情况修改
+            pass_check, reasons = component_check_base.notify(component_obj) # 示例修改
+            reasons = list(set(reasons))
+            if not pass_check:
+                error_data.append({"Component Name": component, "Error Message": ", ".join(reasons)})
+                print("组件名称:{} 错误信息:{}".format(component, ", ".join(reasons)))
+                # 如果检查失败，增加尝试次数并重试
+                attempts += 1
+                if attempts <= max_retries:
+                    print("组件名称:{} 将重试，当前尝试次数:{}".format(component, attempts))
+                continue
+            # 如果检查通过，则退出循环
+            break
+        except Exception as e:
+            error_data.append({"Component Name": component, "Error Message": str(e)})
+            print("组件名称:{} 错误信息:{}".format(component, str(e)))
+            # 如果发生异常，增加尝试次数并重试
+            attempts += 1
+            if attempts <= max_retries:
+                print("组件名称:{} 将重试，当前尝试次数:{}".format(component, attempts))
+            continue
+
+    return error_data
+
+def write_error_data(txt_file_path, error_df, error_stats):
+    """将组件错误信息写入文件
+
+    Args:
+        error_df (Union[pd.DataFrame, None]): 错误信息表格
+        error_stats (dict): 错误统计信息
+    """
     with open(txt_file_path, 'w') as file:
         file.write("Component Name\tError Message\n")
         for _, row in error_df.iterrows():
@@ -35,33 +86,46 @@ def write_error_data(txt_file_path, error_df,error_stats):
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
+    """
+    组件manifests和tool_eval入参测试类
+    Args:
+        无
+    
+    Returns:
+        无返回值
+    
+    Raises:
+        无
+        
+    """
     def setUp(self) -> None:
+        """初始化测试用例，设置component名单和白名单，并初始化ComponentCheckBase实例
+        Args:
+            无
+        Returns:
+            无
+        """
         self.all_components = get_all_components()
         self.v2_components = get_v2_components()
         self.whitelist_components = get_component_white_list()
-        self.component_check_base = ComponentCheckBase()
 
     def _test_component(self, components, whitelist_components, txt_file_path):
+        """测试所有组件的manifests和tool_eval入参
+        Args:
+            无
+        Raises:
+            AppbuilderBuildexException: 如果有任何组件不在白名单中，则抛出异常
+        """
         error_data = []
         error_stats ={}
          
-        for name, import_res in components.items():
-
-            if import_res["import_error"] != "":
-                error_data.append({"Component Name": name, "Error Message": import_res["import_error"]})
-                print("组件名称:{} 错误信息:{}".format(name, import_res["import_error"]))
-                continue
-
-            component_obj = import_res["obj"]
-            try:
-                pass_check, reasons = self.component_check_base.notify(component_obj)
-                reasons = list(set(reasons))
-                if not pass_check:
-                    error_data.append({"Component Name": name, "Error Message": ", ".join(reasons)})
-                    print("组件名称:{} 错误信息:{}".format(name, ", ".join(reasons)))
-            except Exception as e:
-                error_data.append({"Component Name": name, "Error Message": str(e)})
-                print("组件名称:{} 错误信息:{}".format(name, str(e)))
+        with Pool(processes=os.cpu_count()) as pool:
+            # 使用pool.map来执行多进程
+            results = pool.map(check_component_with_retry, components.items())
+            
+            # 合并每个进程返回的错误数据
+            for result in results:
+                error_data.extend(result)
 
 
         error_df = pd.DataFrame(error_data) if len(error_data) > 0 else None
@@ -89,11 +153,12 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
         else:
             print("\n所有组件测试通过，无错误信息。")
 
-
     def test_all_components(self):
+        """测试旧版本组件"""
         self._test_component(self.all_components, self.whitelist_components, 'components_error_info.txt')
 
     def test_v2_components(self):
+        """测试v2版本组件"""
         self._test_component(self.v2_components, [], 'v2_components_error_info.txt')
 
 

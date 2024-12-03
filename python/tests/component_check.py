@@ -1,16 +1,3 @@
-# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 import os
 import json
 import inspect
@@ -19,10 +6,8 @@ from jsonschema import validate, ValidationError, SchemaError
 from pydantic import BaseModel
 from typing import Generator
 from appbuilder.utils.func_utils import Singleton
-from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
 from appbuilder.tests.component_schemas import type_to_json_schemas
-from component_tool_eval_cases import component_tool_eval_cases
-
+from appbuilder.utils.json_schema_to_model import json_schema_to_pydantic_model
 
 class CheckInfo(BaseModel):
     check_rule_name: str
@@ -70,12 +55,6 @@ class ComponentCheckBase(metaclass=Singleton):
             return True, reasons
         else:
             return False, reasons
-
-def register_component_check_rule(rule_name: str, rule_cls: RuleBase):
-    component_checker = ComponentCheckBase()
-    component_checker.register_rule(rule_name, rule_cls())
-
-
 
 class ManifestValidRule(RuleBase):
     """
@@ -152,7 +131,7 @@ class MainfestMatchToolEvalRule(RuleBase):
                 manifest_var = properties.keys()
             else:
                 manifest_var = []
-                
+            
             # 交互检查
             tool_eval_input_params = []
             print("required_params: {}".format(manifest_var))
@@ -245,9 +224,10 @@ class ToolEvalOutputJsonRule(RuleBase):
     """
     检查tool_eval的输出结果是否符合对应的json schema
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__()
         self.rule_name = 'ToolEvalOutputJsonRule'
+        self.component_tool_eval_cases = kwargs.get("component_tool_eval_cases")
 
     def _check_pre_format(self, outputs):
         invalid_details = []
@@ -270,7 +250,7 @@ class ToolEvalOutputJsonRule(RuleBase):
         """检查输出格式是否符合对应的json schema
         """
         invalid_details = []
-        if len(invalid_details:=self._check_pre_format(outputs)) > 0 :
+        if len(self._check_pre_format(outputs)) > 0 :
             return invalid_details
     
         for content in outputs["content"]: 
@@ -351,19 +331,26 @@ class ToolEvalOutputJsonRule(RuleBase):
     def check(self, component_cls) -> CheckInfo:
         invalid_details = []
         component_cls_name = component_cls.__name__
-        if component_cls_name not in component_tool_eval_cases:
+        
+        if component_cls_name not in self.component_tool_eval_cases:
             invalid_details.append("{} 没有添加测试case到 component_tool_eval_cases 中".format(component_cls_name))
         else:
-            component_case = component_tool_eval_cases[component_cls_name]()
+            component_case = self.component_tool_eval_cases[component_cls_name]()
+
+            envs = {}
+            if hasattr(component_case, "envs"):
+                envs = component_case.envs()
+                os.environ.update(envs)
+            
             input_dict = component_case.inputs()
-            output_json_schemas = component_case.schemas()
             init_args = component_case.init_args()
             component_obj = component_cls(**init_args)
+            output_json_schemas = component_case.schemas()
             
-            try: #校验流式输出
+            try:
                 stream_output_dict = {"text": "", "oral_text":"", "code": ""}
                 stream_outputs = component_obj.tool_eval(**input_dict)
-                for stream_output in stream_outputs: 
+                for stream_output in stream_outputs: #校验流式输出
                     iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
                     invalid_details.extend(["流式" + error_message for error_message in iter_invalid_detail])
                     iter_output_dict = self._gather_iter_outputs(stream_output)
@@ -376,15 +363,18 @@ class ToolEvalOutputJsonRule(RuleBase):
                 invalid_details.append("ToolEval执行失败: {}".format(e))
 
             time.sleep(2)
-            try: #校验非流式输出
+            try:
                 non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-                non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs.model_dump(), output_json_schemas)
+                non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs.model_dump(), output_json_schemas)  #校验非流式输出
                 invalid_details.extend(["非流式" + error_message for error_message in non_stream_invalid_details]) 
                 if len(invalid_details) == 0:
                     non_stream_output_dict = self._gather_iter_outputs(non_stream_outputs)
                     invalid_details.extend(self._check_text_and_code(component_case, non_stream_output_dict))
             except Exception as e:
                 invalid_details.append(" NonStreamToolEval执行失败: {}".format(e))
+
+            for env in envs:
+                os.environ.pop(env)
                     
         if len(invalid_details) > 0:
             return CheckInfo(
@@ -396,9 +386,8 @@ class ToolEvalOutputJsonRule(RuleBase):
                 check_rule_name=self.rule_name,
                 check_result=True,
                 check_detail="")
-                
 
-register_component_check_rule("ManifestValidRule", ManifestValidRule)
-register_component_check_rule("MainfestMatchToolEvalRule", MainfestMatchToolEvalRule)
-register_component_check_rule("ToolEvalInputNameRule", ToolEvalInputNameRule)
-register_component_check_rule("ToolEvalOutputJsonRule", ToolEvalOutputJsonRule)
+
+def register_component_check_rule(rule_name: str, rule_cls: RuleBase, init_args={}):
+    component_checker = ComponentCheckBase()
+    component_checker.register_rule(rule_name, rule_cls(**init_args))
