@@ -83,6 +83,8 @@ class Translation(Component):
         }
     ]
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     @HTTPClient.check_param
     @components_run_trace
