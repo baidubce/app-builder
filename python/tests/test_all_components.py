@@ -4,12 +4,18 @@ import numpy as np
 import pandas as pd
 import unittest
 import os
-from appbuilder.tests.base_rules import ComponentCheckBase
+from appbuilder.tests.component_check import ComponentCheckBase
+from appbuilder.tests.component_check import register_component_check_rule
+from appbuilder.tests.component_check import ManifestValidRule, MainfestMatchToolEvalRule, ToolEvalInputNameRule, ToolEvalOutputJsonRule
 from appbuilder.core._exception import AppbuilderBuildexException
 from component_collector import  get_all_components, get_v2_components, get_component_white_list
-from appbuilder.tests.base_rules import register_component_check_rule
-from appbuilder.tests.base_rules import ManifestValidRule, MainfestMatchToolEvalRule, ToolEvalInputNameRule, ToolEvalOutputJsonRule
 from component_tool_eval_cases import component_tool_eval_cases
+
+register_component_check_rule("ManifestValidRule", ManifestValidRule, {})
+register_component_check_rule("MainfestMatchToolEvalRule", MainfestMatchToolEvalRule, {})
+register_component_check_rule("ToolEvalInputNameRule", ToolEvalInputNameRule, {})
+register_component_check_rule("ToolEvalOutputJsonRule", ToolEvalOutputJsonRule, \
+    {"component_tool_eval_cases": component_tool_eval_cases})
 
 
 def check_component_with_retry(component_import_res_tuple):
@@ -102,11 +108,6 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
         self.all_components = get_all_components()
         self.v2_components = get_v2_components()
         self.whitelist_components = get_component_white_list()
-        register_component_check_rule("ManifestValidRule", ManifestValidRule, {})
-        register_component_check_rule("MainfestMatchToolEvalRule", MainfestMatchToolEvalRule, {})
-        register_component_check_rule("ToolEvalInputNameRule", ToolEvalInputNameRule, {})
-        register_component_check_rule("ToolEvalOutputJsonRule", ToolEvalOutputJsonRule, \
-            {"component_tool_eval_cases": component_tool_eval_cases})
 
     def _test_component(self, components, whitelist_components, txt_file_path):
         """测试所有组件的manifests和tool_eval入参
