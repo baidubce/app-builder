@@ -15,6 +15,7 @@ import unittest
 import os
 import numpy as np
 import pandas as pd
+from multiprocessing import Pool
 
 from appbuilder.core.component import Component
 from appbuilder.core.components.llms.base import CompletionBaseComponent
@@ -22,6 +23,55 @@ from appbuilder.core._exception import AppbuilderBuildexException
 from component_collector import  get_all_components, get_v2_components, get_component_white_list
 from appbuilder.tests.component_check import ComponentCheckBase
 
+def check_component_with_retry(component_import_res_tuple):
+    """
+    使用重试机制检查组件。测试用例失败后会重试两次。
+    
+    Args:
+        component_import_res_tuple (tuple): 包含组件和导入结果的元组。
+    
+    Returns:
+        list: 包含错误信息的数据列表。
+    
+    """
+    component, import_res = component_import_res_tuple
+    component_check_base = ComponentCheckBase()
+    
+    error_data = []
+    max_retries = 2  # 设置最大重试次数
+    attempts = 0
+
+    while attempts <= max_retries:
+        if import_res["import_error"] != "":
+            error_data.append({"Component Name": component.__name__, "Error Message": import_res["import_error"]})
+            print("组件名称:{} 错误信息:{}".format(component.__name__, import_res["import_error"]))
+            break
+
+        component_obj = import_res["obj"]
+        try:
+            # 此处的self.component_check_base.notify需要根据实际情况修改
+            pass_check, reasons = component_check_base.notify(component_obj) # 示例修改
+            reasons = list(set(reasons))
+            if not pass_check:
+                error_data.append({"Component Name": component.__name__, "Error Message": ", ".join(reasons)})
+                print("组件名称:{} 错误信息:{}".format(component.__name__, ", ".join(reasons)))
+                # 如果检查失败，增加尝试次数并重试
+                attempts += 1
+                if attempts <= max_retries:
+                    print("组件名称:{} 将重试，当前尝试次数:{}".format(component.__name__, attempts))
+                continue
+            # 如果检查通过，则退出循环
+            break
+        except Exception as e:
+            error_data.append({"Component Name": component.__name__, "Error Message": str(e)})
+            print("组件名称:{} 错误信息:{}".format(component.__name__, str(e)))
+            # 如果发生异常，增加尝试次数并重试
+            attempts += 1
+            if attempts <= max_retries:
+                print("组件名称:{} 将重试，当前尝试次数:{}".format(component.__name__, attempts))
+            continue
+
+    return error_data
 
 def write_error_data(txt_file_path, error_df,error_stats):
     with open(txt_file_path, 'w') as file:
@@ -45,24 +95,13 @@ class TestComponentManifestsAndToolEval(unittest.TestCase):
         error_data = []
         error_stats ={}
          
-        for name, import_res in components.items():
-
-            if import_res["import_error"] != "":
-                error_data.append({"Component Name": name, "Error Message": import_res["import_error"]})
-                print("组件名称:{} 错误信息:{}".format(name, import_res["import_error"]))
-                continue
-
-            component_obj = import_res["obj"]
-            try:
-                pass_check, reasons = self.component_check_base.notify(component_obj)
-                reasons = list(set(reasons))
-                if not pass_check:
-                    error_data.append({"Component Name": name, "Error Message": ", ".join(reasons)})
-                    print("组件名称:{} 错误信息:{}".format(name, ", ".join(reasons)))
-            except Exception as e:
-                error_data.append({"Component Name": name, "Error Message": str(e)})
-                print("组件名称:{} 错误信息:{}".format(name, str(e)))
-
+        with Pool(processes=os.cpu_count()) as pool:
+            # 使用pool.map来执行多进程
+            results = pool.map(check_component_with_retry, components.items())
+            
+            # 合并每个进程返回的错误数据
+            for result in results:
+                error_data.extend(result)
 
         error_df = pd.DataFrame(error_data) if len(error_data) > 0 else None
 
