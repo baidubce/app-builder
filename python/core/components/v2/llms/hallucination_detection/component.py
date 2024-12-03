@@ -205,19 +205,16 @@ class HallucinationDetection(CompletionBaseComponent):
         调用函数进行工具评估。
         
         Args:
-            name (str): 函数名，当前方法未使用此参数，预留接口。
-            stream (bool, optional): 是否以流的方式返回结果，默认为False。如果为True，则逐个返回结果；如果为False，则一次性返回所有结果。
+            - query (str): 查询语句。
+            - context (str): 上下文信息。
+            - answer (str): 参考答案。
             **kwargs: 关键字参数，包含评估所需的输入参数。
-        
-                - query (str): 查询语句。
-                - context (str): 上下文信息。
-                - answer (str): 参考答案。
                 - model_configs (dict, optional): 模型配置信息，默认为空字典。包含以下字段：
                     - temperature (float, optional): 温度参数，用于控制生成文本的随机性，默认为1e-10。
                     - top_p (float, optional): 截断概率，用于控制生成文本的质量，默认为0.0。
         
         Returns:
-            如果stream为False，返回包含所有评估结果的列表；如果stream为True，逐个返回评估结果。
+            ComponentOutput: 组件输出结果，包含评估结果。
         
         Raises:
             ValueError: 如果缺少query、context或answer参数，将引发此异常。
