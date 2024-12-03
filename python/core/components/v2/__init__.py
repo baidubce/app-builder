@@ -18,12 +18,14 @@ from .llms.style_rewrite.component import StyleRewrite
 from .llms.hallucination_detection.component import HallucinationDetection
 from .qrcode_ocr.component import QRcodeOCR
 from .handwrite_ocr.component import HandwriteOCR
+# from .mix_card_ocr.component import MixCardOCR
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
     "ImageUnderstand",
     "StyleRewrite",
-    "HallucinationDetection"
+    "HallucinationDetection",
     "QRcodeOCR",
     "HandwriteOCR",
+    # "MixCardOCR",
 ] # NOQA
