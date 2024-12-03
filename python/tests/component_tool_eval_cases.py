@@ -143,6 +143,23 @@ class HallucinationDetectionCase(Case):
     def outputs(self):
         return {"text": ["存在幻觉"]}
 
+class HandWriteOCRCase(Case):
+    def inputs(self):
+        image_url = "https://bj.bcebos.com/v1/appbuilder/test_handw"\
+                    "rite_ocr.jpg?authorization=bce-auth-v1%2FALTAKGa8"\
+                    "m4qCUasgoljdEDAzLm%2F2024-01-23T11%3A58%3A09Z%2F-1%2Fhost%2"\
+                    "F677f93445fb65157bee11cd492ce213d5c56e7a41827e45ce7e32b083d195c8b"
+        return {
+            "file_names": ["text"],
+            "file_urls": {"text": image_url}
+        }
+
+    def schemas(self):
+        return [text_schema]
+
+    def outputs(self):
+        return {"text": ["银杏树"]}
+
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
@@ -152,4 +169,5 @@ component_tool_eval_cases = {
     "StyleRewrite": StyleRewriteCase,
     "HallucinationDetection": HallucinationDetectionCase,
     "QRcodeOCR": QRcodeOCRCase,
+    "HandwriteOCR": HandWriteOCRCase,
 }
