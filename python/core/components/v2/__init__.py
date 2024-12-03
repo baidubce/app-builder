@@ -16,10 +16,12 @@ from .animal_recognize.component import AnimalRecognition
 from .image_understand.component import  ImageUnderstand
 from .llms.style_rewrite.component import StyleRewrite
 from .llms.hallucination_detection.component import HallucinationDetection
+from .qrcode_ocr.component import QRcodeOCR
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
     "ImageUnderstand",
     "StyleRewrite",
     "HallucinationDetection"
+    "QRcodeOCR"
 ] # NOQA
