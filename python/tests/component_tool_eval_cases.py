@@ -219,16 +219,6 @@ class TableOCRCase(Case):
     
     def outputs(self):
         return {"text": ["http"]}
-
-
-class Text2ImageCase(Case):
-    def inputs(self):
-        return {
-            'query': '生成一张小猫图片',
-        }
-
-    def schemas(self):
-        return [image_schema]
     
 class StyleWritingCase(Case):
     def init_args(self):
@@ -260,5 +250,4 @@ component_tool_eval_cases = {
     "Translation": TranslationCase,
     "GeneralOCR": GeneralOCRCase,
     "TableOCR": TableOCRCase,
-    "Text2Image": Text2ImageCase
 }

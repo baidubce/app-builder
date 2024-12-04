@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Baidu, Inc. All Rights Reserved.
+# Copyright (c) 2024 Baidu, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,20 +17,20 @@ r"""Text2Image component.
 import time
 import math
 
-from typing import Optional
+from typing import Generator, Union, Optional
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, RiskInputException
 from appbuilder.core.components.text_to_image.model import Text2ImageSubmitRequest, Text2ImageQueryRequest, \
-    Text2ImageQueryResponse, Text2ImageSubmitResponse, Text2ImageOutMessage, Text2ImageInMessage
+    Text2ImageQueryResponse, Text2ImageSubmitResponse, Text2ImageOutMessage
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
 class Text2Image(Component):
     r"""
     文生图组件，即对于输入的文本，输出生成的图片url。
-
+    
     Examples:
 
     .. code-block:: python
@@ -44,7 +44,8 @@ class Text2Image(Component):
         # 打印生成结果
         print(out.content) # eg: {"img_urls": ["xxx"]}
     """
-
+    name = "text_to_image"
+    version = "v1"
     manifests = [
         {
             "name": "text_to_image",
@@ -107,12 +108,147 @@ class Text2Image(Component):
             HTTPError: 请求失败时抛出异常。
         
         """
+        prompt=message.content["prompt"]
+        img_urls, _ = self._recognize(
+                            prompt =  prompt,
+                            width = width,
+                            height = height,
+                            image_num = image_num,
+                            image = image,
+                            url = url,
+                            pdf_file = pdf_file,
+                            pdf_file_num = pdf_file_num,
+                            change_degree = change_degree,
+                            text_content = text_content,
+                            task_time_out = task_time_out,
+                            text_check = text_check,
+                            request_id = request_id
+                            )
+        if len(img_urls) == 0:
+            raise RiskInputException(f'prompt{prompt} 中可能存在敏感词')
+        out = Text2ImageOutMessage(img_urls=img_urls)
+        return Message(content=out.model_dump())
+
+    @components_run_stream_trace
+    def tool_eval(
+        self,
+        query: str,
+        **kwargs,
+    ) -> Union[Generator[str, None, None], str]:
+        """
+        根据输入的查询内容生成输出。
+        
+        Args:
+            query (str): 查询内容。
+            **kwargs: 其他参数，包含：
+                _sys_traceid (str, optional): 系统追踪ID，默认为None。
+                width (int, optional): 图片宽度，默认为1024。
+                height (int, optional): 图片高度，默认为1024。
+                image_num (int, optional): 图片数量，默认为1。
+                image (Union[str, bytes], optional): 图片数据，默认为None。
+                url (str, optional): 图片URL，默认为None。
+                pdf_file (Union[str, bytes], optional): PDF文件数据，默认为None。
+                pdf_file_num (int, optional): PDF文件页数，默认为None。
+                change_degree (int, optional): 图片旋转角度，默认为None。
+                text_content (str, optional): 文本内容，默认为None。
+                task_time_out (int, optional): 任务超时时间，默认为None。
+                text_check (int, optional): 文本校验等级，默认为1。
+        
+        Returns:
+            Union[Generator[str, None, None], str]: 生成的输出。
+        
+        Raises:
+            RiskInputException: 当查询内容中存在敏感词时抛出。
+        
+        """
+        request_id = kwargs.get("_sys_traceid", None)
+        prompt = query
+        width = kwargs.get("width", 1024)
+        height = kwargs.get("height", 1024)
+        image_num = kwargs.get("image_num", 1)
+        image = kwargs.get("image", None)
+        url = kwargs.get("url", None)
+        pdf_file = kwargs.get("pdf_file", None)
+        pdf_file_num = kwargs.get("pdf_file_num", None)
+        change_degree = kwargs.get("change_degree", None)
+        text_content = kwargs.get("text_content", None)
+        task_time_out = kwargs.get("task_time_out", None)
+        text_check = kwargs.get("text_check", 1)
+
+        img_urls, raw_data = self._recognize(
+                            prompt = prompt,
+                            width = width,
+                            height = height,
+                            image_num = image_num,
+                            image = image,
+                            url = url,
+                            pdf_file = pdf_file,
+                            pdf_file_num = pdf_file_num,
+                            change_degree = change_degree,
+                            text_content = text_content,
+                            task_time_out = task_time_out,
+                            text_check = text_check,
+                            request_id = request_id
+                            )
+
+        if len(img_urls) == 0:
+            raise RiskInputException(f'query：{query} 中可能存在敏感词')
+
+        for url_number in range(len(img_urls)):
+            yield self.create_output(
+                type='image', 
+                text={
+                    'filename': "",
+                    'url': img_urls[url_number],
+                },  
+                raw_data=raw_data,
+                visible_scope='all',
+                )
+
+    def _recognize(
+        self,
+        prompt: str,
+        width: int = 1024,
+        height: int = 1024,
+        image_num: int = 1,
+        image: Optional[str] = None,
+        url: Optional[str] = None,
+        pdf_file: Optional[str] = None,
+        pdf_file_num: Optional[str] = None,
+        change_degree: Optional[int] = None,
+        text_content: Optional[str] = None,
+        task_time_out: Optional[int]= None,
+        text_check: Optional[int] = 1,
+        request_id: Optional[str] = None
+        ):
+        """
+        识别并生成图片。
+        
+        Args:
+            prompt (str): 提示文本，用于生成图片。
+            width (int, optional): 图片宽度，默认为1024。
+            height (int, optional): 图片高度，默认为1024。
+            image_num (int, optional): 生成图片的数量，默认为1。
+            image (str, optional): 传入图片路径，默认为None。
+            url (str, optional): 图片URL，默认为None。
+            pdf_file (str, optional): PDF文件路径，默认为None。
+            pdf_file_num (str, optional): 需要转换的PDF页数，默认为None。
+            change_degree (int, optional): 图片旋转角度，默认为None。
+            text_content (str, optional): 文本内容，默认为None。
+            task_time_out (int, optional): 任务超时时间，默认为None。
+            text_check (int, optional): 文本校验选项，默认为1。
+            request_id (str, optional): 请求ID，默认为None。
+        
+        Returns:
+            tuple: 包含生成的图片URL列表和返回数据的元组。
+        
+        """
         headers = self._http_client.auth_header()
         headers["Content-Type"] = "application/json"
         api_url = self._http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
 
         req = Text2ImageSubmitRequest(
-            prompt=message.content["prompt"],  
+            prompt=prompt,  
             width=width,
             height=height,
             image_num=image_num,
@@ -136,12 +272,12 @@ class Text2Image(Component):
 
             while True:
                 request = Text2ImageQueryRequest(task_id=taskId)
-                text2ImageQueryResponse = self.queryText2ImageData(request, request_id=request_id)
+                text2ImageQueryResponse, data = self._queryText2ImageData(request, request_id=request_id)
                 if text2ImageQueryResponse.data.task_progress is not None:
                     task_progress = float(text2ImageQueryResponse.data.task_progress)
                     if math.isclose(1.0, task_progress, rel_tol=1e-9, abs_tol=0.0):
                         break
-                    
+
                     # NOTE(chengmo)：文生图组件的返回时间在10s以上，查询过于频繁会被限流，导致异常报错
                     # 此处采用 yangyongzhen老师提供的方案，前三次查询间隔3s，后三次查询间隔逐渐增大
                     if task_request_time <= 3:
@@ -150,45 +286,11 @@ class Text2Image(Component):
                         time.sleep(task_request_time)
                     task_request_time += 1
 
-            img_urls = self.extract_img_urls(text2ImageQueryResponse)
-            out = Text2ImageOutMessage(img_urls=img_urls)
-            return Message(content=out.model_dump())
+            img_urls = self._extract_img_urls(text2ImageQueryResponse)
 
-    @HTTPClient.check_param
-    def submitText2ImageTask(
-        self,
-        request: Text2ImageSubmitRequest,
-        timeout: float = None,
-        retry: int = 0,
-        request_id: str = None,
-    ) -> Text2ImageSubmitResponse:
-        """
-        使用给定的输入并返回文生图的任务信息。
-        
-        Args:
-            request (obj:`Text2ImageSubmitRequest`): 输入请求，这是一个必需的参数。
-            timeout (float, optional): 请求的超时时间。默认为None。
-            retry (int, optional): 请求的重试次数。默认为0。
-            request_id (str, optional): 请求的唯一标识符。默认为None。
-        
-        Returns:
-            obj:`Text2ImageSubmitResponse`: 接口返回的输出消息。
-        
-        """
-        url = self.http_client.service_url("/v1/bce/aip/ernievilg/v1/txt2imgv2")
-        data = request.model_dump()
-        headers = self.http_client.auth_header(request_id)
-        headers['content-type'] = 'application/json'
-        if retry != self.http_client.retry.total:
-            self.http_client.retry.total = retry
-        response = self.http_client.session.post(url, json=data, headers=headers, timeout=timeout)
-        self.http_client.check_response_header(response)
-        data = response.json()
-        self.http_client.check_response_json(data)
-        response = Text2ImageSubmitResponse(**data)
-        return response
+            return img_urls, data
 
-    def queryText2ImageData(
+    def _queryText2ImageData(
         self,
         request: Text2ImageQueryRequest,
         timeout: float = None,
@@ -220,11 +322,11 @@ class Text2Image(Component):
         data = response.json()
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
-        self.__class__.check_service_error(request_id, data)
+        self.__class__._check_service_error(request_id, data)
         response = Text2ImageQueryResponse(**data)
-        return response
+        return response, data
 
-    def extract_img_urls(self, response: Text2ImageQueryResponse):
+    def _extract_img_urls(self, response: Text2ImageQueryResponse):
         """
         从作画生成的返回结果中提取图片url。
         
@@ -246,7 +348,7 @@ class Text2Image(Component):
         return img_urls
 
     @staticmethod
-    def check_service_error(request_id: str, data: dict):
+    def _check_service_error(request_id: str, data: dict):
         """
         检查服务错误信息
         

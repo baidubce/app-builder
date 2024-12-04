@@ -5,6 +5,7 @@ from appbuilder.core.components.text_to_image.model import (Text2ImageSubmitRequ
                                                             Text2ImageQueryRequest, Text2ImageQueryResponse, SubTaskResult)
 
 from appbuilder.core._exception import RiskInputException 
+from appbuilder.core.component import ComponentOutput
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestText2ImageComponent(unittest.TestCase):
@@ -107,6 +108,25 @@ class TestText2ImageComponent(unittest.TestCase):
         data = {"error_code": "ERROR", "error_msg": "Error message"}
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.text2Image.check_service_error("", data)
+
+    def test_tool_eval(self):
+        """
+        测试 tool_eval 方法的正确性。
+        
+        Args:
+            self: 测试类的实例。
+        
+        Returns:
+            无返回值。
+        
+        Raises:
+            无异常抛出。
+        
+        """
+        result = self.text2Image.tool_eval(query = "上海的经典风景")
+        for res in result:
+            self.assertIsInstance(res, ComponentOutput)
+            print(res)
 
 if __name__ == '__main__':
     unittest.main()
