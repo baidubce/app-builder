@@ -222,7 +222,7 @@ class TableOCRCase(Case):
     
 class StyleWritingCase(Case):
     def init_args(self):
-        return {"model": "RNIE-3.5-8K"}
+        return {"model": "ERNIE-3.5-8K"}
     
     def inputs(self):
         return {
