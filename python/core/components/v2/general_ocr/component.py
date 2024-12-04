@@ -164,24 +164,22 @@ class GeneralOCR(Component):
         img_url: str,
         **kwargs
         ):
-        r"""
-        根据给定的参数执行OCR识别功能。
+        """
+        对图片中的文字进行识别并返回结果。
         
         Args:
-            name (str): 函数名称，此处未使用，但为保持一致性保留。
-            streaming (bool): 是否以流式方式返回结果。如果为True，则逐个返回结果，否则返回全部结果。
-            kwargs: 关键字参数，支持以下参数：
-                traceid (str): 请求的唯一标识符，用于追踪请求和响应。
-                img_url (str): 待识别图片的URL。
-                file_urls (dict): 包含文件名和对应URL的字典。如果提供了img_url，则忽略此参数。
-                img_name (str): 待识别图片的文件名，与file_urls配合使用。
-        
+            img_name (str): 图片的文件名。
+            img_url (str): 图片的URL地址。
+            **kwargs: 其他参数，目前支持以下参数：
+                _sys_traceid (str): 系统追踪ID，用于跟踪请求。
+                language_type (str): 语言类型，默认为'CHN_ENG'（中英文混合）。
+                _sys_file_urls (dict): 文件URL字典，key为文件名，value为文件URL。
+                
         Returns:
-            如果streaming为False，则返回包含识别结果的JSON字符串。
-            如果streaming为True，则逐个返回包含识别结果的字典。
+            Generator: 生成器，每次生成一个包含识别结果的Output对象。
         
         Raises:
-            InvalidRequestArgumentError: 如果请求格式错误（例如未设置文件名或指定文件名对应的URL不存在），则抛出此异常。
+            InvalidRequestArgumentError: 如果请求格式错误或文件URL不存在，将抛出此异常。
         
         """
         traceid = kwargs.get("_sys_traceid")
