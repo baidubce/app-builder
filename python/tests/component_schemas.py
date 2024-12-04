@@ -198,7 +198,6 @@ image_schema["properties"]["text"] = {
       "type": "string"
     },
     "byte": {
-        "type": "string",
         "format": "bytes"
     }
   },
