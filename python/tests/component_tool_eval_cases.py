@@ -232,7 +232,7 @@ class Text2ImageCase(Case):
     
 class StyleWritingCase(Case):
     def init_args(self):
-        return {"model": "RNIE-3.5-8K"}
+        return {"model": "ERNIE-3.5-8K"}
     
     def inputs(self):
         return {
@@ -260,5 +260,6 @@ component_tool_eval_cases = {
     "Translation": TranslationCase,
     "GeneralOCR": GeneralOCRCase,
     "TableOCR": TableOCRCase,
-    "Text2Image": Text2ImageCase
+    "Text2Image": Text2ImageCase,
+    "StyleWriting": StyleWritingCase,
 }
