@@ -63,7 +63,7 @@ class PPTGenerationFromFile(Component):
                 "type": "object",
                 "properties": {
                     "file_url": {
-                        "text": "string",
+                        "type": "string",
                         "description": "用户上传的文件的链接。"
                     }
                 },

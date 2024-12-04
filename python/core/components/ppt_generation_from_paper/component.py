@@ -63,7 +63,7 @@ class PPTGenerationFromPaper(Component):
                 "type": "object",
                 "properties": {
                     "file_key": {
-                        "text": "string",
+                        "type": "string",
                         "description": "用户上传的论文的链接。"
                     }
                 },

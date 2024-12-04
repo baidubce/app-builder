@@ -72,15 +72,15 @@ class HallucinationDetection(CompletionBaseComponent):
                 "type": "object",
                 "properties": {
                     "query": {
-                        "text": "string",
+                        "type": "string",
                         "description": "用户查询。"
                     },
                     "context": {
-                        "text": "string",
+                        "type": "string",
                         "description": "检索结果。"
                     },
                     "answer": {
-                        "text": "string",
+                        "type": "string",
                         "description": "根据检索结果context生成的用户查询query的回答answer。"
                     }
                 },
