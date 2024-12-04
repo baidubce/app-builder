@@ -14,6 +14,8 @@
 
 from .animal_recognize.component import AnimalRecognition
 from .image_understand.component import  ImageUnderstand
+from .translate.component import Translation
+from .general_ocr.component import GeneralOCR
 from .llms.style_rewrite.component import StyleRewrite
 from .llms.hallucination_detection.component import HallucinationDetection
 from .qrcode_ocr.component import QRcodeOCR
@@ -23,6 +25,8 @@ from .mix_card_ocr.component import MixCardOCR
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
     "ImageUnderstand",
+    "Translation",
+    "GeneralOCR",
     "StyleRewrite",
     "HallucinationDetection",
     "QRcodeOCR",
