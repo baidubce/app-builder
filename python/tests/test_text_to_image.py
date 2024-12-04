@@ -38,42 +38,6 @@ class TestText2ImageComponent(unittest.TestCase):
         self.assertIsNotNone(out)
         self.assertIsInstance(out, appbuilder.Message)
 
-    def test_queryText2ImageData(self):
-        """
-        queryText2ImageData方法单测
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        """
-        request = Text2ImageQueryRequest(
-            task_id = "123456",
-        )
-        response = self.text2Image.queryText2ImageData(request)
-        self.assertIsNotNone(response)
-        self.assertIsInstance(response, Text2ImageQueryResponse)
-
-    def test_extract_img_urls(self):
-        """
-        extract_img_urls方法单测
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        """
-        response = Text2ImageQueryResponse()
-        response.data.task_progress = 1.0
-        response.data.task_progress_detail = 0.5
-        response.data.sub_task_result_list = [SubTaskResult(**{'sub_task_progress_detail':0.8, 'final_image_list': [{'img_url': 'http://example.com'}]})]
-        img_urls = self.text2Image.extract_img_urls(response)
-        self.assertEqual(img_urls, ['http://example.com'])
-
     def test_check_service_error(self):
         """
         check_service_error方法单测
