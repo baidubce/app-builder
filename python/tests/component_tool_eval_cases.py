@@ -250,4 +250,5 @@ component_tool_eval_cases = {
     "Translation": TranslationCase,
     "GeneralOCR": GeneralOCRCase,
     "TableOCR": TableOCRCase,
+    "StyleWriting": StyleWritingCase
 }
