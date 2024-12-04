@@ -98,6 +98,22 @@ class StyleRewriteCase(Case):
     def schemas(self):
         return [text_schema]
 
+class QRcodeOCRCase(Case):
+    def inputs(self):
+        image_url = "https://bj.bcebos.com/v1/appbuilder/qrcode_ocr_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-" \
+                    "01-24T12%3A45%3A13Z%2F-1%2Fhost%2Ffc43d07b41903aeeb5a023131ba6" \
+                    "e74ab057ce26d50e966dc31ff083e6a9c41b"
+        return {
+            "file_names": ["text"],
+            "file_urls": {"text": image_url}
+        }
+
+    def schemas(self):
+        return [text_schema]
+
+    def outputs(self):
+        return {"text": ["ocr文字识别"]}
 
 class HallucinationDetectionCase(Case):
     def inputs(self):
@@ -127,6 +143,40 @@ class HallucinationDetectionCase(Case):
     def outputs(self):
         return {"text": ["存在幻觉"]}
 
+class HandWriteOCRCase(Case):
+    def inputs(self):
+        image_url = "https://bj.bcebos.com/v1/appbuilder/test_handw"\
+                    "rite_ocr.jpg?authorization=bce-auth-v1%2FALTAKGa8"\
+                    "m4qCUasgoljdEDAzLm%2F2024-01-23T11%3A58%3A09Z%2F-1%2Fhost%2"\
+                    "F677f93445fb65157bee11cd492ce213d5c56e7a41827e45ce7e32b083d195c8b"
+        return {
+            "file_names": ["text"],
+            "file_urls": {"text": image_url}
+        }
+
+    def schemas(self):
+        return [text_schema]
+
+    def outputs(self):
+        return {"text": ["银杏树"]}
+    
+class MixCardOCRCase(Case):
+    def inputs(self):
+        image_url=("https://bj.bcebos.com/v1/appbuilder/test_mix_card_ocr.jpeg?"
+                        "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T06"
+                        "%3A18%3A11Z%2F-1%2Fhost%2F695b8041c1ded194b9e80dbe"
+                        "1865e4393da5a3515e90d72d81ef18296bd29598")
+        return {
+            "file_names": ["test"],
+            "file_urls": {"test": image_url}
+        }
+    
+    def schemas(self):
+        return [text_schema]
+
+    def outputs(self):
+        return {"text": ["北京市公安局"]}
+
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
@@ -134,5 +184,8 @@ component_tool_eval_cases = {
     "ASR": ASRCase,
     "TreeMind": TreeMindCase,
     "StyleRewrite": StyleRewriteCase,
-    "HallucinationDetection": HallucinationDetectionCase
+    "HallucinationDetection": HallucinationDetectionCase,
+    "QRcodeOCR": QRcodeOCRCase,
+    "HandwriteOCR": HandWriteOCRCase,
+    "MixCardOCR": MixCardOCRCase,
 }
