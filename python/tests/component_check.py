@@ -85,14 +85,25 @@ class ManifestValidRule(RuleBase):
             pydantic_model = json_schema_to_pydantic_model(schema, tool_name)
             check_to_json = pydantic_model.schema_json()
             json_to_dict = json.loads(check_to_json)
+
+            if "properties" in schema:
+                properties = schema["properties"]
+                for key, value in properties.items():
+                    if "type" not in value:
+                        invalid_details.append("\'type' must be in properties item: {}".format(key))
+                    if "description" not in value:
+                        invalid_details.append("\'description' must be in properties item: {}".format(key))
+            
         except Exception as e:
             print(e)
             check_pass_flag = False
             invalid_details.append(str(e))
 
         if len(invalid_details) > 0:
+            check_pass_flag = False
             invalid_details = ",".join(invalid_details)
         else:
+            check_pass_flag = True
             invalid_details = ""
         return CheckInfo(
             check_rule_name=self.rule_name,

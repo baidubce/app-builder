@@ -59,15 +59,15 @@ class OralQueryGeneration(CompletionBaseComponent):
                 "type": "object",
                 "properties": {
                     "text": {
-                        "text": "string",
+                        "type": "string",
                         "description": "输入文本，组件会根据该输入文本生成query。"
                     },
                     "query_type": {
-                        "text": "string",
+                        "type": "string",
                         "description": "待生成的query类型，可选问题、短语以及全部（问题 + 短语）。"
                     },
                     "output_format": {
-                        "text": "string",
+                        "type": "string",
                         "description": "输出格式，可选json或str，str格式与老版本输出格式相同。"
                     }
                 },

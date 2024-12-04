@@ -66,7 +66,7 @@ class PPTGenerationFromInstruction(Component):
                 "type": "object",
                 "properties": {
                     "text": {
-                        "text": "string",
+                        "type": "string",
                         "description": "用户请求生成PPT的指令。",
                         "example": "生成一个介绍北京的PPT。"
                     }
