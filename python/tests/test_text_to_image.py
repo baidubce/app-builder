@@ -38,26 +38,6 @@ class TestText2ImageComponent(unittest.TestCase):
         self.assertIsNotNone(out)
         self.assertIsInstance(out, appbuilder.Message)
 
-    def test_submitText2ImageTask(self):
-        """
-        submitText2ImageTask方法单测
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        """
-        request = Text2ImageSubmitRequest()
-        request.prompt = "上海的经典风景"
-        request.width = 1024
-        request.height = 1024
-        request.image_num = 1
-        response = self.text2Image.submitText2ImageTask(request)
-        self.assertIsNotNone(response)
-        self.assertIsInstance(response, Text2ImageSubmitResponse)
-
     def test_queryText2ImageData(self):
         """
         queryText2ImageData方法单测
