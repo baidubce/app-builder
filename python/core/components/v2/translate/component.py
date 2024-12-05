@@ -76,8 +76,7 @@ class Translation(Component):
                     }
                 },
                 "required": [
-                    "q",
-                    "to_lang"
+                    "q"
                 ]
             }
         }
