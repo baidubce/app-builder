@@ -246,6 +246,15 @@ class StyleWritingCase(Case):
     
     def outputs(self):
         return {"text": ["足球"]}
+    
+class TreeMindCase(Case):
+    def inputs(self):
+        return {
+            "query": "生成一份年度总结的思维导图"
+        }
+    
+    def schemas(self):
+        return [text_schema, url_schema]
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
@@ -262,4 +271,5 @@ component_tool_eval_cases = {
     "TableOCR": TableOCRCase,
     "Text2Image": Text2ImageCase,
     "StyleWriting": StyleWritingCase,
+    "TreeMind": TreeMindCase,
 }
