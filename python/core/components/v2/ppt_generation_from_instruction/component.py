@@ -318,6 +318,11 @@ class PPTGenerationFromInstruction(Component):
     @components_run_stream_trace
     def tool_eval(self, text: str, **kwargs):
         """用于function call
+        Args:
+            text (str): 用户输入的指令
+
+        Returns:
+            ComponentOutput: 生成的PPT下载链接
         """
         if not text:
             raise ValueError('param `text` should not be empty.')

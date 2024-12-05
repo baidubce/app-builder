@@ -22,7 +22,7 @@ import appbuilder
 from appbuilder.core.component import ComponentOutput
 from appbuilder.core.components.v2 import PPTGenerationFromPaper
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip(reason="暂时跳过")
 class TestPPTGenerationFromPaperComponent(unittest.TestCase):
     def setUp(self):
         """

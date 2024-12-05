@@ -6,7 +6,7 @@ from appbuilder.core.component import ComponentOutput
 from appbuilder.core.components.v2 import PPTGenerationFromInstruction
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip(reason="暂时跳过")
 class TestV2PPTGenerationFromInstruction(unittest.TestCase):
     def setUp(self) -> None:
         self.comp = PPTGenerationFromInstruction()

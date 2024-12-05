@@ -322,6 +322,9 @@ class PPTGenerationFromPaper(Component):
         Args:
             style (str): 风格，默认为None
             **kwargs: 其他参数
+
+        Returns:
+            ComponentOutput: 生成的ppt下载链接
         """
         file_urls = kwargs.get('_sys_file_urls', {})
         if not file_urls:
