@@ -19,6 +19,9 @@ from .llms.hallucination_detection.component import HallucinationDetection
 from .qrcode_ocr.component import QRcodeOCR
 from .handwrite_ocr.component import HandwriteOCR
 from .mix_card_ocr.component import MixCardOCR
+from .ppt_generation_from_instruction import PPTGenerationFromInstruction
+from .ppt_generation_from_file import PPTGenerationFromFile
+from .ppt_generation_from_paper import PPTGenerationFromPaper
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
@@ -28,4 +31,7 @@ __V2_COMPONENTS__ = [
     "QRcodeOCR",
     "HandwriteOCR",
     "MixCardOCR",
+    "PPTGenerationFromInstruction",
+    "PPTGenerationFromFile",
+    "PPTGenerationFromPaper"
 ] # NOQA

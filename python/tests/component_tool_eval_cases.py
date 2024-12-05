@@ -178,6 +178,46 @@ class MixCardOCRCase(Case):
         return {"text": ["北京市公安局"]}
 
 
+class PPTGenerationFromInstructionCase(Case):
+    def inputs(self):
+        return {
+                "text": "生成一个介绍迪士尼的PPT"
+            }
+
+    def schemas(self):
+        return [text_schema, url_schema]
+
+    def outputs(self):
+        return {"text": ["已成功为您生成PPT"]}
+    
+
+class PPTGenerationFromFileCase(Case):
+    def inputs(self):
+        return {
+            '_sys_file_urls': {'test_file': 'http://image.yoojober.com/users/chatppt/temp/2024-06/6672a92c87e6f.doc'}
+        }
+
+    def schemas(self):
+        return [text_schema, url_schema]
+
+    def outputs(self):
+        return {"text": ["已成功为您生成PPT"]}
+
+
+class PPTGenerationFromPaperCase(Case):
+    def inputs(self):
+        return {
+            '_sys_file_urls':  {'test_file': 'http://image.yoojober.com/users/chatppt/temp/2024-06/6672aa839a9da.docx'},
+            'style': '科技'
+        }
+
+    def schemas(self):
+        return [text_schema, url_schema]
+
+    def outputs(self):
+        return {"text": ["已成功为您生成PPT"]}
+
+    
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
     "ImageUnderstand": ImageUnderstandCase,
@@ -188,4 +228,8 @@ component_tool_eval_cases = {
     "QRcodeOCR": QRcodeOCRCase,
     "HandwriteOCR": HandWriteOCRCase,
     "MixCardOCR": MixCardOCRCase,
+    "PPTGenerationFromInstruction": PPTGenerationFromInstructionCase,
+    "PPTGenerationFromFile": PPTGenerationFromFileCase,
+    "PPTGenerationFromPaper": PPTGenerationFromPaperCase,
+    
 }
