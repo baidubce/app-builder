@@ -14,6 +14,8 @@
 
 from .animal_recognize.component import AnimalRecognition
 from .image_understand.component import  ImageUnderstand
+from .translate.component import Translation
+from .general_ocr.component import GeneralOCR
 from .llms.style_rewrite.component import StyleRewrite
 from .llms.hallucination_detection.component import HallucinationDetection
 from .qrcode_ocr.component import QRcodeOCR
@@ -22,10 +24,15 @@ from .mix_card_ocr.component import MixCardOCR
 from .ppt_generation_from_instruction import PPTGenerationFromInstruction
 from .ppt_generation_from_file import PPTGenerationFromFile
 from .ppt_generation_from_paper import PPTGenerationFromPaper
+from .table_ocr.component import TableOCR
+from .text_to_image.component import Text2Image
+from .llms.style_writing.component import StyleWriting
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
     "ImageUnderstand",
+    "Translation",
+    "GeneralOCR",
     "StyleRewrite",
     "HallucinationDetection",
     "QRcodeOCR",
@@ -34,4 +41,7 @@ __V2_COMPONENTS__ = [
     "PPTGenerationFromInstruction",
     "PPTGenerationFromFile",
     "PPTGenerationFromPaper"
+    "TableOCR",
+    "Text2Image",
+    "StyleWriting"
 ] # NOQA

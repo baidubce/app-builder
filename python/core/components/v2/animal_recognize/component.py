@@ -150,16 +150,16 @@ class AnimalRecognition(Component):
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
         """
-        用于工具的执行，通过调用底层接口进行动物识别。
+        对图像进行工具评估。
         
         Args:
-            name (str): 工具名。
-            streaming (bool): 是否流式返回。
-            origin_query (str): 用户原始query。
-            **kwargs: 工具调用的额外关键字参数。
+            img_name (str): 图像名称。
+            img_url (str): 图像URL地址。
+            **kwargs: 其他关键字参数。
         
         Returns:
-            Union[Generator[str, None, None], str]: 动物识别结果，包括识别出的动物类别和相应的置信度信息。
+            Union[Generator[str, None, None], str]: 返回一个生成器，生成图像识别结果，或者返回图像识别结果的字符串。
+        
         """
         traceid = kwargs.get("_sys_traceid")
         file_urls = kwargs.get("_sys_file_urls", {})

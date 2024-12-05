@@ -176,7 +176,76 @@ class MixCardOCRCase(Case):
 
     def outputs(self):
         return {"text": ["北京市公安局"]}
+class TranslationCase(Case):
+    def inputs(self):
+        return {
+            "q": "你好",
+            "to_lang": "en",
+            }
 
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["Hello"]}
+
+class GeneralOCRCase(Case):
+    def inputs(self):
+        return {
+            "img_url": "https://bj.bcebos.com/v1/appbuilder/general_ocr_test.png?" \
+                    "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
+                    "11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae" \
+                    "857a27513734d765495f89ffa5f73",
+            "img_name": "test_img.jpg"
+        }
+
+    def outputs(self):
+        return {"text": ["识别结果"]}
+
+    def schemas(self):
+        return [text_schema]
+
+class TableOCRCase(Case):
+    def inputs(self):
+        image_url = "https://bj.bcebos.com/v1/appbuilder/table_ocr_test.png?"\
+            "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A37%3A09Z%2F-1%2Fhost%2Fab528a5a9120d328dc6d18c6"\
+            "064079145ff4698856f477b820147768fc2187d3"
+        return {
+            "file_names": [image_url]
+        }
+    
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["http"]}
+
+
+class Text2ImageCase(Case):
+    def inputs(self):
+        return {
+            'query': '生成一张小猫图片',
+        }
+
+    def schemas(self):
+        return [image_schema]
+    
+class StyleWritingCase(Case):
+    def init_args(self):
+        return {"model": "ERNIE-3.5-8K"}
+    
+    def inputs(self):
+        return {
+            "query": "帮我写一篇关于足球的文案", 
+            "style": "小红书", 
+            "length": 100,
+        }
+
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["足球"]}
 
 class PPTGenerationFromInstructionCase(Case):
     def inputs(self):
@@ -231,5 +300,9 @@ component_tool_eval_cases = {
     "PPTGenerationFromInstruction": PPTGenerationFromInstructionCase,
     "PPTGenerationFromFile": PPTGenerationFromFileCase,
     "PPTGenerationFromPaper": PPTGenerationFromPaperCase,
-    
+    "Translation": TranslationCase,
+    "GeneralOCR": GeneralOCRCase,
+    "TableOCR": TableOCRCase,
+    "Text2Image": Text2ImageCase,
+    "StyleWriting": StyleWritingCase,
 }
