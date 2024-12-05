@@ -99,7 +99,8 @@ class PPTGenerationFromInstruction(Component):
         super().__init__(PPTGenerationFromInstructionArgs,
                          secret_key=secret_key,
                          gateway=gateway,
-                         lazy_certification=lazy_certification)
+                         lazy_certification=lazy_certification,
+                         **kwargs)
 
     def ppt_generation(self,
                        post_data: dict,

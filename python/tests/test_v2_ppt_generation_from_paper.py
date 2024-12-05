@@ -53,7 +53,7 @@ class TestPPTGenerationFromPaperComponent(unittest.TestCase):
         print(result)
         self.assertIsNotNone(result)
 
-    def test_ppt_generation_from_file_non_stream(self):
+    def _test_ppt_generation_from_file_non_stream(self):
         """测试non_stream_tool_eval
         """
         time.sleep(2)

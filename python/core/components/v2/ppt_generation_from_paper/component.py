@@ -81,6 +81,7 @@ class PPTGenerationFromPaper(Component):
         secret_key: Optional[str] = None,
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化论文生成PPT组件。
         
@@ -95,7 +96,8 @@ class PPTGenerationFromPaper(Component):
         super().__init__(PPTGenerationFromPaperArgs,
                          secret_key=secret_key,
                          gateway=gateway,
-                         lazy_certification=lazy_certification)
+                         lazy_certification=lazy_certification,
+                         **kwargs)
 
     def ppt_generation(self,
                        post_data: dict,

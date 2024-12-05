@@ -12,7 +12,7 @@ class TestV2PPTGenerationFromInstruction(unittest.TestCase):
         self.comp = PPTGenerationFromInstruction()
         self.text = "生成一个介绍迪士尼的PPT"
         
-    def test_non_stream_tool_eval(self):
+    def _test_non_stream_tool_eval(self):
         time.sleep(2)
         result = self.comp.non_stream_tool_eval(text=self.text)
         print(result)

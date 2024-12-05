@@ -40,7 +40,7 @@ __V2_COMPONENTS__ = [
     "MixCardOCR",
     "PPTGenerationFromInstruction",
     "PPTGenerationFromFile",
-    "PPTGenerationFromPaper"
+    "PPTGenerationFromPaper",
     "TableOCR",
     "Text2Image",
     "StyleWriting"

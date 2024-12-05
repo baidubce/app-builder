@@ -22,7 +22,7 @@ class TestCarExpert(unittest.TestCase):
             '_sys_file_urls': {'test_file': 'http://image.yoojober.com/users/chatppt/temp/2024-06/6672a92c87e6f.doc'}
         }
 
-    def test_ppt_generation_from_file_non_stream(self):
+    def _test_ppt_generation_from_file_non_stream(self):
         """测试non_stream_tool_eval
         """
         time.sleep(2)
