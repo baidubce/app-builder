@@ -205,7 +205,47 @@ class GeneralOCRCase(Case):
     def schemas(self):
         return [text_schema]
 
-   
+class TableOCRCase(Case):
+    def inputs(self):
+        image_url = "https://bj.bcebos.com/v1/appbuilder/table_ocr_test.png?"\
+            "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A37%3A09Z%2F-1%2Fhost%2Fab528a5a9120d328dc6d18c6"\
+            "064079145ff4698856f477b820147768fc2187d3"
+        return {
+            "file_names": [image_url]
+        }
+    
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["http"]}
+
+
+class Text2ImageCase(Case):
+    def inputs(self):
+        return {
+            'query': '生成一张小猫图片',
+        }
+
+    def schemas(self):
+        return [image_schema]
+    
+class StyleWritingCase(Case):
+    def init_args(self):
+        return {"model": "ERNIE-3.5-8K"}
+    
+    def inputs(self):
+        return {
+            "query": "帮我写一篇关于足球的文案", 
+            "style": "小红书", 
+            "length": 100,
+        }
+
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["足球"]}
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
@@ -219,4 +259,7 @@ component_tool_eval_cases = {
     "MixCardOCR": MixCardOCRCase,
     "Translation": TranslationCase,
     "GeneralOCR": GeneralOCRCase,
+    "TableOCR": TableOCRCase,
+    "Text2Image": Text2ImageCase,
+    "StyleWriting": StyleWritingCase,
 }

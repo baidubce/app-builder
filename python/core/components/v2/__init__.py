@@ -21,6 +21,9 @@ from .llms.hallucination_detection.component import HallucinationDetection
 from .qrcode_ocr.component import QRcodeOCR
 from .handwrite_ocr.component import HandwriteOCR
 from .mix_card_ocr.component import MixCardOCR
+from .table_ocr.component import TableOCR
+from .text_to_image.component import Text2Image
+from .llms.style_writing.component import StyleWriting
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
@@ -32,4 +35,7 @@ __V2_COMPONENTS__ = [
     "QRcodeOCR",
     "HandwriteOCR",
     "MixCardOCR",
+    "TableOCR",
+    "Text2Image",
+    "StyleWriting"
 ] # NOQA
