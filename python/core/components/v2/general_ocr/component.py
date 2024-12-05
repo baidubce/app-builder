@@ -160,8 +160,8 @@ class GeneralOCR(Component):
     @components_run_stream_trace
     def tool_eval(
         self, 
-        img_name: str,
-        img_url: str,
+        img_name: str = '',
+        img_url: str = '',
         **kwargs
         ):
         """
@@ -182,6 +182,9 @@ class GeneralOCR(Component):
             InvalidRequestArgumentError: 如果请求格式错误或文件URL不存在，将抛出此异常。
         
         """
+        if not img_name and not img_url:
+            raise ValueError(
+                "request format error, one of image or url or must pdf_file or ofd_file be set")
         traceid = kwargs.get("_sys_traceid")
         language_type = kwargs.get("language_type", 'CHN_ENG')
         if not img_url:
