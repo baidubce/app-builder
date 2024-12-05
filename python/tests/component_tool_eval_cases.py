@@ -255,6 +255,21 @@ class TreeMindCase(Case):
     
     def schemas(self):
         return [text_schema, url_schema]
+    
+class PlantRecognitionCase(Case):
+    def inputs(self):
+        img_url = "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
+                  "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T" \
+                  "12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad68" \
+                  "62cf937c03f8c5260d51c6ae"
+        img_name = "test_img.jpg"
+        return {
+            "img_url": img_url,
+            "img_name": img_name
+        }
+    
+    def schemas(self):
+        return [text_schema]
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
@@ -272,4 +287,5 @@ component_tool_eval_cases = {
     "Text2Image": Text2ImageCase,
     "StyleWriting": StyleWritingCase,
     "TreeMind": TreeMindCase,
+    "PlantRecognition": PlantRecognitionCase,
 }
