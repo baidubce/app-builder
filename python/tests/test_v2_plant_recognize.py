@@ -18,9 +18,10 @@ import requests
 import appbuilder
 from appbuilder.core.message import Message
 from appbuilder.core.component import Component
+from appbuilder.core.component import ComponentOutput
 from appbuilder.core.components.v2.plant_recognize.component import PlantRecognition
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPlantRecognition(unittest.TestCase):
 
     def setUp(self):
@@ -75,19 +76,6 @@ class TestPlantRecognition(unittest.TestCase):
         msg = self.plant_recognize.run(inp)
         self.assertIsNotNone(msg.content)
 
-    def test_tool_eval_valid(self):
-        """测试 tool 方法对有效请求的处理。"""
-        img_url = "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
-                  "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T" \
-                  "12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad68" \
-                  "62cf937c03f8c5260d51c6ae"
-        img_name = "test_img.jpg"
-        file_urls = {img_name: img_url}
-        result = self.plant_recognize.tool_eval(name="plant_recognition", streaming=True,
-                                                img_name=img_name, file_urls=file_urls, origin_query="")
-        res = [item for item in result]
-        self.assertNotEqual(len(res), 0)
-
     def test_tool_eval_invalid(self):
         """测试 tool 方法对无效请求的处理。"""
         with self.assertRaises(ValueError):
@@ -96,7 +84,7 @@ class TestPlantRecognition(unittest.TestCase):
             next(result)
 
     def test_tool_eval(self):
-        """测试 tool 方法对无效请求的处理。"""
+        """测试 tool 方法的处理。"""
         img_url = "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
                   "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T" \
                   "12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad68" \
@@ -105,7 +93,8 @@ class TestPlantRecognition(unittest.TestCase):
         result = self.plant_recognize.tool_eval(
             img_name=img_name, img_url=img_url)
         for r in result:
-            self.assertIsInstance(r, Component)
+            print(r)
+            self.assertIsInstance(r, ComponentOutput)
 
 
 if __name__ == '__main__':

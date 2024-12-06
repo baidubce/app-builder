@@ -170,14 +170,10 @@ class PlantRecognition(Component):
         traceid = kwargs.get("_sys_traceid", "")
         file_urls = kwargs.get("_sys_file_urls", {})
         rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
-        plant_score_list = []
-        [plant_score_list.append(PlantScore(name=plant.name, score=plant.score)) for plant in rec_res.result]
-        out = PlantRecognitionOutMsg(plant_score_list=plant_score_list)
-        out_str = str(out.model_dump())
 
         rec_res = self.create_output(
             type="text",
-            text=out_str,
+            text=rec_res,
         )
         yield rec_res
 

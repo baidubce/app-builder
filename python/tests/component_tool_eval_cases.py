@@ -270,6 +270,9 @@ class PlantRecognitionCase(Case):
     
     def schemas(self):
         return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["非植物"]}
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
