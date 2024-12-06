@@ -254,7 +254,7 @@ class TreeMindCase(Case):
         }
     
     def schemas(self):
-        return [text_schema, url_schema]
+        return [text_schema, url_schema, image_schema]
     
 class PlantRecognitionCase(Case):
     def inputs(self):
