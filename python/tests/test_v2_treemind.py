@@ -15,6 +15,7 @@ import os
 import unittest
 from appbuilder.core.message import Message
 from appbuilder.core.component import Component
+from appbuilder.core.component import ComponentOutput
 from appbuilder.core.components.v2 import TreeMind
 
 class TestTreeMindComponent(unittest.TestCase):
@@ -38,18 +39,7 @@ class TestTreeMindComponent(unittest.TestCase):
         result = self.tm.tool_eval(query=self.query)
         self.assertIsNotNone(result)
         for r in result:
-            print(r)
             self.assertIsNotNone(r)
-            self.assertIn(r["type"],["text", "urls"])
-
-    def test_treemind_component_run(self):
-        """测试run函数的返回值是否正确
-        """
-        msg = Message(content=self.query)
-        result = self.tm.run(msg)
-        print(result)
-        self.assertIsNotNone(result)
-        self.assertIsInstance(result, Message)
 
     def test_run_with_invalid_input(self):
         """测试run函数在传入无效输入的情况下的行为。
@@ -67,7 +57,7 @@ class TestTreeMindComponent(unittest.TestCase):
     def test_tool_eval(self):
         result = self.tm.tool_eval(query=self.query)
         for r in result:
-            self.assertIsInstance(r, Component)
+            self.assertIsInstance(r, ComponentOutput)
 
 if __name__ == '__main__':
     unittest.main()

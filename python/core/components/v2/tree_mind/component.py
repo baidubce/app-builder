@@ -114,7 +114,7 @@ class TreeMind(Component):
         
         img_link_result = self.create_output(
             type="image",
-            image={
+            text={
                 "url": img_link
             },
             visible_scope='all',
