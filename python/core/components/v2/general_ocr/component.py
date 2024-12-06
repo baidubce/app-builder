@@ -62,11 +62,20 @@ class GeneralOCR(Component):
                         "type": "string",
                         "description": "待识别图片的文件名,用于生成图片url"
                     },
+                    "language_type": {
+                        "type": "string",
+                        "description": "识别语言类型，'CHN_ENG'为中英文混合，'ENG'为英文， 'JAP'为日语，'KOR'为韩语，'FRE'为法语，'SPA'为西班牙语，'POR'为葡萄牙语，"
+                        "'GER'为德语，'ITA'为意大利语，'RUS'为俄语，'DAN'为丹麦语，'DUT'为荷兰语，'MAL'为马来语，'SWE'为瑞典语，'IND'为印尼语，'POL'为波兰语，'ROM'为罗马尼亚语，"
+                        "'TUR'为土耳其语，'GRE'为希腊语，'HUN'为匈牙利语，'THA'为泰语，'VIE'为越南语，'ARA'为阿拉伯语，'HIN'为印地语，默认为'CHN_ENG'",
+                        "enum": ['CHN_ENG', 'ENG', 'JAP', 'KOR', 'FRE', 'SPA', 'POR', 'GER', 'ITA',
+                                 'RUS', 'DAN', 'DUT', 'MAL', 'SWE', 'IND', 'POL', 'ROM', 'TUR', 
+                                 'GRE', 'HUN', 'THA', 'VIE', 'ARA', 'HIN'],
+                    },
                 },
                 "anyOf": [
                     {
                         "required": [
-                            "img_url"
+                            "img_url",
                         ]
                     },
                     {
@@ -162,6 +171,7 @@ class GeneralOCR(Component):
         self, 
         img_name: str = '',
         img_url: str = '',
+        language_type: str = 'CHN_ENG',
         **kwargs
         ):
         """
@@ -186,7 +196,6 @@ class GeneralOCR(Component):
             raise ValueError(
                 "request format error, one of image or url or must pdf_file or ofd_file be set")
         traceid = kwargs.get("_sys_traceid")
-        language_type = kwargs.get("language_type", 'CHN_ENG')
         if not img_url:
             file_urls = kwargs.get("_sys_file_urls", {})
             img_path = img_name
