@@ -19,7 +19,7 @@ from appbuilder.core.components.v2 import GeneralOCR
 from appbuilder.core.component import ComponentOutput
 from appbuilder.core._exception import InvalidRequestArgumentError
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestGeneralOCR(unittest.TestCase):
     def setUp(self) -> None:
         self.com = GeneralOCR()
