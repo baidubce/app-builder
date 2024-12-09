@@ -118,10 +118,9 @@ public class AppBuilderClientTest {
         String ToolCallID = "";
         while (itor.hasNext()) {
             AppBuilderClientResult result = itor.next();
-            int lastIndex = result.getEvents().length - 1;
-            Event lastEvent = result.getEvents()[lastIndex];
-            int toolCallIndex = lastEvent.getToolCalls().length - 1;
-            ToolCallID = lastEvent.getToolCalls()[toolCallIndex].getId();
+        
+            Event lastEvent = result.getEvents()[result.getEvents().length - 1];
+            ToolCallID = lastEvent.getToolCalls()[lastEvent.getToolCalls().length - 1].getId();
             System.out.println(result);
         }
 
