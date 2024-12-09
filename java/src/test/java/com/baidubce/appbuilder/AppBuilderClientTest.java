@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 public class AppBuilderClientTest {
     String appId;
     String chatflowAppId;
+    String followupqueryId;
 
     @Before
     public void setUp() {
@@ -34,6 +35,7 @@ public class AppBuilderClientTest {
         System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
         appId = "aa8af334-df27-4855-b3d1-0d249c61fc08";
         chatflowAppId = "4403205e-fb83-4fac-96d8-943bdb63796f";
+        followupqueryId = "fb64d96b-f828-4385-ba1d-835298d635a9";
     }
 
     @Test
@@ -53,7 +55,7 @@ public class AppBuilderClientTest {
 
     @Test
     public void AppBuilderClientRunTest() throws IOException, AppBuilderServerException {
-        AppBuilderClient builder = new AppBuilderClient(appId);
+        AppBuilderClient builder = new AppBuilderClient(followupqueryId);
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
         String fileId = builder.uploadLocalFile(conversationId,

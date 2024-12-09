@@ -44,7 +44,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.app_id = "aa8af334-df27-4855-b3d1-0d249c61fc08"
+        self.app_id = "fb64d96b-f828-4385-ba1d-835298d635a9"
 
     def test_appbuilder_run_chatflow(self):
         # 如果app_id为空，则跳过单测执行, 避免单测因配置无效而失败
@@ -72,14 +72,14 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                         "json").get("follow_up_querys")[0]
                     print(follow_up_query)
                     assert follow_up_query is not None
-    
+
     def test_appbuilder_run_chatflow_with_event_handler(self):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
         appbuilder.logger.setLevel("ERROR")
         builder = appbuilder.AppBuilderClient(self.app_id)
         conversation_id = builder.create_conversation()
-        
+
         event_handler = MyEventHandler()
         with builder.run_with_handler(
             conversation_id = conversation_id,
@@ -88,7 +88,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
             event_handler=event_handler,
         ) as run:
             run.until_done()
-            
+
         print(event_handler.follow_up_queries)
         assert len(event_handler.follow_up_queries) > 0
 
