@@ -1003,7 +1003,10 @@ class AppBuilderClientDemo {
         String ToolCallID = "";
         while (itor.hasNext()) {
             AppBuilderClientResult result = itor.next();
-            ToolCallID = result.getEvents()[0].getToolCalls()[0].getId();
+            int lastIndex = result.getEvents().length - 1;
+            Event lastEvent = result.getEvents()[lastIndex];
+            int toolCallIndex = lastEvent.getToolCalls().length - 1;
+            ToolCallID = lastEvent.getToolCalls()[toolCallIndex].getId();
             System.out.println(result);
         }
 
@@ -1406,12 +1409,9 @@ func main() {
 	totalAnswer := ""
 	toolCallID := ""
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
-		totalAnswer = totalAnswer + answer.Answer
-		for _, ev := range answer.Events {
-			toolCallID = ev.ToolCalls[0].ID
-			evJSON, _ := json.Marshal(ev)
-			fmt.Println(string(evJSON))
-		}
+		totalAnswer += answer.Answer
+		lastEvent := answer.Events[len(answer.Events)-1]
+		toolCallID = lastEvent.ToolCalls[len(lastEvent.ToolCalls)-1].ID
 	}
 
 	i2, err := client.Run(appbuilder.AppBuilderClientRunRequest{

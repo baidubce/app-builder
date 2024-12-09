@@ -508,11 +508,8 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	toolCallID := ""
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		totalAnswer += answer.Answer
-		for _, ev := range answer.Events {
-			toolCallID = ev.ToolCalls[0].ID
-			evJSON, _ := json.Marshal(ev)
-			log(string(evJSON))
-		}
+		lastEvent := answer.Events[len(answer.Events)-1]
+		toolCallID = lastEvent.ToolCalls[len(lastEvent.ToolCalls)-1].ID
 	}
 
 	i2, err := client.RunWithToolCall(AppBuilderClientRunRequest{
