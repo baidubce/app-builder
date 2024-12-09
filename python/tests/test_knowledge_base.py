@@ -23,6 +23,7 @@ class TestKnowLedge(unittest.TestCase):
 
     def test_doc_knowledage(self):
         dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+        appbuilder.logger.setLoglevel('DEBUG')
         knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
 
         upload_res = knowledge.upload_file("./data/qa_appbuilder_client_demo.pdf")

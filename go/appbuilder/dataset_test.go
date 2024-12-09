@@ -20,6 +20,7 @@ import (
 	"os"
 	"testing"
 )
+
 func TestDatasetError(t *testing.T) {
 	t.Parallel() // 并发运行
 	// 测试逻辑
@@ -51,7 +52,7 @@ func TestDatasetError(t *testing.T) {
 	dataset.sdkConfig.GatewayURLV2 = GatewayURL
 	_, err = dataset.Create("测试集合")
 	if err == nil {
-		
+
 	}
 	// 测试 UploadLocalFile 5: 模拟读取 body 时发生错误
 	dataset.client = &FaultyHTTPClient{}
@@ -66,7 +67,7 @@ func TestDatasetError(t *testing.T) {
 	//NewDataset测试2 client == nil
 	config.HTTPClient = nil
 	dataset, _ = NewDataset(config)
-	
+
 }
 func TestDataset(t *testing.T) {
 	t.Parallel() // 并发运行
@@ -92,9 +93,10 @@ func TestDataset(t *testing.T) {
 	}
 	log("Dataset created with ID: %s", datasetID)
 
-	_,err = dataset.BatchUploadLocaleFile("datasetID", []string{"./files/test.pdf", "./files/test2.pdf"})
+	_, err = dataset.BatchUploadLocaleFile("datasetID", []string{"./files/test.pdf", "./files/test2.pdf"})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("upload file failed: %v", err)
 	}
 	//log("Documents uploaded with ID: %s", documentIDs)
 
@@ -122,7 +124,7 @@ func TestDataset(t *testing.T) {
 	if t.Failed() {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		fmt.Println(logBuffer.String())
-	} else {  // else 紧跟在右大括号后面
+	} else { // else 紧跟在右大括号后面
 		// 测试通过，打印文件名和测试函数名
 		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
