@@ -33,10 +33,12 @@ const (
 	StatusContentType            = "status"
 	ChatflowInterruptContentType = "chatflow_interrupt"
 	PublishMessageContentType    = "publish_message"
+	JsonContentType              = "json"
 )
 
 const (
-	ChatflowEventType = "chatflow"
+	ChatflowEventType      = "chatflow"
+	FollowUpQueryEventType = "FollowUpQuery"
 )
 
 var TypeToStruct = map[string]reflect.Type{
@@ -50,6 +52,7 @@ var TypeToStruct = map[string]reflect.Type{
 	StatusContentType:            reflect.TypeOf(StatusDetail{}),
 	ChatflowInterruptContentType: reflect.TypeOf(ChatflowInterruptDetail{}),
 	PublishMessageContentType:    reflect.TypeOf(PublishMessageDetail{}),
+	JsonContentType:              reflect.TypeOf(JsonDetail{}),
 }
 
 type AppBuilderClientRunRequest struct {
@@ -233,6 +236,14 @@ type ChatflowInterruptDetail struct {
 type PublishMessageDetail struct {
 	Message   string `json:"message"`
 	MessageID string `json:"message_id"`
+}
+
+type JsonDetail struct {
+	Json FollowUpQueries `json:"json"`
+}
+
+type FollowUpQueries struct {
+	FollowUpQueries []string `json:"follow_up_querys"`
 }
 
 type DefaultDetail struct {

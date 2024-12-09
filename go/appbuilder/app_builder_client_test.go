@@ -407,6 +407,15 @@ func TestNewAppBuilderClient(t *testing.T) {
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		totalAnswer += answer.Answer
 		for _, ev := range answer.Events {
+			if ev.ContentType == JsonContentType {
+				detail := ev.Detail.(JsonDetail)
+				folllowUpQueries := detail.Json.FollowUpQueries
+				fmt.Println(folllowUpQueries)
+				if len(folllowUpQueries[0]) == 0 {
+					t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+					t.Fatal("follow up queries is empty")
+				}
+			}
 			evJSON, _ := json.Marshal(ev)
 			log(string(evJSON))
 		}

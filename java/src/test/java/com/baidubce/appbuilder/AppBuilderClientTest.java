@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.List;
 
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
@@ -63,7 +64,28 @@ public class AppBuilderClientTest {
         assertTrue(itor.hasNext());
         while (itor.hasNext()) {
             AppBuilderClientResult result = itor.next();
-            System.out.println(result);
+            for (Event event : result.getEvents()) {
+                if (event.getContentType().equals(EventContent.JsonContentType) && (event.getEventType().equals(Event.FollowUpQueryEventType))) {
+                    Object json = event.getDetail().get("json");
+                    if (json instanceof Map<?,?>) {
+                        Map<?, ?> map = (Map<?, ?>) json;
+                        for (Map.Entry<?, ?> entry : map.entrySet()) {
+
+                            if (entry.getKey() instanceof String && entry.getValue() instanceof List) {
+                                String key = (String) entry.getKey();
+                                List<?> list = (List<?>) entry.getValue();
+                                if (!list.isEmpty() && list.get(0) instanceof String) {
+                                    String stringValue = (String) list.get(0);
+                                    if (key.equals("follow_up_querys")) {
+                                        System.out.println(stringValue);
+                                        assert !stringValue.isEmpty();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
