@@ -65,24 +65,28 @@ public class AppBuilderClientTest {
         while (itor.hasNext()) {
             AppBuilderClientResult result = itor.next();
             for (Event event : result.getEvents()) {
-                if (event.getContentType().equals(EventContent.JsonContentType) && (event.getEventType().equals(Event.FollowUpQueryEventType))) {
-                    Object json = event.getDetail().get("json");
-                    if (json instanceof Map<?,?>) {
-                        Map<?, ?> map = (Map<?, ?>) json;
-                        for (Map.Entry<?, ?> entry : map.entrySet()) {
+                if (!event.getContentType().equals(EventContent.JsonContentType)
+                        || !event.getEventType().equals(Event.FollowUpQueryEventType)) {
+                    continue;
+                }
+                Object json = event.getDetail().get("json");
+                if (!(json instanceof Map)) {
+                    continue;
+                }
 
-                            if (entry.getKey() instanceof String && entry.getValue() instanceof List) {
-                                String key = (String) entry.getKey();
-                                List<?> list = (List<?>) entry.getValue();
-                                if (!list.isEmpty() && list.get(0) instanceof String) {
-                                    String stringValue = (String) list.get(0);
-                                    if (key.equals("follow_up_querys")) {
-                                        System.out.println(stringValue);
-                                        assert !stringValue.isEmpty();
-                                    }
-                                }
-                            }
-                        }
+                for (Map.Entry<?, ?> entry : ((Map<?, ?>) json).entrySet()) {
+                    if (!(entry.getKey() instanceof String && entry.getValue() instanceof List
+                            && !((List<?>) entry.getValue()).isEmpty()
+                            && ((List<?>) entry.getValue()).get(0) instanceof String)) {
+                        continue;
+                    }
+
+                    String key = (String) entry.getKey();
+                    String stringValue = (String) ((List<?>) entry.getValue()).get(0);
+
+                    if (key.equals("follow_up_querys")) {
+                        System.out.println(stringValue);
+                        assert !stringValue.isEmpty();
                     }
                 }
             }
