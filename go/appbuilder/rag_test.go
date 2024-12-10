@@ -87,7 +87,7 @@ func TestNewRAG(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
 	// 测试逻辑
-	config, err := NewSDKConfig("", "")
+	config, err := NewSDKConfig("", os.Getenv("APPBUILDER_TOKEN"))
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
