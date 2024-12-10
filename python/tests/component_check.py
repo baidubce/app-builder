@@ -60,19 +60,24 @@ class ManifestValidRule(RuleBase):
     """
     通过尝试将component的manifest转换为pydantic模型来检查manifest是否符合规范
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__()
         self.rule_name = "ManifestValidRule"
+        self.component_tool_eval_case = kwargs.get("component_tool_eval_case", {})
 
     def check(self, component_cls) -> CheckInfo:
         check_pass_flag = True
         invalid_details = []
 
+        component_name = component_cls.__name__
+        component_case = self.component_tool_eval_case[component_name]
+        init_args = component_case().init_args()
 
         try:
-            if not hasattr(component_cls, "manifests"):
+            component_obj = component_cls(**init_args)
+            if not hasattr(component_obj, "manifests"):
                 raise ValueError("No manifests found")
-            manifests = component_cls.manifests
+            manifests = component_obj.manifests
             # NOTE(暂时检查manifest中的第一个mainfest)
             if not manifests or len(manifests) == 0:
                 raise ValueError("No manifests found")
@@ -239,6 +244,7 @@ class ToolEvalOutputJsonRule(RuleBase):
         super().__init__()
         self.rule_name = 'ToolEvalOutputJsonRule'
         self.component_tool_eval_cases = kwargs.get("component_tool_eval_cases")
+        self.unstable_components = kwargs.get("unstable_components", [])
 
     def _check_pre_format(self, outputs):
         invalid_details = []
@@ -357,21 +363,22 @@ class ToolEvalOutputJsonRule(RuleBase):
             init_args = component_case.init_args()
             component_obj = component_cls(**init_args)
             output_json_schemas = component_case.schemas()
-            
-            try:
-                stream_output_dict = {"text": "", "oral_text":"", "code": ""}
-                stream_outputs = component_obj.tool_eval(**input_dict)
-                for stream_output in stream_outputs:
-                    iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
-                    invalid_details.extend(iter_invalid_detail)
-                    iter_output_dict = self._gather_iter_outputs(stream_output)
-                    stream_output_dict["text"] += iter_output_dict["text"]
-                    stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
-                    stream_output_dict["code"] += iter_output_dict["code"]
-                if len(invalid_details) == 0:
-                    invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
-            except Exception as e:
-                invalid_details.append("ToolEval执行失败: {}".format(e))
+            count = 3
+            while count > 0:
+                try:
+                    stream_output_dict = {"text": "", "oral_text":"", "code": ""}
+                    stream_outputs = component_obj.tool_eval(**input_dict)
+                    for stream_output in stream_outputs:
+                        iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
+                        invalid_details.extend(iter_invalid_detail)
+                        iter_output_dict = self._gather_iter_outputs(stream_output)
+                        stream_output_dict["text"] += iter_output_dict["text"]
+                        stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
+                        stream_output_dict["code"] += iter_output_dict["code"]
+                    if len(invalid_details) == 0:
+                        invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
+                except Exception as e:
+                    invalid_details.append("ToolEval执行失败: {}".format(e))
 
             for env in envs:
                 os.environ.pop(env)
