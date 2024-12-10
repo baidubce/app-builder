@@ -40,5 +40,5 @@ go get github.com/baidubce/app-builder/go/appbuilder
 
 ### Docker (当前仅集成了Python版本AppBuilder-SDK)
 ``` shell
-docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.9.7
+docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:0.9.8
 ```
