@@ -249,7 +249,6 @@ func TestAddDocumentError(t *testing.T) {
 func TestCreateKnowledgeBaseError(t *testing.T) {
 	t.Parallel() // 并发运行
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
-	os.Setenv("APPBUILDER_TOKEN", "")
 	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
 	if err != nil {
 	}
@@ -821,7 +820,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 func TestChunkError(t *testing.T) {
 	t.Parallel() // 并发运行
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
-	os.Setenv("APPBUILDER_TOKEN", "")
 
 	documentID := os.Getenv(DocumentIDV3)
 	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
@@ -1169,7 +1167,6 @@ func TestCreateKnowledgeBase(t *testing.T) {
 	var logBuffer bytes.Buffer
 
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
-	os.Setenv("APPBUILDER_TOKEN", "")
 
 	log := func(format string, args ...any) {
 		fmt.Fprintf(&logBuffer, format+"\n", args...)
@@ -1402,7 +1399,6 @@ func TestChunk(t *testing.T) {
 	var logBuffer bytes.Buffer
 
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
-	os.Setenv("APPBUILDER_TOKEN", "")
 
 	log := func(format string, args ...any) {
 		fmt.Fprintf(&logBuffer, format+"\n", args...)
