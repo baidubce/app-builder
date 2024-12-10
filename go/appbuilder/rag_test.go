@@ -82,12 +82,11 @@ func TestNewRAGError(t *testing.T) {
 	}
 }
 func TestNewRAG(t *testing.T) {
-	t.Parallel() // 并发运行
 	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
 	// 测试逻辑
-	config, err := NewSDKConfig("", os.Getenv("APPBUILDER_TOKEN"))
+	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
