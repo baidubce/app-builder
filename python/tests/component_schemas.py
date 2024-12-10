@@ -213,14 +213,14 @@ chart_schema["properties"]["type"] = {
 chart_schema["properties"]["text"] = {
   "type": "object",
   "properties": {
-    "filename": {
+    "type": {
       "type": "string"
     },
-    "url": {
+    "data": {
       "type": "string"
     }
   },
-  "required": ["filename", "url"]
+  "required": ["type", "data"]
 }
 
 audio_schema = copy.deepcopy(base_item_schema)
