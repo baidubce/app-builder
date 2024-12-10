@@ -21,6 +21,7 @@ import appbuilder
 from appbuilder.core.component import ComponentOutput
 from appbuilder.core._exception import InvalidRequestArgumentError
 from appbuilder.core.components.v2 import ASR
+from appbuilder.core.components.v2.asr.component import _convert as convert
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestASR(unittest.TestCase):
@@ -44,9 +45,21 @@ class TestASR(unittest.TestCase):
             print(res)
 
     def test_asr_tool_eval_error(self):
+        result = self.com.tool_eval()
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)
+
         result = self.com.tool_eval(file_name='test_path')
         with self.assertRaises(InvalidRequestArgumentError):
             next(result)
+
+    def test_convert_with_mp3(self):
+        file_type = ["mp3", "wav", "pcm", "m4a"]
+        for type in file_type:
+            with self.assertRaises(FileNotFoundError):
+                path = os.path.join(os.path.dirname(__file__), "test_audio")
+                path += ".{}".format(type)
+                convert(path, type)
 
 if __name__ == '__main__':
     unittest.main()
