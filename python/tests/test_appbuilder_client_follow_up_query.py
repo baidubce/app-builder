@@ -46,7 +46,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
         """
         self.app_id = "fb64d96b-f828-4385-ba1d-835298d635a9"
 
-    def test_appbuilder_run_chatflow(self):
+    def test_appbuilder_run_follow_up_query(self):
         # 如果app_id为空，则跳过单测执行, 避免单测因配置无效而失败
         """
         如果app_id为空，则跳过单测执行, 避免单测因配置无效而失败
@@ -73,7 +73,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
                     print(follow_up_query)
                     assert follow_up_query is not None
 
-    def test_appbuilder_run_chatflow_with_event_handler(self):
+    def test_appbuilder_run_followupquery_with_event_handler(self):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
         appbuilder.logger.setLevel("ERROR")
