@@ -244,7 +244,6 @@ class ToolEvalOutputJsonRule(RuleBase):
         super().__init__()
         self.rule_name = 'ToolEvalOutputJsonRule'
         self.component_tool_eval_cases = kwargs.get("component_tool_eval_cases")
-        self.unstable_components = kwargs.get("unstable_components", [])
 
     def _check_pre_format(self, outputs):
         invalid_details = []
