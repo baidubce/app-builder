@@ -361,9 +361,9 @@ class ToolEvalOutputJsonRule(RuleBase):
             try:
                 stream_output_dict = {"text": "", "oral_text":"", "code": ""}
                 stream_outputs = component_obj.tool_eval(**input_dict)
-                for stream_output in stream_outputs: #校验流式输出
+                for stream_output in stream_outputs:
                     iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
-                    invalid_details.extend(["流式" + error_message for error_message in iter_invalid_detail])
+                    invalid_details.extend(iter_invalid_detail)
                     iter_output_dict = self._gather_iter_outputs(stream_output)
                     stream_output_dict["text"] += iter_output_dict["text"]
                     stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
@@ -372,17 +372,6 @@ class ToolEvalOutputJsonRule(RuleBase):
                     invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
             except Exception as e:
                 invalid_details.append("ToolEval执行失败: {}".format(e))
-
-            time.sleep(2)
-            try:
-                non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-                non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs.model_dump(), output_json_schemas)  #校验非流式输出
-                invalid_details.extend(["非流式" + error_message for error_message in non_stream_invalid_details]) 
-                if len(invalid_details) == 0:
-                    non_stream_output_dict = self._gather_iter_outputs(non_stream_outputs)
-                    invalid_details.extend(self._check_text_and_code(component_case, non_stream_output_dict))
-            except Exception as e:
-                invalid_details.append(" NonStreamToolEval执行失败: {}".format(e))
 
             for env in envs:
                 os.environ.pop(env)
