@@ -30,7 +30,9 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 class Text2Image(Component):
     r"""
     文生图组件，即对于输入的文本，输出生成的图片url。
+
     Examples:
+    
     .. code-block:: python
         import appbuilder
         text_to_image = appbuilder.Text2Image()

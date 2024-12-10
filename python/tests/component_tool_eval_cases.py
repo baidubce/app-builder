@@ -273,6 +273,67 @@ class PlantRecognitionCase(Case):
     
     def outputs(self):
         return {"text": ["非植物"]}
+    
+class ASRCase(Case):
+    def inputs(self):
+        audio_file_url ="https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
+                        "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
+                        "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
+
+        return {
+            "file_url": audio_file_url
+        }
+    
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["北京科技馆"]}
+    
+class ObjectRecognitionCase(Case):
+    def inputs(self):
+        img_url = "https://bj.bcebos.com/v1/appbuilder/object_recognize_test.png?" \
+                "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
+                "11T11%3A00%3A19Z%2F-1%2Fhost%2F2c31bf29205f61e58df661dc80af31a1dc" \
+                "1ba1de0a8f072bc5a87102bd32f9e3"
+        return {
+            "img_url": img_url
+        }
+    
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["苹果"]}
+    
+class SimilarQuestionCase(Case):
+    def inputs(self):
+        return {
+            "query": "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
+        }
+    
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["冰淇淋"]}
+
+class OralQueryGenerationCase(Case):
+    def inputs(self):
+        text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
+                '文档摘要：OPPO Reno5上的视频超级防抖，视频超级防抖3.0，多代视频防抖算法积累，这一代依旧超级防抖超级稳。 开启视频超级'
+                '防抖 开启路径：打开「相机 > 视频 > 点击屏幕上方的“超级防抖”标识」 后置视频同时支持超级防抖和超级防抖Pro功能，开启超级'
+                '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
+                '，实时视频分享您的生活。')
+        return {
+            "text":text
+        }
+    
+    def schemas(self):
+        return [text_schema]
+    
+    def outputs(self):
+        return {"text": ["OPPO"]}
 
 component_tool_eval_cases = {
     "AnimalRecognition": AnimalRecognitionCase,
@@ -291,4 +352,8 @@ component_tool_eval_cases = {
     "StyleWriting": StyleWritingCase,
     "TreeMind": TreeMindCase,
     "PlantRecognition": PlantRecognitionCase,
+    "ASR": ASRCase,
+    "ObjectRecognition": ObjectRecognitionCase,
+    "SimilarQuestion": SimilarQuestionCase,
+    "OralQueryGeneration": OralQueryGenerationCase,
 }
