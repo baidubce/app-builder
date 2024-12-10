@@ -362,22 +362,21 @@ class ToolEvalOutputJsonRule(RuleBase):
             init_args = component_case.init_args()
             component_obj = component_cls(**init_args)
             output_json_schemas = component_case.schemas()
-            count = 3
-            while count > 0:
-                try:
-                    stream_output_dict = {"text": "", "oral_text":"", "code": ""}
-                    stream_outputs = component_obj.tool_eval(**input_dict)
-                    for stream_output in stream_outputs:
-                        iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
-                        invalid_details.extend(iter_invalid_detail)
-                        iter_output_dict = self._gather_iter_outputs(stream_output)
-                        stream_output_dict["text"] += iter_output_dict["text"]
-                        stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
-                        stream_output_dict["code"] += iter_output_dict["code"]
-                    if len(invalid_details) == 0:
-                        invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
-                except Exception as e:
-                    invalid_details.append("ToolEval执行失败: {}".format(e))
+            
+            try:
+                stream_output_dict = {"text": "", "oral_text":"", "code": ""}
+                stream_outputs = component_obj.tool_eval(**input_dict)
+                for stream_output in stream_outputs:
+                    iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
+                    invalid_details.extend(iter_invalid_detail)
+                    iter_output_dict = self._gather_iter_outputs(stream_output)
+                    stream_output_dict["text"] += iter_output_dict["text"]
+                    stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
+                    stream_output_dict["code"] += iter_output_dict["code"]
+                if len(invalid_details) == 0:
+                    invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
+            except Exception as e:
+                invalid_details.append("ToolEval执行失败: {}".format(e))
 
             for env in envs:
                 os.environ.pop(env)
