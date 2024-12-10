@@ -102,6 +102,9 @@ func TestNewRAG(t *testing.T) {
 	fmt.Println("问题出现在这里2")
 
 	i, err := rag.Run("", "北京有多少小学生", true)
+	if err != nil {
+		t.Fatalf("run RAG failed: %v", err)
+	}
 	var answer *RAGAnswer
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
 		data, _ := json.Marshal(answer)
