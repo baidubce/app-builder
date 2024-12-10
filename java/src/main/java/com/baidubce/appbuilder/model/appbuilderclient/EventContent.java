@@ -16,6 +16,7 @@ public class EventContent {
     public static final String ChatflowInterruptContentType = "chatflow_interrupt";
     public static final String PublishMessageContentType = "publish_message";
     public static final String MultipleDialogEventContentType = "multiple_dialog_event";
+    public static final String JsonContentType = "json";
 
     @SerializedName("event_code")
     private String eventCode;

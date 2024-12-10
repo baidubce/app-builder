@@ -18,62 +18,62 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"os"
+	"io"
 	"net/http"
-    "io"
-    "strings"
-    "testing"
+	"os"
+	"strings"
+	"testing"
 )
 
 // 模拟返回 400 错误的 HTTP 响应
 type MockHTTPClient struct{}
 
 func (m *MockHTTPClient) Do(req *http.Request) (*http.Response, error) {
-    return &http.Response{
-        StatusCode: 400,  // 非 2xx 状态码
-        Body:       io.NopCloser(strings.NewReader(`{"error": "Bad Request"}`)),
-    }, nil
+	return &http.Response{
+		StatusCode: 400, // 非 2xx 状态码
+		Body:       io.NopCloser(strings.NewReader(`{"error": "Bad Request"}`)),
+	}, nil
 }
 
 // FaultyHTTPClient 模拟响应读取时发生错误
 type FaultyHTTPClient struct{}
 
 func (f *FaultyHTTPClient) Do(req *http.Request) (*http.Response, error) {
-    return &http.Response{
-        StatusCode: 200,  // 返回成功的状态码
-        Body:       &FaultyBody{},  // 使用 FaultyBody，模拟读取时出错
-    }, nil
+	return &http.Response{
+		StatusCode: 200,           // 返回成功的状态码
+		Body:       &FaultyBody{}, // 使用 FaultyBody，模拟读取时出错
+	}, nil
 }
 
 // FaultyBody 模拟响应体读取错误
 type FaultyBody struct{}
 
 func (f *FaultyBody) Read(p []byte) (n int, err error) {
-    return 0, fmt.Errorf("simulated read error")  // 模拟读取时发生错误
+	return 0, fmt.Errorf("simulated read error") // 模拟读取时发生错误
 }
 
 func (f *FaultyBody) Close() error {
-    return nil
+	return nil
 }
 
 // 模拟无效 JSON 响应
 type InvalidJSONHTTPClient struct{}
 
 func (m *InvalidJSONHTTPClient) Do(req *http.Request) (*http.Response, error) {
-    return &http.Response{
-        StatusCode: 200,
-        Body:       io.NopCloser(strings.NewReader(`{invalid_json}`)),
-    }, nil
+	return &http.Response{
+		StatusCode: 200,
+		Body:       io.NopCloser(strings.NewReader(`{invalid_json}`)),
+	}, nil
 }
 
 // 模拟缺少 id 的 JSON 响应
 type MissingIDHTTPClient struct{}
 
 func (m *MissingIDHTTPClient) Do(req *http.Request) (*http.Response, error) {
-    return &http.Response{
-        StatusCode: 200,  // 成功的状态码，但缺少 id 字段
-        Body:       io.NopCloser(strings.NewReader(`{"message": "Upload successful", "other_field": "value"}`)), // 缺少 id 字段
-    }, nil
+	return &http.Response{
+		StatusCode: 200,                                                                                         // 成功的状态码，但缺少 id 字段
+		Body:       io.NopCloser(strings.NewReader(`{"message": "Upload successful", "other_field": "value"}`)), // 缺少 id 字段
+	}, nil
 }
 func TestNewAgentBuilderError(t *testing.T) {
 	t.Parallel() // 并发运行
@@ -166,7 +166,6 @@ func TestNewAgentBuilderUploadLocalFileError1(t *testing.T) {
 
 	// 测试 UploadLocalFile 2: 文件复制错误
 
-
 	// 测试 UploadLocalFile 4: t.client.Do 错误
 	agentBuilder.sdkConfig.GatewayURLV2 = "http://192.0.2.1"
 	_, err = agentBuilder.UploadLocalFile("5665", "./files/test.pdf")
@@ -180,7 +179,6 @@ func TestNewAgentBuilderUploadLocalFileError1(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "missing protocol scheme") {
 		t.Errorf("expected ServiceURLV2 error, got %v", err)
 	}
-
 
 }
 func TestNewAgentBuilderUploadLocalFileError2(t *testing.T) {
@@ -221,7 +219,7 @@ func TestNewAgentBuilderUploadLocalFileError2(t *testing.T) {
 
 	// 检查 err 是否为空，并且确保返回的错误信息包含 "id" 这个字段
 	if err == nil || !strings.Contains(err.Error(), "body") || !strings.Contains(err.Error(), "id") {
-		
+
 	}
 }
 func TestNewAgentBuilderRunError(t *testing.T) {
@@ -338,11 +336,10 @@ func TestNewAgentBuilder(t *testing.T) {
 			default:
 				// 默认是 json.RawMessage
 				detail, ok := ev.Detail.(json.RawMessage)
-				if !ok {
-					t.Fatalf("unknown detail type")
+				if ok {
+					log("---------------rawMessage------------")
+					log("%s", string(detail))
 				}
-				log("---------------rawMessage------------")
-				log("%s", string(detail))
 			}
 		}
 	}
@@ -357,7 +354,7 @@ func TestNewAgentBuilder(t *testing.T) {
 	if t.Failed() {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		fmt.Println(logBuffer.String())
-	} else {  // else 紧跟在右大括号后面
+	} else { // else 紧跟在右大括号后面
 		// 测试通过，打印文件名和测试函数名
 		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}

@@ -98,7 +98,7 @@ class KnowledgeBaseGetDocumentsListResponse(BaseModel):
 
 class KnowledgeBaseConfigIndex(BaseModel):
     type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
-    esUrl: Optional[str] = Field(..., description="bes地址")
+    esUrl: Optional[str] = Field(None, description="bes地址")
     username: Optional[str] = Field(None, description="bes用户名")
     password: Optional[str] = Field(None, description="bes密码")
 

@@ -381,7 +381,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 	}
 	log("Number of apps: %d", len(apps2.Data))
 
-	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
+	appID := "fb64d96b-f828-4385-ba1d-835298d635a9"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
@@ -404,9 +404,19 @@ func TestNewAppBuilderClient(t *testing.T) {
 		t.Fatalf("run failed:%v", err)
 	}
 	totalAnswer := ""
+	// test follow up queries
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		totalAnswer += answer.Answer
 		for _, ev := range answer.Events {
+			if ev.ContentType == JsonContentType {
+				detail := ev.Detail.(JsonDetail)
+				folllowUpQueries := detail.Json.FollowUpQueries
+				fmt.Println(folllowUpQueries)
+				if len(folllowUpQueries[0]) == 0 {
+					t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+					t.Fatal("follow up queries is empty")
+				}
+			}
 			evJSON, _ := json.Marshal(ev)
 			log(string(evJSON))
 		}
@@ -498,11 +508,8 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	toolCallID := ""
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		totalAnswer += answer.Answer
-		for _, ev := range answer.Events {
-			toolCallID = ev.ToolCalls[0].ID
-			evJSON, _ := json.Marshal(ev)
-			log(string(evJSON))
-		}
+		lastEvent := answer.Events[len(answer.Events)-1]
+		toolCallID = lastEvent.ToolCalls[len(lastEvent.ToolCalls)-1].ID
 	}
 
 	i2, err := client.RunWithToolCall(AppBuilderClientRunRequest{
