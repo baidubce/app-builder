@@ -15,13 +15,14 @@
 package appbuilder
 
 import (
-	"os"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"testing"
 )
+
 func TestNewRAGError(t *testing.T) {
 	t.Parallel() // 并发运行
 	// 设置环境变量
