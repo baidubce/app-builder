@@ -28,7 +28,7 @@ func TestNewRAGError(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
 	// 测试逻辑
-	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
+	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
@@ -86,7 +86,7 @@ func TestNewRAG(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
 	// 测试逻辑
-	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
+	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)

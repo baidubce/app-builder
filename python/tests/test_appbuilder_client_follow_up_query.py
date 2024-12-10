@@ -60,7 +60,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
         """
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
-        appbuilder.logger.setLevel("ERROR")
+        appbuilder.logger.setLoglevel("ERROR")
         builder = appbuilder.AppBuilderClient(self.app_id)
         conversation_id = builder.create_conversation()
         msg = builder.run(conversation_id, "你能做什么", stream=True)
@@ -76,7 +76,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
     def test_appbuilder_run_followupquery_with_event_handler(self):
         if len(self.app_id) == 0:
             self.skipTest("self.app_id is empty")
-        appbuilder.logger.setLevel("ERROR")
+        appbuilder.logger.setLoglevel("ERROR")
         builder = appbuilder.AppBuilderClient(self.app_id)
         conversation_id = builder.create_conversation()
 
