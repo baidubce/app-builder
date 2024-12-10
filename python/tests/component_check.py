@@ -107,10 +107,10 @@ class ManifestValidRule(RuleBase):
                 print(e)
                 check_pass_flag = False
                 invalid_details.append(str(e))
-
+                
             for env in envs:
                 os.environ.pop(env)
-
+                
         if len(invalid_details) > 0:
             check_pass_flag = False
             invalid_details = ",".join(invalid_details)
