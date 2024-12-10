@@ -103,8 +103,8 @@ class Image(BaseModel, extra='allow'):
 
 
 class Chart(BaseModel, extra='allow'):
-    filename: str = Field(default="", description="图表名称")
-    url: str = Field(default="", description="图表url")
+    type: str = Field(default="", description="图表类型")
+    data: str = Field(default="", description="图表数据, json_str格式")
 
 
 class Audio(BaseModel, extra='allow'):

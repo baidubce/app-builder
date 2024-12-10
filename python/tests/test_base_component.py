@@ -26,7 +26,7 @@ class TestBaseComponent(unittest.TestCase):
         output4 = self.component.create_output(type="oral_text", text={"info": "你好"})
         output5 = self.component.create_output(type="files", text={"filename": "file.txt", "url": "http://www.baidu.com"})
         output6 = self.component.create_output(type="image", text={"filename": "file.png", "url": "http://www.baidu.com"})
-        output7 = self.component.create_output(type="chart", text={"filename": "file.jpg", "url": "http://www.baidu.com"})
+        output7 = self.component.create_output(type="chart", text={"type": "chart", "data": '{"key": "value"}'})
         output8 = self.component.create_output(type="audio", text={"filename": "file.mp3", "url": "http://www.baidu.com"})
         output9 = self.component.create_output(type="plan", text={"detail": "hello", "steps":[{"name": "1", "arguments": {"query": "a", "chat_history": "world"}}]})
         output10 = self.component.create_output(type="function_call", text={"thought": "hello", "name": "AppBuilder", "arguments": {"query": "a", "chat_history": "world"}})
@@ -44,7 +44,7 @@ class TestBaseComponent(unittest.TestCase):
     def test_valid_output_type_with_same_key(self):
         output1 = self.component.create_output(type="urls", text={"url": "http://www.baidu.com"})
         self.assertIsInstance(output1.content[0].text, Urls)
-        output2 = self.component.create_output(type="chart", text={"filename": "file.jpg", "url": "http://www.baidu.com"})
+        output2 = self.component.create_output(type="chart", text={"type": "chart_sheet", "data": '{"key": "value"}'})
         self.assertIsInstance(output2.content[0].text, Chart)
         with self.assertRaises(ValueError):
             output = self.component.create_output(type="files", text=["http://www.baidu.com"])
