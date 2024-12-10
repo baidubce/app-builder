@@ -19,6 +19,7 @@ import requests
 
 import appbuilder
 from appbuilder.core.component import ComponentOutput
+from appbuilder.core._exception import InvalidRequestArgumentError
 from appbuilder.core.components.v2 import ASR
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
@@ -41,6 +42,11 @@ class TestASR(unittest.TestCase):
         for res in result:
             self.assertIsInstance(res, ComponentOutput)
             print(res)
+
+    def test_asr_tool_eval_error(self):
+        result = self.com.tool_eval(file_name='test_path')
+        with self.assertRaises(InvalidRequestArgumentError):
+            next(result)
 
 if __name__ == '__main__':
     unittest.main()
