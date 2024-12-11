@@ -97,7 +97,7 @@ def json_schema_to_pydantic_model(json_schema: dict, name_override: str) -> Base
     with _delete_file_on_completion(file_path=temp_file_path):
         module = _load_module_from_file(file_path=temp_file_path)
 
-    main_model_name = _to_camel_case(name=class_title)
+    main_model_name = pydantic_models_as_str.split('class ')[-1].split('(BaseModel)')[0]
     pydantic_model: BaseModel = module.__dict__[main_model_name]
     # Override the pydantic model/parser name for nicer ValidationError messaging and logging
     pydantic_model.__name__ = name_override
