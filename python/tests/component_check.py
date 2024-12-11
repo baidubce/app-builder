@@ -73,6 +73,8 @@ class ManifestValidRule(RuleBase):
             invalid_details.append("{} 没有添加测试case到 component_tool_eval_cases 中".format(component_cls_name))
         else:
             component_case = self.component_tool_eval_cases[component_cls_name]()
+            envs = component_case.envs()
+            os.environ.update(envs)
             init_args = component_case.init_args()
 
             try:
@@ -105,7 +107,10 @@ class ManifestValidRule(RuleBase):
                 print(e)
                 check_pass_flag = False
                 invalid_details.append(str(e))
-
+                
+            for env in envs:
+                os.environ.pop(env)
+                
         if len(invalid_details) > 0:
             check_pass_flag = False
             invalid_details = ",".join(invalid_details)
@@ -292,9 +297,9 @@ class ToolEvalOutputJsonRule(RuleBase):
             if out_type == "text":
                 text_output += content.text.info
             elif out_type == "oral_text":
-                oral_text_output += content.oral_text.info
+                oral_text_output += content.text.info
             elif out_type == "code":
-                code_output += content.code.code
+                code_output += content.text.code
         return {
             "text": text_output,
             "oral_text": oral_text_output,

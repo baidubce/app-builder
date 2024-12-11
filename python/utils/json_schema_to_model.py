@@ -88,7 +88,8 @@ def json_schema_to_pydantic_model(json_schema: dict, name_override: str) -> Base
 
     class_title = json_schema["title"]
     pydantic_models_as_str = sed_pydantic_str(pydantic_models_as_str, class_title)
-
+    pydantic_models_as_str = pydantic_models_as_str.replace("unique_items", "Set")
+    
     with NamedTemporaryFile(suffix=".py", delete=False) as temp_file:
         temp_file_path = Path(temp_file.name).resolve()
         temp_file.write(pydantic_models_as_str.encode())
@@ -119,6 +120,14 @@ if __name__ == '__main__':
                         "type": "string",
                         "description": "待识别图片的文件名,用于生成图片url"
                     },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                        },
+                        "uniqueItems": True
+                    }
+                    
                 },
                 "anyOf": [
                     {
