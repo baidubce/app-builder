@@ -22,7 +22,14 @@ class BadJsonSchema(Exception):
 
 def _to_camel_case(name: str) -> str:
     if any(NON_ALPHANUMERIC.finditer(name)):
-        return "".join(term.lower().title() for term in NON_ALPHANUMERIC.split(name))
+        terms = NON_ALPHANUMERIC.split(name)
+        new_terms = [terms[0].capitalize()]
+        for term in terms[1:]:
+            if term and term[0].isdigit() and len(term) > 1 and term[1].islower():
+                new_terms.append(term[0] + term[1:] if new_terms[-1][-1].isdigit() else term[0].lower() + term[1:])
+            else:
+                new_terms.append(term.capitalize())
+        return "".join(new_terms)
     if UPPER_CAMEL_CASE.match(name):
         return name
     if LOWER_CAMEL_CASE.match(name):
