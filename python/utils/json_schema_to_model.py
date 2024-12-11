@@ -22,7 +22,14 @@ class BadJsonSchema(Exception):
 
 def _to_camel_case(name: str) -> str:
     if any(NON_ALPHANUMERIC.finditer(name)):
-        return "".join(term.lower().title() for term in NON_ALPHANUMERIC.split(name))
+        terms = NON_ALPHANUMERIC.split(name)
+        new_terms = [terms[0].capitalize()]
+        for term in terms[1:]:
+            if term and term[0].isdigit() and len(term) > 1 and term[1].islower():
+                new_terms.append(term[0] + term[1:] if new_terms[-1][-1].isdigit() else term[0].lower() + term[1:])
+            else:
+                new_terms.append(term.capitalize())
+        return "".join(new_terms)
     if UPPER_CAMEL_CASE.match(name):
         return name
     if LOWER_CAMEL_CASE.match(name):
@@ -97,7 +104,7 @@ def json_schema_to_pydantic_model(json_schema: dict, name_override: str) -> Base
     with _delete_file_on_completion(file_path=temp_file_path):
         module = _load_module_from_file(file_path=temp_file_path)
 
-    main_model_name = pydantic_models_as_str.split('class ')[-1].split('(BaseModel)')[0]
+    main_model_name = _to_camel_case(name=class_title)
     pydantic_model: BaseModel = module.__dict__[main_model_name]
     # Override the pydantic model/parser name for nicer ValidationError messaging and logging
     pydantic_model.__name__ = name_override
