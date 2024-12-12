@@ -127,6 +127,9 @@ class FunctionCall(BaseModel, extra='allow'):
     arguments: dict = Field(default={}, description="参数列表")
     
 
+class Json(BaseModel, extra='allow'):
+    json_data: dict = Field(default={}, description="json数据")
+
 class Content(BaseModel):
     name: str = Field(default="",
                       description="介绍当前yield内容的阶段名， 使用name的必要条件，是同一组件会输出不同type的content，并且需要加以区分，方便前端渲染与用户展示")
@@ -140,7 +143,7 @@ class Content(BaseModel):
                           description="耗时、性能、内存等trace及debug所需信息")
     type: str = Field(default="text", 
                       description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio该字段的取值决定了下面text字段的内容结构")
-    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, FunctionCall] = Field(default=Text, 
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall] = Field(default=Text, 
                        description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
     @field_validator('text', mode='before')
