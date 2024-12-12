@@ -18,6 +18,7 @@ base_item_schema = {
     "raw_data": {
       "type": "object"
     },
+    
     "usage": {
       "type": "object",
       "properties": {
