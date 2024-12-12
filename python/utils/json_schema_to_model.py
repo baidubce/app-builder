@@ -13,6 +13,7 @@ from pydantic import BaseModel
 
 
 NON_ALPHANUMERIC = re.compile(r"[^a-zA-Z0-9]+")
+STARTS_WITH_NUMBER = re.compile(r'[0-9]+')
 UPPER_CAMEL_CASE = re.compile(r"[A-Z][a-zA-Z0-9]+")
 LOWER_CAMEL_CASE = re.compile(r"[a-z][a-zA-Z0-9]+")
 
@@ -22,7 +23,7 @@ class BadJsonSchema(Exception):
 
 def _to_camel_case(name: str) -> str:
     if any(NON_ALPHANUMERIC.finditer(name)):
-        return "".join(term.lower().title() for term in NON_ALPHANUMERIC.split(name))
+        return  "".join(term.lower().title() if not STARTS_WITH_NUMBER.match(term) else term.lower() for term in NON_ALPHANUMERIC.split(name))
     if UPPER_CAMEL_CASE.match(name):
         return name
     if LOWER_CAMEL_CASE.match(name):
