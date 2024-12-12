@@ -14,10 +14,12 @@ class TestBaseComponent(unittest.TestCase):
         out2 = self.component.create_output(type="code", text="import appbuilder")
         out3 = self.component.create_output(type="urls", text="http://www.baidu.com")
         out4 = self.component.create_output(type="oral_text", text="你是哪个")
+        out5 = self.component.create_output(type="json", text="{'key':'value'}")
         self.assertIsInstance(out1, ComponentOutput)
         self.assertIsInstance(out2, ComponentOutput)
         self.assertIsInstance(out3, ComponentOutput)
         self.assertIsInstance(out4, ComponentOutput)
+        self.assertIsInstance(out5, ComponentOutput)
 
     def test_valid_output_with_dict(self):
         output1 = self.component.create_output(type="text", text={"info": "1"})
@@ -55,15 +57,7 @@ class TestBaseComponent(unittest.TestCase):
         
     def test_invalid_output_type_json(self):
         with self.assertRaises(ValueError):
-            output = self.component.create_output(type="json", text="")
-        # with self.assertRaises(AssertionError):
-        #     output = self.component.create_output(type="files", text={})
-        # with self.assertRaises(AssertionError):
-        #     output = self.component.create_output(type="references", text={"info": "text"})
-        # with self.assertRaises(AssertionError):
-        #     output = self.component.create_output(type="image", text={"url": "https://example.com/img"})
-        # with self.assertRaises(AssertionError):
-        #     output = self.component.create_output(type="chart", text={"url": "https://example.com/chart"})
+            output = self.component.create_output(type="test", text="")
 
 
 if __name__ == '__main__':

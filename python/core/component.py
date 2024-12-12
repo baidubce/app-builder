@@ -126,6 +126,8 @@ class FunctionCall(BaseModel, extra='allow'):
     name: str = Field(default="", description="工具名")
     arguments: dict = Field(default={}, description="参数列表")
     
+class Json(BaseModel, extra='allow'):
+    data: str = Field(default="", description="json数据")
 
 class Content(BaseModel):
     name: str = Field(default="",
@@ -140,7 +142,7 @@ class Content(BaseModel):
                           description="耗时、性能、内存等trace及debug所需信息")
     type: str = Field(default="text", 
                       description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio该字段的取值决定了下面text字段的内容结构")
-    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, FunctionCall] = Field(default=Text, 
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall] = Field(default=Text, 
                        description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
     @field_validator('text', mode='before')
@@ -167,6 +169,8 @@ class Content(BaseModel):
             return Plan(**v)
         elif values.data['type'] == 'function_call':
             return FunctionCall(**v)
+        elif values.data['type'] == 'json':
+            return Json(**v)
         else:
             raise ValueError(f"Invalid value for 'type': {values['type']}")
 
@@ -513,6 +517,8 @@ class Component:
                 text = {"url": text}
             elif type == "oral_text":
                 text = {"info": text}
+            elif type == "json":
+                text = {"data": text}
             else:
                 raise ValueError("Only when type=text/code/urls/oral_text, string text is allowed! Please give dict text")
         elif isinstance(text, dict):
