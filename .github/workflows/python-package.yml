@@ -109,6 +109,7 @@ jobs:
           echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Install dependencies部分..."
           cd cicd/app-builder
           pwd
+          sudo apt-get update
           sudo apt-get install ffmpeg libavcodec-extra
           python3 -m ensurepip --upgrade
           python3 -m pip install --upgrade pip
