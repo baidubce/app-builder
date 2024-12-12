@@ -127,7 +127,7 @@ class FunctionCall(BaseModel, extra='allow'):
     arguments: dict = Field(default={}, description="参数列表")
     
 class Json(BaseModel, extra='allow'):
-    data: dict = Field(default="", description="json数据")
+    data: str = Field(default="", description="json数据")
 
 class Content(BaseModel):
     name: str = Field(default="",
@@ -517,6 +517,8 @@ class Component:
                 text = {"url": text}
             elif type == "oral_text":
                 text = {"info": text}
+            elif type == "json":
+                text = {"data": text}
             else:
                 raise ValueError("Only when type=text/code/urls/oral_text, string text is allowed! Please give dict text")
         elif isinstance(text, dict):
@@ -542,8 +544,6 @@ class Component:
                 key_list = ["detail", "steps"]
             elif type == "function_call":
                 key_list = ["thought", "name", "arguments"]
-            elif type == "json":
-                key_list = ["data"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
             # assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
