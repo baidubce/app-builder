@@ -13,6 +13,7 @@ from pydantic import BaseModel
 
 
 NON_ALPHANUMERIC = re.compile(r"[^a-zA-Z0-9]+")
+STARTS_WITH_NUMBER = re.compile(r'[0-9]+')
 UPPER_CAMEL_CASE = re.compile(r"[A-Z][a-zA-Z0-9]+")
 LOWER_CAMEL_CASE = re.compile(r"[a-z][a-zA-Z0-9]+")
 
@@ -22,14 +23,7 @@ class BadJsonSchema(Exception):
 
 def _to_camel_case(name: str) -> str:
     if any(NON_ALPHANUMERIC.finditer(name)):
-        terms = NON_ALPHANUMERIC.split(name)
-        new_terms = [terms[0].capitalize()]
-        for term in terms[1:]:
-            if term and term[0].isdigit() and len(term) > 1 and term[1].islower():
-                new_terms.append(term[0] + term[1:] if new_terms[-1][-1].isdigit() else term[0].lower() + term[1:])
-            else:
-                new_terms.append(term.capitalize())
-        return "".join(new_terms)
+        return  "".join(term.lower().title() if not STARTS_WITH_NUMBER.match(term) else term.lower() for term in NON_ALPHANUMERIC.split(name))
     if UPPER_CAMEL_CASE.match(name):
         return name
     if LOWER_CAMEL_CASE.match(name):
@@ -155,4 +149,4 @@ if __name__ == '__main__':
     schema['title'] = "general_ocr"
     model = json_schema_to_pydantic_model(json_schema=schema, name_override="GeneralOcr")
     print(model)
-    print(model.schema_json())
+    print(model.__dict__)
