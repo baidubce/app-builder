@@ -149,4 +149,4 @@ if __name__ == '__main__':
     schema['title'] = "general_ocr"
     model = json_schema_to_pydantic_model(json_schema=schema, name_override="GeneralOcr")
     print(model)
-    print(model.__dict__)
+    print(model.schema_json())
