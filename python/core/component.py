@@ -127,7 +127,7 @@ class FunctionCall(BaseModel, extra='allow'):
     arguments: dict = Field(default={}, description="参数列表")
     
 class Json(BaseModel, extra='allow'):
-    json_data: dict = Field(default={}, description="json数据")
+    data: dict = Field(default="", description="json数据")
 
 class Content(BaseModel):
     name: str = Field(default="",
@@ -169,6 +169,8 @@ class Content(BaseModel):
             return Plan(**v)
         elif values.data['type'] == 'function_call':
             return FunctionCall(**v)
+        elif values.data['type'] == 'json':
+            return Json(**v)
         else:
             raise ValueError(f"Invalid value for 'type': {values['type']}")
 
@@ -540,6 +542,8 @@ class Component:
                 key_list = ["detail", "steps"]
             elif type == "function_call":
                 key_list = ["thought", "name", "arguments"]
+            elif type == "json":
+                key_list = ["data"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
             # assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
