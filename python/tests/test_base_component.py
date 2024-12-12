@@ -19,6 +19,7 @@ class TestBaseComponent(unittest.TestCase):
         self.assertIsInstance(out2, ComponentOutput)
         self.assertIsInstance(out3, ComponentOutput)
         self.assertIsInstance(out4, ComponentOutput)
+        self.assertIsInstance(out5, ComponentOutput)
 
     def test_valid_output_with_dict(self):
         output1 = self.component.create_output(type="text", text={"info": "1"})
