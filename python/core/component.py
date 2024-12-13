@@ -537,7 +537,7 @@ class Component:
             elif type == "image":
                 key_list = ["filename", "url"]
             elif type == "chart":
-                key_list = ["filename", "url"]
+                key_list = ["type", "data"]
             elif type == "audio":
                 key_list = ["filename", "url"]
             elif type == "plan":

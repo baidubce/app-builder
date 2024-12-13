@@ -101,7 +101,7 @@ class OralQueryGeneration(CompletionBaseComponent):
             OralQueryGenerationArgs, model=model, secret_key=secret_key, gateway=gateway,
             lazy_certification=lazy_certification)
     
-    def _regenerate_output(self, model_output, output_format):
+    def regenerate_output(self, model_output, output_format):
         """
         兼容老版本的输出格式
         """
@@ -130,7 +130,7 @@ class OralQueryGeneration(CompletionBaseComponent):
         regenerated_output = '\n'.join([f'{index}. {query}' for index, query in enumerate(queries, 1)])
         return regenerated_output
 
-    def _completion(self, version, base_url, request, timeout: float = None,
+    def completion(self, version, base_url, request, timeout: float = None,
                    retry: int = 0):
         r"""Send a byte array of an audio file to obtain the result of speech recognition."""
 
@@ -187,13 +187,13 @@ class OralQueryGeneration(CompletionBaseComponent):
         model_config = self.get_model_config(model_config_inputs)
 
         request = self.gene_request('', inputs, response_mode, user_id, model_config)
-        response = self._completion(self.version, self.base_url, request)
+        response = self.completion(self.version, self.base_url, request)
 
         if response.error_no != 0:
             raise AppBuilderServerException(service_err_code=response.error_no, service_err_message=response.error_msg)
 
         result = response.to_message()
-        result.content = self._regenerate_output(result.content, output_format)
+        result.content = self.regenerate_output(result.content, output_format)
 
         return result
 
