@@ -151,7 +151,7 @@ agent.chainlit_demo(port=8091)
 ```
 
 ### 5、将 appbuilder client 服务化，提供 chainlit demo 页面`AgentRuntime.chainlit_agent(host='0.0.0.0', port=8091)`
-
+目前支持工作流Agent、自主规划Agent应用。
 
 #### 方法参数
 
@@ -172,9 +172,7 @@ import os
 
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AppBuilder应用ID，可在console端查看
-builder = appbuilder.AppBuilderClient(app_id)
-conversation_id = builder.create_conversation()
-agent = appbuilder.AgentRuntime(component=builder)
-message = appbuilder.Message({"query": "北京今天天气怎么样"})
-print(agent.chat(message, stream=False))
+agent_builder = appbuilder.AppBuilderClient(app_id)
+agent = appbuilder.AgentRuntime(component=agent_builder)
+agent.chainlit_agent(port=8091)
 ```
