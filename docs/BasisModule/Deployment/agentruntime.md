@@ -172,7 +172,7 @@ import os
 
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AppBuilder应用ID，可在console端查看
-agent_builder = appbuilder.AppBuilderClient(app_id)
-agent = appbuilder.AgentRuntime(component=agent_builder)
+client = appbuilder.AppBuilderClient(app_id)
+agent = appbuilder.AgentRuntime(component=client)
 agent.chainlit_agent(port=8091)
 ```
