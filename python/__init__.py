@@ -177,7 +177,7 @@ from appbuilder.core.manifest.models import Manifest
 
 from appbuilder.core.utils import get_model_list
 
-from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient
+from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient, AsyncAppBuilderClient
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
 from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps, describe_apps
 from appbuilder.core.console.knowledge_base.knowledge_base import KnowledgeBase
@@ -202,19 +202,20 @@ from appbuilder.core.assistant.threads.runs import AssistantStreamManager
 from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
 
 __all__ = [
-    'logger',
-    'BadRequestException',
-    'ForbiddenException',
-    'NotFoundException',
-    'PreconditionFailedException',
-    'InternalServerErrorException',
-    'HTTPConnectionException',
-    'AppBuilderServerException',
-    'AppbuilderTraceException',
-    'AppbuilderTestToolEval',
-    'AutomaticTestToolEval',
+    "logger",
+    "BadRequestException",
+    "ForbiddenException",
+    "NotFoundException",
+    "PreconditionFailedException",
+    "InternalServerErrorException",
+    "HTTPConnectionException",
+    "AppBuilderServerException",
+    "AppbuilderTraceException",
+    "AppbuilderTestToolEval",
+    "AutomaticTestToolEval",
     "get_model_list",
     "AppBuilderClient",
+    "AsyncAppBuilderClient",
     "AgentBuilder",
     "get_app_list",
     "get_all_apps",
@@ -232,5 +233,5 @@ __all__ = [
     "AssistantEventHandler",
     "AssistantStreamManager",
     "AppBuilderTracer",
-    "AppbuilderInstrumentor"
+    "AppbuilderInstrumentor",
 ] + __COMPONENTS__

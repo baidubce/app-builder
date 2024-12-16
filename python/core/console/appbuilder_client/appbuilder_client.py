@@ -17,13 +17,13 @@ import os
 import json
 import uuid
 import queue
-from typing import Optional,Union
+from typing import Optional, Union
 from appbuilder.core.component import Message, Component
 from appbuilder.core.manifest.models import Manifest
 from appbuilder.core.console.appbuilder_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.utils.sse_util import SSEClient
-from appbuilder.core._client import HTTPClient
+from appbuilder.utils.sse_util import SSEClient, AsyncSSEClient
+from appbuilder.core._client import HTTPClient, AsyncHTTPClient
 from appbuilder.utils.func_utils import deprecated
 from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import client_run_trace, client_tool_trace
@@ -81,7 +81,7 @@ def describe_apps(
     marker: Optional[str] = None,
     maxKeys: int = 10,
     secret_key: Optional[str] = None,
-    gateway: Optional[str] = None
+    gateway: Optional[str] = None,
 ) -> list[data_class.AppOverview]:
     """
     该接口查询用户下状态为已发布的应用列表
@@ -100,9 +100,7 @@ def describe_apps(
     headers = client.auth_header_v2()
     headers["Content-Type"] = "application/json"
     url = client.service_url_v2("/app?Action=DescribeApps")
-    request = data_class.DescribeAppsRequest(
-        MaxKeys=maxKeys, Marker=marker
-    )
+    request = data_class.DescribeAppsRequest(MaxKeys=maxKeys, Marker=marker)
     response = client.session.post(
         url=url,
         json=request.model_dump(),
@@ -225,7 +223,8 @@ class AppBuilderClient(Component):
         """
         if len(conversation_id) == 0:
             raise ValueError(
-                "conversation_id is empty, you can run self.create_conversation to get a conversation_id")
+                "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
+            )
 
         filepath = os.path.abspath(local_file_path)
         if not os.path.exists(filepath):
@@ -247,17 +246,19 @@ class AppBuilderClient(Component):
         return resp.id
 
     @client_run_trace
-    def run(self, conversation_id: str,
-            query: str = "",
-            file_ids: list = [],
-            stream: bool = False,
-            tools: list[Union[data_class.Tool,Manifest]]= None,
-            tool_outputs: list[data_class.ToolOutput] = None,
-            tool_choice: data_class.ToolChoice = None,
-            end_user_id: str = None,
-            action: data_class.Action = None,
-            **kwargs
-            ) -> Message:
+    def run(
+        self,
+        conversation_id: str,
+        query: str = "",
+        file_ids: list = [],
+        stream: bool = False,
+        tools: list[Union[data_class.Tool, Manifest]] = None,
+        tool_outputs: list[data_class.ToolOutput] = None,
+        tool_choice: data_class.ToolChoice = None,
+        end_user_id: str = None,
+        action: data_class.Action = None,
+        **kwargs,
+    ) -> Message:
         r"""运行智能体应用
 
         Args:
@@ -283,7 +284,8 @@ class AppBuilderClient(Component):
 
         if query == "" and (tool_outputs is None or len(tool_outputs) == 0):
             raise ValueError(
-                "AppBuilderClient Run API: query and tool_outputs cannot both be empty")
+                "AppBuilderClient Run API: query and tool_outputs cannot both be empty"
+            )
 
         req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
@@ -316,15 +318,17 @@ class AppBuilderClient(Component):
             _transform(resp, out)
             return Message(content=out)
 
-    def run_with_handler(self,
-                         conversation_id: str,
-                         query: str = "",
-                         file_ids: list = [],
-                         tools: list[Union[data_class.Tool,Manifest]] = None,
-                         stream: bool = False,
-                         event_handler=None,
-                         action=None,
-                         **kwargs):
+    def run_with_handler(
+        self,
+        conversation_id: str,
+        query: str = "",
+        file_ids: list = [],
+        tools: list[Union[data_class.Tool, Manifest]] = None,
+        stream: bool = False,
+        event_handler=None,
+        action=None,
+        **kwargs,
+    ):
         r"""运行智能体应用，并通过事件处理器处理事件
 
         Args:
@@ -350,20 +354,22 @@ class AppBuilderClient(Component):
             tools=tools,
             stream=stream,
             action=action,
-            **kwargs
+            **kwargs,
         )
 
         return event_handler
 
-    def run_multiple_dialog_with_handler(self,
-                                         conversation_id: str,
-                                         queries: iter = None,
-                                         file_ids: iter = None,
-                                         tools: iter = None,
-                                         stream: bool = False,
-                                         event_handler=None,
-                                         actions: iter = None,
-                                         **kwargs):
+    def run_multiple_dialog_with_handler(
+        self,
+        conversation_id: str,
+        queries: iter = None,
+        file_ids: iter = None,
+        tools: iter = None,
+        stream: bool = False,
+        event_handler=None,
+        actions: iter = None,
+        **kwargs,
+    ):
         r"""运行智能体应用，并通过事件处理器处理事件
 
         Args:
@@ -442,6 +448,131 @@ class AppBuilderClient(Component):
             )
 
 
+class AsyncAppBuilderClient(Component):
+    def __init__(self, app_id, **kwargs):
+        super().__init__(is_aysnc=True, **kwargs)
+        if (not isinstance(app_id, str)) or len(app_id) == 0:
+            raise ValueError(
+                "app_id must be a str, and length is bigger then zero,"
+                "please go to official website which is 'https://cloud.baidu.com/product/AppBuilder'"
+                " to get a valid app_id after your application is published."
+            )
+        self.app_id = app_id
+
+    async def create_conversation(self) -> str:
+        r"""异步创建会话并返回会话ID
+
+        会话ID在服务端用于上下文管理、绑定会话文档等，如需开始新的会话，请创建并使用新的会话ID
+
+        Args:
+            无
+
+        Returns:
+            response (str): 唯一会话ID
+
+        """
+        headers = self.http_client.auth_header_v2()
+        headers["Content-Type"] = "application/json"
+        url = self.http_client.service_url_v2("/app/conversation")
+        response = await self.http_client.session.post(
+            url, headers=headers, json={"app_id": self.app_id}, timeout=None
+        )
+        self.http_client.check_response_header(response)
+        data = await response.json()
+        resp = data_class.CreateConversationResponse(**data)
+        return resp.conversation_id
+
+    async def run(
+        self,
+        conversation_id: str,
+        query: str = "",
+        file_ids: list = [],
+        stream: bool = False,
+        tools: list[Union[data_class.Tool, Manifest]] = None,
+        tool_outputs: list[data_class.ToolOutput] = None,
+        tool_choice: data_class.ToolChoice = None,
+        end_user_id: str = None,
+        action: data_class.Action = None,
+        **kwargs,
+    ) -> Message:
+        r"""异步运行智能体应用
+
+        Args:
+            query (str): query内容
+            conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+            file_ids(list[str]): 文件ID列表
+            stream (bool): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
+            tools(list[Union[data_class.Tool,Manifest]]): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
+            tool_outputs(list[data_class.ToolOutput]): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
+            tool_choice(data_class.ToolChoice): 控制大模型使用组件的方式，默认为None
+            end_user_id (str): 用户ID，用于区分不同用户
+            action(data_class.Action): 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
+            kwargs: 其他参数
+
+        Returns:
+            message (Message): 对话结果，一个Message对象，使用message.content获取内容。
+        """
+
+        if len(conversation_id) == 0:
+            raise ValueError(
+                "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
+            )
+
+        if query == "" and (tool_outputs is None or len(tool_outputs) == 0):
+            raise ValueError(
+                "AppBuilderClient Run API: query and tool_outputs cannot both be empty"
+            )
+
+        req = data_class.AppBuilderClientRequest(
+            app_id=self.app_id,
+            conversation_id=conversation_id,
+            query=query,
+            stream=True if stream else False,
+            file_ids=file_ids,
+            tools=tools,
+            tool_outputs=tool_outputs,
+            tool_choice=tool_choice,
+            end_user_id=end_user_id,
+            action=action,
+        )
+
+        headers = self.http_client.auth_header_v2()
+        headers["Content-Type"] = "application/json"
+        url = self.http_client.service_url_v2("/app/conversation/runs")
+        response = await self.http_client.session.post(
+            url, headers=headers, json=req.model_dump(), timeout=None
+        )
+        self.http_client.check_response_header(response)
+        request_id = self.http_client.response_request_id(response)
+        if stream:
+            client = AsyncSSEClient(response)
+            return Message(content=self._iterate_events(request_id, client.events()))
+        else:
+            data = await response.json()
+            resp = data_class.AppBuilderClientResponse(**data)
+            out = data_class.AppBuilderClientAnswer()
+            _transform(resp, out)
+            return Message(content=out)
+
+    @staticmethod
+    async def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:
+        async for event in events:
+            try:
+                data = event.data
+                if len(data) == 0:
+                    data = event.raw
+                data = json.loads(data)
+            except json.JSONDecodeError as e:
+                raise AppBuilderServerException(
+                    request_id=request_id,
+                    message="json decoder failed {}".format(str(e)),
+                )
+            inp = data_class.AppBuilderClientResponse(**data)
+            out = data_class.AppBuilderClientAnswer()
+            _transform(inp, out)
+            yield out
+
+
 class AgentBuilder(AppBuilderClient):
     r"""AgentBuilder是继承自AppBuilderClient的一个子类，用于构建和管理智能体应用。
     支持调用在[百度智能云千帆AppBuilder](https://cloud.baidu.com/product/AppBuilder)平台上
@@ -464,6 +595,7 @@ class AgentBuilder(AppBuilderClient):
         print(message.content)
 
     """
+
     @deprecated(
         reason="AgentBuilder is deprecated, please use AppBuilderClient instead",
         version="1.0.0",

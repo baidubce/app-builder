@@ -14,6 +14,8 @@
 
 import requests
 import json
+import aiohttp
+from aiohttp import ClientSession
 from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import session_post
 
@@ -72,3 +74,52 @@ class InnerSession(requests.sessions.Session):
     @session_post
     def put(self, url, data=None, **kwargs):
         return super().put(url=url, data=data, **kwargs)
+
+
+class AsyncInnerSession(ClientSession):
+
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize inner session.
+        """
+        super(AsyncInnerSession, self).__init__(*args, **kwargs)
+
+    async def build_curl(self, request: aiohttp.ClientRequest) -> str:
+        """
+        Generate cURL command from prepared request object.
+        """
+        curl = "curl -X {0} -L '{1}' \\\n".format(request.method, request.url)
+
+        headers = [
+            "-H '{0}: {1}' \\".format(k, v)
+            for k, v in request.headers.items()
+            if k != "Content-Length"
+        ]
+
+        if headers:
+            headers[-1] = headers[-1].rstrip(" \\")
+        curl += "\n".join(headers)
+        if request.body:
+            try:
+                body = json.loads(request.body)
+                body = "'{0}'".format(json.dumps(body, ensure_ascii=False))
+                curl += " \\\n-d {0}".format(body)
+            except:
+                curl += " \\\n-d '{0}'".format(request.body)
+        return curl
+
+    @session_post
+    async def post(self, url, data=None, json=None, **kwargs):
+        return await super().post(url=url, data=data, json=json, **kwargs)
+
+    @session_post
+    async def delete(self, url, **kwargs):
+        return await super().delete(url=url, **kwargs)
+
+    @session_post
+    async def get(self, url, **kwargs):
+        return await super().get(url=url, **kwargs)
+
+    @session_post
+    async def put(self, url, data=None, **kwargs):
+        return await super().put(url=url, data=data, **kwargs)
