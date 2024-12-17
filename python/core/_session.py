@@ -84,42 +84,44 @@ class AsyncInnerSession(ClientSession):
         """
         super(AsyncInnerSession, self).__init__(*args, **kwargs)
 
-    async def build_curl(self, request: aiohttp.ClientRequest) -> str:
+    async def build_curl(self, method, url, data=None, json_data=None, **kwargs) -> str:
         """
         Generate cURL command from prepared request object.
         """
-        curl = "curl -X {0} -L '{1}' \\\n".format(request.method, request.url)
+        curl = "curl -X {0} -L '{1}' \\\n".format(method, url)
 
-        headers = [
-            "-H '{0}: {1}' \\".format(k, v)
-            for k, v in request.headers.items()
-            if k != "Content-Length"
-        ]
+        headers = kwargs.get("headers", {})
+        headers_strs = [
+            "-H '{0}: {1}' \\".format(k, v) for k, v in headers.items()]
+        if headers_strs:
+            headers_strs[-1] = headers_strs[-1].rstrip(" \\")
+        curl += "\n".join(headers_strs)
 
-        if headers:
-            headers[-1] = headers[-1].rstrip(" \\")
-        curl += "\n".join(headers)
-        if request.body:
-            try:
-                body = json.loads(request.body)
-                body = "'{0}'".format(json.dumps(body, ensure_ascii=False))
-                curl += " \\\n-d {0}".format(body)
-            except:
-                curl += " \\\n-d '{0}'".format(request.body)
+        if data:
+            body = "'{0}'".format(json.dumps(data, ensure_ascii=False))
+            curl += " \\\n-d {0}".format(body)
+        elif json_data:
+            body = "'{0}'".format(json.dumps(json_data, ensure_ascii=False))
+            curl += " \\\n-d {0}".format(body)
+
         return curl
 
     @session_post
     async def post(self, url, data=None, json=None, **kwargs):
+        logger.debug("Curl Command:\n" + await self.build_curl('POST', url, data=data, json_data=json, **kwargs) + "\n")
         return await super().post(url=url, data=data, json=json, **kwargs)
 
     @session_post
     async def delete(self, url, **kwargs):
+        logger.debug("Curl Command:\n" + await self.build_curl('DELETE', url, **kwargs) + "\n")
         return await super().delete(url=url, **kwargs)
 
     @session_post
     async def get(self, url, **kwargs):
+        logger.debug("Curl Command:\n" + await self.build_curl('GET', url, **kwargs) + "\n")
         return await super().get(url=url, **kwargs)
 
     @session_post
     async def put(self, url, data=None, **kwargs):
+        logger.debug("Curl Command:\n" + await self.build_curl('PUT', url, data=data, **kwargs) + "\n")
         return await super().put(url=url, data=data, **kwargs)

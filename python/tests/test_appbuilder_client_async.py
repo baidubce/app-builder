@@ -38,11 +38,8 @@ class TestAppBuilderClientAsync(unittest.TestCase):
 
         async def agent_run(client, conversation_id, text):
             ans = await client.run(conversation_id, text, stream=True)
-            for content in ans:
-                for answer in content:
-                    if inspect.isasyncgen(answer):
-                        async for te in answer:
-                            print(te)
+            async for data in ans.content:
+                print(data)
 
         async def agent_sample():
             client = appbuilder.AsyncAppBuilderClient(self.app_id)

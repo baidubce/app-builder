@@ -272,15 +272,6 @@ class AsyncHTTPClient(HTTPClient):
         r"""response_request_id is a helper method to get the unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
 
-    @staticmethod
-    async def aiohttp_response_to_requests_response(response: ClientResponse):
-        content = await response.read()
-        requests_response = requests.Response()
-        requests_response.status_code = response.status
-        requests_response.headers = response.headers
-        requests_response._content = content
-        return requests_response
-
 
 class AssistantHTTPClient(HTTPClient):
     def service_url(self, sub_path: str, prefix: str = None):
