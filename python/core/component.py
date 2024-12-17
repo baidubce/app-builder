@@ -116,6 +116,7 @@ class Audio(BaseModel, extra='allow'):
 class PlanStep(BaseModel, extra='allow'):
     name: str = Field(default="", description="step名")
     arguments: dict = Field(default={}, description="step参数")
+    thought: str = Field(default="", description="step思考结果")
     
 class Plan(BaseModel, extra='allow'):
     detail: str = Field(default="", description="计划详情")
