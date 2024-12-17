@@ -15,7 +15,6 @@
 import unittest
 import os
 import asyncio
-import inspect
 import appbuilder
 
 
@@ -41,7 +40,7 @@ class TestAppBuilderClientAsync(unittest.TestCase):
             async for data in ans.content:
                 print(data)
 
-        async def agent_sample():
+        async def agent_handle():
             client = appbuilder.AsyncAppBuilderClient(self.app_id)
             conversation_id = await client.create_conversation()
             task1 = asyncio.create_task(
@@ -52,7 +51,7 @@ class TestAppBuilderClientAsync(unittest.TestCase):
             await client.http_client.session.close()
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(agent_sample())
+        loop.run_until_complete(agent_handle())
 
     def test_async_run(self):
         appbuilder.logger.setLoglevel("ERROR")
@@ -61,7 +60,7 @@ class TestAppBuilderClientAsync(unittest.TestCase):
             ans = await client.run(conversation_id, text, stream=False)
             print(ans.content.answer)
 
-        async def agent_sample():
+        async def agent_handle():
             client = appbuilder.AsyncAppBuilderClient(self.app_id)
             conversation_id = await client.create_conversation()
             await client.upload_local_file(conversation_id, "./data/qa_appbuilder_client_demo.pdf")
@@ -73,7 +72,7 @@ class TestAppBuilderClientAsync(unittest.TestCase):
             await client.http_client.session.close()
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(agent_sample())
+        loop.run_until_complete(agent_handle())
 
 
 if __name__ == "__main__":
