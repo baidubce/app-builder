@@ -14,15 +14,22 @@
 import unittest
 import appbuilder
 import asyncio
+from unittest.mock import patch, AsyncMock
 from appbuilder.core._session import AsyncInnerSession
 
 class TestCoreSession(unittest.TestCase):
-    def test_async_session_get(self):
-        appbuilder.logger.setLoglevel("ERROR")
-        
+
+
+    @patch("appbuilder.core._session.AsyncInnerSession.put")
+    def test_async_session_get(self, mock_put):
+        async def demo():
+            return {"status": 200}
+
         async def get_demo():
+            mock_put.return_value.__aenter__.return_value.json = await demo()
             session = AsyncInnerSession()
             await session.get("http://www.baidu.com")
+            session.put("https://example.com")
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(get_demo())
