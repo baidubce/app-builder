@@ -13,9 +13,10 @@
 # limitations under the License.
 import os
 import unittest
+import asyncio
 
 from unittest.mock import MagicMock
-from appbuilder.utils.sse_util import SSEClient,Event
+from appbuilder.utils.sse_util import SSEClient,AsyncSSEClient, Event
 from appbuilder.utils.model_util import RemoteModel,Models
 from appbuilder.utils.logger_util import LoggerWithLoggerId,_setup_logging,logger
 from threading import current_thread 
@@ -25,7 +26,7 @@ class test_logger_level():
     def __init__(self):
         self.level='level'
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestUtils(unittest.TestCase):
     def test_sse_util_SSEClient(self):
         mock_event_source = MagicMock()
@@ -55,6 +56,33 @@ class TestUtils(unittest.TestCase):
 
         # test_close
         sse_client.close()
+    
+    def test_sse_util_AsyncSSEClient(self):
+        async def mock_client():
+            mock_event_source = MagicMock()
+            mock_event_source.__iter__.return_value = iter([
+                b'data: Test event 1\n\n',
+                b'data: Last incomplete event'
+            ])
+            sse_client = AsyncSSEClient(mock_event_source)
+            event_generator = sse_client._read()
+            async for data in event_generator:
+                pass
+
+            # test_events
+            mock_event_source.__aiter__.return_value = iter([
+                b': Test event 1\n\n',
+                b'test: Test event 2\n\n',
+                b'data:Testevent3\n\n',
+                b'data\n\n',
+                b'event:Testevent5\n\n',
+            ])
+            sse_client = AsyncSSEClient(mock_event_source)
+            async for event in sse_client.events():
+                pass
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(mock_client())
 
     def test_sse_util_SSEClient_DEBUG(self):
         logger.setLoglevel("DEBUG")
