@@ -14,11 +14,12 @@
 import unittest
 import appbuilder
 import asyncio
+import aiohttp
 from unittest.mock import patch, MagicMock
 from appbuilder.core._session import AsyncInnerSession
 
 class TestCoreSession(unittest.TestCase):
-    @patch("appbuilder.core._session.AsyncInnerSession.put")
+    @patch("aiohttp.ClientSession.put")
     def test_async_session_get(self, mock_put):
         async def demo():
             return {"status": 200}
