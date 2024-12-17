@@ -423,7 +423,7 @@ class AsyncAppBuilderEventHandler(object):
             无返回值。
 
         """
-        for _ in self._iterator:
+        async for _ in self._iterator:
             pass
 
     async def handle_content_type(self, run_context, run_response):

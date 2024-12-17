@@ -48,6 +48,10 @@ class MyEventHandler(AsyncAppBuilderEventHandler):
             action=self._create_action(),
         )
 
+    def gen_action(self):
+        while True:
+            yield self._create_action()
+
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderClientChatflow(unittest.TestCase):
@@ -129,6 +133,66 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
             )
             async for data in event_handler:
                 pass
+
+            await client.http_client.session.close()
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(agent_handle())
+
+    def test_chatflow_stream(self):
+        appbuilder.logger.setLoglevel("DEBUG")
+
+        async def agent_handle():
+            client = appbuilder.AsyncAppBuilderClient(self.app_id)
+            conversation_id = await client.create_conversation()
+            event_handler = MyEventHandler()
+            await event_handler.init(
+                appbuilder_client=client,
+                conversation_id=conversation_id,
+                stream=True,
+                query="查天气",
+            )
+            async for data in event_handler:
+                pass
+            await event_handler.run(
+                query="查航班",
+            )
+            async for data in event_handler:
+                pass
+            await event_handler.run(
+                query="CA1234",
+            )
+            async for data in event_handler:
+                pass
+            await event_handler.run(
+                query="北京的",
+            )
+            async for data in event_handler:
+                pass
+
+            await client.http_client.session.close()
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(agent_handle())
+    
+    def test_chatflow_multiple_dialog(self):
+        appbuilder.logger.setLoglevel("DEBUG")
+
+        async def agent_handle():
+            client = appbuilder.AsyncAppBuilderClient(self.app_id)
+            conversation_id = await client.create_conversation()
+            queries = ["查天气", "查航班", "CA1234", "北京的"]
+            event_handler = MyEventHandler()
+            event_handler = client.run_multiple_dialog_with_handler(
+                    conversation_id=conversation_id,
+                    queries=queries,
+                    event_handler=event_handler,
+                    stream=False,
+                    actions=event_handler.gen_action(),
+                )
+            async for data in event_handler:
+                async for answer in data:
+                    print(answer)
 
             await client.http_client.session.close()
 
