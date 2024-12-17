@@ -15,7 +15,7 @@
 import requests
 import json
 import aiohttp
-from aiohttp import ClientSession
+from aiohttp import ClientSession, hdrs
 from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import session_post
 
@@ -98,8 +98,11 @@ class AsyncInnerSession(ClientSession):
         curl += "\n".join(headers_strs)
 
         if data:
-            body = "'{0}'".format(json.dumps(data, ensure_ascii=False))
-            curl += " \\\n-d {0}".format(body)
+            try:
+                body = "'{0}'".format(json.dumps(data, ensure_ascii=False))
+                curl += " \\\n-d {0}".format(body)
+            except:
+                pass
         elif json_data:
             body = "'{0}'".format(json.dumps(json_data, ensure_ascii=False))
             curl += " \\\n-d {0}".format(body)
@@ -108,20 +111,20 @@ class AsyncInnerSession(ClientSession):
 
     @session_post
     async def post(self, url, data=None, json=None, **kwargs):
-        logger.debug("Curl Command:\n" + await self.build_curl('POST', url, data=data, json_data=json, **kwargs) + "\n")
+        logger.debug("Curl Command:\n" + await self.build_curl(hdrs.METH_POST, url, data=data, json_data=json, **kwargs) + "\n")
         return await super().post(url=url, data=data, json=json, **kwargs)
 
     @session_post
     async def delete(self, url, **kwargs):
-        logger.debug("Curl Command:\n" + await self.build_curl('DELETE', url, **kwargs) + "\n")
+        logger.debug("Curl Command:\n" + await self.build_curl(hdrs.METH_DELETE, url, **kwargs) + "\n")
         return await super().delete(url=url, **kwargs)
 
     @session_post
     async def get(self, url, **kwargs):
-        logger.debug("Curl Command:\n" + await self.build_curl('GET', url, **kwargs) + "\n")
+        logger.debug("Curl Command:\n" + await self.build_curl(hdrs.METH_GET, url, **kwargs) + "\n")
         return await super().get(url=url, **kwargs)
 
     @session_post
     async def put(self, url, data=None, **kwargs):
-        logger.debug("Curl Command:\n" + await self.build_curl('PUT', url, data=data, **kwargs) + "\n")
+        logger.debug("Curl Command:\n" + await self.build_curl(hdrs.METH_PUT, url, data=data, **kwargs) + "\n")
         return await super().put(url=url, data=data, **kwargs)

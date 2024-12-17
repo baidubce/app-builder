@@ -64,6 +64,7 @@ class TestAppBuilderClientAsync(unittest.TestCase):
         async def agent_sample():
             client = appbuilder.AsyncAppBuilderClient(self.app_id)
             conversation_id = await client.create_conversation()
+            await client.upload_local_file(conversation_id, "./data/qa_appbuilder_client_demo.pdf")
             task1 = asyncio.create_task(
                 agent_run(client, conversation_id, "最早的邮展"))
             task2 = asyncio.create_task(

@@ -177,7 +177,8 @@ from appbuilder.core.manifest.models import Manifest
 
 from appbuilder.core.utils import get_model_list
 
-from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient, AsyncAppBuilderClient
+from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient
+from appbuilder.core.console.appbuilder_client.async_appbuilder_client import AsyncAppBuilderClient
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
 from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps, describe_apps
 from appbuilder.core.console.knowledge_base.knowledge_base import KnowledgeBase
