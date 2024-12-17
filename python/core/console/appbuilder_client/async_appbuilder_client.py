@@ -13,10 +13,10 @@
 # limitations under the License.
 import json
 import os
+from typing import Union
 from aiohttp import FormData
 from appbuilder.core.component import Message, Component
 from appbuilder.core.console.appbuilder_client import data_class, AppBuilderClient
-from typing import Union
 from appbuilder.core.manifest.models import Manifest
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import AsyncSSEClient
@@ -150,8 +150,11 @@ class AsyncAppBuilderClient(Component):
         if not os.path.exists(filepath):
             raise FileNotFoundError(f"{filepath} does not exist")
         multipart_form_data = FormData()
-        multipart_form_data.add_field(name="file", value=open(
-            local_file_path, 'rb'), filename=os.path.basename(local_file_path))
+        multipart_form_data.add_field(
+            name="file",
+            value=open(local_file_path, "rb"),
+            filename=os.path.basename(local_file_path),
+        )
         multipart_form_data.add_field(name="app_id", value=self.app_id)
         multipart_form_data.add_field(
             name="conversation_id", value=conversation_id)

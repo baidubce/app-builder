@@ -26,7 +26,7 @@ class test_logger_level():
     def __init__(self):
         self.level='level'
 
-#@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestUtils(unittest.TestCase):
     def test_sse_util_SSEClient(self):
         mock_event_source = MagicMock()
