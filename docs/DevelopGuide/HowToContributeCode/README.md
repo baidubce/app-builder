@@ -4,15 +4,16 @@
 
 ### 组件整体介绍
 
- 在无特殊情况下，一个官方组件（class Component）的实现可以拆解为以下几个关键模块，分别是
-* 1、def run：组件的run函数，规范体现在该函数的输入和输出
-  * 输入规范
-  * 输出规范
-* 2、def tool_eval：组件功能的核心实现，规范体现在该函数的输入和输出
-  * 输入规范
-  * 输出规范
-* 3、dict manifest：组件参与FunctionCall时，帮助大模型理解组件功能的说明，规范体现在manifest的内容和格式
-  * manifest规范
+在无特殊情况下，一个官方组件（class Component）的实现可以拆解为以下几个关键模块，分别是
+
+* def run：组件的run函数，规范体现在该函数的输入和输出
+    * 输入规范
+    * 输出规范
+* def tool_eval：组件功能的核心实现，规范体现在该函数的输入和输出
+    * 输入规范
+    * 输出规范
+* dict manifest：组件参与FunctionCall时，帮助大模型理解组件功能的说明，规范体现在manifest的内容和格式
+    * manifest规范
 
 ### `run` 函数
 

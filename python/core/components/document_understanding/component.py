@@ -25,7 +25,6 @@ from appbuilder.core.message import Message
 from appbuilder.core.component import Component
 import base64
 import uuid
-from appbuilder.utils.trace.tracer_wrapper import components_run_stream_trace, components_run_trace
 
 class DocumentUnderstanding(Component):
     """
@@ -131,7 +130,6 @@ class DocumentUnderstanding(Component):
         response = requests.request("POST", url, headers=headers, data=payload, files=files)
         return json.loads(response.text).get("id", None)
 
-    @components_run_trace
     def run(self,
             message: Message,
             file_path,
@@ -197,7 +195,6 @@ class DocumentUnderstanding(Component):
         else:
             response.raise_for_status()
 
-    @components_run_stream_trace
     def tool_eval(self,
                   message: Message,
                   file_path: str,
