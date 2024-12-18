@@ -287,54 +287,48 @@ Hook:
         - 产业实践应用范例: 
             - [SDK使用示例](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/ExamplesOfIndustrialPracticeApplications/README.md)
         - [SDK当前支持的编程语言](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/CurrentlySupportedProgrammingLanguages/README.md)
-  - 基础:
-      - 模型:
-          - [获取模型列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
-      - [组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
-      - 监控:
-          - [TRACE基础功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
-          - [TRACE拓展功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
-          - [Debug功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/Debug.md)
-      - 部署:
-          - [交互式前端部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
-          - [公有云部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
-          - [API 访问](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
-          - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
-          - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
-      - 平台:
-          - 应用:
-              - [AppBuilderClient组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
-              - [获取AppBuilder已发布的应用列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
-          - 知识库:
-              - [知识库组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
-          - 自定义组件:
-              - [基础能力组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
-  - 应用:
-      - Agent:
-          - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [使用官方组件](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [使用异步和流式加速客户端调用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - RAG:
-          - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
-          - [知识库管理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [Reference信息处理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - Workflow:
-          - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [从零使用Workflow组装一个RAG应用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [从零使用Workflow组装一个Agent应用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-  - 开发者指南:
-      - [如何贡献代码](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
-      - [版本升级日志](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
-      - [常见问题FAQ](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - [日志管理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - [错误信息](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - [环境参数](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
-  - API Reference:
-      - [Python API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/PythonAPI.md)
-      - [Java API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Java/JavaAPI.md)
-      - [Go API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+    - 基础:
+        - 模型:
+            - [获取模型列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
+        - [组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+        - 监控:
+            - [TRACE基础功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
+            - [TRACE拓展功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+        - 部署:
+            - [交互式前端部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
+            - [公有云部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
+            - [API 访问](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
+            - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
+            - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
+        - 平台:
+            - 应用:
+                - [AppBuilderClient组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
+                - [获取AppBuilder已发布的应用列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
+            - 知识库:
+                - [知识库组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
+            - 自定义组件:
+                - [基础能力组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
+    - 应用:
+        - Agent:
+            - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/BasicKnowledge/agent.md)
+            - [使用官方组件](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/UseOfficialComponents/use_official_components.md)
+            - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolCall/tool_call.md)
+            - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolChoice/tool_choice.md)
+            - [使用异步和流式加速客户端调用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - RAG:
+            - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
+            - [知识库管理](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/DatasetManage/dataset_manage.md)
+            - [Reference信息处理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - Workflow:
+            - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [从零使用Workflow组装一个RAG应用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [从零使用Workflow组装一个Agent应用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+    - 开发者指南:
+        - [如何贡献代码](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
+        - [二次开发](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/SecondaryDevelopment/README.md)
+        - [版本升级日志](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
+        - [错误信息](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ErrorMessage/error_message.md)
+        - [环境参数](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
 
 
 ## 开源社区与活动
