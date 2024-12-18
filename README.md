@@ -325,7 +325,7 @@ Hook:
             - [从零使用Workflow组装一个Agent应用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
     - 开发者指南:
         - [如何贡献代码](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
-        - [二次开发](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/SecondaryDevelopment/README.md)
+        - [二次开发](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/AdvancedDevelopment/README.md)
         - [版本升级日志](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
         - [错误信息](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ErrorMessage/error_message.md)
         - [环境参数](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)

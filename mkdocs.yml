@@ -98,7 +98,7 @@ nav:
     #   - 从零使用Workflow组装一个Agent应用: 
   - 开发者指南:
     - 如何贡献代码: DevelopGuide/HowToContributeCode/README.md
-    - 二次开发: DevelopGuide/SecondaryDevelopment/README.md
+    - 二次开发: DevelopGuide/AdvancedDevelopment/README.md
     - 版本升级日志: DevelopGuide/ChangeLog/changelog.md
     - 错误信息: DevelopGuide/ErrorMessage/error_message.md
     - 环境参数: DevelopGuide/EnvironmentalParameters/env.md

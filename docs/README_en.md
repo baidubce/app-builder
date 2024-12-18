@@ -293,7 +293,7 @@ Hook:
             - [Assembling an Agent application from scratch using Workflow](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
     - Developer Guide:
         - [How to contribute code](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
-        - [Secondary Development](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/SecondaryDevelopment/README.md)
+        - [Secondary Development](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/AdvancedDevelopment/README.md)
         - [Version upgrade log](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
         - [Error messages](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ErrorMessage/error_message.md)
         - [Environmental parameters](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)

@@ -289,7 +289,7 @@ print(answer.content.answer)
             - [Workflowを使ってAgentアプリケーションをゼロから組み立てる](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
     - 開発者ガイド:
         - [コードの貢献方法](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
-        - [にじかいせっか](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/SecondaryDevelopment/README.md)
+        - [にじかいせっか](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/AdvancedDevelopment/README.md)
         - [バージョンアップログ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
         - [エラーメッセージ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ErrorMessage/error_message.md)
         - [環境パラメータ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)

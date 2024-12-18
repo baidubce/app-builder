@@ -2,7 +2,7 @@
 
 该文档目录包含以下内容：
 
-- [二次开发基本介绍](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/SecondaryDevelopment/README.md)
+- [二次开发基本介绍](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/AdvancedDevelopment/README.md)
 - [AppBuilder SDK 运行环境超参配置说明](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
 
 
