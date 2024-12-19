@@ -44,7 +44,7 @@ Baidu AI Cloud Qianfan AppBuilder-SDKは、AIアプリケーション開発者�
 
 ## どのようにインストールしますか？
 
-#### Baidu AI Cloud Qianfan AppBuilder SDKの最新バージョンは0.9.7（2024-11-27）です
+#### Baidu AI Cloud Qianfan AppBuilder SDKの最新バージョンは0.9.8（2024-12-10）です
 
 Baidu AI Cloud Qianfan AppBuilder SDKのリリースノートについては、[バージョン説明](DevelopGuide/ChangeLog/changelog.md)をご覧ください。
 
@@ -250,54 +250,49 @@ print(answer.content.answer)
         - 産業実践アプリケーション例: 
             - [SDK使用例](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/ExamplesOfIndustrialPracticeApplications/README.md)
         - [現在SDKがサポートしているプログラミング言語](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/CurrentlySupportedProgrammingLanguages/README.md)
-  - 基本:
-      - モデル:
-          - [モデルリストの取得](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
-      - [コンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
-      - 監視:
-          - [TRACE基本機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
-          - [TRACE拡張機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
-          - [Debug機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/Debug.md)
-      - デプロイ:
-          - [インタラクティブなフロントエンドデプロイ](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
-          - [パブリッククラウドデプロイ](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
-          - [API アクセス](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
-          - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
-          - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
-      - プラットフォーム:
-          - アプリケーション:
-              - [AppBuilderClientコンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
-              - [AppBuilderで公開されたアプリケーションリストの取得](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
-          - ナレッジベース:
-              - [ナレッジベースコンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
-          - カスタムコンポーネント:
-              - [基本機能コンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
-  - アプリケーション:
-      - エージェント:
-          - [基本知識](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [公式コンポーネントの使用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [非同期およびストリーミングを使用してクライアント呼び出しを加速する](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - RAG:
-          - [基本知識](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
-          - [ナレッジベース管理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [Reference情報処理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - ワークフロー:
-          - [基本知識](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [Workflowを使ってRAGアプリケーションをゼロから組み立てる](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [Workflowを使ってAgentアプリケーションをゼロから組み立てる](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-  - 開発者ガイド:
-      - [コードの貢献方法](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
-      - [バージョンアップログ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
-      - [よくある質問FAQ](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - [ログ管理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - [エラーメッセージ](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - [環境パラメータ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
-  - APIリファレンス:
-      - [Python APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/PythonAPI.md)
-      - [Java APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Java/JavaAPI.md)
-      - [Go APIリファレンス](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+    - 基本:
+        - モデル:
+            - [モデルリストの取得](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
+        - [コンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+        - 監視:
+            - [TRACE基本機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
+            - [TRACE拡張機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+            - [Debug機能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/Debug.md)
+        - デプロイ:
+            - [インタラクティブなフロントエンドデプロイ](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
+            - [パブリッククラウドデプロイ](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
+            - [API アクセス](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
+            - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
+            - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
+        - プラットフォーム:
+            - アプリケーション:
+                - [AppBuilderClientコンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
+                - [AppBuilderで公開されたアプリケーションリストの取得](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
+            - ナレッジベース:
+                - [ナレッジベースコンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
+            - カスタムコンポーネント:
+                - [基本機能コンポーネント](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
+    - アプリケーション:
+        - エージェント:
+            - [基本知識](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [公式コンポーネントの使用](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/UseOfficialComponents/use_official_components.md)
+            - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolCall/tool_call.md)
+            - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolChoice/tool_choice.md)
+            - [非同期およびストリーミングを使用してクライアント呼び出しを加速する](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - RAG:
+            - [基本知識](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
+            - [ナレッジベース管理](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/DatasetManage/dataset_manage.md)
+            - [Reference情報処理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - ワークフロー:
+            - [基本知識](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [Workflowを使ってRAGアプリケーションをゼロから組み立てる](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [Workflowを使ってAgentアプリケーションをゼロから組み立てる](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+    - 開発者ガイド:
+        - [コードの貢献方法](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
+        - [にじかいせっか](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/AdvancedDevelopment/README.md)
+        - [バージョンアップログ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
+        - [エラーメッセージ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ErrorMessage/error_message.md)
+        - [環境パラメータ](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
 
 
 ## オープンソースコミュニティと活動

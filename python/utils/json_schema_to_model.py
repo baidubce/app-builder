@@ -13,6 +13,7 @@ from pydantic import BaseModel
 
 
 NON_ALPHANUMERIC = re.compile(r"[^a-zA-Z0-9]+")
+STARTS_WITH_NUMBER = re.compile(r'[0-9]+')
 UPPER_CAMEL_CASE = re.compile(r"[A-Z][a-zA-Z0-9]+")
 LOWER_CAMEL_CASE = re.compile(r"[a-z][a-zA-Z0-9]+")
 
@@ -22,7 +23,7 @@ class BadJsonSchema(Exception):
 
 def _to_camel_case(name: str) -> str:
     if any(NON_ALPHANUMERIC.finditer(name)):
-        return "".join(term.lower().title() for term in NON_ALPHANUMERIC.split(name))
+        return  "".join(term.lower().title() if not STARTS_WITH_NUMBER.match(term) else term.lower() for term in NON_ALPHANUMERIC.split(name))
     if UPPER_CAMEL_CASE.match(name):
         return name
     if LOWER_CAMEL_CASE.match(name):
@@ -88,7 +89,8 @@ def json_schema_to_pydantic_model(json_schema: dict, name_override: str) -> Base
 
     class_title = json_schema["title"]
     pydantic_models_as_str = sed_pydantic_str(pydantic_models_as_str, class_title)
-
+    pydantic_models_as_str = pydantic_models_as_str.replace("unique_items", "Set")
+    
     with NamedTemporaryFile(suffix=".py", delete=False) as temp_file:
         temp_file_path = Path(temp_file.name).resolve()
         temp_file.write(pydantic_models_as_str.encode())
@@ -119,6 +121,14 @@ if __name__ == '__main__':
                         "type": "string",
                         "description": "待识别图片的文件名,用于生成图片url"
                     },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                        },
+                        "uniqueItems": True
+                    }
+                    
                 },
                 "anyOf": [
                     {

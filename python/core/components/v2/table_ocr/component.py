@@ -152,7 +152,7 @@ class TableOCR(Component):
                 service_err_message=data.get("error_msg")
             )
 
-    def _get_table_markdown(self, tables_result):
+    def get_table_markdown(self, tables_result):
         """
         将表格识别结果转换为Markdown格式。
         
@@ -222,7 +222,7 @@ class TableOCR(Component):
             req.cell_contents = "false"
             resp, raw_data = self._recognize(req, request_id=traceid)
             tables_result = proto.Message.to_dict(resp)["tables_result"]
-            markdowns = self._get_table_markdown(tables_result)
+            markdowns = self.get_table_markdown(tables_result)
             result[file_name] = markdowns
 
         result = json.dumps(result, ensure_ascii=False)

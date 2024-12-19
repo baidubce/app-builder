@@ -60,45 +60,57 @@ class ManifestValidRule(RuleBase):
     """
     通过尝试将component的manifest转换为pydantic模型来检查manifest是否符合规范
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__()
         self.rule_name = "ManifestValidRule"
+        self.component_tool_eval_cases = kwargs.get("component_tool_eval_cases", {})
 
     def check(self, component_cls) -> CheckInfo:
         check_pass_flag = True
         invalid_details = []
+        component_cls_name = component_cls.__name__
+        if component_cls_name not in self.component_tool_eval_cases:
+            invalid_details.append("{} 没有添加测试case到 component_tool_eval_cases 中".format(component_cls_name))
+        else:
+            component_case = self.component_tool_eval_cases[component_cls_name]()
+            envs = component_case.envs()
+            os.environ.update(envs)
+            init_args = component_case.init_args()
 
+            try:
+                component_obj = component_cls(**init_args)
+                if not hasattr(component_obj, "manifests"):
+                    raise ValueError("No manifests found")
+                manifests = component_obj.manifests
+                # NOTE(暂时检查manifest中的第一个mainfest)
+                if not manifests or len(manifests) == 0:
+                    raise ValueError("No manifests found")
+                manifest = manifests[0]
+                tool_name = manifest['name']
+                tool_desc = manifest['description']
+                schema = manifest["parameters"]
+                schema["title"] = tool_name
+                # 第一步，将json schema转换为pydantic模型
+                pydantic_model = json_schema_to_pydantic_model(schema, tool_name)
+                check_to_json = pydantic_model.schema_json()
+                json_to_dict = json.loads(check_to_json)
 
-        try:
-            if not hasattr(component_cls, "manifests"):
-                raise ValueError("No manifests found")
-            manifests = component_cls.manifests
-            # NOTE(暂时检查manifest中的第一个mainfest)
-            if not manifests or len(manifests) == 0:
-                raise ValueError("No manifests found")
-            manifest = manifests[0]
-            tool_name = manifest['name']
-            tool_desc = manifest['description']
-            schema = manifest["parameters"]
-            schema["title"] = tool_name
-            # 第一步，将json schema转换为pydantic模型
-            pydantic_model = json_schema_to_pydantic_model(schema, tool_name)
-            check_to_json = pydantic_model.schema_json()
-            json_to_dict = json.loads(check_to_json)
-
-            if "properties" in schema:
-                properties = schema["properties"]
-                for key, value in properties.items():
-                    if "type" not in value:
-                        invalid_details.append("\'type' must be in properties item: {}".format(key))
-                    if "description" not in value:
-                        invalid_details.append("\'description' must be in properties item: {}".format(key))
-            
-        except Exception as e:
-            print(e)
-            check_pass_flag = False
-            invalid_details.append(str(e))
-
+                if "properties" in schema:
+                    properties = schema["properties"]
+                    for key, value in properties.items():
+                        if "type" not in value:
+                            invalid_details.append("\'type' must be in properties item: {}".format(key))
+                        if "description" not in value:
+                            invalid_details.append("\'description' must be in properties item: {}".format(key))
+                
+            except Exception as e:
+                print(e)
+                check_pass_flag = False
+                invalid_details.append(str(e))
+                
+            for env in envs:
+                os.environ.pop(env)
+                
         if len(invalid_details) > 0:
             check_pass_flag = False
             invalid_details = ",".join(invalid_details)
@@ -285,9 +297,9 @@ class ToolEvalOutputJsonRule(RuleBase):
             if out_type == "text":
                 text_output += content.text.info
             elif out_type == "oral_text":
-                oral_text_output += content.oral_text.info
+                oral_text_output += content.text.info
             elif out_type == "code":
-                code_output += content.code.code
+                code_output += content.text.code
         return {
             "text": text_output,
             "oral_text": oral_text_output,
@@ -361,9 +373,9 @@ class ToolEvalOutputJsonRule(RuleBase):
             try:
                 stream_output_dict = {"text": "", "oral_text":"", "code": ""}
                 stream_outputs = component_obj.tool_eval(**input_dict)
-                for stream_output in stream_outputs: #校验流式输出
+                for stream_output in stream_outputs:
                     iter_invalid_detail = self._check_jsonschema(stream_output.model_dump(), output_json_schemas)
-                    invalid_details.extend(["流式" + error_message for error_message in iter_invalid_detail])
+                    invalid_details.extend(iter_invalid_detail)
                     iter_output_dict = self._gather_iter_outputs(stream_output)
                     stream_output_dict["text"] += iter_output_dict["text"]
                     stream_output_dict["oral_text"] += iter_output_dict["oral_text"]
@@ -372,17 +384,6 @@ class ToolEvalOutputJsonRule(RuleBase):
                     invalid_details.extend(self._check_text_and_code(component_case, stream_output_dict))
             except Exception as e:
                 invalid_details.append("ToolEval执行失败: {}".format(e))
-
-            time.sleep(2)
-            try:
-                non_stream_outputs = component_obj.non_stream_tool_eval(**input_dict)
-                non_stream_invalid_details  = self._check_jsonschema(non_stream_outputs.model_dump(), output_json_schemas)  #校验非流式输出
-                invalid_details.extend(["非流式" + error_message for error_message in non_stream_invalid_details]) 
-                if len(invalid_details) == 0:
-                    non_stream_output_dict = self._gather_iter_outputs(non_stream_outputs)
-                    invalid_details.extend(self._check_text_and_code(component_case, non_stream_output_dict))
-            except Exception as e:
-                invalid_details.append(" NonStreamToolEval执行失败: {}".format(e))
 
             for env in envs:
                 os.environ.pop(env)

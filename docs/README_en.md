@@ -47,7 +47,7 @@ Baidu AI Cloud Qianfan AppBuilder-SDK offers the following essential features fo
 
 ##  How to install？
 
-#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.7 (2024-11-27)
+#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.8 (2024-12-10)
 
 Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/DevelopGuide/ChangeLog/changelog.md)
 
@@ -254,54 +254,49 @@ Hook:
         - Industrial practice application examples:
             - [SDK usage examples](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/ExamplesOfIndustrialPracticeApplications/README.md)
         - [Currently supported programming languages by SDK](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/CurrentlySupportedProgrammingLanguages/README.md)
-  - Basics:
-      - Models:
-          - [Get model list](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
-      - [Components](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
-      - Monitoring:
-          - [TRACE basic functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
-          - [TRACE extended functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
-          - [Debug functionality](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/Debug.md)
-      - Deployment:
-          - [Interactive front-end deployment](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
-          - [Public cloud deployment](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
-          - [API access](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
-          - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
-          - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
-      - Platform:
-          - Applications:
-              - [AppBuilderClient component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
-              - [Get the list of applications published by AppBuilder](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
-          - Knowledge Base:
-              - [Knowledge Base component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
-          - Custom Components:
-              - [Basic capabilities component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
-  - Applications:
-      - Agent:
-          - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [Using official components](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [Using asynchronous and streaming accelerated client calls](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - RAG:
-          - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
-          - [Knowledge Base Management](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [Reference Information Processing](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - Workflow:
-          - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [Assembling a RAG application from scratch using Workflow](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-          - [Assembling an Agent application from scratch using Workflow](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-  - Developer Guide:
-      - [How to contribute code](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
-      - [Version upgrade log](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
-      - [FAQ](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - [Log Management](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - [Error messages](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
-      - [Environmental parameters](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
-  - API Reference:
-      - [Python API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Python/PythonAPI.md)
-      - [Java API Reference](https://github.com/baidubce/app-builder/blob/master/docs/API-Reference/Java/JavaAPI.md)
-      - [Go API Reference](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+    - Basics:
+        - Models:
+            - [Get model list](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
+        - [Components](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+        - Monitoring:
+            - [TRACE basic functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
+            - [TRACE extended functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+            - [Debug functionality](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/Debug.md)
+        - Deployment:
+            - [Interactive front-end deployment](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
+            - [Public cloud deployment](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
+            - [API access](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
+            - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
+            - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
+        - Platform:
+            - Applications:
+                - [AppBuilderClient component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
+                - [Get the list of applications published by AppBuilder](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
+            - Knowledge Base:
+                - [Knowledge Base component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
+            - Custom Components:
+                - [Basic capabilities component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
+    - Applications:
+        - Agent:
+            - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/BasicKnowledge/agent.md)
+            - [Using official components](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/UseOfficialComponents/use_official_components.md)
+            - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolCall/tool_call.md)
+            - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolChoice/tool_choice.md)
+            - [Using asynchronous and streaming accelerated client calls](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - RAG:
+            - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
+            - [Knowledge Base Management](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/DatasetManage/dataset_manage.md)
+            - [Reference Information Processing](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - Workflow:
+            - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [Assembling a RAG application from scratch using Workflow](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [Assembling an Agent application from scratch using Workflow](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+    - Developer Guide:
+        - [How to contribute code](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
+        - [Secondary Development](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/AdvancedDevelopment/README.md)
+        - [Version upgrade log](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
+        - [Error messages](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ErrorMessage/error_message.md)
+        - [Environmental parameters](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
 
 ## Open source community and activities
 <div align="center">

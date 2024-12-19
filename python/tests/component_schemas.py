@@ -213,14 +213,14 @@ chart_schema["properties"]["type"] = {
 chart_schema["properties"]["text"] = {
   "type": "object",
   "properties": {
-    "filename": {
+    "type": {
       "type": "string"
     },
-    "url": {
+    "data": {
       "type": "string"
     }
   },
-  "required": ["filename", "url"]
+  "required": ["type", "data"]
 }
 
 audio_schema = copy.deepcopy(base_item_schema)
@@ -245,6 +245,21 @@ audio_schema["properties"]["text"] = {
   "required": ["filename", "url"]
 }
 
+json_schema = copy.deepcopy(base_item_schema)
+json_schema["$schema"] = "json_schema"
+json_schema["properties"]["type"] = {
+    "type": "string",
+    "enum": ["json"]
+}
+json_schema["properties"]["text"] = {
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "string"
+    }
+  },
+  "required": ["data"]
+}
 
 plan_schema = copy.deepcopy(base_item_schema)
 plan_schema["$schema"] = "plan_schema"
@@ -311,6 +326,7 @@ type_to_json_schemas = {
   "image": image_schema,
   "chart": chart_schema,
   "audio": audio_schema,
+  "json": json_schema,
   "plan": plan_schema,
   "function_call": function_call_schema,
 }

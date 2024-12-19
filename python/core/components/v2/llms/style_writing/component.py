@@ -20,7 +20,7 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 from pydantic import Field
 from typing import Optional
 
-from appbuilder.core.components.llms.style_writing.base import StyleQueryChoices, LengthChoices
+from appbuilder.core.components.llms.style_writing.base import StyleQueryChoices, LengthChoices, StyleWritingArgs
 
 class StyleWritingArgs(ComponentArguments):
     """
@@ -95,12 +95,12 @@ class StyleWriting(CompletionBaseComponent):
 
     def __init__(
             self,
-            model=None,
+            model: str="Qianfan-Agent-Speed-8K",
             secret_key: Optional[str] = None,
             gateway: str = "",
-            lazy_certification: bool = False,
+            lazy_certification: bool = True,
     ):
-        """初始化StyleWriting模型。
+        """初始化StyleRewrite模型。
         
         Args:
             model (str|None): 模型名称，用于指定要使用的千帆模型。
@@ -143,18 +143,21 @@ class StyleWriting(CompletionBaseComponent):
                   length: int = 100,
                   **kwargs):
         """
-        对指定的工具进行函数调用评估。
+        使用指定的模型和参数对输入的查询进行评估，并生成输出。
         
         Args:
-            name (str): 工具名称。
-            streaming (bool, optional): 是否以流的方式返回结果。默认为False。
-            **kwargs: 其他参数。
-        
-        Returns:
-            str 或 generator: 如果 streaming 为 False，则返回评估结果字符串；如果 streaming 为 True，则返回一个生成器，每次迭代返回评估结果字符串的一部分。
+            query (str): 要评估的查询字符串。
+            style (str, optional): 评估的风格。默认为 "通用"。
+            length (int, optional): 输出文本的长度。默认为 100。
+            **kwargs: 关键字参数，可以包含以下可选参数：
+                _sys_traceid (str): 系统跟踪ID。
+                model_configs (dict): 模型配置字典，可以包含 "temperature" 和 "top_p" 两个键。
         
         Raises:
-            ValueError: 如果未提供必要的参数 'query'。
+            ValueError: 如果查询字符串为空，则引发 ValueError 异常。
+        
+        Yields:
+            Output: 生成的输出对象，包含文本类型和文本内容。
         
         """
         traceid = kwargs.get("_sys_traceid")

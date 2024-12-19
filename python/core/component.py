@@ -22,7 +22,7 @@ from pydantic import Field, field_validator
 from typing import (
     Dict, List, Optional, Any, Generator, Union, AsyncGenerator)
 from appbuilder.core.utils import ttl_lru_cache
-from appbuilder.core._client import HTTPClient
+from appbuilder.core._client import HTTPClient, AsyncHTTPClient
 from appbuilder.core.message import Message
 
 
@@ -103,8 +103,8 @@ class Image(BaseModel, extra='allow'):
 
 
 class Chart(BaseModel, extra='allow'):
-    filename: str = Field(default="", description="图表名称")
-    url: str = Field(default="", description="图表url")
+    type: str = Field(default="", description="图表类型")
+    data: str = Field(default="", description="图表数据, json_str格式")
 
 
 class Audio(BaseModel, extra='allow'):
@@ -116,16 +116,23 @@ class Audio(BaseModel, extra='allow'):
 class PlanStep(BaseModel, extra='allow'):
     name: str = Field(default="", description="step名")
     arguments: dict = Field(default={}, description="step参数")
+    thought: str = Field(default="", description="step思考结果")
     
+
 class Plan(BaseModel, extra='allow'):
     detail: str = Field(default="", description="计划详情")
     steps: list[PlanStep] = Field(default=[], description="步骤列表")
+
 
 class FunctionCall(BaseModel, extra='allow'):
     thought: str = Field(default="", description="思考结果")
     name: str = Field(default="", description="工具名")
     arguments: dict = Field(default={}, description="参数列表")
-    
+
+
+class Json(BaseModel, extra='allow'):
+    data: str = Field(default="", description="json数据")
+
 
 class Content(BaseModel):
     name: str = Field(default="",
@@ -138,10 +145,10 @@ class Content(BaseModel):
                         description="大模型的token用量, ")
     metrics: dict = Field(default={},
                           description="耗时、性能、内存等trace及debug所需信息")
-    type: str = Field(default="text", 
+    type: str = Field(default="text",
                       description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio该字段的取值决定了下面text字段的内容结构")
-    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, FunctionCall] = Field(default=Text, 
-                       description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall] = Field(default=Text,
+                                                                                                                      description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
     @field_validator('text', mode='before')
     def set_text(cls, v, values, **kwargs):
@@ -167,6 +174,8 @@ class Content(BaseModel):
             return Plan(**v)
         elif values.data['type'] == 'function_call':
             return FunctionCall(**v)
+        elif values.data['type'] == 'json':
+            return Json(**v)
         else:
             raise ValueError(f"Invalid value for 'type': {values['type']}")
 
@@ -175,7 +184,7 @@ class ComponentOutput(BaseModel):
     role: str = Field(default="tool",
                       description="role是区分当前消息来源的重要字段，对于绝大多数组件而言，都是填写tool，标明role所在的消息来源为组件。部分思考及问答组件，role需要填写为assistant")
     content: list[Content] = Field(default=[],
-                                         description="content是当前组件返回内容的主要payload，List[Content]，每个Content Dict 包括了当前输出的一个元素")
+                                   description="content是当前组件返回内容的主要payload，List[Content]，每个Content Dict 包括了当前输出的一个元素")
 
 
 class Component:
@@ -197,6 +206,7 @@ class Component:
         secret_key: Optional[str] = None,
         gateway: str = "",
         lazy_certification: bool = False,
+        is_aysnc: bool = False,
         **kwargs
     ):
         r"""Component初始化方法.
@@ -214,6 +224,7 @@ class Component:
         self.gateway = gateway
         self._http_client = None
         self.lazy_certification = lazy_certification
+        self.is_async = is_aysnc
         if not self.lazy_certification:
             self.set_secret_key_and_gateway(self.secret_key, self.gateway)
 
@@ -231,7 +242,10 @@ class Component:
         """
         self.secret_key = secret_key
         self.gateway = gateway
-        self._http_client = HTTPClient(self.secret_key, self.gateway)
+        if self.is_async:
+            self._http_client = AsyncHTTPClient(self.secret_key, self.gateway)
+        else:
+            self._http_client = HTTPClient(self.secret_key, self.gateway)
 
     @property
     def http_client(self):
@@ -246,7 +260,11 @@ class Component:
 
         """
         if self._http_client is None:
-            self._http_client = HTTPClient(self.secret_key, self.gateway)
+            if self.is_async:
+                self._http_client = AsyncHTTPClient(
+                    self.secret_key, self.gateway)
+            else:
+                self._http_client = HTTPClient(self.secret_key, self.gateway)
         return self._http_client
 
     def __call__(self, *inputs, **kwargs):
@@ -513,8 +531,11 @@ class Component:
                 text = {"url": text}
             elif type == "oral_text":
                 text = {"info": text}
+            elif type == "json":
+                text = {"data": text}
             else:
-                raise ValueError("Only when type=text/code/urls/oral_text, string text is allowed! Please give dict text")
+                raise ValueError(
+                    "Only when type=text/code/urls/oral_text, string text is allowed! Please give dict text")
         elif isinstance(text, dict):
             if type == "text":
                 key_list = ["info"]
@@ -527,11 +548,12 @@ class Component:
             elif type == "files":
                 key_list = ["filename", "url"]
             elif type == "references":
-                key_list = ["type", "resource_type", "icon", "site_name", "source", "doc_id", "title", "content", "image_content", "image_url", "video_url"]
+                key_list = ["type", "resource_type", "icon", "site_name", "source",
+                            "doc_id", "title", "content", "image_content", "image_url", "video_url"]
             elif type == "image":
                 key_list = ["filename", "url"]
             elif type == "chart":
-                key_list = ["filename", "url"]
+                key_list = ["type", "data"]
             elif type == "audio":
                 key_list = ["filename", "url"]
             elif type == "plan":
@@ -544,7 +566,8 @@ class Component:
         else:
             raise ValueError("text must be str or dict")
 
-        assert role in ["tool", "assistant"], "role must be 'tool' or 'assistant'"
+        assert role in [
+            "tool", "assistant"], "role must be 'tool' or 'assistant'"
         result = {
             "role": role,
             "content": [{

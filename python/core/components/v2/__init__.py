@@ -25,6 +25,10 @@ from .table_ocr.component import TableOCR
 from .text_to_image.component import Text2Image
 from .llms.style_writing.component import StyleWriting
 from .tree_mind.component import TreeMind
+from .asr.component import ASR
+from .object_recognize.component import ObjectRecognition
+from .llms.similar_question.component import SimilarQuestion
+from .llms.oral_query_generation.component import OralQueryGeneration
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
@@ -39,5 +43,9 @@ __V2_COMPONENTS__ = [
     "TableOCR",
     "Text2Image",
     "StyleWriting",
-    "TreeMind"
+    "TreeMind",
+    "ASR",
+    "ObjectRecognition",
+    "SimilarQuestion",
+    "OralQueryGeneration",
 ] # NOQA

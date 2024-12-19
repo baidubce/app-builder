@@ -82,15 +82,15 @@ nav:
       - 自定义组件:
         - 基础能力组件: BasisModule/Platform/CustomComponents/components.md
   - 应用:
-    # - Agent:
-    #   - 基础知识: 
-    #   - 使用官方组件: 
-    #   - ToolCall: 
-    #   - ToolChoice: 
+    - Agent:
+      - 基础知识: Application/Agent/BasicKnowledge/agent.md
+      - 使用官方组件: Application/Agent/UseOfficialComponents/use_official_components.md
+      - ToolCall: Application/Agent/ToolCall/tool_call.md
+      - ToolChoice: Application/Agent/ToolChoice/tool_choice.md
     #   - 使用异步和流式加速客户端调用: 
     - RAG:
       - 基础知识: Application/RAG/BasicKnowledge/rag.md
-      # - 知识库管理: 
+      - 知识库管理: Application/RAG/DatasetManage/dataset_manage.md
       # - Reference信息处理: 
     # - Workflow:
     #   - 基础知识: 
@@ -98,10 +98,9 @@ nav:
     #   - 从零使用Workflow组装一个Agent应用: 
   - 开发者指南:
     - 如何贡献代码: DevelopGuide/HowToContributeCode/README.md
+    - 二次开发: DevelopGuide/AdvancedDevelopment/README.md
     - 版本升级日志: DevelopGuide/ChangeLog/changelog.md
-    # - 常见问题FAQ: 
-    # - 日志管理: 
-    # - 错误信息: 
+    - 错误信息: DevelopGuide/ErrorMessage/error_message.md
     - 环境参数: DevelopGuide/EnvironmentalParameters/env.md
   - API Reference:
     - Python API Reference: API-Reference/Python/PythonAPI.md

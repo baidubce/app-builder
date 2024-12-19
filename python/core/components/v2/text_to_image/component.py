@@ -30,7 +30,9 @@ from appbuilder.utils.trace.tracer_wrapper import components_run_trace, componen
 class Text2Image(Component):
     r"""
     文生图组件，即对于输入的文本，输出生成的图片url。
+
     Examples:
+    
     .. code-block:: python
         import appbuilder
         text_to_image = appbuilder.Text2Image()
@@ -269,7 +271,7 @@ class Text2Image(Component):
 
             while True:
                 request = Text2ImageQueryRequest(task_id=taskId)
-                text2ImageQueryResponse, data = self._queryText2ImageData(request, request_id=request_id)
+                text2ImageQueryResponse, data = self.queryText2ImageData(request, request_id=request_id)
                 if text2ImageQueryResponse.data.task_progress is not None:
                     task_progress = float(text2ImageQueryResponse.data.task_progress)
                     if math.isclose(1.0, task_progress, rel_tol=1e-9, abs_tol=0.0):
@@ -283,11 +285,11 @@ class Text2Image(Component):
                         time.sleep(task_request_time)
                     task_request_time += 1
 
-            img_urls = self._extract_img_urls(text2ImageQueryResponse)
+            img_urls = self.extract_img_urls(text2ImageQueryResponse)
 
             return img_urls, data
 
-    def _queryText2ImageData(
+    def queryText2ImageData(
         self,
         request: Text2ImageQueryRequest,
         timeout: float = None,
@@ -319,11 +321,11 @@ class Text2Image(Component):
         data = response.json()
         self.http_client.check_response_json(data)
         request_id = self.http_client.response_request_id(response)
-        self.__class__._check_service_error(request_id, data)
+        self.__class__.check_service_error(request_id, data)
         response = Text2ImageQueryResponse(**data)
         return response, data
 
-    def _extract_img_urls(self, response: Text2ImageQueryResponse):
+    def extract_img_urls(self, response: Text2ImageQueryResponse):
         """
         从作画生成的返回结果中提取图片url。
         
@@ -345,7 +347,7 @@ class Text2Image(Component):
         return img_urls
 
     @staticmethod
-    def _check_service_error(request_id: str, data: dict):
+    def check_service_error(request_id: str, data: dict):
         """
         检查服务错误信息
         

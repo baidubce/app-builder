@@ -17,7 +17,7 @@ import os
 import json
 import uuid
 import queue
-from typing import Optional,Union
+from typing import Optional, Union
 from appbuilder.core.component import Message, Component
 from appbuilder.core.manifest.models import Manifest
 from appbuilder.core.console.appbuilder_client import data_class
@@ -81,7 +81,7 @@ def describe_apps(
     marker: Optional[str] = None,
     maxKeys: int = 10,
     secret_key: Optional[str] = None,
-    gateway: Optional[str] = None
+    gateway: Optional[str] = None,
 ) -> list[data_class.AppOverview]:
     """
     该接口查询用户下状态为已发布的应用列表
@@ -100,9 +100,7 @@ def describe_apps(
     headers = client.auth_header_v2()
     headers["Content-Type"] = "application/json"
     url = client.service_url_v2("/app?Action=DescribeApps")
-    request = data_class.DescribeAppsRequest(
-        MaxKeys=maxKeys, Marker=marker
-    )
+    request = data_class.DescribeAppsRequest(MaxKeys=maxKeys, Marker=marker)
     response = client.session.post(
         url=url,
         json=request.model_dump(),
@@ -225,7 +223,8 @@ class AppBuilderClient(Component):
         """
         if len(conversation_id) == 0:
             raise ValueError(
-                "conversation_id is empty, you can run self.create_conversation to get a conversation_id")
+                "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
+            )
 
         filepath = os.path.abspath(local_file_path)
         if not os.path.exists(filepath):
@@ -247,17 +246,19 @@ class AppBuilderClient(Component):
         return resp.id
 
     @client_run_trace
-    def run(self, conversation_id: str,
-            query: str = "",
-            file_ids: list = [],
-            stream: bool = False,
-            tools: list[Union[data_class.Tool,Manifest]]= None,
-            tool_outputs: list[data_class.ToolOutput] = None,
-            tool_choice: data_class.ToolChoice = None,
-            end_user_id: str = None,
-            action: data_class.Action = None,
-            **kwargs
-            ) -> Message:
+    def run(
+        self,
+        conversation_id: str,
+        query: str = "",
+        file_ids: list = [],
+        stream: bool = False,
+        tools: list[Union[data_class.Tool, Manifest]] = None,
+        tool_outputs: list[data_class.ToolOutput] = None,
+        tool_choice: data_class.ToolChoice = None,
+        end_user_id: str = None,
+        action: data_class.Action = None,
+        **kwargs,
+    ) -> Message:
         r"""运行智能体应用
 
         Args:
@@ -283,7 +284,8 @@ class AppBuilderClient(Component):
 
         if query == "" and (tool_outputs is None or len(tool_outputs) == 0):
             raise ValueError(
-                "AppBuilderClient Run API: query and tool_outputs cannot both be empty")
+                "AppBuilderClient Run API: query and tool_outputs cannot both be empty"
+            )
 
         req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
@@ -313,18 +315,20 @@ class AppBuilderClient(Component):
             data = response.json()
             resp = data_class.AppBuilderClientResponse(**data)
             out = data_class.AppBuilderClientAnswer()
-            _transform(resp, out)
+            AppBuilderClient._transform(resp, out)
             return Message(content=out)
 
-    def run_with_handler(self,
-                         conversation_id: str,
-                         query: str = "",
-                         file_ids: list = [],
-                         tools: list[Union[data_class.Tool,Manifest]] = None,
-                         stream: bool = False,
-                         event_handler=None,
-                         action=None,
-                         **kwargs):
+    def run_with_handler(
+        self,
+        conversation_id: str,
+        query: str = "",
+        file_ids: list = [],
+        tools: list[Union[data_class.Tool, Manifest]] = None,
+        stream: bool = False,
+        event_handler=None,
+        action=None,
+        **kwargs,
+    ):
         r"""运行智能体应用，并通过事件处理器处理事件
 
         Args:
@@ -350,20 +354,22 @@ class AppBuilderClient(Component):
             tools=tools,
             stream=stream,
             action=action,
-            **kwargs
+            **kwargs,
         )
 
         return event_handler
 
-    def run_multiple_dialog_with_handler(self,
-                                         conversation_id: str,
-                                         queries: iter = None,
-                                         file_ids: iter = None,
-                                         tools: iter = None,
-                                         stream: bool = False,
-                                         event_handler=None,
-                                         actions: iter = None,
-                                         **kwargs):
+    def run_multiple_dialog_with_handler(
+        self,
+        conversation_id: str,
+        queries: iter = None,
+        file_ids: iter = None,
+        tools: iter = None,
+        stream: bool = False,
+        event_handler=None,
+        actions: iter = None,
+        **kwargs,
+    ):
         r"""运行智能体应用，并通过事件处理器处理事件
 
         Args:
@@ -415,7 +421,7 @@ class AppBuilderClient(Component):
         event_handler.reset_state()
 
     @staticmethod
-    def _iterate_events(request_id, events) -> data_class.AppBuilderClientAnswer:
+    def _iterate_events(request_id, events):
         for event in events:
             try:
                 data = event.data
@@ -429,7 +435,7 @@ class AppBuilderClient(Component):
                 )
             inp = data_class.AppBuilderClientResponse(**data)
             out = data_class.AppBuilderClientAnswer()
-            _transform(inp, out)
+            AppBuilderClient._transform(inp, out)
             yield out
 
     @staticmethod
@@ -440,6 +446,24 @@ class AppBuilderClient(Component):
                 service_err_code=data["code"],
                 service_err_message="message={}".format(data["message"]),
             )
+
+    @staticmethod
+    def _transform(
+        inp: data_class.AppBuilderClientResponse, out: data_class.AppBuilderClientAnswer
+    ):
+        out.answer = inp.answer
+        for ev in inp.content:
+            event = data_class.Event(
+                code=ev.event_code,
+                message=ev.event_message,
+                status=ev.event_status,
+                event_type=ev.event_type,
+                content_type=ev.content_type,
+                detail=ev.outputs,
+                usage=ev.usage,
+                tool_calls=ev.tool_calls,
+            )
+            out.events.append(event)
 
 
 class AgentBuilder(AppBuilderClient):
@@ -464,6 +488,7 @@ class AgentBuilder(AppBuilderClient):
         print(message.content)
 
     """
+
     @deprecated(
         reason="AgentBuilder is deprecated, please use AppBuilderClient instead",
         version="1.0.0",
@@ -481,21 +506,3 @@ class AgentBuilder(AppBuilderClient):
 
         """
         super().__init__(app_id)
-
-
-def _transform(
-    inp: data_class.AppBuilderClientResponse, out: data_class.AppBuilderClientAnswer
-):
-    out.answer = inp.answer
-    for ev in inp.content:
-        event = data_class.Event(
-            code=ev.event_code,
-            message=ev.event_message,
-            status=ev.event_status,
-            event_type=ev.event_type,
-            content_type=ev.content_type,
-            detail=ev.outputs,
-            usage=ev.usage,
-            tool_calls=ev.tool_calls,
-        )
-        out.events.append(event)
