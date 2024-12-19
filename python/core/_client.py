@@ -21,11 +21,12 @@ from typing import Optional
 
 import requests
 from requests.adapters import HTTPAdapter, Retry
+from aiohttp import ClientResponse
 
 from appbuilder import get_default_header
 
 from appbuilder.core._exception import *
-from appbuilder.core._session import InnerSession
+from appbuilder.core._session import InnerSession, AsyncInnerSession
 from appbuilder.core.constants import (
     GATEWAY_URL,
     GATEWAY_URL_V2,
@@ -100,7 +101,8 @@ class HTTPClient:
         secret_key_prefix = os.getenv("SECRET_KEY_PREFIX", SECRET_KEY_PREFIX)
 
         if not self.secret_key.startswith(secret_key_prefix):
-            self.secret_key = "{} {}".format(secret_key_prefix, self.secret_key)
+            self.secret_key = "{} {}".format(
+                secret_key_prefix, self.secret_key)
 
         logger.debug("AppBuilder Secret key: {}\n".format(self.secret_key))
 
@@ -181,7 +183,8 @@ class HTTPClient:
         data = response.json()
         if "code" in data and data.get("code") != 0:
             requestId = __class__.response_request_id(response)
-            raise AppBuilderServerException(requestId, data["code"], data["message"])
+            raise AppBuilderServerException(
+                requestId, data["code"], data["message"])
 
     def auth_header(self, request_id: Optional[str] = None):
         r"""auth_header is a helper method return auth info"""
@@ -232,6 +235,42 @@ class HTTPClient:
             return func(*args, **kwargs)
 
         return inner
+
+
+class AsyncHTTPClient(HTTPClient):
+    def __init__(self, secret_key=None, gateway="", gateway_v2=""):
+        super().__init__(secret_key, gateway, gateway_v2)
+        self.session = AsyncInnerSession()
+
+    @staticmethod
+    def check_response_header(response: ClientResponse):
+        r"""check_response_header is a helper method for check head status .
+        :param response: requests.Response.
+        :rtype:
+        """
+        status_code = response.status
+        if status_code == requests.codes.ok:
+            return
+        message = "request_id={} , http status code is {}, body is {}".format(
+            __class__.response_request_id(response), status_code, response.text
+        )
+        if status_code == requests.codes.bad_request:
+            raise BadRequestException(message)
+        elif status_code == requests.codes.forbidden:
+            raise ForbiddenException(message)
+        elif status_code == requests.codes.not_found:
+            raise NotFoundException(message)
+        elif status_code == requests.codes.precondition_required:
+            raise PreconditionFailedException(message)
+        elif status_code == requests.codes.internal_server_error:
+            raise InternalServerErrorException(message)
+        else:
+            raise BaseRPCException(message)
+
+    @staticmethod
+    def response_request_id(response: ClientResponse):
+        r"""response_request_id is a helper method to get the unique request id"""
+        return response.headers.get("X-Appbuilder-Request-Id", "")
 
 
 class AssistantHTTPClient(HTTPClient):
