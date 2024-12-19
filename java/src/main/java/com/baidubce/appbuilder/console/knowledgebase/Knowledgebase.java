@@ -691,4 +691,17 @@ public class Knowledgebase extends Component {
         ChunksDescribeResponse respBody = response.getBody();
         return respBody;
     }
+
+    public QueryKnowledgeBaseResponse queryKnowledgeBaseResponse(QueryKnowledgeBaseRequest request)
+            throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.QUERY_KNOWLEDGEBASE_URL;
+
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<QueryKnowledgeBaseResponse> response = httpClient.execute(postRequest, QueryKnowledgeBaseResponse.class);
+        QueryKnowledgeBaseResponse respBody = response.getBody();
+        return respBody;  
+    }
 }
