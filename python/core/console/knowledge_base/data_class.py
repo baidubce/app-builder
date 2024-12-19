@@ -11,12 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from pydantic import BaseModel
-from pydantic import Field
-from typing import Union
-from typing import Optional
-import datetime
+from __future__ import annotations
+from datetime import datetime
+from pydantic import BaseModel, Field
+from typing import Union, Optional, List
 
 
 class KnowledgeBaseUploadFileResponse(BaseModel):
@@ -285,3 +283,108 @@ class DescribeChunksResponse(BaseModel):
     )
     nextMarker: str = Field(..., description="下一页起始位置")
     maxKeys: int = Field(..., description="本次查询包含的最大结果集数量")
+
+class MetadataFilter(BaseModel):
+    operator: str = Field(..., description="操作符名称。==:等于，in:在数组中，not_in:不在数组中")
+    field: str = Field(None, description="字段名，目前支持doc_id")
+    value: Union[str, list[str]] = Field(
+        ..., description="字段值，如果是in操作符，value为数组"
+    )
+
+class MetadataFilters(BaseModel):
+    filters: list[MetadataFilter] = Field(..., description="过滤条件")
+    condition: str = Field(..., description="文档组合条件。and:与，or:或")
+
+class PreRankingConfig(BaseModel):
+    bm25_weight: float = Field(
+        None, description="粗排bm25比重，取值范围在 [0, 1]，默认0.75"
+    )
+    vec_weight: float = Field(
+        None, description="粗排向量余弦分比重，取值范围在 [0, 1]，默认0.25"
+    )
+    bm25_b: float = Field(
+        None, description="控制文档长度对评分影响的参数，取值范围在 [0, 1]，默认0.75"
+    )
+    bm25_k1: float = Field(
+        None,
+        description="词频饱和因子，控制词频（TF）对评分的影响，常取值范围在 [1.2, 2.0]，默认1.5",
+    )
+    bm25_max_score: float = Field(
+        None, description="得分归一化参数，不建议修改，默认50"
+    )
+
+
+class ElasticSearchRetrieveConfig(BaseModel):
+    name: str = Field(..., description="配置名称")
+    type: str = Field(None, description="elastic_search标志，该节点为es全文检索")
+    threshold: float = Field(None, description="得分阈值，默认0.1")
+    top: int = Field(None, description="召回数量，默认400")
+
+class RankingConfig(BaseModel):
+    name: str = Field(..., description="配置名称")
+    type: str = Field(None, description="ranking标志，该节点为ranking节点")
+    inputs: list[str] = Field(
+        ...,
+        description='输入的节点名，如es检索配置的名称为pipeline_001，则该inputs为["pipeline_001"]',
+    )
+    model_name: str = Field(None, description="ranking模型名（当前仅一种，暂不生效）")
+    top: int = Field(None, description="取切片top进行排序，默认20，最大400")
+
+class QueryPipelineConfig(BaseModel):
+    id: str = Field(
+        None, description="配置唯一标识，如果用这个id，则引用已经配置好的QueryPipeline"
+    )
+    pipeline: list[Union[ElasticSearchRetrieveConfig, RankingConfig]] = Field(
+        None, description="配置的Pipeline，如果没有用id，可以用这个对象指定一个新的配置"
+    )
+
+
+class QueryKnowledgeBaseRequest(BaseModel):
+    query: str = Field(..., description="检索query")
+    type: str = Field(None, description="检索策略的枚举, fulltext:全文检索")
+    top: int = Field(None, description="返回结果数量")
+    skip: int = Field(
+        None,
+        description="跳过多少条记录, 通过top和skip可以实现类似分页的效果，比如top 10 skip 0，取第一页的10个，top 10 skip 10，取第二页的10个",
+    )
+    metadata_fileters: MetadataFilters = Field(None, description="元数据过滤条件")
+    pipeline_config: QueryPipelineConfig = Field(None, description="检索配置")
+
+class RowLine(BaseModel):
+    key: str = Field(..., description="列名")
+    index: int = Field(..., description="列号")
+    value: str = Field(..., description="列值")
+    enable_indexing: bool = Field(..., description="是否索引")
+    enable_response: bool = Field(
+        ...,
+        description="是否参与问答（即该列数据是否对大模型可见）。当前值固定为true。",
+    )
+
+class ChunkLocation(BaseModel):
+    paget_num : list[int] = Field(..., description="页面")
+    box: list[list[int]] = Field(
+        ...,
+        description="文本内容位置，在视觉上是文本框，格式是长度为4的int数组，含义是[x, y, width, height]",
+    )
+
+class Chunk(BaseModel):
+    chunk_id: str = Field(..., description="切片ID")
+    knowledgebase_id: str = Field(..., description="知识库ID")
+    document_id: str = Field(..., description="文档ID")
+    document_name: str = Field(None, description="文档名称")
+    meta: dict = Field(None, description="文档元数据")
+    type: str = Field(..., description="切片类型")
+    content: str = Field(..., description="切片内容")
+    create_time: datetime = Field(..., description="创建时间")
+    update_time: datetime = Field(..., description="更新时间")
+    retrieval_score: float = Field(..., description="粗检索得分")
+    rank_score: float = Field(..., description="rerank得分")
+    locations: list[ChunkLocation] = Field(None, description="切片位置")
+    children: List[Chunk] = Field(None, description="子切片")
+
+class QueryKnowledgeBaseResponse(BaseModel):
+    requestId: str = Field(..., description="请求ID")
+    code: str = Field(None, description="状态码")
+    message: str = Field(None, description="状态信息")
+    chunks: list[Chunk] = Field(..., description="切片列表")
+    total_count: int = Field(..., description="切片总数")
