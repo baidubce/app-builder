@@ -72,6 +72,8 @@ public class AppBuilderConfig {
     public static final String CHUNKS_DESCRIBE_URL = "/knowledgeBase?Action=DescribeChunks";
     // 删除切片
     public static final String CHUNK_DELETE_URL = "/knowledgeBase?Action=DeleteChunk";
+    // 知识库检索
+    public static final String QUERY_KNOWLEDGEBASE_URL = "/knowledgebases/query";
 
 
     // 运行rag

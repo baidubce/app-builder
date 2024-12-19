@@ -16,6 +16,8 @@ import appbuilder
 import os
 
 from appbuilder.core._exception import BadRequestException
+from appbuilder.core.console.knowledge_base import data_class
+
 
 class TestKnowLedge(unittest.TestCase):
     def setUp(self):
@@ -26,7 +28,8 @@ class TestKnowLedge(unittest.TestCase):
         appbuilder.logger.setLoglevel('DEBUG')
         knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
 
-        upload_res = knowledge.upload_file("./data/qa_appbuilder_client_demo.pdf")
+        upload_res = knowledge.upload_file(
+            "./data/qa_appbuilder_client_demo.pdf")
         add_res = knowledge.add_document(
             content_type="raw_text",
             file_ids=[upload_res.id],
@@ -35,10 +38,11 @@ class TestKnowLedge(unittest.TestCase):
             ),
         )
         list_res = knowledge.get_documents_list()
-        delete_res = knowledge.delete_document(document_id=add_res.document_ids[0])
+        delete_res = knowledge.delete_document(
+            document_id=add_res.document_ids[0])
         all_doc = knowledge.get_all_documents()
         self.assertIsInstance(all_doc, list)
-    
+
     def test_get_documents_number_raise(self):
         knowledge = appbuilder.KnowledgeBase()
         with self.assertRaises(ValueError):
@@ -49,9 +53,11 @@ class TestKnowLedge(unittest.TestCase):
         knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
 
         upload_res = knowledge.upload_file("./data/qa_demo.xlsx")
-        add_res = knowledge.add_document(content_type="qa", file_ids=[upload_res.id])
+        add_res = knowledge.add_document(
+            content_type="qa", file_ids=[upload_res.id])
         list_res = knowledge.get_documents_list()
-        delete_res = knowledge.delete_document(document_id=add_res.document_ids[0])
+        delete_res = knowledge.delete_document(
+            document_id=add_res.document_ids[0])
 
     def test_create_knowledge_base(self):
         knowledge = appbuilder.KnowledgeBase()
@@ -94,7 +100,8 @@ class TestKnowLedge(unittest.TestCase):
                     ),
                     prependInfo=["title", "filename"],
                 ),
-                knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+                knowledgeAugmentation=appbuilder.DocumentChoices(choices=[
+                                                                 "faq"]),
             ),
         )
         self.assertIsInstance(create_documents_response.documentIds, list)
@@ -117,12 +124,14 @@ class TestKnowLedge(unittest.TestCase):
                     ),
                     prependInfo=["title", "filename"],
                 ),
-                knowledgeAugmentation=appbuilder.DocumentChoices(choices=["faq"]),
+                knowledgeAugmentation=appbuilder.DocumentChoices(choices=[
+                                                                 "faq"]),
             ),
         )
         self.assertIsInstance(upload_documents_response.documentId, str)
 
-        list_res = knowledge.get_documents_list(knowledge_base_id=knowledge_base_id)
+        list_res = knowledge.get_documents_list(
+            knowledge_base_id=knowledge_base_id)
         document_id = list_res.data[-1].id
         res = knowledge.describe_chunks(document_id)
         resp = knowledge.create_chunk(document_id, content="test")
@@ -136,10 +145,48 @@ class TestKnowLedge(unittest.TestCase):
             knowledge_base_id=knowledge_base_id, name="test"
         )
 
-
         if self.whether_create_knowledge_base:
             knowledge.delete_knowledge_base(knowledge_base_id)
 
+    def test_query_knowledge_base(self):
+        knowledge = appbuilder.KnowledgeBase()
+        appbuilder.logger.setLoglevel("DEBUG")
+        client = appbuilder.KnowledgeBase()
+        res = client.query_knowledge_base(
+            query="民法典第三条",
+            type="fulltext",
+            knowledgebase_ids=["70c6375a-1595-41f2-9a3b-e81bc9060b7f"],
+            top=5,
+            skip=0,
+            metadata_filters=data_class.MetadataFilters(filters=[], condition="or"),
+            pipeline_config=data_class.QueryPipelineConfig(
+                id="pipeline_001",
+                pipeline=[
+                    {
+                        "name": "step1",
+                        "type": "elastic_search",
+                        "threshold": 0.1,
+                        "top": 400,
+                        "pre_ranking": {
+                            "bm25_weight": 0.25,
+                            "vec_weight": 0.75,
+                            "bm25_b": 0.75,
+                            "bm25_k1": 1.5,
+                            "bm25_max_score": 50,
+                        },
+                    },
+                    {
+                        "name": "step2",
+                        "type": "ranking",
+                        "inputs": ["step1"],
+                        "model_name": "ranker-v1",
+                        "top": 20,
+                    },
+                ],
+            ),
+        )
+        chunk_id = res.chunks[0].chunk_id
+        self.assertIsNotNone(chunk_id)
 
 
 if __name__ == "__main__":

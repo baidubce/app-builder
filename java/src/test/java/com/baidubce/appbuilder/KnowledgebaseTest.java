@@ -3,6 +3,8 @@ package com.baidubce.appbuilder;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +12,8 @@ import org.junit.Test;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.console.knowledgebase.Knowledgebase;
 import com.baidubce.appbuilder.model.knowledgebase.*;
+import com.google.gson.Gson;
+
 import static org.junit.Assert.assertTrue;
 
 
@@ -153,5 +157,33 @@ public class KnowledgebaseTest {
         }
         // 删除切片
         knowledgebase.deleteChunk(chunkId);
+    }
+
+    @Test
+    public void testQueryKnowledgeBase() throws IOException, AppBuilderServerException {
+        System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN"));
+        Knowledgebase knowledgebase = new Knowledgebase();
+        // 查询知识库
+        Gson gson = new Gson();
+        String requestJson = new String(
+                Files.readAllBytes(Paths.get("src/test/java/com/baidubce/appbuilder/files/query_knowledgebase.json")));
+        QueryKnowledgeBaseRequest request = gson.fromJson(requestJson, QueryKnowledgeBaseRequest.class);
+        QueryKnowledgeBaseResponse response = knowledgebase.queryKnowledgeBase(request);
+        assertNotNull(response.getChunks().get(0).getChunk_id());
+    }
+    
+    @Test
+    public void testQueryKnowledgeBaseV2() throws IOException, AppBuilderServerException {
+        System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN"));
+        Knowledgebase knowledgebase = new Knowledgebase();
+        // 查询知识库
+        Gson gson = new Gson();
+        String requestJson = new String(
+                Files.readAllBytes(Paths.get("src/test/java/com/baidubce/appbuilder/files/query_knowledgebase.json")));
+        QueryKnowledgeBaseRequest request = gson.fromJson(requestJson, QueryKnowledgeBaseRequest.class);
+        QueryKnowledgeBaseResponse response = knowledgebase.queryKnowledgeBase(request.getQuery(),
+                request.getType(), request.getTop(), request.getSkip(),
+                request.getKnowledgebase_ids(), request.getMetadata_filters(), request.getPipeline_config());
+        assertNotNull(response.getChunks().get(0).getChunk_id());
     }
 }
