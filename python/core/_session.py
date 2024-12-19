@@ -109,22 +109,18 @@ class AsyncInnerSession(ClientSession):
 
         return curl
 
-    @session_post
     async def post(self, url, data=None, json=None, **kwargs):
         logger.debug("Curl Command:\n" + await self.build_curl(hdrs.METH_POST, url, data=data, json_data=json, **kwargs) + "\n")
         return await super().post(url=url, data=data, json=json, **kwargs)
 
-    @session_post
     async def delete(self, url, **kwargs):
         logger.debug("Curl Command:\n" + await self.build_curl(hdrs.METH_DELETE, url, **kwargs) + "\n")
         return await super().delete(url=url, **kwargs)
 
-    @session_post
     async def get(self, url, **kwargs):
         logger.debug("Curl Command:\n" + await self.build_curl(hdrs.METH_GET, url, **kwargs) + "\n")
         return await super().get(url=url, **kwargs)
 
-    @session_post
     async def put(self, url, data=None, **kwargs):
         logger.debug("Curl Command:\n" + await self.build_curl(hdrs.METH_PUT, url, data=data, **kwargs) + "\n")
         return await super().put(url=url, data=data, **kwargs)
