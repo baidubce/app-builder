@@ -14,6 +14,7 @@
 import os
 import unittest
 import json
+import asyncio
 
 from appbuilder.core._client import HTTPClient, AsyncHTTPClient
 from appbuilder.core._exception import *
@@ -100,34 +101,37 @@ class TestCoreClient(unittest.TestCase):
             HTTPClient.check_response_header(response)
 
     def test_core_client_check_async_response_header(self):
-        # 测试各种response报错
-        response = AsyncResponse(
-            status_code=400,
-            headers={'Content-Type': 'application/json'},
-            text='{"code": 0, "message": "success"}'
-        )
-        with self.assertRaises(BadRequestException):
-            AsyncHTTPClient.check_response_header(response)
+        async def run_test():
+            # 测试各种response报错
+            response = AsyncResponse(
+                status_code=400,
+                headers={'Content-Type': 'application/json'},
+                text=lambda:asyncio.sleep(0) or '{"code": 0, "message": "success"}'
+            )
+            with self.assertRaises(BadRequestException):
+                await AsyncHTTPClient.check_response_header(response)
 
-        response.status = 403
-        with self.assertRaises(ForbiddenException):
-            AsyncHTTPClient.check_response_header(response)
+            response.status = 403
+            with self.assertRaises(ForbiddenException):
+                await AsyncHTTPClient.check_response_header(response)
 
-        response.status = 404
-        with self.assertRaises(NotFoundException):
-            AsyncHTTPClient.check_response_header(response)
+            response.status = 404
+            with self.assertRaises(NotFoundException):
+                await AsyncHTTPClient.check_response_header(response)
 
-        response.status = 428
-        with self.assertRaises(PreconditionFailedException):
-            AsyncHTTPClient.check_response_header(response)
+            response.status = 428
+            with self.assertRaises(PreconditionFailedException):
+                await AsyncHTTPClient.check_response_header(response)
 
-        response.status = 500
-        with self.assertRaises(InternalServerErrorException):
-            AsyncHTTPClient.check_response_header(response)
+            response.status = 500
+            with self.assertRaises(InternalServerErrorException):
+                await AsyncHTTPClient.check_response_header(response)
 
-        response.status = 201
-        with self.assertRaises(BaseRPCException):
-            AsyncHTTPClient.check_response_header(response)
+            response.status = 201
+            with self.assertRaises(BaseRPCException):
+                await AsyncHTTPClient.check_response_header(response)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(run_test())
 
     def test_core_client_check_response_json(self):
         data = {

@@ -123,13 +123,13 @@ class AsyncAppBuilderEventHandler(object):
         while not self._is_complete:
             if not self._need_tool_call:
                 res = await self._run()
-                self.__event_process__(res)
+                await self.__event_process__(res)
             else:
                 res = await self._submit_tool_output()
-                self.__event_process__(res)
+                await self.__event_process__(res)
             yield res
         if self._need_tool_call and self._is_complete:
-            self.reset_state()
+            await self.reset_state()
 
     async def __event_process__(self, run_response):
         """
