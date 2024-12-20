@@ -59,13 +59,6 @@ class HandwriteOCR(Component):
                             "type": "string"
                         },
                         "description": "待识别文件的文件名"
-                    },
-                    "file_urls": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        },
-                        "description": "待识别文件的url下载地址"
                     }
                 },
                 "required": ["file_names"]
@@ -114,13 +107,11 @@ class HandwriteOCR(Component):
     @components_run_stream_trace
     def tool_eval(self,
                   file_names: Optional[list] = [],
-                  file_urls: Optional[dict] = {},
                   **kwargs):
         """
         工具评估函数
         Args:
             file_names (Optional[list]): 待识别文件的文件名列表
-            file_urls (Optional[dict]): 待识别文件的url下载地址字典
             **kwargs: 其他参数
         
         Raises:
@@ -133,12 +124,10 @@ class HandwriteOCR(Component):
         result = ""
         
         sys_file_names = file_names
-        sys_file_urls = file_urls
-
         if not sys_file_names:
             sys_file_names = kwargs.get('_sys_file_names', [])
-        if not sys_file_urls:
-            sys_file_urls = kwargs.get('_sys_file_urls', {})
+
+        sys_file_urls = kwargs.get('_sys_file_urls', {})
 
         for file_name in sys_file_names:
             if utils.is_url(file_name):

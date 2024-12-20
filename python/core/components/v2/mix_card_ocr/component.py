@@ -63,19 +63,13 @@ class MixCardOCR(Component):
                             "type": "string"
                         },
                         "description": "待识别文件的文件名"
-                    },
-                    "file_urls": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        },
-                        "description": "待识别文件的下载URL"
                     }
                 },
                 "required": ["file_names"]
             }
         }
     ]
+
 
     @HTTPClient.check_param
     @components_run_trace
@@ -168,22 +162,16 @@ class MixCardOCR(Component):
     @components_run_stream_trace
     def tool_eval(self,
                   file_names: Optional[list] = [],
-                  file_urls: Optional[dict] = {},
                   **kwargs):
         """
         对指定文件进行OCR识别。
 
         Args:
-            name (str): API名称。
-            streaming (bool): 是否流式输出。如果为True，则逐个返回识别结果；如果为False，则一次性返回所有识别结果。
+            file_names (Optional[List], optional): 要识别的文件名列表。 
             **kwargs: 其他参数。
 
         Returns:
-            如果streaming为False，则返回包含所有识别结果的JSON字符串。
-            如果streaming为True，则逐个返回包含识别结果的字典，每个字典包含以下字段：
-                type (str): 消息类型，固定为"text"。
-                text (str): 识别结果的JSON字符串。
-                visible_scope (str): 消息可见范围，可以是"llm"或"user"。
+            ComponentOutput: 识别结果。
 
         Raises:
             InvalidRequestArgumentError: 如果请求格式错误，即文件URL不存在时抛出。
@@ -194,12 +182,10 @@ class MixCardOCR(Component):
         traceid = kwargs.get("_sys_traceid", "")
 
         sys_file_names = file_names
-        sys_file_urls = file_urls
-
         if not sys_file_names:
             sys_file_names = kwargs.get("_sys_file_names", [])
-        if not sys_file_urls:
-            sys_file_urls = kwargs.get("_sys_file_urls", {})
+
+        sys_file_urls = kwargs.get("_sys_file_urls", {})
 
         for file_name in sys_file_names:
             if utils.is_url(file_name):
