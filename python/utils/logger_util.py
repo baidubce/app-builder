@@ -124,16 +124,12 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
     def setLogConfig(
             self, 
             rolling:bool=True, 
-            console_show:bool=True, 
             update_interval:int=1, 
             update_time:str='', 
             backup_count:int=0, 
             filename:str=''
             ):
         # 配置控制台输出
-        if not console_show:
-            if "console" in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
-                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("console")
         if "file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
 
@@ -153,14 +149,9 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
 
         # 设置filename
         if not filename:
-            if SIMPLE_HANDLERS_FILE["filename"] or TIME_HANDLERS_FILE["filename"]:
-                if not SIMPLE_HANDLERS_FILE["filename"]:
-                    filename = SIMPLE_HANDLERS_FILE["filename"]
-                else:
-                    filename = TIME_HANDLERS_FILE["filename"]
-            else:
-                filename = "tmp.log"
-
+            filename = (SIMPLE_HANDLERS_FILE.get("filename") or
+                        TIME_HANDLERS_FILE.get("filename") or 
+                        "tmp.log")
         # 创建处理器
         if rolling:
             if update_time:

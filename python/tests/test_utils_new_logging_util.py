@@ -33,7 +33,6 @@ class TestTestUtilsLoggingUtil(unittest.TestCase):
     
     def test_set_log_config_01(self):
         self.logger.setLogConfig(
-            console_show=False,
             update_interval = -1,
             update_time='M',
             backup_count=-1
@@ -42,7 +41,6 @@ class TestTestUtilsLoggingUtil(unittest.TestCase):
     def test_set_log_config_02(self):
         self.logger.setLogConfig(
             filename='test.log',
-            console_show=False,
             update_interval = -1,
             update_time='M',
             backup_count=-1
@@ -51,7 +49,6 @@ class TestTestUtilsLoggingUtil(unittest.TestCase):
     def test_set_log_config_03(self):
         with self.assertRaises(ValueError):
             self.logger.setLogConfig(
-                console_show=False,
                 update_interval = -1,
                 update_time='Test',
                 backup_count=-1
