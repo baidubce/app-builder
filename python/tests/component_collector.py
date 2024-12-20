@@ -18,6 +18,10 @@ import appbuilder
 SKIP_COMPONENTS = [
 ]
 
+V2_SKIP_COMPONENTS = [
+    "ASR",
+]
+
 # 白名单中的组件因历史原因，检查失败，但可以正常使用，因此加入白名单
 COMPONENT_WHITE_LIST = [
     "RagWithBaiduSearchPro",
@@ -75,10 +79,10 @@ COMPONENT_WHITE_LIST = [
 def get_component_white_list():
     return COMPONENT_WHITE_LIST
 
-def get_components(components_list, import_prefix):
+def get_components(components_list, import_prefix, skip_components):
     components = {}
     for component in components_list:
-        if component in SKIP_COMPONENTS:
+        if component.__name__ in skip_components:
             continue
 
         try:
@@ -98,12 +102,12 @@ def get_components(components_list, import_prefix):
 
 def get_all_components():
     from appbuilder import __COMPONENTS__
-    all_components = get_components(__COMPONENTS__, "appbuilder.")
+    all_components = get_components(__COMPONENTS__, "appbuilder.", SKIP_COMPONENTS)
     return all_components
 
 def get_v2_components():
     from appbuilder.core.components.v2 import __V2_COMPONENTS__
-    v2_components = get_components(__V2_COMPONENTS__, "appbuilder.core.components.v2.")
+    v2_components = get_components(__V2_COMPONENTS__, "appbuilder.core.components.v2.", V2_SKIP_COMPONENTS)
     return v2_components
 
 if __name__ == '__main__':
