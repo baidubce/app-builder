@@ -16,7 +16,6 @@ import json
 import os
 import copy
 
-
 from appbuilder.utils.logger_util import LoggerWithLoggerId, LOGGING_CONFIG
 
 
@@ -31,23 +30,34 @@ class TestTestUtilsLoggingUtil(unittest.TestCase):
         global LOGGING_CONFIG
         LOGGING_CONFIG = copy.deepcopy(self.original_logging_config)
 
-    def test_set_auto_logid(self):
-        self.logger.set_auto_logid()
     
-    def test_set_logid(self):
-        self.logger.set_logid('test')
-        
-    def test_get_logid(self):
-        self.logger.set_auto_logid()
-    
-    def test_process(self):
-        msg,kwargs=self.logger.process(msg='test',kwargs={})
-        msg,kwargs=self.logger.process(msg='test',kwargs={'extra':{'logid':'test'}})
-        
+    def test_set_log_config_01(self):
+        self.logger.setLogConfig(
+            console_show=False,
+            update_interval = -1,
+            update_time='M',
+            backup_count=-1
+        )
 
+    def test_set_log_config_02(self):
+        self.logger.setLogConfig(
+            filename='test.log',
+            console_show=False,
+            update_interval = -1,
+            update_time='M',
+            backup_count=-1
+        )
+
+    def test_set_log_config_03(self):
+        with self.assertRaises(ValueError):
+            self.logger.setLogConfig(
+                console_show=False,
+                update_interval = -1,
+                update_time='Test',
+                backup_count=-1
+            )
+        
 
 if __name__ == '__main__':
     unittest.main()
-        
-        
         

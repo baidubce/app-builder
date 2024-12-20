@@ -80,6 +80,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         """
         log_file = os.environ.get("APPBUILDER_LOGFILE", "")
         if log_file:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handler"] = ["console"] # 默认使用console
             SIMPLE_HANDLERS_FILE["filename"] = log_file
             TIME_HANDLERS_FILE['filename'] = log_file
             SIMPLE_HANDLERS_FILE["level"] = loglevel
@@ -152,7 +153,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
 
         # 设置filename
         if not filename:
-            if SIMPLE_HANDLERS_FILE["filename"] or TIME_HANDLERS_FILE["backupCount"]:
+            if SIMPLE_HANDLERS_FILE["filename"] or TIME_HANDLERS_FILE["filename"]:
                 if not SIMPLE_HANDLERS_FILE["filename"]:
                     filename = SIMPLE_HANDLERS_FILE["filename"]
                 else:
@@ -167,14 +168,16 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
                 TIME_HANDLERS_FILE['interval'] = update_interval
                 TIME_HANDLERS_FILE['backupCount'] = backup_count
                 TIME_HANDLERS_FILE['filename'] = filename
-                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("file")
-                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append('timed_file')
+                if 'file' in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+                    LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("file")
+                if not "timed_file" in LOGGING_CONFIG["handlers"]:
+                    LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append('timed_file')
                 LOGGING_CONFIG["handlers"]["timed_file"] = TIME_HANDLERS_FILE
                 LOGGING_CONFIG["handlers"]["timed_file"]["level"] = LOGGING_CONFIG['loggers']['appbuilder']['level']
         else:
             SIMPLE_HANDLERS_FILE["filename"] = filename
             LOGGING_CONFIG["handlers"]["file"] = SIMPLE_HANDLERS_FILE
-        print(json.dumps(LOGGING_CONFIG, indent=4 ,ensure_ascii=False))
+            LOGGING_CONFIG["handlers"]["file"]["level"] = LOGGING_CONFIG['loggers']['appbuilder']['level']
         logging.config.dictConfig(LOGGING_CONFIG)
 
 
