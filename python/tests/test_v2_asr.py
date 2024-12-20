@@ -23,7 +23,7 @@ from appbuilder.core._exception import InvalidRequestArgumentError
 from appbuilder.core.components.v2 import ASR
 from appbuilder.core.components.v2.asr.component import _convert as convert
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip("测试API超限，暂时跳过")
 class TestASR(unittest.TestCase):
     def setUp(self):
         self.audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
