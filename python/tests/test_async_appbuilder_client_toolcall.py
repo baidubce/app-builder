@@ -35,7 +35,8 @@ class MyEventHandler(AsyncAppBuilderEventHandler):
             tool_call_id = tool_call.id
             tool_res = self.get_current_weather(**tool_call.function.arguments)
             # 蓝色打印
-            print("\033[1;34m", "-> 本地ToolCall结果: ", tool_res, "\033[0m\n")
+            print("\033[1;34m", "-> 本地ToolCallId: ", tool_call_id, "\033[0m")
+            print("\033[1;34m", "-> ToolCall结果: ", tool_res, "\033[0m\n")
             tool_output.append(
                 {"tool_call_id": tool_call_id, "output": tool_res})
         return tool_output
@@ -92,9 +93,10 @@ class TestAgentRuntime(unittest.TestCase):
             }
         ]
 
-        appbuilder.logger.setLoglevel("ERROR")
+        appbuilder.logger.setLoglevel("DEBUG")
 
-        async def agent_run(client, conversation_id, query):
+        async def agent_run(client, query):
+            conversation_id = await client.create_conversation()
             with await client.run_with_handler(
                 conversation_id=conversation_id,
                 query=query,
@@ -105,11 +107,10 @@ class TestAgentRuntime(unittest.TestCase):
 
         async def agent_handle():
             client = appbuilder.AsyncAppBuilderClient(self.app_id)
-            conversation_id = await client.create_conversation()
             task1 = asyncio.create_task(
-                agent_run(client, conversation_id, "北京的天气怎么样"))
+                agent_run(client, "北京的天气怎么样"))
             task2 = asyncio.create_task(
-                agent_run(client, conversation_id, "上海的天气怎么样"))
+                agent_run(client, "上海的天气怎么样"))
             await asyncio.gather(task1, task2)
 
             await client.http_client.session.close()

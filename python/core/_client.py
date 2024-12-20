@@ -243,7 +243,7 @@ class AsyncHTTPClient(HTTPClient):
         self.session = AsyncInnerSession()
 
     @staticmethod
-    def check_response_header(response: ClientResponse):
+    async def check_response_header(response: ClientResponse):
         r"""check_response_header is a helper method for check head status .
         :param response: requests.Response.
         :rtype:
@@ -252,7 +252,7 @@ class AsyncHTTPClient(HTTPClient):
         if status_code == requests.codes.ok:
             return
         message = "request_id={} , http status code is {}, body is {}".format(
-            __class__.response_request_id(response), status_code, response.text
+            await __class__.response_request_id(response), status_code, await response.text()
         )
         if status_code == requests.codes.bad_request:
             raise BadRequestException(message)
@@ -268,7 +268,7 @@ class AsyncHTTPClient(HTTPClient):
             raise BaseRPCException(message)
 
     @staticmethod
-    def response_request_id(response: ClientResponse):
+    async def response_request_id(response: ClientResponse):
         r"""response_request_id is a helper method to get the unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
 
