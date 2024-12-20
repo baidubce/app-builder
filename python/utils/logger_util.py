@@ -20,6 +20,7 @@ import uuid
 import os
 import sys
 import logging.config
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from threading import current_thread
 
 
@@ -52,6 +53,18 @@ LOGGING_CONFIG = {
             "propagate": True,
         },
     },
+}
+
+
+TIME_HANDLERS_FILE = {
+    'class': 'logging.handlers.TimedRotatingFileHandler',
+    'formatter': 'standard',
+    'level': 'DEBUG',
+    'filename': 'tmp.log',
+    'when': 'midnight',  # 可选项: 'S', 'M', 'H', 'D', 'W0'-'W6', 'midnight'
+    'interval': 1,       # 每1天滚动一次
+    'backupCount': 5,    # 保留5个备份
+    'encoding': 'utf-8',
 }
 
 
@@ -101,6 +114,60 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         level
         """
         return self.logger.level
+
+    def setLogConfig(
+            self, 
+            rolling=True, 
+            console_show=True, 
+            update_interval:int=1, 
+            update_time='', 
+            backup_count=0, 
+            log_file=''
+            ):
+        # 配置控制台输出
+        if not console_show:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("console")
+        if "file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
+
+        # 确定日志文件名称
+        if log_file:
+            filename = log_file
+        elif os.environ.get("APPBUILDER_LOGFILE"):
+            filename = os.environ["APPBUILDER_LOGFILE"]
+        else:
+            filename = LOGGING_CONFIG["handlers"]["file"]["filename"]
+
+        # 确定备份数量
+        if backup_count <= 0 or not isinstance(backup_count, int):
+            backup_count = sys.maxsize # 默认为无穷大
+
+        # 确定滚动时间
+        if update_interval < 1:
+            update_interval = 1
+        if update_time:
+            update_time = update_time.lower()
+            if update_time not in ['s', 'm', 'h', 'd', 'midnight'] and not (update_time.startswith('w') and update_time[1:].isdigit() and 0 <= int(update_time[1:]) <= 6):
+                raise ValueError("expected APPBUILDER_LOG_UPDATE_TIME in [s, m, h, d, w0-w6, midnight], but got %s" % update_time)
+            else:
+                update_time = update_time.upper()
+
+        # 创建处理器
+        if rolling:
+            if update_time:
+                TIME_HANDLERS_FILE['filename'] = filename
+                TIME_HANDLERS_FILE['when'] = update_time
+                TIME_HANDLERS_FILE['interval'] = update_interval
+                TIME_HANDLERS_FILE['backupCount'] = backup_count
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("file")
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append('timed_file')
+                LOGGING_CONFIG["handlers"]["timed_file"] = TIME_HANDLERS_FILE
+                LOGGING_CONFIG["handlers"]["timed_file"]["level"] = LOGGING_CONFIG['loggers']['appbuilder']['level']
+        else:
+            LOGGING_CONFIG["handlers"]["file"]["filename"] = filename
+
+        logging.config.dictConfig(LOGGING_CONFIG)
+
 
     def setFilename(self, filename):
         """
