@@ -126,7 +126,8 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
             ):
         # 配置控制台输出
         if not console_show:
-            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("console")
+            if "console" in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("console")
         if "file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
 

@@ -85,7 +85,6 @@ def write_error_data(txt_file_path, error_df, error_stats):
             file.write(f"错误信息: {error}, 出现次数: {count}\n")
     print(f"\n错误信息已写入: {txt_file_path}")
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
     """
     组件manifests和tool_eval入参测试类
