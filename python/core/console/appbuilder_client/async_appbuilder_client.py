@@ -51,7 +51,7 @@ class AsyncAppBuilderClient(Component):
         response = await self.http_client.session.post(
             url, headers=headers, json={"app_id": self.app_id}, timeout=None
         )
-        self.http_client.check_response_header(response)
+        await self.http_client.check_response_header(response)
         data = await response.json()
         resp = data_class.CreateConversationResponse(**data)
         return resp.conversation_id
@@ -116,8 +116,8 @@ class AsyncAppBuilderClient(Component):
         response = await self.http_client.session.post(
             url, headers=headers, json=req.model_dump(), timeout=None
         )
-        self.http_client.check_response_header(response)
-        request_id = self.http_client.response_request_id(response)
+        await self.http_client.check_response_header(response)
+        request_id = await self.http_client.response_request_id(response)
         if stream:
             client = AsyncSSEClient(response)
             return Message(content=self._iterate_events(request_id, client.events()))
@@ -164,7 +164,7 @@ class AsyncAppBuilderClient(Component):
         response = await self.http_client.session.post(
             url, data=multipart_form_data, headers=headers
         )
-        self.http_client.check_response_header(response)
+        await self.http_client.check_response_header(response)
         data = await response.json()
         resp = data_class.FileUploadResponse(**data)
         return resp.id
