@@ -8,7 +8,7 @@ from appbuilder.core._exception import InvalidRequestArgumentError
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse
 import os
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip("测试API超限，暂时跳过")
 class TestASRComponent(unittest.TestCase):
     def setUp(self):
         """
