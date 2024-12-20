@@ -17,7 +17,7 @@ import os
 from appbuilder.utils.logger_util import LoggerWithLoggerId, LOGGING_CONFIG, TIME_HANDLERS_FILE
 
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestTestUtilsLoggingUtil(unittest.TestCase):
     def setUp(self):
         self.logger = LoggerWithLoggerId(LOGGING_CONFIG["loggers"]["appbuilder"], {}, 'DEBUG')
