@@ -14,7 +14,7 @@
 import unittest
 import os
 
-from appbuilder.utils.logger_util import LoggerWithLoggerId, LOGGING_CONFIG, TIME_HANDLERS_FILE
+from appbuilder.utils.logger_util import LoggerWithLoggerId, LOGGING_CONFIG
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
