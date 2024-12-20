@@ -17,9 +17,11 @@
 日志
 """
 import uuid
+import json
 import os
 import sys
 import logging.config
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from threading import current_thread
 
 
@@ -37,13 +39,7 @@ LOGGING_CONFIG = {
             "class": "logging.StreamHandler",
             "formatter": "standard",
             "stream": "ext://sys.stdout",  # Use standard output
-        },
-        "file": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": "tmp.log",
-            "formatter": "standard",
-        },
+        }
     },
     "loggers": {
         "appbuilder": {
@@ -52,6 +48,25 @@ LOGGING_CONFIG = {
             "propagate": True,
         },
     },
+}
+
+
+TIME_HANDLERS_FILE = {
+    'class': 'logging.handlers.TimedRotatingFileHandler',
+    'formatter': 'standard',
+    'level': 'INFO',
+    'filename': "",
+    'when': 'midnight',  # 可选项: 'S', 'M', 'H', 'D', 'W0'-'W6', 'midnight'
+    'interval': 1,       # 每1天滚动一次
+    'backupCount': 5,    # 保留5个备份
+    'encoding': 'utf-8',
+}
+
+SIMPLE_HANDLERS_FILE = {
+    "level": "INFO",
+    "class": "logging.FileHandler",
+    "filename": "",
+    "formatter": "standard",
 }
 
 
@@ -65,9 +80,12 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         """
         log_file = os.environ.get("APPBUILDER_LOGFILE", "")
         if log_file:
-            LOGGING_CONFIG["handlers"]["file"]["filename"] = log_file
+            SIMPLE_HANDLERS_FILE["filename"] = log_file
+            TIME_HANDLERS_FILE['filename'] = log_file
+            SIMPLE_HANDLERS_FILE["level"] = loglevel
+            TIME_HANDLERS_FILE['level'] = loglevel
+            LOGGING_CONFIG["handlers"]["file"] = SIMPLE_HANDLERS_FILE 
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
-            LOGGING_CONFIG["handlers"]["file"]["level"] = loglevel
         LOGGING_CONFIG['handlers']['console']['level'] = loglevel
         LOGGING_CONFIG['loggers']['appbuilder']['level'] = loglevel
         logging.config.dictConfig(LOGGING_CONFIG)
@@ -102,13 +120,72 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         """
         return self.logger.level
 
+    def setLogConfig(
+            self, 
+            rolling:bool=True, 
+            console_show:bool=True, 
+            update_interval:int=1, 
+            update_time:str='', 
+            backup_count:int=0, 
+            filename:str=''
+            ):
+        # 配置控制台输出
+        if not console_show:
+            if "console" in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("console")
+        if "file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
+
+        # 确定备份数量
+        if backup_count <= 0 or not isinstance(backup_count, int):
+            backup_count = sys.maxsize # 默认为无穷大
+
+        # 确定滚动时间
+        if update_interval < 1:
+            update_interval = 1
+        if update_time:
+            update_time = update_time.lower()
+            if update_time not in ['s', 'm', 'h', 'd', 'midnight'] and not (update_time.startswith('w') and update_time[1:].isdigit() and 0 <= int(update_time[1:]) <= 6):
+                raise ValueError("expected update_time in [S, M, H, D, midnight, WX], where X is between 0~6, but got %s")
+            else:
+                update_time = update_time.upper()
+
+        # 设置filename
+        if not filename:
+            if SIMPLE_HANDLERS_FILE["filename"] or TIME_HANDLERS_FILE["backupCount"]:
+                if not SIMPLE_HANDLERS_FILE["filename"]:
+                    filename = SIMPLE_HANDLERS_FILE["filename"]
+                else:
+                    filename = TIME_HANDLERS_FILE["filename"]
+            else:
+                filename = "tmp.log"
+
+        # 创建处理器
+        if rolling:
+            if update_time:
+                TIME_HANDLERS_FILE['when'] = update_time
+                TIME_HANDLERS_FILE['interval'] = update_interval
+                TIME_HANDLERS_FILE['backupCount'] = backup_count
+                TIME_HANDLERS_FILE['filename'] = filename
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("file")
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append('timed_file')
+                LOGGING_CONFIG["handlers"]["timed_file"] = TIME_HANDLERS_FILE
+                LOGGING_CONFIG["handlers"]["timed_file"]["level"] = LOGGING_CONFIG['loggers']['appbuilder']['level']
+        else:
+            SIMPLE_HANDLERS_FILE["filename"] = filename
+            LOGGING_CONFIG["handlers"]["file"] = SIMPLE_HANDLERS_FILE
+        print(json.dumps(LOGGING_CONFIG, indent=4 ,ensure_ascii=False))
+        logging.config.dictConfig(LOGGING_CONFIG)
+
+
     def setFilename(self, filename):
         """
         set filename
         """
         if "file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
-        LOGGING_CONFIG["handlers"]["file"]["filename"] = filename
+        SIMPLE_HANDLERS_FILE["filename"] = filename
+        LOGGING_CONFIG["handlers"]["file"] = SIMPLE_HANDLERS_FILE
         logging.config.dictConfig(LOGGING_CONFIG)
 
     def setLoglevel(self, level):
@@ -122,7 +199,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         log_level = log_level.upper()
         LOGGING_CONFIG['handlers']['console']['level'] = log_level
         LOGGING_CONFIG['loggers']['appbuilder']['level'] = log_level
-        LOGGING_CONFIG["handlers"]["file"]["level"] = log_level
+        SIMPLE_HANDLERS_FILE["level"] = log_level
         logging.config.dictConfig(LOGGING_CONFIG)
 
     def process(self, msg, kwargs):

@@ -14,7 +14,7 @@
 import unittest
 import os
 
-from appbuilder.utils.logger_util import LoggerWithLoggerId,LOGGING_CONFIG
+from appbuilder.utils.logger_util import LoggerWithLoggerId, LOGGING_CONFIG
 
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
@@ -31,8 +31,38 @@ class TestTestUtilsLoggingUtil(unittest.TestCase):
     def test_get_logid(self):
         self.logger.set_auto_logid()
     
-    # def test_level(self):
-    #     level=self.logger.level()
+    def test_set_log_config(self):
+        self.logger.setLogConfig(
+            console_show=False,
+            update_interval = -1,
+            update_time='M',
+            backup_count=-1
+        )
+
+        self.logger.setLogConfig(
+            filename='test.log',
+            console_show=False,
+            update_interval = -1,
+            update_time='M',
+            backup_count=-1
+        )
+
+        os.environ["APPBUILDER_LOGFILE"] = 'test.log'
+        self.logger.setLogConfig(
+            console_show=False,
+            update_interval = -1,
+            update_time='M',
+            backup_count=-1
+        )
+        del os.environ['APPBUILDER_LOGFILE']
+
+        with self.assertRaises(ValueError):
+            self.logger.setLogConfig(
+                console_show=False,
+                update_interval = -1,
+                update_time='Test',
+                backup_count=-1
+            )
     
     def test_process(self):
         msg,kwargs=self.logger.process(msg='test',kwargs={})

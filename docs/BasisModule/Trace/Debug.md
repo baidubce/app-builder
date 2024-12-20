@@ -52,3 +52,38 @@ System.setProperty("APPBUILDER_LOGLFILE", "/tmp/appbuilder.log");
 // golang
 os.Setenv("APPBUILDER_LOGLEVEL", "/tmp/appbuilder.log")
 ```
+
+
+## log高阶配置
+
+`setLogConfig`功能可以设置日志的输出方式、是否滚动日志、滚动日志参数等。
+
+参数说明:
+- rolling (bool, optional): 是否启用滚动日志. 默认为True.
+- console_show (bool, optional): 是否在控制台显示日志. 默认为True.
+- update_interval (int, optional): 更新日志文件的间隔时间. 默认为1.
+- update_time (str, optional): 更新日志文件的时间间隔单位. 默认为空字符串.
+    - 可选值:
+        - 'S' - Seconds
+        - 'M' - Minutes
+        - 'H' - Hours
+        - 'D' - Days
+        - 'W0'-'W6' - Weekday (0=Monday, 6=Sunday)
+        - 'midnight' - Roll over at midnight 
+- backup_count (int, optional): 备份日志文件的数量. 默认为无穷大.
+- filename (str, optional): 日志文件的名称. 默认为空字符串.
+
+需在代码中设置
+
+```python
+appbuilder.logger.setLoglevel("DEBUG")
+"""
+这里设置:
+    rolling=Ture - 启用滚动日志(运行此段代码，默认使用滚动日志)
+    filename="appbuilder.log" - 此优先级最高会覆盖之前的设置，若未传参则使用之前已经设置的日志文件，若之前未设置则使用默认的"tmp.log"日志文件
+    update_interval = 30 - 更新日志文件的间隔数量级
+    update_time = 'S' - 更新日志文件的间隔单位为秒级
+    console_show = False - 不在控制台显示日志
+"""
+appbuilder.logger.setLogConfig(filename="appbuilder.log",update_interval=30, update_time='S', console_show=False)
+```
