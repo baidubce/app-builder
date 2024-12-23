@@ -225,7 +225,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
 
         # 创建处理器
         if rolling:
-            if update_time:
+            if update_time and update_interval:
                 TIME_HANDLERS_FILE['when'] = update_time
                 TIME_HANDLERS_FILE_ERROR['when'] = update_time
                 TIME_HANDLERS_FILE['interval'] = update_interval

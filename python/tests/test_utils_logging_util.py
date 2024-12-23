@@ -43,7 +43,15 @@ class TestTestUtilsLoggingUtil(unittest.TestCase):
     def test_process(self):
         msg,kwargs=self.logger.process(msg='test',kwargs={})
         msg,kwargs=self.logger.process(msg='test',kwargs={'extra':{'logid':'test'}})
-        
+
+    def test_set_log_config_rolling_false(self):
+        self.logger.setLogConfig(
+            rolling=False,
+            filename='test.log',
+            update_interval = -1,
+            update_time='M',
+            backup_count=-1
+        )      
 
 
 if __name__ == '__main__':
