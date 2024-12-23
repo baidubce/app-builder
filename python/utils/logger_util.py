@@ -62,6 +62,17 @@ TIME_HANDLERS_FILE = {
     'encoding': 'utf-8',
 }
 
+TIME_HANDLERS_FILE_ERROR = {
+    'class': 'logging.handlers.TimedRotatingFileHandler',
+    'formatter': 'standard',
+    'level': 'ERROR',
+    'filename': "",
+    'when': 'midnight',  # 可选项: 'S', 'M', 'H', 'D', 'W0'-'W6', 'midnight'
+    'interval': 1,       # 每1天滚动一次
+    'backupCount': 5,    # 保留5个备份
+    'encoding': 'utf-8',
+}
+
 SIMPLE_HANDLERS_FILE = {
     "level": "INFO",
     "class": "logging.FileHandler",
@@ -69,6 +80,12 @@ SIMPLE_HANDLERS_FILE = {
     "formatter": "standard",
 }
 
+SIMPLE_HANDLERS_FILE_ERROR = {
+    "level": "ERROR",
+    "class": "logging.FileHandler",
+    "filename": "",
+    "formatter": "standard",
+}
 
 class LoggerWithLoggerId(logging.LoggerAdapter):
     """
@@ -81,12 +98,15 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         log_file = os.environ.get("APPBUILDER_LOGFILE", "")
         if log_file:
             LOGGING_CONFIG["loggers"]["appbuilder"]["handler"] = ["console"] # 默认使用console
-            SIMPLE_HANDLERS_FILE["filename"] = log_file
-            TIME_HANDLERS_FILE['filename'] = log_file
+
             SIMPLE_HANDLERS_FILE["level"] = loglevel
             TIME_HANDLERS_FILE['level'] = loglevel
+            SIMPLE_HANDLERS_FILE["filename"] = log_file
+            SIMPLE_HANDLERS_FILE_ERROR["filename"] = f"error.{log_file}"
             LOGGING_CONFIG["handlers"]["file"] = SIMPLE_HANDLERS_FILE 
+            LOGGING_CONFIG["handlers"]["error_file"] = SIMPLE_HANDLERS_FILE_ERROR
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("error_file")
         LOGGING_CONFIG['handlers']['console']['level'] = loglevel
         LOGGING_CONFIG['loggers']['appbuilder']['level'] = loglevel
         logging.config.dictConfig(LOGGING_CONFIG)
@@ -125,13 +145,15 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
             self, 
             rolling:bool=True, 
             update_interval:int=1, 
-            update_time:str='', 
+            update_time:str='midnight', 
             backup_count:int=0, 
             filename:str=''
             ):
         # 配置控制台输出
         if "file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
+        if "error_file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("error_file")
 
         # 确定备份数量
         if backup_count <= 0 or not isinstance(backup_count, int):
@@ -149,37 +171,69 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
 
         # 设置filename
         if not filename:
+
             filename = (SIMPLE_HANDLERS_FILE.get("filename") or
                         TIME_HANDLERS_FILE.get("filename") or 
                         "tmp.log")
+            
+
         # 创建处理器
         if rolling:
             if update_time:
                 TIME_HANDLERS_FILE['when'] = update_time
+                TIME_HANDLERS_FILE_ERROR['when'] = update_time
                 TIME_HANDLERS_FILE['interval'] = update_interval
+                TIME_HANDLERS_FILE_ERROR['interval'] = update_interval
                 TIME_HANDLERS_FILE['backupCount'] = backup_count
+                TIME_HANDLERS_FILE_ERROR['backupCount'] = backup_count
                 TIME_HANDLERS_FILE['filename'] = filename
+                TIME_HANDLERS_FILE_ERROR['filename'] = f"error.{filename}"
                 if 'file' in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
                     LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("file")
+                if 'error_file' in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+                    LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("error_file")
                 if not "timed_file" in LOGGING_CONFIG["handlers"]:
                     LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append('timed_file')
+                if not "error_timed_file" in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+                    LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append('error_timed_file')
                 LOGGING_CONFIG["handlers"]["timed_file"] = TIME_HANDLERS_FILE
+                LOGGING_CONFIG["handlers"]["error_timed_file"] = TIME_HANDLERS_FILE_ERROR
                 LOGGING_CONFIG["handlers"]["timed_file"]["level"] = LOGGING_CONFIG['loggers']['appbuilder']['level']
         else:
             SIMPLE_HANDLERS_FILE["filename"] = filename
+            SIMPLE_HANDLERS_FILE_ERROR["filename"] = f"error.{filename}"
             LOGGING_CONFIG["handlers"]["file"] = SIMPLE_HANDLERS_FILE
+            LOGGING_CONFIG["handlers"]["error_file"] = SIMPLE_HANDLERS_FILE_ERROR
+            if "timed_file" in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("timed_file")
+            if "error_timed_file" in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("error_timed_file")
+            if "file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
+            if "error_file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("error_file")
             LOGGING_CONFIG["handlers"]["file"]["level"] = LOGGING_CONFIG['loggers']['appbuilder']['level']
-        logging.config.dictConfig(LOGGING_CONFIG)
 
+        logging.config.dictConfig(LOGGING_CONFIG)
 
     def setFilename(self, filename):
         """
         set filename
+
+        设置此函数会同时设置日志文件和错误日志文件的文件名。同时取消了日志文件的滚动功能。
         """
+        if "timed_file" in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("timed_file")
+        if "error_timed_file" in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].remove("error_timed_file")
         if "file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
+        if "error_file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("error_file")
         SIMPLE_HANDLERS_FILE["filename"] = filename
+        SIMPLE_HANDLERS_FILE_ERROR["filename"] = f"error.{filename}"
         LOGGING_CONFIG["handlers"]["file"] = SIMPLE_HANDLERS_FILE
+        LOGGING_CONFIG["handlers"]["error_file"] = SIMPLE_HANDLERS_FILE_ERROR
         logging.config.dictConfig(LOGGING_CONFIG)
 
     def setLoglevel(self, level):
@@ -194,6 +248,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         LOGGING_CONFIG['handlers']['console']['level'] = log_level
         LOGGING_CONFIG['loggers']['appbuilder']['level'] = log_level
         SIMPLE_HANDLERS_FILE["level"] = log_level
+        TIME_HANDLERS_FILE['level'] = log_level
         logging.config.dictConfig(LOGGING_CONFIG)
 
     def process(self, msg, kwargs):

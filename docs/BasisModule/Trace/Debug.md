@@ -61,7 +61,7 @@ os.Setenv("APPBUILDER_LOGLEVEL", "/tmp/appbuilder.log")
 参数说明:
 - rolling (bool, optional): 是否启用滚动日志. 默认为True.
 - update_interval (int, optional): 更新日志文件的间隔时间. 默认为1.
-- update_time (str, optional): 更新日志文件的时间间隔单位. 默认为空字符串.
+- update_time (str, optional): 更新日志文件的时间间隔单位. 默认为'midnight'，每日凌晨更新.
     - 可选值:
         - 'S' - Seconds
         - 'M' - Minutes
@@ -80,8 +80,8 @@ appbuilder.logger.setLoglevel("DEBUG")
 这里设置:
     rolling=Ture - 启用滚动日志(运行此段代码，默认使用滚动日志)
     filename="appbuilder.log" - 此优先级最高会覆盖之前的设置，若未传参则使用之前已经设置的日志文件，若之前未设置则使用默认的"tmp.log"日志文件
-    update_interval = 30 - 更新日志文件的间隔数量级
-    update_time = 'S' - 更新日志文件的间隔单位为秒级
+    update_interval = 1 - 更新日志文件的间隔数量级
+    update_time = 'midnight' - 更新日志文件的间隔单位为秒级，每日凌晨滚动日志
 """
-appbuilder.logger.setLogConfig(filename="appbuilder.log",update_interval=30, update_time='S')
+appbuilder.logger.setLogConfig(filename="appbuilder.log",update_interval=1, update_time='midnight')
 ```
