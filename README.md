@@ -23,9 +23,9 @@
 - **调用**
     - 调用大模型，可自由调用您在[百度智能云千帆大模型平台](https://qianfan.cloud.baidu.com/)的模型，开发并调优prompt
     - 调用能力组件，提供40+个源于百度生态的[优质组件](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)，赋能Agent应用
-    - 调用AI原生应用，通过[AppBuilderClient](/docs/basic_module/appbuilder_client.md)可访问并管理在百度智能云千帆AppBuilder[网页端](https://console.bce.baidu.com/ai_apaas/app)发布的AI原生应用，并可注册本地函数联动端云组件
+    - 调用AI原生应用，通过[AppBuilderClient](/docs/BasisModule/Platform/Application/appbuilder_client.md)可访问并管理在百度智能云千帆AppBuilder[网页端](https://console.bce.baidu.com/ai_apaas/app)发布的AI原生应用，并可注册本地函数联动端云组件
 - **编排**
-    - 配置知识库，通过[KnowledgeBase](/docs/basic_module/knowledgebase.md)管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
+    - 配置知识库，通过[KnowledgeBase](/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)管理知识库，进行文档及知识切片的增删改查，配合[网页端](https://console.bce.baidu.com/ai_apaas/app)开发产业级的`RAG`应用
     - 编排工作流，提供了`Message`、`Component`、`AgentRuntime`多级工作流抽象，实现工作流编排，并可与LangChain、OpenAI等业界生态能力打通
 - **监控**
     - 提供了可视化Tracing、详细DebugLog等监控工具，助力开发者在生产环境应用
@@ -51,23 +51,23 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 
 | 阶段 |组件名称 | 组件类型 |组件链接 |
 |--------|--------|--------|---|
-| 文档解析 | 文档矫正增强 (DocCropEnhance) | 基础能力组件 | [链接](./appbuilder/core/components/doc_crop_enhance/README.md) |
-| 文档解析 | 文档格式转换 (DocFormatConverter) | 基础能力组件 | [链接](./appbuilder/core/components/doc_format_converter/README.md)|
-| 文档解析 | 文档解析（DocParser）| 基础能力组件 | [链接](./appbuilder/core/components/doc_parser/README.md) |
-| 文档解析 | 表格抽取组件（ExtractTableFromDoc）| 基础能力组件 | [链接](./appbuilder/core/components/extract_table/README.md) |
-| 文档解析 | 通用文字识别-高精度版（GeneralOCR）| 基础能力组件 | [链接](./appbuilder/core/components/general_ocr/README.md) |
-| 文档切片 | 文档切分（DocSplitter）| 基础能力组件 | [链接](./appbuilder/core/components/doc_splitter/README.md) |
-| 切片向量化 | 向量计算（Embedding） | 基础能力组件 | [链接](./appbuilder/core/components/embeddings/README.md) |
-| 索引构建及切片召回 | 向量检索-VectorDB（BaiduVectorDBRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/baidu_vdb/README.md) |
-| 索引构建及切片召回 | 向量检索-BES（BaiduElasticSearchRetriever） | 基础能力组件 | [链接](./appbuilder/core/components/retriever/bes/README.md) |
-| 文档切片及答案生成 | 问答对挖掘（QAPairMining）| 高级能力组件 | [链接](./appbuilder/core/components/llms/qa_pair_mining/README.md) |
-| 文档切片及答案生成 | 相似问生成（SimilarQuestion）| 高级能力组件 | [链接](./appbuilder/core/components/llms/similar_question/README.md) |
-| 答案生成| 标签抽取（TagExtraction）| 高级能力组件 | [链接](./appbuilder/core/components/llms/tag_extraction/README.md) |
-| 答案生成 | 复杂Query判定（IsComplexQuery）| 高级能力组件 | [链接](./appbuilder/core/components/llms/is_complex_query/README.md) |
-| 答案生成 | 复杂Query分解（QueryDecomposition）| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_decomposition/README.md) |
-| 答案生成 | 多轮改写 (QueryRewrite)| 高级能力组件 | [链接](./appbuilder/core/components/llms/query_rewrite/README.md) |
-| 答案生成 | 阅读理解问答（MRC）| 高级能力组件 | [链接](./appbuilder/core/components/llms/mrc/README.md) |
-| 答案生成 | 幻觉检测（Hallucination Detection）| 高级能力组件 | [链接](./appbuilder/core/components/llms/hallucination_detection/README.md) |
+| 文档解析 | 文档矫正增强 (DocCropEnhance) | 基础能力组件 | [链接](./python/core/components/doc_crop_enhance/README.md) |
+| 文档解析 | 文档格式转换 (DocFormatConverter) | 基础能力组件 | [链接](./python/core/components/doc_format_converter/README.md)|
+| 文档解析 | 文档解析（DocParser）| 基础能力组件 | [链接](./python/core/components/doc_parser/README.md) |
+| 文档解析 | 表格抽取组件（ExtractTableFromDoc）| 基础能力组件 | [链接](./python/core/components/extract_table/README.md) |
+| 文档解析 | 通用文字识别-高精度版（GeneralOCR）| 基础能力组件 | [链接](./python/core/components/general_ocr/README.md) |
+| 文档切片 | 文档切分（DocSplitter）| 基础能力组件 | [链接](./python/core/components/doc_splitter/README.md) |
+| 切片向量化 | 向量计算（Embedding） | 基础能力组件 | [链接](./python/core/components/embeddings/README.md) |
+| 索引构建及切片召回 | 向量检索-VectorDB（BaiduVectorDBRetriever） | 基础能力组件 | [链接](./python/core/components/retriever/baidu_vdb/README.md) |
+| 索引构建及切片召回 | 向量检索-BES（BaiduElasticSearchRetriever） | 基础能力组件 | [链接](./python/core/components/retriever/bes/README.md) |
+| 文档切片及答案生成 | 问答对挖掘（QAPairMining）| 高级能力组件 | [链接](./python/core/components/llms/qa_pair_mining/README.md) |
+| 文档切片及答案生成 | 相似问生成（SimilarQuestion）| 高级能力组件 | [链接](./python/core/components/llms/similar_question/README.md) |
+| 答案生成| 标签抽取（TagExtraction）| 高级能力组件 | [链接](./python/core/components/llms/tag_extraction/README.md) |
+| 答案生成 | 复杂Query判定（IsComplexQuery）| 高级能力组件 | [链接](./python/core/components/llms/is_complex_query/README.md) |
+| 答案生成 | 复杂Query分解（QueryDecomposition）| 高级能力组件 | [链接](./python/core/components/llms/query_decomposition/README.md) |
+| 答案生成 | 多轮改写 (QueryRewrite)| 高级能力组件 | [链接](./python/core/components/llms/query_rewrite/README.md) |
+| 答案生成 | 阅读理解问答（MRC）| 高级能力组件 | [链接](./python/core/components/llms/mrc/README.md) |
+| 答案生成 | 幻觉检测（Hallucination Detection）| 高级能力组件 | [链接](./python/core/components/llms/hallucination_detection/README.md) |
 
 
 > 功能预告：在AppBuiler-SDK 1.0.0版本中，AppBuilder-SDK可联动AppBuilder平台，自定义离线与在线处理的能力及Pipeline，构建更加灵活、可沉淀、可复用的产业级`RAG`应用，敬请期待
@@ -76,16 +76,16 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 
 ##  如何安装AppBuilder-SDK
 
-#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.6 (2024-10-26)
+#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.8 (2024-12-10)
 
-百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/quick_start/changelog.md)
+百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/DevelopGuide/ChangeLog/changelog.md)
 
 - `Python`版本安装，要求Python版本 >= `3.9`
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
-- `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明](/docs/quick_start/install.md)
+- `Java` 及 `Go` 版本安装，以及通过`Docker`镜像使用，请查阅[安装说明](/docs/QuickStart/StartFirstAINativeApplication/install.md)
 
 
 ## 快速开始你的AI原生应用开发之旅
@@ -111,7 +111,7 @@ template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}
 # 定义输入，调用playground组件
 input = appbuilder.Message({"role": "java工程师", "question": "请简要回答java语言的内存回收机制是什么，要求100字以内"})
 
-playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Appbuilder-Speed-8k")
+playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8k")
 
 # 以打字机的方式，流式展示大模型回答内容
 output = playground(input, stream=True, temperature=1e-10)
@@ -157,7 +157,7 @@ import os
 # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Appbuilder-Speed-8k")
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE-Lite-AppBuilder-8K")
 
 input = appbuilder.Message("9.11和9.8哪个大")
 result = rag_with_baidu_search_pro.run(
@@ -278,21 +278,57 @@ Hook:
 
 ## 用户文档
 
-- [快速开始](/docs/quick_start/README.md)
-    - [安装说明](/docs/quick_start/install.md)
-    - [版本说明](/docs/quick_start/changelog.md)
-- [基础功能](/docs/basic_module/README.md)
-    - [基础能力组件](/docs/basic_module/components.md)
-    - [流程编排](/docs/basic_module/assistant_sdk.md)
-    - [端到端应用](/docs/basic_module/appbuilder_client.md)
-- [进阶实践](/docs/advanced_application/README.md)
-    - [Cookbooks](/cookbooks/README.md)
-    - [AppBuilder Trace](https://github.com/baidubce/app-builder/blob/master/docs/trace/README.md)
-- [服务化部署](/docs/service/README.md)
-    - [API调用](/docs/service/flask.md)
-    - [交互式前端](/docs/service/chainlit.md)
-    - [公有云部署](/docs/service/cloud.md)
-- [二次开发](/docs/develop_guide/README.md)
+## Github 文档
+- [首页](https://github.com/baidubce/app-builder/blob/master/docs/README.md)
+    - 快速上手: 
+        - 开始你的第一个AI原生应用: 
+            - [安装](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/install.md)
+            - [快速开始](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/README.md)
+        - 产业实践应用范例: 
+            - [SDK使用示例](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/ExamplesOfIndustrialPracticeApplications/README.md)
+        - [SDK当前支持的编程语言](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/CurrentlySupportedProgrammingLanguages/README.md)
+    - 基础:
+        - 模型:
+            - [获取模型列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
+        - [组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+        - 监控:
+            - [TRACE基础功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
+            - [TRACE拓展功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+        - 部署:
+            - [交互式前端部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
+            - [公有云部署](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
+            - [API 访问](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
+            - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
+            - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
+        - 平台:
+            - 应用:
+                - [AppBuilderClient组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
+                - [获取AppBuilder已发布的应用列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
+            - 知识库:
+                - [知识库组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
+            - 自定义组件:
+                - [基础能力组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
+    - 应用:
+        - Agent:
+            - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/BasicKnowledge/agent.md)
+            - [使用官方组件](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/UseOfficialComponents/use_official_components.md)
+            - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolCall/tool_call.md)
+            - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolChoice/tool_choice.md)
+            - [使用异步和流式加速客户端调用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - RAG:
+            - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
+            - [知识库管理](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/DatasetManage/dataset_manage.md)
+            - [Reference信息处理](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - Workflow:
+            - [基础知识](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [从零使用Workflow组装一个RAG应用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [从零使用Workflow组装一个Agent应用](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+    - 开发者指南:
+        - [如何贡献代码](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
+        - [二次开发](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/AdvancedDevelopment/README.md)
+        - [版本升级日志](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
+        - [错误信息](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ErrorMessage/error_message.md)
+        - [环境参数](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
 
 
 ## 开源社区与活动

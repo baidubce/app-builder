@@ -47,16 +47,16 @@ Baidu AI Cloud Qianfan AppBuilder-SDK offers the following essential features fo
 
 ##  How to install？
 
-#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.6 (2024-10-26)
+#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.8 (2024-12-10)
 
-Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/quick_start/changelog.md)
+Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/DevelopGuide/ChangeLog/changelog.md)
 
 - We recommend installing the latest stable version of `Python`
 
 ```bash
 python3 -m pip install --upgrade appbuilder-sdk
 ```
-- For installation of `Java` and `Go` versions, as well as using `Docker` images, please refer to the [Installation Instructions](/docs/quick_start/install.md)
+- For installation of `Java` and `Go` versions, as well as using `Docker` images, please refer to the [Installation Instructions](/docs/QuickStart/StartFirstAINativeApplication/install.md)
 
 
 ## Quickly start your first AI native application!
@@ -82,7 +82,7 @@ template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}
 # 定义输入，调用playground组件
 input = appbuilder.Message({"role": "java工程师", "question": "请简要回答java语言的内存回收机制是什么，要求100字以内"})
 
-playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Appbuilder-Speed-8k")
+playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8k")
 
 # 以打字机的方式，流式展示大模型回答内容
 output = playground(input, stream=True, temperature=1e-10)
@@ -128,7 +128,7 @@ import os
 # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
 os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
 
-rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="Qianfan-Appbuilder-Speed-8k")
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE-Lite-AppBuilder-8K")
 
 input = appbuilder.Message("9.11和9.8哪个大")
 result = rag_with_baidu_search_pro.run(
@@ -246,21 +246,57 @@ Hook:
 
 ## User Documentation
 
-- [Quick start](/docs/quick_start/README.md)
-    - [Installation instructions](/docs/quick_start/install.md)
-    - [Release note](/docs/quick_start/changelog.md)
-- [Basic components](/docs/basic_module/README.md)
-    - [Basic Ability Components](/docs/basic_module/components.md)
-    - [Process orchestration](/docs/basic_module/assistant_sdk.md)
-    - [End-to-end applications](/docs/basic_module/appbuilder_client.md)
-- [Advanced Practice](/docs/advanced_application/README.md)
-    - [Cookbooks](/cookbooks/README.md)
-- [Service deployment](/docs/service/README.md)
-    - [API calls](/docs/service/flask.md)
-    - [Interactive front-end](/docs/service/chainlit.md)
-    - [Cloud deployment](/docs/service/cloud.md)
-- [Secondary development](/docs/develop_guide/README.md)
-
+- [Home](https://github.com/baidubce/app-builder/blob/master/docs/README.md)
+    - Quick Start:
+        - Start your first AI-native application:
+            - [Installation](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/install.md)
+            - [Quick Start Guide](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/StartFirstAINativeApplication/README.md)
+        - Industrial practice application examples:
+            - [SDK usage examples](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/ExamplesOfIndustrialPracticeApplications/README.md)
+        - [Currently supported programming languages by SDK](https://github.com/baidubce/app-builder/blob/master/docs/QuickStart/CurrentlySupportedProgrammingLanguages/README.md)
+    - Basics:
+        - Models:
+            - [Get model list](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
+        - [Components](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+        - Monitoring:
+            - [TRACE basic functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
+            - [TRACE extended functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
+            - [Debug functionality](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/Debug.md)
+        - Deployment:
+            - [Interactive front-end deployment](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/AgentChainlit.md)
+            - [Public cloud deployment](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/cloud.md)
+            - [API access](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/flask.md)
+            - [AgentRuntime](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/agentruntime.md)
+            - [UserSession](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Deployment/usersession.md)
+        - Platform:
+            - Applications:
+                - [AppBuilderClient component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/appbuilder_client.md)
+                - [Get the list of applications published by AppBuilder](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/Application/get_app_list.md)
+            - Knowledge Base:
+                - [Knowledge Base component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/KnowledgeBase/knowledgebase.md)
+            - Custom Components:
+                - [Basic capabilities component](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Platform/CustomComponents/components.md)
+    - Applications:
+        - Agent:
+            - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/BasicKnowledge/agent.md)
+            - [Using official components](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/UseOfficialComponents/use_official_components.md)
+            - [ToolCall](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolCall/tool_call.md)
+            - [ToolChoice](https://github.com/baidubce/app-builder/blob/master/docs/Application/Agent/ToolChoice/tool_choice.md)
+            - [Using asynchronous and streaming accelerated client calls](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - RAG:
+            - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/BasicKnowledge/rag.md)
+            - [Knowledge Base Management](https://github.com/baidubce/app-builder/blob/master/docs/Application/RAG/DatasetManage/dataset_manage.md)
+            - [Reference Information Processing](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+        - Workflow:
+            - [Basic knowledge](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [Assembling a RAG application from scratch using Workflow](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+            - [Assembling an Agent application from scratch using Workflow](https://github.com/baidubce/app-builder/blob/master/docs/Tools/DocPass/DocPass.md)
+    - Developer Guide:
+        - [How to contribute code](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/HowToContributeCode/README.md)
+        - [Secondary Development](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/AdvancedDevelopment/README.md)
+        - [Version upgrade log](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ChangeLog/changelog.md)
+        - [Error messages](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/ErrorMessage/error_message.md)
+        - [Environmental parameters](https://github.com/baidubce/app-builder/blob/master/docs/DevelopGuide/EnvironmentalParameters/env.md)
 
 ## Open source community and activities
 <div align="center">

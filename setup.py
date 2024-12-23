@@ -20,13 +20,27 @@ Authors: dongdaxiang(dongdaxiang@baidu.com)
 Date:    2023/12/01 11:19:24
 """
 
+import os
+import shutil
+import datetime
 from setuptools import setup, find_packages
 
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-packages = find_packages()
+
+now = datetime.datetime.now()
+timestamp_str = now.strftime("%Y%m%d_%H%M%S")
+package_dir = f"appbuilder_sdk_{timestamp_str}"
+if not os.path.exists(package_dir):
+    os.makedirs(package_dir)
+
+shutil.copytree("python", os.path.join(package_dir, "appbuilder"))
+shutil.copy("requirements.txt", package_dir)
+
+packages = find_packages(where=package_dir)
 package_data = {}
+print(packages)
 for package in packages:
     if package.startswith('appbuilder.utils'):
         package_data[package] = ["*.md"]
@@ -40,11 +54,12 @@ all_require = serve_require + trace_require + test_require + langchain_require
 setup(
     name="appbuilder-sdk",
     # NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
-    version="0.9.6",
+    version="0.9.8",
     author="dongdaxiang",
     author_email="dongdaxiang@baidu.com",
     packages=packages,
     package_data=package_data,
+    package_dir={'': package_dir}, 
     install_requires=requirements,
     python_requires=">=3.9",
     extras_require={
@@ -64,3 +79,5 @@ setup(
     long_description="百度智能云千帆AppBuilder, 开箱即用的组件与框架, 高效开发你的AI原生应用, 更多信息请登录: https://appbuilder.cloud.baidu.com/",
     url="https://github.com/baidubce/app-builder",
 )
+
+shutil.rmtree(package_dir)

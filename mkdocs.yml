@@ -1,0 +1,122 @@
+site_name: Appbuilder-SDK
+
+# 网站页面结构和导航配置
+nav:
+  - 首页: README.md
+  - 快速上手: 
+    - 开始你的第一个AI原生应用: 
+      - 安装: QuickStart/StartFirstAINativeApplication/install.md
+      - 快速开始: QuickStart/StartFirstAINativeApplication/README.md
+    - 产业实践应用范例: 
+      - SDK使用示例: QuickStart/ExamplesOfIndustrialPracticeApplications/README.md
+    - SDK当前支持的编程语言: QuickStart/CurrentlySupportedProgrammingLanguages/README.md
+  - 基础:
+    - 模型:
+      - 获取模型列表: BasisModule/Model/get_model_list.md
+    - 组件:
+      - 语义匹配（Matching）: BasisModule/Components/matching/README.md
+      - 表格文字识别 (TableOCR): BasisModule/Components/table_ocr/README.md
+      - 文件生成PPT（PPTGenerationFromFile）: BasisModule/Components/ppt_generation_from_file/README.md
+      - GBI 选表: BasisModule/Components/gbi/select_table/README.md
+      - GBI 问表: BasisModule/Components/gbi/nl2sql/README.md
+      - 向量计算（Embedding）: BasisModule/Components/embeddings/README.md
+      - 论文生成PPT（PPTGenerationFromPaper）: BasisModule/Components/ppt_generation_from_paper/README.md
+      - 地标识别（LandmarkRecognition）: BasisModule/Components/landmark_recognize/README.md
+      - 手写文字识别 （HandwriteOCR）: BasisModule/Components/handwrite_ocr/README.md
+      - 通用文字识别-高精度版（GeneralOCR）: BasisModule/Components/general_ocr/README.md
+      - 文本翻译-通用版（Translation）: BasisModule/Components/translate/README.md
+      - 百度搜索RAG（deprecate）: BasisModule/Components/rag_with_baidu_search/README.md
+      - 文档切分（DocSplitter）: BasisModule/Components/doc_splitter/README.md
+      - 表格抽取组件（ExtractTableFromDoc）: BasisModule/Components/extract_table/README.md
+      - 向量检索: BasisModule/Components/retriever/README.md
+      - 文本精排（Reranker）: BasisModule/Components/retriever/reranker/README.md
+      - 向量检索-VectorDB（BaiduVectorDBRetriever）: BasisModule/Components/retriever/baidu_vdb/README.md
+      - 向量检索-BES（BaiduElasticSearchRetriever）: BasisModule/Components/retriever/bes/README.md
+      - 通用物体和场景识别-高级版（ObjectRecognition）: BasisModule/Components/object_recognize/README.md
+      - 文档解析（DocParser）: BasisModule/Components/doc_parser/README.md
+      - 文档格式转换 (DocFormatConverter): BasisModule/Components/doc_format_converter/README.md
+      - 身份证混贴识别（MixCardOCR）: BasisModule/Components/mix_card_ocr/README.md
+      - 短语音识别-极速版 (Automatic Speech Recognition): BasisModule/Components/asr/README.md
+      - 文生图 (Text2Image): BasisModule/Components/text_to_image/README.md
+      - 长文档内容理解（DocumentUnderstanding）: BasisModule/Components/document_understanding/README.md
+      - 短文本在线合成（TTS）: BasisModule/Components/tts/README.md
+      - 植物识别（PlantRecognition）: BasisModule/Components/plant_recognize/README.md
+      - 树图 (TreeMind): BasisModule/Components/tree_mind/README.md
+      - 菜品识别（DishRecognition）: BasisModule/Components/dish_recognize/README.md
+      - 指令生成PPT（PPTGenerationFromInstruction）: BasisModule/Components/ppt_generation_from_instruction/README.md
+      - 动物识别 (AnimalRecognition): BasisModule/Components/animal_recognize/README.md
+      - 百度搜索RAG_PRO: BasisModule/Components/rag_with_baidu_search_pro/README.md
+      - 二维码识别 (QRcodeOCR): BasisModule/Components/qrcode_ocr/README.md
+      - 复杂Query判定（IsComplexQuery）: BasisModule/Components/llms/is_complex_query/README.md
+      - 空应用（Playground）: BasisModule/Components/llms/playground/README.md
+      - 口语化Query生成（Oral Query Generation）: BasisModule/Components/llms/oral_query_generation/README.md
+      - 阅读理解问答（MRC）: BasisModule/Components/llms/mrc/README.md
+      - 多轮改写 (QueryRewrite): BasisModule/Components/llms/query_rewrite/README.md
+      - 风格写作（StyleWriting）: BasisModule/Components/llms/style_writing/README.md
+      - 复杂Query分解（QueryDecomposition）: BasisModule/Components/llms/query_decomposition/README.md
+      - 会话小结（DialogSummary）: BasisModule/Components/llms/dialog_summary/README.md
+      - 幻觉检测（Hallucination Detection）: BasisModule/Components/llms/hallucination_detection/README.md
+      - 相似问生成（SimilarQuestion）: BasisModule/Components/llms/similar_question/README.md
+      - 标签抽取（TagExtraction）: BasisModule/Components/llms/tag_extraction/README.md
+      - 问答对挖掘（QAPairMining）: BasisModule/Components/llms/qa_pair_mining/README.md
+      - 风格转写 (StyleRewrite): BasisModule/Components/llms/style_rewrite/README.md
+      - 自然语言转pandas (nl2pandas): BasisModule/Components/llms/nl2pandas/README.md
+      - 文档矫正增强 (DocCropEnhance): BasisModule/Components/doc_crop_enhance/README.md
+      - 图像内容理解 （ImageUnderstand）: BasisModule/Components/image_understand/README.md
+    - 监控:
+      - TRACE基础功能: BasisModule/Trace/basic.md
+      - TRACE拓展功能: BasisModule/Trace/phoenix_method.md
+      - Debug功能: BasisModule/Trace/Debug.md
+    - 部署:
+      - 交互式前端部署: BasisModule/Deployment/AgentChainlit.md
+      - 公有云部署: BasisModule/Deployment/cloud.md
+      - API 访问: BasisModule/Deployment/flask.md
+      - AgentRuntime: BasisModule/Deployment/agentruntime.md
+      - UserSession: BasisModule/Deployment/usersession.md
+    - 平台:
+      - 应用:
+        - AppBuilderClient组件: BasisModule/Platform/Application/appbuilder_client.md
+        - 获取AppBuilder已发布的应用列表: BasisModule/Platform/Application/get_app_list.md
+      - 知识库:
+        - 知识库组件: BasisModule/Platform/KnowledgeBase/knowledgebase.md
+      - 自定义组件:
+        - 基础能力组件: BasisModule/Platform/CustomComponents/components.md
+  - 应用:
+    - Agent:
+      - 基础知识: Application/Agent/BasicKnowledge/agent.md
+      - 使用官方组件: Application/Agent/UseOfficialComponents/use_official_components.md
+      - ToolCall: Application/Agent/ToolCall/tool_call.md
+      - ToolChoice: Application/Agent/ToolChoice/tool_choice.md
+    #   - 使用异步和流式加速客户端调用: 
+    - RAG:
+      - 基础知识: Application/RAG/BasicKnowledge/rag.md
+      - 知识库管理: Application/RAG/DatasetManage/dataset_manage.md
+      # - Reference信息处理: 
+    # - Workflow:
+    #   - 基础知识: 
+    #   - 从零使用Workflow组装一个RAG应用: 
+    #   - 从零使用Workflow组装一个Agent应用: 
+  - 开发者指南:
+    - 如何贡献代码: DevelopGuide/HowToContributeCode/README.md
+    - 二次开发: DevelopGuide/AdvancedDevelopment/README.md
+    - 版本升级日志: DevelopGuide/ChangeLog/changelog.md
+    - 错误信息: DevelopGuide/ErrorMessage/error_message.md
+    - 环境参数: DevelopGuide/EnvironmentalParameters/env.md
+  - API Reference:
+    - Python API Reference: API-Reference/Python/PythonAPI.md
+    - Java API Reference: API-Reference/Java/JavaAPI.md
+    # - Go API Reference: 
+
+# 主题设置
+theme:
+  name: material
+
+# 插件列表
+plugins:
+  - search
+
+# 其他配置
+markdown_extensions:
+  - codehilite
+  - toc:
+      permalink: true

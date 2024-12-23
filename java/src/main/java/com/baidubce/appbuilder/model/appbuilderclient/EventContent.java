@@ -5,6 +5,19 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 
 public class EventContent {
+    public static final String CodeContentType = "code";
+    public static final String TextContentType = "text";
+    public static final String ImageContentType = "image";
+    public static final String RAGContentType = "rag";
+    public static final String FunctionCallContentType = "function_call";
+    public static final String AudioContentType = "audio";
+    public static final String VideoContentType = "video";
+    public static final String StatusContentType = "status";
+    public static final String ChatflowInterruptContentType = "chatflow_interrupt";
+    public static final String PublishMessageContentType = "publish_message";
+    public static final String MultipleDialogEventContentType = "multiple_dialog_event";
+    public static final String JsonContentType = "json";
+
     @SerializedName("event_code")
     private String eventCode;
     @SerializedName("event_message")

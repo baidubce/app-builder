@@ -381,7 +381,7 @@ func TestNewAppBuilderClient(t *testing.T) {
 	}
 	log("Number of apps: %d", len(apps2.Data))
 
-	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
+	appID := "fb64d96b-f828-4385-ba1d-835298d635a9"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
@@ -404,9 +404,19 @@ func TestNewAppBuilderClient(t *testing.T) {
 		t.Fatalf("run failed:%v", err)
 	}
 	totalAnswer := ""
+	// test follow up queries
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		totalAnswer += answer.Answer
 		for _, ev := range answer.Events {
+			if ev.ContentType == JsonContentType {
+				detail := ev.Detail.(JsonDetail)
+				folllowUpQueries := detail.Json.FollowUpQueries
+				fmt.Println(folllowUpQueries)
+				if len(folllowUpQueries[0]) == 0 {
+					t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+					t.Fatal("follow up queries is empty")
+				}
+			}
 			evJSON, _ := json.Marshal(ev)
 			log(string(evJSON))
 		}
@@ -498,11 +508,8 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	toolCallID := ""
 	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
 		totalAnswer += answer.Answer
-		for _, ev := range answer.Events {
-			toolCallID = ev.ToolCalls[0].ID
-			evJSON, _ := json.Marshal(ev)
-			log(string(evJSON))
-		}
+		lastEvent := answer.Events[len(answer.Events)-1]
+		toolCallID = lastEvent.ToolCalls[len(lastEvent.ToolCalls)-1].ID
 	}
 
 	i2, err := client.RunWithToolCall(AppBuilderClientRunRequest{
@@ -574,7 +581,7 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 	input := make(map[string]any)
 	input["city"] = "北京"
 	end_user_id := "go_user_id_0"
-	i, err := client.RunWithToolCall(AppBuilderClientRunRequest{
+	i, err := client.Run(AppBuilderClientRunRequest{
 		ConversationID: conversationID,
 		AppID:          appID,
 		Query:          "你能干什么",
@@ -598,6 +605,165 @@ func TestAppBuilderClientRunToolChoice(t *testing.T) {
 		for _, ev := range answer.Events {
 			evJSON, _ := json.Marshal(ev)
 			log(string(evJSON))
+		}
+	}
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		fmt.Println(logBuffer.String())
+	} else { // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+	}
+}
+
+func TestAppBuilderClientRunChatflow(t *testing.T) {
+	var logBuffer bytes.Buffer
+
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	appID := "4403205e-fb83-4fac-96d8-943bdb63796f"
+	client, err := NewAppBuilderClient(appID, config)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new AgentBuidler instance failed")
+	}
+
+	conversationID, err := client.CreateConversation()
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("create conversation failed: %v", err)
+	}
+
+	i, err := client.Run(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "查天气",
+		Stream:         true,
+	})
+
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("run failed:%v", err)
+	}
+
+	var interruptId string
+	interruptStack := make([]string, 0)
+	for answer, err := i.Next(); err == nil; answer, err = i.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == PublishMessageContentType {
+				detail := ev.Detail.(PublishMessageDetail)
+				message := detail.Message
+				fmt.Println(message)
+				break
+			}
+			if ev.ContentType == ChatflowInterruptContentType {
+				deatil := ev.Detail.(ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("interrupt id is empty")
+	}
+
+	interruptId = ""
+	i2, err := client.Run(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "我先查个航班动态",
+		Stream:         true,
+		Action:         NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("run failed:%v", err)
+	}
+	interruptStack = interruptStack[:len(interruptStack)-1]
+	for answer, err := i2.Next(); err == nil; answer, err = i2.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == PublishMessageContentType {
+				detail := ev.Detail.(PublishMessageDetail)
+				message := detail.Message
+				fmt.Println(message)
+				break
+			}
+			if ev.ContentType == ChatflowInterruptContentType {
+				deatil := ev.Detail.(ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("interrupt id is empty")
+	}
+
+	interruptId = ""
+	i3, err := client.Run(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "CA1234",
+		Stream:         true,
+		Action:         NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("run failed:%v", err)
+	}
+	interruptStack = interruptStack[:len(interruptStack)-1]
+	for answer, err := i3.Next(); err == nil; answer, err = i3.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == TextContentType {
+				detail := ev.Detail.(TextDetail)
+				text := detail.Text
+				fmt.Println(text)
+				break
+			}
+			if ev.ContentType == ChatflowInterruptContentType {
+				deatil := ev.Detail.(ChatflowInterruptDetail)
+				interruptId = deatil.InterruptEventID
+				interruptStack = append(interruptStack, interruptId)
+				break
+			}
+		}
+	}
+	if len(interruptId) == 0 {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("interrupt id is empty")
+	}
+
+	i4, err := client.Run(AppBuilderClientRunRequest{
+		ConversationID: conversationID,
+		AppID:          appID,
+		Query:          "北京的",
+		Stream:         true,
+		Action:         NewResumeAction(interruptStack[len(interruptStack)-1]),
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("run failed:%v", err)
+	}
+	for answer, err := i4.Next(); err == nil; answer, err = i4.Next() {
+		for _, ev := range answer.Events {
+			if ev.ContentType == TextContentType {
+				detail := ev.Detail.(TextDetail)
+				text := detail.Text
+				fmt.Println(text)
+				break
+			}
 		}
 	}
 

@@ -15,20 +15,21 @@
 package appbuilder
 
 import (
-	"os"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"testing"
 )
+
 func TestNewRAGError(t *testing.T) {
 	t.Parallel() // 并发运行
 	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
 	// 测试逻辑
-	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
+	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
@@ -81,12 +82,11 @@ func TestNewRAGError(t *testing.T) {
 	}
 }
 func TestNewRAG(t *testing.T) {
-	t.Parallel() // 并发运行
 	// 设置环境变量
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
 	// 测试逻辑
-	config, err := NewSDKConfig("", "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd")
+	config, err := NewSDKConfig("", os.Getenv(SecretKey))
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
@@ -98,9 +98,11 @@ func TestNewRAG(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new RAG instance failed")
 	}
-	fmt.Println("问题出现在这里2")
 
 	i, err := rag.Run("", "北京有多少小学生", true)
+	if err != nil {
+		t.Fatalf("run RAG failed: %v", err)
+	}
 	var answer *RAGAnswer
 	for answer, err = i.Next(); err == nil; answer, err = i.Next() {
 		data, _ := json.Marshal(answer)

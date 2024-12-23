@@ -4,6 +4,9 @@ import java.util.Map;
 import com.google.gson.annotations.SerializedName;
 
 public class Event {
+    public static final String ChatflowEventType = "chatflow";
+    public static final String FollowUpQueryEventType = "FollowUpQuery";
+    
     private String code;
     private String message;
     private String eventType;
