@@ -66,13 +66,6 @@ class QRcodeOCR(Component):
                     "location": {
                         "type": "string",
                         "description": "是否输出二维码/条形码位置信息"
-                    },
-                    "file_urls": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        },
-                        "description": "待识别文件的URL下载地址"
                     }
                 },
                 "required": ["file_names"]
@@ -164,14 +157,13 @@ class QRcodeOCR(Component):
             )
 
     @components_run_stream_trace
-    def tool_eval(self, file_names:Optional[list]=[], location: Optional[str]="false", file_urls:Optional[dict]={}, **kwargs):
+    def tool_eval(self, file_names:Optional[list]=[], location: Optional[str]="false",  **kwargs):
         """
         ToolEval方法，用于执行二维码识别操作。
         
         Args:
             file_names (list, 可选): 待识别文件的文件名列表。
             location (str, 可选): 是否需要返回二维码位置信息，默认为 "false"。
-            file_urls (dict, 可选): 待识别文件的URL下载地址字典，格式为 {"filename": "url"}。
             
         Yields:
             ComponentOutput: 识别结果，包含识别到的二维码信息。
@@ -180,13 +172,10 @@ class QRcodeOCR(Component):
         traceid = kwargs.get("_sys_traceid", "")
         # file_name
         sys_file_names = file_names
-        sys_file_urls = file_urls
-
         if not sys_file_names:
             sys_file_names = kwargs.get("_sys_file_names", [])
-        if not sys_file_urls:
-            sys_file_urls = kwargs.get("_sys_file_urls", {})
 
+        sys_file_urls = kwargs.get("_sys_file_urls", {})
 
         for file_name in sys_file_names:
             if utils.is_url(file_name):

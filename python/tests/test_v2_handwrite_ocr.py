@@ -80,7 +80,7 @@ class TestHandWriteOCR(unittest.TestCase):
             next(result)
         result=self.handwrite_ocr.tool_eval(
             file_names=['test'],
-            file_urls={'test':self.image_url}
+            _sys_file_urls={'test':self.image_url}
             )
         res=next(result)
         print(res)

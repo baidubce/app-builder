@@ -145,7 +145,7 @@ class TestQRcodeOCR(unittest.TestCase):
             print(msg)
         result=self.qrcode_ocr.tool_eval(
             file_names=['test'],
-            file_urls={'test':image_url}
+            _sys_file_urls={'test':image_url}
             )
         res=next(result)
         print(res)

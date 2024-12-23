@@ -106,7 +106,7 @@ class QRcodeOCRCase(Case):
                     "e74ab057ce26d50e966dc31ff083e6a9c41b"
         return {
             "file_names": ["text"],
-            "file_urls": {"text": image_url}
+            "_sys_file_urls": {"text": image_url}
         }
 
     def schemas(self):
@@ -151,7 +151,7 @@ class HandWriteOCRCase(Case):
                     "F677f93445fb65157bee11cd492ce213d5c56e7a41827e45ce7e32b083d195c8b"
         return {
             "file_names": ["text"],
-            "file_urls": {"text": image_url}
+            "_sys_file_urls": {"text": image_url}
         }
 
     def schemas(self):
@@ -168,7 +168,7 @@ class MixCardOCRCase(Case):
                         "1865e4393da5a3515e90d72d81ef18296bd29598")
         return {
             "file_names": ["test"],
-            "file_urls": {"test": image_url}
+            "_sys_file_urls": {"test": image_url}
         }
     
     def schemas(self):

@@ -15,6 +15,7 @@
 r"""树图工具"""
 
 import json
+from urllib.parse import urlparse, unquote
 from typing import Dict, List, Optional, Any
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
@@ -83,6 +84,17 @@ class TreeMind(Component):
         img_link = treemind_response.info.downloadInfo.fileInfo.pic
         return img_link, jump_link
 
+    @staticmethod
+    def get_filename_from_url(url):
+        """从给定URL中提取文件名"""
+        parsed_url = urlparse(url)
+        # 提取路径部分
+        path = parsed_url.path
+        # 从路径中获取文件名
+        filename = path.split('/')[-1]
+        # 解码URL编码的文件名
+        return unquote(filename)
+
     @components_run_stream_trace
     def tool_eval(
             self,
@@ -115,6 +127,7 @@ class TreeMind(Component):
         img_link_result = self.create_output(
             type="image",
             text={
+                "filename": self.get_filename_from_url(img_link),
                 "url": img_link
             },
             visible_scope='all',
