@@ -85,3 +85,6 @@ appbuilder.logger.setLoglevel("DEBUG")
 """
 appbuilder.logger.setLogConfig(filename="appbuilder.log",update_interval=1, update_time='midnight')
 ```
+
+## 新增功能
+日志功能会自动开启日志的分离功能，独立创建一个`error.(filename).log'文件，用于存储`WARNING`、`ERROR`级别日志，同时会兼容日志的滚动功能。
