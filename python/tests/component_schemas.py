@@ -148,16 +148,7 @@ references_schema["properties"]["text"] = {
     "type": {
       "type": "string"
     },
-    "resource_type": {
-      "type": "string"
-    },
     "doc_id": {
-      "type": "string"
-    },
-    "icon": {
-      "type": "string",
-    },
-    "site_name": {
       "type": "string"
     },
     "content": {
@@ -166,20 +157,14 @@ references_schema["properties"]["text"] = {
     "title": {
       "type": "string"
     },
-    "mock_id": {
+    "source": {
       "type": "string"
     },
-    "from": {
-      "type": "string"
-    },
-    "image_url": {
-      "type": "string"
-    },
-    "video_url": {
-      "type": "string"
+    "extra": {
+      "type": "object"
     }
   },
-  "required": ["type", "resource_type", "doc_id", "icon", "site_name", "content", "title", "mock_id", "from", "image_url", "video_url"]
+  "required": ["type", "doc_id", "content", "title", "source"]
 }
 
 image_schema = copy.deepcopy(base_item_schema)
