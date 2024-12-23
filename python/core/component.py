@@ -83,17 +83,11 @@ class OralText(BaseModel, extra='allow'):
 
 class References(BaseModel, extra='allow'):
     type: str = Field(default="", description="类型")
-    resource_type: str = Field(default="", description="资源类型")
-    icon: str = Field(default="", description="站点图标")
-    site_name: str = Field(default="", description="站点名")
     source: str = Field(default="", description="来源")
     doc_id: str = Field(default="", description="文档id")
     title: str = Field(default="", description="标题")
     content: str = Field(default="", description="内容")
-    image_content: str = Field(default="", description="图片内容")
-    mock_id: Optional[str] = Field(default="", description="模拟数据id")
-    image_url: str = Field(default="", description="图片url")
-    video_url: str = Field(default="", description="视频url")
+    extra: Optional[dict] = Field(default={}, description="其他信息")
 
 
 class Image(BaseModel, extra='allow'):
@@ -548,8 +542,7 @@ class Component:
             elif type == "files":
                 key_list = ["filename", "url"]
             elif type == "references":
-                key_list = ["type", "resource_type", "icon", "site_name", "source",
-                            "doc_id", "title", "content", "image_content", "image_url", "video_url"]
+                key_list = ["type", "source", "doc_id", "title", "content"]
             elif type == "image":
                 key_list = ["filename", "url"]
             elif type == "chart":
@@ -562,7 +555,7 @@ class Component:
                 key_list = ["thought", "name", "arguments"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
-            # assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
+            assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
         else:
             raise ValueError("text must be str or dict")
 
