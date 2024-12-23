@@ -11,7 +11,7 @@ from component_collector import  get_all_components, get_v2_components, get_comp
 from component_check import check_component_with_retry, write_error_data
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestComponentManifestsAndToolEval(unittest.TestCase):
     """
     组件manifests和tool_eval入参测试类

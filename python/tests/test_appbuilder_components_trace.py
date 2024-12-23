@@ -49,10 +49,10 @@ class TestAppBuilderComponentsTrace(unittest.TestCase):
             无返回值。
         
         """
-        self.audio_file_url = "https://bj.bcebos.com/v1/appbuilder/asr_test.pcm?authorization=bce-auth-v1" \
-                              "%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-11T10%3A56%3A41Z%2F-1%2Fhost" \
-                              "%2Fa6c4d2ca8a3f0259f4cae8ae3fa98a9f75afde1a063eaec04847c99ab7d1e411"
-        self.asr = appbuilder.ASR()
+        self.image_url = "https://bj.bcebos.com/v1/appbuilder/table_ocr_test.png?"\
+            "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A37%3A09Z%2F-1%2Fhost%2Fab528a5a9120d328dc6d18c6"\
+            "064079145ff4698856f477b820147768fc2187d3"
+        self.table_ocr = appbuilder.TableOCR()
         self.play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model="ERNIE-3.5-8K")
         model_name = "ERNIE-3.5-8K"
         secret_key = os.getenv('SECRET_KEY', None)
@@ -77,10 +77,9 @@ class TestAppBuilderComponentsTrace(unittest.TestCase):
         tracer.start_trace()
 
         # test asr run and tool_eval
-        raw_audio = requests.get(self.audio_file_url).content
-        inp = appbuilder.Message(content={"raw_audio": raw_audio})
-        out = self.asr.run(inp)
-        result = self.asr.tool_eval(name="asr", streaming=True, file_url=self.audio_file_url)
+        out = self.table_ocr.run(appbuilder.Message(content={"url": self.image_url}))
+        print(out)
+        result = self.table_ocr.tool_eval(name="asr", streaming=True, file_names=[self.image_url])
         for res in result:
             print(res)
 
