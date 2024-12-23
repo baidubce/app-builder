@@ -82,10 +82,8 @@ class TestMixCardOCR(unittest.TestCase):
         with self.assertRaises(InvalidRequestArgumentError):
             next(result)
         result=self.mix_card_ocr.tool_eval(
-            name='name',
-            streaming=True,
             file_names=['test'],
-            file_urls={'test':self.image_url}
+            _sys_file_urls={'test':self.image_url}
         )
         res=next(result)
         print("res: {}".format(res))

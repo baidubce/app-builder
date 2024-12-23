@@ -390,15 +390,18 @@ def check_component_with_retry(component_import_res_tuple):
     """
     component, import_res, component_case_cls = component_import_res_tuple
     component_check_base = ComponentCheckBase()
-    
+    if inspect.isclass(component):
+        component_name = component.__name__
+    else:
+        component_name = component
     error_data = []
     max_retries = 2  # 设置最大重试次数
     attempts = 0
 
     while attempts <= max_retries:
         if import_res["import_error"] != "":
-            error_data.append({"Component Name": component, "Error Message": import_res["import_error"]})
-            print("组件名称:{} 错误信息:{}".format(component, import_res["import_error"]))
+            error_data.append({"Component Name": component_name, "Error Message": import_res["import_error"]})
+            print("组件名称:{} 错误信息:{}".format(component_name, import_res["import_error"]))
             break
         
         component_case = component_case_cls()
@@ -412,22 +415,22 @@ def check_component_with_retry(component_import_res_tuple):
             pass_check, reasons = component_check_base.notify(component_obj, component_case) # 示例修改
             reasons = list(set(reasons))
             if not pass_check:
-                error_data.append({"Component Name": component, "Error Message": ", ".join(reasons)})
-                print("组件名称:{} 错误信息:{}".format(component, ", ".join(reasons)))
+                error_data.append({"Component Name": component_name, "Error Message": ", ".join(reasons)})
+                print("组件名称:{} 错误信息:{}".format(component_name, ", ".join(reasons)))
                 # 如果检查失败，增加尝试次数并重试
                 attempts += 1
                 if attempts <= max_retries:
-                    print("组件名称:{} 将重试，当前尝试次数:{}".format(component, attempts))
+                    print("组件名称:{} 将重试，当前尝试次数:{}".format(component_name, attempts))
                 continue
             # 如果检查通过，则退出循环
             break
         except Exception as e:
-            error_data.append({"Component Name": component, "Error Message": str(e)})
-            print("组件名称:{} 错误信息:{}".format(component, str(e)))
+            error_data.append({"Component Name": component_name, "Error Message": str(e)})
+            print("组件名称:{} 错误信息:{}".format(component_name, str(e)))
             # 如果发生异常，增加尝试次数并重试
             attempts += 1
             if attempts <= max_retries:
-                print("组件名称:{} 将重试，当前尝试次数:{}".format(component, attempts))
+                print("组件名称:{} 将重试，当前尝试次数:{}".format(component_name, attempts))
             continue
         
         finally:
