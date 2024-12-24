@@ -247,6 +247,20 @@ class AgentRuntime(BaseModel):
         """
         return self.component.run(message=message, stream=stream, **args)
 
+    def chat_tool_eval(self, **kwargs) -> Message:
+        """
+        执行一次对话
+
+        Args:
+            message (Message): 该次对话用户输入的 Message
+            stream (bool): 是否流式请求
+            **args: 其他参数，会被透传到 component
+
+        Returns:
+            Message(Message): 返回的 Message
+        """
+        return self.component.tool_eval(**kwargs)
+
     def create_flask_app(self, url_rule="/chat"):
         """ 
         创建 Flask 应用，主要用于 Gunicorn 这样的 WSGI 服务器来运行服务。
@@ -517,6 +531,130 @@ class AgentRuntime(BaseModel):
                 if token := part or "":
                     await msg.stream_token(token)
             await msg.update()
+            self.user_session._post_append()
+
+        # start chainlit service
+        if os.getenv('APPBUILDER_RUN_CHAINLIT') == '1':
+            pass
+        else:
+            os.environ['APPBUILDER_RUN_CHAINLIT'] = '1'
+            target = sys.argv[0]
+            runner = CliRunner()
+            runner.invoke(
+                chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
+
+    async def display_elements(self, parent_step, iter):
+        """
+        显示元素
+        """
+        try:
+            import chainlit as cl
+            import chainlit.cli
+        except ImportError:
+            raise ImportError("chainlit module is not installed. Please install it using 'pip install "
+                              "chainlit~=1.0.200'.")
+            
+        iter_type = iter.content[0].type
+        iter_out_step = cl.Step(
+            name="stream_out",
+            parent_id=parent_step.id,
+            type="text",
+        )
+        if iter_type == "text":
+            text = iter.content[0].text.info
+            logging.info(f"text={text}")
+            iter_out_step.input = text
+            # elements = [cl.Text(content=text, display="inline")]
+        elif iter_type == "image":
+            image_name = iter.content[0].text.filename
+            image_url = iter.content[0].text.url
+            image = iter.content[0].text.byte
+            iter_out_step.input = image_name+"\n下载链接："+image_url
+            # elements = [cl.Image(url=image_url, name=image_name, display="inline")]
+        elif iter_type == "code":
+            code = iter.content[0].text.code
+            iter_out_step.input = code
+            # elements = [cl.Text(content=code, display="inline")]
+        elif iter_type == "files":
+            filename = iter.content[0].text.filename
+            url = iter.content[0].text.url
+            iter_out_step.input = filename+"\n下载链接："+image_url
+            # elements = [cl.File(url=url, name=filename, display="inline")]
+        elif iter_type == "urls":
+            url = iter.content[0].text.url
+            iter_out_step.input = url
+            # elements = [cl.Text(content=url, display="inline")]
+        else:
+            raise ValueError(f"Unsupported iter type: {iter_type}")
+        # await cl.Message(content="", elements=elements).send()
+        await iter_out_step.send()
+    
+    def chainlit_component(self, host='0.0.0.0', port=8092):
+        """
+        将 component 服务化，提供 chainlit demo 页面
+
+        Args:
+            host (str): 服务 host
+            port (int): 服务 port
+
+        Returns:
+            None
+        """
+        # lazy import chainlit
+        try:
+            import chainlit as cl
+            import chainlit.cli
+        except ImportError:
+            raise ImportError("chainlit module is not installed. Please install it using 'pip install "
+                              "chainlit~=1.0.200'.")
+        import click
+        from click.testing import CliRunner
+
+        self.prepare_chainlit_readme()
+
+        @cl.on_message  # this function will be called every time a user inputs a message in the UI
+        async def main(message: cl.Message):
+            session_id = cl.user_session.get("id")
+            request_id = str(uuid.uuid4())
+            init_context(session_id=session_id, request_id=request_id)
+
+            query = message.content
+            app_id = "818d7f8e-f047-4cec-a754-211dbfbe6733"
+            app_client = appbuilder.AppBuilderClient(app_id)
+            conversation_id = app_client.create_conversation()
+            tools = [
+                {
+                    "type": "function",
+                    "function": self.component.manifests[0]
+                }
+            ]
+            message_2 = app_client.run(
+                conversation_id=conversation_id,
+                query=query,
+                tools=tools
+            )
+            
+            think_step = cl.Step(name="思考过程", type="text")
+            # think_step.input = "思考过程: \n" + message_2.content.events[-1].model_dump_json(indent=4)
+            think_step.output = (message_2.content.events[-1].detail)["text"]\
+                ["function_call"]["thought"]
+            think_step.output += "接下来开始执行工具。"
+            await think_step.send()
+
+            tool_call_step = cl.Step(name="工具执行", type="tool")
+            arguments = message_2.content.events[-1].tool_calls[0].function.arguments
+            str_arguments = json.dumps(arguments, ensure_ascii=False)
+            logging.info("arguments: {}".format(str_arguments))
+            stream_message = self.chat_tool_eval(**arguments)
+            tool_call_step.output = self.component.name + "工具执行完成。"
+            await tool_call_step.send()
+
+            stream_output_step = cl.Step(name="流式输出结果", type="tool")
+            await stream_output_step.send()
+            for part in stream_message:
+                logging.info("part: {}".format(part.content[0].type))
+                if token := part or "":
+                    await self.display_elements(stream_output_step, token)
             self.user_session._post_append()
 
         # start chainlit service
