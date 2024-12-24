@@ -82,6 +82,9 @@ def get_component_white_list():
 def get_components(components_list, import_prefix, skip_components):
     components = {}
     for component in components_list:
+        if not isinstance(component, str):
+            component = component.__name__
+        
         if component in skip_components:
             continue
 
