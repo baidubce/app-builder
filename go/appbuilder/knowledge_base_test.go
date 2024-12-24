@@ -16,6 +16,7 @@ package appbuilder
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -1468,6 +1469,97 @@ func TestChunk(t *testing.T) {
 		t.Fatalf("delete chunk failed: %v", err)
 	}
 	log("Chunk deleted with ID: %s", chunkID)
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		fmt.Println(logBuffer.String())
+	} else { // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+	}
+}
+
+func TestQueryKnowledgeBase(t *testing.T) {
+	t.Parallel() // 并发运行
+	var logBuffer bytes.Buffer
+
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+
+	log := func(format string, args ...any) {
+		fmt.Fprintf(&logBuffer, format+"\n", args...)
+	}
+
+	config, err := NewSDKConfig("", os.Getenv(SecretKey))
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	client, err := NewKnowledgeBase(config)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new Knowledge base instance failed")
+	}
+
+	jsonStr := `
+{
+    "type": "fulltext",
+    "query": "民法典第三条",
+    "knowledgebase_ids": [
+        "70c6375a-1595-41f2-9a3b-e81bc9060b7f"
+    ],
+    "metadata_filters": {
+        "filters": [
+        ],
+        "condition": "or"
+    },
+    "pipeline_config": {
+        "id": "pipeline_001",
+        "pipeline": [
+            {
+                "name": "step1",
+                "type": "elastic_search",
+                "threshold": 0.1,
+                "top": 400,
+                "pre_ranking": {
+                    "bm25_weight": 0.25,
+                    "vec_weight": 0.75,
+                    "bm25_b": 0.75,
+                    "bm25_k1": 1.5,
+                    "bm25_max_score": 50
+                }
+            },
+            {
+                "name": "step2",
+                "type": "ranking",
+                "inputs": ["step1"],
+                "model_name": "ranker-v1",
+                "top": 20
+            }
+        ]
+    },
+    "top": 5,
+    "skip": 0
+}`
+
+	var request QueryKnowledgeBaseRequest
+	err = json.Unmarshal([]byte(jsonStr), &request)
+	if err != nil {
+		fmt.Println("unmarshal tool error:", err)
+	}
+
+	queryKnowledgeBaseResponse, err := client.QueryKnowledgeBase(request)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("create chunk failed: %v", err)
+	}
+	chunkID := queryKnowledgeBaseResponse.Chunks[0].ChunkID
+	log("query got chunk ID: %s", chunkID)
+	if len(chunkID) == 0 {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("query knowledge base failed: %v", err)
+	}
 
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {

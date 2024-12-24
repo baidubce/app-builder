@@ -245,3 +245,89 @@ type DescribeChunksResponse struct {
 	NextMarker  string                  `json:"nextMarker"`
 	MaxKeys     int                     `json:"maxKeys"`
 }
+
+type MetadataFilter struct {
+	Operator string `json:"operator"`
+	Field    string `json:"field,omitempty"`
+	Value    any    `json:"value"`
+}
+
+type MetadataFilters struct {
+	Filters   []MetadataFilter `json:"filters"`
+	Condition string           `json:"condition"`
+}
+
+type PreRankingConfig struct {
+	Bm25Weight   float64 `json:"bm25_weight"`
+	VecWeight    float64 `json:"vec_weight"`
+	Bm25B        float64 `json:"bm25_b"`
+	Bm25K1       float64 `json:"bm25_k1"`
+	Bm25MaxScore float64 `json:"bm25_max_score"`
+}
+
+type ElasticSearchRetrieveConfig struct {
+	Name      string  `json:"name"`
+	Type      string  `json:"type"`
+	Threshold float64 `json:"threshold"`
+	Top       int     `json:"top"`
+}
+
+type RankingConfig struct {
+	Name      string   `json:"name"`
+	Type      string   `json:"type"`
+	Inputs    []string `json:"inputs"`
+	ModelName string   `json:"model_name"`
+	Top       int      `json:"top"`
+}
+
+type QueryPipelineConfig struct {
+	ID       string `json:"id"`
+	Pipeline []any  `json:"pipeline"`
+}
+
+type QueryKnowledgeBaseRequest struct {
+	Query            string              `json:"query"`
+	KnowledgebaseIDs []string            `json:"knowledgebase_ids"`
+	Type             *string             `json:"type,omitempty"`
+	Top              int                 `json:"top,omitempty"`
+	Skip             int                 `json:"skip,omitempty"`
+	MetadataFileters MetadataFilters     `json:"metadata_fileters,omitempty"`
+	PipelineConfig   QueryPipelineConfig `json:"pipeline_config,omitempty"`
+}
+
+type RowLine struct {
+	Key            string `json:"key"`
+	Index          int    `json:"index"`
+	Value          string `json:"value"`
+	EnableIndexing bool   `json:"enable_indexing"`
+	EnableResponse bool   `json:"enable_response"`
+}
+
+type ChunkLocation struct {
+	PageNum []int   `json:"paget_num"`
+	Box     [][]int `json:"box"`
+}
+
+type Chunk struct {
+	ChunkID         string         `json:"chunk_id"`
+	KnowledgebaseID string         `json:"knowledgebase_id"`
+	DocumentID      string         `json:"document_id"`
+	DocumentName    string         `json:"document_name"`
+	Meta            map[string]any `json:"meta"`
+	Type            string         `json:"type"`
+	Content         string         `json:"content"`
+	CreateTime      string         `json:"create_time"`
+	UpdateTime      string         `json:"update_time"`
+	RetrievalScore  float64        `json:"retrieval_score"`
+	RankScore       float64        `json:"rank_score"`
+	Locations       ChunkLocation  `json:"locations"`
+	Children        []Chunk        `json:"children"`
+}
+
+type QueryKnowledgeBaseResponse struct {
+	RequestId  string  `json:"requestId"`
+	Code       string  `json:"code"`
+	Message    string  `json:"message"`
+	Chunks     []Chunk `json:"chunks"`
+	TotalCount int     `json:"total_count"`
+}

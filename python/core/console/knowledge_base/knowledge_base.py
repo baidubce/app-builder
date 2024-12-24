@@ -15,9 +15,6 @@
 import os
 import json
 import uuid
-from pydantic import BaseModel
-from pydantic import Field
-from typing import Union
 from typing import Optional
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.console.knowledge_base import data_class
@@ -897,3 +894,46 @@ class KnowledgeBase(Component):
                 doc_list.extend(response_per_time.data)
 
         return doc_list
+
+    def query_knowledge_base(
+        self,
+        query: str,
+        knowledgebase_ids: list[str],
+        type: str = None,
+        metadata_filters: data_class.MetadataFilter = None,
+        pipeline_config: data_class.QueryPipelineConfig = None,
+        top: int = None,
+        skip: int = None,
+    ) -> data_class.QueryKnowledgeBaseResponse:
+        """
+        检索知识库
+
+        Args:
+            request (data_class.QueryKnowledgeBaseRequest): 检索知识库的请求对象
+
+        Returns:
+            data_class.QueryKnowledgeBaseResponse: 检索知识库的响应对象
+        """
+        headers = self.http_client.auth_header_v2()
+        headers["content-type"] = "application/json"
+
+        url = self.http_client.service_url_v2("/knowledgebases/query")
+        request = data_class.QueryKnowledgeBaseRequest(
+            query=query,
+            knowledgebase_ids=knowledgebase_ids,
+            type=type,
+            metadata_filters=metadata_filters,
+            pipeline_config=pipeline_config,
+            top=top,
+            skip=skip,
+        )
+        response = self.http_client.session.post(
+            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+        )
+
+        self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
+        data = response.json()
+
+        resp = data_class.QueryKnowledgeBaseResponse(**data)
+        return resp
