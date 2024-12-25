@@ -24,6 +24,7 @@
 
 ### 端到端应用
 - [Agent应用](/cookbooks/end2end_application/agent/appbuilder_client.ipynb)
+- [Agent应用-工作流Agent](/cookbooks/end2end_application/agent/chatflow.ipynb)
 - [RAG应用-简历筛选小助手](/cookbooks/end2end_application/rag/rag.ipynb)
 - [RAG应用-问答助手](/cookbooks/end2end_application/rag/console_rag.ipynb)
 - [RAG应用-企业问答系统-离线知识生产](/cookbooks/end2end_application/rag/qa_system_1_dataset.ipynb)
