@@ -556,7 +556,7 @@ class AgentRuntime(BaseModel):
             
         iter_type = iter.content[0].type
         iter_out_step = cl.Step(
-            name="stream_out",
+            name="iter结果",
             parent_id=parent_step.id,
             type="text",
         )
@@ -564,29 +564,23 @@ class AgentRuntime(BaseModel):
             text = iter.content[0].text.info
             logging.info(f"text={text}")
             iter_out_step.input = text
-            # elements = [cl.Text(content=text, display="inline")]
         elif iter_type == "image":
             image_name = iter.content[0].text.filename
             image_url = iter.content[0].text.url
             image = iter.content[0].text.byte
             iter_out_step.input = image_name+"\n下载链接："+image_url
-            # elements = [cl.Image(url=image_url, name=image_name, display="inline")]
         elif iter_type == "code":
             code = iter.content[0].text.code
             iter_out_step.input = code
-            # elements = [cl.Text(content=code, display="inline")]
         elif iter_type == "files":
             filename = iter.content[0].text.filename
             url = iter.content[0].text.url
             iter_out_step.input = filename+"\n下载链接："+image_url
-            # elements = [cl.File(url=url, name=filename, display="inline")]
         elif iter_type == "urls":
             url = iter.content[0].text.url
             iter_out_step.input = url
-            # elements = [cl.Text(content=url, display="inline")]
         else:
             raise ValueError(f"Unsupported iter type: {iter_type}")
-        # await cl.Message(content="", elements=elements).send()
         await iter_out_step.send()
     
     def chainlit_component(self, host='0.0.0.0', port=8092):
