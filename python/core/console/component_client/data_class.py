@@ -15,6 +15,7 @@
 from pydantic import BaseModel
 from pydantic import Field
 from typing import Optional
+from appbuilder.core.component import ComponentOutput, Content
 
 
 class RunRequest(BaseModel):
@@ -55,82 +56,51 @@ class RunRequest(BaseModel):
     parameters: Parameters = Field(..., description="调用传参")
 
 
+class Content(Content):
+    """ ContentWithEvent """
+
+    class Event(BaseModel):
+        """ Event"""
+        id: str = Field(..., description="事件id")
+        status: str = Field(...,
+                            description="事件状态，枚举：preparing、running、error、done")
+        name: str = Field(
+            ...,
+            description="事件名，相当于调用的深度，深度与前端的渲染逻辑有关系",
+        )
+        created_time: str = Field(
+            ...,
+            description="当前event发送时间",
+        )
+        error_code: str = Field(
+            None,
+            description="错误码",
+        )
+        error_message: str = Field(
+            None,
+            description="错误信息",
+        )
+
+    event: Event = Field(..., description="事件信息")
+
+
+class ComponentOutput(ComponentOutput):
+    content: list[Content] = Field(
+        None,
+        description="当前组件返回内容的主要payload，List[ContentWithEvent]，每个 Content 包括了当前 event 的一个元素",
+    )
+
+
 class RunResponse(BaseModel):
     """ Component Run方法响应体 """
-    class Data(BaseModel):
+    class Data(ComponentOutput):
         """ Data """
-
-        class Content(BaseModel):
-            """ Content """
-
-            class Usage(BaseModel):
-                """ Usage"""
-                prompt_tokens: int = Field(..., description="prompt token消耗")
-                completion_tokens: int = Field(..., description="问答返回消耗")
-                total_tokens: int = Field(..., description="总token消耗")
-                nodes: list[dict] = Field(None, description="工作流节点消耗情况")
-
-            class Metrics(BaseModel):
-                """ Metrics"""
-                begin_time: str = Field(
-                    ..., description="请求开始时间，示例：”2000-01-01T10:00:00.560430“"
-                )
-                duration: float = Field(
-                    ..., description="从请求到当前event总耗时，保留3位有效数字，单位秒s"
-                )
-
-            class Event(BaseModel):
-                """ Event"""
-                id: str = Field(..., description="事件id")
-                status: str = Field(...,
-                                    description="事件状态，枚举：preparing、running、error、done")
-                name: str = Field(
-                    ...,
-                    description="事件名，相当于调用的深度，深度与前端的渲染逻辑有关系",
-                )
-                created_time: str = Field(
-                    ...,
-                    description="当前event发送时间",
-                )
-                error_code: str = Field(
-                    None,
-                    description="错误码",
-                )
-                error_message: str = Field(
-                    None,
-                    description="错误信息",
-                )
-
-            type: str = Field(
-                ...,
-                description="代表event 类型， text、json、code、files、urls、oral_text、references、image、chart、audio、function_call",
-            )
-            name: str = Field(..., description="当前内容名称")
-            text: dict = Field(
-                ...,
-                description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定",
-            )
-            visible_scope: str = Field(
-                ...,
-                description="为了界面展示明确的说明字段，枚举: all、llm、user、空",
-            )
-            usage: Usage = Field(
-                None, description="大模型的token使用情况"
-            )
-            metrics: Metrics = Field(..., description="耗时信息")
-            event: Event = Field(..., description="事件信息")
-
         conversation_id: str = Field(..., description="对话id")
         message_id: str = Field(..., description="消息id")
         trace_id: str = Field(..., description="追踪id")
         user_id: str = Field(..., description="开发者UUID（计费依赖）")
         end_user_id: str = Field(None, description="终端用户id")
         is_completion: bool = Field(..., description="是否完成")
-        role: str = Field(..., description="当前消息来源，默认tool")
-        content: list[Content] = Field(
-            None,
-            description="当前组件返回内容的主要payload，List[Content]，每个 Content 包括了当前 event 的一个元素，具体见下文Content对象定义",
-        )
 
     request_id: str = Field(..., description="请求id")
     code: str = Field(None, description="响应码")

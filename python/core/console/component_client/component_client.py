@@ -13,15 +13,18 @@
 # limitations under the License.
 
 """组件"""
-from appbuilder.core.component import Component
+import json
+from appbuilder.core.component import Component, Message
 from appbuilder.core.console.component_client import data_class
+from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import client_tool_trace
+from appbuilder.utils.sse_util import SSEClient
 
 
 class ComponentClient(Component):
     def __init__(self, **kwargs):
-        r"""初始化智能体应用
+        r"""初始化
 
         Returns:
             response (obj: `ComponentClient`): 组件实例
@@ -72,7 +75,28 @@ class ComponentClient(Component):
             json=request.model_dump(exclude_none=True, by_alias=True),
             timeout=None,
         )
-        self.http_client.check_response_header(response)
-        data = response.json()
-        resp = data_class.RunResponse(**data)
-        return resp
+        request_id = self.http_client.check_response_header(response)
+
+        if stream:
+            client = SSEClient(response)
+            return Message(content=self._iterate_events(request_id, client.events()))
+        else:
+            data = response.json()
+            resp = data_class.RunResponse(**data)
+            return Message(content=resp.data)
+
+    @staticmethod
+    def _iterate_events(request_id, events):
+        for event in events:
+            try:
+                data = event.data
+                if len(data) == 0:
+                    data = event.raw
+                data = json.loads(data)
+            except json.JSONDecodeError as e:
+                raise AppBuilderServerException(
+                    request_id=request_id,
+                    message="json decoder failed {}".format(str(e)),
+                )
+            resp = data_class.RunResponse(**data)
+            yield resp.data
