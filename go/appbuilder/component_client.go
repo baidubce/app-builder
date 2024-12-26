@@ -15,8 +15,13 @@
 package appbuilder
 
 import (
+	"bufio"
+	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -34,4 +39,49 @@ func NewComponentClient(config *SDKConfig) (*ComponentClient, error) {
 		client = &http.Client{Timeout: 300 * time.Second}
 	}
 	return &ComponentClient{sdkConfig: config, client: client}, nil
+}
+
+func (t *ComponentClient) Run(component, version, action string, req ComponentRunRequest) (ComponentClientIterator, error) {
+	request := http.Request{}
+
+	urlSuffix := fmt.Sprintf("/components/%s", component)
+	if version != "" {
+		urlSuffix += fmt.Sprintf("/version/%s", version)
+	}
+	if action != "" {
+		if strings.Contains(urlSuffix, "?") {
+			urlSuffix += fmt.Sprintf("&action=%s", action)
+		} else {
+			urlSuffix += fmt.Sprintf("?action=%s", action)
+		}
+	}
+
+	serviceURL, err := t.sdkConfig.ServiceURLV2(urlSuffix)
+	if err != nil {
+		return nil, err
+	}
+
+	header := t.sdkConfig.AuthHeaderV2()
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = NopCloser(bytes.NewReader(data))
+	request.ContentLength = int64(len(data)) // 手动设置长度
+
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return nil, err
+	}
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return nil, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	r := NewSSEReader(1024*1024, bufio.NewReader(resp.Body))
+	if req.Stream {
+		return &ComponentClientStreamIterator{requestID: requestID, r: r, body: resp.Body}, nil
+	}
+	return &ComponentClientOnceIterator{body: resp.Body}, nil
 }

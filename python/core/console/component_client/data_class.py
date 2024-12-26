@@ -20,7 +20,7 @@ from appbuilder.core.component import ComponentOutput, Content
 
 class RunRequest(BaseModel):
     """ Component Run方法请求体 """
-    class Parameters(BaseModel):
+    class Parameters(BaseModel, extra="allow"):
         """ Parameters"""
         class Message(BaseModel):
             """ Message"""
@@ -32,7 +32,7 @@ class RunRequest(BaseModel):
         )
         sys_file_urls: Optional[dict] = Field(
             None,
-            description='{"xxx.pdf": "http:///"}，画布中开始节点的系统参数fileUrls', alias="sys_file_urls"
+            description='{"xxx.pdf": "http:///"}，画布中开始节点的系统参数fileUrls', alias="_sys_file_urls"
         )
         sys_conversation_id: Optional[str] = Field(
             None,
@@ -45,18 +45,11 @@ class RunRequest(BaseModel):
             None, description="聊天历史记录", alias="_sys_chat_history"
         )
 
-        class Config:
-            """
-            Config Class
-            """
-
-            extra = "allow"
-
     stream: bool = Field(default=False, description='是否流式返回')
     parameters: Parameters = Field(..., description="调用传参")
 
 
-class Content(Content):
+class ContentWithEvent(Content):
     """ ContentWithEvent """
 
     class Event(BaseModel):
@@ -84,25 +77,22 @@ class Content(Content):
     event: Event = Field(..., description="事件信息")
 
 
-class ComponentOutput(ComponentOutput):
-    content: list[Content] = Field(
-        None,
-        description="当前组件返回内容的主要payload，List[ContentWithEvent]，每个 Content 包括了当前 event 的一个元素",
-    )
-
-
 class RunResponse(BaseModel):
     """ Component Run方法响应体 """
-    class Data(ComponentOutput):
-        """ Data """
+    class RunOutput(ComponentOutput):
+        """ RunOutput """
         conversation_id: str = Field(..., description="对话id")
         message_id: str = Field(..., description="消息id")
         trace_id: str = Field(..., description="追踪id")
         user_id: str = Field(..., description="开发者UUID（计费依赖）")
         end_user_id: str = Field(None, description="终端用户id")
         is_completion: bool = Field(..., description="是否完成")
+        content: list[ContentWithEvent] = Field(
+            None,
+            description="当前组件返回内容的主要payload，List[ContentWithEvent]，每个 Content 包括了当前 event 的一个元素",
+        )
 
     request_id: str = Field(..., description="请求id")
     code: str = Field(None, description="响应码")
     message: str = Field(None, description="响应消息")
-    data: Data = Field(..., description="响应数据")
+    data: RunOutput = Field(..., description="响应数据")
