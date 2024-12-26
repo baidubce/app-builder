@@ -29,6 +29,7 @@ from .asr.component import ASR
 from .object_recognize.component import ObjectRecognition
 from .llms.similar_question.component import SimilarQuestion
 from .llms.oral_query_generation.component import OralQueryGeneration
+from .plant_recognize.component import PlantRecognition
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
@@ -48,4 +49,5 @@ __V2_COMPONENTS__ = [
     "ObjectRecognition",
     "SimilarQuestion",
     "OralQueryGeneration",
+    "PlantRecognition"
 ] # NOQA
