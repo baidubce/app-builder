@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 """Base client for interact with backend server"""
 
 import os
@@ -260,7 +259,7 @@ class AsyncHTTPClient(HTTPClient):
         """
         status_code = response.status
         if status_code == requests.codes.ok:
-            await logger.debug("request_id={} , http status code is {} , response text is {}".format(
+            logger.debug("request_id={} , http status code is {} , response text is {}".format(
                 await __class__.response_request_id(response), status_code, await response.text()
             ))
             return
@@ -268,22 +267,22 @@ class AsyncHTTPClient(HTTPClient):
             await __class__.response_request_id(response), status_code, await response.text()
         )
         if status_code == requests.codes.bad_request:
-            await logger.error(message)
+            logger.error(message)
             raise BadRequestException(message)
         elif status_code == requests.codes.forbidden:
-            await logger.error(message)
+            logger.error(message)
             raise ForbiddenException(message)
         elif status_code == requests.codes.not_found:
-            await logger.error(message)
+            logger.error(message)
             raise NotFoundException(message)
         elif status_code == requests.codes.precondition_required:
-            await logger.error(message)
+            logger.error(message)
             raise PreconditionFailedException(message)
         elif status_code == requests.codes.internal_server_error:
-            await logger.error(message)
+            logger.error(message)
             raise InternalServerErrorException(message)
         else:
-            await logger.error(message)
+            logger.error(message)
             raise BaseRPCException(message)
 
     @staticmethod
