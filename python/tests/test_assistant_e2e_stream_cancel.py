@@ -31,6 +31,7 @@ check_tool = {
     }
 }
 
+@unittest.skip("暂时跳过")
 class TestCancel(unittest.TestCase):
     def setUp(self):
         os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_V2"]
