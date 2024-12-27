@@ -115,8 +115,8 @@ class HTTPClient:
         """
         status_code = response.status_code
         if status_code == requests.codes.ok:
-            logger.debug("request_id={} , http status code is {} , response data is {}".format(
-                __class__.response_request_id(response), status_code, response.json()
+            logger.debug("request_id={} , http status code is {} , response text is {}".format(
+                __class__.response_request_id(response), status_code, response.text
             ))
             return
         message = "request_id={} , http status code is {}, body is {}".format(
@@ -260,8 +260,8 @@ class AsyncHTTPClient(HTTPClient):
         """
         status_code = response.status
         if status_code == requests.codes.ok:
-            logger.debug("request_id={} , http status code is {} , response data is {}".format(
-                await __class__.response_request_id(response), status_code, await response.json()
+            logger.debug("request_id={} , http status code is {} , response text is {}".format(
+                await __class__.response_request_id(response), status_code, await response.text()
             ))
             return
         message = "request_id={} , http status code is {}, body is {}".format(
