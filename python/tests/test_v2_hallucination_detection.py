@@ -51,7 +51,7 @@ class TestHallucinationDetectionComponent(unittest.TestCase):
             无返回值，方法中执行了环境变量的赋值操作。
         """
 
-        self.hallucination_detection = HallucinationDetection()
+        self.hallucination_detection = HallucinationDetection(model="ERNIE-3.5-8K")
     
     def test_run_with_default_params(self):
         """测试 run 方法使用默认参数
