@@ -432,6 +432,9 @@ class CompletionBaseComponent(Component):
         url = self.http_client.service_url(completion_url, self.base_url)
         response = self.http_client.session.post(url, json=request.params, headers=headers, timeout=timeout,
                                                  stream=stream)
+        
+        return self.gene_response(response, stream)
+
 
     @staticmethod
     def check_service_error(data: dict):
