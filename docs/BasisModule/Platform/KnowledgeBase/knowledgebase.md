@@ -300,10 +300,10 @@ class DocumentChoices(BaseModel):
 class DocumentChunker(BaseModel):
     choices: list[str] = Field(..., description="使用哪些chunker方法 (separator | pattern | onePage)，separator：自定义切片—标识符，pattern：自定义切片—标识符中选择正则表达式，onePage：整文件切片")
     prependInfo: list[str] = Field(
-        ...,
+        None,
         description="chunker关联元数据，可选值为title (增加标题), filename(增加文件名)",
     )
-    separator: Optional[DocumentSeparator] = Field(..., description="分隔符配置")
+    separator: Optional[DocumentSeparator] = Field(None, description="分隔符配置")
     pattern: Optional[DocumentPattern] = Field(None, description="正则表达式")
 
 class DocumentSeparator(BaseModel):
