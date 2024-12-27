@@ -23,6 +23,7 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 from aiohttp import ClientResponse
 
+from appbuilder.utils.logger_util import logger
 from appbuilder import get_default_header
 
 from appbuilder.core._exception import *
@@ -114,21 +115,30 @@ class HTTPClient:
         """
         status_code = response.status_code
         if status_code == requests.codes.ok:
+            logger.debug("request_id={} , http status code is {} , response data is {}".format(
+                __class__.response_request_id(response), status_code, response.json()
+            ))
             return
         message = "request_id={} , http status code is {}, body is {}".format(
             __class__.response_request_id(response), status_code, response.text
         )
         if status_code == requests.codes.bad_request:
+            logger.error(message)
             raise BadRequestException(message)
         elif status_code == requests.codes.forbidden:
+            logger.error(message)
             raise ForbiddenException(message)
         elif status_code == requests.codes.not_found:
+            logger.error(message)
             raise NotFoundException(message)
         elif status_code == requests.codes.precondition_required:
+            logger.error(message)
             raise PreconditionFailedException(message)
         elif status_code == requests.codes.internal_server_error:
+            logger.error(message)
             raise InternalServerErrorException(message)
         else:
+            logger.error(message)
             raise BaseRPCException(message)
 
     def service_url(self, sub_path: str, prefix: str = None):
@@ -250,21 +260,30 @@ class AsyncHTTPClient(HTTPClient):
         """
         status_code = response.status
         if status_code == requests.codes.ok:
+            logger.debug("request_id={} , http status code is {} , response data is {}".format(
+                await __class__.response_request_id(response), status_code, await response.json()
+            ))
             return
         message = "request_id={} , http status code is {}, body is {}".format(
             await __class__.response_request_id(response), status_code, await response.text()
         )
         if status_code == requests.codes.bad_request:
+            logger.error(message)
             raise BadRequestException(message)
         elif status_code == requests.codes.forbidden:
+            logger.error(message)
             raise ForbiddenException(message)
         elif status_code == requests.codes.not_found:
+            logger.error(message)
             raise NotFoundException(message)
         elif status_code == requests.codes.precondition_required:
+            logger.error(message)
             raise PreconditionFailedException(message)
         elif status_code == requests.codes.internal_server_error:
+            logger.error(message)
             raise InternalServerErrorException(message)
         else:
+            logger.error(message)
             raise BaseRPCException(message)
 
     @staticmethod

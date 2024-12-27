@@ -430,20 +430,8 @@ class CompletionBaseComponent(Component):
 
         stream = True if request.response_mode == "streaming" else False
         url = self.http_client.service_url(completion_url, self.base_url)
-        logger.debug(
-            "request url: {}, method: {}, json: {}, headers: {}".format(url,
-                                                                        "POST",
-                                                                        request.params,
-                                                                        headers))
         response = self.http_client.session.post(url, json=request.params, headers=headers, timeout=timeout,
                                                  stream=stream)
-
-        logger.debug(
-            "request url: {}, method: {}, json: {}, headers: {}, response: {}".format(url, "POST",
-                                                                                      request.params,
-                                                                                      headers,
-                                                                                      response))
-        return self.gene_response(response, stream)
 
     @staticmethod
     def check_service_error(data: dict):

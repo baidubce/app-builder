@@ -21,7 +21,6 @@ import os
 import json
 
 from appbuilder.core.component import Component, Message, ComponentArguments
-from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
@@ -125,7 +124,6 @@ class ExtractTableFromDoc(Component):
             "field_before_table_cnt": doc_node_num_before_table
         }
         url = self.http_client.service_url(sub_path="", prefix=self.base_url)
-        # logger.info("request url: {}, headers: {}".format(url, headers))
         headers = self.http_client.auth_header()
         headers["Content-Type"] = "application/json"
         resp = self.http_client.session.post(url=url, data=json.dumps(params), headers=headers)

@@ -329,7 +329,7 @@ class AssistantEventHandler():
                 process_res = self.__stream_event_process__(event)
                 yield process_res
         except Exception as e:
-            logger.info(e)
+            logger.error(e)
 
     def __stream_event_process__(self, event) -> Union[
             thread_type.StreamRunStatus, thread_type.StreamRunMessage, dict]:
