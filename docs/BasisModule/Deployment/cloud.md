@@ -57,7 +57,7 @@ touch sample/component_sample.py
 import appbuilder
 
 component = appbuilder.Playground(prompt_template="{query}", model="ERNIE-Bot")
-agent = appbuilder.AgentRuntime(component=component)
+agent = appbuilder.FlaskRuntime(component=component)
 agent.serve(port=8091)
 ```
 

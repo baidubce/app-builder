@@ -8,13 +8,14 @@ import appbuilder
 from appbuilder.core.component import Component
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder import (
-    AgentRuntime,
+    FlaskRuntime,
+    ChainlitRuntime,
     Message,
     Playground,
     AppBuilderClient
 )
 
-class TestAgentRuntime(unittest.TestCase):
+class TestRuntime(unittest.TestCase):
     def setUp(self):
         """
         设置环境变量。
@@ -34,7 +35,7 @@ class TestAgentRuntime(unittest.TestCase):
             model="ERNIE-3.5-8K",
             lazy_certification=True,
         )
-        agent = appbuilder.AgentRuntime(component=component)
+        agent = appbuilder.FlaskRuntime(component=component)
         app = agent.create_flask_app(url_rule="/chat")
         app.config['TESTING'] = True
         client = app.test_client()
@@ -54,7 +55,7 @@ class TestAgentRuntime(unittest.TestCase):
             model="ERNIE-3.5-8K",
             lazy_certification=True,
         )
-        agent = appbuilder.AgentRuntime(component=component)
+        agent = appbuilder.FlaskRuntime(component=component)
         app = agent.create_flask_app(url_rule="/chat")
         app.config['TESTING'] = True
         client = app.test_client()
@@ -77,7 +78,7 @@ class TestAgentRuntime(unittest.TestCase):
             model="ERNIE-3.5-8K",
             lazy_certification=True,
         )
-        agent = appbuilder.AgentRuntime(component=component)
+        agent = appbuilder.FlaskRuntime(component=component)
         app = agent.create_flask_app(url_rule="/chat")
         app.config['TESTING'] = True
         client = app.test_client()
@@ -105,7 +106,7 @@ class TestAgentRuntime(unittest.TestCase):
             model="ERNIE-3.5-8K",
             lazy_certification=True,
         )
-        agent = appbuilder.AgentRuntime(component=component)
+        agent = appbuilder.FlaskRuntime(component=component)
         app = agent.create_flask_app(url_rule="/chat")
         app.config['TESTING'] = True
         client = app.test_client()
@@ -128,13 +129,14 @@ class TestAgentRuntime(unittest.TestCase):
             prompt_template="{query}",
             model="ERNIE-3.5-8K"
         )
-        agent = AgentRuntime(component=component)
+        agent = FlaskRuntime(component=component)
+        agent = ChainlitRuntime(component=component)
 
     def test_init_with_invalid_component(self):
         """ 测试在component非法时运行 """
         component = "invalid_component"
         with self.assertRaises(pydantic.ValidationError):
-            agent = AgentRuntime(component=component)
+            agent = FlaskRuntime(component=component)
 
     def test_chat_with_valid_message_and_blocking(self):
         """ 测试在消息有效时处理 """
@@ -142,27 +144,38 @@ class TestAgentRuntime(unittest.TestCase):
             prompt_template="{query}",
             model="ERNIE-3.5-8K"
         )
-        agent = appbuilder.AgentRuntime(component=component)
+        agent = appbuilder.FlaskRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
         answer = agent.chat(message, stream=False)
+        agent2 = appbuilder.ChainlitRuntime(component=component)
+        message = appbuilder.Message({"query": "你好"})
+        answer2 = agent2.chat(message, stream=False)
         self.assertIs(type(answer.content), str)
-
+        self.assertIs(type(answer2.content), str)
+        
     def test_chat_with_valid_message_and_streaming(self):
         """ 测试在消息有效时处理 """
         component = Playground(
             prompt_template="{query}",
             model="ERNIE-3.5-8K"
         )
-        agent = AgentRuntime(component=component)
+        agent = FlaskRuntime(component=component)
         message = Message({"query": "你好"})
         answer = agent.chat(message, stream=True)
         for it in answer.content:
             self.assertIs(type(it), str)
 
+        agent2 = ChainlitRuntime(component=component)
+        message = Message({"query": "你好"})
+        answer2 = agent2.chat(message, stream=True)
+        for it in answer2.content:
+            self.assertIs(type(it), str)
+        
+
     def test_chainlit_agent_component_error(self):
         """ 测试chainlit agent组件错误 """
         component = Component()
-        agent = AgentRuntime(component=component)
+        agent = ChainlitRuntime(component=component)
         subprocess.check_call(
             [sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"]
         )
@@ -175,7 +188,7 @@ class TestAgentRuntime(unittest.TestCase):
             agent.chainlit_agent()
         os.environ["APPBUILDER_RUN_CHAINLIT"] = "1"
         agent_builder = AppBuilderClient(self.app_id)
-        agent = AgentRuntime(component=agent_builder)
+        agent = ChainlitRuntime(component=agent_builder)
         agent.chainlit_agent()
 
 

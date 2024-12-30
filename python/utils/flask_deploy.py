@@ -57,7 +57,7 @@ class FlaskRuntime(object):
             model="eb-4"
         )
         user_session_config = "sqlite:///foo.db"
-        agent = appbuilder.AgentRuntime(
+        agent = appbuilder.FlaskRuntime(
             component=component, user_session_config=user_session_config)
         agent.serve(debug=False, port=8091)
 
@@ -79,7 +79,7 @@ class FlaskRuntime(object):
         import sys
         from appbuilder.core.component import Component
         from appbuilder import (
-            AgentRuntime, UserSession, Message, QueryRewrite, Playground,
+            FlaskRuntime, UserSession, Message, QueryRewrite, Playground,
         )
 
         os.environ["APPBUILDER_TOKEN"] = '...'
@@ -115,7 +115,7 @@ class FlaskRuntime(object):
                 }) 
                 return answer
 
-        agent = AgentRuntime(component=PlaygroundWithHistory())
+        agent = FlaskRuntime(component=PlaygroundWithHistory())
         agent.chainlit_demo(port=8091)
 
     Session 信息查看 : 查看本地user_session.db数据库内部信息，下面是一个例子

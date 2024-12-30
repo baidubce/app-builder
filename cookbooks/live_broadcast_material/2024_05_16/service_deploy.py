@@ -21,5 +21,5 @@ component = appbuilder.Playground(
     model="ERNIE-Bot"
 )
 
-agent = appbuilder.AgentRuntime(component=component)
+agent = appbuilder.FlaskRuntime(component=component)
 agent.serve(port=8091)

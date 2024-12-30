@@ -39,7 +39,7 @@ class ChainlitRuntime(object):
             prompt_template="{query}",
             model="eb-4"
         )
-        agent = appbuilder.AgentRuntime(component=component)
+        agent = appbuilder.ChainlitRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
         print(agent.chat(message, stream=False))
 
@@ -54,7 +54,7 @@ class ChainlitRuntime(object):
             prompt_template="{query}",
             model="eb-4"
         )
-        agent = appbuilder.AgentRuntime(component=component)
+        agent = appbuilder.ChainlitRuntime(component=component)
         agent.chainlit_demo(port=8091)
 
     Session 数据管理 : 除去上述简单应用外，还支持 Session 数据管理，下面是一个例子
@@ -65,7 +65,7 @@ class ChainlitRuntime(object):
         import sys
         from appbuilder.core.component import Component
         from appbuilder import (
-            AgentRuntime, UserSession, Message, QueryRewrite, Playground,
+            ChainlitRuntime, UserSession, Message, QueryRewrite, Playground,
         )
 
         os.environ["APPBUILDER_TOKEN"] = '...'
@@ -101,7 +101,7 @@ class ChainlitRuntime(object):
                 }) 
                 return answer
 
-        agent = AgentRuntime(component=PlaygroundWithHistory())
+        agent = ChainlitRuntime(component=PlaygroundWithHistory())
         agent.chainlit_demo(port=8091)
 
     Session 信息查看 : 查看本地user_session.db数据库内部信息，下面是一个例子
