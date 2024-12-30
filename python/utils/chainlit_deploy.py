@@ -13,13 +13,6 @@ from appbuilder.core.context import init_context
 from appbuilder.core.user_session import UserSession
 from appbuilder.core.console.appbuilder_client.data_class import ToolChoice, Action
 
-try:
-    import chainlit as cl
-    import chainlit.cli
-except ImportError:
-    raise ImportError("chainlit module is not installed. Please install it using 'pip install "
-                        "chainlit~=1.0.200'.")
-
 
 class ChainlitRuntime(object):
     """ChainlitRuntime 是对组件和应用调用的chainlit服务化封装，开发者不是必须要用 ChainlitRuntime 才能运行自己的组件服务。
@@ -33,13 +26,14 @@ class ChainlitRuntime(object):
         import os
         import sys
         import appbuilder
+        from appbuilder.utils.chainlit_deploy import ChainlitRuntime
         os.environ["APPBUILDER_TOKEN"] = '...'
 
         component = appbuilder.Playground(
             prompt_template="{query}",
             model="eb-4"
         )
-        agent = appbuilder.ChainlitRuntime(component=component)
+        agent = ChainlitRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
         print(agent.chat(message, stream=False))
 
@@ -48,13 +42,14 @@ class ChainlitRuntime(object):
         import os
         import sys
         import appbuilder
+        from appbuilder.utils.chainlit_deploy import ChainlitRuntime
         os.environ["APPBUILDER_TOKEN"] = '...'
 
         component = appbuilder.Playground(
             prompt_template="{query}",
             model="eb-4"
         )
-        agent = appbuilder.ChainlitRuntime(component=component)
+        agent = ChainlitRuntime(component=component)
         agent.chainlit_demo(port=8091)
 
     Session 数据管理 : 除去上述简单应用外，还支持 Session 数据管理，下面是一个例子
@@ -213,18 +208,7 @@ class ChainlitRuntime(object):
                 shutil.copy(chainlit_readme_path, cwd_path)
                 logger.info("chainlit readme file copied successfully")
         except:
-            logger.error("Failed to copy chainlit.md to current directory")
-
-    def _start_chainlit(self, host, port):
-        # start chainlit service
-        if os.getenv('APPBUILDER_RUN_CHAINLIT') == '1':
-            pass
-        else:
-            os.environ['APPBUILDER_RUN_CHAINLIT'] = '1'
-            target = sys.argv[0]
-            runner = CliRunner()
-            runner.invoke(
-                chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
+            logger.error("Failed to copy chainlit.md to current directory")   
 
     def chainlit_demo(self, host='0.0.0.0', port=8091):
         """
@@ -237,6 +221,12 @@ class ChainlitRuntime(object):
         Returns:
             None
         """
+        try:
+            import chainlit as cl
+            import chainlit.cli
+        except ImportError:
+            raise ImportError("chainlit module is not installed. Please install it using 'pip install "
+                                "chainlit~=1.0.200'.")
         @cl.on_message  # this function will be called every time a user inputs a message in the UI
         async def main(message: cl.Message):
             session_id = cl.user_session.get("id")
@@ -252,7 +242,14 @@ class ChainlitRuntime(object):
             await msg.update()
             self.user_session._post_append()
 
-        self._start_chainlit(host, port)
+        if os.getenv('APPBUILDER_RUN_CHAINLIT') == '1':
+            pass
+        else:
+            os.environ['APPBUILDER_RUN_CHAINLIT'] = '1'
+            target = sys.argv[0]
+            runner = CliRunner()
+            runner.invoke(
+                chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
         
 
     def chainlit_agent(self, host='0.0.0.0', port=8091):
@@ -266,6 +263,12 @@ class ChainlitRuntime(object):
         Returns:
             None
         """
+        try:
+            import chainlit as cl
+            import chainlit.cli
+        except ImportError:
+            raise ImportError("chainlit module is not installed. Please install it using 'pip install "
+                                "chainlit~=1.0.200'.")
         if not isinstance(self.component, appbuilder.AppBuilderClient):
             raise ValueError(
                 "chainlit_agent require component must be an instance of AppBuilderClient")
@@ -343,5 +346,12 @@ class ChainlitRuntime(object):
             await msg.update()
             self.user_session._post_append()
 
-        self._start_chainlit(host, port)
+        if os.getenv('APPBUILDER_RUN_CHAINLIT') == '1':
+            pass
+        else:
+            os.environ['APPBUILDER_RUN_CHAINLIT'] = '1'
+            target = sys.argv[0]
+            runner = CliRunner()
+            runner.invoke(
+                chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
 

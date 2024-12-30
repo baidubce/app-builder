@@ -17,7 +17,7 @@ import unittest
 import random
 
 from appbuilder.core.components.llms.style_writing import StyleWriting
-from appbuilder import FlaskRuntime
+from appbuilder.utils.flask_deploy import FlaskRuntime
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.utils.sse_util import SSEClient

@@ -27,12 +27,14 @@ FlaskRuntime 是对组件调用的服务化封装，开发者不是必须要用 
 ```python
 import os
 import appbuilder
+from appbuilder.utils.flask_deploy import FlaskRuntime
+
 os.environ["APPBUILDER_TOKEN"] = '...'
 component = appbuilder.Playground(
     prompt_template="{query}",
     model="eb-4"
 )
-agent = appbuilder.FlaskRuntime(component=component)
+agent = FlaskRuntime(component=component)
 ```
 
 ### 2、运行Agent服务`FlaskRuntime.chat(message: Message, stream: bool = False, **args) -> Message`
@@ -53,12 +55,14 @@ agent = appbuilder.FlaskRuntime(component=component)
 ```python
 import os
 import appbuilder
+from appbuilder.utils.flask_deploy import FlaskRuntime
+
 os.environ["APPBUILDER_TOKEN"] = '...'
 component = appbuilder.Playground(
     prompt_template="{query}",
     model="eb-4"
 )
-agent = appbuilder.FlaskRuntime(component=component)
+agent = FlaskRuntime(component=component)
 message = appbuilder.Message({"query": "你好"})
 print(agent.chat(message, stream=False))
 ```
@@ -83,13 +87,15 @@ print(agent.chat(message, stream=False))
 ```python
 import os
 import appbuilder
+from appbuilder.utils.flask_deploy import FlaskRuntime
+
 os.environ["APPBUILDER_TOKEN"] = '...'
 component = appbuilder.Playground(
     prompt_template="{query}",
     model="eb-4"
 )
 user_session_config = "sqlite:///foo.db"
-agent = appbuilder.FlaskRuntime(
+agent = FlaskRuntime(
     component=component, user_session_config=user_session_config)
 agent.serve(debug=False, port=8091)
 ```

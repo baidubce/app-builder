@@ -8,12 +8,12 @@ import appbuilder
 from appbuilder.core.component import Component
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder import (
-    FlaskRuntime,
-    ChainlitRuntime,
     Message,
     Playground,
     AppBuilderClient
 )
+from appbuilder.utils.flask_deploy import FlaskRuntime
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
 
 class TestRuntime(unittest.TestCase):
     def setUp(self):
@@ -35,7 +35,7 @@ class TestRuntime(unittest.TestCase):
             model="ERNIE-3.5-8K",
             lazy_certification=True,
         )
-        agent = appbuilder.FlaskRuntime(component=component)
+        agent = FlaskRuntime(component=component)
         app = agent.create_flask_app(url_rule="/chat")
         app.config['TESTING'] = True
         client = app.test_client()
@@ -55,7 +55,7 @@ class TestRuntime(unittest.TestCase):
             model="ERNIE-3.5-8K",
             lazy_certification=True,
         )
-        agent = appbuilder.FlaskRuntime(component=component)
+        agent = FlaskRuntime(component=component)
         app = agent.create_flask_app(url_rule="/chat")
         app.config['TESTING'] = True
         client = app.test_client()
@@ -78,7 +78,7 @@ class TestRuntime(unittest.TestCase):
             model="ERNIE-3.5-8K",
             lazy_certification=True,
         )
-        agent = appbuilder.FlaskRuntime(component=component)
+        agent = FlaskRuntime(component=component)
         app = agent.create_flask_app(url_rule="/chat")
         app.config['TESTING'] = True
         client = app.test_client()
@@ -106,7 +106,7 @@ class TestRuntime(unittest.TestCase):
             model="ERNIE-3.5-8K",
             lazy_certification=True,
         )
-        agent = appbuilder.FlaskRuntime(component=component)
+        agent = FlaskRuntime(component=component)
         app = agent.create_flask_app(url_rule="/chat")
         app.config['TESTING'] = True
         client = app.test_client()
@@ -144,10 +144,10 @@ class TestRuntime(unittest.TestCase):
             prompt_template="{query}",
             model="ERNIE-3.5-8K"
         )
-        agent = appbuilder.FlaskRuntime(component=component)
+        agent = FlaskRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
         answer = agent.chat(message, stream=False)
-        agent2 = appbuilder.ChainlitRuntime(component=component)
+        agent2 = ChainlitRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
         answer2 = agent2.chat(message, stream=False)
         self.assertIs(type(answer.content), str)

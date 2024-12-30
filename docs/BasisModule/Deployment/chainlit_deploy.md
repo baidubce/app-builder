@@ -27,12 +27,14 @@ ChainlitRuntime 是对组件和应用调用的服务化封装，开发者不是�
 ```python
 import os
 import appbuilder
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
+
 os.environ["APPBUILDER_TOKEN"] = '...'
 component = appbuilder.Playground(
     prompt_template="{query}",
     model="eb-4"
 )
-agent = appbuilder.ChainlitRuntime(component=component)
+agent = ChainlitRuntime(component=component)
 ```
 
 ### 2、运行Agent服务`ChainlitRuntime.chat(message: Message, stream: bool = False, **args) -> Message`
@@ -53,12 +55,14 @@ agent = appbuilder.ChainlitRuntime(component=component)
 ```python
 import os
 import appbuilder
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
+
 os.environ["APPBUILDER_TOKEN"] = '...'
 component = appbuilder.Playground(
     prompt_template="{query}",
     model="eb-4"
 )
-agent = appbuilder.ChainlitRuntime(component=component)
+agent = ChainlitRuntime(component=component)
 message = appbuilder.Message({"query": "你好"})
 print(agent.chat(message, stream=False))
 ```
@@ -84,8 +88,10 @@ import os
 import logging
 from appbuilder.core.component import Component
 from appbuilder import (
-    ChainlitRuntime, UserSession, Message, QueryRewrite, Playground,
+    UserSession, Message, QueryRewrite, Playground,
 )
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
+
 os.environ["APPBUILDER_TOKEN"] = 'YOUR_APPBUILDER_TOKEN'
 class PlaygroundWithHistory(Component):
     def __init__(self):
@@ -138,11 +144,12 @@ agent.chainlit_demo(port=8091)
 
 ```python
 import appbuilder
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
 import os
 
 os.environ["APPBUILDER_TOKEN"] = '...'
 app_id = '...'  # 已发布AppBuilder应用ID，可在console端查看
 client = appbuilder.AppBuilderClient(app_id)
-agent = appbuilder.ChainlitRuntime(component=client)
+agent = ChainlitRuntime(component=client)
 agent.chainlit_agent(port=8091)
 ```

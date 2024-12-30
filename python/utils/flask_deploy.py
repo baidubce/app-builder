@@ -9,14 +9,6 @@ from appbuilder.core.user_session import UserSession
 from appbuilder.utils.logger_util import logger
 from appbuilder.core.context import init_context
 
-try:
-    from flask import Flask, request, Response
-    from werkzeug.exceptions import BadRequest
-    from flask import stream_with_context
-
-except ImportError:
-    raise ImportError("Flask module is not installed. Please install it using 'pip install "
-                        "flask~=2.3.2 flask-restful==0.3.9'.")
 
 # 流式场景首包超时时，最大重试次数
 MAX_RETRY_COUNT = 3
@@ -34,13 +26,14 @@ class FlaskRuntime(object):
         import os
         import sys
         import appbuilder
+        from appbuilder.utils.flask_deploy import FlaskRuntime
         os.environ["APPBUILDER_TOKEN"] = '...'
 
         component = appbuilder.Playground(
             prompt_template="{query}",
             model="eb-4"
         )
-        agent = appbuilder.FlaskRuntime(component=component)
+        agent = FlaskRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
         print(agent.chat(message, stream=False))
 
@@ -50,6 +43,7 @@ class FlaskRuntime(object):
         import os
         import sys
         import appbuilder
+        from appbuilder.utils.flask_deploy import FlaskRuntime
         os.environ["APPBUILDER_TOKEN"] = '...'
 
         component = appbuilder.Playground(
@@ -57,7 +51,7 @@ class FlaskRuntime(object):
             model="eb-4"
         )
         user_session_config = "sqlite:///foo.db"
-        agent = appbuilder.FlaskRuntime(
+        agent = FlaskRuntime(
             component=component, user_session_config=user_session_config)
         agent.serve(debug=False, port=8091)
 
@@ -164,6 +158,12 @@ class FlaskRuntime(object):
                 遵循 sqlalchemy 后端定义，参考文档：https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls
             user_session (UserSession): 用户会话管理器，如果不指定则自动生成一个默认的 UserSession
         """
+        try:
+            from flask import Flask
+
+        except ImportError:
+            raise ImportError("Flask module is not installed. Please install it using 'pip install "
+                                "flask~=2.3.2 flask-restful==0.3.9'.")
         self.app = Flask(__name__)
         self.app.json.ensure_ascii = False
         self.component = component
@@ -201,7 +201,14 @@ class FlaskRuntime(object):
         Returns:
             Flask
         """
+        try:
+            from flask import request, Response
+            from werkzeug.exceptions import BadRequest
+            from flask import stream_with_context
 
+        except ImportError:
+            raise ImportError("Flask module is not installed. Please install it using 'pip install "
+                                "flask~=2.3.2 flask-restful==0.3.9'.")
         @self.app.errorhandler(BadRequest)
         def handle_bad_request(e):
             return {"code": 400, "message": f'{e}', "result": None}, 400

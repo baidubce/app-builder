@@ -110,6 +110,7 @@ pip install chainlit
 
 ```python
 import appbuilder
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
 
 # 空模版组件
 playground = appbuilder.Playground(
@@ -118,7 +119,7 @@ playground = appbuilder.Playground(
 )
 
 # 使用 ChainlitRuntime 来服务化playground组件
-agent = appbuilder.ChainlitRuntime(component=playground)
+agent = ChainlitRuntime(component=playground)
 
 # 启动chainlit demo，会自动在浏览器打开体验对话框页面
 agent.chainlit_demo(port=8091)
