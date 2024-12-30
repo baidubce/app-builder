@@ -5,7 +5,6 @@ from appbuilder.core.constants import MAX_DOCUMENTS_NUM, SUPPORTED_FILE_TYPE
 import json
 import os
 from appbuilder.utils.func_utils import deprecated
-from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import client_tool_trace
 
 
