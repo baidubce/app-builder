@@ -90,7 +90,7 @@ class Text2ImageCase(Case):
 
 class StyleRewriteCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "Qianfan-Agent-Speed-8k"}
     
     def inputs(self):
         return {"query": "文心大模型发布新版"}
