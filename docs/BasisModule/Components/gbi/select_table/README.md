@@ -51,7 +51,7 @@ print(f"选的表是: {select_table_result_message.content}")
 
 ## 参数说明
 ### 初始化参数
-- model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, Qianfan-Agent-Speed-8k
+- model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, Qianfan-Agent-Speed-8K
 - table_descriptions: 表的描述是个字典，key: 是表的名字, value: 是表的描述，例如:
 
 ```

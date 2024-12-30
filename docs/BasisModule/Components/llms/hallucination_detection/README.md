@@ -37,8 +37,8 @@ context = \
 很多怕胖的女生看到猪皮就怕怕，但其实猪皮含有大量胶原蛋白，营养价值很高呢！这里红通通的猪皮还经过韩国秘制酱汁处理过，会有一点点辣味。烤猪皮的时候也需特别注意火侯，这样吃起来才会有外脆内Q的口感！'''
 answer = '澳门新麻蒲烤肉店并不是每天开门。'
 
-#! 该组件推荐使用Qianfan-Agent-Speed-8k模型。
-hallucination_detection = appbuilder.HallucinationDetection('Qianfan-Agent-Speed-8k')
+#! 该组件推荐使用Qianfan-Agent-Speed-8K模型。
+hallucination_detection = appbuilder.HallucinationDetection('Qianfan-Agent-Speed-8K')
 inputs = {'query': query, 'context': context, 'answer': answer}
 msg = appbuilder.Message(inputs)
 result = hallucination_detection.run(msg)
@@ -58,7 +58,7 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 初始化参数
 | 参数名称 | 参数类型 | 是否必须 | 描述 | 示例值 |
 | ------- | ------- | -------- | -------- | -------- |
-| `model` | str | 是 | 模型名称，用于指定要使用的千帆模型。推荐使用Qianfan-Agent-Speed-8k模型。 | Qianfan-Agent-Speed-8k |
+| `model` | str | 是 | 模型名称，用于指定要使用的千帆模型。推荐使用Qianfan-Agent-Speed-8K模型。 | Qianfan-Agent-Speed-8K |
 | `secret_key` | str | 否 | 用户鉴权token，默认从环境变量中获取: `os.getenv("APPBUILDER_TOKEN", "")` | bce-v3/XXX |
 | `gateway` | str | 否 | 后端网关服务地址，默认从环境变量中获取: `os.getenv("GATEWAY_URL", "")` | https://appbuilder.baidu.com |
 | `lazy_certification` | bool | 否 | 延迟认证，为True时在第一次运行时认证。默认为False。 | False |

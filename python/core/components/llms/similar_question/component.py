@@ -35,7 +35,7 @@ class SimilarQuestion(CompletionBaseComponent):
 
         os.environ["APPBUILDER_TOKEN"] = "..."
 
-        qa_mining = appbuilder.SimilarQuestion(model="Qianfan-Agent-Speed-8k")
+        qa_mining = appbuilder.SimilarQuestion(model="Qianfan-Agent-Speed-8K")
 
         msg = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
         msg = appbuilder.Message(msg)
