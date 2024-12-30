@@ -21,7 +21,7 @@ from appbuilder.core.component import ComponentOutput
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestStyleRewrite(unittest.TestCase):
     def setUp(self) -> None:
-        self.com = StyleRewrite(model="Qianfan-Agent-Speed-8k")
+        self.com = StyleRewrite(model="Qianfan-Agent-Speed-8K")
     
     def test_normal_case(self):
         time.sleep(2)
