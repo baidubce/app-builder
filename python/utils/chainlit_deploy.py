@@ -153,7 +153,6 @@ class ChainlitRuntime(object):
             user_session (UserSession): 用户会话管理器，如果不指定则自动生成一个默认的 UserSession
             tool_choice (ToolChoice): 可用于Agent强制执行的组件工具
 
-        
         """
         self.component = component
         if user_session is None:
