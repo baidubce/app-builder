@@ -211,12 +211,12 @@ public class HttpClient {
                     new HttpResponse<T>().setCode(resp.getCode()).setMessage(resp.getReasonPhrase())
                             .setRequestId(requestId).setHeaders(headers).setStringBody(stringBody);
             if (resp.getCode() == 200) {
-                LOGGER.log(Level.FINE, "Successful response with code 200 for request ID: {}", requestId);
+                LOGGER.log(Level.FINE, "Successful response with code 200 for request ID: {0}", new Object[]{requestId});
                 if (bodyType != null) {
                     response.setBody(JsonUtils.deserialize(stringBody, bodyType));
                 }
             } else {
-                LOGGER.log(Level.SEVERE, "Error response with code {} for request ID: {}, message: {}", resp.getCode(), requestId, resp.getReasonPhrase());
+                LOGGER.log(Level.SEVERE, "Error response with code {0} for request ID: {1}, message: {2}", new Object[]{resp.getCode(), requestId, resp.getReasonPhrase()});
             }
             return response;
         });
