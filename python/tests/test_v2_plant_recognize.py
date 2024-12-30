@@ -21,7 +21,7 @@ from appbuilder.core.component import Component
 from appbuilder.core.component import ComponentOutput
 from appbuilder.core.components.v2.plant_recognize.component import PlantRecognition
 
-# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestPlantRecognition(unittest.TestCase):
 
     def setUp(self):
