@@ -23,7 +23,7 @@ import appbuilder
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
 
-qa_mining = appbuilder.QAPairMining(model="Qianfan-Agent-Speed-8K")
+qa_mining = appbuilder.QAPairMining(model="Qianfan-Agent-Speed-8k")
 # 输入文本（对此文本挖掘问答对）
 msg = '2017年，工商银行根据外部宏观环境变化，及时调整业务策略，优化资产负债结构，' + \
     '保持存贷款业务协调发展，提升资产负债配置效率。' + \
@@ -110,7 +110,7 @@ split_result = splitter(parse_result)
 
 # 每个段落抽取问答对，并返回结果
 for doc_segment in split_result.content["paragraphs"]:
-    qa_mining = QAPairMining(model="Qianfan-Agent-Speed-8K")
+    qa_mining = QAPairMining(model="Qianfan-Agent-Speed-8k")
     text = doc_segment.get("text", "")
     if text == "":
         logger.error("Text is null. break")

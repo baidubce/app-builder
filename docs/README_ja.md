@@ -79,7 +79,7 @@ template_str = "あなたは{role}の役割を果たします。私の質問に�
 # 入力を定義し、playgroundコンポーネントを呼び出します。
 input = appbuilder.Message({"role": "Javaエンジニア", "question": "Java言語のメモリ回収メカニズムについて簡単に説明してください。100文字以内でお願いします。"})
 
-playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8K")
+playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8k")
 
 # タイプライターのように、ストリーム形式で大規模モデルの回答内容を表示します。
 output = playground(input, stream=True, temperature=1e-10)
