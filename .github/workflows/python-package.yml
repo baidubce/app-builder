@@ -118,6 +118,7 @@ jobs:
           python3 -m pip install coverage
           python3 -m pip install diff-cover
           python3 -m pip install pydub
+          python3 -m pip install chainlit==1.0.200
           python3 -m pip install SQLAlchemy==2.0.31
           python3 -m pip install chainlit~=1.0.200 flask~=2.3.2 flask-restful==0.3.9
           python3 -m pip install opentelemetry-exporter-otlp==1.23.0 opentelemetry-instrumentation==0.44b0 opentelemetry-sdk==1.23.0 opentelemetry-api==1.23.0
