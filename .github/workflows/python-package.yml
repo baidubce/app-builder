@@ -75,6 +75,7 @@ jobs:
         git remote add upstream https://github.com/baidubce/app-builder.git 
         git fetch upstream
         git remote -v
+        git checkout chainlit
         git status
 
         # 找到当前分支与 upstream/master 的共同祖先提交
