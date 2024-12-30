@@ -110,7 +110,7 @@ class FlaskRuntime(object):
                 return answer
 
         agent = FlaskRuntime(component=PlaygroundWithHistory())
-        agent.chainlit_demo(port=8091)
+        agent.chainlit_component(port=8091)
 
     Session 信息查看 : 查看本地user_session.db数据库内部信息，下面是一个例子
 

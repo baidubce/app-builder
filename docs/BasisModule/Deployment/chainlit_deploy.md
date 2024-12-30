@@ -67,7 +67,7 @@ message = appbuilder.Message({"query": "你好"})
 print(agent.chat(message, stream=False))
 ```
 
-### 3、提供 chainlit demo 页面`ChainlitRuntime.chainlit_demo(host='0.0.0.0', port=8091)`
+### 3、提供 chainlit component 页面`ChainlitRuntime.chainlit_component(host='0.0.0.0', port=8091)`
 
 
 #### 方法参数
@@ -123,7 +123,7 @@ class PlaygroundWithHistory(Component):
         return answer
 
 agent = ChainlitRuntime(component=PlaygroundWithHistory())
-agent.chainlit_demo(port=8091)
+agent.chainlit_component(port=8091)
 ```
 
 ### 5、将 appbuilder client 服务化，提供 chainlit demo 页面`ChainlitRuntime.chainlit_agent(host='0.0.0.0', port=8091)`

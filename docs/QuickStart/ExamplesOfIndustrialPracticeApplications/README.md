@@ -122,5 +122,5 @@ playground = appbuilder.Playground(
 agent = ChainlitRuntime(component=playground)
 
 # 启动chainlit demo，会自动在浏览器打开体验对话框页面
-agent.chainlit_demo(port=8091)
+agent.chainlit_component(port=8091)
 ```

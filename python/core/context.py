@@ -69,7 +69,7 @@ def get_context() -> SessionContext:
         request_id = _LOCAL_KEY + str(uuid.uuid4())[:-len(_LOCAL_KEY)]
         logging.debug(
             "Unable to find the context. You need to use UserSession "
-            "in FlaskRuntime.serve or ChainlitRuntime.chainlit_demo. "
+            "in FlaskRuntime.serve or ChainlitRuntime.chainlit_component. "
             f"Generate session_id({session_id}) and request_id({request_id}) here for local debugging.")
         ctx = init_context(session_id=session_id, request_id=request_id)
         return ctx

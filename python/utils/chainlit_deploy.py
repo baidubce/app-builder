@@ -50,7 +50,7 @@ class ChainlitRuntime(object):
             model="eb-4"
         )
         agent = ChainlitRuntime(component=component)
-        agent.chainlit_demo(port=8091)
+        agent.chainlit_component(port=8091)
 
     Session 数据管理 : 除去上述简单应用外，还支持 Session 数据管理，下面是一个例子
 
@@ -97,7 +97,7 @@ class ChainlitRuntime(object):
                 return answer
 
         agent = ChainlitRuntime(component=PlaygroundWithHistory())
-        agent.chainlit_demo(port=8091)
+        agent.chainlit_component(port=8091)
 
     Session 信息查看 : 查看本地user_session.db数据库内部信息，下面是一个例子
 
@@ -210,7 +210,7 @@ class ChainlitRuntime(object):
         except:
             logger.error("Failed to copy chainlit.md to current directory")   
 
-    def chainlit_demo(self, host='0.0.0.0', port=8091):
+    def chainlit_component(self, host='0.0.0.0', port=8091):
         """
         将 component 服务化，提供 chainlit demo 页面
 
