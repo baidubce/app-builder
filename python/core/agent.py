@@ -374,7 +374,6 @@ class AgentRuntime(BaseModel):
                             logging.error(
                                 f"request_id={request_id}, session_id={session_id}, err={e}, execute self.chat failed", exc_info=True)
                             yield "data: " + json.dumps(err_resp, ensure_ascii=False) +  "\n\n"
-                            return
                         else:  # 调用chat方法成功，开始生成流式事件
                             content_iterator = iter(answer.content)
                             answer.content = None
@@ -408,7 +407,6 @@ class AgentRuntime(BaseModel):
                                     code = 500 if not hasattr(e, "code") else e.code
                                     err_resp = {"code": code, "message": "InternalServerError", "result": None}
                                     yield "data: " + json.dumps(err_resp, ensure_ascii=False) + "\n\n"
-                                    return
                             result.content = ""
                             yield "data: " + json.dumps({
                                 "code": 0, "message": "",
@@ -422,7 +420,6 @@ class AgentRuntime(BaseModel):
                                 f"request_id={request_id}, session_id={session_id}]"
                                 f"retry_count={retry_count}, success response", exc_info=True)
                             self.user_session._post_append()
-                            return  # 正常返回
 
             if stream:  # 流式
                 return Response(stream_with_context(gen_sse_resp()), 200,
