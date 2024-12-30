@@ -25,7 +25,6 @@ from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.sse_util import SSEClient
 from appbuilder.core._client import HTTPClient
 from appbuilder.utils.func_utils import deprecated
-from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import client_run_trace, client_tool_trace
 
 
