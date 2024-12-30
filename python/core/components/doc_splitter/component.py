@@ -23,7 +23,6 @@ from typing import Dict, Any
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.doc_parser.base import ParseResult
 from appbuilder.core.component import Component, Message, ComponentArguments
-from appbuilder.utils.logger_util import logger
 from appbuilder.core.components.doc_parser.base import DocSegment
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 

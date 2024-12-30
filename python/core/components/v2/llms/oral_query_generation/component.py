@@ -19,7 +19,6 @@ from typing import Optional
 from appbuilder.core.components.llms.base import CompletionBaseComponent, ModelArgsConfig
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 from appbuilder.core.components.llms.oral_query_generation.base import OralQueryGenerationArgs
 
@@ -140,20 +139,8 @@ class OralQueryGeneration(CompletionBaseComponent):
         stream = True if request.response_mode == "streaming" else False
         
         url = self.http_client.service_url("/app/query_generation", self.base_url)
-
-        logger.debug(
-            "request url: {}, method: {}, json: {}, headers: {}".format(url,
-                                                                        "POST",
-                                                                        request.params,
-                                                                        headers))
         response = self.http_client.session.post(url, json=request.params, headers=headers, timeout=timeout,
                                                  stream=stream)
-
-        logger.debug(
-            "request url: {}, method: {}, json: {}, headers: {}, response: {}".format(url, "POST",
-                                                                                      request.params,
-                                                                                      headers,
-                                                                                      response))
         return self.gene_response(response, stream)
 
     @components_run_trace

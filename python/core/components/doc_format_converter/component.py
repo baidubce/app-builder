@@ -27,7 +27,6 @@ import requests
 
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component, Message
-from appbuilder.utils.logger_util import logger
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.doc_format_converter.model import DocFormatConverterInMessage, \
                         DocFormatConverterOutMessage, \

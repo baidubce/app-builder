@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -29,16 +30,19 @@ type SSEEvent struct {
 }
 
 func checkHTTPResponse(rsp *http.Response) (string, error) {
-	requestID := rsp.Header.Get("X-Appbuilder-Request-Id")
-	if rsp.StatusCode == http.StatusOK {
-		return requestID, nil
-	}
+    requestID := rsp.Header.Get("X-Appbuilder-Request-Id")
+    if rsp.StatusCode == http.StatusOK {
+        log.Printf("Successful HTTP response. RequestID: %s", requestID)
+        return requestID, nil
+    }
 
-	data, err := io.ReadAll(rsp.Body)
-	if err != nil {
-		return requestID, err
-	}
-	return requestID, fmt.Errorf("http status code is %d, content is %s", rsp.StatusCode, string(data))
+    data, err := io.ReadAll(rsp.Body)
+    if err != nil {
+        log.Printf("Failed to read response body. RequestID: %s, Error: %v", requestID, err)
+        return requestID, err
+    }
+    log.Printf("HTTP response with unexpected status code. RequestID: %s, StatusCode: %d, Content: %s", requestID, rsp.StatusCode, string(data))
+    return requestID, fmt.Errorf("http status code is %d, content is %s", rsp.StatusCode, string(data))
 }
 
 func NewSSEReader(bufSize int, reader *bufio.Reader) *sseReader {
