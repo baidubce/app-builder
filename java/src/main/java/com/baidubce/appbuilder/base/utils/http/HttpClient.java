@@ -210,12 +210,24 @@ public class HttpClient {
             HttpResponse<T> response =
                     new HttpResponse<T>().setCode(resp.getCode()).setMessage(resp.getReasonPhrase())
                             .setRequestId(requestId).setHeaders(headers).setStringBody(stringBody);
-            if (resp.getCode() == 200 && bodyType != null) {
-                response.setBody(JsonUtils.deserialize(stringBody, bodyType));
+            if (resp.getCode() == 200) {
+                LOGGER.log(Level.FINE, "Successful response with code 200 for request ID: {}", requestId);
+                if (bodyType != null) {
+                    response.setBody(JsonUtils.deserialize(stringBody, bodyType));
+                }
+            } else {
+                LOGGER.log(Level.SEVERE, "Error response with code {} for request ID: {}, message: {}", resp.getCode(), requestId, resp.getReasonPhrase());
             }
             return response;
         });
         if (httpResponse.getCode() != 200) {
+            String errorMessage = String.format(
+            "Error after processing response with code %d for request ID: %s, message: %s",
+            httpResponse.getCode(),
+            httpResponse.getRequestId(),
+            httpResponse.getMessage()
+            );
+            LOGGER.log(Level.SEVERE, errorMessage);
             throw new AppBuilderServerException(httpResponse.getRequestId(), httpResponse.getCode(),
                     httpResponse.getMessage(), httpResponse.getStringBody());
         }
