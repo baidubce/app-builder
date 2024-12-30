@@ -6,9 +6,9 @@ name: Python package
 on:
   workflow_dispatch:
   push:
-    branches: [ "master" ]
+    branches: [ "chainlit" ]
   pull_request_target:
-    branches: [ "master" ]
+    branches: [ "chainlit" ]
 
 jobs:
   Pylint:
