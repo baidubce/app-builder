@@ -29,6 +29,7 @@ public class DatasetTest {
             assertNotNull(datasetId);
         } catch (Exception e) {
             datasetId = System.getenv("DATASET_ID_V3");
+            dataset.setDatasetId(datasetId);
         }
         
         String filePath = "src/test/java/com/baidubce/appbuilder/files/test.pdf";
