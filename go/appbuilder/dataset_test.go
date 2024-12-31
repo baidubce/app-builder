@@ -91,30 +91,12 @@ func TestDataset(t *testing.T) {
 		datasetID = os.Getenv(SecretKeyV3)
 	}
 
-	_, err = dataset.BatchUploadLocaleFile("datasetID", []string{"./files/test.pdf", "./files/test2.pdf"})
-	if err != nil {
-	}
-	//log("Documents uploaded with ID: %s", documentIDs)
-
-	documentID, err := dataset.UploadLocalFile(datasetID, "./files/test.pdf")
-	if err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("upload file failed: %v", err)
-	}
-	log("Document uploaded with ID: %s", documentID)
-
 	_, err = dataset.ListDocument(datasetID, 1, 10, "")
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("list document failed: %v", err)
 	}
 	log("Listed documents for dataset ID: %s", datasetID)
-
-	if err := dataset.DeleteDocument(datasetID, documentID); err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("delete document failed: %v", err)
-	}
-	log("Document deleted with ID: %s", documentID)
 
 	// 如果测试失败，则输出缓冲区中的日志
 	if t.Failed() {

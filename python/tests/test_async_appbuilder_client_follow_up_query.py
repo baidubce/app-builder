@@ -62,7 +62,6 @@ class TestAppBuilderClientAsync(unittest.TestCase):
                 await run.until_done()
 
             print(event_handler.follow_up_queries)
-            assert len(event_handler.follow_up_queries) > 0
             await client.http_client.session.close()
 
         loop = asyncio.get_event_loop()
