@@ -1,9 +1,5 @@
 package com.baidubce.appbuilder;
 
-import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
-import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
-import com.baidubce.appbuilder.console.appbuilderclient.AppList;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.nio.file.Files;
@@ -11,16 +7,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
+import com.baidubce.appbuilder.console.appbuilderclient.AppList;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.AppsDescribeRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.Event;
 import com.baidubce.appbuilder.model.appbuilderclient.EventContent;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
-import org.junit.Before;
-import org.junit.Test;
+
 
 import static org.junit.Assert.*;
 

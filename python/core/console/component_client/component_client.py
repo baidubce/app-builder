@@ -18,7 +18,7 @@ from appbuilder.core.component import Component, Message
 from appbuilder.core.console.component_client import data_class
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.utils.logger_util import logger
-from appbuilder.utils.trace.tracer_wrapper import client_tool_trace
+from appbuilder.utils.trace.tracer_wrapper import client_run_trace
 from appbuilder.utils.sse_util import SSEClient
 
 
@@ -31,10 +31,10 @@ class ComponentClient(Component):
         """
         super().__init__(**kwargs)
 
-    @client_tool_trace
+    @client_run_trace
     def run(
         self,
-        component: str,
+        component_id: str,
         sys_origin_query: str,
         version: str = None,
         action: str = None,
@@ -44,11 +44,26 @@ class ComponentClient(Component):
         sys_end_user_id: str = None,
         sys_chat_history: list = None,
         **kwargs,
-    ) -> data_class.RunResponse:
+    ) -> Message:
+        """ 组件运行
+        Args:
+            component_id (str): 组件ID
+            sys_origin_query (str): 用户输入的原始查询语句
+            version (str): 组件版本号
+            action (str): 组件动作
+            stream (bool): 是否流式返回
+            sys_file_urls (dict): 文件地址
+            sys_conversation_id (str): 会话ID
+            sys_end_user_id (str): 用户ID
+            sys_chat_history (list): 聊天
+            kwargs: 其他参数
+        Returns:
+            message (Message): 对话结果，一个Message对象，使用message.content获取内容。
+        """
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
 
-        url_suffix = f"/components/{component}"
+        url_suffix = f"/components/{component_id}"
         if version is not None:
             url_suffix += f"/version/{version}"
         if action is not None:

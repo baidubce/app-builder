@@ -47,18 +47,14 @@ type ComponentRunResponse struct {
 }
 
 type ComponentRunResponseData struct {
-	ConversationID  string          `json:"conversation_id"`
-	MessageID       string          `json:"message_id"`
-	TraceID         string          `json:"trace_id"`
-	UserID          string          `json:"user_id"`
-	EndUserID       string          `json:"end_user_id"`
-	IsCompletion    bool            `json:"is_completion"`
-	ComponentOutput ComponentOutput `json:"component_output"`
-}
-
-type ComponentOutput struct {
-	Role    string    `json:"role"`
-	Content []Content `json:"content"`
+	ConversationID string    `json:"conversation_id"`
+	MessageID      string    `json:"message_id"`
+	TraceID        string    `json:"trace_id"`
+	UserID         string    `json:"user_id"`
+	EndUserID      string    `json:"end_user_id"`
+	IsCompletion   bool      `json:"is_completion"`
+	Role           string    `json:"role"`
+	Content        []Content `json:"content"`
 }
 
 type Content struct {

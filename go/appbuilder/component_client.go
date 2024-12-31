@@ -41,7 +41,7 @@ func NewComponentClient(config *SDKConfig) (*ComponentClient, error) {
 	return &ComponentClient{sdkConfig: config, client: client}, nil
 }
 
-func (t *ComponentClient) Run(component, version, action string, req ComponentRunRequest) (ComponentClientIterator, error) {
+func (t *ComponentClient) Run(component, version, action string, stream bool, parameters map[string]any) (ComponentClientIterator, error) {
 	request := http.Request{}
 
 	urlSuffix := fmt.Sprintf("/components/%s", component)
@@ -66,6 +66,11 @@ func (t *ComponentClient) Run(component, version, action string, req ComponentRu
 	request.Method = "POST"
 	header.Set("Content-Type", "application/json")
 	request.Header = header
+
+	req := ComponentRunRequest{
+		Stream:     stream,
+		Parameters: parameters,
+	}
 	data, _ := json.Marshal(req)
 	request.Body = NopCloser(bytes.NewReader(data))
 	request.ContentLength = int64(len(data)) // 手动设置长度
