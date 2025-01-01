@@ -100,7 +100,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"] = []
         log_file = os.environ.get("APPBUILDER_LOGFILE", "")
         if log_file:
-            ERROR_FILE_HEADER["filename"] = f"error.{log_file}"
+            ERROR_FILE_HEADER["filename"] = _add_error_to_file_name(log_file)
             FILE_HEADER["filename"] = log_file
             FILE_HEADER["level"] = loglevel
             LOGGING_CONFIG["handlers"]["file"] = FILE_HEADER
@@ -153,11 +153,11 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
             LOGGING_CONFIG["handlers"]["file"] = FILE_HEADER
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
         if "error_file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
-            ERROR_FILE_HEADER["filename"] = f"error.{filename}"
+            ERROR_FILE_HEADER["filename"] = _add_error_to_file_name(filename)
             LOGGING_CONFIG["handlers"]["error_file"] = ERROR_FILE_HEADER
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("error_file")
         FILE_HEADER["filename"] = filename
-        ERROR_FILE_HEADER["filename"] = f"error.{filename}"
+        ERROR_FILE_HEADER["filename"] = _add_error_to_file_name(filename)
         LOGGING_CONFIG["handlers"]["file"] = FILE_HEADER
         LOGGING_CONFIG["handlers"]["error_file"] = ERROR_FILE_HEADER
         logging.config.dictConfig(LOGGING_CONFIG)
@@ -218,7 +218,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
 
         # 设置文件名称
         SET_CONFIG_HEADER['filename'] = file_name
-        ERROR_SET_CONFIG_HEADER['filename'] = f"error.{file_name}"
+        ERROR_SET_CONFIG_HEADER['filename'] = _add_error_to_file_name(file_name)
 
         # 设置滚动时间
         SET_CONFIG_HEADER['when'] = when
@@ -308,6 +308,12 @@ def get_logger(name, level=logging.INFO):
     # log multiple times
     logger.propagate = False
     return logger
+
+def _add_error_to_file_name(filename):
+    prefix = "error."
+    dir_name, base_name = os.path.split(filename)
+    new_base_name = f"{prefix}{base_name}"
+    return os.path.join(dir_name, new_base_name)
 
 
 logger = _setup_logging()
