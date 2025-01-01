@@ -52,3 +52,35 @@ System.setProperty("APPBUILDER_LOGLFILE", "/tmp/appbuilder.log");
 // golang
 os.Setenv("APPBUILDER_LOGLEVEL", "/tmp/appbuilder.log")
 ```
+
+## `setLogConfig`功能
+
+Appbuilder-SDK新增滚动日志功能
+
+主要参数:
+- console_show: 数据类型bool，默认值True，LOG日志是否在控制台输出
+- loglevel: 数据类型str，默认值"DEBUG"，LOG日志级别
+- file_name: 数据类型str，默认值"tmp.log"，LOG日志名称
+- when: 数据类型str，默认值"MIDNIGHT"，LOG日志滚动更新时间单位
+    - "S": 以秒为单位
+    - "M": 以分钟为单位
+    - "H": 以小时为单位
+    - "D": 以天为时间单位
+    - "MIDNIGHT": 每日凌晨更新
+- interval: 数据类型int，默认值1，LOG日志按时间滚动的参数，默认值为1，与when参数联合使用
+- max_bytes: 数据类型Optional[int]，默认值None，传入`None`或负数会自动更新为系统最大整数`sys.maxsize`，单个滚动的LOG日志文件的最大大小，例：10M即为10\*1024\*1024 即需要传入 # 以B为单位
+- total_size_limit: 数据类型Optional[int]，默认值None，传入`None`或负数会自动更新为系统最大整数`sys.maxsize`，当前目录下可储存的LOG日志文件的最大大小，例：10M即为10\*1024\*1024 # 以B为单位
+- backup_count: 数据类型Optional[int]，默认值None，传入`None`或负数会自动更新为系统最大整数`sys.maxsize`，当前目录下可储存的LOG日志文件的最大数量
+
+```python
+# python
+appbuilder.logger.setLogConfig(
+    console_show = False,
+    file_name="appbuilder.log", 
+    when="MIDNIGHT", # 每日凌晨更新 
+    interval=1,
+    max_bytes=100 * 1024 *1024, # 最大日志大小为100MB
+    total_size_limit=1024 * 1024 *1024, # 最大储存1GB的日志
+    backup_count=10, # 当前目录储存的最大LOG日志数 
+    )
+```

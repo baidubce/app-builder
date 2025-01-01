@@ -202,8 +202,11 @@ from appbuilder.core.assistant.threads.runs import AssistantStreamManager
 
 from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
 
+from .utils.logger_file_headler import SizeAndTimeRotatingFileHandler
+
 __all__ = [
     "logger",
+    "SizeAndTimeRotatingFileHandler",
     "BadRequestException",
     "ForbiddenException",
     "NotFoundException",
