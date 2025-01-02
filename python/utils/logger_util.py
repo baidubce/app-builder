@@ -68,24 +68,24 @@ ERROR_SET_CONFIG_HEADER = {
     'level': 'ERROR',
     'formatter': 'standard',
     'class': 'appbuilder.SizeAndTimeRotatingFileHandler',
-    'filename': 'error.tmp.log',
-    'when': 'MIDDNIGHT',
-    'interval': 1,
-    'max_bytes': 5*1024*1024,
-    'backup_count': 20,
-    'total_size_limit': 100*1024*1024
+    'file_name': 'error.tmp.log',
+    'rotate_frequency': 'MIDDNIGHT',
+    'rotate_interval': 1,
+    'max_file_size': 5*1024*1024,
+    'max_log_files': 20,
+    'total_log_size': 100*1024*1024
 }
 
 SET_CONFIG_HEADER = {
     'level': 'DEBUG',
     'formatter': 'standard',
     'class': 'appbuilder.SizeAndTimeRotatingFileHandler',
-    'filename': 'tmp.log',
-    'when': 'MIDNIGHT',
-    'interval': 1,
-    'max_bytes': 5*1024*1024,
-    'backup_count': 20,
-    'total_size_limit': 100*1024*1024
+    'file_name': 'tmp.log',
+    'rotate_frequency': 'MIDDNIGHT',
+    'rotate_interval': 1,
+    'max_file_size': 5*1024*1024,
+    'max_log_files': 20,
+    'total_log_size': 100*1024*1024
 }
 
 class LoggerWithLoggerId(logging.LoggerAdapter):
@@ -99,6 +99,10 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         LOGGING_CONFIG["handlers"] = {}
         LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"] = []
         log_file = os.environ.get("APPBUILDER_LOGFILE", "")
+        loglevel = loglevel.strip().lower()
+        if loglevel not in ["debug", "info", "warning", "error"]:
+            raise ValueError("expected APPBUILDER_LOGLEVEL in [debug, info, warning, error], but got %s" % loglevel)
+        loglevel = loglevel.upper()
         if log_file:
             ERROR_FILE_HEADER["filename"] = _add_error_to_file_name(log_file)
             FILE_HEADER["filename"] = log_file
@@ -196,6 +200,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         log_level = loglevel.strip().lower()
         if log_level not in ["debug", "info", "warning", "error"]:
             raise ValueError("expected APPBUILDER_LOGLEVEL in [debug, info, warning, error], but got %s" % log_level)
+        log_level = log_level.upper()
 
         # 设置console输出日志
         if console_output:
@@ -223,27 +228,27 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         SET_CONFIG_HEADER['level'] = loglevel
 
         # 设置文件名称
-        SET_CONFIG_HEADER['filename'] = file_name
-        ERROR_SET_CONFIG_HEADER['filename'] = _add_error_to_file_name(file_name)
+        SET_CONFIG_HEADER['file_name'] = file_name
+        ERROR_SET_CONFIG_HEADER['file_name'] = _add_error_to_file_name(file_name)
 
         # 设置滚动时间
-        SET_CONFIG_HEADER['when'] = rotate_frequency
-        ERROR_SET_CONFIG_HEADER['when'] = rotate_frequency
-        SET_CONFIG_HEADER['interval'] = rotate_interval
-        ERROR_SET_CONFIG_HEADER['interval'] = rotate_interval
+        SET_CONFIG_HEADER['rotate_frequency'] = rotate_frequency
+        ERROR_SET_CONFIG_HEADER['rotate_frequency'] = rotate_frequency
+        SET_CONFIG_HEADER['rotate_interval'] = rotate_interval
+        ERROR_SET_CONFIG_HEADER['rotate_interval'] = rotate_interval
 
         # 设置最大文件大小
         
-        SET_CONFIG_HEADER['max_bytes'] = max_file_size
-        ERROR_SET_CONFIG_HEADER['max_bytes'] = max_file_size
+        SET_CONFIG_HEADER['max_file_size'] = max_file_size
+        ERROR_SET_CONFIG_HEADER['max_file_size'] = max_file_size
 
         # 设置总大小限制
-        SET_CONFIG_HEADER['total_size_limit'] = total_log_size
-        ERROR_SET_CONFIG_HEADER['total_size_limit'] = total_log_size
+        SET_CONFIG_HEADER['total_log_size'] = total_log_size
+        ERROR_SET_CONFIG_HEADER['total_log_size'] = total_log_size
 
         # 设置备份数量
-        SET_CONFIG_HEADER['backup_count'] = max_log_files
-        ERROR_SET_CONFIG_HEADER['backup_count'] = max_log_files
+        SET_CONFIG_HEADER['max_log_files'] = max_log_files
+        ERROR_SET_CONFIG_HEADER['max_log_files'] = max_log_files
 
         LOGGING_CONFIG["handlers"]["file"] = SET_CONFIG_HEADER
         LOGGING_CONFIG["handlers"]["error_file"] = ERROR_SET_CONFIG_HEADER

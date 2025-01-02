@@ -67,12 +67,12 @@ class TestLogSetLogConfig(unittest.TestCase):
             logger = logging.getLogger('CustomLogger')
             logger.setLevel(logging.DEBUG)
             handler = SizeAndTimeRotatingFileHandler(
-                filename ='test.log', 
-                when=time_msg, 
-                interval=1, 
-                max_bytes=1024*100*1024, 
-                backup_count=10, 
-                total_size_limit=1024*300*1024
+                file_name ='test.log', 
+                rotate_frequency=time_msg, 
+                rotate_interval=1, 
+                max_file_size=1024*100*1024, 
+                max_log_files=10, 
+                total_log_size=1024*300*1024
             )
             formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
             handler.setFormatter(formatter)
@@ -86,12 +86,12 @@ class TestLogSetLogConfig(unittest.TestCase):
         logger = logging.getLogger('CustomLogger')
         logger.setLevel(logging.DEBUG)
         handler = SizeAndTimeRotatingFileHandler(
-            filename ='test.log', 
-            when='S', 
-            interval=10, 
-            max_bytes=1*1024, 
-            backup_count=2, 
-            total_size_limit=1024*300*1024
+            file_name ='test.log', 
+            rotate_frequency='S', 
+            rotate_interval=10, 
+            max_file_size=1*1024, 
+            max_log_files=2, 
+            total_log_size=1024*300*1024
         )
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
@@ -105,18 +105,18 @@ class TestLogSetLogConfig(unittest.TestCase):
         logger = logging.getLogger('CustomLogger')
         logger.setLevel(logging.DEBUG)
         handler = SizeAndTimeRotatingFileHandler(
-            filename ='test.log', 
-            when='S', 
-            interval=100, 
-            max_bytes=10*1024, 
-            backup_count=10000, 
-            total_size_limit=20*1024
+            file_name ='test.log', 
+            rotate_frequency='S', 
+            rotate_interval=100, 
+            max_file_size=10*1024, 
+            max_log_files=10000, 
+            total_log_size=20*1024
         )
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
-        for i in range(100):
+        for _ in range(100):
             logger.info("This is a test log message."*100)
             time.sleep(0.001)
 
