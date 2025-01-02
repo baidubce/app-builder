@@ -242,7 +242,7 @@ class Component:
         except AttributeError:
             # 目前async仅在AppBuilderClient中使用，所以没有async属性的组件都可以设置为False
             self.is_async = False
-            
+
         if self.is_async:
             self._http_client = AsyncHTTPClient(self.secret_key, self.gateway)
         else:
