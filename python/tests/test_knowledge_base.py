@@ -133,13 +133,13 @@ class TestKnowLedge(unittest.TestCase):
         list_res = knowledge.get_documents_list(
             knowledge_base_id=knowledge_base_id)
         document_id = list_res.data[-1].id
-        res = knowledge.describe_chunks(document_id)
-        resp = knowledge.create_chunk(document_id, content="test")
+        res = knowledge.describe_chunks(document_id, knowledgebase_id=knowledge_base_id)
+        resp = knowledge.create_chunk(document_id, content="test", knowledgebase_id=knowledge_base_id)
         chunk_id = resp.id
-        knowledge.modify_chunk(chunk_id, content="new test", enable=True)
+        knowledge.modify_chunk(chunk_id, content="new test", enable=True, knowledgebase_id=knowledge_base_id)
         # 目前openapi有延迟，后续openapi完善后，删除注释
-        # knowledge.describe_chunk(chunk_id)
-        knowledge.delete_chunk(chunk_id)
+        # knowledge.describe_chunk(chunk_id, knowledgebase_id=knowledge_base_id)
+        knowledge.delete_chunk(chunk_id, knowledgebase_id=knowledge_base_id)
 
         knowledge.modify_knowledge_base(
             knowledge_base_id=knowledge_base_id, name="test"

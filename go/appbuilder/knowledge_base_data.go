@@ -190,9 +190,10 @@ type UploadDocumentsResponse struct {
 }
 
 type CreateChunkRequest struct {
-	DocumentID  string `json:"documentId"`
-	Content     string `json:"content"`
-	ClientToken string `json:"client_token,omitempty"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	DocumentID      string `json:"documentId"`
+	Content         string `json:"content"`
+	ClientToken     string `json:"client_token,omitempty"`
 }
 
 type CreateChunkResponse struct {
@@ -200,19 +201,22 @@ type CreateChunkResponse struct {
 }
 
 type ModifyChunkRequest struct {
-	ChunkID     string `json:"chunkId"`
-	Content     string `json:"content"`
-	Enable      bool   `json:"enable"`
-	ClientToken string `json:"client_token,omitempty"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	ChunkID         string `json:"chunkId"`
+	Content         string `json:"content"`
+	Enable          bool   `json:"enable"`
+	ClientToken     string `json:"client_token,omitempty"`
 }
 
 type DeleteChunkRequest struct {
-	ChunkID     string `json:"chunkId"`
-	ClientToken string `json:"client_token,omitempty"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	ChunkID         string `json:"chunkId"`
+	ClientToken     string `json:"client_token,omitempty"`
 }
 
 type DescribeChunkRequest struct {
-	ChunkID string `json:"chunkId"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	ChunkID         string `json:"chunkId"`
 }
 
 type DescribeChunkResponse struct {
@@ -232,10 +236,11 @@ type DescribeChunkResponse struct {
 }
 
 type DescribeChunksRequest struct {
-	DocumnetID string `json:"documentId"`
-	Marker     string `json:"marker,omitempty"`
-	MaxKeys    int    `json:"maxKeys,omitempty"`
-	Type       string `json:"type,omitempty"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	DocumnetID      string `json:"documentId"`
+	Marker          string `json:"marker,omitempty"`
+	MaxKeys         int    `json:"maxKeys,omitempty"`
+	Type            string `json:"type,omitempty"`
 }
 
 type DescribeChunksResponse struct {
