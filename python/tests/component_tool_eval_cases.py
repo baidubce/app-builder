@@ -90,7 +90,7 @@ class Text2ImageCase(Case):
 
 class StyleRewriteCase(Case):
     def init_args(self):
-        return {"model": "Qianfan-Agent-Speed-8k"}
+        return {"model": "ERNIE-3.5-8K"}
     
     def inputs(self):
         return {"query": "文心大模型发布新版"}
@@ -116,6 +116,9 @@ class QRcodeOCRCase(Case):
         return {"text": ["ocr文字识别"]}
 
 class HallucinationDetectionCase(Case):
+    def init_args(self):
+        return {"model": "ERNIE-3.5-8K"}
+    
     def inputs(self):
         return {
             "query": '澳门新麻蒲烤肉店每天开门吗？',
@@ -307,6 +310,9 @@ class ObjectRecognitionCase(Case):
         return {"text": ["苹果"]}
     
 class SimilarQuestionCase(Case):
+    def init_args(self):
+        return {"model": "ERNIE-3.5-8K"}
+    
     def inputs(self):
         return {
             "query": "我想吃冰淇淋，哪里的冰淇淋比较好吃？"
@@ -319,6 +325,9 @@ class SimilarQuestionCase(Case):
         return {"text": ["冰淇淋"]}
 
 class OralQueryGenerationCase(Case):
+    def init_args(self):
+        return {"model": "ERNIE-3.5-8K"}
+    
     def inputs(self):
         text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
                 '文档摘要：OPPO Reno5上的视频超级防抖，视频超级防抖3.0，多代视频防抖算法积累，这一代依旧超级防抖超级稳。 开启视频超级'

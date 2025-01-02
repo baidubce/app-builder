@@ -82,7 +82,7 @@ template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}
 # 定义输入，调用playground组件
 input = appbuilder.Message({"role": "java工程师", "question": "请简要回答java语言的内存回收机制是什么，要求100字以内"})
 
-playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8k")
+playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8K")
 
 # 以打字机的方式，流式展示大模型回答内容
 output = playground(input, stream=True, temperature=1e-10)

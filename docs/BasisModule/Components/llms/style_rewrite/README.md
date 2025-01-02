@@ -33,7 +33,7 @@ import appbuilder
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 # 初始化并使用 StyleRewrite 组件
-style_rewrite = appbuilder.StyleRewrite(model="Qianfan-Agent-Speed-8k")
+style_rewrite = appbuilder.StyleRewrite(model="Qianfan-Agent-Speed-8K")
 answer = style_rewrite(appbuilder.Message("文心大模型发布新版"), style="激励话术")
 ```
 
