@@ -49,23 +49,25 @@ class TestLogSetLogConfig(unittest.TestCase):
             )
 
     def test_rolling_with_time(self):
-        logger = logging.getLogger('CustomLogger')
-        logger.setLevel(logging.DEBUG)
-        handler = SizeAndTimeRotatingFileHandler(
-            filename ='test.log', 
-            when='S', 
-            interval=1, 
-            max_bytes=1024*100*1024, 
-            backup_count=10, 
-            total_size_limit=1024*300*1024
-        )
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+        time_msgs = ['S', 'M', 'H', 'D', 'MIDNIGHT']
+        for time_msg in time_msgs:
+            logger = logging.getLogger('CustomLogger')
+            logger.setLevel(logging.DEBUG)
+            handler = SizeAndTimeRotatingFileHandler(
+                filename ='test.log', 
+                when=time_msg, 
+                interval=1, 
+                max_bytes=1024*100*1024, 
+                backup_count=10, 
+                total_size_limit=1024*300*1024
+            )
+            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
 
-        for i in range(3):
-            logger.info("This is a test log message.")
-            time.sleep(1)
+            for _ in range(2):
+                logger.info("This is a test log message.")
+                time.sleep(0.1)
 
     def test_rolling_with_size(self):
         logger = logging.getLogger('CustomLogger')
