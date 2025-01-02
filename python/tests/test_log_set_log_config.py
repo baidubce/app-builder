@@ -34,6 +34,21 @@ class TestLogSetLogConfig(unittest.TestCase):
             max_log_files=None, # 测试not max_log_files or max_log_files <= 0时，自动更新为sys.maxsize
         )
 
+    def test_set_log_config_log_path(self):
+        os.environ["APPBUILDER_LOGPATH"] = "/tmp"
+        lwl=LoggerWithLoggerId(logger='test_logger',extra={'logid':'test_logid'},loglevel='INFO')
+        lwl.setLogConfig(
+            console_output = True,
+            loglevel='DEBUG',
+            log_path='/tmp',
+            file_name='test.log',
+            rotate_frequency='D',
+            rotate_interval=0, # 测试rotate_interval<1时，自动更新为1
+            max_file_size=None, # 测试not max_file_size or max_file_size <= 0时，自动更新为sys.maxsize
+            total_log_size=None, # 测试not total_log_size or total_log_size <= 0时，自动更新为sys.maxsize
+            max_log_files=None, # 测试not max_log_files or max_log_files <= 0时，自动更新为sys.maxsize
+        )
+
     def test_set_log_config_raise_error(self):
         lwl=LoggerWithLoggerId(logger='test_logger',extra={'logid':'test_logid'},loglevel='INFO')
         with self.assertRaises(ValueError):    
@@ -47,7 +62,7 @@ class TestLogSetLogConfig(unittest.TestCase):
                 total_log_size=None, # 测试not total_log_size or total_log_size <= 0时，自动更新为sys.maxsize
                 max_log_files=None, # 测试not max_log_files or max_log_files <= 0时，自动更新为sys.maxsize
             )
-        
+
         with self.assertRaises(ValueError):    
             lwl.setLogConfig(
                 console_output = True,
@@ -59,7 +74,6 @@ class TestLogSetLogConfig(unittest.TestCase):
                 total_log_size=None, # 测试not total_log_size or total_log_size <= 0时，自动更新为sys.maxsize
                 max_log_files=None, # 测试not max_log_files or max_log_files <= 0时，自动更新为sys.maxsize
             )
-
 
     def test_rolling_with_time(self):
         time_msgs = ['S', 'M', 'H', 'D', 'MIDNIGHT']

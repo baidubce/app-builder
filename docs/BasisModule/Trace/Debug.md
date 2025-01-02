@@ -60,7 +60,8 @@ Appbuilder-SDK新增滚动日志功能
 主要参数:
 - console_output: 数据类型bool，默认值True，LOG日志是否在控制台输出
 - loglevel: 数据类型str，默认值"DEBUG"，LOG日志级别
-- file_name: 数据类型str，默认值"tmp.log"，LOG日志名称
+- log_path: 数据类型str，默认值"/tmp"，默认日志存放路径。
+- file_name: 数据类型str，默认值为进程id，日志名前缀
 - rotate_frequency: 数据类型str，默认值"MIDNIGHT"，LOG日志滚动更新时间单位
     - "S": 以秒为单位
     - "M": 以分钟为单位
@@ -78,7 +79,7 @@ Appbuilder-SDK新增滚动日志功能
 appbuilder.logger.setLogConfig(
     console_output = False,
     loglevel="DEBUG"
-    file_name="appbuilder.log", 
+    log_path="/tmp",, 
     rotate_frequency="MIDNIGHT", # 每日凌晨更新 
     rotate_interval=1,
     max_file_size=100 * 1024 *1024, # 最大日志大小为100MB

@@ -24,7 +24,7 @@ import logging.handlers
 import logging.config
 from threading import current_thread
 from typing import Optional
-    
+
 LOGGING_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -53,14 +53,14 @@ CONSOLE_HEADER = {
 ERROR_FILE_HEADER = {
     "level": "ERROR",
     "class": "logging.FileHandler",
-    "filename": "error.tmp.log",
+    "filename": "tmp.error.log",
     "formatter": "standard",
 }
 
 FILE_HEADER = {
     "level": "DEBUG",
     "class": "logging.FileHandler",
-    "filename": "tmp.log",
+    "filename": "tmp.info.log",
     "formatter": "standard",
 }
 
@@ -68,7 +68,7 @@ ERROR_SET_CONFIG_HEADER = {
     'level': 'ERROR',
     'formatter': 'standard',
     'class': 'appbuilder.SizeAndTimeRotatingFileHandler',
-    'file_name': 'error.tmp.log',
+    'file_name': 'tmp.error.log',
     'rotate_frequency': 'MIDDNIGHT',
     'rotate_interval': 1,
     'max_file_size': 5*1024*1024,
@@ -80,7 +80,7 @@ SET_CONFIG_HEADER = {
     'level': 'DEBUG',
     'formatter': 'standard',
     'class': 'appbuilder.SizeAndTimeRotatingFileHandler',
-    'file_name': 'tmp.log',
+    'file_name': 'tmp.info.log',
     'rotate_frequency': 'MIDDNIGHT',
     'rotate_interval': 1,
     'max_file_size': 5*1024*1024,
@@ -99,12 +99,29 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         LOGGING_CONFIG["handlers"] = {}
         LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"] = []
         log_file = os.environ.get("APPBUILDER_LOGFILE", "")
+        log_path = os.environ.get("APPBUILDER_LOGPATH", "")
         loglevel = loglevel.strip().lower()
         if loglevel not in ["debug", "info", "warning", "error"]:
             raise ValueError("expected APPBUILDER_LOGLEVEL in [debug, info, warning, error], but got %s" % loglevel)
         loglevel = loglevel.upper()
-        if log_file:
-            ERROR_FILE_HEADER["filename"] = _add_error_to_file_name(log_file)
+
+        if log_path:
+            current_pid = str(os.getpid())
+            full_log_path = os.path.join(log_path, "log")
+            if not os.path.exists(full_log_path):
+                os.makedirs(full_log_path)
+            info_log_file = os.path.join(log_path, "log", current_pid + ".info.log")
+            error_log_file = os.path.join(log_path, "log", current_pid + ".error.log")
+            FILE_HEADER["filename"] = info_log_file
+            ERROR_FILE_HEADER["filename"] = error_log_file
+            FILE_HEADER["level"] = loglevel
+            LOGGING_CONFIG["handlers"]["file"] = FILE_HEADER
+            LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
+            if loglevel in ("DEBUG", "INFO", "WARNING"):
+                LOGGING_CONFIG["handlers"]["error_file"] = ERROR_FILE_HEADER
+                LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("error_file")
+        elif log_file:
+            ERROR_FILE_HEADER["filename"] = self._add_error_to_file_name(log_file)
             FILE_HEADER["filename"] = log_file
             FILE_HEADER["level"] = loglevel
             LOGGING_CONFIG["handlers"]["file"] = FILE_HEADER
@@ -112,6 +129,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
             if loglevel in ("DEBUG", "INFO", "WARNING"):
                 LOGGING_CONFIG["handlers"]["error_file"] = ERROR_FILE_HEADER
                 LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("error_file")
+
         CONSOLE_HEADER["level"] = loglevel
         LOGGING_CONFIG["handlers"]["console"] = CONSOLE_HEADER
         LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("console")
@@ -148,6 +166,13 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         """
         return self.logger.level
 
+    @staticmethod
+    def _add_error_to_file_name(filename):
+        prefix = "error."
+        dir_name, base_name = os.path.split(filename)
+        new_base_name = f"{prefix}{base_name}"
+        return os.path.join(dir_name, new_base_name)
+
     def setFilename(self, filename):
         """
         set filename
@@ -157,11 +182,11 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
             LOGGING_CONFIG["handlers"]["file"] = FILE_HEADER
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("file")
         if "error_file" not in LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"]:
-            ERROR_FILE_HEADER["filename"] = _add_error_to_file_name(filename)
+            ERROR_FILE_HEADER["filename"] = self._add_error_to_file_name(filename)
             LOGGING_CONFIG["handlers"]["error_file"] = ERROR_FILE_HEADER
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("error_file")
         FILE_HEADER["filename"] = filename
-        ERROR_FILE_HEADER["filename"] = _add_error_to_file_name(filename)
+        ERROR_FILE_HEADER["filename"] = self._add_error_to_file_name(filename)
         LOGGING_CONFIG["handlers"]["file"] = FILE_HEADER
         LOGGING_CONFIG["handlers"]["error_file"] = ERROR_FILE_HEADER
         logging.config.dictConfig(LOGGING_CONFIG)
@@ -186,16 +211,17 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
     def setLogConfig(self,
                     console_output: bool = True,
                     loglevel: str = "DEBUG",
-                    file_name: str = "tmp.log",
+                    log_path: str = "/tmp",
                     rotate_frequency: str = "MIDNIGHT",
                     rotate_interval: int = 1,
                     max_file_size: Optional[int] = None, # 以B为单位
                     total_log_size: Optional[int] = None, # 以B为单位
-                    max_log_files: Optional[int] = None
+                    max_log_files: Optional[int] = None,
+                    file_name: Optional[str] = None
                     ):
         LOGGING_CONFIG["handlers"] = {}
         LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"] = []
-        
+
         # log_level 数据校验
         log_level = loglevel.strip().lower()
         if log_level not in ["debug", "info", "warning", "error"]:
@@ -209,7 +235,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("console")
         else:
             LOGGING_CONFIG["loggers"]["appbuilder"]["propagate"] = False
-        
+
         # 参数验证
         if not max_file_size or max_file_size <= 0:
             max_file_size = sys.maxsize
@@ -228,8 +254,17 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         SET_CONFIG_HEADER['level'] = loglevel
 
         # 设置文件名称
-        SET_CONFIG_HEADER['file_name'] = file_name
-        ERROR_SET_CONFIG_HEADER['file_name'] = _add_error_to_file_name(file_name)
+        if not file_name:
+            current_pid = str(os.getpid())
+        else:
+            current_pid = file_name
+        full_log_path = os.path.join(log_path, "log")
+        if not os.path.exists(full_log_path):
+            os.makedirs(full_log_path)
+        info_log_file = os.path.join(log_path, "log", current_pid + ".info.log")
+        error_log_file = os.path.join(log_path, "log", current_pid + ".error.log")
+        SET_CONFIG_HEADER["file_name"] = info_log_file
+        ERROR_SET_CONFIG_HEADER["file_name"] = error_log_file
 
         # 设置滚动时间
         SET_CONFIG_HEADER['rotate_frequency'] = rotate_frequency
@@ -238,7 +273,7 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         ERROR_SET_CONFIG_HEADER['rotate_interval'] = rotate_interval
 
         # 设置最大文件大小
-        
+
         SET_CONFIG_HEADER['max_file_size'] = max_file_size
         ERROR_SET_CONFIG_HEADER['max_file_size'] = max_file_size
 
@@ -319,12 +354,6 @@ def get_logger(name, level=logging.INFO):
     # log multiple times
     logger.propagate = False
     return logger
-
-def _add_error_to_file_name(filename):
-    prefix = "error."
-    dir_name, base_name = os.path.split(filename)
-    new_base_name = f"{prefix}{base_name}"
-    return os.path.join(dir_name, new_base_name)
 
 
 logger = _setup_logging()
