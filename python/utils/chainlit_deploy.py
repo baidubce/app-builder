@@ -7,6 +7,7 @@ from click.testing import CliRunner
 import uuid
 
 import appbuilder
+from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.utils.logger_util import logger
 from appbuilder.core.context import init_context
@@ -134,7 +135,7 @@ class ChainlitRuntime(object):
 
     """
     def __init__(self,
-            component,
+            component: Component,
             user_session_config: Optional[Union[Any, str]] = None,
             user_session: Optional[UserSession] = None,
             tool_choice: ToolChoice = None 
@@ -196,9 +197,9 @@ class ChainlitRuntime(object):
             # 获取当前文件的路径所在文件夹
             current_file_path = os.path.dirname(
                 os.path.dirname(os.path.abspath(__file__)))
-            logger.info("current_file_path")
             chainlit_readme_path = os.path.join(
-                current_file_path, "chainlit.md")
+                current_file_path, "utils/chainlit.md")
+            logger.debug(f"chainlit_readme_path:{chainlit_readme_path}")
             if not os.path.exists(chainlit_readme_path):
                 raise FileNotFoundError(f"Chainlit readme file not found at {chainlit_readme_path}")
             

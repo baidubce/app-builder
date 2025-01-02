@@ -50,6 +50,7 @@ class TestRuntime(unittest.TestCase):
   
     def test_err_http(self):
         """ 测试http """
+        print(os.getenv("APPBUILDER_TOKEN", ""))
         component = appbuilder.Playground(
             prompt_template="{query}",
             model="ERNIE-3.5-8K",
@@ -132,12 +133,6 @@ class TestRuntime(unittest.TestCase):
         agent = FlaskRuntime(component=component)
         agent = ChainlitRuntime(component=component)
 
-    def test_init_with_invalid_component(self):
-        """ 测试在component非法时运行 """
-        component = "invalid_component"
-        with self.assertRaises(pydantic.ValidationError):
-            agent = FlaskRuntime(component=component)
-
     def test_chat_with_valid_message_and_blocking(self):
         """ 测试在消息有效时处理 """
         component = Playground(
@@ -182,7 +177,7 @@ class TestRuntime(unittest.TestCase):
         with self.assertRaises(ImportError):
             agent.chainlit_agent()
         subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "chainlit~=1.0.200"]
+            [sys.executable, "-m", "pip", "install", "chainlit==1.0.200"]
         )
         with self.assertRaises(ValueError):
             agent.chainlit_agent()

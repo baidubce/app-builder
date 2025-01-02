@@ -4,6 +4,7 @@ import copy
 from typing import Optional, Union, Any
 
 import appbuilder
+from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core.user_session import UserSession
 from appbuilder.utils.logger_util import logger
@@ -146,7 +147,7 @@ class FlaskRuntime(object):
         conn.close()
     """
     def __init__(self, 
-            component,
+            component: Component,
             user_session_config: Optional[Union[Any, str]] = None,
             user_session: Optional[UserSession] = None
             ):
