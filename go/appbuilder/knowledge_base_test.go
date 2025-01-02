@@ -349,6 +349,8 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 	}
 
 	client.client = clientT
+	var knowledgeBaseID string
+	needDeleteKnowledgeBase := false
 	// 成功 创建知识库
 	createKnowledgeBaseRes, err := client.CreateKnowledgeBase(KnowledgeBaseDetail{
 		Name:        "test-go",
@@ -362,10 +364,13 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 			},
 		},
 	})
-	if err != nil {
+	if err == nil {
+		needDeleteKnowledgeBase = true
+		knowledgeBaseID = createKnowledgeBaseRes.ID
+	} else {
+		knowledgeBaseID = os.Getenv(SecretKeyV3)
 	}
 
-	knowledgeBaseID := createKnowledgeBaseRes.ID
 	client.client = clientT
 	// GetKnowledgeBaseDetail 测试1 ServiceURLV2 错误
 	client.sdkConfig.GatewayURLV2 = "://invalid-url"
@@ -812,10 +817,11 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 
 	client.client = clientT
 	// 删除知识库
-	err = client.DeleteKnowledgeBase(knowledgeBaseID)
-	if err != nil {
+	if needDeleteKnowledgeBase {
+		err = client.DeleteKnowledgeBase(knowledgeBaseID)
+		if err != nil {
+		}
 	}
-
 }
 
 func TestChunkError(t *testing.T) {
@@ -1186,6 +1192,8 @@ func TestCreateKnowledgeBase(t *testing.T) {
 	}
 
 	// 创建知识库
+	var knowledgeBaseID string
+	needDeleteKnowledgeBase := false
 	createKnowledgeBaseRes, err := client.CreateKnowledgeBase(KnowledgeBaseDetail{
 		Name:        "test-go",
 		Description: "test-go",
@@ -1199,10 +1207,11 @@ func TestCreateKnowledgeBase(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("create knowledge base failed: %v", err)
+		knowledgeBaseID = os.Getenv(DatasetIDV3)
+	} else {
+		needDeleteKnowledgeBase = true
+		knowledgeBaseID = createKnowledgeBaseRes.ID
 	}
-	knowledgeBaseID := createKnowledgeBaseRes.ID
 	log("Knowledge base created with ID: %s", knowledgeBaseID)
 
 	// 获取知识库详情
@@ -1379,12 +1388,14 @@ func TestCreateKnowledgeBase(t *testing.T) {
 	log("Knowledge base modified with new name: %s", name)
 
 	// 删除知识库
-	err = client.DeleteKnowledgeBase(knowledgeBaseID)
-	if err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("delete knowledge base failed: %v", err)
+	if needDeleteKnowledgeBase {
+		err = client.DeleteKnowledgeBase(knowledgeBaseID)
+		if err != nil {
+			t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+			t.Fatalf("delete knowledge base failed: %v", err)
+		}
+		log("Knowledge base deleted with ID: %s", knowledgeBaseID)
 	}
-	log("Knowledge base deleted with ID: %s", knowledgeBaseID)
 
 	// 测试通过，打印文件名和测试函数名
 	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")

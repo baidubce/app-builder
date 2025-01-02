@@ -75,6 +75,8 @@ public class AppBuilderConfig {
     // 知识库检索
     public static final String QUERY_KNOWLEDGEBASE_URL = "/knowledgebases/query";
 
+    // 组件调用
+    public static final String COMPONENT_RUN_URL = "/components";
 
     // 运行rag
     public static final String RAG_RUN_URL =

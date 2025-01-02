@@ -36,6 +36,10 @@ public class Dataset extends Component {
         this.datasetId = datasetId;
     }
 
+    public void setDatasetId(String datasetId) {
+        this.datasetId = datasetId;
+    }
+
     /**
      * 创建数据集
      *

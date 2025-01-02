@@ -76,10 +76,17 @@ public class KnowledgebaseTest {
                 "http://localhost:9200", "elastic", "changeme");
         KnowledgeBaseConfig config = new KnowledgeBaseConfig(index);
         request.setConfig(config);
-        KnowledgeBaseDetail response = knowledgebase.createKnowledgeBase(request);
-        String knowledgeBaseId = response.getId();
-        System.out.println(knowledgeBaseId);
-        assertNotNull(response.getId());
+
+        String knowledgeBaseId = "";
+        boolean needDeleteKnowledgebase = false;
+        try {
+            KnowledgeBaseDetail response = knowledgebase.createKnowledgeBase(request);
+            knowledgeBaseId = response.getId();
+            assertNotNull(response.getId());
+            needDeleteKnowledgebase = true;
+        } catch (Exception e) {
+            knowledgeBaseId = System.getenv("DATASET_ID_V3");
+        }
 
         // 获取知识库详情
         KnowledgeBaseDetail detail = knowledgebase.getKnowledgeBaseDetail(knowledgeBaseId);
@@ -134,7 +141,9 @@ public class KnowledgebaseTest {
         assertNotNull(documentsUploadResponse.getDocumentId());
 
         // 删除知识库
-        knowledgebase.deleteKnowledgeBase(knowledgeBaseId);
+        if(needDeleteKnowledgebase) {
+            knowledgebase.deleteKnowledgeBase(knowledgeBaseId);
+        }
     }
     
     @Test

@@ -181,6 +181,7 @@ from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuild
 from appbuilder.core.console.appbuilder_client.async_appbuilder_client import AsyncAppBuilderClient
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
 from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps, describe_apps
+from appbuilder.core.console.component_client.component_client import ComponentClient
 from appbuilder.core.console.knowledge_base.knowledge_base import KnowledgeBase
 from appbuilder.core.console.knowledge_base.data_class import CustomProcessRule, DocumentSource, DocumentChoices, DocumentChunker, DocumentSeparator, DocumentPattern, DocumentProcessOption
 
@@ -218,6 +219,7 @@ __all__ = [
     "AppBuilderClient",
     "AsyncAppBuilderClient",
     "AgentBuilder",
+    "ComponentClient",
     "get_app_list",
     "get_all_apps",
     "describe_apps",
