@@ -30,7 +30,7 @@ model_name_mapping = [
     ("ERNIE-Bot-turbo", "eb-turbo"),
     ("EB-turbo-AppBuilder专用版", "eb-turbo-appbuilder"),
     ("EB-turbo-AppBuilder专用版", "ernie_speed_appbuilder"),
-    ("EB-turbo-AppBuilder专用版", "Qianfan-Agent-Speed-8k"),
+    ("EB-turbo-AppBuilder专用版", "Qianfan-Agent-Speed-8K"),
 ]
 
 class RemoteModel(object):
@@ -62,7 +62,7 @@ class RemoteModel(object):
          """
         # TODO(chengmo): 使用logging 替换 print，解决print多次的问题
         if short_name == "eb-turbo-appbuilder":
-            print("Deprecate warning: model [eb-turbo-appbuilder] is deprecated, please use [Qianfan-Agent-Speed-8k]")
+            print("Deprecate warning: model [eb-turbo-appbuilder] is deprecated, please use [Qianfan-Agent-Speed-8K]")
 
         if short_name in self.short_names:
             return self.remote_name
