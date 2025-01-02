@@ -17,12 +17,19 @@ import com.baidubce.appbuilder.base.utils.json.JsonUtils;
 import com.baidubce.appbuilder.model.knowledgebase.*;
 
 public class Knowledgebase extends Component {
+    private String knowledgeBaseId;
+
     public Knowledgebase() {
         super();
     }
 
     public Knowledgebase(String SecretKey) {
         super(SecretKey);
+    }
+
+    public Knowledgebase(String knowledgeBaseId, String SecretKey) {
+        super(SecretKey);
+        this.knowledgeBaseId = knowledgeBaseId;
     }
 
     /**
@@ -537,8 +544,14 @@ public class Knowledgebase extends Component {
     private String innerCreateChunk(String documentId, String content, String clientToken)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CHUNK_CREATE_URL;
-
-        ChunkCreateRequest request = new ChunkCreateRequest(documentId, content);
+        
+        ChunkCreateRequest request;
+        if(this.knowledgeBaseId.isEmpty()) {
+            request = new ChunkCreateRequest(documentId, content);
+        } else {
+            request = new ChunkCreateRequest(this.knowledgeBaseId, documentId, content);
+        }
+        
         String jsonBody = JsonUtils.serialize(request);
         url = url + "&clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
@@ -592,7 +605,12 @@ public class Knowledgebase extends Component {
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CHUNK_MODIFY_URL;
 
-        ChunkModifyRequest request = new ChunkModifyRequest(chunkId, content, enable);
+        ChunkModifyRequest request;
+        if (this.knowledgeBaseId.isEmpty()) {
+            request = new ChunkModifyRequest(chunkId, content, enable);
+        } else {
+            request = new ChunkModifyRequest(this.knowledgeBaseId, chunkId, content, enable);
+        }
         String jsonBody = JsonUtils.serialize(request);
         url = url + "&clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
@@ -634,8 +652,12 @@ public class Knowledgebase extends Component {
      */
     private void innderDeleteChunk(String chunkId, String clientToken) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CHUNK_DELETE_URL;
+        
         ChunkDeleteRequest request = new ChunkDeleteRequest();
         request.setChunkId(chunkId);
+        if (!this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
         String jsonBody = JsonUtils.serialize(request);
         url = url + "&clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
@@ -658,6 +680,9 @@ public class Knowledgebase extends Component {
 
         ChunkDescribeRequest request = new ChunkDescribeRequest();
         request.setChunkId(chunkId);
+        if (!this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
         String jsonBody = JsonUtils.serialize(request);
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
@@ -683,6 +708,9 @@ public class Knowledgebase extends Component {
         String url = AppBuilderConfig.CHUNKS_DESCRIBE_URL;
 
         ChunksDescribeRequest request = new ChunksDescribeRequest(documentId, marker, maxKeys, type);
+        if (!this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
         String jsonBody = JsonUtils.serialize(request);
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));

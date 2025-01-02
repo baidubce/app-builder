@@ -42,9 +42,21 @@ func NewKnowledgeBase(config *SDKConfig) (*KnowledgeBase, error) {
 	return &KnowledgeBase{sdkConfig: config, client: client}, nil
 }
 
+func NewKnowledgeBaseWithKnowledgeBaseID(knowledgeBaseID string, config *SDKConfig) (*KnowledgeBase, error) {
+	if config == nil {
+		return nil, errors.New("invalid config")
+	}
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 60 * time.Second}
+	}
+	return &KnowledgeBase{knowledgeBaseID: knowledgeBaseID, sdkConfig: config, client: client}, nil
+}
+
 type KnowledgeBase struct {
-	sdkConfig *SDKConfig
-	client    HTTPClient
+	knowledgeBaseID string
+	sdkConfig       *SDKConfig
+	client          HTTPClient
 }
 
 func (t *KnowledgeBase) CreateDocument(req CreateDocumentRequest) (CreateDocumentResponse, error) {
@@ -618,6 +630,10 @@ func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 	if req.ClientToken == "" {
 		req.ClientToken = uuid.New().String()
 	}
+
+	if req.KnowledgeBaseID == "" && t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
+	}
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateChunk&clientToken=" + req.ClientToken)
 	if err != nil {
 		return "", err
@@ -656,6 +672,10 @@ func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
 	header := t.sdkConfig.AuthHeaderV2()
 	if req.ClientToken == "" {
 		req.ClientToken = uuid.New().String()
+	}
+
+	if req.KnowledgeBaseID == "" && t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
 	}
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=ModifyChunk&clientToken=" + req.ClientToken)
 	if err != nil {
@@ -715,6 +735,10 @@ func (t *KnowledgeBase) deleteChunk(chunkID string, clientToken string) error {
 	req := DeleteChunkRequest{
 		ChunkID: chunkID,
 	}
+
+	if t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
+	}
 	data, _ := json.Marshal(req)
 	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
@@ -754,6 +778,10 @@ func (t *KnowledgeBase) DescribeChunk(chunkID string) (DescribeChunkResponse, er
 	req := DescribeChunkRequest{
 		ChunkID: chunkID,
 	}
+
+	if t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
+	}
 	data, _ := json.Marshal(req)
 	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
@@ -785,6 +813,10 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DescribeChunks")
 	if err != nil {
 		return DescribeChunksResponse{}, err
+	}
+
+	if req.KnowledgeBaseID == "" && t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
 	}
 	request.URL = serviceURL
 	request.Method = "POST"

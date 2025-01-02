@@ -828,18 +828,28 @@ func TestChunkError(t *testing.T) {
 	t.Parallel() // 并发运行
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
-	documentID := os.Getenv(DocumentIDV3)
-	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
+	knowledgeBaseID := os.Getenv(DatasetID)
+	config, err := NewSDKConfig("", os.Getenv(SecretKey))
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
-	client, err := NewKnowledgeBase(config)
+	client, err := NewKnowledgeBaseWithKnowledgeBaseID(knowledgeBaseID, config)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new Knowledge base instance failed")
 	}
+
+	documentsRes, err := client.GetDocumentList(GetDocumentListRequest{
+		KnowledgeBaseID: knowledgeBaseID,
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("get document list failed: %v", err)
+	}
+	documentID := documentsRes.Data[0].ID
+
 	var clientT = client.client
 	var GatewayURL = client.sdkConfig.GatewayURLV2
 
@@ -1416,22 +1426,33 @@ func TestChunk(t *testing.T) {
 		fmt.Fprintf(&logBuffer, format+"\n", args...)
 	}
 
-	documentID := os.Getenv(DocumentIDV3)
-	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
+	knowledgeBaseID := os.Getenv(DatasetID)
+	config, err := NewSDKConfig("", os.Getenv(SecretKey))
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
-	client, err := NewKnowledgeBase(config)
+	client, err := NewKnowledgeBaseWithKnowledgeBaseID(knowledgeBaseID, config)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new Knowledge base instance failed")
 	}
+
+	documentsRes, err := client.GetDocumentList(GetDocumentListRequest{
+		KnowledgeBaseID: knowledgeBaseID,
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("get document list failed: %v", err)
+	}
+	log("Documents retrieved: %+v", documentsRes)
+	documentID := documentsRes.Data[0].ID
 	// 创建切片
 	chunkID, err := client.CreateChunk(CreateChunkRequest{
-		DocumentID: documentID,
-		Content:    "test",
+		KnowledgeBaseID: knowledgeBaseID,
+		DocumentID:      documentID,
+		Content:         "test",
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
@@ -1441,9 +1462,10 @@ func TestChunk(t *testing.T) {
 
 	// 修改切片
 	err = client.ModifyChunk(ModifyChunkRequest{
-		ChunkID: chunkID,
-		Content: "new test",
-		Enable:  true,
+		KnowledgeBaseID: knowledgeBaseID,
+		ChunkID:         chunkID,
+		Content:         "new test",
+		Enable:          true,
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
@@ -1461,9 +1483,10 @@ func TestChunk(t *testing.T) {
 
 	// 获取切片列表
 	describeChunksRes, err := client.DescribeChunks(DescribeChunksRequest{
-		DocumnetID: documentID,
-		Marker:     chunkID,
-		MaxKeys:    10,
+		KnowledgeBaseID: knowledgeBaseID,
+		DocumnetID:      documentID,
+		Marker:          chunkID,
+		MaxKeys:         10,
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")

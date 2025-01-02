@@ -198,7 +198,7 @@ class DocumentProcessOption(BaseModel):
     )
     parser: Optional[DocumentChoices] = Field(
         None,
-        description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr按需增加)",
+        description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr光学字符识别，pageImageAnalysis文档图片解析，chartAnalysis图表解析，tableAnalysis表格深度解析，按需增加)",
     )
     knowledgeAugmentation: Optional[DocumentChoices] = Field(
         None,
@@ -230,6 +230,7 @@ class KnowledgeBaseUploadDocumentsResponse(BaseModel):
 
 
 class CreateChunkRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     documentId: str = Field(..., description="文档ID")
     content: str = Field(..., description="文档内容")
 
@@ -239,16 +240,19 @@ class CreateChunkResponse(BaseModel):
 
 
 class ModifyChunkRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     chunkId: str = Field(..., description="切片ID")
     content: str = Field(..., description="文档内容")
     enable: bool = Field(..., description="是否启用")
 
 
 class DeleteChunkRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     chunkId: str = Field(..., description="切片ID")
 
 
 class DescribeChunkRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     chunkId: str = Field(..., description="切片ID")
 
 
@@ -269,6 +273,7 @@ class DescribeChunkResponse(BaseModel):
 
 
 class DescribeChunksRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     documentId: str = Field(..., description="文档ID")
     marker: Optional[str] = Field(None, description="起始位置")
     maxKeys: Optional[int] = Field(

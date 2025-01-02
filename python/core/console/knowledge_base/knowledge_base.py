@@ -646,6 +646,7 @@ class KnowledgeBase(Component):
         documentId: str,
         content: str,
         client_token: str = None,
+        knowledgebase_id: Optional[str] = None,
     ) -> data_class.CreateChunkResponse:
         r"""
         创建文档块
@@ -670,6 +671,7 @@ class KnowledgeBase(Component):
         )
 
         request = data_class.CreateChunkRequest(
+            knowledgeBaseId=knowledgebase_id or self.knowledge_id,
             documentId=documentId,
             content=content,
         )
@@ -690,6 +692,7 @@ class KnowledgeBase(Component):
         chunkId: str,
         content: str,
         enable: bool,
+        knowledgebase_id: Optional[str] = None,
         client_token: str = None,
     ):
         r"""
@@ -713,6 +716,7 @@ class KnowledgeBase(Component):
         )
 
         request = data_class.ModifyChunkRequest(
+            knowledgeBaseId=knowledgebase_id or self.knowledge_id,
             chunkId=chunkId,
             content=content,
             enable=enable,
@@ -731,6 +735,7 @@ class KnowledgeBase(Component):
     def delete_chunk(
         self,
         chunkId: str,
+        knowledgebase_id: Optional[str] = None,
         client_token: str = None,
     ):
         r"""
@@ -753,6 +758,7 @@ class KnowledgeBase(Component):
         )
 
         request = data_class.DeleteChunkRequest(
+            knowledgeBaseId=knowledgebase_id or self.knowledge_id,
             chunkId=chunkId,
         )
 
@@ -769,6 +775,7 @@ class KnowledgeBase(Component):
     def describe_chunk(
         self,
         chunkId: str,
+        knowledgebase_id: Optional[str] = None,
     ) -> data_class.DescribeChunkResponse:
         r"""
         获取文档块详情
@@ -797,6 +804,7 @@ class KnowledgeBase(Component):
         url = self.http_client.service_url_v2("/knowledgeBase?Action=DescribeChunk")
 
         request = data_class.DescribeChunkRequest(
+            knowledgeBaseId=knowledgebase_id or self.knowledge_id,
             chunkId=chunkId,
         )
 
@@ -814,6 +822,7 @@ class KnowledgeBase(Component):
     def describe_chunks(
         self,
         documentId: str,
+        knowledgebase_id: Optional[str] = None,
         marker: str = None,
         maxKeys: int = None,
         type: str = None,
@@ -841,6 +850,7 @@ class KnowledgeBase(Component):
         url = self.http_client.service_url_v2("/knowledgeBase?Action=DescribeChunks")
 
         request = data_class.DescribeChunksRequest(
+            knowledgeBaseId=knowledgebase_id or self.knowledge_id,
             documentId=documentId,
             marker=marker,
             maxKeys=maxKeys,

@@ -288,7 +288,7 @@ class DocumentProcessOption(BaseModel):
         description="模板类型，ppt：模版配置—ppt幻灯片, resume：模版配置—简历文档, paper：模版配置—论文文档, custom：自定义配置—自定义切片, default：自定义配置—默认切分",
         enum=["ppt", "paper", "qaPair", "resume", " custom", "default"],
     )
-    parser: Optional[DocumentChoices] = Field(None, description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr按需增加)")
+    parser: Optional[DocumentChoices] = Field(None, description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr光学字符识别，pageImageAnalysis文档图片解析，chartAnalysis图表解析，tableAnalysis表格深度解析，按需增加)")
     knowledgeAugmentation: Optional[DocumentChoices] = Field(
         None, description="知识增强，faq、spokenQuery、spo、shortSummary按需增加。问题生成:faq、spokenQuery，段落摘要:shortSummary，三元组知识抽取:spo"
     )
@@ -662,10 +662,11 @@ for message in doc_list:
 
 #### 方法参数
 
-| 参数名称   | 参数类型 | 是否必传 | 描述     | 示例值         |
-| ---------- | -------- | -------- | -------- | -------------- |
-| documentId | string   | 是       | 文档ID   | "正确的文档ID" |
-| content    | string   | 是       | 切片内容 | "内容"         |
+| 参数名称        | 参数类型 | 是否必传 | 描述     | 示例值         |
+| --------------- | -------- | -------- | -------- | -------------- |
+| knowledgeBaseId | string   | 是       | 知识库ID |                |
+| documentId      | string   | 是       | 文档ID   | "正确的文档ID" |
+| content         | string   | 是       | 切片内容 | "内容"         |
 
 #### 方法返回值
 
@@ -686,7 +687,7 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-resp = my_knowledge.create_chunk("your_document_id", "content")
+resp = my_knowledge.create_chunk("your_document_id", "content", knowledgebase_id=knowledge_base_id)
 print("切片ID: ", resp.id)
 chunk_id = resp.id
 ```
@@ -697,6 +698,7 @@ chunk_id = resp.id
 
 | 参数名称   | 参数类型 | 是否必传     | 描述         | 示例值         |
 | ---------- | -------- | ------------ | -------------- | -------------- |
+| knowledgeBaseId | string | 是 | 知识库ID |  |
 | chunkId | string   | 是      | 文档ID       | "正确的切片ID" |
 | content    | string   | 是    | 切片内容     | "内容"         |
 | enable     | bool     | 是 | 是否用该切片 | True          |
@@ -711,16 +713,17 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-my_knowledge.modify_chunk("your_chunk_id", "content", True)
+my_knowledge.modify_chunk("your_chunk_id", "content", True, knowledgebase_id=my_knowledge_base_id)
 ```
 
 ### 16. 删除切片`delete_chunk(chunkId: str)`
 
 #### 方法参数
 
-| 参数名称 | 参数类型 | 是否必传 | 描述   | 示例值         |
-| -------- | -------- | -------- | ------ | -------------- |
-| chunkId  | string   | 是       | 文档ID | "正确的切片ID" |
+| 参数名称        | 参数类型 | 是否必传 | 描述     | 示例值         |
+| --------------- | -------- | -------- | -------- | -------------- |
+| knowledgeBaseId | string   | 是       | 知识库ID |                |
+| chunkId         | string   | 是       | 文档ID   | "正确的切片ID" |
 
 #### 方法示例
 
@@ -732,16 +735,17 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-my_knowledge.delete_chunk("your_chunk_id")
+my_knowledge.delete_chunk("your_chunk_id", knowledgebase_id=my_knowledge_base_id)
 ```
 
 ### 17. 获取切片信息`describe_chunk(chunkId: str)`
 
 #### 方法参数
 
-| 参数名称 | 参数类型 | 是否必传 | 描述   | 示例值         |
-| -------- | -------- | -------- | ------ | -------------- |
-| chunkId  | string   | 是       | 文档ID | "正确的切片ID" |
+| 参数名称        | 参数类型 | 是否必传 | 描述     | 示例值         |
+| --------------- | -------- | -------- | -------- | -------------- |
+| knowledgeBaseId | string   | 是       | 知识库ID |                |
+| chunkId         | string   | 是       | 文档ID   | "正确的切片ID" |
 
 #### 方法返回值
 
@@ -774,7 +778,7 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-resp = my_knowledge.describe_chunk("your_chunk_id")
+resp = my_knowledge.describe_chunk("your_chunk_id", knowledgebase_id=my_knowledge_base_id)
 print("切片详情：")
 print(resp)
 ```
@@ -783,12 +787,13 @@ print(resp)
 
 #### 方法参数
 
-| 参数名称   | 参数类型 | 是否必传 | 描述                                                         | 示例值         |
-| ---------- | -------- | -------- | ------------------------------------------------------------ | -------------- |
-| documentId | string   | 是       | 文档ID                                                       | "正确的文档ID" |
-| marker     | string   | 否       | 起始位置，切片ID                                             | "正确的切片ID" |
-| maxKeys    | string   | 否       | 返回文档数量大小，默认10，最大值100                          | 10             |
-| type       | string   | 否       | 根据类型获取切片列表(RAW、NEW、COPY)，RAW：原文切片，NEW：新增切片，COPY：复制切片 | "RAW"          |
+| 参数名称        | 参数类型 | 是否必传 | 描述                                                         | 示例值         |
+| --------------- | -------- | -------- | ------------------------------------------------------------ | -------------- |
+| knowledgeBaseId | string   | 是       | 知识库ID                                                     |                |
+| documentId      | string   | 是       | 文档ID                                                       | "正确的文档ID" |
+| marker          | string   | 否       | 起始位置，切片ID                                             | "正确的切片ID" |
+| maxKeys         | string   | 否       | 返回文档数量大小，默认10，最大值100                          | 10             |
+| type            | string   | 否       | 根据类型获取切片列表(RAW、NEW、COPY)，RAW：原文切片，NEW：新增切片，COPY：复制切片 | "RAW"          |
 
 #### 方法返回值
 
@@ -834,7 +839,7 @@ os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
 my_knowledge_base_id = "your_knowledge_base_id"
 my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
 print("知识库ID: ", my_knowledge.knowledge_id)
-resp = my_knowledge.describe_chunks("your_document_id")
+resp = my_knowledge.describe_chunks("your_document_id", knowledgebase_id=my_knowledge_base_id)
 print("切片列表：")
 print(resp)
 ```
@@ -964,7 +969,11 @@ public class KnowledgebaseTest {
     @Test
     public void testCreateChunk() throws IOException, AppBuilderServerException {
         String documentId = "";
-        Knowledgebase knowledgebase = new Knowledgebase();
+        // 知识库ID
+        String knowledgeBaseId = "";
+        // Appbuilder Token
+        String secretKey = "";
+        Knowledgebase knowledgebase = new Knowledgebase(knowledgeBaseID, secretKey);
         // 创建切片
         String chunkId = knowledgebase.createChunk(documentId, "test");
         // 修改切片
@@ -1189,13 +1198,13 @@ func TestChunk(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_TOKEN", "")
 	documentID := ""
-
+  knowledgeBaseID := "";
 	config, err := NewSDKConfig("", "")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
-	client, err := NewKnowledgeBase(config)
+	client, err := NewKnowledgeBaseWithKnowledgeBaseID(knowledgeBaseID, config)
 	if err != nil {
 		t.Fatalf("new Knowledge base instance failed")
 	}

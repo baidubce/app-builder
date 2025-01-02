@@ -148,8 +148,15 @@ public class KnowledgebaseTest {
     
     @Test
     public void testCreateChunk() throws IOException, AppBuilderServerException {
-        String documentId = System.getenv("DOCUMENT_ID_V3");
-        Knowledgebase knowledgebase = new Knowledgebase();
+        String knowledgeBaseID = System.getenv("DATASET_ID");
+        String secretKey = System.getenv("APPBUILDER_TOKEN");
+
+        Knowledgebase knowledgebase = new Knowledgebase(knowledgeBaseID, secretKey);
+        DocumentListRequest listRequest = new DocumentListRequest();
+        listRequest.setKonwledgeBaseId(knowledgeBaseID);
+        listRequest.setLimit(10);
+        Document[] documents = knowledgebase.getDocumentList(listRequest);
+        String documentId = documents[0].getId();
         // 创建切片
         String chunkId = knowledgebase.createChunk(documentId, "test");
         // 修改切片
