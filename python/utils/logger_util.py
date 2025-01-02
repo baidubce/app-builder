@@ -180,37 +180,43 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         logging.config.dictConfig(LOGGING_CONFIG)
 
     def setLogConfig(self,
-                    console_show: bool = True,
+                    console_output: bool = True,
                     loglevel: str = "DEBUG",
                     file_name: str = "tmp.log",
-                    when: str = "MIDNIGHT",
-                    interval: int = 1,
-                    max_bytes: Optional[int] = None, # 以B为单位
-                    total_size_limit: Optional[int] = None, # 以B为单位
-                    backup_count: Optional[int] = None
+                    rotate_frequency: str = "MIDNIGHT",
+                    rotate_interval: int = 1,
+                    max_file_size: Optional[int] = None, # 以B为单位
+                    total_log_size: Optional[int] = None, # 以B为单位
+                    max_log_files: Optional[int] = None
                     ):
         LOGGING_CONFIG["handlers"] = {}
         LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"] = []
         
+        # log_level 数据校验
+        log_level = loglevel.strip().lower()
+        if log_level not in ["debug", "info", "warning", "error"]:
+            raise ValueError("expected APPBUILDER_LOGLEVEL in [debug, info, warning, error], but got %s" % log_level)
 
         # 设置console输出日志
-        if console_show:
+        if console_output:
             CONSOLE_HEADER['level'] = loglevel
             LOGGING_CONFIG["handlers"]["console"] = CONSOLE_HEADER
             LOGGING_CONFIG["loggers"]["appbuilder"]["handlers"].append("console")
+        else:
+            LOGGING_CONFIG["loggers"]["appbuilder"]["propagate"] = False
         
         # 参数验证
-        if not max_bytes or max_bytes <= 0:
-            max_bytes = sys.maxsize
-        if not total_size_limit or total_size_limit <= 0:
-            total_size_limit = sys.maxsize
-        if not backup_count or backup_count <= 0:
-            backup_count = sys.maxsize
-        if interval < 1:
-            interval = 1
-        when = when.strip().lower()
-        if when not in ["s", "m", "h", "d", "midnight"]:
-            raise ValueError("expected when in [S, M, H, D, MIDNIGHT], but got %s" % when)
+        if not max_file_size or max_file_size <= 0:
+            max_file_size = sys.maxsize
+        if not total_log_size or total_log_size <= 0:
+            total_log_size = sys.maxsize
+        if not max_log_files or max_log_files <= 0:
+            max_log_files = sys.maxsize
+        if rotate_interval < 1:
+            rotate_interval = 1
+        rotate_frequency = rotate_frequency.strip().lower()
+        if rotate_frequency not in ["s", "m", "h", "d", "midnight"]:
+            raise ValueError("expected rotate_frequency in [S, M, H, D, MIDNIGHT], but got %s" % rotate_frequency)
 
         # 设置文件输出日志
         # 设置日志级别
@@ -221,23 +227,23 @@ class LoggerWithLoggerId(logging.LoggerAdapter):
         ERROR_SET_CONFIG_HEADER['filename'] = _add_error_to_file_name(file_name)
 
         # 设置滚动时间
-        SET_CONFIG_HEADER['when'] = when
-        ERROR_SET_CONFIG_HEADER['when'] = when
-        SET_CONFIG_HEADER['interval'] = interval
-        ERROR_SET_CONFIG_HEADER['interval'] = interval
+        SET_CONFIG_HEADER['when'] = rotate_frequency
+        ERROR_SET_CONFIG_HEADER['when'] = rotate_frequency
+        SET_CONFIG_HEADER['interval'] = rotate_interval
+        ERROR_SET_CONFIG_HEADER['interval'] = rotate_interval
 
         # 设置最大文件大小
         
-        SET_CONFIG_HEADER['max_bytes'] = max_bytes
-        ERROR_SET_CONFIG_HEADER['max_bytes'] = max_bytes
+        SET_CONFIG_HEADER['max_bytes'] = max_file_size
+        ERROR_SET_CONFIG_HEADER['max_bytes'] = max_file_size
 
         # 设置总大小限制
-        SET_CONFIG_HEADER['total_size_limit'] = total_size_limit
-        ERROR_SET_CONFIG_HEADER['total_size_limit'] = total_size_limit
+        SET_CONFIG_HEADER['total_size_limit'] = total_log_size
+        ERROR_SET_CONFIG_HEADER['total_size_limit'] = total_log_size
 
         # 设置备份数量
-        SET_CONFIG_HEADER['backup_count'] = backup_count
-        ERROR_SET_CONFIG_HEADER['backup_count'] = backup_count
+        SET_CONFIG_HEADER['backup_count'] = max_log_files
+        ERROR_SET_CONFIG_HEADER['backup_count'] = max_log_files
 
         LOGGING_CONFIG["handlers"]["file"] = SET_CONFIG_HEADER
         LOGGING_CONFIG["handlers"]["error_file"] = ERROR_SET_CONFIG_HEADER
