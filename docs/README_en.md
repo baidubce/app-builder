@@ -47,7 +47,7 @@ Baidu AI Cloud Qianfan AppBuilder-SDK offers the following essential features fo
 
 ##  How to install？
 
-#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.8 (2024-12-10)
+#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 1.0.0 (2025-01-03)
 
 Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/DevelopGuide/ChangeLog/changelog.md)
 
