@@ -98,6 +98,7 @@ class HallucinationDetection(CompletionBaseComponent):
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化幻觉检测组件。
         
