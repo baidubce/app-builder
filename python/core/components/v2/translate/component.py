@@ -82,9 +82,6 @@ class Translation(Component):
         }
     ]
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     @HTTPClient.check_param
     @components_run_trace
     def run(self, message: Message, from_lang: str = "auto", to_lang: str = "en",
