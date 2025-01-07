@@ -83,6 +83,7 @@ class OralQueryGeneration(CompletionBaseComponent):
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = True,
+            **kwargs
     ):
         """初始化StyleRewrite模型。
         
