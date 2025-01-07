@@ -272,6 +272,7 @@ class CompletionBaseComponent(Component):
         secret_key: Optional[str] = None,
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """
         Args:
@@ -280,6 +281,7 @@ class CompletionBaseComponent(Component):
             secret_key (Optional[str], optional): 可选的密钥. Defaults to None.
             gateway (str, optional): 网关地址. Defaults to "".
             lazy_certification (bool, optional): 延迟认证，为True时在第一次运行时认证. Defaults to False.
+            **kwargs: 其他关键字参数
         
         """
         super(CompletionBaseComponent, self).__init__(

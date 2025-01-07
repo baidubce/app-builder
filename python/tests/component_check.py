@@ -38,15 +38,15 @@ class ComponentCheckBase(metaclass=Singleton):
     def remove_rule(self, rule_name: str):
         del self.rules[rule_name]
 
-    def notify(self, component_cls, component_case) -> tuple[bool, list]:
+    def notify(self, component_obj, component_case) -> tuple[bool, list]:
         check_pass = True
         check_details = {}
         reasons = []
         for rule_name, rule_obj in self.rules.items():
             if rule_name == "ToolEvalOutputJsonRule":
-                res = rule_obj.check(component_cls, component_case)
+                res = rule_obj.check(component_obj, component_case)
             else:
-                res = rule_obj.check(component_cls)
+                res = rule_obj.check(component_obj)
             check_details[rule_name] = res
             if res.check_result == False:
                 check_pass = False
@@ -118,6 +118,61 @@ Data_Type = {
     'boolean': bool,
     'null': None,
 }
+
+class InitKwargsRule(RuleBase):
+    def __init__(self):
+        super().__init__()
+        self.rule_name = "InitKwargsRule"
+
+    def _accepts_kwargs(self, func):
+        """
+        检查函数是否接受 **kwargs 参数。
+        """
+        sig = inspect.signature(func)
+        params = sig.parameters
+        return any(p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values())
+
+    def check(self, component_obj) -> CheckInfo:
+        if not self._accepts_kwargs(component_obj.__init__):
+            return CheckInfo(
+                check_rule_name=self.rule_name,
+                check_result=False,
+                check_detail="组件的__init__初始化方法需要添加**kwargs参数"
+            )
+        else:
+            return CheckInfo(
+                check_rule_name=self.rule_name,
+                check_result=True,
+                check_detail=""
+            )
+
+class ToolEvalKwargsRule(RuleBase):
+    def __init__(self):
+        super().__init__()
+        self.rule_name = "ToolEvalKwargsRule"
+
+    def _accepts_kwargs(self, func):
+        """
+        检查函数是否接受 **kwargs 参数。
+        """
+        sig = inspect.signature(func)
+        params = sig.parameters
+        return any(p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values())
+
+    def check(self, component_obj) -> CheckInfo:
+        if not self._accepts_kwargs(component_obj.tool_eval):
+            return CheckInfo(
+                check_rule_name=self.rule_name,
+                check_result=False,
+                check_detail="组件的__init__初始化方法需要添加**kwargs参数"
+            )
+        else:
+            return CheckInfo(
+                check_rule_name=self.rule_name,
+                check_result=True,
+                check_detail=""
+            )
+        
 
 class MainfestMatchToolEvalRule(RuleBase):
     def __init__(self):
@@ -460,3 +515,5 @@ register_component_check_rule("ManifestValidRule", ManifestValidRule)
 register_component_check_rule("MainfestMatchToolEvalRule", MainfestMatchToolEvalRule)
 register_component_check_rule("ToolEvalInputNameRule", ToolEvalInputNameRule)
 register_component_check_rule("ToolEvalOutputJsonRule", ToolEvalOutputJsonRule)
+register_component_check_rule("InitKwargsRule", InitKwargsRule)
+register_component_check_rule("ToolEvalKwargsRule", ToolEvalKwargsRule)
