@@ -197,7 +197,7 @@ class Text2Image(Component):
             yield self.create_output(
                 type='image', 
                 text={
-                    'filename': "",
+                    'filename': self.get_filename_from_url(img_urls[url_number]),
                     'url': img_urls[url_number],
                 },  
                 raw_data=raw_data,
