@@ -17,6 +17,8 @@
 import base64
 import json
 
+from typing import Optional
+
 from appbuilder.core import utils
 from appbuilder.core.component import Component
 from appbuilder.core.components.table_ocr.model import *
@@ -189,7 +191,7 @@ class TableOCR(Component):
 
     @components_run_stream_trace
     def tool_eval(self, 
-                  file_names: List[str],
+                  file_names: Optional[List[str]] = [],
                   **kwargs):
         """
         处理并评估传入的文件列表，并返回表格数据的Markdown格式表示。
@@ -206,8 +208,10 @@ class TableOCR(Component):
         
         """
         result = {}
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", "")
         file_urls = kwargs.get("_sys_file_urls", {})
+        if not file_names:
+            file_names = kwargs.get("_sys_file_names", [])
         for file_name in file_names:
             if utils.is_url(file_name):
                 file_url = file_name
