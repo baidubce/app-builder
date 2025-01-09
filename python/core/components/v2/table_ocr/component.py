@@ -191,7 +191,7 @@ class TableOCR(Component):
 
     @components_run_stream_trace
     def tool_eval(self, 
-                  file_names: Optional[List[str]],
+                  file_names: Optional[List[str]] = [],
                   **kwargs):
         """
         处理并评估传入的文件列表，并返回表格数据的Markdown格式表示。
