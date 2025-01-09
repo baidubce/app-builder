@@ -48,7 +48,7 @@ class TestDialogSummary(unittest.TestCase):
         """测试不同的 stream 和 temperature 参数值"""
 
         chats = appbuilder.get_model_list(api_type_filter=["chat"])
-        self.assertTrue("EB-turbo-AppBuilder专用版" in chats)
+        self.assertTrue("ERNIE-3.5-8K" in chats)
 
         appbuilder.DialogSummary(model="EB-turbo-AppBuilder专用版")
 
