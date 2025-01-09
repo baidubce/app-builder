@@ -38,7 +38,7 @@ class TestTableOCR(unittest.TestCase):
 
     def test_tool_eval_02(self):
         _sys_file_urls = {
-            "test-name": [self.image_url]
+            "test-name": self.image_url
         }
         result = self.com.tool_eval(_sys_file_names = ["test-name"], _sys_file_urls = _sys_file_urls)
         for res in result:
