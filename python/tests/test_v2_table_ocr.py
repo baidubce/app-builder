@@ -30,8 +30,17 @@ class TestTableOCR(unittest.TestCase):
         print(out)
         
 
-    def test_tool_eval(self):
+    def test_tool_eval_01(self):
         result = self.com.tool_eval([self.image_url])
+        for res in result:
+            assert isinstance(res, ComponentOutput)
+            print(res.role, res.content)
+
+    def test_tool_eval_02(self):
+        _sys_file_urls = {
+            "test-name": [self.image_url]
+        }
+        result = self.com.tool_eval(_sys_file_names = ["test-name"], _sys_file_urls = _sys_file_urls)
         for res in result:
             assert isinstance(res, ComponentOutput)
             print(res.role, res.content)
