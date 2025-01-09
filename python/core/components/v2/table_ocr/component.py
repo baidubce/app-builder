@@ -208,10 +208,10 @@ class TableOCR(Component):
         
         """
         result = {}
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", "")
         file_urls = kwargs.get("_sys_file_urls", {})
         if not file_names:
-            file_names = kwargs.get("_sys_file_names")
+            file_names = kwargs.get("_sys_file_names", [])
         for file_name in file_names:
             if utils.is_url(file_name):
                 file_url = file_name
