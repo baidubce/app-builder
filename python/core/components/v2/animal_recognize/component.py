@@ -17,6 +17,8 @@
 import base64
 import json
 
+from typing import Optional
+
 from appbuilder.core.component import Component, ComponentOutput
 from appbuilder.core.components.animal_recognize.model import *
 from appbuilder.core.message import Message
@@ -145,8 +147,8 @@ class AnimalRecognition(Component):
     @components_run_stream_trace
     def tool_eval(
         self,
-        img_name: str,
-        img_url: str,
+        img_name: Optional[str] = "",
+        img_url: Optional[str] = "",
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
         """
@@ -161,11 +163,13 @@ class AnimalRecognition(Component):
             Union[Generator[str, None, None], str]: 返回一个生成器，生成图像识别结果，或者返回图像识别结果的字符串。
         
         """
-        traceid = kwargs.get("_sys_traceid")
+        if not img_name and not img_url:
+            raise ValueError("img_name or img_url is required")
+        traceid = kwargs.get("_sys_traceid", "")
         file_urls = kwargs.get("_sys_file_urls", {})
         yield from self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
 
-    def _recognize_w_post_process(self, img_name, img_url, file_urls, request_id=None) -> str:
+    def _recognize_w_post_process(self, img_name, img_url, file_urls, request_id=None) -> str: # type: ignore
         r"""调底层接口对图片或图片url进行动物识别，并返回类别及其置信度
         Args:
             img_name (str): 图片文件名

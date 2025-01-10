@@ -168,7 +168,7 @@ class Translation(Component):
             InvalidRequestArgumentError: 如果参数 `q` 未设置，则引发此异常。
         
         """
-        traceid = kwargs.get("_sys_traceid", None)
+        traceid = kwargs.get("_sys_traceid", "")
         text = q
         req = TranslateRequest()
         if not text:

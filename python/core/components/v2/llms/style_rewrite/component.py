@@ -127,7 +127,7 @@ class StyleRewrite(CompletionBaseComponent):
         Raises:
             ValueError: 如果缺少参数 'query'。
         """
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", "")
         if not query:
             raise ValueError("param `query` is required")
         msg = Message(query)

@@ -122,7 +122,7 @@ class SimilarQuestion(CompletionBaseComponent):
             Generator[Output]: 返回一个生成器，生成类型为Output的对象。
         
         """
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", "")
         msg = Message(query)
         model_configs = kwargs.get('model_configs', {})
         temperature = model_configs.get("temperature", 1e-10)
