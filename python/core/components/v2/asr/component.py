@@ -21,6 +21,7 @@ import json
 import requests
 import tempfile
 from urllib.parse import urlparse
+from typing import Optional
 
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
@@ -181,9 +182,9 @@ class ASR(Component):
 
     @components_run_stream_trace
     def tool_eval(self,
-                  file_url: str = '',
-                  file_name: str = '',
-                  file_type: str = '',
+                  file_url: Optional[str] = '',
+                  file_name: Optional[str] = '',
+                  file_type: Optional[str] = '',
                   **kwargs):    
         """
         执行语音识别操作，并返回识别结果

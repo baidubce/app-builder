@@ -15,6 +15,8 @@ import base64
 import json
 import os.path
 
+from typing import Optional
+
 
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
@@ -169,9 +171,9 @@ class GeneralOCR(Component):
     @components_run_stream_trace
     def tool_eval(
         self, 
-        img_name: str = '',
-        img_url: str = '',
-        language_type: str = 'CHN_ENG',
+        img_name: Optional[str] = '',
+        img_url: Optional[str] = '',
+        language_type: Optional[str] = 'CHN_ENG',
         **kwargs
         ):
         """
@@ -195,7 +197,7 @@ class GeneralOCR(Component):
         if not img_name and not img_url:
             raise ValueError(
                 "request format error, one of image or url or must pdf_file or ofd_file be set")
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", "")
         if not img_url:
             file_urls = kwargs.get("_sys_file_urls", {})
             img_path = img_name

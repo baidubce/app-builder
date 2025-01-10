@@ -162,7 +162,7 @@ class StyleWriting(CompletionBaseComponent):
             Output: 生成的输出对象，包含文本类型和文本内容。
         
         """
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", "")
         if not query:
             raise ValueError("param `query` is required")
         msg = Message(query)
