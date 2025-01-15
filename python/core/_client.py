@@ -114,9 +114,6 @@ class HTTPClient:
         """
         status_code = response.status_code
         if status_code == requests.codes.ok:
-            logger.debug("request_id={} , http status code is {} , response text is {}".format(
-                __class__.response_request_id(response), status_code, response.text
-            ))
             return
         message = "request_id={} , http status code is {}, body is {}".format(
             __class__.response_request_id(response), status_code, response.text
