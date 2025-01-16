@@ -69,6 +69,7 @@ class StyleRewrite(CompletionBaseComponent):
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = True,
+            **kwargs
     ):
         """初始化StyleRewrite模型。
         
@@ -77,14 +78,15 @@ class StyleRewrite(CompletionBaseComponent):
             secret_key (str, 可选): 用户鉴权token, 默认从环境变量中获取: os.getenv("APPBUILDER_TOKEN", "").
             gateway (str, 可选): 后端网关服务地址，默认从环境变量中获取: os.getenv("GATEWAY_URL", "")
             lazy_certification (bool, 可选): 延迟认证，为True时在第一次运行时认证. Defaults to False.
-        
+            **kwargs: 其他关键字参数.
+            
         Returns:
             None
         
         """
         super().__init__(
             StyleRewriteArgs, model=model, secret_key=secret_key, gateway=gateway,
-            lazy_certification=lazy_certification)
+            lazy_certification=lazy_certification, **kwargs)
 
     @components_run_trace
     def run(self, message, style="营销话术", stream=False, temperature=1e-10, top_p=0.0, request_id=None):
@@ -125,7 +127,7 @@ class StyleRewrite(CompletionBaseComponent):
         Raises:
             ValueError: 如果缺少参数 'query'。
         """
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", "")
         if not query:
             raise ValueError("param `query` is required")
         msg = Message(query)

@@ -16,6 +16,8 @@ r"""图像内容理解"""
 import base64
 import time
 
+from typing import Optional
+
 from appbuilder.core.component import Component, ComponentOutput
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
@@ -173,8 +175,8 @@ class ImageUnderstand(Component):
     @components_run_stream_trace
     def tool_eval(
         self,
-        img_name: str,
-        img_url: str,
+        img_name: Optional[str] = '',
+        img_url: Optional[str] = '',
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
         """
@@ -188,7 +190,7 @@ class ImageUnderstand(Component):
         Returns:
             Union[Generator[str, None, None], str]: 图片内容理解结果
         """
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", '')
         file_urls = kwargs.get("_sys_file_urls", {})
         rec_res, raw_data = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
         llm_result = self.create_output(type="text", text=rec_res, name="text_1", raw_data=raw_data, visible_scope='llm')
