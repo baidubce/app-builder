@@ -26,11 +26,11 @@ class MyEventHandler(AppBuilderEventHandler):
         self.follow_up_queries = []
 
     def handle_content_type(self, run_context, run_response):
-        event = run_response.events[-1]
-        if event.content_type == "json" and event.event_type == "FollowUpQuery":
-            follow_up_queries = event.detail.get("json").get("follow_up_querys")
-            self.follow_up_queries.extend(follow_up_queries)
-
+        for event in run_response.events:
+            print(event)
+            if event.content_type == "json" and event.event_type == "FollowUpQuery":
+                follow_up_queries = event.detail.get("json").get("follow_up_querys")
+                self.follow_up_queries.extend(follow_up_queries)
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestAppBuilderClientChatflow(unittest.TestCase):
@@ -84,7 +84,7 @@ class TestAppBuilderClientChatflow(unittest.TestCase):
         with builder.run_with_handler(
             conversation_id = conversation_id,
             query = "你能做什么",
-            stream=True,
+            stream=False,
             event_handler=event_handler,
         ) as run:
             run.until_done()

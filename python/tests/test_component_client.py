@@ -16,7 +16,7 @@ import appbuilder
 import os
 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
+#unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_SERIAL", "")
 class TestComponentCLient(unittest.TestCase):
     def test_component_client(self):
         appbuilder.logger.setLoglevel("DEBUG")
@@ -24,7 +24,7 @@ class TestComponentCLient(unittest.TestCase):
 
         res = client.run(component_id="44205c67-3980-41f7-aad4-37357b577fd0",
                          version="latest", sys_origin_query="北京景点推荐")
-        print(res.content.content)
+        print(res.content)
 
     def test_component_client_stream(self):
         appbuilder.logger.setLoglevel("DEBUG")

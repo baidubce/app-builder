@@ -14,7 +14,7 @@
 
 from pydantic import BaseModel
 from pydantic import Field
-from typing import Optional
+from typing import Optional, Union
 from appbuilder.core.component import ComponentOutput, Content
 
 
@@ -74,7 +74,7 @@ class ContentWithEvent(Content):
             description="错误信息",
         )
 
-    event: Event = Field(..., description="事件信息")
+    event: Event = Field(None, description="事件信息")
 
 
 class RunResponse(BaseModel):
@@ -87,12 +87,13 @@ class RunResponse(BaseModel):
         user_id: str = Field(..., description="开发者UUID（计费依赖）")
         end_user_id: str = Field(None, description="终端用户id")
         is_completion: bool = Field(..., description="是否完成")
+        role: str = Field(..., description="当前消息来源，默认tool")
         content: list[ContentWithEvent] = Field(
             None,
             description="当前组件返回内容的主要payload，List[ContentWithEvent]，每个 Content 包括了当前 event 的一个元素",
         )
 
-    request_id: str = Field(..., description="请求id")
-    code: str = Field(None, description="响应码")
+    request_id: str = Field(None, description="请求id")
+    code: Union[str,int] = Field(None, description="响应码")
     message: str = Field(None, description="响应消息")
-    data: RunOutput = Field(..., description="响应数据")
+    data: RunOutput = Field(None, description="响应数据")
