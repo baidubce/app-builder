@@ -78,3 +78,5 @@
   * 新增RAG检索SDK
   * Agent Python SDK支持Async调用
   * 新增滚动日志功能
+* **2025.01.16 v1.0.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.1)
+  * 修复1.0.0中的Python SDK流式调用慢问题

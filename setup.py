@@ -54,7 +54,7 @@ all_require = serve_require + trace_require + test_require + langchain_require
 setup(
     name="appbuilder-sdk",
     # NOTE(chengmo): 修改此版本号时，请注意同时修改 __init__.py 中的 __version__
-    version="1.0.0",
+    version="1.0.1",
     author="dongdaxiang",
     author_email="dongdaxiang@baidu.com",
     packages=packages,
