@@ -24,7 +24,6 @@ from typing import (
 from appbuilder.core.utils import ttl_lru_cache
 from appbuilder.core._client import HTTPClient, AsyncHTTPClient
 from appbuilder.core.message import Message
-from urllib.parse import urlparse, unquote
 
 class ComponentArguments(BaseModel):
     """
@@ -581,14 +580,3 @@ class Component:
             }]
         }
         return ComponentOutput(**result)
-    
-    @staticmethod  
-    def get_filename_from_url(url):
-        """从给定URL中提取文件名"""
-        parsed_url = urlparse(url)
-        # 提取路径部分
-        path = parsed_url.path
-        # 从路径中获取文件名
-        filename = path.split('/')[-1]
-        # 解码URL编码的文件名
-        return unquote(filename)

@@ -21,6 +21,7 @@ from typing import Generator, Union, Optional
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
+from appbuilder.core.utils import get_filename_from_url
 from appbuilder.core._exception import AppBuilderServerException, RiskInputException
 from appbuilder.core.components.text_to_image.model import Text2ImageSubmitRequest, Text2ImageQueryRequest, \
     Text2ImageQueryResponse, Text2ImageSubmitResponse, Text2ImageOutMessage
@@ -197,7 +198,7 @@ class Text2Image(Component):
             yield self.create_output(
                 type='image', 
                 text={
-                    'filename': self.get_filename_from_url(img_urls[url_number]),
+                    'filename': get_filename_from_url(img_urls[url_number]),
                     'url': img_urls[url_number],
                 },  
                 raw_data=raw_data,
