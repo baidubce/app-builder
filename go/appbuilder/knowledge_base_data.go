@@ -292,7 +292,7 @@ type VectorDBRetrieveConfig struct {
 	Top       int     `json:"top"`
 }
 
-type SmallToBigConfig status {
+type SmallToBigConfig struct {
 	Name      string   `json:"name"`
 	Type      string   `json:"type"`
 }

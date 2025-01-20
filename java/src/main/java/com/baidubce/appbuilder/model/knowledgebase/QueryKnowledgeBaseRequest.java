@@ -2,8 +2,6 @@ package com.baidubce.appbuilder.model.knowledgebase;
 
 import java.util.List;
 
-import com.baidubce.appbuilder.model.knowledgebase.QueryKnowledgeBaseRequest.PostRankingConfig.QueryPipelineConfig;
-
 public class QueryKnowledgeBaseRequest {
     private String query;
     private String type;
