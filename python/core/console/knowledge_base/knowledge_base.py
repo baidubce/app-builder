@@ -912,7 +912,7 @@ class KnowledgeBase(Component):
         type: Optional[data_class.QueryType] = None,
         metadata_filters: data_class.MetadataFilter = None,
         pipeline_config: data_class.QueryPipelineConfig = None,
-        rank_score_threshold: float = None,
+        rank_score_threshold: Optional[float] = 0.4,
         top: int = 6,
         skip: int = None,
     ) -> data_class.QueryKnowledgeBaseResponse:
