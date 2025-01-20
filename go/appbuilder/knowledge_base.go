@@ -848,6 +848,12 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 }
 
 func (t *KnowledgeBase) QueryKnowledgeBase(req QueryKnowledgeBaseRequest) (QueryKnowledgeBaseResponse, error) {
+    // 检查 RankScoreThreshold 是否为 nil，如果是，则设置默认值
+    if req.RankScoreThreshold == nil {
+        defaultThreshold := 0.4
+        req.RankScoreThreshold = &defaultThreshold
+    }
+	
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgebases/query")

@@ -722,6 +722,9 @@ public class Knowledgebase extends Component {
 
     public QueryKnowledgeBaseResponse queryKnowledgeBase(QueryKnowledgeBaseRequest request)
             throws IOException, AppBuilderServerException {
+        if (request.getRank_score_threshold() == null) {
+            request.setRank_score_threshold(0.4f);
+        }
         String url = AppBuilderConfig.QUERY_KNOWLEDGEBASE_URL;
 
         String jsonBody = JsonUtils.serialize(request);
@@ -734,12 +737,16 @@ public class Knowledgebase extends Component {
         return respBody;
     }
     
-    public QueryKnowledgeBaseResponse queryKnowledgeBase(String query, String type, Integer top, Integer skip,
+    public QueryKnowledgeBaseResponse queryKnowledgeBase(String query, String type, Float rank_score_threshold, Integer top, Integer skip,
             String[] knowledgebaseIDs, QueryKnowledgeBaseRequest.MetadataFilters filters,
             QueryKnowledgeBaseRequest.QueryPipelineConfig pipelineConfig) 
             throws IOException, AppBuilderServerException {
+        if (rank_score_threshold == null) {
+            rank_score_threshold = 0.4f;
+        }
+
         String url = AppBuilderConfig.QUERY_KNOWLEDGEBASE_URL;
-        QueryKnowledgeBaseRequest request = new QueryKnowledgeBaseRequest(query, type, top, skip, knowledgebaseIDs, filters, pipelineConfig);
+        QueryKnowledgeBaseRequest request = new QueryKnowledgeBaseRequest(query, type, rank_score_threshold,top, skip, knowledgebaseIDs, filters, pipelineConfig);
         String jsonBody = JsonUtils.serialize(request);
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));

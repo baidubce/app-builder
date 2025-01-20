@@ -14,6 +14,7 @@
 from __future__ import annotations
 from datetime import datetime
 from pydantic import BaseModel, Field
+from enum import Enum
 from typing import Union, Optional, List
 
 
@@ -323,12 +324,27 @@ class PreRankingConfig(BaseModel):
         None, description="得分归一化参数，不建议修改，默认50"
     )
 
+class QueryType(str, Enum):
+    FULLTEXT = "fulltext" # 全文检索
+    SEMANTIC = "semantic" # 语义检索
+    HYBRID = "hybrid" # 混合检索
 
-class ElasticSearchRetrieveConfig(BaseModel):
+class ElasticSearchRetrieveConfig(BaseModel): # 托管资源为共享资源 或 BES资源时使用该配置
     name: str = Field(..., description="配置名称")
     type: str = Field(None, description="elastic_search标志，该节点为es全文检索")
     threshold: float = Field(None, description="得分阈值，默认0.1")
     top: int = Field(None, description="召回数量，默认400")
+
+class VectorDBRetrieveConfig(BaseModel):
+    name: str = Field(..., description="该节点的自定义名称。")
+    type: str = Field("vector_db", description="该节点的类型，默认为vector_db。")
+    threshold: Optional[float] = Field(0.1, description="得分阈值。取值范围：[0, 1]", ge=0.0, le=1.0)
+    top: Optional[int] = Field(400, description="召回数量。取值范围：[0, 800]", ge=0, le=800)
+    pre_ranking: Optional[PreRankingConfig] = Field(None, description="粗排配置")
+
+class SmallToBigConfig(BaseModel):
+    name: str = Field(..., description="配置名称")
+    type: str = Field("small_to_big", description="small_to_big标志，该节点为small_to_big节点")
 
 
 class RankingConfig(BaseModel):
@@ -341,23 +357,28 @@ class RankingConfig(BaseModel):
     model_name: str = Field(None, description="ranking模型名（当前仅一种，暂不生效）")
     top: int = Field(None, description="取切片top进行排序，默认20，最大400")
 
-
 class QueryPipelineConfig(BaseModel):
     id: str = Field(
         None, description="配置唯一标识，如果用这个id，则引用已经配置好的QueryPipeline"
     )
-    pipeline: list[Union[ElasticSearchRetrieveConfig, RankingConfig]] = Field(
+    pipeline: list[Union[ElasticSearchRetrieveConfig, RankingConfig, VectorDBRetrieveConfig, SmallToBigConfig]] = Field(
         None, description="配置的Pipeline，如果没有用id，可以用这个对象指定一个新的配置"
     )
 
 
 class QueryKnowledgeBaseRequest(BaseModel):
     query: str = Field(..., description="检索query")
-    type: str = Field(None, description="检索策略的枚举, fulltext:全文检索")
+    type: Optional[QueryType] = Field(None, description="检索策略的枚举, fulltext:全文检索, semantic:语义检索, hybrid:混合检索")
     top: int = Field(None, description="返回结果数量")
     skip: int = Field(
         None,
         description="跳过多少条记录, 通过top和skip可以实现类似分页的效果，比如top 10 skip 0，取第一页的10个，top 10 skip 10，取第二页的10个",
+    )
+    rank_score_threshold: float = Field(
+        0.4,
+        description="重排序匹配分阈值，只有rank_score大于等于该分值的切片重排序时才会被筛选出来。当且仅当，pipeline_config中配置了ranking节点时，该过滤条件生效。取值范围： [0, 1]。",
+        ge=0.0,
+        le=1.0,
     )
     knowledgebase_ids: list[str] = Field(..., description="知识库ID列表")
     metadata_filters: MetadataFilters = Field(None, description="元数据过滤条件")

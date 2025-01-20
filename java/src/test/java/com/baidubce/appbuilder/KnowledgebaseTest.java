@@ -198,7 +198,7 @@ public class KnowledgebaseTest {
                 Files.readAllBytes(Paths.get("src/test/java/com/baidubce/appbuilder/files/query_knowledgebase.json")));
         QueryKnowledgeBaseRequest request = gson.fromJson(requestJson, QueryKnowledgeBaseRequest.class);
         QueryKnowledgeBaseResponse response = knowledgebase.queryKnowledgeBase(request.getQuery(),
-                request.getType(), request.getTop(), request.getSkip(),
+                request.getType(), request.getRank_score_threshold(), request.getTop(), request.getSkip(),
                 request.getKnowledgebase_ids(), request.getMetadata_filters(), request.getPipeline_config());
         assertNotNull(response.getChunks().get(0).getChunk_id());
     }
