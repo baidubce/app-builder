@@ -5,7 +5,7 @@ import java.util.List;
 public class QueryKnowledgeBaseRequest {
     private String query;
     private String type;
-    private float rank_score_threshold;
+    private float rank_score_threshold = 0.4f;
     private Integer top;
     private Integer skip;
     private String[] knowledgebase_ids;

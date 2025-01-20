@@ -316,7 +316,7 @@ type QueryKnowledgeBaseRequest struct {
 	Type             		*QueryType          `json:"type,omitempty"`
 	Top              		int                 `json:"top,omitempty"`
 	Skip             		int                 `json:"skip,omitempty"`
-	rank_score_threshold 	float64         	`json:"rank_score_threshold,omitempty"`
+	rank_score_threshold 	*float64         	`json:"rank_score_threshold,omitempty"`
 	MetadataFileters 		MetadataFilters     `json:"metadata_fileters,omitempty"`
 	PipelineConfig   		QueryPipelineConfig `json:"pipeline_config,omitempty"`
 }
