@@ -722,8 +722,8 @@ public class Knowledgebase extends Component {
 
     public QueryKnowledgeBaseResponse queryKnowledgeBase(QueryKnowledgeBaseRequest request)
             throws IOException, AppBuilderServerException {
-        if (request.rank_score_threshold == null) {
-            request.rank_score_threshold = 0.4f;
+        if (request.getRankScoreThreshold() == null) {
+            request.setRankScoreThreshold(0.4f);
         }
         String url = AppBuilderConfig.QUERY_KNOWLEDGEBASE_URL;
 

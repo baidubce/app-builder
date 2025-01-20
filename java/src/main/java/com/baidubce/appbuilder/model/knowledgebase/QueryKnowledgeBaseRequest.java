@@ -12,7 +12,7 @@ public class QueryKnowledgeBaseRequest {
     private MetadataFilters metadata_filters;
     private QueryPipelineConfig pipeline_config;
 
-    public QueryKnowledgeBaseRequest(String query, String type, float rank_score_threshold, Integer top, Integer skip,
+    public QueryKnowledgeBaseRequest(String query, String type, Float rank_score_threshold, Integer top, Integer skip,
             String[] knowledgebase_ids, MetadataFilters metadata_filters,
             QueryPipelineConfig pipeline_config) {
         this.query = query;
@@ -41,11 +41,11 @@ public class QueryKnowledgeBaseRequest {
         this.type = type;
     }
 
-    public float getRank_score_threshold() {
+    public float getRankScoreThreshold() {
         return rank_score_threshold;
     }
 
-    public void setRank_score_threshold(float rank_score_threshold) {
+    public void setRankScoreThreshold(float rank_score_threshold) {
         this.rank_score_threshold = rank_score_threshold;
     }
 
