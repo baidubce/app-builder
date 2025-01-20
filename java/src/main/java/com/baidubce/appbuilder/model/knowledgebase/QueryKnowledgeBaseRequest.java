@@ -41,11 +41,11 @@ public class QueryKnowledgeBaseRequest {
         this.type = type;
     }
 
-    public Float getRankScoreThreshold() {
+    public Float getRank_score_threshold() {
         return rank_score_threshold;
     }
 
-    public void setRankScoreThreshold(Float rank_score_threshold) {
+    public void setRank_score_threshold(Float rank_score_threshold) {
         this.rank_score_threshold = rank_score_threshold;
     }
 
