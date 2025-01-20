@@ -1539,12 +1539,17 @@ func TestQueryKnowledgeBase(t *testing.T) {
 	jsonStr := `
 {
     "type": "fulltext",
-    "query": "民法典第三条",
+    "query": "query_str",
     "knowledgebase_ids": [
-        "70c6375a-1595-41f2-9a3b-e81bc9060b7f"
+        "knowledgebase_id"
     ],
     "metadata_filters": {
         "filters": [
+            {
+                "operator": "==",
+                "field": "doc_id",
+                "value": "123###789"
+            }
         ],
         "condition": "or"
     },
@@ -1554,26 +1559,25 @@ func TestQueryKnowledgeBase(t *testing.T) {
             {
                 "name": "step1",
                 "type": "elastic_search",
-                "threshold": 0.1,
+                "threshold": 0.01,
                 "top": 400,
                 "pre_ranking": {
                     "bm25_weight": 0.25,
                     "vec_weight": 0.75,
                     "bm25_b": 0.75,
-                    "bm25_k1": 1.5,
-                    "bm25_max_score": 50
+                    "bm25_k1": 1.2,
+                    "bm25_max_score": 100
                 }
             },
             {
                 "name": "step2",
                 "type": "ranking",
                 "inputs": ["step1"],
-                "model_name": "ranker-v1",
                 "top": 20
             }
         ]
     },
-    "top": 5,
+    "top": 10,
     "skip": 0
 }`
 
