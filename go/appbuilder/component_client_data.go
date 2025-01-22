@@ -168,7 +168,7 @@ func (t *ComponentClientStreamIterator) Next() (*ComponentRunResponse, error) {
 			t.body.Close()
 			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 		}
-		return &resp.Data, nil
+		return &resp, nil
 	}
 	// 非SSE格式关闭连接，并返回数据
 	t.body.Close()
@@ -191,5 +191,5 @@ func (t *ComponentClientOnceIterator) Next() (*ComponentRunResponse, error) {
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	return &resp.Data, nil
+	return &resp, nil
 }
