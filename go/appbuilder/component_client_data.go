@@ -143,7 +143,7 @@ type Json struct {
 
 type ComponentClientIterator interface {
 	// Next 获取处理结果，如果返回error不为空，迭代器自动失效，不允许再调用此方法
-	Next() (*ComponentRunResponseData, error)
+	Next() (*ComponentRunResponse, error)
 }
 
 type ComponentClientStreamIterator struct {
@@ -152,7 +152,7 @@ type ComponentClientStreamIterator struct {
 	body      io.ReadCloser
 }
 
-func (t *ComponentClientStreamIterator) Next() (*ComponentRunResponseData, error) {
+func (t *ComponentClientStreamIterator) Next() (*ComponentRunResponse, error) {
 	data, err := t.r.ReadMessageLine()
 	if err != nil && !(err == io.EOF) {
 		t.body.Close()
@@ -181,7 +181,7 @@ type ComponentClientOnceIterator struct {
 	requestID string
 }
 
-func (t *ComponentClientOnceIterator) Next() (*ComponentRunResponseData, error) {
+func (t *ComponentClientOnceIterator) Next() (*ComponentRunResponse, error) {
 	data, err := io.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
