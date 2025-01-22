@@ -21,7 +21,7 @@ from appbuilder import BESVectorStoreIndex
 from appbuilder import BaiduVDBVectorStoreIndex,TableParams
 from appbuilder.core.component import Message 
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+@unittest.skip(reason="vdb欠费了,跳过")
 class TestBaiduVbdRetriever(unittest.TestCase):
     def setUp(self):
         self.instance_id=os.getenv("INSTANCE_ID", "UNKNOWN")
