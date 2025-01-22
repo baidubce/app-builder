@@ -33,7 +33,7 @@ class TestBaseComponent(unittest.TestCase):
         output9 = self.component.create_output(type="plan", text={"detail": "hello", "steps":[{"name": "1", "arguments": {"query": "a", "chat_history": "world"}}]})
         output10 = self.component.create_output(type="function_call", text={"thought": "hello", "name": "AppBuilder", "arguments": {"query": "a", "chat_history": "world"}})
         output11 = self.component.create_output(type="references", text={"type": "engine", "doc_id": "1", "content": "hello, world", "title": "Have a nice day", "source": "bing", "extra": {"key": "value"}})
-        output12 = self.component.create_output(type="json", text={"key": "value"})
+        output12 = self.component.create_output(type="json", text={"data": "value"})
         self.assertIsInstance(output1, ComponentOutput)
         self.assertIsInstance(output2, ComponentOutput)
         self.assertIsInstance(output3, ComponentOutput)
