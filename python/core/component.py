@@ -121,6 +121,7 @@ class FunctionCall(BaseModel, extra='allow'):
     thought: str = Field(default="", description="思考结果")
     name: str = Field(default="", description="工具名")
     arguments: dict = Field(default={}, description="参数列表")
+    component: Optional[str] = Field(default="", description="组件名class name")
 
 
 class Json(BaseModel, extra='allow'):
@@ -128,7 +129,7 @@ class Json(BaseModel, extra='allow'):
 
 
 class Content(BaseModel):
-    name: str = Field(default="",
+    name: Optional[str] = Field(default="",
                       description="介绍当前yield内容的阶段名， 使用name的必要条件，是同一组件会输出不同type的content，并且需要加以区分，方便前端渲染与用户展示")
     visible_scope: str = Field(default="all",
                                description="为了界面展示明确的说明字段，三种取值：llm、user、all。llm为思考模型可见，类似function calling结果中submit的执行结果，user为终端用户可见，all包含上述两者")
