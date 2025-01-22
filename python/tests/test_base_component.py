@@ -33,6 +33,7 @@ class TestBaseComponent(unittest.TestCase):
         output9 = self.component.create_output(type="plan", text={"detail": "hello", "steps":[{"name": "1", "arguments": {"query": "a", "chat_history": "world"}}]})
         output10 = self.component.create_output(type="function_call", text={"thought": "hello", "name": "AppBuilder", "arguments": {"query": "a", "chat_history": "world"}})
         output11 = self.component.create_output(type="references", text={"type": "engine", "doc_id": "1", "content": "hello, world", "title": "Have a nice day", "source": "bing", "extra": {"key": "value"}})
+        output12 = self.component.create_output(type="json", text={"key": "value"})
         self.assertIsInstance(output1, ComponentOutput)
         self.assertIsInstance(output2, ComponentOutput)
         self.assertIsInstance(output3, ComponentOutput)
@@ -44,6 +45,7 @@ class TestBaseComponent(unittest.TestCase):
         self.assertIsInstance(output9, ComponentOutput)
         self.assertIsInstance(output10, ComponentOutput)
         self.assertIsInstance(output11, ComponentOutput)
+        self.assertIsInstance(output12, ComponentOutput)
         self.assertEqual(output11.content[0].text.extra["key"], "value")
 
     def test_valid_output_type_with_same_key(self):
