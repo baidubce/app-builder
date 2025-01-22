@@ -40,19 +40,15 @@ type Message struct {
 }
 
 type ComponentRunResponse struct {
-	RequestID string                   `json:"request_id"`
-	Code      string                   `json:"code"`
-	Message   string                   `json:"message"`
-	Data      ComponentRunResponseData `json:"data"`
-}
-
-type ComponentRunResponseData struct {
+	RequestID      string    `json:"request_id"`
+	Code           string    `json:"code"`
+	Message        string    `json:"message"`
 	ConversationID string    `json:"conversation_id"`
 	MessageID      string    `json:"message_id"`
 	TraceID        string    `json:"trace_id"`
 	UserID         string    `json:"user_id"`
 	EndUserID      string    `json:"end_user_id"`
-	IsCompletion   bool      `json:"is_completion"`
+	Status         string    `json:"status"` // 新增的字段
 	Role           string    `json:"role"`
 	Content        []Content `json:"content"`
 }
