@@ -560,6 +560,8 @@ class Component:
                 key_list = ["detail", "steps"]
             elif type == "function_call":
                 key_list = ["thought", "name", "arguments"]
+            elif type == "json":
+                key_list = ["data"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
             assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
