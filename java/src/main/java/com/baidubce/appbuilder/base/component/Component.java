@@ -15,6 +15,7 @@ public class Component {
         initClient(secretKey, "");
     }
 
+    
     public Component(String secretKey, String gateway) {
         initClient(secretKey, gateway);
     }
