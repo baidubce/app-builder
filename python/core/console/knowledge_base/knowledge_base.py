@@ -88,6 +88,7 @@ class KnowledgeBase(Component):
             knowledge_id=response["id"], knowledge_name=response["name"]
         )
 
+    @deprecated
     def upload_file(
         self, file_path: str, client_token: str = None
     ) -> data_class.KnowledgeBaseUploadFileResponse:

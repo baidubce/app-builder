@@ -13,23 +13,25 @@ public class KnowledgeBaseConfig {
 
     public static class Index {
         private String type;
-        private String esUrl;
+        private String clusterId;
         private String username;
         private String password;
+        private String location;
 
-        public Index(String type, String esUrl, String username, String password) {
+        public Index(String type, String clusterId, String username, String password, String location) {
             this.type = type;
-            this.esUrl = esUrl;
+            this.clusterId = clusterId;
             this.username = username;
             this.password = password;
+            this.location = location;
         }
 
         public String getType() {
             return type;
         }
 
-        public String getEsUrl() {
-            return esUrl;
+        public String getClusterId() {
+            return clusterId;
         }
 
         public String getUsername() {
@@ -38,6 +40,10 @@ public class KnowledgeBaseConfig {
 
         public String getPassword() {
             return password;
+        }
+
+        public String getLocation() {
+            return location;
         }
     }
 }

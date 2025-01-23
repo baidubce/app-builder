@@ -40,6 +40,7 @@ public class Knowledgebase extends Component {
      * @throws IOException               当文件上传失败时抛出IOException
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
+    @Deprecated
     public String uploadFile(String filePath) throws IOException, AppBuilderServerException {
         return innerUploadFile(filePath, java.util.UUID.randomUUID().toString());
     }
@@ -53,6 +54,7 @@ public class Knowledgebase extends Component {
      * @throws IOException 如果发生I/O错误
      * @throws AppBuilderServerException 如果应用构建服务器发生错误
      */
+    @Deprecated
     public String uploadFile(String filePath, String clientToken) throws IOException, AppBuilderServerException {
         return innerUploadFile(filePath, clientToken);
     }

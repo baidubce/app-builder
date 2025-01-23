@@ -200,6 +200,7 @@ func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumen
 	return &rsp, nil
 }
 
+// Deprecated: 此功能即将废弃
 func (t *KnowledgeBase) UploadFile(localFilePath string) (string, error) {
 	var data bytes.Buffer
 	w := multipart.NewWriter(&data)
