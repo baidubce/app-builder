@@ -26,9 +26,10 @@
 | name        | string   | 是       | 希望创建的知识库名称                  | "我的知识库"       |
 | description | string   | 否       | 知识库描述                            | "我的知识库"       |
 | type        | string   | 是       | 知识库索引存储配置 (public、bes、vdb) | "public"           |
-| esUrl       | string   | 否       | bes 访问地址，type填bes时填写         | "http://test/test" |
+| clusterId   | string   | 否       | 集群/实例 ID                        | "clusterId" |
 | esUserName  | string   | 否       | bes 用户名，type填bes时填写           | "username"         |
 | esPassword  | string   | 否       | bes密码，type填bes时填写              | "password"         |
+|location|string|否|托管资源的区域，type填vdb时填写<br>可选值：<br>- bj：北京<br>- bd：保定<br>- sz：苏州<br>- gz：广州|"bj"|
 
 #### 方法返回值
 
@@ -867,7 +868,7 @@ public class KnowledgebaseTest {
 
         // 创建知识库
         KnowledgeBaseConfig.Index index = new KnowledgeBaseConfig.Index("public",
-                "http://localhost:9200", "elastic", "changeme");
+                "", "", "", "");
         KnowledgeBaseConfig config = new KnowledgeBaseConfig(index);
         request.setConfig(config);
         KnowledgeBaseDetail response = knowledgebase.createKnowledgeBase(request);
@@ -1038,9 +1039,6 @@ func TestCreateKnowledgeBase(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
-				Password: "elastic",
-				Username: "elastic",
 			},
 		},
 	})

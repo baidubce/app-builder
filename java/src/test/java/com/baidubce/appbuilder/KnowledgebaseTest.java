@@ -73,7 +73,7 @@ public class KnowledgebaseTest {
 
         // 创建知识库
         KnowledgeBaseConfig.Index index = new KnowledgeBaseConfig.Index("public",
-                "http://localhost:9200", "elastic", "changeme");
+                "", "", "", "");
         KnowledgeBaseConfig config = new KnowledgeBaseConfig(index);
         request.setConfig(config);
 

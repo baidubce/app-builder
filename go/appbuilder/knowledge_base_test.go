@@ -268,7 +268,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -285,7 +284,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -303,7 +301,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -321,7 +318,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -339,7 +335,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -358,7 +353,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -1210,7 +1204,6 @@ func TestCreateKnowledgeBase(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
