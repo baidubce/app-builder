@@ -44,7 +44,7 @@ public class KnowledgeBaseConfigTest {
     }
 
     @Test
-    public void testIndexRegion() {
-        assertEquals("bj", index.getRegion());
+    public void testIndexLocation() {
+        assertEquals("bj", index.getLocation());
     }
 }
