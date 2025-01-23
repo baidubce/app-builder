@@ -89,10 +89,11 @@ type KnowlegeBaseConfig struct {
 }
 
 type KnowledgeBaseConfigIndex struct {
-	Type     string `json:"type"`
-	EsUrl    string `json:"esUrl"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Type     	string `json:"type"`
+	ClusterId 	string `json:"clusterId"`
+	Username 	string `json:"username"`
+	Password 	string `json:"password"`
+	Location 	string `json:"location"`
 }
 
 type KnowledgeBaseDetail struct {

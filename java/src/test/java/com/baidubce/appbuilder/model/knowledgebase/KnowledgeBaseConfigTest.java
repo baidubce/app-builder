@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.beans.Transient;
+
 public class KnowledgeBaseConfigTest {
 
     private KnowledgeBaseConfig knowledgeBaseConfig;
@@ -12,7 +14,7 @@ public class KnowledgeBaseConfigTest {
 
     @Before
     public void setUp() {
-        index = new KnowledgeBaseConfig.Index("es", "http://localhost:9200", "user", "password");
+        index = new KnowledgeBaseConfig.Index("es", "clusterId", "user", "password", "bj");
         knowledgeBaseConfig = new KnowledgeBaseConfig(index);
     }
 
@@ -27,8 +29,8 @@ public class KnowledgeBaseConfigTest {
     }
 
     @Test
-    public void testIndexEsUrl() {
-        assertEquals("http://localhost:9200", index.getEsUrl());
+    public void testIndexClusterId() {
+        assertEquals("clusterId", index.getClusterId());
     }
 
     @Test
@@ -39,5 +41,10 @@ public class KnowledgeBaseConfigTest {
     @Test
     public void testIndexPassword() {
         assertEquals("password", index.getPassword());
+    }
+
+    @Test
+    public void testIndexLocation() {
+        assertEquals("bj", index.getLocation());
     }
 }

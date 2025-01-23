@@ -97,9 +97,10 @@ class KnowledgeBaseGetDocumentsListResponse(BaseModel):
 
 class KnowledgeBaseConfigIndex(BaseModel):
     type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
-    esUrl: Optional[str] = Field(None, description="bes地址")
+    clusterId: Optional[str] = Field(None, description="集群/实例 ID")
     username: Optional[str] = Field(None, description="bes用户名")
     password: Optional[str] = Field(None, description="bes密码")
+    location: Optional[str] = Field(None, description="托管资源的区域", enum=["bj", "bd", "sz", "gz"])
 
 
 class KnowledgeBaseConfig(BaseModel):
@@ -117,6 +118,7 @@ class KnowledgeBaseGetDetailRequest(BaseModel):
 
 
 class KnowledgeBaseDetailResponse(BaseModel):
+    requestId: str = Field(..., description="请求ID")
     id: str = Field(..., description="知识库ID")
     name: str = Field(..., description="知识库名称")
     description: Optional[str] = Field(None, description="知识库描述")

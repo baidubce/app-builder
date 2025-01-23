@@ -26,9 +26,10 @@
 | name        | string   | 是       | 希望创建的知识库名称                  | "我的知识库"       |
 | description | string   | 否       | 知识库描述                            | "我的知识库"       |
 | type        | string   | 是       | 知识库索引存储配置 (public、bes、vdb) | "public"           |
-| esUrl       | string   | 否       | bes 访问地址，type填bes时填写         | "http://test/test" |
+| clusterId   | string   | 否       | 集群/实例 ID                        | "clusterId" |
 | esUserName  | string   | 否       | bes 用户名，type填bes时填写           | "username"         |
 | esPassword  | string   | 否       | bes密码，type填bes时填写              | "password"         |
+|location|string|否|托管资源的区域，type填vdb时填写<br>可选值：<br>- bj：北京<br>- bd：保定<br>- sz：苏州<br>- gz：广州|"bj"|
 
 #### 方法返回值
 
@@ -441,41 +442,7 @@ knowledge.upload_documents(
 )
 ```
 
-### 9、上传通用文档 `KnowledgeBase().upload_file(file_path: str)->KnowledgeBaseUploadFileResponse`
-
-#### 方法参数
-| 参数名称  | 参数类型 | 是否必传 | 描述           | 示例值         |
-| --------- | -------- | -------- | -------------- | -------------- |
-| file_path | string   | 是       | 本地的文件路径 | "/home/my_doc" |
-
-#### 方法返回值
-`KnowledgeBaseUploadFileResponse` 类定义如下
-
-```python
-class KnowledgeBaseUploadFileResponse(BaseModel):
-    request_id: str = Field(..., description="请求ID")
-    id: str = Field(..., description="文件ID")
-    name: str = Field(..., description="文件名称")
-```
-
-
-#### 方法示例
-```python
-import os
-import appbuilder
-os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
-
-my_knowledge_base_id = "your_knowledge_base_id"
-my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
-print("知识库ID: ", my_knowledge.knowledge_id)
-
-upload_res = my_knowledge.upload_file("./test.txt")
-print(upload_res)
-
-# 知识库ID:  da51a988-cbe7-4b24-aa5b-768985e8xxxx
-# request_id='255eec22-ec87-4564-bdeb-3e5623eaxxxx' id='ef12119b-d5be-492a-997c-77f8e84axxxx' name='test.txt'
-```
-### 10、向知识库添加文档 `KnowledgeBase().add_document()->KnowledgeBaseAddDocumentResponse`
+### 9、向知识库添加文档 `KnowledgeBase().add_document()->KnowledgeBaseAddDocumentResponse`
 
 #### 方法参数
 | 参数名称            | 参数类型          | 是否必传 | 描述                                                         | 示例值                                                       |
@@ -525,7 +492,7 @@ print("添加文档结果: ",add_res)
 # 添加文档结果: request_id='412e1630-b570-47c9-a042-caf3cd9dxxxx' knowledge_base_id='da51a988-cbe7-4b24-aa5b-768985e8xxxx' document_ids=['5e0eb279-7688-4100-95d1-241f3d19xxxx']
 ```
 
-### 11、从知识库删除文档 `KnowledgeBase().delete_document()->KnowledgeBaseDeleteDocumentResponse`
+### 10、从知识库删除文档 `KnowledgeBase().delete_document()->KnowledgeBaseDeleteDocumentResponse`
 
 #### 方法参数
 | 参数名称    | 参数类型 | 是否必传 | 描述           | 示例值                                 |
@@ -566,7 +533,7 @@ print("删除文档结果: ",delete_res)
 # 删除文档结果: request_id='ba0e8bc0-b799-45b5-bdac-0d4c50e2xxxx'
 ```
 
-### 12、获取知识库的文档列表`KnowledgeBase().get_documents_list()->KnowledgeBaseGetDocumentsListResponse` 
+### 11、获取知识库的文档列表`KnowledgeBase().get_documents_list()->KnowledgeBaseGetDocumentsListResponse` 
 
 #### 方法参数
 | 参数名称 | 参数类型 | 是否必传 | 描述                                                         | 示例值                                 |
@@ -617,7 +584,7 @@ print("文档列表: ", list_res)
 # 文档列表: request_id='f66c2193-6035-4022-811b-c4cd7743xxxx' data=[{'id': '8f388b10-5e6a-423f-8acc-dd5fdc2fxxxx', 'name': 'test.txt', 'created_at': 1719988868, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '0ebb03fb-ea48-4c49-b494-cf0cec11xxxx'}}, {'id': '5e0eb279-7688-4100-95d1-241f3d19xxxx', 'name': 'test.txt', 'created_at': 1719987921, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '059e2ae2-1e3c-43ea-8b42-5d988f93xxxx'}}]
 ```
 
-### 13、获取知识库全部文档`KnowledgeBase().get_all_documents()->list`
+### 12、获取知识库全部文档`KnowledgeBase().get_all_documents()->list`
 
 #### 方法参数
 | 参数名称          | 参数类型 | 是否必传 | 描述         | 示例值           |
@@ -658,7 +625,7 @@ for message in doc_list:
     print(message)
 ```
 
-### 14. 创建切片`create_chunk(documentId: str, content: str) -> CreateChunkResponse`
+### 13. 创建切片`create_chunk(documentId: str, content: str) -> CreateChunkResponse`
 
 #### 方法参数
 
@@ -692,7 +659,7 @@ print("切片ID: ", resp.id)
 chunk_id = resp.id
 ```
 
-### 15. 修改切片信息`modify_chunk(chunkId: str, content: str, enable: bool)`
+### 14. 修改切片信息`modify_chunk(chunkId: str, content: str, enable: bool)`
 
 #### 方法参数
 
@@ -716,7 +683,7 @@ print("知识库ID: ", my_knowledge.knowledge_id)
 my_knowledge.modify_chunk("your_chunk_id", "content", True, knowledgebase_id=my_knowledge_base_id)
 ```
 
-### 16. 删除切片`delete_chunk(chunkId: str)`
+### 15. 删除切片`delete_chunk(chunkId: str)`
 
 #### 方法参数
 
@@ -738,7 +705,7 @@ print("知识库ID: ", my_knowledge.knowledge_id)
 my_knowledge.delete_chunk("your_chunk_id", knowledgebase_id=my_knowledge_base_id)
 ```
 
-### 17. 获取切片信息`describe_chunk(chunkId: str)`
+### 16. 获取切片信息`describe_chunk(chunkId: str)`
 
 #### 方法参数
 
@@ -783,7 +750,7 @@ print("切片详情：")
 print(resp)
 ```
 
-### 18. 获取切片列表`describe_chunks(documentId: str, marker: str = None, maxKeys: int = None, type: str = None) -> DescribeChunksResponse`
+### 17. 获取切片列表`describe_chunks(documentId: str, marker: str = None, maxKeys: int = None, type: str = None) -> DescribeChunksResponse`
 
 #### 方法参数
 
@@ -871,10 +838,6 @@ public class KnowledgebaseTest {
         listRequest.setKonwledgeBaseId(knowledgeBaseId);
         listRequest.setLimit(10);
         Document[] documents = knowledgebase.getDocumentList(listRequest);
-
-        // 向知识库上传通用文档
-        String fileId = knowledgebase.uploadFile("src/test/java/com/baidubce/appbuilder/files/test.pdf");
-        System.out.println(fileId);
         
         // 向知识库添加文档
         DocumentAddRequest request = new DocumentAddRequest();
@@ -905,7 +868,7 @@ public class KnowledgebaseTest {
 
         // 创建知识库
         KnowledgeBaseConfig.Index index = new KnowledgeBaseConfig.Index("public",
-                "http://localhost:9200", "elastic", "changeme");
+                "", "", "", "");
         KnowledgeBaseConfig config = new KnowledgeBaseConfig(index);
         request.setConfig(config);
         KnowledgeBaseDetail response = knowledgebase.createKnowledgeBase(request);
@@ -1031,13 +994,6 @@ func TestKnowledgeBase(t *testing.T) {
 	}
 	fmt.Println(documentsRes)
 
-    // 向知识库中上传通用文件
-	fileID, err := client.UploadFile("./files/test.pdf")
-	if err != nil {
-		t.Fatalf("upload file failed: %v", err)
-	}
-	fmt.Println(fileID)
-
     // 向知识库中添加文档
 	createDocumentRes, err := client.CreateDocument(CreateDocumentRequest{
 		KnowledgeBaseID: knowledgeBaseID,
@@ -1083,9 +1039,6 @@ func TestCreateKnowledgeBase(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
-				Password: "elastic",
-				Username: "elastic",
 			},
 		},
 	})
