@@ -95,6 +95,7 @@ public class Knowledgebase extends Component {
      * @throws IOException               当文件上传失败时抛出IOException
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
+    @Deprecated
     public String[] addDocument(DocumentAddRequest req)
             throws IOException, AppBuilderServerException {
         return innerAddDocument(req, java.util.UUID.randomUUID().toString());
@@ -109,6 +110,7 @@ public class Knowledgebase extends Component {
      * @throws IOException 如果发生输入/输出异常，抛出此异常
      * @throws AppBuilderServerException 如果应用程序构建服务器发生异常，抛出此异常
      */
+    @Deprecated
     public String[] addDocument(DocumentAddRequest req, String clientToken)
             throws IOException, AppBuilderServerException {
         return innerAddDocument(req, clientToken);
