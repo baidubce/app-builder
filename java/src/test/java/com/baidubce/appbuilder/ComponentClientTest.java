@@ -31,7 +31,7 @@ public class ComponentClientTest {
         parameters.put(ComponentClientRunRequest.SysOriginQuery, "北京景点推荐");
         ComponentClientIterator iter = client.run(componentId, "latest", "", false, parameters);
         while (iter.hasNext()) {
-            ComponentClientRunResponse.ComponentRunResponseData response = iter.next();
+            ComponentClientRunResponse response = iter.next();
             assertNotNull(response.getContent()[0].getText());
         }
     }
@@ -44,7 +44,7 @@ public class ComponentClientTest {
         ComponentClientIterator iter = client.run(componentId, "latest", "", true, parameters);
         Object text = null;
         while (iter.hasNext()) {
-            ComponentClientRunResponse.ComponentRunResponseData response = iter.next();
+            ComponentClientRunResponse response = iter.next();
             if (response.getContent().length > 0) {
                 text = response.getContent()[0].getText();
             }

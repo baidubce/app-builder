@@ -40,19 +40,15 @@ type Message struct {
 }
 
 type ComponentRunResponse struct {
-	RequestID string                   `json:"request_id"`
-	Code      string                   `json:"code"`
-	Message   string                   `json:"message"`
-	Data      ComponentRunResponseData `json:"data"`
-}
-
-type ComponentRunResponseData struct {
+	RequestID      string    `json:"request_id"`
+	Code           string    `json:"code"`
+	Message        string    `json:"message"`
 	ConversationID string    `json:"conversation_id"`
 	MessageID      string    `json:"message_id"`
 	TraceID        string    `json:"trace_id"`
 	UserID         string    `json:"user_id"`
 	EndUserID      string    `json:"end_user_id"`
-	IsCompletion   bool      `json:"is_completion"`
+	Status         string    `json:"status"` // 新增的字段
 	Role           string    `json:"role"`
 	Content        []Content `json:"content"`
 }
@@ -147,7 +143,7 @@ type Json struct {
 
 type ComponentClientIterator interface {
 	// Next 获取处理结果，如果返回error不为空，迭代器自动失效，不允许再调用此方法
-	Next() (*ComponentRunResponseData, error)
+	Next() (*ComponentRunResponse, error)
 }
 
 type ComponentClientStreamIterator struct {
@@ -156,7 +152,7 @@ type ComponentClientStreamIterator struct {
 	body      io.ReadCloser
 }
 
-func (t *ComponentClientStreamIterator) Next() (*ComponentRunResponseData, error) {
+func (t *ComponentClientStreamIterator) Next() (*ComponentRunResponse, error) {
 	data, err := t.r.ReadMessageLine()
 	if err != nil && !(err == io.EOF) {
 		t.body.Close()
@@ -172,7 +168,7 @@ func (t *ComponentClientStreamIterator) Next() (*ComponentRunResponseData, error
 			t.body.Close()
 			return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 		}
-		return &resp.Data, nil
+		return &resp, nil
 	}
 	// 非SSE格式关闭连接，并返回数据
 	t.body.Close()
@@ -185,7 +181,7 @@ type ComponentClientOnceIterator struct {
 	requestID string
 }
 
-func (t *ComponentClientOnceIterator) Next() (*ComponentRunResponseData, error) {
+func (t *ComponentClientOnceIterator) Next() (*ComponentRunResponse, error) {
 	data, err := io.ReadAll(t.body)
 	if err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
@@ -195,5 +191,5 @@ func (t *ComponentClientOnceIterator) Next() (*ComponentRunResponseData, error) 
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, fmt.Errorf("requestID=%s, err=%v", t.requestID, err)
 	}
-	return &resp.Data, nil
+	return &resp, nil
 }

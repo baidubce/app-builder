@@ -14,8 +14,7 @@ public class ComponentClientIterator {
         return iterator.hasNext();
     }
 
-    public ComponentClientRunResponse.ComponentRunResponseData next() {
-        ComponentClientRunResponse response = iterator.next();
-        return response.getData();
+    public ComponentClientRunResponse next() {
+        return iterator.next();
     }
 }

@@ -11,8 +11,21 @@ public class ComponentClientRunResponse {
     private String requestID;
     private String code;
     private String message;
-    private ComponentRunResponseData data;
+    @SerializedName("conversation_id")
+    private String conversationID;
+    @SerializedName("message_id")
+    private String messageID;
+    @SerializedName("trace_id")
+    private String traceID;
+    @SerializedName("user_id")
+    private String userID;
+    @SerializedName("end_user_id")
+    private String endUserID;
+    private String status; // 新增的字段
+    private String role;
+    private Content[] content;
 
+    // Getters and Setters
     public String getRequestID() {
         return requestID;
     }
@@ -37,105 +50,174 @@ public class ComponentClientRunResponse {
         this.message = message;
     }
 
-    public ComponentRunResponseData getData() {
-        return data;
+    public String getConversationID() {
+        return conversationID;
     }
 
-    public void setData(ComponentRunResponseData data) {
-        this.data = data;
+    public void setConversationID(String conversationID) {
+        this.conversationID = conversationID;
     }
 
-    public static class ComponentRunResponseData {
-        @SerializedName("conversation_id")
-        private String conversationID;
-        @SerializedName("message_id")
-        private String messageID;
-        @SerializedName("trace_id")
-        private String traceID;
-        @SerializedName("user_id")
-        private String userID;
-        @SerializedName("end_user_id")
-        private String endUserID;
-        @SerializedName("is_completion")
-        private boolean isCompletion;
-        private String role;
-        private Content[] content;
+    public String getMessageID() {
+        return messageID;
+    }
 
-        public String getConversationID() {
-            return conversationID;
+    public void setMessageID(String messageID) {
+        this.messageID = messageID;
+    }
+
+    public String getTraceID() {
+        return traceID;
+    }
+
+    public void setTraceID(String traceID) {
+        this.traceID = traceID;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public String getEndUserID() {
+        return endUserID;
+    }
+
+    public void setEndUserID(String endUserID) {
+        this.endUserID = endUserID;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Content[] getContent() {
+        return content;
+    }
+
+    public void setContent(Content[] content) {
+        this.content = content;
+    }
+
+    public static class Content {
+        private String name;
+        @SerializedName("visible_scope")
+        private String visibleScope;
+        @SerializedName("raw_data")
+        private Map<String, Object> rawData = new HashMap<>();
+        private Map<String, Object> usage = new HashMap<>();
+        private Map<String, Object> metrics = new HashMap<>();
+        private String type;
+        private Map<String, Object> text = new HashMap<>();
+        private ComponentEvent event;
+
+        // Getters and Setters
+        public String getName() {
+            return name;
         }
 
-        public void setConversationID(String conversationID) {
-            this.conversationID = conversationID;
+        public void setName(String name) {
+            this.name = name;
         }
 
-        public String getMessageID() {
-            return messageID;
+        public String getVisibleScope() {
+            return visibleScope;
         }
 
-        public void setMessageID(String messageID) {
-            this.messageID = messageID;
+        public void setVisibleScope(String visibleScope) {
+            this.visibleScope = visibleScope;
         }
 
-        public String getTraceID() {
-            return traceID;
+        public Map<String, Object> getRawData() {
+            return rawData;
         }
 
-        public void setTraceID(String traceID) {
-            this.traceID = traceID;
+        public void setRawData(Map<String, Object> rawData) {
+            this.rawData = rawData;
         }
 
-        public String getUserID() {
-            return userID;
+        public Map<String, Object> getUsage() {
+            return usage;
         }
 
-        public void setUserID(String userID) {
-            this.userID = userID;
+        public void setUsage(Map<String, Object> usage) {
+            this.usage = usage;
         }
 
-        public String getEndUserID() {
-            return endUserID;
+        public Map<String, Object> getMetrics() {
+            return metrics;
         }
 
-        public void setEndUserID(String endUserID) {
-            this.endUserID = endUserID;
+        public void setMetrics(Map<String, Object> metrics) {
+            this.metrics = metrics;
         }
 
-        public boolean isCompletion() {
-            return isCompletion;
+        public String getType() {
+            return type;
         }
 
-        public void setCompletion(boolean completion) {
-            isCompletion = completion;
+        public void setType(String type) {
+            this.type = type;
         }
 
-        public String getRole() {
-            return role;
+        public Map<String, Object> getText() {
+            return text;
         }
 
-        public void setRole(String role) {
-            this.role = role;
+        public void setText(Map<String, Object> text) {
+            this.text = text;
         }
 
-        public Content[] getContent() {
-            return content;
-        }
-        
-        public void setContent(Content[] content) {
-            this.content = content;
+        public ComponentEvent getEvent() {
+            return event;
         }
 
-        public static class Content {
+        public void setEvent(ComponentEvent event) {
+            this.event = event;
+        }
+
+        public static class ComponentEvent {
+            private String id;
+            private String status;
             private String name;
-            @SerializedName("visible_scope")
-            private String visibleScope;
-            @SerializedName("raw_data")
-            private Map<String, Object> rawData = new HashMap<>();
-            private Map<String, Object> usage = new HashMap<>();
-            private Map<String, Object> metrics = new HashMap<>();
-            private String type;
-            private Map<String, Object> text = new HashMap<>();
-            private ComponentEvent event;
+            @SerializedName("created_time")
+            private String createdTime;
+            @SerializedName("error_code")
+            private String errorCode;
+            @SerializedName("error_message")
+            private String errorMessage;
+
+            // Getters and Setters
+            public String getId() {
+                return id;
+            }
+
+            public void setId(String id) {
+                this.id = id;
+            }
+
+            public String getStatus() {
+                return status;
+            }
+
+            public void setStatus(String status) {
+                this.status = status;
+            }
 
             public String getName() {
                 return name;
@@ -145,120 +227,28 @@ public class ComponentClientRunResponse {
                 this.name = name;
             }
 
-            public String getVisibleScope() {
-                return visibleScope;
+            public String getCreatedTime() {
+                return createdTime;
             }
 
-            public void setVisibleScope(String visibleScope) {
-                this.visibleScope = visibleScope;
+            public void setCreatedTime(String createdTime) {
+                this.createdTime = createdTime;
             }
 
-            public Map<String, Object> getRawData() {
-                return rawData;
+            public String getErrorCode() {
+                return errorCode;
             }
 
-            public void setRawData(Map<String, Object> rawData) {
-                this.rawData = rawData;
+            public void setErrorCode(String errorCode) {
+                this.errorCode = errorCode;
             }
 
-            public Map<String, Object> getUsage() {
-                return usage;
+            public String getErrorMessage() {
+                return errorMessage;
             }
 
-            public void setUsage(Map<String, Object> usage) {
-                this.usage = usage;
-            }
-
-            public Map<String, Object> getMetrics() {
-                return metrics;
-            }
-
-            public void setMetrics(Map<String, Object> metrics) {
-                this.metrics = metrics;
-            }
-
-            public String getType() {
-                return type;
-            }
-
-            public void setType(String type) {
-                this.type = type;
-            }
-
-            public Map<String, Object> getText() {
-                return text;
-            }
-
-            public void setText(Map<String, Object> text) {
-                this.text = text;
-            }
-
-            public ComponentEvent getEvent() {
-                return event;
-            }
-
-            public void setEvent(ComponentEvent event) {
-                this.event = event;
-            }
-
-            public static class ComponentEvent {
-                private String id;
-                private String status;
-                private String name;
-                @SerializedName("created_time")
-                private String createdTime;
-                @SerializedName("error_code")
-                private String errorCode;
-                @SerializedName("error_message")
-                private String errorMessage;
-
-                public String getId() {
-                    return id;
-                }
-
-                public void setId(String id) {
-                    this.id = id;
-                }
-
-                public String getStatus() {
-                    return status;
-                }
-
-                public void setStatus(String status) {
-                    this.status = status;
-                }
-
-                public String getName() {
-                    return name;
-                }
-
-                public void setName(String name) {
-                    this.name = name;
-                }
-
-                public String getCreatedTime() {
-                    return createdTime;
-                }
-
-                public void setCreatedTime(String createdTime) {
-                    this.createdTime = createdTime;
-                }
-
-                public String getErrorCode() {
-                    return errorCode;
-                }
-
-                public void setErrorCode(String errorCode) {
-                    this.errorCode = errorCode;
-                }
-
-                public String getErrorMessage() {
-                    return errorMessage;
-                }
-
-                public void setErrorMessage(String errorMessage) {
-                    this.errorMessage = errorMessage;
-                }
+            public void setErrorMessage(String errorMessage) {
+                this.errorMessage = errorMessage;
             }
         }
     }

@@ -76,24 +76,19 @@ class ContentWithEvent(Content):
 
     event: Event = Field(None, description="事件信息")
 
-
 class RunResponse(BaseModel):
     """ Component Run方法响应体 """
-    class RunOutput(ComponentOutput):
-        """ RunOutput """
-        conversation_id: str = Field(..., description="对话id")
-        message_id: str = Field(..., description="消息id")
-        trace_id: str = Field(..., description="追踪id")
-        user_id: str = Field(..., description="开发者UUID（计费依赖）")
-        end_user_id: str = Field(None, description="终端用户id")
-        is_completion: bool = Field(..., description="是否完成")
-        role: str = Field(..., description="当前消息来源，默认tool")
-        content: list[ContentWithEvent] = Field(
-            None,
-            description="当前组件返回内容的主要payload，List[ContentWithEvent]，每个 Content 包括了当前 event 的一个元素",
-        )
-
+    conversation_id: str = Field(None, description="对话id")
+    message_id: str = Field(None, description="消息id")
+    trace_id: str = Field(None, description="追踪id")
+    user_id: str = Field(None, description="开发者UUID（计费依赖）")
+    end_user_id: str = Field(None, description="终端用户id")
+    status: str = Field(None, description="对话状态，有interrupt, running, error, done四种枚举值")
+    role: str = Field(None, description="当前消息来源，默认tool")
+    content: list[ContentWithEvent] = Field(
+        None,
+        description="当前组件返回内容的主要payload，List[ContentWithEvent]，每个 Content 包括了当前 event 的一个元素",
+    )
     request_id: str = Field(None, description="请求id")
-    code: Union[str,int] = Field(None, description="响应码")
+    code: Union[str, int] = Field(None, description="响应码")
     message: str = Field(None, description="响应消息")
-    data: RunOutput = Field(None, description="响应数据")

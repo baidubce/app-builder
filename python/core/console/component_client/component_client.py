@@ -98,7 +98,7 @@ class ComponentClient(Component):
         else:
             data = response.json()
             resp = data_class.RunResponse(**data)
-            return Message(content=resp.data)
+            return Message(content=resp)
 
     @staticmethod
     def _iterate_events(request_id, events):
@@ -114,4 +114,4 @@ class ComponentClient(Component):
                     message="json decoder failed {}".format(str(e)),
                 )
             resp = data_class.RunResponse(**data)
-            yield resp.data
+            yield resp
