@@ -12,7 +12,7 @@ public class KnowledgeBaseDetailTest {
     @Before
     public void setUp() {
         knowledgeBaseDetail = new KnowledgeBaseDetail();
-        knowledgeBaseConfig = new KnowledgeBaseConfig(new KnowledgeBaseConfig.Index("type1", "esUrl", "user", "pass"));
+        knowledgeBaseConfig = new KnowledgeBaseConfig(new KnowledgeBaseConfig.Index("type1", "clusterId", "user", "pass", "location"));
     }
 
     @Test
