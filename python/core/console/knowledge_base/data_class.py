@@ -142,10 +142,22 @@ class KnowledgeBaseGetListRequest(BaseModel):
         10, description="返回文档数量大小，默认10，最大值100", le=100, ge=1
     )
 
+class KnowledgeBaseGetListConfigIndex(BaseModel):
+    type: str = Field(None, description="索引类型")
+    esUrl: Optional[str] = Field('', description="es地址")
+
+class KnowledgeBaseGetListConfig(BaseModel):
+    index: Optional[KnowledgeBaseGetListConfigIndex] = Field(..., description="索引配置")
+
+class KnowledgeBaseGetListDetailResponse(BaseModel):
+    id: str = Field(..., description="知识库ID")
+    name: str = Field(..., description="知识库名称")
+    description: Optional[str] = Field(None, description="知识库描述")
+    config: Optional[KnowledgeBaseGetListConfig] = Field(..., description="知识库配置")
 
 class KnowledgeBaseGetListResponse(BaseModel):
     requestId: str = Field(..., description="请求ID")
-    data: list[KnowledgeBaseDetailResponse] = Field([], description="知识库详情列表")
+    data: list[KnowledgeBaseGetListDetailResponse] = Field([], description="知识库详情列表")
     marker: str = Field(..., description="起始位置")
     nextMarker: str = Field(..., description="下一页起始位置")
     maxKeys: int = Field(10, description="返回文档数量大小，默认10，最大值100")
