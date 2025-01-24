@@ -80,3 +80,7 @@
   * 新增滚动日志功能
 * **2025.01.16 v1.0.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.1)
   * 修复1.0.0中的Python SDK流式调用慢问题
+* **2025.01.24 v1.0.2版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.2)
+  * 升级KnowledgebaseClient，同步更新OpenAPI的入参
+  * 升级KnowledgebaseClient，同步更新知识库创建入参
+  * 升级ComponentClient，同步更新OpenAPI的出参
