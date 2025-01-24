@@ -29,10 +29,10 @@ implementation("com.baidubce:appbuilder:1.0.0")
 implementation 'com.baidubce:appbuilder:1.0.0'
 ```
 #### 本地导入
-点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/1.0.0/appbuilder-1.0.0.jar) 下载Jar包，将Jar包导入到项目目录下。
+点击[链接](https://repo1.maven.org/maven2/com/baidubce/appbuilder/1.0.2/appbuilder-1.0.2.jar) 下载Jar包，将Jar包导入到项目目录下。
 
 ### Go (仅支持调用端到端应用)
-> 支持Go 1.18.1以上版本，当前最新tag为v1.0.0
+> 支持Go 1.18.1以上版本，当前最新tag为v1.0.2
 
 ```shell
 go get github.com/baidubce/app-builder/go/appbuilder
