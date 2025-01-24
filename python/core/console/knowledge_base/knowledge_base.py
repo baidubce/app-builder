@@ -913,10 +913,11 @@ class KnowledgeBase(Component):
         self,
         query: str,
         knowledgebase_ids: list[str],
-        type: str = None,
+        type: Optional[data_class.QueryType] = None,
         metadata_filters: data_class.MetadataFilter = None,
         pipeline_config: data_class.QueryPipelineConfig = None,
-        top: int = None,
+        rank_score_threshold: Optional[float] = 0.4,
+        top: int = 6,
         skip: int = None,
     ) -> data_class.QueryKnowledgeBaseResponse:
         """
@@ -938,6 +939,7 @@ class KnowledgeBase(Component):
             type=type,
             metadata_filters=metadata_filters,
             pipeline_config=pipeline_config,
+            rank_score_threshold=rank_score_threshold,
             top=top,
             skip=skip,
         )

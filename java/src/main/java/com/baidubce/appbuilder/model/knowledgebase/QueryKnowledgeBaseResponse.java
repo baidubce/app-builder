@@ -44,6 +44,9 @@ public class QueryKnowledgeBaseResponse {
         private float rank_score;
         private ChunkLocation locations;
         private List<Chunk> children;
+        private List<Chunk> neighbour_chunks;
+        private String original_chunk_id;
+        private Integer original_chunk_offset;
 
         public String getChunk_id() { return chunk_id; }
 
@@ -96,6 +99,18 @@ public class QueryKnowledgeBaseResponse {
         public List<Chunk> getChildren() { return children; }
 
         public void setChildren(List<Chunk> children) { this.children = children; }
+
+        public List<Chunk> getNeighbour_chunks() { return neighbour_chunks; }
+
+        public void setNeighbour_chunks(List<Chunk> neighbour_chunks) { this.neighbour_chunks = neighbour_chunks; }
+
+        public String getOriginal_chunk_id() { return original_chunk_id; }
+
+        public void setOriginal_chunk_id(String original_chunk_id) { this.original_chunk_id = original_chunk_id; }
+
+        public Integer getOriginal_chunk_offset() { return original_chunk_offset; }
+
+        public void setOriginal_chunk_offset(Integer original_chunk_offset) { this.original_chunk_offset = original_chunk_offset; }
     }
 
     public static class ChunkLocation {
