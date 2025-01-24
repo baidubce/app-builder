@@ -66,9 +66,6 @@ class TestKnowLedge(unittest.TestCase):
                 name="test",
                 description="test",
                 type="public",
-                esUrl="http://localhost:9200",
-                esUserName="elastic",
-                esPassword="changeme",
             )
             knowledge_base_id = resp.id
             knowledge.get_knowledge_base_detail(knowledge_base_id)

@@ -18,7 +18,7 @@
 
 ## Python基本用法
 
-### 1、新建知识库`KnowledgeBase().create_knowledge_base(name: str, description: str, type: str, esUrl: str, esUserName: str, esPassword: str) -> KnowledgeBaseDetailResponse`
+### 1、新建知识库`KnowledgeBase().create_knowledge_base(name: str, description: str, type: str, clusterId: str, esUserName: str, esPassword: str, location: str) -> KnowledgeBaseDetailResponse`
 
 #### 方法参数
 | 参数名称    | 参数类型 | 是否必传 | 描述                                  | 示例值             |
@@ -26,10 +26,10 @@
 | name        | string   | 是       | 希望创建的知识库名称                  | "我的知识库"       |
 | description | string   | 否       | 知识库描述                            | "我的知识库"       |
 | type        | string   | 是       | 知识库索引存储配置 (public、bes、vdb) | "public"           |
-| clusterId   | string   | 否       | 集群/实例 ID                        | "clusterId" |
-| esUserName  | string   | 否       | bes 用户名，type填bes时填写           | "username"         |
-| esPassword  | string   | 否       | bes密码，type填bes时填写              | "password"         |
-|location|string|否|托管资源的区域，type填vdb时填写<br>可选值：<br>- bj：北京<br>- bd：保定<br>- sz：苏州<br>- gz：广州|"bj"|
+| clusterId   | string   | type=bes 和 vdb 时填写       | 集群/实例 ID<br>请在bes、vdb控制台中查看。                       | "clusterId" |
+| esUserName  | string   | type=bes 和 vdb 时填写       | 用户名/账号<br>请在bes、vdb控制台中查看           | "username"         |
+| esPassword  | string   | type=bes 和 vdb 时填写       | 密码/API密钥<br>请在bes、vdb控制台中查看              | "password"         |
+|location|string|type=bes 和 vdb 时填写|托管资源的区域，type填vdb时填写<br>可选值：<br>- bj：北京<br>- bd：保定<br>- sz：苏州<br>- gz：广州|"bj"|
 
 #### 方法返回值
 
@@ -55,9 +55,10 @@ class KnowledgeBaseConfig(BaseModel):
 ```python
 class KnowledgeBaseConfigIndex(BaseModel):
     type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
-    esUrl: Optional[str] = Field(..., description="ES地址")
-    username: Optional[str] = Field(None, description="ES用户名")
-    password: Optional[str] = Field(None, description="ES密码")
+    clusterId: Optional[str] = Field(None, description="集群/实例 ID")
+    username: Optional[str] = Field(None, description="bes用户名")
+    password: Optional[str] = Field(None, description="bes密码")
+    location: Optional[str] = Field(None, description="托管资源的区域", enum=["bj", "bd", "sz", "gz"])
 ```
 
 #### 方法示例
@@ -442,57 +443,7 @@ knowledge.upload_documents(
 )
 ```
 
-### 9、向知识库添加文档 `KnowledgeBase().add_document()->KnowledgeBaseAddDocumentResponse`
-
-#### 方法参数
-| 参数名称            | 参数类型          | 是否必传 | 描述                                                         | 示例值                                                       |
-| ------------------- | ----------------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| content_type        | enum[str]         | 是       | 知识库文档类型，有raw_text和qa两种可选，分别对应文本文档 和 结构化的excel问答对 | "raw_text"                                                   |
-| file_ids            | list[str]         | 是       | 文件ID列表，文件ID通过`upload_file`接口获得                  | ['ef12119b-d5be-492a-997c-77f8e84axxxx']                     |
-| is_enhanced         | bool              | 否       | 文档是否开启基于大模型的知识增强                             | False                                                        |
-| custom_process_rule | CustomProcessRule | 否       | 文档的自定义切分逻辑                                         | `appbuilder.CustomProcessRule(separators=["?"], target_length=400,overlap_rate=0.2)` |
-
-
-`CustomProcessRule` 类定义如下：
-```python
-class CustomProcessRule(BaseModel):
-    separators: list[str] = Field(..., description="分段符号列表", example=[",", "?"])
-    target_length: int = Field(..., description="分段最大长度", ge=300, le=1200)
-    overlap_rate: float = Field(..., description="分段重叠最大字数占比，推荐值0.25", ge=0, le=0.3, example=0.2)
-
-```
-
-#### 方法返回值
-方法返回`KnowledgeBaseAddDocumentResponse`，该类定义如下：
-```python
-class KnowledgeBaseAddDocumentResponse(BaseModel):
-    request_id: str = Field(..., description="请求ID")
-    knowledge_base_id: str = Field(..., description="知识库ID")
-    document_ids: list[str] = Field(..., description="成功新建的文档id集合")
-```
-
-#### 方法示例
-```python
-import os
-import appbuilder
-os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
-
-my_knowledge_base_id = "your_knowledge_base_id"
-my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
-print("知识库ID: ", my_knowledge.knowledge_id)
-
-upload_res = my_knowledge.upload_file("./test.txt")
-print("文件上传结果: ",upload_res)
-
-add_res = my_knowledge.add_document(content_type='raw_text', file_ids=[upload_res.id])
-print("添加文档结果: ",add_res)
-
-# 知识库ID:  da51a988-cbe7-4b24-aa5b-768985e8xxxx
-# 文件上传结果: request_id='255eec22-ec87-4564-bdeb-3e5623eaxxxx' id='ef12119b-d5be-492a-997c-77f8e84axxxx' name='test.txt'
-# 添加文档结果: request_id='412e1630-b570-47c9-a042-caf3cd9dxxxx' knowledge_base_id='da51a988-cbe7-4b24-aa5b-768985e8xxxx' document_ids=['5e0eb279-7688-4100-95d1-241f3d19xxxx']
-```
-
-### 10、从知识库删除文档 `KnowledgeBase().delete_document()->KnowledgeBaseDeleteDocumentResponse`
+### 9、从知识库删除文档 `KnowledgeBase().delete_document()->KnowledgeBaseDeleteDocumentResponse`
 
 #### 方法参数
 | 参数名称    | 参数类型 | 是否必传 | 描述           | 示例值                                 |
@@ -533,7 +484,7 @@ print("删除文档结果: ",delete_res)
 # 删除文档结果: request_id='ba0e8bc0-b799-45b5-bdac-0d4c50e2xxxx'
 ```
 
-### 11、获取知识库的文档列表`KnowledgeBase().get_documents_list()->KnowledgeBaseGetDocumentsListResponse` 
+### 10、获取知识库的文档列表`KnowledgeBase().get_documents_list()->KnowledgeBaseGetDocumentsListResponse` 
 
 #### 方法参数
 | 参数名称 | 参数类型 | 是否必传 | 描述                                                         | 示例值                                 |
@@ -584,7 +535,7 @@ print("文档列表: ", list_res)
 # 文档列表: request_id='f66c2193-6035-4022-811b-c4cd7743xxxx' data=[{'id': '8f388b10-5e6a-423f-8acc-dd5fdc2fxxxx', 'name': 'test.txt', 'created_at': 1719988868, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '0ebb03fb-ea48-4c49-b494-cf0cec11xxxx'}}, {'id': '5e0eb279-7688-4100-95d1-241f3d19xxxx', 'name': 'test.txt', 'created_at': 1719987921, 'word_count': 16886, 'enabled': True, 'meta': {'source': 'upload_file', 'file_id': '059e2ae2-1e3c-43ea-8b42-5d988f93xxxx'}}]
 ```
 
-### 12、获取知识库全部文档`KnowledgeBase().get_all_documents()->list`
+### 11、获取知识库全部文档`KnowledgeBase().get_all_documents()->list`
 
 #### 方法参数
 | 参数名称          | 参数类型 | 是否必传 | 描述         | 示例值           |
@@ -625,7 +576,7 @@ for message in doc_list:
     print(message)
 ```
 
-### 13. 创建切片`create_chunk(documentId: str, content: str) -> CreateChunkResponse`
+### 12. 创建切片`create_chunk(documentId: str, content: str) -> CreateChunkResponse`
 
 #### 方法参数
 
@@ -659,7 +610,7 @@ print("切片ID: ", resp.id)
 chunk_id = resp.id
 ```
 
-### 14. 修改切片信息`modify_chunk(chunkId: str, content: str, enable: bool)`
+### 13. 修改切片信息`modify_chunk(chunkId: str, content: str, enable: bool)`
 
 #### 方法参数
 
@@ -683,7 +634,7 @@ print("知识库ID: ", my_knowledge.knowledge_id)
 my_knowledge.modify_chunk("your_chunk_id", "content", True, knowledgebase_id=my_knowledge_base_id)
 ```
 
-### 15. 删除切片`delete_chunk(chunkId: str)`
+### 14. 删除切片`delete_chunk(chunkId: str)`
 
 #### 方法参数
 
@@ -705,7 +656,7 @@ print("知识库ID: ", my_knowledge.knowledge_id)
 my_knowledge.delete_chunk("your_chunk_id", knowledgebase_id=my_knowledge_base_id)
 ```
 
-### 16. 获取切片信息`describe_chunk(chunkId: str)`
+### 15. 获取切片信息`describe_chunk(chunkId: str)`
 
 #### 方法参数
 
@@ -750,7 +701,7 @@ print("切片详情：")
 print(resp)
 ```
 
-### 17. 获取切片列表`describe_chunks(documentId: str, marker: str = None, maxKeys: int = None, type: str = None) -> DescribeChunksResponse`
+### 16. 获取切片列表`describe_chunks(documentId: str, marker: str = None, maxKeys: int = None, type: str = None) -> DescribeChunksResponse`
 
 #### 方法参数
 
@@ -828,7 +779,7 @@ public class KnowledgebaseTest {
     }
     
     @Test
-    public void testAddDocument() throws IOException, AppBuilderServerException {
+    public void testDocument() throws IOException, AppBuilderServerException {
         // 实例化Knowledgebase
         String knowledgeBaseId  = "";
         Knowledgebase knowledgebase = new Knowledgebase();
@@ -838,24 +789,11 @@ public class KnowledgebaseTest {
         listRequest.setKonwledgeBaseId(knowledgeBaseId);
         listRequest.setLimit(10);
         Document[] documents = knowledgebase.getDocumentList(listRequest);
-        
-        // 向知识库添加文档
-        DocumentAddRequest request = new DocumentAddRequest();
-        request.setKnowledgeBaseId(knowledgeBaseId);
-        request.setContentType("raw_text");
-        request.setFileIds(new String[] { fileId });
-        DocumentAddRequest.CustomProcessRule customProcessRule = new DocumentAddRequest.CustomProcessRule();
-        customProcessRule.setSeparators(new String[] { "。" });
-        customProcessRule.setTargetLength(300);
-        customProcessRule.setOverlapRate(0.25);
-        request.setCustomProcessRule(customProcessRule);
-        String[] documentsRes = knowledgebase.addDocument(request);
-        assertNotNull(documentsRes);
 
         // 从知识库删除文档
         DocumentDeleteRequest deleteRequest = new DocumentDeleteRequest();
         deleteRequest.setKonwledgeBaseId(knowledgeBaseId);
-        deleteRequest.setDocumentId(documentsRes[0]);
+        deleteRequest.setDocumentId("期望删除的DocumentId");
         knowledgebase.deleteDocument(deleteRequest);
     }
   
@@ -994,26 +932,10 @@ func TestKnowledgeBase(t *testing.T) {
 	}
 	fmt.Println(documentsRes)
 
-    // 向知识库中添加文档
-	createDocumentRes, err := client.CreateDocument(CreateDocumentRequest{
-		KnowledgeBaseID: knowledgeBaseID,
-		ContentType:     ContentTypeRawText,
-		FileIDS:         []string{fileID},
-		CustomProcessRule: &CustomProcessRule{
-			Separators:   []string{"。"},
-			TargetLength: 300,
-			OverlapRate:  0.25,
-		},
-	})
-	if err != nil {
-		t.Fatalf("create document failed: %v", err)
-	}
-	fmt.Println(createDocumentRes)
-
     // 从知识库中删除文档
 	err = client.DeleteDocument(DeleteDocumentRequest{
 		KnowledgeBaseID: knowledgeBaseID,
-		DocumentID:      createDocumentRes.DocumentsIDS[0]})
+		DocumentID:      "期望删除的DocumentID"})
 	if err != nil {
 		t.Fatalf("delete document failed: %v", err)
 	}

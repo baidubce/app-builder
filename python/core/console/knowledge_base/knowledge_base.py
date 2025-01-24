@@ -129,6 +129,7 @@ class KnowledgeBase(Component):
 
         return resp
 
+    @deprecated()
     def add_document(
         self,
         content_type: str,
@@ -286,9 +287,10 @@ class KnowledgeBase(Component):
         name: str,
         description: str,
         type: str = "public",
-        esUrl: str = None,
+        clusterId: str = None,
         esUserName: str = None,
         esPassword: str = None,
+        location: str = None,
         client_token: str = None,
     ) -> data_class.KnowledgeBaseDetailResponse:
         r"""
@@ -325,9 +327,10 @@ class KnowledgeBase(Component):
             config={
                 "index": {
                     "type": type,
-                    "esUrl": esUrl,
+                    "clusterId": clusterId,
                     "username": esUserName,
                     "password": esPassword,
+                    "location": location,
                 }
             },
         )

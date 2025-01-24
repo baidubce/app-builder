@@ -437,6 +437,7 @@ func (t *KnowledgeBase) deleteKnowledgeBase(knowledgeBaseID string, clientToken 
 	return nil
 }
 
+// Deprecated: 此功能即将废弃
 func (t *KnowledgeBase) CreateDocuments(req CreateDocumentsRequest) error {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
