@@ -762,6 +762,189 @@ print("切片列表：")
 print(resp)
 ```
 
+### 17. 知识库检索`query_knowledge_base(query: str, knowledgebase_ids: list[str], type: Optional[data_class.QueryType] = None, metadata_filters: data_class.MetadataFilter = None,pipeline_config: data_class.QueryPipelineConfig = None, rank_score_threshold: Optional[float] = 0.4, top: int = 6, skip: int = None) -> data_class.QueryKnowledgeBaseResponse`
+
+#### 方法参数
+
+| 参数名称        | 参数类型 | 是否必传 | 描述                                                         | 示例值         |
+| --------------- | -------- | -------- | ------------------------------------------------------------ | -------------- |
+| query | string   | 是       | 检索query，最长为1024字符，超过自动截断                                                   |民法典第三条                |
+| knowledgebase_ids      | list[str]   | 是       | 指定知识库的id集合                                                       | ["kb-1", "kb-2"] |
+| type          | string   | 否       | 检索策略。<br>可选值：<br>* fulltext，全文检索<br>* semantic，语义检索<br>* hybird，混合检索| "fulltext" |
+| metadata_filters         | data_class.MetadataFilters | 否       | 元数据过滤条件，详细见MetadataFilters                          | -             |
+| pipeline_config            | data_class.QueryPipelineConfig   | 否       | 检索配置，详细见QueryPipelineConfig | -          |
+| rank_score_threshold         | float   | 否       | 重排序匹配分阈值，只有rank_score大于等于该分值的切片重排序时才会被筛选出来。<br>当且仅当，pipeline_config中配置了ranking节点时，该过滤条件生效。<br>取值范围： [0, 1]。<br>默认0.4                          | 0.4             |
+| top            | int   | 否       | 返回前多少的条目。默认值6。如果检索结果的数量未达到top值，则按实际检索到的结果数量返回 | 6          |
+| skip         | int   | 否       | 跳过条目数（通过top和skip可以实现类似分页的效果，比如top 10 skip 0，取第一页的10个，top 10 skip 10，取第二页的10个）| 0             |
+
+`data_class.MetadataFilters` 类定义如下：
+
+```python
+class MetadataFilters(BaseModel):
+    filters: list[MetadataFilter] = Field(..., description="过滤条件")
+    condition: str = Field(..., description="文档组合条件。and:与，or:或")
+```
+
+`data_class.MetadataFilter` 类定义如下：
+
+```python
+class MetadataFilter(BaseModel):
+    operator: str = Field(..., description="操作符名称。==:等于，in:在数组中，not_in:不在数组中")
+    field: str = Field(None, description="字段名，目前支持doc_id")
+    value: Union[str, list[str]] = Field(
+        ..., description="字段值，如果是in操作符，value为数组"
+    )
+```
+
+
+`data_class.QueryPipelineConfig` 类定义如下：
+
+```python
+class QueryPipelineConfig(BaseModel):
+    id: str = Field(
+        None, description="配置唯一标识，如果用这个id，则引用已经配置好的QueryPipeline"
+    )
+    pipeline: list[Union[ElasticSearchRetrieveConfig, RankingConfig, VectorDBRetrieveConfig, SmallToBigConfig]] = Field(
+        None, description="配置的Pipeline，如果没有用id，可以用这个对象指定一个新的配置"
+    )
+```
+
+`data_class.ElasticSearchRetrieveConfig` 类定义如下：
+
+```python
+class ElasticSearchRetrieveConfig(BaseModel): # 托管资源为共享资源 或 BES资源时使用该配置
+    name: str = Field(..., description="配置名称")
+    type: str = Field(None, description="elastic_search标志，该节点为es全文检索")
+    threshold: float = Field(None, description="得分阈值，默认0.1")
+    top: int = Field(None, description="召回数量，默认400")
+```
+
+`data_class.RankingConfig` 类定义如下：
+
+```python
+class RankingConfig(BaseModel):
+    name: str = Field(..., description="配置名称")
+    type: str = Field(None, description="ranking标志，该节点为ranking节点")
+    inputs: list[str] = Field(
+        ...,
+        description='输入的节点名，如es检索配置的名称为pipeline_001，则该inputs为["pipeline_001"]',
+    )
+    model_name: str = Field(None, description="ranking模型名（当前仅一种，暂不生效）")
+    top: int = Field(None, description="取切片top进行排序，默认20，最大400")
+```
+
+`data_class.VectorDBRetrieveConfig` 类定义如下：
+
+```python
+class VectorDBRetrieveConfig(BaseModel):
+    name: str = Field(..., description="该节点的自定义名称。")
+    type: str = Field("vector_db", description="该节点的类型，默认为vector_db。")
+    threshold: Optional[float] = Field(0.1, description="得分阈值。取值范围：[0, 1]", ge=0.0, le=1.0)
+    top: Optional[int] = Field(400, description="召回数量。取值范围：[0, 800]", ge=0, le=800)
+    pre_ranking: Optional[PreRankingConfig] = Field(None, description="粗排配置")
+```
+
+`data_class.PreRankingConfig` 类定义如下：
+
+```python
+class PreRankingConfig(BaseModel):
+    bm25_weight: float = Field(
+        None, description="粗排bm25比重，取值范围在 [0, 1]，默认0.75"
+    )
+    vec_weight: float = Field(
+        None, description="粗排向量余弦分比重，取值范围在 [0, 1]，默认0.25"
+    )
+    bm25_b: float = Field(
+        None, description="控制文档长度对评分影响的参数，取值范围在 [0, 1]，默认0.75"
+    )
+    bm25_k1: float = Field(
+        None,
+        description="词频饱和因子，控制词频（TF）对评分的影响，常取值范围在 [1.2, 2.0]，默认1.5",
+    )
+    bm25_max_score: float = Field(
+        None, description="得分归一化参数，不建议修改，默认50"
+    )
+```
+
+#### 方法返回值
+
+`data_class.QueryKnowledgeBaseResponse` 类定义如下：
+
+```python
+class QueryKnowledgeBaseResponse(BaseModel):
+    requestId: str = Field(None, description="请求ID")
+    code: str = Field(None, description="状态码")
+    message: str = Field(None, description="状态信息")
+    chunks: list[Chunk] = Field(..., description="切片列表")
+    total_count: int = Field(..., description="切片总数")
+```
+
+衍生类`Chunk`定义如下：
+
+```python
+class Chunk(BaseModel):
+    chunk_id: str = Field(..., description="切片ID")
+    knowledgebase_id: str = Field(..., description="知识库ID")
+    document_id: str = Field(..., description="文档ID")
+    document_name: str = Field(None, description="文档名称")
+    meta: dict = Field(None, description="文档元数据")
+    chunk_type: str = Field(..., description="切片类型")
+    content: str = Field(..., description="切片内容")
+    create_time: datetime = Field(..., description="创建时间")
+    update_time: datetime = Field(..., description="更新时间")
+    retrieval_score: float = Field(..., description="粗检索得分")
+    rank_score: float = Field(..., description="rerank得分")
+    locations: ChunkLocation = Field(None, description="切片位置")
+    children: List[Chunk] = Field(None, description="子切片")
+```
+
+#### 方法示例
+
+```python
+import os
+import appbuilder
+os.environ["APPBUILDER_TOKEN"] = "your_appbuilder_token"
+
+knowledge = appbuilder.KnowledgeBase()
+client = appbuilder.KnowledgeBase()
+res = client.query_knowledge_base(
+    query="民法典第三条",
+    type="fulltext",
+    knowledgebase_ids=["70c6375a-1595-41f2-9a3b-e81bc9060b7f"],
+    top=5,
+    skip=0,
+    metadata_filters=data_class.MetadataFilters(filters=[], condition="or"),
+    pipeline_config=data_class.QueryPipelineConfig(
+        id="pipeline_001",
+        pipeline=[
+            {
+                "name": "step1",
+                "type": "elastic_search",
+                "threshold": 0.1,
+                "top": 400,
+                "pre_ranking": {
+                    "bm25_weight": 0.25,
+                    "vec_weight": 0.75,
+                    "bm25_b": 0.75,
+                    "bm25_k1": 1.5,
+                    "bm25_max_score": 50,
+                },
+            },
+            {
+                "name": "step2",
+                "type": "ranking",
+                "inputs": ["step1"],
+                "model_name": "ranker-v1",
+                "top": 20,
+            },
+        ],
+    ),
+)
+chunk_id = res.chunks[0].chunk_id
+for chunk in res.chunks:
+    print(chunk.content)
+```
+
 ### Java基本用法
 
 #### 方法及各方法入参/出参
