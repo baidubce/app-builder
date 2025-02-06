@@ -914,7 +914,7 @@ class KnowledgeBase(Component):
         query: str,
         knowledgebase_ids: list[str],
         type: Optional[data_class.QueryType] = None,
-        metadata_filters: data_class.MetadataFilter = None,
+        metadata_filters: data_class.MetadataFilters = None,
         pipeline_config: data_class.QueryPipelineConfig = None,
         rank_score_threshold: Optional[float] = 0.4,
         top: int = 6,
