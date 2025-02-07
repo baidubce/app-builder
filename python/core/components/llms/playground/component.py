@@ -49,6 +49,7 @@ class Playground(CompletionBaseComponent):
         secret_key: Optional[str] = None,
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化空模板配置模型。
 

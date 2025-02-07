@@ -54,6 +54,7 @@ class QAPairMining(CompletionBaseComponent):
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化QAPairMining(问答对挖掘)模型。
         
