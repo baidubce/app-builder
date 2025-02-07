@@ -296,7 +296,13 @@ class BESRetriever(Component):
     tool_desc: Dict[str, Any] = {"description": "a retriever based on Baidu ElasticSearch"}
     base_es_url: str = "/v1/bce/bes/cluster/"
 
-    def __init__(self, embedding, index_name, bes_client, index_type="hnsw"):
+    def __init__(self, 
+                 embedding, 
+                 index_name, 
+                 bes_client, 
+                 index_type="hnsw",
+                 **kwargs
+                 ):
         super().__init__()
 
         self.embedding = embedding

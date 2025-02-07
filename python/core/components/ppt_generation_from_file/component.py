@@ -79,6 +79,7 @@ class PPTGenerationFromFile(Component):
         secret_key: Optional[str] = None,
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化论文生成PPT组件。
         

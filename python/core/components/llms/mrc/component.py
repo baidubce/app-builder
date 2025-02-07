@@ -63,6 +63,7 @@ class MRC(CompletionBaseComponent):
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化MRC(阅读理解问答)模型。
         

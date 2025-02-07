@@ -53,7 +53,10 @@ class Reranker(Component):
     }
     accepted_models = list(base_urls.keys())
 
-    def __init__(self, model="bce-reranker-base"):
+    def __init__(self, 
+                 model="bce-reranker-base",
+                 **kwargs
+                 ):
         """Reranker"""
 
         if model not in self.accepted_models:

@@ -59,7 +59,10 @@ class Embedding(EmbeddingBaseComponent):
         'Embedding-V1' : "/v1/bce/wenxinworkshop/ai_custom/v1/embeddings/embedding-v1"
     }
 
-    def __init__(self, model="Embedding-V1"):
+    def __init__(self, 
+                 model="Embedding-V1",
+                 **kwargs
+                 ):
         """Embedding"""
 
         if model not in self.accepted_models:

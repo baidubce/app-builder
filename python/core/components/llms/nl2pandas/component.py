@@ -51,6 +51,7 @@ class Nl2pandasComponent(CompletionBaseComponent):
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化Nl2pandasComponent模型。
         

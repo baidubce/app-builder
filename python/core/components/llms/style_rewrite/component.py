@@ -69,6 +69,7 @@ class StyleRewrite(CompletionBaseComponent):
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = False,
+            **kwargs
     ):
         """初始化StyleRewrite模型。
         

@@ -30,8 +30,12 @@ class SelectTable(Component):
     gbi 选表
     """
 
-    def __init__(self, model_name: str, table_descriptions: Dict[str, str],
-                 prompt_template: str = ""):
+    def __init__(self, 
+                 model_name: str, 
+                 table_descriptions: Dict[str, str],
+                 prompt_template: str = "",
+                 **kwargs
+                 ):
         """
         创建 GBI 选表对象
         

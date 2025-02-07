@@ -56,6 +56,7 @@ class IsComplexQuery(CompletionBaseComponent):
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化IsComplexQueryMeta任务。
         

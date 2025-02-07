@@ -58,6 +58,7 @@ class Matching(MatchingBaseComponent):
     def __init__(
         self,
         embedding_component: EmbeddingBaseComponent,
+        **kwargs
     ):
         """
         EmbeddingBaseComponent: 用于计算文本的embedding

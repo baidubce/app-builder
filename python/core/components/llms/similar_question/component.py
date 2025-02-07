@@ -72,6 +72,7 @@ class SimilarQuestion(CompletionBaseComponent):
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化SimilarQuestionMeta任务。
         

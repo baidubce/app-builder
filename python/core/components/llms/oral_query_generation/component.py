@@ -83,6 +83,7 @@ class OralQueryGeneration(CompletionBaseComponent):
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化口语化Query生成模型。
         
