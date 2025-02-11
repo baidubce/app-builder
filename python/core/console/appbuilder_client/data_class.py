@@ -85,7 +85,7 @@ class Action(BaseModel):
         ...,
         description="对话时要进行的特殊操作。如回复工作流agent中'信息收集节点'的消息。",
     )
-    
+
     @classmethod
     def create_resume_action(cls, event_id):
         return {
@@ -113,7 +113,7 @@ class AppBuilderClientRequest(BaseModel):
     conversation_id: str
     file_ids: Optional[list[str]] = None
     app_id: str
-    tools: Optional[list[Union[Tool,Manifest]]] = None
+    tools: Optional[list[Union[Tool, Manifest]]] = None
     tool_outputs: Optional[list[ToolOutput]] = None
     tool_choice: Optional[ToolChoice] = None
     end_user_id: Optional[str] = None
@@ -307,6 +307,7 @@ class AppBuilderClientAnswer(BaseModel):
             events( list[Event]): 事件列表
        """
     answer: str = ""
+    message_id: str = ""
     events: list[Event] = []
 
 
@@ -373,3 +374,18 @@ class DescribeAppsResponse(BaseModel):
     nextMarker: str = Field("", description="下一次起始位置")
     maxKeys: int = Field(0, description="最大返回数量")
     data: list[AppOverview] = Field([], description="应用概览列表")
+
+
+class FeedbackRequest(BaseModel):
+    app_id: str = Field(..., description="应用ID")
+    conversation_id: str = Field(..., description="对话ID")
+    message_id: str = Field(..., description="对应的消息ID")
+    type: Optional[str] = Field(
+        None,
+        description="点赞点踩枚举值 cancel：取消评论, upvote：点赞, downvote：点踩",
+    )
+    flag: Optional[list[str]] = Field(
+        None,
+        description="点踩原因枚举值:答非所问、内容缺失、没有帮助、逻辑问题、偏见歧视、事实错误",
+    )
+    reason: Optional[str] = Field(None, description="对于点赞点踩额外补充的原因。")

@@ -271,6 +271,10 @@ func (t *AppBuilderClient) Run(param ...interface{}) (AppBuilderClientIterator, 
 		return nil, errors.New("conversationID mustn't be empty")
 	}
 
+	if len(req.AppID) == 0 {
+		req.AppID = t.appID
+	}
+
 	request := http.Request{}
 
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/runs")
@@ -333,6 +337,43 @@ func (t *AppBuilderClient) buildAppBuilderClientRunRequest(param ...interface{})
 		Stream:         stream,
 		FileIDs:        fileIDS,
 	}, nil
+}
+
+func (t *AppBuilderClient) Feedback(req AppBuilderClientFeedbackRequest) (string, error) {
+	if len(req.ConversationID) == 0 {
+		return "", errors.New("conversationID mustn't be empty")
+	}
+
+	if len(req.AppID) == 0 {
+		req.AppID = t.appID
+	}
+
+	request := http.Request{}
+
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/feedback")
+	if err != nil {
+		return "", err
+	}
+
+	header := t.sdkConfig.AuthHeaderV2()
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = NopCloser(bytes.NewReader(data))
+	request.ContentLength = int64(len(data)) // 手动设置长度
+
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return "", err
+	}
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return requestID, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	return requestID, nil
 }
 
 // Deprecated: Run方法已兼容此方法

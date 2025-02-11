@@ -31,6 +31,8 @@ public class AppBuilderConfig {
     public static final String UPLOAD_FILE_URL = "/app/conversation/file/upload";
     // 运行appbuilder
     public static final String AGENTBUILDER_RUN_URL = "/app/conversation/runs";
+    // 点踩点赞
+    public static final String FEEDBACK_URL = "/app/conversation/feedback";
 
     // knowledgebase
     // 上传文件

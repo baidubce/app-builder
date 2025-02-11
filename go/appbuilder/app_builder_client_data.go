@@ -68,6 +68,15 @@ type AppBuilderClientRunRequest struct {
 	Action         *Action      `json:"action"`
 }
 
+type AppBuilderClientFeedbackRequest struct {
+	AppID          string   `json:"app_id"`
+	ConversationID string   `json:"conversation_id"`
+	MessageID      string   `json:"message_id"`
+	Type           string   `json:"type,omitempty"`
+	Flag           []string `json:"flag,omitempty"`
+	Reason         string   `json:"reason,omitempty"`
+}
+
 type Tool struct {
 	Type     string   `json:"type"`
 	Function Function `json:"function"`
@@ -301,12 +310,14 @@ type App struct {
 }
 
 type AppBuilderClientAnswer struct {
-	Answer string
-	Events []Event
+	MessageID string
+	Answer    string
+	Events    []Event
 }
 
 func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 	t.Answer = inp.Answer
+	t.MessageID = inp.MessageID
 	for _, c := range inp.Content {
 		ev := Event{Code: c.EventCode,
 			Message:     c.EventMessage,
