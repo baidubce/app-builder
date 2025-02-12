@@ -20,6 +20,8 @@ import com.baidubce.appbuilder.model.appbuilderclient.AppsDescribeRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.Event;
 import com.baidubce.appbuilder.model.appbuilderclient.EventContent;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientFeedbackRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientFeedbackResponse;
 
 
 import static org.junit.Assert.*;
@@ -251,5 +253,30 @@ public class AppBuilderClientTest {
             }
         }
         assertTrue(hasMultipleContentType);
+    }
+
+    @Test
+    public void AppBuilderClientFeedbackTest() throws IOException, AppBuilderServerException {
+        AppBuilderClient builder = new AppBuilderClient(followupqueryId);
+        String conversationId = builder.createConversation();
+        assertNotNull(conversationId);
+        String fileId = builder.uploadLocalFile(conversationId,
+                "src/test/java/com/baidubce/appbuilder/files/test.pdf");
+        assertNotNull(fileId);
+        AppBuilderClientIterator itor = builder.run("北京有多少小学生", conversationId, new String[] { fileId }, true);
+        assertTrue(itor.hasNext());
+        String messageId = "";
+        while (itor.hasNext()) {
+            AppBuilderClientResult result = itor.next();
+            messageId = result.getMessageId();
+            if (messageId != null && !messageId.isEmpty()) {
+                break;
+            }
+        }
+
+        AppBuilderClientFeedbackRequest request = new AppBuilderClientFeedbackRequest(followupqueryId, conversationId,
+                messageId, "downvote", new String[] { "没有帮助" }, "测试");
+        AppBuilderClientFeedbackResponse result = builder.feedback(request);
+        assertNotNull(result.getRequestId());
     }
 }

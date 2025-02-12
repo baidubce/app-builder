@@ -100,7 +100,7 @@ public class AppBuilderClient extends Component {
     }
 
     /**
-     * 运行AgentBuilder，根据输入的问题、会话ID、文件ID数组以及是否以流模式返回结果，返回AgentBuilderIterator迭代器。
+     * 运行AppBuilderClient，根据输入的问题、会话ID、文件ID数组以及是否以流模式返回结果，返回AgentBuilderIterator迭代器。
      *
      * @param query 查询字符串
      * @param conversationId 会话ID
@@ -150,8 +150,37 @@ public class AppBuilderClient extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<Iterator<AppBuilderClientResponse>> response =
-                httpClient.executeSSE(postRequest, AppBuilderClientResponse.class);
+        HttpResponse<Iterator<AppBuilderClientResponse>> response = httpClient.executeSSE(postRequest,
+                AppBuilderClientResponse.class);
         return new AppBuilderClientIterator(response.getBody());
+    }
+
+    /**
+     * 对对话结果进行点踩点赞
+     *
+     * @param requestBody 请求体，包含运行所需的所有信息
+     * @return 返回包含构建客户端响应的迭代器
+     * @throws IOException               如果在执行请求时发生I/O错误
+     * @throws AppBuilderServerException 如果应用构建服务器返回错误响应
+     */
+    public AppBuilderClientFeedbackResponse feedback(AppBuilderClientFeedbackRequest requestBody)
+            throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.FEEDBACK_URL;
+
+        if (requestBody.getAppId() == null || requestBody.getAppId().isEmpty()) {
+            requestBody.setAppId(this.appID);
+        }
+
+        if (requestBody.getAppId() == null || requestBody.getAppId().isEmpty()) {
+            throw new RuntimeException("Param 'appID' is required!");
+        }
+
+        String jsonBody = JsonUtils.serialize(requestBody);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<AppBuilderClientFeedbackResponse> response = httpClient.execute(postRequest, AppBuilderClientFeedbackResponse.class);
+        AppBuilderClientFeedbackResponse respBody = response.getBody();
+        return respBody;
     }
 }

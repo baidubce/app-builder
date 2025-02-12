@@ -317,6 +317,52 @@ class AppBuilderClient(Component):
             AppBuilderClient._transform(resp, out)
             return Message(content=out)
 
+    @client_run_trace
+    def feedback(
+        self,
+        conversation_id: str,
+        message_id: str,
+        type: str = None,
+        flag: list[str] = None,
+        reason: str = None,
+    ):
+        r"""点踩点赞
+
+        Args:
+            conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
+            message_id (str): 消息ID，对话后会返回消息ID
+            type (str): 点赞点踩枚举值 cancel：取消评论, upvote：点赞, downvote：点踩
+            flag(list[str]): 点踩原因枚举值:答非所问、内容缺失、没有帮助、逻辑问题、偏见歧视、事实错误
+            reason(str): 对于点赞点踩额外补充的原因。
+
+        Returns:
+            request_id (str): 请求ID
+        """
+
+        if len(conversation_id) == 0:
+            raise ValueError(
+                "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
+            )
+
+        req = data_class.FeedbackRequest(
+            app_id=self.app_id,
+            conversation_id=conversation_id,
+            message_id=message_id,
+            type=type,
+            flag=flag,
+            reason=reason,
+        )
+
+        headers = self.http_client.auth_header_v2()
+        headers["Content-Type"] = "application/json"
+        url = self.http_client.service_url_v2("/app/conversation/feedback")
+        response = self.http_client.session.post(
+            url, headers=headers, json=req.model_dump(), timeout=None, stream=True
+        )
+        self.http_client.check_response_header(response)
+        request_id = self.http_client.response_request_id(response)
+        return request_id
+
     def run_with_handler(
         self,
         conversation_id: str,
@@ -451,6 +497,7 @@ class AppBuilderClient(Component):
         inp: data_class.AppBuilderClientResponse, out: data_class.AppBuilderClientAnswer
     ):
         out.answer = inp.answer
+        out.message_id = inp.message_id
         for ev in inp.content:
             event = data_class.Event(
                 code=ev.event_code,

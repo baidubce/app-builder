@@ -27,6 +27,6 @@ public class AppBuilderClientIterator {
                     .setDetail(contents[i].getOutputs()).setUsage(contents[i].getUsage())
                     .setToolCalls(contents[i].getToolCalls());
         });
-        return new AppBuilderClientResult().setAnswer(response.getAnswer()).setEvents(events);
+        return new AppBuilderClientResult().setAnswer(response.getAnswer()).setMessageId(response.getMessageId()).setEvents(events);
     }
 }

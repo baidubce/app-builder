@@ -1,8 +1,8 @@
-package com.baidubce.appbuilder.model.knowledgebase;
+package com.baidubce.appbuilder.model.appbuilderclient;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DocumentDeleteResponse {
+public class AppBuilderClientFeedbackResponse {
     @SerializedName("request_id")
     private String requestId;
     private String code;
@@ -30,14 +30,5 @@ public class DocumentDeleteResponse {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    @Override
-    public String toString() {
-        return "DocumentDeleteResponse{" +
-                "request_id=" + requestId +
-                ", code='" + code + '\'' +
-                ", message='" + message +
-                '}';
     }
 }
