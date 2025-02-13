@@ -191,7 +191,7 @@ class QRcodeOCR(Component):
                 raise InvalidRequestArgumentError(
                     f"illegal location, expected location is 'true' or 'false', got {location}"
                 )
-            req.location = location
+            req.location = location.lower()
             resp = self._recognize(req, request_id=traceid)
             result[file_name] = [
                 item["text"] for item in resp.model_dump().get("codes_result", [])
