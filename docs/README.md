@@ -12,7 +12,7 @@
     - 基础:
         - 模型:
             - [获取模型列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
-        - [组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+        - [组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components)
         - 监控:
             - [TRACE基础功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
             - [TRACE拓展功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)

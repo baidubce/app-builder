@@ -257,7 +257,7 @@ Hook:
     - Basics:
         - Models:
             - [Get model list](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
-        - [Components](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+        - [Components](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components)
         - Monitoring:
             - [TRACE basic functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
             - [TRACE extended functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)
