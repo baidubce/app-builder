@@ -188,7 +188,7 @@ class QRcodeOCR(Component):
             req = QRcodeRequest()
             req.url = file_url
             req.location = location.lower()
-            if not isinstance(req.location, str) or req.location.lower() not in ("true", "false"):
+            if not isinstance(req.location, str) or req.location not in ("true", "false"):
                 raise InvalidRequestArgumentError(
                     f"illegal location, expected location is 'true' or 'false', got {req.location}"
                 )
