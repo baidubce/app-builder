@@ -187,11 +187,11 @@ class QRcodeOCR(Component):
                     f"request format error, file {file_name} url does not exist")
             req = QRcodeRequest()
             req.url = file_url
-            if not isinstance(location, str) or location.lower() not in ("true", "false"):
+            req.location = location.lower()
+            if not isinstance(req.location, str) or req.location.lower() not in ("true", "false"):
                 raise InvalidRequestArgumentError(
-                    f"illegal location, expected location is 'true' or 'false', got {location}"
+                    f"illegal location, expected location is 'true' or 'false', got {req.location}"
                 )
-            req.location = location
             resp = self._recognize(req, request_id=traceid)
             result[file_name] = [
                 item["text"] for item in resp.model_dump().get("codes_result", [])
