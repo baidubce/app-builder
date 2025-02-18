@@ -72,7 +72,7 @@ type AppBuilderClientFeedbackRequest struct {
 	AppID          string   `json:"app_id"`
 	ConversationID string   `json:"conversation_id"`
 	MessageID      string   `json:"message_id"`
-	Type           string   `json:"type,omitempty"`
+	Type           string   `json:"type"`
 	Flag           []string `json:"flag,omitempty"`
 	Reason         string   `json:"reason,omitempty"`
 }
