@@ -322,7 +322,7 @@ class AppBuilderClient(Component):
         self,
         conversation_id: str,
         message_id: str,
-        type: str = None,
+        type: str,
         flag: list[str] = None,
         reason: str = None,
     ):
