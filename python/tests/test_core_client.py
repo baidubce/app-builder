@@ -100,35 +100,35 @@ class TestCoreClient(unittest.TestCase):
         with self.assertRaises(BaseRPCException):
             HTTPClient.check_response_header(response)
 
-        response.status = 401
+        response.status_code = 401
         with self.assertRaises(UnAuthorizedException):
             HTTPClient.check_response_header(response)
 
-        response.status = 405
+        response.status_code = 405
         with self.assertRaises(MethodNotAllowedException):
             HTTPClient.check_response_header(response)
 
-        response.status = 409
+        response.status_code = 409
         with self.assertRaises(ConflictException):
             HTTPClient.check_response_header(response)
 
-        response.status = 411
+        response.status_code = 411
         with self.assertRaises(MissingContentLengthException):
             HTTPClient.check_response_header(response)
 
-        response.status = 422
+        response.status_code = 422
         with self.assertRaises(UnprocessableEntityException):
             HTTPClient.check_response_header(response)
 
-        response.status = 424
+        response.status_code = 424
         with self.assertRaises(DependencyFailedException):
             HTTPClient.check_response_header(response)
 
-        response.status = 429
+        response.status_code = 429
         with self.assertRaises(TooManyRequestsException):
             HTTPClient.check_response_header(response)
 
-        response.status = 507
+        response.status_code = 507
         with self.assertRaises(InsufficientStorageException):
             HTTPClient.check_response_header(response)
 
