@@ -100,6 +100,38 @@ class TestCoreClient(unittest.TestCase):
         with self.assertRaises(BaseRPCException):
             HTTPClient.check_response_header(response)
 
+        response.status_code = 401
+        with self.assertRaises(UnAuthorizedException):
+            HTTPClient.check_response_header(response)
+
+        response.status_code = 405
+        with self.assertRaises(MethodNotAllowedException):
+            HTTPClient.check_response_header(response)
+
+        response.status_code = 409
+        with self.assertRaises(ConflictException):
+            HTTPClient.check_response_header(response)
+
+        response.status_code = 411
+        with self.assertRaises(MissingContentLengthException):
+            HTTPClient.check_response_header(response)
+
+        response.status_code = 422
+        with self.assertRaises(UnprocessableEntityException):
+            HTTPClient.check_response_header(response)
+
+        response.status_code = 424
+        with self.assertRaises(DependencyFailedException):
+            HTTPClient.check_response_header(response)
+
+        response.status_code = 429
+        with self.assertRaises(TooManyRequestsException):
+            HTTPClient.check_response_header(response)
+
+        response.status_code = 507
+        with self.assertRaises(InsufficientStorageException):
+            HTTPClient.check_response_header(response)
+
     def test_core_client_check_async_response_header(self):
         async def run_test():
             # 测试各种response报错
@@ -129,6 +161,38 @@ class TestCoreClient(unittest.TestCase):
 
             response.status = 201
             with self.assertRaises(BaseRPCException):
+                await AsyncHTTPClient.check_response_header(response)
+
+            response.status = 401
+            with self.assertRaises(UnAuthorizedException):
+                await AsyncHTTPClient.check_response_header(response)
+
+            response.status = 405
+            with self.assertRaises(MethodNotAllowedException):
+                await AsyncHTTPClient.check_response_header(response)
+
+            response.status = 409
+            with self.assertRaises(ConflictException):
+                await AsyncHTTPClient.check_response_header(response)
+
+            response.status = 411
+            with self.assertRaises(MissingContentLengthException):
+                await AsyncHTTPClient.check_response_header(response)
+
+            response.status = 422
+            with self.assertRaises(UnprocessableEntityException):
+                await AsyncHTTPClient.check_response_header(response)
+
+            response.status = 424
+            with self.assertRaises(DependencyFailedException):
+                await AsyncHTTPClient.check_response_header(response)
+
+            response.status = 429
+            with self.assertRaises(TooManyRequestsException):
+                await AsyncHTTPClient.check_response_header(response)
+
+            response.status = 507
+            with self.assertRaises(InsufficientStorageException):
                 await AsyncHTTPClient.check_response_header(response)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(run_test())

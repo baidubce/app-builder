@@ -126,18 +126,42 @@ class HTTPClient:
         if status_code == requests.codes.bad_request:
             logger.error(message)
             raise BadRequestException(message)
+        elif status_code == requests.codes.unauthorized:
+            logger.error(message)
+            raise UnAuthorizedException(message)
         elif status_code == requests.codes.forbidden:
             logger.error(message)
             raise ForbiddenException(message)
         elif status_code == requests.codes.not_found:
             logger.error(message)
             raise NotFoundException(message)
+        elif status_code == requests.codes.method_not_allowed:
+            logger.error(message)
+            raise MethodNotAllowedException(message)
+        elif status_code == requests.codes.conflict:
+            logger.error(message)
+            raise ConflictException(message)
+        elif status_code == requests.codes.length_required:
+            logger.error(message)
+            raise MissingContentLengthException(message)
         elif status_code == requests.codes.precondition_required:
             logger.error(message)
             raise PreconditionFailedException(message)
+        elif status_code == requests.codes.unprocessable_entity:
+            logger.error(message)
+            raise UnprocessableEntityException(message)
+        elif status_code == requests.codes.failed_dependency:
+            logger.error(message)
+            raise DependencyFailedException(message)
+        elif status_code == requests.codes.too_many_requests:
+            logger.error(message)
+            raise TooManyRequestsException(message)
         elif status_code == requests.codes.internal_server_error:
             logger.error(message)
             raise InternalServerErrorException(message)
+        elif status_code == requests.codes.insufficient_storage:
+            logger.error(message)
+            raise InsufficientStorageException(message)
         else:
             logger.error(message)
             raise BaseRPCException(message)
@@ -247,6 +271,13 @@ class HTTPClient:
 
         return inner
 
+    @staticmethod
+    def check_response(response: requests.Response):
+        """对API影响结果做检查"""
+        HTTPClient.check_response_header(response)
+        data = response.json()
+        HTTPClient.check_response_json(data)
+        
 
 class AsyncHTTPClient(HTTPClient):
     def __init__(self, secret_key=None, gateway="", gateway_v2=""):
@@ -266,16 +297,46 @@ class AsyncHTTPClient(HTTPClient):
             await __class__.response_request_id(response), status_code, await response.text()
         )
         if status_code == requests.codes.bad_request:
+            logger.error(message)
             raise BadRequestException(message)
+        elif status_code == requests.codes.unauthorized:
+            logger.error(message)
+            raise UnAuthorizedException(message)
         elif status_code == requests.codes.forbidden:
+            logger.error(message)
             raise ForbiddenException(message)
         elif status_code == requests.codes.not_found:
+            logger.error(message)
             raise NotFoundException(message)
+        elif status_code == requests.codes.method_not_allowed:
+            logger.error(message)
+            raise MethodNotAllowedException(message)
+        elif status_code == requests.codes.conflict:
+            logger.error(message)
+            raise ConflictException(message)
+        elif status_code == requests.codes.length_required:
+            logger.error(message)
+            raise MissingContentLengthException(message)
         elif status_code == requests.codes.precondition_required:
+            logger.error(message)
             raise PreconditionFailedException(message)
+        elif status_code == requests.codes.unprocessable_entity:
+            logger.error(message)
+            raise UnprocessableEntityException(message)
+        elif status_code == requests.codes.failed_dependency:
+            logger.error(message)
+            raise DependencyFailedException(message)
+        elif status_code == requests.codes.too_many_requests:
+            logger.error(message)
+            raise TooManyRequestsException(message)
         elif status_code == requests.codes.internal_server_error:
+            logger.error(message)
             raise InternalServerErrorException(message)
+        elif status_code == requests.codes.insufficient_storage:
+            logger.error(message)
+            raise InsufficientStorageException(message)
         else:
+            logger.error(message)
             raise BaseRPCException(message)
 
     @staticmethod
