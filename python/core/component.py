@@ -582,9 +582,3 @@ class Component:
             }]
         }
         return ComponentOutput(**result)
-
-    def check_response(self, response):
-        """对API影响结果做检查"""
-        self.http_client.check_response_header(response)
-        data = response.json()
-        self.http_client.check_response_json(data)
