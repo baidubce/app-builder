@@ -28,7 +28,7 @@ class TestErrorHandle(unittest.TestCase):
         client = HTTPClient()
         response = MagicMock(spec=requests.Response)
         response.status_code = requests.codes.method_not_allowed
-        response.text = "method_not_allowed occurred"
+        response.text = "MethodNotAllowed occurred"
         response.headers = client.auth_header()
 
         # 模拟check_response_header方法
@@ -67,7 +67,7 @@ class TestErrorHandle(unittest.TestCase):
         client = HTTPClient()
         response = MagicMock(spec=requests.Response)
         response.status_code = requests.codes.length_required
-        response.text = "Conflict occurred"
+        response.text = "MissingContentLength occurred"
         response.headers = client.auth_header()
 
         # 模拟check_response_header方法
@@ -86,7 +86,7 @@ class TestErrorHandle(unittest.TestCase):
         client = HTTPClient()
         response = MagicMock(spec=requests.Response)
         response.status_code = requests.codes.unprocessable_entity
-        response.text = "Conflict occurred"
+        response.text = "UnprocessableEntity occurred"
         response.headers = client.auth_header()
 
         # 模拟check_response_header方法
@@ -105,7 +105,7 @@ class TestErrorHandle(unittest.TestCase):
         client = HTTPClient()
         response = MagicMock(spec=requests.Response)
         response.status_code = requests.codes.failed_dependency
-        response.text = "Conflict occurred"
+        response.text = "DependencyFailed occurred"
         response.headers = client.auth_header()
 
         # 模拟check_response_header方法
@@ -124,7 +124,7 @@ class TestErrorHandle(unittest.TestCase):
         client = HTTPClient()
         response = MagicMock(spec=requests.Response)
         response.status_code = requests.codes.too_many_requests
-        response.text = "Conflict occurred"
+        response.text = "TooManyRequests occurred"
         response.headers = client.auth_header()
 
         # 模拟check_response_header方法
@@ -144,7 +144,7 @@ class TestErrorHandle(unittest.TestCase):
         client = HTTPClient()
         response = MagicMock(spec=requests.Response)
         response.status_code = requests.codes.insufficient_storage
-        response.text = "Conflict occurred"
+        response.text = "InsufficientStorage occurred"
         response.headers = client.auth_header()
 
         # 模拟check_response_header方法
