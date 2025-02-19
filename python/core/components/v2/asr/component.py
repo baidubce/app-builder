@@ -214,9 +214,8 @@ class ASR(Component):
                     f"request format error, file {file_url} url does not exist"
                 )
             
-        if not file_type or file_type not in ["pcm", "wav", "amr", "m4a"]:
-            _, file_type = os.path.splitext(os.path.basename(urlparse(file_url).path))
-            file_type = file_type.strip('.')
+        _, file_type = os.path.splitext(os.path.basename(urlparse(file_url).path))
+        file_type = file_type.strip('.')
 
         audio_file = tempfile.NamedTemporaryFile("wb", suffix=file_type)
         audio_file.write(requests.get(file_url).content)
