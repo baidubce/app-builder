@@ -196,7 +196,6 @@ class MCPComponentServer:
 if __name__ == "__main__":
     import os
     from appbuilder import SimilarQuestion, StyleRewrite, OralQueryGeneration
-    from appbuilder.mcp.server import MCPComponentServer
 
     os.environ["APPBUILDER_TOKEN"] = 'bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd'
 
