@@ -13,4 +13,5 @@ opentelemetry-sdk>=1.23.0
 opentelemetry-api>=1.23.0
 pydub>=0.10.0
 ffmpeg
+aiohttp
 urllib3<2.0.0
