@@ -190,7 +190,7 @@ class TranslationCase(Case):
         return [text_schema]
     
     def outputs(self):
-        return {"text": ["Hello"]}
+        return {"text": ["hello"]}
 
 class GeneralOCRCase(Case):
     def inputs(self):
