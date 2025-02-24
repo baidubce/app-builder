@@ -129,7 +129,7 @@ class MCPComponentServer:
                                If not provided, uses /{component.name}/
         """
 
-        # Register each manifest as a separate tool under the component's URL
+        # Register each manifest as a separate tool
         for manifest in component.manifests:
             tool_name = manifest["name"]
             tool_decription = manifest["description"]
@@ -143,9 +143,9 @@ class MCPComponentServer:
                         result = func(*bound_values.args, **bound_values.kwargs)
                         for output in result:
                             if output.content[0].type == "image":
-                                return self._convert_image_output(output.content[0].text.url)
+                                yield self._convert_image_output(output.content[0].text.url)
                             else:
-                                return output
+                                yield output
                     
                     except Exception as e:
                         logging.error(f"Error in {tool_name}: {str(e)}")
