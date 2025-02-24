@@ -12,23 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-from typing import Type, Optional, Any, Dict, List, Literal
-from appbuilder.core.component import Component, ComponentOutput
-from appbuilder.core.message import Message
+import appbuilder
+from appbuilder.core.component import Component
+from appbuilder.core._exception import *
+from typing import Any, Literal
 import logging
+import inspect
+from functools import wraps
+logging.basicConfig(level=logging.INFO)
 
 try:
     from mcp.server.fastmcp import FastMCP
+    from mcp.types import ImageContent
 except ImportError:
     raise ImportError(
         "Could not import FastMCP. Please install MCP package with: "
         "pip install mcp"
     )
-
-
-
-logger = logging.getLogger(__name__)
 
 class MCPComponentServer:
     """
@@ -70,7 +70,7 @@ class MCPComponentServer:
             **kwargs: Additional arguments passed to FastMCP
         """
         self.mcp = FastMCP(name, host=host, port=port, **kwargs)
-        self.components: Dict[str, Component] = {}
+        self.components = {}
 
     def tool(self, *args, **kwargs):
         """
@@ -94,7 +94,32 @@ class MCPComponentServer:
         """
         return self.mcp.resource(*args, **kwargs)
 
-    def add_component(self, component: Component, url: Optional[str] = None) -> None:
+    def _convert_image_output(self, url: str) -> ImageContent:
+        import requests
+        import base64
+        import imghdr
+        import io
+        
+        # 获取图片数据
+        response = requests.get(url)
+        image_bytes = response.content
+        
+        # 获取图片类型并构造 mimeType
+        image_data = io.BytesIO(image_bytes)
+        image_type = imghdr.what(image_data)
+        mime_type = f"image/{image_type}"
+        
+        # 转换为base64
+        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+        
+        # 创建 ImageContent
+        return ImageContent(
+            type="image",
+            data=image_base64,
+            mimeType=mime_type
+        )
+
+    def add_component(self, component: Component) -> None:
         """
         Add an Appbuilder Component and register its tools under the component's URL namespace.
 
@@ -103,85 +128,104 @@ class MCPComponentServer:
             url (str, optional): Custom URL to override component's default URL. 
                                If not provided, uses /{component.name}/
         """
-        # Store component instance
-        component_type = type(component).__name__
-        self.components[component_type] = component
-
-        # Use component's name for URL if not overridden
-        base_url = url if url is not None else f"/{component.name}/"
-        
-        # Ensure URL starts and ends with /
-        if not base_url.startswith('/'):
-            base_url = '/' + base_url
-        if not base_url.endswith('/'):
-            base_url = base_url + '/'
 
         # Register each manifest as a separate tool under the component's URL
         for manifest in component.manifests:
             tool_name = manifest["name"]
-            
-            def create_tool_fn(comp: Component, tool_manifest: dict):
-                def tool_fn(**kwargs) -> Any:
+            tool_decription = manifest["description"]
+            def create_tool_fn(func):
+                signature = inspect.signature(func)
+                @wraps(func)
+                def wrapper(*args, **kwargs) -> Any:
                     try:
-                        # Try tool_eval first
-                        if hasattr(comp, "tool_eval"):
-                            results = []
-                            for output in comp.tool_eval(**kwargs):
-                                if isinstance(output, ComponentOutput):
-                                    for content in output.content:
-                                        if content.type == "text":
-                                            results.append(content.text.info)
-                                        elif content.type == "json":
-                                            results.append(content.text.data)
-                            return "\n".join(results) if results else None
-                        
-                        # Fall back to run method
-                        msg = Message(content=kwargs)
-                        result = comp.run(msg)
-                        return result.content
-                        
+                        # call tool_eval
+                        bound_values = signature.bind(*args, **kwargs)
+                        result = func(*bound_values.args, **bound_values.kwargs)
+                        for output in result:
+                            if output.content[0].type == "image":
+                                return self._convert_image_output(output.content[0].text.url)
+                            else:
+                                return output
+                    
                     except Exception as e:
-                        logger.error(f"Error in {tool_name}: {str(e)}")
+                        logging.error(f"Error in {tool_name}: {str(e)}")
                         raise
-
-                return tool_fn
+                wrapper.__signature__ = signature
+                return wrapper
 
             # Create tool function with metadata
-            tool_fn = create_tool_fn(component, manifest)
+            tool_fn = create_tool_fn(component.tool_eval)
             tool_fn.__name__ = tool_name
-            tool_fn.__doc__ = manifest["description"]
-
-            # Register parameter types from manifest
-            param_types = {}
-            required_params = set()
-            
-            # Get required parameters
-            if "required" in manifest["parameters"]:
-                required_params.update(manifest["parameters"]["required"])
-                
-            # Add parameter info
-            for param_name, param_info in manifest["parameters"]["properties"].items():
-                param_type = self._convert_json_schema_type(param_info["type"])
-                param_types[param_name] = param_type
-                if param_name in required_params:
-                    param_types[f"_{param_name}_is_required"] = True
-
-            tool_fn.__annotations__ = param_types
+            tool_fn.__doc__ = tool_decription
 
             # Register with FastMCP using name and description from manifest
-            self.mcp.tool(name=tool_name, description=manifest["description"])(tool_fn)
+            self.mcp.tool(name=tool_name, description=tool_decription)(tool_fn)
 
-    def _convert_json_schema_type(self, json_type: str) -> Type:
-        """Convert JSON schema type to Python type"""
-        type_mapping = {
-            "string": str,
-            "integer": int,
-            "number": float,
-            "boolean": bool,
-            "array": List,
-            "object": Dict
-        }
-        return type_mapping.get(json_type, Any)
+    def init_component(
+            self,
+            import_path: str = "appbuilder.core.components.v2.",
+            component_init_args: dict[str, Any] = {},
+            component_name: str = "",
+        ) -> Component:
+        """init component
+
+        Args:
+            relative_path (str, optional): path to import component. Defaults to "appbuilder.components.v2.".
+            init_args (dict[str, Any], optional): init args. Defaults to {}.
+            component_name (str, optional): component name to init. Defaults to "".
+
+        Returns:
+            Component: object of Component
+        """
+        if not component_name:
+            logging.error("No component_name specified")
+            raise InvalidRequestArgumentError("No component_name specified")
+        
+        try:
+            import_res = eval(import_path + component_name)
+        except Exception as e:
+            logging.error(f"import component error: {e}")
+            raise ImportError(f"import component error: {e}")
+
+        try:
+            component = import_res(**component_init_args)
+        except Exception as e:
+            logging.error(f"init component error: {e}")
+            raise Exception(f"Failed to initialize component {component_name}: {str(e)}")
+        return component
+
+    def add_AppBuilder_tool(
+            self,
+            import_path: str = "appbuilder.core.components.v2.",
+            component_list: list[str] = [],
+            init_args: dict[str, Any] = {},
+        ):
+        """add AppBuilder tool as MCP server"""
+        
+        for component_name in component_list:
+            try: 
+                # 1. get component init args
+                if component_name not in init_args:
+                    component_init_args = {}
+                else:
+                    component_init_args = init_args[component_name]
+
+                logging.info(f"init {component_name} with args: {component_init_args}")
+                
+                # 2. init component
+                component = self.init_component(
+                    import_path=import_path,
+                    component_name=component_name,
+                    component_init_args=component_init_args
+                )
+                
+                # 3. add component
+                self.add_component(component)
+                logging.info(f"component: {component_name} has been added")
+                
+            except Exception as e:
+                logging.exception(f"Failed to add component {component_name}: {str(e)}")
+                continue
 
     def run(self, transport: Literal["stdio", "sse"] = "stdio") -> None:
         """Run the FastMCP server. Note this is a synchronous function.
@@ -192,33 +236,41 @@ class MCPComponentServer:
         self.mcp.run()
 
 
+def main():
+    # from appbuilder.mcp.server import MCPComponentServer
+    from appbuilder.core.components.v2 import __V2_COMPONENTS__
+    server = MCPComponentServer("AI Services")
+    model_config = {"model": "ERNIE-4.0-8K"}
+    init_args = {
+        "Translation": model_config,
+        "AnimalRecognition": model_config,
+        "Text2Image": model_config,
+        "QRcodeOCR": model_config
+    }
+    
+    server.add_AppBuilder_tool(
+        import_path="appbuilder.core.components.v2.",  # 确保这个路径是正确的
+        component_list=list(init_args.keys()),
+        init_args=init_args
+    )
+    
+    # # Add custom tool
+    # @server.tool()
+    # def add(a: int, b: int) -> int:
+    #     """Add two numbers"""
+    #     return a + b
+
+    # # Add dynamic resource
+    # @server.resource("greeting://{name}")
+    # def get_greeting(name: str) -> str:
+    #     """Get a personalized greeting"""
+    #     return f"Hello, {name}!"
+
+    server.run()
+
 
 if __name__ == "__main__":
     import os
-    from appbuilder import SimilarQuestion, StyleRewrite, OralQueryGeneration
-    from appbuilder.mcp.server import MCPComponentServer
-
     os.environ["APPBUILDER_TOKEN"] = 'bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd'
-
-    # Create server with host and port arguments
-    server = MCPComponentServer("AI Services", host="localhost", port=8888)
-
-    model = "ERNIE-4.0-8K"
-    server.add_component(SimilarQuestion(model=model)) # served at /similar_question/
-    server.add_component(StyleRewrite(model=model)) # served at /style_rewrite/
-    server.add_component(OralQueryGeneration(model=model)) # served at /query_generation/
-
-    # Add custom tool
-    @server.tool()
-    def add(a: int, b: int) -> int:
-        """Add two numbers"""
-        return a + b
-
-    # Add dynamic resource
-    @server.resource("greeting://{name}")
-    def get_greeting(name: str) -> str:
-        """Get a personalized greeting"""
-        return f"Hello, {name}!"
-
-    # Run server
-    server.run()
+    main()
+    
