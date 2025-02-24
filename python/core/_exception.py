@@ -29,6 +29,12 @@ class BadRequestException(BaseRPCException):
     pass
 
 
+class UnAuthorizedException(BaseRPCException):
+    r"""UnAuthorizedException represent HTTP Code 401.
+    """
+    pass
+
+
 class ForbiddenException(BaseRPCException):
     r"""BadRequestException represent HTTP Code 403.
     """
@@ -40,6 +46,23 @@ class NotFoundException(BaseRPCException):
     """
     pass
 
+class MethodNotAllowedException(BaseRPCException):
+    r"""MethodNotAllowedException represent HTTP Code 405.
+    """
+    pass
+
+
+class ConflictException(BaseRPCException):
+    r"""ConflictException represent HTTP Code 409.
+    """
+    pass
+
+
+class MissingContentLengthException(BaseRPCException):
+    r"""MissingContentLengthException represent HTTP Code 411.
+    """
+    pass
+
 
 class PreconditionFailedException(BaseRPCException):
     r"""PreconditionFailedException represent HTTP Code 412.
@@ -47,11 +70,33 @@ class PreconditionFailedException(BaseRPCException):
     pass
 
 
+class UnprocessableEntityException(BaseRPCException):
+    r"""UnprocessableEntityException represent HTTP Code 422.
+    """
+    pass
+
+
+class DependencyFailedException(BaseRPCException):
+    r"""DependencyFailedException represent HTTP Code 424.
+    """
+    pass
+
+
+class TooManyRequestsException(BaseRPCException):
+    r"""TooManyRequestsException represent HTTP Code 429.
+    """
+    pass
+
 class InternalServerErrorException(BaseRPCException):
     r"""InternalServerErrorException represent HTTP Code 500.
     """
     pass
 
+
+class InsufficientStorageException(BaseRPCException):
+    r"""TooManyRequestsException represent HTTP Code 507.
+    """
+    pass
 
 class HTTPConnectionException(BaseRPCException):
     r"""HTTPConnectionException represent HTTP Connection error.
