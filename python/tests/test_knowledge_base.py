@@ -132,7 +132,7 @@ class TestKnowLedge(unittest.TestCase):
         list_res = knowledge.get_documents_list(
             knowledge_base_id=knowledge_base_id)
         document_id = list_res.data[-1].id
-        res = knowledge.describe_chunks(document_id, knowledgebase_id=knowledge_base_id)
+        knowledge.describe_chunks(document_id, knowledgebase_id=knowledge_base_id, keyword="test")
         resp = knowledge.create_chunk(document_id, content="test", knowledgebase_id=knowledge_base_id)
         chunk_id = resp.id
         knowledge.modify_chunk(chunk_id, content="new test", enable=True, knowledgebase_id=knowledge_base_id)

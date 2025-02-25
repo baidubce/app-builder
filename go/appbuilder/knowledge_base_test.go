@@ -1480,6 +1480,7 @@ func TestChunk(t *testing.T) {
 		DocumnetID:      documentID,
 		Marker:          chunkID,
 		MaxKeys:         10,
+		Keyword:         "test",
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")

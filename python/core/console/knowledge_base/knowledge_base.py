@@ -851,6 +851,7 @@ class KnowledgeBase(Component):
         marker: str = None,
         maxKeys: int = None,
         type: str = None,
+        keyword: str = None,
     ) -> data_class.DescribeChunksResponse:
         r"""
         获取文档块列表
@@ -860,6 +861,7 @@ class KnowledgeBase(Component):
             marker (str, optional): 分页标记，用于指定从哪个位置开始返回结果。默认为None，表示从头开始返回结果。
             maxKeys (int, optional): 最大返回数量，用于限制每次请求返回的最大文档块数目。默认为None，表示不限制返回数量。
             type (str, optional): 文档块类型。默认为None，表示不限定类型。
+            keyword (str, optional): 根据关键字模糊匹配切片，最大长度2000字符。
 
         Returns:
             DescribeChunksResponse: 文档块列表，一个DescribeChunksResponse对象,包含以下属性：
@@ -881,6 +883,7 @@ class KnowledgeBase(Component):
             marker=marker,
             maxKeys=maxKeys,
             type=type,
+            keyword=keyword,
         )
 
         response = self.http_client.session.post(

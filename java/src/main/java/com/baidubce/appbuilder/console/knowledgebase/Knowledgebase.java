@@ -724,6 +724,21 @@ public class Knowledgebase extends Component {
         return respBody;
     }
 
+    public ChunksDescribeResponse describeChunks(ChunksDescribeRequest request) throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.CHUNKS_DESCRIBE_URL;
+
+        if (!this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<ChunksDescribeResponse> response = httpClient.execute(postRequest, ChunksDescribeResponse.class);
+        ChunksDescribeResponse respBody = response.getBody();
+        return respBody;
+    }
+
     public QueryKnowledgeBaseResponse queryKnowledgeBase(QueryKnowledgeBaseRequest request)
             throws IOException, AppBuilderServerException {
         if (request.getRank_score_threshold() == null) {

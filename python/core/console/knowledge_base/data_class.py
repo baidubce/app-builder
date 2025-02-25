@@ -300,7 +300,12 @@ class DescribeChunksRequest(BaseModel):
     maxKeys: Optional[int] = Field(
         None, description="返回文档数量大小，默认10，最大值100"
     )
-    type: Optional[str] = Field(None, description="切片类型")
+    type: Optional[str] = Field(
+        None, description="切片类型。RAW：原文切片、NEW：新增切片、COPY：复制切片"
+    )
+    keyword: Optional[str] = Field(
+        None, description="根据关键字模糊匹配切片，最大长度2000字符"
+    )
 
 
 class DescribeChunksResponse(BaseModel):
