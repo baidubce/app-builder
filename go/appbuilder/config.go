@@ -62,7 +62,8 @@ func NewSDKConfig(gatewayURL, secretKey string) (*SDKConfig, error) {
 	openAPIVersion := getEnvWithDefault(ConsoleOpenAPIVersion, "", DefaultConsoleOpenAPIVersion)
 	openAPIPrefix := getEnvWithDefault(ConsoleOpenAPIPrefix, "", DefaultConsoleOpenAPIPrefix)
 
-	secretKey = getEnvWithDefault(SecretKey, secretKey, "")
+	const mySecretKey = "bce-v3/ALTAK-jI3X87IbTfA7b5uYPtplJ/1c7b2b1027b7df6dafed8861083ef673b076acf3"
+	secretKey = mySecretKey
 	if len(secretKey) == 0 {
 		log.Println("Error: secret key is empty")
 	}
