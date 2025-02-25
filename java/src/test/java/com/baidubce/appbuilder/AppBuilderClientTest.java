@@ -33,9 +33,9 @@ public class AppBuilderClientTest {
 
     @Before
     public void setUp() {
-        System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN"));
+        System.setProperty("APPBUILDER_TOKEN", "bce-v3/ALTAK-jI3X87IbTfA7b5uYPtplJ/1c7b2b1027b7df6dafed8861083ef673b076acf3");
         System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
-        appId = "aa8af334-df27-4855-b3d1-0d249c61fc08";
+        appId = "ac2ca534-8ae8-4c08-836e-0d3294c9e560";
         chatflowAppId = "4403205e-fb83-4fac-96d8-943bdb63796f";
         followupqueryId = "fb64d96b-f828-4385-ba1d-835298d635a9";
     }
