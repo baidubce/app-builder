@@ -104,8 +104,13 @@ class KnowledgeBaseConfigIndex(BaseModel):
     location: Optional[str] = Field(None, description="托管资源的区域", enum=["bj", "bd", "sz", "gz"])
 
 
+class KnowledgeBaseConfigCatalogue(BaseModel):
+    pathPrefix: Optional[str] = Field(None, description="知识库所属目录绝对路径")
+
+
 class KnowledgeBaseConfig(BaseModel):
     index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(None, description="知识库目录配置")
 
 
 class KnowledgeBaseCreateKnowledgeBaseRequest(BaseModel):
@@ -130,6 +135,7 @@ class KnowledgeBaseModifyRequest(BaseModel):
     id: str = Field(..., description="知识库ID")
     name: Optional[str] = Field(None, description="知识库名称")
     description: Optional[str] = Field(None, description="知识库描述")
+    config: Optional[KnowledgeBaseConfig] = Field(None, description="知识库配置")
 
 
 class KnowledgeBaseDeleteRequest(BaseModel):

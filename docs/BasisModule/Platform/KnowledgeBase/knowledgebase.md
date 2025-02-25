@@ -30,6 +30,7 @@
 | esUserName  | string   | type=bes 和 vdb 时填写       | 用户名/账号<br>请在bes、vdb控制台中查看           | "username"         |
 | esPassword  | string   | type=bes 和 vdb 时填写       | 密码/API密钥<br>请在bes、vdb控制台中查看              | "password"         |
 |location|string|type=bes 和 vdb 时填写|托管资源的区域，type填vdb时填写<br>可选值：<br>- bj：北京<br>- bd：保定<br>- sz：苏州<br>- gz：广州|"bj"|
+|pathPrefix|string|否|创建知识库的指定目录，最大层级为5，默认为根目录下|"/全部群组/##/##"|
 
 #### 方法返回值
 
@@ -48,6 +49,7 @@ class KnowledgeBaseDetailResponse(BaseModel):
 ```python
 class KnowledgeBaseConfig(BaseModel):
     index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(None, description="知识库目录配置")
 ```
 
 衍生类`KnowledgeBaseConfigIndex`定义如下：
@@ -59,6 +61,13 @@ class KnowledgeBaseConfigIndex(BaseModel):
     username: Optional[str] = Field(None, description="bes用户名")
     password: Optional[str] = Field(None, description="bes密码")
     location: Optional[str] = Field(None, description="托管资源的区域", enum=["bj", "bd", "sz", "gz"])
+```
+
+衍生类`KnowledgeBaseConfigCatalogue`
+
+```python
+class KnowledgeBaseConfigCatalogue(BaseModel):
+    pathPrefix: Optional[str] = Field(None, description="知识库所属目录绝对路径")
 ```
 
 #### 方法示例
@@ -132,6 +141,7 @@ class KnowledgeBaseDetailResponse(BaseModel):
 ```python
 class KnowledgeBaseConfig(BaseModel):
     index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(None, description="知识库目录配置")
 ```
 
 衍生类`KnowledgeBaseConfigIndex`定义如下：
@@ -142,6 +152,13 @@ class KnowledgeBaseConfigIndex(BaseModel):
     esUrl: Optional[str] = Field(..., description="ES地址")
     username: Optional[str] = Field(None, description="ES用户名")
     password: Optional[str] = Field(None, description="ES密码")
+```
+
+衍生类`KnowledgeBaseConfigCatalogue`
+
+```python
+class KnowledgeBaseConfigCatalogue(BaseModel):
+    pathPrefix: Optional[str] = Field(None, description="知识库所属目录绝对路径")
 ```
 
 #### 方法示例
@@ -199,6 +216,7 @@ class KnowledgeBaseDetailResponse(BaseModel):
 ```python
 class KnowledgeBaseConfig(BaseModel):
     index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(None, description="知识库目录配置")
 ```
 
 衍生类`KnowledgeBaseConfigIndex`定义如下：
@@ -209,6 +227,13 @@ class KnowledgeBaseConfigIndex(BaseModel):
     esUrl: Optional[str] = Field(..., description="ES地址")
     username: Optional[str] = Field(None, description="ES用户名")
     password: Optional[str] = Field(None, description="ES密码")
+```
+
+衍生类`KnowledgeBaseConfigCatalogue`
+
+```python
+class KnowledgeBaseConfigCatalogue(BaseModel):
+    pathPrefix: Optional[str] = Field(None, description="知识库所属目录绝对路径")
 ```
 
 #### 方法示例：
@@ -227,11 +252,12 @@ print("获取到的知识库列表: ", resp)
 
 #### 方法参数
 
-| 参数名称          | 参数类型 | 是否必传 | 描述               | 示例值           |
-| ----------------- | -------- | -------- | ------------------ | ---------------- |
-| knowledge_base_id | string   | 是       | 起始位置，知识库id | "正确的知识库ID" |
-| name              | string   | 否       | 修改后的知识库名称 | "new_name"       |
-| description       | string   | 否       | 修改后的知识库描述 | "测试"           |
+| 参数名称          | 参数类型 | 是否必传 | 描述                                          | 示例值           |
+| ----------------- | -------- | -------- | --------------------------------------------- | ---------------- |
+| knowledge_base_id | string   | 是       | 起始位置，知识库id                            | "正确的知识库ID" |
+| name              | string   | 否       | 修改后的知识库名称                            | "new_name"       |
+| description       | string   | 否       | 修改后的知识库描述                            | "测试"           |
+| pathPrefix        | string   | 否       | 知识库的指定目录，最大层级为5，默认为根目录下 |                  |
 
 #### 方法示例
 

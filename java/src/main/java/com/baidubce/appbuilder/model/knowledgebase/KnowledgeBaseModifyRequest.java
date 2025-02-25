@@ -7,6 +7,7 @@ public class KnowledgeBaseModifyRequest {
     private String knowledgeBaseId;
     private String name;
     private String description;
+    private KnowledgeBaseConfig config;
 
     public String getKnowledgeBaseId() {
         return knowledgeBaseId;
@@ -30,5 +31,13 @@ public class KnowledgeBaseModifyRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public KnowledgeBaseConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(KnowledgeBaseConfig config) {
+        this.config = config;
     }
 }
