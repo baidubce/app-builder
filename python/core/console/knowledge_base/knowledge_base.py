@@ -556,10 +556,6 @@ class KnowledgeBase(Component):
             - maxKeys (int): 返回文档数量大小，默认10，最大值100
             - isTruncated (bool): 是否有更多结果
         """
-        if self.knowledge_id == None and knowledge_base_id == None:
-            raise ValueError(
-                "knowledge_base_id cannot be empty, please call `create` first or use existing one"
-            )
         request = data_class.KnowledgeBaseGetListRequest(
             marker=knowledge_base_id or self.knowledge_id,
             maxKeys=maxKeys,
