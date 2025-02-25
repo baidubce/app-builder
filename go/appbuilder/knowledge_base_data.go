@@ -256,6 +256,7 @@ type DescribeChunksRequest struct {
 	Marker          string `json:"marker,omitempty"`
 	MaxKeys         int    `json:"maxKeys,omitempty"`
 	Type            string `json:"type,omitempty"`
+	Keyword         string `json:"keyword,omitempty"`
 }
 
 type DescribeChunksResponse struct {

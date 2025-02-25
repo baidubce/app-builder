@@ -738,6 +738,7 @@ print(resp)
 | marker          | string   | 否       | 起始位置，切片ID                                             | "正确的切片ID" |
 | maxKeys         | string   | 否       | 返回文档数量大小，默认10，最大值100                          | 10             |
 | type            | string   | 否       | 根据类型获取切片列表(RAW、NEW、COPY)，RAW：原文切片，NEW：新增切片，COPY：复制切片 | "RAW"          |
+| keyword         | string   | 否       | 根据关键字模糊匹配切片，最大长度2000字符。                   | "test"         |
 
 #### 方法返回值
 

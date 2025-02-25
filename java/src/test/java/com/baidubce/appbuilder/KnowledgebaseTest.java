@@ -165,6 +165,9 @@ public class KnowledgebaseTest {
         knowledgebase.describeChunk(chunkId);
         // 获取切片列表
         knowledgebase.describeChunks(documentId, chunkId, 10, null);
+        // 获取切片列表
+        ChunksDescribeRequest request = new ChunksDescribeRequest(knowledgeBaseID, documentId, chunkId, 10, null, "test");
+        knowledgebase.describeChunks(request);
         try {
             // 延时 
             Thread.sleep(10000);
