@@ -217,7 +217,7 @@ func TestClientRun(t *testing.T) {
 		t.Fatalf("new http client config failed: %v", err)
 	}
 	var GatewayURL = config.GatewayURLV2
-	appID := "aa8af334-df27-4855-b3d1-0d249c61fc08"
+	appID := "ac2ca534-8ae8-4c08-836e-0d3294c9e560"
 	client, err := NewAppBuilderClient(appID, config)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
