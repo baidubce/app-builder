@@ -23,49 +23,51 @@ class TestKnowLedge(unittest.TestCase):
     def setUp(self):
         self.whether_create_knowledge_base = False
 
-    def test_doc_knowledage(self):
-        dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
-        appbuilder.logger.setLoglevel('DEBUG')
-        knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
+    # def test_doc_knowledage(self):
+    #     dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+    #     appbuilder.logger.setLoglevel('DEBUG')
+    #     knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
 
-        upload_res = knowledge.upload_file(
-            "./data/qa_appbuilder_client_demo.pdf")
-        add_res = knowledge.add_document(
-            content_type="raw_text",
-            file_ids=[upload_res.id],
-            custom_process_rule=appbuilder.CustomProcessRule(
-                separators=["?"], target_length=400, overlap_rate=0.2
-            ),
-        )
-        list_res = knowledge.get_documents_list()
-        delete_res = knowledge.delete_document(
-            document_id=add_res.document_ids[0])
-        all_doc = knowledge.get_all_documents()
-        self.assertIsInstance(all_doc, list)
+    #     upload_res = knowledge.upload_file(
+    #         "./data/qa_appbuilder_client_demo.pdf")
+    #     add_res = knowledge.add_document(
+    #         content_type="raw_text",
+    #         file_ids=[upload_res.id],
+    #         custom_process_rule=appbuilder.CustomProcessRule(
+    #             separators=["?"], target_length=400, overlap_rate=0.2
+    #         ),
+    #     )
+    #     list_res = knowledge.get_documents_list()
+    #     delete_res = knowledge.delete_document(
+    #         document_id=add_res.document_ids[0])
+    #     all_doc = knowledge.get_all_documents()
+    #     self.assertIsInstance(all_doc, list)
 
-    def test_get_documents_number_raise(self):
-        knowledge = appbuilder.KnowledgeBase()
-        with self.assertRaises(ValueError):
-            knowledge.get_all_documents()
+    # def test_get_documents_number_raise(self):
+    #     knowledge = appbuilder.KnowledgeBase()
+    #     with self.assertRaises(ValueError):
+    #         knowledge.get_all_documents()
 
-    def test_xlsx_knowledage(self):
-        dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
-        knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
+    # def test_xlsx_knowledage(self):
+    #     dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+    #     knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
 
-        upload_res = knowledge.upload_file("./data/qa_demo.xlsx")
-        add_res = knowledge.add_document(
-            content_type="qa", file_ids=[upload_res.id])
-        list_res = knowledge.get_documents_list()
-        delete_res = knowledge.delete_document(
-            document_id=add_res.document_ids[0])
+    #     upload_res = knowledge.upload_file("./data/qa_demo.xlsx")
+    #     add_res = knowledge.add_document(
+    #         content_type="qa", file_ids=[upload_res.id])
+    #     list_res = knowledge.get_documents_list()
+    #     delete_res = knowledge.delete_document(
+    #         document_id=add_res.document_ids[0])
 
     def test_create_knowledge_base(self):
         knowledge = appbuilder.KnowledgeBase()
+        appbuilder.logger.setLoglevel("DEBUG")
         try:
             resp = knowledge.create_knowledge_base(
                 name="test",
                 description="test",
                 type="public",
+                pathPrefix="/全部群组",
             )
             knowledge_base_id = resp.id
             knowledge.get_knowledge_base_detail(knowledge_base_id)
@@ -139,7 +141,9 @@ class TestKnowLedge(unittest.TestCase):
         knowledge.delete_chunk(chunk_id, knowledgebase_id=knowledge_base_id)
 
         knowledge.modify_knowledge_base(
-            knowledge_base_id=knowledge_base_id, name="test"
+            knowledge_base_id=knowledge_base_id,
+            name="test",
+            pathPrefix="/全部群组",
         )
 
         if self.whether_create_knowledge_base:

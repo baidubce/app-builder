@@ -51,7 +51,7 @@ class KnowledgeBase(Component):
     ):
         r"""
         初始化KnowledgeBase类实例
-        
+
         Args:
             knowledge_id (Optional[str]): 知识库ID
             knowledge_name (Optional[str]): 知识库名称
@@ -64,7 +64,7 @@ class KnowledgeBase(Component):
     @deprecated()
     def create_knowledge(cls, knowledge_name: str) -> "KnowledgeBase":
         r""" 创建知识库
-        
+
         Deprecated: use create_knowledge_base instead
 
         Args:
@@ -292,6 +292,7 @@ class KnowledgeBase(Component):
         esPassword: str = None,
         location: str = None,
         client_token: str = None,
+        pathPrefix: str = None,
     ) -> data_class.KnowledgeBaseDetailResponse:
         r"""
         创建知识库
@@ -304,6 +305,8 @@ class KnowledgeBase(Component):
             esUserName (str, optional): Elasticsearch用户名。默认为None。
             esPassword (str, optional): Elasticsearch密码。默认为None。
             client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+            pathPrefix (str, optional): 知识库所属目录绝对路径。默认为None。
+
 
         Returns:
             KnowledgeBaseDetailResponse: 创建知识库的响应消息,包含以下属性：
@@ -331,12 +334,18 @@ class KnowledgeBase(Component):
                     "username": esUserName,
                     "password": esPassword,
                     "location": location,
-                }
+                },
             },
         )
 
+        if pathPrefix != None:
+            request.config.catalogue = {
+                "pathPrefix": pathPrefix,
+            }
+
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -397,6 +406,7 @@ class KnowledgeBase(Component):
         name: Optional[str] = None,
         description: Optional[str] = None,
         client_token: str = None,
+        pathPrefix: str = None,
     ):
         r"""
         修改知识库信息
@@ -406,6 +416,7 @@ class KnowledgeBase(Component):
             name (Optional[str], optional): 新的知识库名称。默认值为None。
             description (Optional[str], optional): 新的知识库描述。默认值为None。
             client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+            pathPrefix (str, optional): 知识库所属目录绝对路径。默认为None。
 
         Returns:
             dict: 响应数据，包含请求ID: requestId。
@@ -420,6 +431,13 @@ class KnowledgeBase(Component):
             description=description,
         )
 
+        if pathPrefix != None:
+            request.config = {
+                "catalogue": {
+                    "pathPrefix": pathPrefix,
+                }
+            }
+
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
@@ -430,7 +448,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -523,7 +542,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -570,7 +590,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -677,7 +698,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -723,7 +745,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -763,7 +786,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -809,7 +833,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -847,7 +872,8 @@ class KnowledgeBase(Component):
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
-        url = self.http_client.service_url_v2("/knowledgeBase?Action=DescribeChunks")
+        url = self.http_client.service_url_v2(
+            "/knowledgeBase?Action=DescribeChunks")
 
         request = data_class.DescribeChunksRequest(
             knowledgeBaseId=knowledgebase_id or self.knowledge_id,
@@ -858,7 +884,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -940,7 +967,8 @@ class KnowledgeBase(Component):
             skip=skip,
         )
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
