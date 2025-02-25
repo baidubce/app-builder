@@ -137,7 +137,7 @@ class KnowledgeBaseDeleteRequest(BaseModel):
 
 
 class KnowledgeBaseGetListRequest(BaseModel):
-    marker: str = Field(None, description="起始位置")
+    marker: Optional[str] = Field(None, description="起始位置")
     keyword: Optional[str] = Field(None, description="搜索关键字")
     maxKeys: int = Field(
         10, description="返回文档数量大小，默认10，最大值100", le=100, ge=1
