@@ -70,7 +70,6 @@ class MCPComponentServer:
             **kwargs: Additional arguments passed to FastMCP
         """
         self.mcp = FastMCP(name, host=host, port=port, **kwargs)
-        self.components = {}
 
     def tool(self, *args, **kwargs):
         """
@@ -141,6 +140,9 @@ class MCPComponentServer:
                         # call tool_eval
                         bound_values = signature.bind(*args, **kwargs)
                         result = func(*bound_values.args, **bound_values.kwargs)
+                        if result is NotImplementedError:
+                            logging.error(f"tool_eval not implemented in {tool_name}")
+                            raise NotImplementedError(f"tool_eval not implemented in {tool_name}")
                         for output in result:
                             if output.content[0].type == "image":
                                 yield self._convert_image_output(output.content[0].text.url)
