@@ -37,11 +37,19 @@ public class DocumentsCreateRequest {
         private String type;
         private String[] urls;
         private Integer urlDepth;
+        private UrlConfig[] urlConfigs;
 
         public Source(String type, String[] urls, Integer urlDepth) {
             this.type = type;
             this.urls = urls;
             this.urlDepth = urlDepth;
+        }
+
+        public Source(String type, String[] urls, Integer urlDepth, UrlConfig[] urlConfigs) {
+            this.type = type;
+            this.urls = urls;
+            this.urlDepth = urlDepth;
+            this.urlConfigs = urlConfigs;
         }
 
         public String getType() {
@@ -54,6 +62,30 @@ public class DocumentsCreateRequest {
 
         public Integer getUrlDepth() {
             return urlDepth;
+        }
+
+        public UrlConfig[] getUrlConfigs() {
+            return urlConfigs;
+        }
+
+        public void setUrlConfigs(UrlConfig[] urlConfigs) {
+            this.urlConfigs = urlConfigs;
+        }
+
+        public static class UrlConfig {
+            private Integer frequency;
+
+            public UrlConfig(Integer frequency) {
+                this.frequency = frequency;
+            }
+
+            public Integer getFrequency() {
+                return frequency;
+            }
+
+            public void setFrequency(Integer frequency) {
+                this.frequency = frequency;
+            }
         }
     }
 

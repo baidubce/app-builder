@@ -1245,6 +1245,11 @@ func TestCreateKnowledgeBase(t *testing.T) {
 			Type:     "web",
 			Urls:     []string{"https://baijiahao.baidu.com/s?id=1802527379394162441"},
 			UrlDepth: 1,
+			UrlConfigs: &[]DocumentsSourceUrlConfig{
+				{
+					Frequency: 1,
+				},
+			},
 		},
 		ProcessOption: &DocumentsProcessOption{
 			Template: "custom",

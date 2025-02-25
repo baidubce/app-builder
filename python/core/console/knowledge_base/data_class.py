@@ -171,10 +171,18 @@ class KnowledgeBaseGetListResponse(BaseModel):
     isTruncated: bool = Field(..., description="是否有更多结果")
 
 
+class DocumentSourceUrlConfig(BaseModel):
+    frequency: int = Field(
+        ...,
+        description="更新频率，目前支持的更新频率为-1(不自动更新),1（每天）,3（每3天）,7（每7天）,30（每30天）。",
+    )
+
+
 class DocumentSource(BaseModel):
     type: str = Field(..., description="数据来源类型", enum=["bos", "web"])
     urls: list[str] = Field(None, description="文档URL")
     urlDepth: int = Field(None, description="url下钻深度，1时不下钻")
+    urlConfigs: Optional[list[DocumentSourceUrlConfig]] = Field(None, description="该字段的长度需要和source、urls字段长度保持一致。")
 
 
 class DocumentChoices(BaseModel):

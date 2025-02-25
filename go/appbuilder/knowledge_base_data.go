@@ -145,10 +145,15 @@ type GetKnowledgeBaseListResponse struct {
 	MaxKeys     int                   `json:"maxKeys"`
 }
 
+type DocumentsSourceUrlConfig struct {
+	Frequency int `json:"frequency"`
+}
+
 type DocumentsSource struct {
-	Type     string   `json:"type"`
-	Urls     []string `json:"urls,omitempty"`
-	UrlDepth int      `json:"url_depth,omitempty"`
+	Type       string                      `json:"type"`
+	Urls       []string                    `json:"urls,omitempty"`
+	UrlDepth   int                         `json:"url_depth,omitempty"`
+	UrlConfigs *[]DocumentsSourceUrlConfig `json:"url_configs,omitempty"`
 }
 
 type DocumentsProcessOptionParser struct {
