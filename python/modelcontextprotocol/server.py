@@ -13,17 +13,26 @@
 # limitations under the License.
 
 import appbuilder
-from appbuilder.core.component import Component, Image
+from appbuilder.core.component import Component, ComponentOutput
 from appbuilder.core._exception import *
 from typing import Any, Literal
+from collections.abc import Generator
 import logging
 import inspect
+import requests
+import base64
+import io
 from functools import wraps
 logging.basicConfig(level=logging.INFO)
 
 try:
     from mcp.server.fastmcp import FastMCP
-    from mcp.types import ImageContent
+    from mcp.server.fastmcp.server import _convert_to_content
+    from mcp.types import (
+        ImageContent,
+        TextContent,
+        EmbeddedResource
+    )
 except ImportError:
     raise ImportError(
         "Could not import FastMCP. Please install MCP package with: "
@@ -93,44 +102,124 @@ class MCPComponentServer:
         """
         return self.mcp.resource(*args, **kwargs)
 
-    def _get_mime_type(self, image_data: bytes) -> str:
+    def _get_mime_type(self, type, image_data: bytes) -> str:
         """get mime_type of image"""
         import imghdr
         image_type = imghdr.what(image_data)
         mime_type = f"image/{image_type}"
         return mime_type
 
-    def _convert_image_output(self, image_text: Image) -> ImageContent:
-        """convert image with url to ImageContent"""
-        if image_text.byte:
-            image_data = image_text.byte
-            return ImageContent(
-                type="image",
-                data=image_data,
-                mimeType=self._get_mime_type(image_data)
-            )
-        else:
-            import requests
-            import base64
-            import io
-        
-            # 获取图片数据
-            response = requests.get(image_text.url)
-            image_bytes = response.content
-            
-            # 获取图片类型并构造 mimeType
-            image_data = io.BytesIO(image_bytes)
-            mime_type = self._get_mime_type(image_data)
-            
-            # 转换为base64
-            image_base64 = base64.b64encode(image_bytes).decode('utf-8')
-            
-            # 创建 ImageContent
-            return ImageContent(
-                type="image",
-                data=image_base64,
-                mimeType=mime_type
-            )
+    def _convert_image(
+            self, 
+            result: ComponentOutput
+        ) -> ImageContent:
+        """convert base64 data, such as image/audio  to ImageContent"""
+        type = result.content[0].type
+        text = result.content[0].text
+        model_config = {"original": result}
+        try:
+            if text.byte:
+                logging.info("create ImageContent from text.byte")
+                data = text.byte
+                mime_type = self._get_mime_type(type, data)
+                return ImageContent(
+                    type="image",
+                    data=data,
+                    mimeType=mime_type,
+                    model_config=model_config
+                )
+            else:
+                logging.info("create ImageContent from text.url")
+                # get image data
+                response = requests.get(text.url)
+                response.raise_for_status()
+                bytes = response.content
+                # convert to base64
+                image_base64 = base64.b64encode(bytes).decode('utf-8')
+
+                # get mimeType
+                image_data = io.BytesIO(bytes)
+                mime_type = self._get_mime_type(type, image_data)
+                
+                # create ImageContent
+                return ImageContent(
+                    type="image",
+                    data=image_base64,
+                    mimeType=mime_type,
+                    model_config=model_config
+                )
+        except Exception as e:
+            logging.error("failed create ImageContent")
+            raise e
+
+    def _convert_other_base64(
+        result: ComponentOutput
+    ) -> EmbeddedResource:
+        text = result.content[0].text
+        model_config = {"original": result}
+        try:
+            if text.byte:
+                logging.info("create ImageContent from text.byte")
+                return EmbeddedResource(
+                    type="resource", 
+                    resource=text.byte, 
+                    model_config=model_config
+                )
+            else:
+                logging.info("create EmbeddedResource from text.url")
+                # get data
+                response = requests.get(text.url)
+                response.raise_for_status()
+                bytes = response.content
+                # convert to base64
+                image_base64 = base64.b64encode(bytes).decode('utf-8')
+                
+                # create ImageContent
+                return EmbeddedResource(
+                    type="resource",
+                    resource=image_base64,
+                    model_config=model_config
+                )
+        except Exception as e:
+            logging.error("failed to create EmbeddedResource")
+            raise e
+
+
+    def _convert_generator(
+        self,
+        result: Generator
+    ) -> list[TextContent|ImageContent|EmbeddedResource]:
+        """convert geneartor to list of TextContent and ImageContent"""
+        output = []
+        for iter in result:
+            model_config = {"original": iter}
+            text_type = iter.content[0].type
+            text = iter.content[0].text
+            match text_type:
+                case "image":
+                    image_iter = self._convert_image(iter)
+                    output.append(image_iter)
+                case "audio":
+                    audio_iter = self._convert_other_base64(iter)
+                    output.append(audio_iter)
+                case "text":
+                    text_iter = TextContent(
+                        type="text", 
+                        text=text.info, 
+                        model_config=model_config
+                    )
+                    output.append(text_iter)
+                case _:
+                    other_iter = TextContent(
+                        type="text", 
+                        text=iter, 
+                        model_config=model_config
+                    )
+                    output.append(other_iter)
+        output = _convert_to_content(output)
+        logging.info(f"output: {output}")
+        return output
+
 
     def add_component(self, component: Component) -> None:
         """
@@ -158,12 +247,8 @@ class MCPComponentServer:
                             logging.error(f"tool_eval not implemented in {tool_name}")
                             raise NotImplementedError(f"tool_eval not implemented in {tool_name}")
                         
-                        for output in result:
-                            if output.content[0].type == "image":
-                                image_result = self._convert_image_output(output.content[0].text)
-                                yield image_result
-                            else:
-                                yield output
+                        list_result = self._convert_generator(result)
+                        return list_result
                     
                     except Exception as e:
                         logging.error(f"Error in {tool_name}: {str(e)}")
@@ -188,8 +273,8 @@ class MCPComponentServer:
         """init component
 
         Args:
-            relative_path (str, optional): path to import component. Defaults to "appbuilder.components.v2.".
-            init_args (dict[str, Any], optional): init args. Defaults to {}.
+            import_path (str, optional): path to import component. Defaults to "appbuilder.components.v2.".
+            component_init_args (dict[str, Any], optional): init args. Defaults to {}.
             component_name (str, optional): component name to init. Defaults to "".
 
         Returns:
