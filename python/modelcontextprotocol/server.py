@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import appbuilder
-from appbuilder.core.component import Component
+from appbuilder.core.component import Component, Image
 from appbuilder.core._exception import *
 from typing import Any, Literal
 import logging
@@ -93,30 +93,44 @@ class MCPComponentServer:
         """
         return self.mcp.resource(*args, **kwargs)
 
-    def _convert_image_output(self, url: str) -> ImageContent:
-        import requests
-        import base64
+    def _get_mime_type(self, image_data: bytes) -> str:
+        """get mime_type of image"""
         import imghdr
-        import io
-        
-        # 获取图片数据
-        response = requests.get(url)
-        image_bytes = response.content
-        
-        # 获取图片类型并构造 mimeType
-        image_data = io.BytesIO(image_bytes)
         image_type = imghdr.what(image_data)
         mime_type = f"image/{image_type}"
+        return mime_type
+
+    def _convert_image_output(self, image_text: Image) -> ImageContent:
+        """convert image with url to ImageContent"""
+        if image_text.byte:
+            image_data = image_text.byte
+            return ImageContent(
+                type="image",
+                data=image_data,
+                mimeType=self._get_mime_type(image_data)
+            )
+        else:
+            import requests
+            import base64
+            import io
         
-        # 转换为base64
-        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
-        
-        # 创建 ImageContent
-        return ImageContent(
-            type="image",
-            data=image_base64,
-            mimeType=mime_type
-        )
+            # 获取图片数据
+            response = requests.get(image_text.url)
+            image_bytes = response.content
+            
+            # 获取图片类型并构造 mimeType
+            image_data = io.BytesIO(image_bytes)
+            mime_type = self._get_mime_type(image_data)
+            
+            # 转换为base64
+            image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+            
+            # 创建 ImageContent
+            return ImageContent(
+                type="image",
+                data=image_base64,
+                mimeType=mime_type
+            )
 
     def add_component(self, component: Component) -> None:
         """
@@ -143,9 +157,11 @@ class MCPComponentServer:
                         if result is NotImplementedError:
                             logging.error(f"tool_eval not implemented in {tool_name}")
                             raise NotImplementedError(f"tool_eval not implemented in {tool_name}")
+                        
                         for output in result:
                             if output.content[0].type == "image":
-                                yield self._convert_image_output(output.content[0].text.url)
+                                image_result = self._convert_image_output(output.content[0].text)
+                                yield image_result
                             else:
                                 yield output
                     
@@ -239,7 +255,7 @@ class MCPComponentServer:
 
 
 def main():
-    # from appbuilder.mcp.server import MCPComponentServer
+    from appbuilder.modelcontextprotocol.server import MCPComponentServer
     from appbuilder.core.components.v2 import __V2_COMPONENTS__
     server = MCPComponentServer("AI Services")
     model_config = {"model": "ERNIE-4.0-8K"}
@@ -251,7 +267,7 @@ def main():
     }
     
     server.add_AppBuilder_tool(
-        import_path="appbuilder.core.components.v2.",  # 确保这个路径是正确的
+        import_path="appbuilder.core.components.v2.",
         component_list=list(init_args.keys()),
         init_args=init_args
     )
