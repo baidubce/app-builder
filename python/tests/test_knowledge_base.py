@@ -84,6 +84,7 @@ class TestKnowLedge(unittest.TestCase):
                 type="web",
                 urls=["https://baijiahao.baidu.com/s?id=1802527379394162441"],
                 urlDepth=1,
+                urlConfigs=[appbuilder.DocumentSourceUrlConfig(frequency=1)]
             ),
             processOption=appbuilder.DocumentProcessOption(
                 template="custom",

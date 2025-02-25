@@ -301,10 +301,17 @@ knowledge.delete_knowledge_base("da51a988-cbe7-4b24-aa5b-768985e8xxxx")
 `DocumentSource`类定义如下：
 
 ```python
+class DocumentSourceUrlConfig(BaseModel):
+    frequency: int = Field(
+        ...,
+        description="更新频率，目前支持的更新频率为-1(不自动更新),1（每天）,3（每3天）,7（每7天）,30（每30天）。",
+    )
+
 class DocumentSource(BaseModel):
     type: str = Field(..., description="数据来源类型", enum=["bos", "web"])
     urls: list[str] = Field(None, description="文档URL")
     urlDepth: int = Field(None, description="url下钻深度，1时不下钻")
+    urlConfigs: Optional[list[DocumentSourceUrlConfig]] = Field(None, description="该字段的长度需要和source、urls字段长度保持一致。")
 ```
 
 `DocumentProcessOption`类及衍生类定义如下：
@@ -364,6 +371,7 @@ knowledge.create_documents(
 		type="web",
 		urls=["https://baijiahao.baidu.com/s?id=1802527379394162441"],
     urlDepth=1,
+    urlConfigs=[appbuilder.DocumentSourceUrlConfig(frequency=1)]
   ),
 	processOption=appbuilder.DocumentProcessOption(
 		template="custom",

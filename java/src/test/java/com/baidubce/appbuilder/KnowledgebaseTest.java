@@ -108,8 +108,9 @@ public class KnowledgebaseTest {
         knowledgebase.modifyKnowledgeBase(modifyRequest);
 
         // 导入知识库
+        DocumentsCreateRequest.Source.UrlConfig[] urlConfigs = {new DocumentsCreateRequest.Source.UrlConfig(1)};
         DocumentsCreateRequest.Source source = new DocumentsCreateRequest.Source("web",
-                new String[] {"https://baijiahao.baidu.com/s?id=1802527379394162441"}, 1);
+                new String[] {"https://baijiahao.baidu.com/s?id=1802527379394162441"}, 1, urlConfigs);
         DocumentsCreateRequest.ProcessOption.Parser parser =
                 new DocumentsCreateRequest.ProcessOption.Parser(
                         new String[] {"layoutAnalysis", "ocr"});
