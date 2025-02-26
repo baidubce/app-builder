@@ -41,6 +41,7 @@ public class AppBuilderConfig {
     public static final String KNOWLEDGEBASE_ADD_DOCUMENT_URL = "/knowledge_base/document";
     // 获取知识库文档列表
     public static final String KNOWLEDGEBASE_DOCUMENT_LIST_URL = "/knowledge_base/documents";
+    public static final String DESCRIBE_DOCUMENTS_URL = "/knowledgeBase?Action=DescribeDocuments";
     // 删除知识库文档
     public static final String KNOWLEDGEBASE_DELETE_DOCUMENT_URL = "/knowledge_base/document";
     // 创建知识库

@@ -1437,13 +1437,20 @@ func TestChunk(t *testing.T) {
 		t.Fatalf("new Knowledge base instance failed")
 	}
 
-	documentsRes, err := client.GetDocumentList(GetDocumentListRequest{
+	_, err = client.GetDocumentList(GetDocumentListRequest{
 		KnowledgeBaseID: knowledgeBaseID,
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("get document list failed: %v", err)
 	}
+
+	documentsRes, err := client.DescribeDocuments(DescribeDocumentsRequest{KnowledgeBaseID: knowledgeBaseID})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("describe documents failed: %v", err)
+	}
+
 	log("Documents retrieved: %+v", documentsRes)
 	documentID := documentsRes.Data[0].ID
 	// 创建切片

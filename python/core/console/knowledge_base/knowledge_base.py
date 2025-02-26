@@ -39,7 +39,7 @@ class KnowledgeBase(Component):
         my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
         print("知识库ID: ", my_knowledge.knowledge_id)
 
-        list_res = my_knowledge.get_documents_list()
+        list_res = my_knowledge.describe_documents()
         print("文档列表: ", list_res)
     """
 
@@ -235,6 +235,49 @@ class KnowledgeBase(Component):
         resp = data_class.KnowledgeBaseDeleteDocumentResponse(**data)
         return resp
 
+    def describe_documents(self, knowledge_base_id: Optional[str]=None, marker: Optional[str] = None, maxKeys: int = 10):
+        r"""
+        获取知识库中的文档列表
+        Args:
+            knowledge_base_id (Optional[str], optional): 知识库ID。默认为None，此时使用当前类的knowledge_id属性。
+            marker (Optional[str], optional): 分页标记。默认为None。
+            maxKeys (int, optional): 最大键数。默认为10。
+
+        Returns:
+            DescribeDocumentsResponse: 描述文档的响应消息, 一个DescribeDocumentsResponse对象,包含以下属性：
+            - data (list[DescribeDocument]): 切片列表
+            - marker (str): 起始位置
+            - isTruncated (bool): true表示后面还有数据，false表示已经是最后一页
+            - nextMarker (str): 下一页起始位置
+            - maxKeys (int): 本次查询包含的最大结果集数量
+        """
+        if self.knowledge_id == None and knowledge_base_id == None:
+            raise ValueError(
+                "knowledge_base_id cannot be empty, please call `create` first or use existing one"
+            )
+
+        headers = self.http_client.auth_header_v2()
+        headers["content-type"] = "application/json"
+
+        url = self.http_client.service_url_v2("/knowledgeBase?Action=DescribeDocuments")
+        request = data_class.DescribeDocumentsRequest(
+            knowledgeBaseId=knowledge_base_id or self.knowledge_id,
+            marker=marker,
+            maxKeys=maxKeys
+        )
+        response = self.http_client.session.post(
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
+        )
+
+        self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
+        data = response.json()
+
+        resp = data_class.DescribeDocumentsResponse(**data)
+        return resp
+
+    @deprecated("use describe_documents instead")
     def get_documents_list(
         self,
         limit: int = 10,
