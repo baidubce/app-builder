@@ -29,6 +29,9 @@ public class KnowledgebaseTest {
         String knowledgeBaseId = System.getenv("DATASET_ID_V3");
         Knowledgebase knowledgebase = new Knowledgebase();
 
+        DocumentsDescribeRequest desribeDocumentsRequest = new DocumentsDescribeRequest(knowledgeBaseId, null, 10);
+        knowledgebase.describeDocuments(desribeDocumentsRequest);
+        
         DocumentListRequest listRequest = new DocumentListRequest();
         listRequest.setKonwledgeBaseId(knowledgeBaseId);
         listRequest.setLimit(10);

@@ -96,12 +96,58 @@ class KnowledgeBaseGetDocumentsListResponse(BaseModel):
     data: list[Document] = Field([], description="文档信息列表")
 
 
+class DescribeDocumentsRequest(BaseModel):
+    knowledgeBaseId: str = Field(..., description="知识库ID")
+    marker: Optional[str] = Field(None, description="起始位置")
+    maxKeys: int = Field(
+        10, description="返回文档数量大小，默认10，最大值100"
+    )
+
+
+class DescribeDocumentMeata(BaseModel):
+    source: Optional[str] = Field(None, description="文档来源")
+    fileId: Optional[str] = Field(None, description="文档对应的文件ID")
+
+class DescribeDocument(BaseModel):
+    id: str = Field(..., description="文档ID")
+    name: str = Field(..., description="文档名称")
+    createdAt: str = Field(..., description="文档创建时间")
+    wordCount: int = Field(..., description="文档字数")
+    enabled: bool = Field(True, description="文档是否可用")
+    displayStatus: str = Field(
+        ...,
+        description="文档状态。available：可用，queuing：排队中，notConfigured：数据待配置，parsing：解析中，indexing：处理中，parseError：解析失败，error：处理失败, retrainingSegmentUnusable：重建切片中，切片不可用, retrainErrSegmentUsable：重建切片错误，旧切片可用",
+    )
+    meta: Optional[DescribeDocumentMeata] = Field(..., description="文档元信息，包括source、fileId")
+    extension: str = Field(
+        None, description="文件的扩展名,当通过url上传文档时，该值为url"
+    )
+    size: Optional[int] = Field(
+        None, description="文件大小,当通过url上传文档时，该值为null"
+    )
+    url: Optional[str] = Field(
+        None, description="文件下载地址。当通过url上传文档时，该值为原始下载链接"
+    )
+
+
+class DescribeDocumentsResponse(BaseModel):
+    requestId: str = Field(..., description="请求ID")
+    marker: str = Field(..., description="起始位置")
+    isTruncated: bool = Field(
+        ..., description="true表示后面还有数据，false表示已经是最后一页"
+    )
+    nextMarker: str = Field(..., description="下一页起始位置")
+    maxKeys: int = Field(..., description="本次查询包含的最大结果集数量")
+    data: list[DescribeDocument] = Field(..., description="文档信息列表")
+
+
 class KnowledgeBaseConfigIndex(BaseModel):
     type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
     clusterId: Optional[str] = Field(None, description="集群/实例 ID")
     username: Optional[str] = Field(None, description="bes用户名")
     password: Optional[str] = Field(None, description="bes密码")
-    location: Optional[str] = Field(None, description="托管资源的区域", enum=["bj", "bd", "sz", "gz"])
+    location: Optional[str] = Field(
+        None, description="托管资源的区域", enum=["bj", "bd", "sz", "gz"])
 
 
 class KnowledgeBaseConfigCatalogue(BaseModel):
@@ -110,7 +156,8 @@ class KnowledgeBaseConfigCatalogue(BaseModel):
 
 class KnowledgeBaseConfig(BaseModel):
     index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
-    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(None, description="知识库目录配置")
+    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(
+        None, description="知识库目录配置")
 
 
 class KnowledgeBaseCreateKnowledgeBaseRequest(BaseModel):
@@ -149,22 +196,29 @@ class KnowledgeBaseGetListRequest(BaseModel):
         10, description="返回文档数量大小，默认10，最大值100", le=100, ge=1
     )
 
+
 class KnowledgeBaseGetListConfigIndex(BaseModel):
     type: str = Field(None, description="索引类型")
     esUrl: Optional[str] = Field('', description="es地址")
 
+
 class KnowledgeBaseGetListConfig(BaseModel):
-    index: Optional[KnowledgeBaseGetListConfigIndex] = Field(..., description="索引配置")
+    index: Optional[KnowledgeBaseGetListConfigIndex] = Field(
+        ..., description="索引配置")
+
 
 class KnowledgeBaseGetListDetailResponse(BaseModel):
     id: str = Field(..., description="知识库ID")
     name: str = Field(..., description="知识库名称")
     description: Optional[str] = Field(None, description="知识库描述")
-    config: Optional[KnowledgeBaseGetListConfig] = Field(..., description="知识库配置")
+    config: Optional[KnowledgeBaseGetListConfig] = Field(
+        ..., description="知识库配置")
+
 
 class KnowledgeBaseGetListResponse(BaseModel):
     requestId: str = Field(..., description="请求ID")
-    data: list[KnowledgeBaseGetListDetailResponse] = Field([], description="知识库详情列表")
+    data: list[KnowledgeBaseGetListDetailResponse] = Field(
+        [], description="知识库详情列表")
     marker: str = Field(..., description="起始位置")
     nextMarker: str = Field(..., description="下一页起始位置")
     maxKeys: int = Field(10, description="返回文档数量大小，默认10，最大值100")
@@ -182,7 +236,8 @@ class DocumentSource(BaseModel):
     type: str = Field(..., description="数据来源类型", enum=["bos", "web"])
     urls: list[str] = Field(None, description="文档URL")
     urlDepth: int = Field(None, description="url下钻深度，1时不下钻")
-    urlConfigs: Optional[list[DocumentSourceUrlConfig]] = Field(None, description="该字段的长度需要和source、urls字段长度保持一致。")
+    urlConfigs: Optional[list[DocumentSourceUrlConfig]] = Field(
+        None, description="该字段的长度需要和source、urls字段长度保持一致。")
 
 
 class DocumentChoices(BaseModel):
@@ -357,27 +412,34 @@ class PreRankingConfig(BaseModel):
         None, description="得分归一化参数，不建议修改，默认50"
     )
 
-class QueryType(str, Enum):
-    FULLTEXT = "fulltext" # 全文检索
-    SEMANTIC = "semantic" # 语义检索
-    HYBRID = "hybrid" # 混合检索
 
-class ElasticSearchRetrieveConfig(BaseModel): # 托管资源为共享资源 或 BES资源时使用该配置
+class QueryType(str, Enum):
+    FULLTEXT = "fulltext"  # 全文检索
+    SEMANTIC = "semantic"  # 语义检索
+    HYBRID = "hybrid"  # 混合检索
+
+
+class ElasticSearchRetrieveConfig(BaseModel):  # 托管资源为共享资源 或 BES资源时使用该配置
     name: str = Field(..., description="配置名称")
     type: str = Field(None, description="elastic_search标志，该节点为es全文检索")
     threshold: float = Field(None, description="得分阈值，默认0.1")
     top: int = Field(None, description="召回数量，默认400")
 
+
 class VectorDBRetrieveConfig(BaseModel):
     name: str = Field(..., description="该节点的自定义名称。")
     type: str = Field("vector_db", description="该节点的类型，默认为vector_db。")
-    threshold: Optional[float] = Field(0.1, description="得分阈值。取值范围：[0, 1]", ge=0.0, le=1.0)
-    top: Optional[int] = Field(400, description="召回数量。取值范围：[0, 800]", ge=0, le=800)
+    threshold: Optional[float] = Field(
+        0.1, description="得分阈值。取值范围：[0, 1]", ge=0.0, le=1.0)
+    top: Optional[int] = Field(
+        400, description="召回数量。取值范围：[0, 800]", ge=0, le=800)
     pre_ranking: Optional[PreRankingConfig] = Field(None, description="粗排配置")
+
 
 class SmallToBigConfig(BaseModel):
     name: str = Field(..., description="配置名称")
-    type: str = Field("small_to_big", description="small_to_big标志，该节点为small_to_big节点")
+    type: str = Field(
+        "small_to_big", description="small_to_big标志，该节点为small_to_big节点")
 
 
 class RankingConfig(BaseModel):
@@ -390,6 +452,7 @@ class RankingConfig(BaseModel):
     model_name: str = Field(None, description="ranking模型名（当前仅一种，暂不生效）")
     top: int = Field(None, description="取切片top进行排序，默认20，最大400")
 
+
 class QueryPipelineConfig(BaseModel):
     id: str = Field(
         None, description="配置唯一标识，如果用这个id，则引用已经配置好的QueryPipeline"
@@ -401,7 +464,8 @@ class QueryPipelineConfig(BaseModel):
 
 class QueryKnowledgeBaseRequest(BaseModel):
     query: str = Field(..., description="检索query")
-    type: Optional[QueryType] = Field(None, description="检索策略的枚举, fulltext:全文检索, semantic:语义检索, hybrid:混合检索")
+    type: Optional[QueryType] = Field(
+        None, description="检索策略的枚举, fulltext:全文检索, semantic:语义检索, hybrid:混合检索")
     top: int = Field(None, description="返回结果数量")
     skip: int = Field(
         None,

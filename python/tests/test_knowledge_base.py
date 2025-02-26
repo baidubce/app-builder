@@ -23,41 +23,41 @@ class TestKnowLedge(unittest.TestCase):
     def setUp(self):
         self.whether_create_knowledge_base = False
 
-    # def test_doc_knowledage(self):
-    #     dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
-    #     appbuilder.logger.setLoglevel('DEBUG')
-    #     knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
+    def test_doc_knowledage(self):
+        dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+        appbuilder.logger.setLoglevel('DEBUG')
+        knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
 
-    #     upload_res = knowledge.upload_file(
-    #         "./data/qa_appbuilder_client_demo.pdf")
-    #     add_res = knowledge.add_document(
-    #         content_type="raw_text",
-    #         file_ids=[upload_res.id],
-    #         custom_process_rule=appbuilder.CustomProcessRule(
-    #             separators=["?"], target_length=400, overlap_rate=0.2
-    #         ),
-    #     )
-    #     list_res = knowledge.get_documents_list()
-    #     delete_res = knowledge.delete_document(
-    #         document_id=add_res.document_ids[0])
-    #     all_doc = knowledge.get_all_documents()
-    #     self.assertIsInstance(all_doc, list)
+        upload_res = knowledge.upload_file(
+            "./data/qa_appbuilder_client_demo.pdf")
+        add_res = knowledge.add_document(
+            content_type="raw_text",
+            file_ids=[upload_res.id],
+            custom_process_rule=appbuilder.CustomProcessRule(
+                separators=["?"], target_length=400, overlap_rate=0.2
+            ),
+        )
+        list_res = knowledge.get_documents_list()
+        delete_res = knowledge.delete_document(
+            document_id=add_res.document_ids[0])
+        all_doc = knowledge.get_all_documents()
+        self.assertIsInstance(all_doc, list)
 
-    # def test_get_documents_number_raise(self):
-    #     knowledge = appbuilder.KnowledgeBase()
-    #     with self.assertRaises(ValueError):
-    #         knowledge.get_all_documents()
+    def test_get_documents_number_raise(self):
+        knowledge = appbuilder.KnowledgeBase()
+        with self.assertRaises(ValueError):
+            knowledge.get_all_documents()
 
-    # def test_xlsx_knowledage(self):
-    #     dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
-    #     knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
+    def test_xlsx_knowledage(self):
+        dataset_id = os.getenv("DATASET_ID", "UNKNOWN")
+        knowledge = appbuilder.KnowledgeBase(knowledge_id=dataset_id)
 
-    #     upload_res = knowledge.upload_file("./data/qa_demo.xlsx")
-    #     add_res = knowledge.add_document(
-    #         content_type="qa", file_ids=[upload_res.id])
-    #     list_res = knowledge.get_documents_list()
-    #     delete_res = knowledge.delete_document(
-    #         document_id=add_res.document_ids[0])
+        upload_res = knowledge.upload_file("./data/qa_demo.xlsx")
+        add_res = knowledge.add_document(
+            content_type="qa", file_ids=[upload_res.id])
+        list_res = knowledge.get_documents_list()
+        delete_res = knowledge.delete_document(
+            document_id=add_res.document_ids[0])
 
     def test_create_knowledge_base(self):
         knowledge = appbuilder.KnowledgeBase()
@@ -130,15 +130,16 @@ class TestKnowLedge(unittest.TestCase):
         )
         self.assertIsInstance(upload_documents_response.documentId, str)
 
-        list_res = knowledge.get_documents_list(
+        knowledge.get_documents_list(
             knowledge_base_id=knowledge_base_id)
+        list_res = knowledge.describe_documents(knowledge_base_id=knowledge_base_id)
         document_id = list_res.data[-1].id
         knowledge.describe_chunks(document_id, knowledgebase_id=knowledge_base_id, keyword="test")
         resp = knowledge.create_chunk(document_id, content="test", knowledgebase_id=knowledge_base_id)
         chunk_id = resp.id
         knowledge.modify_chunk(chunk_id, content="new test", enable=True, knowledgebase_id=knowledge_base_id)
         # 目前openapi有延迟，后续openapi完善后，删除注释
-        # knowledge.describe_chunk(chunk_id, knowledgebase_id=knowledge_base_id)
+        knowledge.describe_chunk(chunk_id, knowledgebase_id=knowledge_base_id)
         knowledge.delete_chunk(chunk_id, knowledgebase_id=knowledge_base_id)
 
         knowledge.modify_knowledge_base(

@@ -151,6 +151,7 @@ public class Knowledgebase extends Component {
      * @throws IOException 当发生输入输出异常时抛出
      * @throws AppBuilderServerException 当应用构建服务器发生异常时抛出
      */
+    @Deprecated
     public Document[] getDocumentList(DocumentListRequest request)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.KNOWLEDGEBASE_DOCUMENT_LIST_URL;
@@ -160,6 +161,23 @@ public class Knowledgebase extends Component {
         HttpResponse<DocumentListResponse> response = httpClient.execute(getRequest, DocumentListResponse.class);
         DocumentListResponse respBody = response.getBody();
         return respBody.getData();
+    }
+
+    public DocumentsDescribeResponse describeDocuments(DocumentsDescribeRequest request)
+            throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.DESCRIBE_DOCUMENTS_URL;
+
+        if (request.getKnowledgeBaseId().isEmpty() && !this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<DocumentsDescribeResponse> response = httpClient.execute(postRequest,
+                DocumentsDescribeResponse.class);
+        DocumentsDescribeResponse respBody = response.getBody();
+        return respBody;
     }
 
     /**
@@ -724,7 +742,8 @@ public class Knowledgebase extends Component {
         return respBody;
     }
 
-    public ChunksDescribeResponse describeChunks(ChunksDescribeRequest request) throws IOException, AppBuilderServerException {
+    public ChunksDescribeResponse describeChunks(ChunksDescribeRequest request)
+            throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CHUNKS_DESCRIBE_URL;
 
         if (!this.knowledgeBaseId.isEmpty()) {

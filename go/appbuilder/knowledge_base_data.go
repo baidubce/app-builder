@@ -255,6 +255,39 @@ type DescribeChunkResponse struct {
 	UpdatedAt       int64    `json:"updateTime"`
 }
 
+type DescribeDocumentsRequest struct {
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	Marker          string `json:"marker,omitempty"`
+	MaxKeys         int    `json:"maxKeys,omitempty"`
+}
+
+type DescribeDocumentResponse struct {
+	ID            string               `json:"id"`
+	Name          string               `json:"name"`
+	CreatedAt     string               `json:"createdAt"`
+	DisplayStatus string               `json:"displayStatus"`
+	WordCount     int64                `json:"wordCount"`
+	Enabled       bool                 `json:"enabled"`
+	Extension     string               `json:"extension"`
+	Size          int64                `json:"size,omitempty"`
+	Url           string               `json:"url,omitempty"`
+	Meta          DescribeDocumentMeta `json:"meta"`
+}
+
+type DescribeDocumentMeta struct {
+	Source string `json:"source"`
+	FileID string `json:"fileId"`
+}
+
+type DescribeDocumentsResponse struct {
+	Data        []DescribeDocumentResponse `json:"data"`
+	Marker      string                     `json:"marker"`
+	IsTruncated bool                       `json:"isTruncated"`
+	NextMarker  string                     `json:"nextMarker"`
+	MaxKeys     int                        `json:"maxKeys"`
+	RequestID   string                     `json:"requestId"`
+}
+
 type DescribeChunksRequest struct {
 	KnowledgeBaseID string `json:"knowledgeBaseId"`
 	DocumnetID      string `json:"documentId"`
