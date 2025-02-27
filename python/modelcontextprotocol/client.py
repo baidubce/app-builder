@@ -1,3 +1,6 @@
+# Based on https://modelcontextprotocol.io/quickstart/client
+# adapted to AppBuilderClient
+# add multi servers support
 import sys
 from typing import Optional
 from contextlib import AsyncExitStack
@@ -13,9 +16,10 @@ class MCPClient:
         self.session: Optional[ClientSession] = None
         self.exit_stack = AsyncExitStack()
         self.tools = None
-        self.appbuilder_tools = None
+        self.appbuilder_tools = []
+        self.sessions={}
+        self.tool_to_server = {}
 
-    # Based on https://modelcontextprotocol.io/quickstart/client，adapted to AppBuilderClient
     async def connect_to_server(self, server_script_path: str):
         """Connect to an MCP server
 
@@ -46,17 +50,39 @@ class MCPClient:
             "\nConnected to server with tools:" +
             str([tool.name for tool in tools])
         )
-        self.appbuilder_tools = [
-            {
-                "type": "function",
-                "function": {
-                    "name": f"{tool.name}",
-                    "description": f"{tool.description}",
-                    "parameters": tool.inputSchema,
+
+        # Store session with its command as key
+        cmd_key = f"{command} {' '.join(server_script_path)}"
+
+        # Store the new session first
+        new_sessions = {cmd_key: self.session}
+        new_sessions.update(self.sessions)
+        self.sessions = new_sessions
+        for tool in tools:
+            if tool.name in self.tool_to_server:
+                raise ValueError(f"Duplicate tool name: {tool.name}")
+            self.tool_to_server[tool.name] = cmd_key
+
+        for tool in response.tools:
+            self.appbuilder_tools.append(
+                {
+                    "type": "function",
+                    "function": {
+                        "name": f"{tool.name}",
+                        "description": f"{tool.description}",
+                        "parameters": tool.inputSchema,
+                    },
                 }
-            } for tool in response.tools
-        ]
-        logger.debug("AppBuilder tools:", self.appbuilder_tools)
+            )
+        logger.debug("AppBuilder tools: %s", self.appbuilder_tools)
+
+    async def call_tool(self, tool_name, tool_args):
+        server_cmd = self.tool_to_server.get(tool_name)
+        if server_cmd is None:
+            raise ValueError(f"Tool '{tool_name}' not found")
+        session = self.sessions[server_cmd]
+        result = await session.call_tool(name=tool_name, arguments=tool_args)
+        return result
 
     async def cleanup(self):
         """Clean up resources"""
