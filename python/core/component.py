@@ -247,6 +247,10 @@ class Component:
         else:
             self._http_client = HTTPClient(self.secret_key, self.gateway)
 
+    def set_model_info(self, model_name: str, model_url: str):
+        """为私有化llm component设置模型，其它component不生效"""
+        pass
+
     @property
     def http_client(self):
         """
