@@ -30,6 +30,7 @@
 | esUserName  | string   | type=bes 和 vdb 时填写       | 用户名/账号<br>请在bes、vdb控制台中查看           | "username"         |
 | esPassword  | string   | type=bes 和 vdb 时填写       | 密码/API密钥<br>请在bes、vdb控制台中查看              | "password"         |
 |location|string|type=bes 和 vdb 时填写|托管资源的区域，type填vdb时填写<br>可选值：<br>- bj：北京<br>- bd：保定<br>- sz：苏州<br>- gz：广州|"bj"|
+|pathPrefix|string|否|创建知识库的指定目录，最大层级为5，默认为根目录下|"/全部群组/##/##"|
 
 #### 方法返回值
 
@@ -48,6 +49,7 @@ class KnowledgeBaseDetailResponse(BaseModel):
 ```python
 class KnowledgeBaseConfig(BaseModel):
     index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(None, description="知识库目录配置")
 ```
 
 衍生类`KnowledgeBaseConfigIndex`定义如下：
@@ -59,6 +61,13 @@ class KnowledgeBaseConfigIndex(BaseModel):
     username: Optional[str] = Field(None, description="bes用户名")
     password: Optional[str] = Field(None, description="bes密码")
     location: Optional[str] = Field(None, description="托管资源的区域", enum=["bj", "bd", "sz", "gz"])
+```
+
+衍生类`KnowledgeBaseConfigCatalogue`
+
+```python
+class KnowledgeBaseConfigCatalogue(BaseModel):
+    pathPrefix: Optional[str] = Field(None, description="知识库所属目录绝对路径")
 ```
 
 #### 方法示例
@@ -132,6 +141,7 @@ class KnowledgeBaseDetailResponse(BaseModel):
 ```python
 class KnowledgeBaseConfig(BaseModel):
     index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(None, description="知识库目录配置")
 ```
 
 衍生类`KnowledgeBaseConfigIndex`定义如下：
@@ -142,6 +152,13 @@ class KnowledgeBaseConfigIndex(BaseModel):
     esUrl: Optional[str] = Field(..., description="ES地址")
     username: Optional[str] = Field(None, description="ES用户名")
     password: Optional[str] = Field(None, description="ES密码")
+```
+
+衍生类`KnowledgeBaseConfigCatalogue`
+
+```python
+class KnowledgeBaseConfigCatalogue(BaseModel):
+    pathPrefix: Optional[str] = Field(None, description="知识库所属目录绝对路径")
 ```
 
 #### 方法示例
@@ -166,7 +183,7 @@ print("新建的知识库名称: ", resp.name)
 
 | 参数名称          | 参数类型 | 是否必传 | 描述                        | 示例值           |
 | ----------------- | -------- | -------- | --------------------------- | ---------------- |
-| knowledge_base_id | string   | 是       | 起始位置，知识库id          | "正确的知识库ID" |
+| knowledge_base_id | string   | 否       | 起始位置，知识库id          | "正确的知识库ID" |
 | maxKeys           | int      | 否       | 数据大小，默认10，最大值100 | 10               |
 | keyword           | string   | 否       | 搜索关键字                  | "测试"           |
 
@@ -199,6 +216,7 @@ class KnowledgeBaseDetailResponse(BaseModel):
 ```python
 class KnowledgeBaseConfig(BaseModel):
     index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(None, description="知识库目录配置")
 ```
 
 衍生类`KnowledgeBaseConfigIndex`定义如下：
@@ -209,6 +227,13 @@ class KnowledgeBaseConfigIndex(BaseModel):
     esUrl: Optional[str] = Field(..., description="ES地址")
     username: Optional[str] = Field(None, description="ES用户名")
     password: Optional[str] = Field(None, description="ES密码")
+```
+
+衍生类`KnowledgeBaseConfigCatalogue`
+
+```python
+class KnowledgeBaseConfigCatalogue(BaseModel):
+    pathPrefix: Optional[str] = Field(None, description="知识库所属目录绝对路径")
 ```
 
 #### 方法示例：
@@ -227,11 +252,12 @@ print("获取到的知识库列表: ", resp)
 
 #### 方法参数
 
-| 参数名称          | 参数类型 | 是否必传 | 描述               | 示例值           |
-| ----------------- | -------- | -------- | ------------------ | ---------------- |
-| knowledge_base_id | string   | 是       | 起始位置，知识库id | "正确的知识库ID" |
-| name              | string   | 否       | 修改后的知识库名称 | "new_name"       |
-| description       | string   | 否       | 修改后的知识库描述 | "测试"           |
+| 参数名称          | 参数类型 | 是否必传 | 描述                                          | 示例值           |
+| ----------------- | -------- | -------- | --------------------------------------------- | ---------------- |
+| knowledge_base_id | string   | 是       | 起始位置，知识库id                            | "正确的知识库ID" |
+| name              | string   | 否       | 修改后的知识库名称                            | "new_name"       |
+| description       | string   | 否       | 修改后的知识库描述                            | "测试"           |
+| pathPrefix        | string   | 否       | 知识库的指定目录，最大层级为5，默认为根目录下 |                  |
 
 #### 方法示例
 
@@ -275,10 +301,17 @@ knowledge.delete_knowledge_base("da51a988-cbe7-4b24-aa5b-768985e8xxxx")
 `DocumentSource`类定义如下：
 
 ```python
+class DocumentSourceUrlConfig(BaseModel):
+    frequency: int = Field(
+        ...,
+        description="更新频率，目前支持的更新频率为-1(不自动更新),1（每天）,3（每3天）,7（每7天）,30（每30天）。",
+    )
+
 class DocumentSource(BaseModel):
     type: str = Field(..., description="数据来源类型", enum=["bos", "web"])
     urls: list[str] = Field(None, description="文档URL")
     urlDepth: int = Field(None, description="url下钻深度，1时不下钻")
+    urlConfigs: Optional[list[DocumentSourceUrlConfig]] = Field(None, description="该字段的长度需要和source、urls字段长度保持一致。")
 ```
 
 `DocumentProcessOption`类及衍生类定义如下：
@@ -338,6 +371,7 @@ knowledge.create_documents(
 		type="web",
 		urls=["https://baijiahao.baidu.com/s?id=1802527379394162441"],
     urlDepth=1,
+    urlConfigs=[appbuilder.DocumentSourceUrlConfig(frequency=1)]
   ),
 	processOption=appbuilder.DocumentProcessOption(
 		template="custom",
@@ -712,6 +746,7 @@ print(resp)
 | marker          | string   | 否       | 起始位置，切片ID                                             | "正确的切片ID" |
 | maxKeys         | string   | 否       | 返回文档数量大小，默认10，最大值100                          | 10             |
 | type            | string   | 否       | 根据类型获取切片列表(RAW、NEW、COPY)，RAW：原文切片，NEW：新增切片，COPY：复制切片 | "RAW"          |
+| keyword         | string   | 否       | 根据关键字模糊匹配切片，最大长度2000字符。                   | "test"         |
 
 #### 方法返回值
 

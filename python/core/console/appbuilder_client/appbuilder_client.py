@@ -322,7 +322,7 @@ class AppBuilderClient(Component):
         self,
         conversation_id: str,
         message_id: str,
-        type: str = None,
+        type: str,
         flag: list[str] = None,
         reason: str = None,
     ):
@@ -357,7 +357,7 @@ class AppBuilderClient(Component):
         headers["Content-Type"] = "application/json"
         url = self.http_client.service_url_v2("/app/conversation/feedback")
         response = self.http_client.session.post(
-            url, headers=headers, json=req.model_dump(), timeout=None, stream=True
+            url, headers=headers, json=req.model_dump(exclude_none=True), timeout=None, stream=True
         )
         self.http_client.check_response_header(response)
         request_id = self.http_client.response_request_id(response)

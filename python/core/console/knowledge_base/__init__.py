@@ -16,6 +16,7 @@ from .knowledge_base import KnowledgeBase
 from .data_class import (
     CustomProcessRule,
     DocumentSource,
+    DocumentSourceUrlConfig,
     DocumentProcessOption,
     DocumentChoices,
     DocumentSeparator,

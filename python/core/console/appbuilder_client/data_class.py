@@ -380,8 +380,8 @@ class FeedbackRequest(BaseModel):
     app_id: str = Field(..., description="应用ID")
     conversation_id: str = Field(..., description="对话ID")
     message_id: str = Field(..., description="对应的消息ID")
-    type: Optional[str] = Field(
-        None,
+    type: str = Field(
+        ...,
         description="点赞点踩枚举值 cancel：取消评论, upvote：点赞, downvote：点踩",
     )
     flag: Optional[list[str]] = Field(

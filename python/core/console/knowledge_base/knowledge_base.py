@@ -39,7 +39,7 @@ class KnowledgeBase(Component):
         my_knowledge = appbuilder.KnowledgeBase(my_knowledge_base_id)
         print("知识库ID: ", my_knowledge.knowledge_id)
 
-        list_res = my_knowledge.get_documents_list()
+        list_res = my_knowledge.describe_documents()
         print("文档列表: ", list_res)
     """
 
@@ -51,7 +51,7 @@ class KnowledgeBase(Component):
     ):
         r"""
         初始化KnowledgeBase类实例
-        
+
         Args:
             knowledge_id (Optional[str]): 知识库ID
             knowledge_name (Optional[str]): 知识库名称
@@ -64,7 +64,7 @@ class KnowledgeBase(Component):
     @deprecated()
     def create_knowledge(cls, knowledge_name: str) -> "KnowledgeBase":
         r""" 创建知识库
-        
+
         Deprecated: use create_knowledge_base instead
 
         Args:
@@ -235,6 +235,49 @@ class KnowledgeBase(Component):
         resp = data_class.KnowledgeBaseDeleteDocumentResponse(**data)
         return resp
 
+    def describe_documents(self, knowledge_base_id: Optional[str]=None, marker: Optional[str] = None, maxKeys: int = 10):
+        r"""
+        获取知识库中的文档列表
+        Args:
+            knowledge_base_id (Optional[str], optional): 知识库ID。默认为None，此时使用当前类的knowledge_id属性。
+            marker (Optional[str], optional): 分页标记。默认为None。
+            maxKeys (int, optional): 最大键数。默认为10。
+
+        Returns:
+            DescribeDocumentsResponse: 描述文档的响应消息, 一个DescribeDocumentsResponse对象,包含以下属性：
+            - data (list[DescribeDocument]): 切片列表
+            - marker (str): 起始位置
+            - isTruncated (bool): true表示后面还有数据，false表示已经是最后一页
+            - nextMarker (str): 下一页起始位置
+            - maxKeys (int): 本次查询包含的最大结果集数量
+        """
+        if self.knowledge_id == None and knowledge_base_id == None:
+            raise ValueError(
+                "knowledge_base_id cannot be empty, please call `create` first or use existing one"
+            )
+
+        headers = self.http_client.auth_header_v2()
+        headers["content-type"] = "application/json"
+
+        url = self.http_client.service_url_v2("/knowledgeBase?Action=DescribeDocuments")
+        request = data_class.DescribeDocumentsRequest(
+            knowledgeBaseId=knowledge_base_id or self.knowledge_id,
+            marker=marker,
+            maxKeys=maxKeys
+        )
+        response = self.http_client.session.post(
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
+        )
+
+        self.http_client.check_response_header(response)
+        self.http_client.check_console_response(response)
+        data = response.json()
+
+        resp = data_class.DescribeDocumentsResponse(**data)
+        return resp
+
+    @deprecated("use describe_documents instead")
     def get_documents_list(
         self,
         limit: int = 10,
@@ -292,6 +335,7 @@ class KnowledgeBase(Component):
         esPassword: str = None,
         location: str = None,
         client_token: str = None,
+        pathPrefix: str = None,
     ) -> data_class.KnowledgeBaseDetailResponse:
         r"""
         创建知识库
@@ -304,6 +348,8 @@ class KnowledgeBase(Component):
             esUserName (str, optional): Elasticsearch用户名。默认为None。
             esPassword (str, optional): Elasticsearch密码。默认为None。
             client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+            pathPrefix (str, optional): 知识库所属目录绝对路径。默认为None。
+
 
         Returns:
             KnowledgeBaseDetailResponse: 创建知识库的响应消息,包含以下属性：
@@ -331,12 +377,18 @@ class KnowledgeBase(Component):
                     "username": esUserName,
                     "password": esPassword,
                     "location": location,
-                }
+                },
             },
         )
 
+        if pathPrefix != None:
+            request.config.catalogue = {
+                "pathPrefix": pathPrefix,
+            }
+
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -397,6 +449,7 @@ class KnowledgeBase(Component):
         name: Optional[str] = None,
         description: Optional[str] = None,
         client_token: str = None,
+        pathPrefix: str = None,
     ):
         r"""
         修改知识库信息
@@ -406,6 +459,7 @@ class KnowledgeBase(Component):
             name (Optional[str], optional): 新的知识库名称。默认值为None。
             description (Optional[str], optional): 新的知识库描述。默认值为None。
             client_token (str, optional): 客户端令牌。默认为None，此时会自动生成一个随机UUID作为客户端令牌。
+            pathPrefix (str, optional): 知识库所属目录绝对路径。默认为None。
 
         Returns:
             dict: 响应数据，包含请求ID: requestId。
@@ -420,6 +474,13 @@ class KnowledgeBase(Component):
             description=description,
         )
 
+        if pathPrefix != None:
+            request.config = {
+                "catalogue": {
+                    "pathPrefix": pathPrefix,
+                }
+            }
+
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
@@ -430,7 +491,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -523,7 +585,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -556,10 +619,6 @@ class KnowledgeBase(Component):
             - maxKeys (int): 返回文档数量大小，默认10，最大值100
             - isTruncated (bool): 是否有更多结果
         """
-        if self.knowledge_id == None and knowledge_base_id == None:
-            raise ValueError(
-                "knowledge_base_id cannot be empty, please call `create` first or use existing one"
-            )
         request = data_class.KnowledgeBaseGetListRequest(
             marker=knowledge_base_id or self.knowledge_id,
             maxKeys=maxKeys,
@@ -574,7 +633,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -681,7 +741,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -727,7 +788,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -767,7 +829,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -813,7 +876,8 @@ class KnowledgeBase(Component):
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -830,6 +894,7 @@ class KnowledgeBase(Component):
         marker: str = None,
         maxKeys: int = None,
         type: str = None,
+        keyword: str = None,
     ) -> data_class.DescribeChunksResponse:
         r"""
         获取文档块列表
@@ -839,6 +904,7 @@ class KnowledgeBase(Component):
             marker (str, optional): 分页标记，用于指定从哪个位置开始返回结果。默认为None，表示从头开始返回结果。
             maxKeys (int, optional): 最大返回数量，用于限制每次请求返回的最大文档块数目。默认为None，表示不限制返回数量。
             type (str, optional): 文档块类型。默认为None，表示不限定类型。
+            keyword (str, optional): 根据关键字模糊匹配切片，最大长度2000字符。
 
         Returns:
             DescribeChunksResponse: 文档块列表，一个DescribeChunksResponse对象,包含以下属性：
@@ -851,7 +917,8 @@ class KnowledgeBase(Component):
         headers = self.http_client.auth_header_v2()
         headers["content-type"] = "application/json"
 
-        url = self.http_client.service_url_v2("/knowledgeBase?Action=DescribeChunks")
+        url = self.http_client.service_url_v2(
+            "/knowledgeBase?Action=DescribeChunks")
 
         request = data_class.DescribeChunksRequest(
             knowledgeBaseId=knowledgebase_id or self.knowledge_id,
@@ -859,10 +926,12 @@ class KnowledgeBase(Component):
             marker=marker,
             maxKeys=maxKeys,
             type=type,
+            keyword=keyword,
         )
 
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)
@@ -944,7 +1013,8 @@ class KnowledgeBase(Component):
             skip=skip,
         )
         response = self.http_client.session.post(
-            url=url, headers=headers, json=request.model_dump(exclude_none=True)
+            url=url, headers=headers, json=request.model_dump(
+                exclude_none=True)
         )
 
         self.http_client.check_response_header(response)

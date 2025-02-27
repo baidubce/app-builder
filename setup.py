@@ -49,7 +49,8 @@ serve_require = ["chainlit~=1.0.200", "flask~=2.3.2", "flask-restful==0.3.9", "a
 trace_require = ["SQLAlchemy==2.0.31"]
 test_require = ["python-dotenv"]
 langchain_require = ["langchain==0.3.0", "datamodel-code-generator==0.25.8"]
-all_require = serve_require + trace_require + test_require + langchain_require
+mcp_require = ["mcp>=1.2.1"]
+all_require = serve_require + trace_require + test_require + langchain_require + mcp_require
 
 setup(
     name="appbuilder-sdk",
@@ -67,6 +68,7 @@ setup(
         "trace": trace_require,
         "test": test_require,
         "langchain": langchain_require,
+        "mcp": mcp_require,
         "all": all_require
     },
     entry_points={
