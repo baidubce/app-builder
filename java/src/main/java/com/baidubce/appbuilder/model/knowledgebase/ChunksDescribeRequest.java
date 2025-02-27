@@ -6,6 +6,7 @@ public class ChunksDescribeRequest {
     private String marker;
     private Integer maxKeys;
     private String type;
+    private String keyword;
 
     public ChunksDescribeRequest(String documentId, String marker, Integer maxKeys, String type) {
         this.documentId = documentId;
@@ -21,6 +22,16 @@ public class ChunksDescribeRequest {
         this.marker = marker;
         this.maxKeys = maxKeys;
         this.type = type;
+    }
+
+    public ChunksDescribeRequest(String knowledgeBaseId, String documentId, String marker, Integer maxKeys,
+            String type, String keyword) {
+        this.knowledgeBaseId = knowledgeBaseId;
+        this.documentId = documentId;
+        this.marker = marker;
+        this.maxKeys = maxKeys;
+        this.type = type;
+        this.keyword = keyword;
     }
 
     public String getKnowledgeBaseId() {
@@ -61,5 +72,13 @@ public class ChunksDescribeRequest {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public String getKeyword() {
+        return keyword;
     }
 }

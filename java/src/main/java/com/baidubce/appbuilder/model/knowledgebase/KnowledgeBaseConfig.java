@@ -2,13 +2,31 @@ package com.baidubce.appbuilder.model.knowledgebase;
 
 public class KnowledgeBaseConfig {
     private Index index;
+    private Catalogue catalogue;
 
     public KnowledgeBaseConfig(Index index) {
         this.index = index;
     }
 
+    public KnowledgeBaseConfig(Index index, Catalogue catalogue) {
+        this.index = index;
+        this.catalogue = catalogue;
+    }
+
     public Index getIndex() {
         return index;
+    }
+
+    public void setIndex(Index index) {
+        this.index = index;
+    }
+
+    public void setCatalogue(Catalogue catalogue) {
+        this.catalogue = catalogue;
+    }
+
+    public Catalogue getCatalogue() {
+        return catalogue;
     }
 
     public static class Index {
@@ -44,6 +62,18 @@ public class KnowledgeBaseConfig {
 
         public String getLocation() {
             return location;
+        }
+    }
+
+    public static class Catalogue {
+        private String pathPrefix;
+        
+        public void setPathPrefix(String pathPrefix) {
+            this.pathPrefix = pathPrefix;
+        }
+
+        public String getPathPrefix() {
+            return pathPrefix;
         }
     }
 }

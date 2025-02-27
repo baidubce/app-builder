@@ -145,6 +145,7 @@ func (t *KnowledgeBase) DeleteDocument(req DeleteDocumentRequest) error {
 	return nil
 }
 
+// Deprecated: use DescribeDocuments instead
 func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumentListResponse, error) {
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledge_base/documents")
@@ -198,6 +199,46 @@ func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumen
 		return nil, fmt.Errorf("requestID=%s, content=%s", requestID, string(respData))
 	}
 	return &rsp, nil
+}
+
+func (t *KnowledgeBase) DescribeDocuments(req DescribeDocumentsRequest) (DescribeDocumentsResponse, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DescribeDocuments")
+	if err != nil {
+		return DescribeDocumentsResponse{}, err
+	}
+
+	if req.KnowledgeBaseID == "" && t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return DescribeDocumentsResponse{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return DescribeDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return DescribeDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	rsp := DescribeDocumentsResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return DescribeDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp, nil
 }
 
 // Deprecated: 此功能即将废弃
@@ -850,12 +891,12 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 }
 
 func (t *KnowledgeBase) QueryKnowledgeBase(req QueryKnowledgeBaseRequest) (QueryKnowledgeBaseResponse, error) {
-    // 检查 RankScoreThreshold 是否为 nil，如果是，则设置默认值
-    if req.RankScoreThreshold == nil {
-        defaultThreshold := 0.4
-        req.RankScoreThreshold = &defaultThreshold
-    }
-	
+	// 检查 RankScoreThreshold 是否为 nil，如果是，则设置默认值
+	if req.RankScoreThreshold == nil {
+		defaultThreshold := 0.4
+		req.RankScoreThreshold = &defaultThreshold
+	}
+
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgebases/query")
