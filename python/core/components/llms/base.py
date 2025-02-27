@@ -403,11 +403,11 @@ class CompletionBaseComponent(Component):
         """获取模型配置信息"""
         self.model_config["model"]["name"] = self.model_name
         # 私有化不需要进行地址替换
-        if os.environ.get("PRIVATE_AB", "OFF") == "OFF":
+        if os.environ.get("PRIVATE_AB", "false") == "false":
             model_url = self._check_model_and_get_model_url(self.model_name, self.model_type)
             if model_url:
                 self.model_config["model"]["url"] = model_url
-        else:
+        elif os.environ.get("PRIVATE_AB", "false") == "true":
             if self.model_url:
                 self.model_config["model"]["url"] = self.model_url
 
