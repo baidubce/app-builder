@@ -116,25 +116,23 @@ class MCPComponentServer:
         else:
             return ["user", "assistant"]
 
+    def _get_mimetype_from_bytes(self, data: bytes) -> str:
+        import filetype
+        kind = filetype.guess(data)
+        return kind.mime
+
+
     def _convert_image_to_image_content(
             self, 
             text: Image,
             audience: list[str]
         ) -> ImageContent:
         """convert base64 data, such as image/audio  to ImageContent"""
-
-        def _get_mime_type(image_data: bytes) -> str:
-            """get mime_type of image"""
-            import imghdr
-            image_type = imghdr.what(image_data)
-            mime_type = f"image/{image_type}"
-            return mime_type
-        
         try:
             if text.byte:
                 logging.info("create ImageContent from Image.byte")
                 base64_data = base64.b64encode(text.byte).decode("utf-8")
-                mime_type = _get_mime_type(text.byte)
+                mime_type = self._get_mimetype_from_bytes(text.byte)
             else:
                 logging.info("create ImageContent from Image.url")
                 response = requests.get(text.url)
@@ -143,7 +141,7 @@ class MCPComponentServer:
                 base64_data = base64.b64encode(image).decode('utf-8')
 
                 image_byte = io.BytesIO(image)
-                mime_type = _get_mime_type(image_byte)
+                mime_type = self._get_mimetype_from_bytes(image_byte)
                 
             # create ImageContent
             return ImageContent(
@@ -164,16 +162,11 @@ class MCPComponentServer:
         audience: str = Literal["user", "assistant"]
     ) -> EmbeddedResource:
         """convert audio to EmebeddedResource"""
-        def detect_audio_type(data: bytes) -> str:
-            import filetype
-            kind = filetype.guess(data)
-            return kind.extension if kind else "未知格式"
-
         try:
             if text.byte:
                 logging.info("convert audio to EmbeddedResource from Audio.byte")
                 base64_data = base64.b64encode(text.byte).decode("utf-8")
-                audio_type = detect_audio_type(text.byte)
+                audio_type = self._get_mimetype_from_bytes(text.byte)
 
             else:
                 logging.info("convert audio to EmbeddedResource from Audio.url")
@@ -184,7 +177,7 @@ class MCPComponentServer:
                 base64_data = base64.b64encode(response.content).decode('utf-8')
                 # detect audio type
                 audio_byte = io.BytesIO(response.content)
-                audio_type = detect_audio_type(audio_byte)
+                audio_type = self._get_mimetype_from_bytes(audio_byte)
                 
             # create EmbeddedResource
             return EmbeddedResource(
@@ -192,7 +185,7 @@ class MCPComponentServer:
                 resource=BlobResourceContents(
                     blob=base64_data,
                     uri=text.url,
-                    mimeType="audio/" + audio_type,
+                    mimeType=audio_type
                 ),
                 annotations=Annotations(
                     audience=audience
@@ -214,7 +207,7 @@ class MCPComponentServer:
             resource=TextResourceContents(
                 uri=unquote(text.doc_id),
                 text=text.content,
-                mimeType="references/" + text.source
+                mimeType="text/plain"
             ),
             annotations=Annotations(
                 audience=audience
@@ -255,9 +248,6 @@ class MCPComponentServer:
                     )
                 )
                 output.append(text_output)
-            elif type == "audio":
-                audio_output = self._convert_audio_to_embedded_resource(text, audience)
-                output.append(audio_output) 
             else:
                 match type:
                     case "image":
@@ -269,10 +259,12 @@ class MCPComponentServer:
                             audience
                         )
                         output.append(reference_output)
-                iter_output = self._convert_component_output_to_text_content(iter.content[0], audience)
+                    case "audio":
+                        audio_output = self._convert_audio_to_embedded_resource(text, audience)
+                        output.append(audio_output)
+                iter_output = self._convert_component_output_to_text_content(iter, audience)
                 output.append(iter_output)
         output = _convert_to_content(output)
-        logging.info(f"output: {output}")
         return output
 
 
@@ -347,14 +339,15 @@ class MCPComponentServer:
 if __name__ == "__main__":
     from appbuilder.modelcontextprotocol.server import MCPComponentServer
     server = MCPComponentServer("AI Services")
-    from appbuilder.core.components.v2 import Translation
 
+    from appbuilder.core.components.v2 import Translation
+    from appbuilder.core.components.v2 import Text2Image
     init_args = {
         "model": "ERNIE-4.0-8K",
         "secret_key": 'bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd'
     }
     server.add_appbuilder_official_tool(Translation, init_args)
-    
+    server.add_appbuilder_official_tool(Text2Image, init_args)
 
     # Add custom tool
     @server.tool()
@@ -367,7 +360,7 @@ if __name__ == "__main__":
     def get_greeting(name: str) -> str:
         """Get a personalized greeting"""
         return f"Hello, {name}!"
-
+    
     server.run()
 
 
