@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import appbuilder
-from appbuilder.core.component import Component, ComponentOutput
+from appbuilder.core.component import Component, Image, Audio, References, Content
 from appbuilder.core._exception import *
 from typing import Any, Literal
 from collections.abc import Generator
@@ -31,7 +31,10 @@ try:
     from mcp.types import (
         ImageContent,
         TextContent,
-        EmbeddedResource
+        EmbeddedResource,
+        TextResourceContents,
+        BlobResourceContents,
+        Annotations
     )
 except ImportError:
     raise ImportError(
@@ -102,122 +105,166 @@ class MCPComponentServer:
         """
         return self.mcp.resource(*args, **kwargs)
 
-    def _get_mime_type(self, type, image_data: bytes) -> str:
-        """get mime_type of image"""
-        import imghdr
-        image_type = imghdr.what(image_data)
-        mime_type = f"image/{image_type}"
-        return mime_type
+    def _convert_visible_scope_to_audience(
+        self,
+        visible_scope: str
+    ) -> list[str]:
+        if visible_scope == "llm":
+            return ["assistant"]
+        elif visible_scope == "user":
+            return ["user"]
+        else:
+            return ["user", "assistant"]
 
-    def _convert_image(
+    def _get_mimetype_from_bytes(self, data: bytes) -> str:
+        import filetype
+        kind = filetype.guess(data)
+        return kind.mime
+
+
+    def _convert_image_to_image_content(
             self, 
-            result: ComponentOutput
+            text: Image,
+            audience: list[str]
         ) -> ImageContent:
         """convert base64 data, such as image/audio  to ImageContent"""
-        type = result.content[0].type
-        text = result.content[0].text
-        model_config = {"original": result}
         try:
             if text.byte:
-                logging.info("create ImageContent from text.byte")
-                data = text.byte
-                mime_type = self._get_mime_type(type, data)
-                return ImageContent(
-                    type="image",
-                    data=data,
-                    mimeType=mime_type,
-                    model_config=model_config
-                )
+                logging.info("create ImageContent from Image.byte")
+                base64_data = base64.b64encode(text.byte).decode("utf-8")
+                mime_type = self._get_mimetype_from_bytes(text.byte)
             else:
-                logging.info("create ImageContent from text.url")
-                # get image data
+                logging.info("create ImageContent from Image.url")
                 response = requests.get(text.url)
                 response.raise_for_status()
-                bytes = response.content
-                # convert to base64
-                image_base64 = base64.b64encode(bytes).decode('utf-8')
+                image = response.content
+                base64_data = base64.b64encode(image).decode('utf-8')
 
-                # get mimeType
-                image_data = io.BytesIO(bytes)
-                mime_type = self._get_mime_type(type, image_data)
+                image_byte = io.BytesIO(image)
+                mime_type = self._get_mimetype_from_bytes(image_byte)
                 
-                # create ImageContent
-                return ImageContent(
-                    type="image",
-                    data=image_base64,
-                    mimeType=mime_type,
-                    model_config=model_config
+            # create ImageContent
+            return ImageContent(
+                type="image",
+                data=base64_data,
+                mimeType=mime_type,
+                annotations=Annotations(
+                    audience=audience
                 )
+            )
         except Exception as e:
-            logging.error("failed create ImageContent")
+            logging.error("failed convet image to ImageContent")
             raise e
 
-    def _convert_other_base64(
-        result: ComponentOutput
+    def _convert_audio_to_embedded_resource(
+        self,
+        text: Audio,
+        audience: str = Literal["user", "assistant"]
     ) -> EmbeddedResource:
-        text = result.content[0].text
-        model_config = {"original": result}
+        """convert audio to EmebeddedResource"""
         try:
             if text.byte:
-                logging.info("create ImageContent from text.byte")
-                return EmbeddedResource(
-                    type="resource", 
-                    resource=text.byte, 
-                    model_config=model_config
-                )
+                logging.info("convert audio to EmbeddedResource from Audio.byte")
+                base64_data = base64.b64encode(text.byte).decode("utf-8")
+                audio_type = self._get_mimetype_from_bytes(text.byte)
+
             else:
-                logging.info("create EmbeddedResource from text.url")
+                logging.info("convert audio to EmbeddedResource from Audio.url")
                 # get data
                 response = requests.get(text.url)
                 response.raise_for_status()
-                bytes = response.content
                 # convert to base64
-                image_base64 = base64.b64encode(bytes).decode('utf-8')
+                base64_data = base64.b64encode(response.content).decode('utf-8')
+                # detect audio type
+                audio_byte = io.BytesIO(response.content)
+                audio_type = self._get_mimetype_from_bytes(audio_byte)
                 
-                # create ImageContent
-                return EmbeddedResource(
-                    type="resource",
-                    resource=image_base64,
-                    model_config=model_config
+            # create EmbeddedResource
+            return EmbeddedResource(
+                type="resource",
+                resource=BlobResourceContents(
+                    blob=base64_data,
+                    uri=text.url,
+                    mimeType=audio_type
+                ),
+                annotations=Annotations(
+                    audience=audience
                 )
+            )
         except Exception as e:
-            logging.error("failed to create EmbeddedResource")
+            logging.error("failed to convert audio to EmbeddedResource")
             raise e
+        
+    def _convert_reference_to_embedded_resource(
+        self,
+        text: References,
+        audience: str = Literal["user", "assistant"]
+    ) -> EmbeddedResource:
+        """convert reference to EmbeddedResource"""
+        from urllib.parse import unquote
+        return EmbeddedResource(
+            type="resource",
+            resource=TextResourceContents(
+                uri=unquote(text.doc_id),
+                text=text.content,
+                mimeType="text/plain"
+            ),
+            annotations=Annotations(
+                audience=audience
+            )
+        )
 
+    def _convert_component_output_to_text_content(
+        self,
+        text: Content,
+        audience: str = Literal["user", "assistant"]
+    ) -> TextContent:
+        """convert ComponentOutput to json_str"""
+        return TextContent(
+            type="text",
+            text=text.model_dump_json(),
+            annotations=Annotations(
+                audience=audience
+            )
+        )
 
     def _convert_generator(
         self,
         result: Generator
     ) -> list[TextContent|ImageContent|EmbeddedResource]:
-        """convert geneartor to list of TextContent and ImageContent"""
+        """convert geneartor to list of TextContent, ImageContent and EmbeddedResource"""
         output = []
         for iter in result:
-            model_config = {"original": iter}
-            text_type = iter.content[0].type
+            type = iter.content[0].type
             text = iter.content[0].text
-            match text_type:
-                case "image":
-                    image_iter = self._convert_image(iter)
-                    output.append(image_iter)
-                case "audio":
-                    audio_iter = self._convert_other_base64(iter)
-                    output.append(audio_iter)
-                case "text":
-                    text_iter = TextContent(
-                        type="text", 
-                        text=text.info, 
-                        model_config=model_config
+            visible_scope = iter.content[0].visible_scope
+            audience = self._convert_visible_scope_to_audience(visible_scope)
+            if type in ["text", "oral_text"]:
+                text_output = TextContent(
+                    type="text", 
+                    text=iter.content[0].text.info, 
+                    annotations=Annotations(
+                        audience=audience
                     )
-                    output.append(text_iter)
-                case _:
-                    other_iter = TextContent(
-                        type="text", 
-                        text=iter, 
-                        model_config=model_config
-                    )
-                    output.append(other_iter)
+                )
+                output.append(text_output)
+            else:
+                match type:
+                    case "image":
+                        image_output = self._convert_image_to_image_content(text, audience)
+                        output.append(image_output)
+                    case "references":
+                        reference_output = self._convert_reference_to_embedded_resource(
+                            text,
+                            audience
+                        )
+                        output.append(reference_output)
+                    case "audio":
+                        audio_output = self._convert_audio_to_embedded_resource(text, audience)
+                        output.append(audio_output)
+                iter_output = self._convert_component_output_to_text_content(iter, audience)
+                output.append(iter_output)
         output = _convert_to_content(output)
-        logging.info(f"output: {output}")
         return output
 
 
@@ -227,8 +274,6 @@ class MCPComponentServer:
 
         Args:
             component (Component): The component instance to add
-            url (str, optional): Custom URL to override component's default URL. 
-                               If not provided, uses /{component.name}/
         """
 
         # Register each manifest as a separate tool
@@ -264,71 +309,23 @@ class MCPComponentServer:
             # Register with FastMCP using name and description from manifest
             self.mcp.tool(name=tool_name, description=tool_decription)(tool_fn)
 
-    def init_component(
+    def add_appbuilder_official_tool(
             self,
-            import_path: str = "appbuilder.core.components.v2.",
-            component_init_args: dict[str, Any] = {},
-            component_name: str = "",
-        ) -> Component:
-        """init component
-
-        Args:
-            import_path (str, optional): path to import component. Defaults to "appbuilder.components.v2.".
-            component_init_args (dict[str, Any], optional): init args. Defaults to {}.
-            component_name (str, optional): component name to init. Defaults to "".
-
-        Returns:
-            Component: object of Component
-        """
-        if not component_name:
-            logging.error("No component_name specified")
-            raise InvalidRequestArgumentError("No component_name specified")
-        
-        try:
-            import_res = eval(import_path + component_name)
-        except Exception as e:
-            logging.error(f"import component error: {e}")
-            raise ImportError(f"import component error: {e}")
-
-        try:
-            component = import_res(**component_init_args)
-        except Exception as e:
-            logging.error(f"init component error: {e}")
-            raise Exception(f"Failed to initialize component {component_name}: {str(e)}")
-        return component
-
-    def add_AppBuilder_tool(
-            self,
-            import_path: str = "appbuilder.core.components.v2.",
-            component_list: list[str] = [],
+            component_cls: Component,
             init_args: dict[str, Any] = {},
         ):
-        """add AppBuilder tool as MCP server"""
-        
-        for component_name in component_list:
-            try: 
-                # 1. get component init args
-                if component_name not in init_args:
-                    component_init_args = {}
-                else:
-                    component_init_args = init_args[component_name]
+        """add AppBuilder official tool as MCP server"""
+        component_name = component_cls.__name__
+        logging.info(f"init {component_name} with args: {init_args}")
 
-                logging.info(f"init {component_name} with args: {component_init_args}")
-                
-                # 2. init component
-                component = self.init_component(
-                    import_path=import_path,
-                    component_name=component_name,
-                    component_init_args=component_init_args
-                )
-                
-                # 3. add component
-                self.add_component(component)
-                logging.info(f"component: {component_name} has been added")
-                
-            except Exception as e:
-                logging.exception(f"Failed to add component {component_name}: {str(e)}")
-                continue
+        try:    
+            component = component_cls(**init_args)
+            self.add_component(component)
+            logging.info(f"component: {component_name} has been added")
+            
+        except Exception as e:
+            logging.exception(f"Failed to add component {component_name}: {str(e)}")
+            raise e
 
     def run(self, transport: Literal["stdio", "sse"] = "stdio") -> None:
         """Run the FastMCP server. Note this is a synchronous function.
@@ -339,41 +336,32 @@ class MCPComponentServer:
         self.mcp.run()
 
 
-def main():
+if __name__ == "__main__":
     from appbuilder.modelcontextprotocol.server import MCPComponentServer
-    from appbuilder.core.components.v2 import __V2_COMPONENTS__
     server = MCPComponentServer("AI Services")
-    model_config = {"model": "ERNIE-4.0-8K"}
+
+    from appbuilder.core.components.v2 import Translation
+    from appbuilder.core.components.v2 import Text2Image
     init_args = {
-        "Translation": model_config,
-        "AnimalRecognition": model_config,
-        "Text2Image": model_config,
-        "QRcodeOCR": model_config
+        "model": "ERNIE-4.0-8K",
+        "secret_key": 'bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd'
     }
-    
-    server.add_AppBuilder_tool(
-        import_path="appbuilder.core.components.v2.",
-        component_list=list(init_args.keys()),
-        init_args=init_args
-    )
-    
-    # # Add custom tool
-    # @server.tool()
-    # def add(a: int, b: int) -> int:
-    #     """Add two numbers"""
-    #     return a + b
+    server.add_appbuilder_official_tool(Translation, init_args)
+    server.add_appbuilder_official_tool(Text2Image, init_args)
 
-    # # Add dynamic resource
-    # @server.resource("greeting://{name}")
-    # def get_greeting(name: str) -> str:
-    #     """Get a personalized greeting"""
-    #     return f"Hello, {name}!"
+    # Add custom tool
+    @server.tool()
+    def add(a: int, b: int) -> int:
+        """Add two numbers"""
+        return a + b
 
+    # Add dynamic resource
+    @server.resource("greeting://{name}")
+    def get_greeting(name: str) -> str:
+        """Get a personalized greeting"""
+        return f"Hello, {name}!"
+    
     server.run()
 
 
-if __name__ == "__main__":
-    import os
-    os.environ["APPBUILDER_TOKEN"] = 'bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd'
-    main()
     
