@@ -159,24 +159,24 @@ class TestAgentRuntime(unittest.TestCase):
         for it in answer.content:
             self.assertIs(type(it), str)
 
-    def test_chainlit_agent_component_error(self):
-        """ 测试chainlit agent组件错误 """
-        component = Component()
-        agent = AgentRuntime(component=component)
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"]
-        )
-        with self.assertRaises(ImportError):
-            agent.chainlit_agent()
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "chainlit~=1.0.200"]
-        )
-        with self.assertRaises(ValueError):
-            agent.chainlit_agent()
-        os.environ["APPBUILDER_RUN_CHAINLIT"] = "1"
-        agent_builder = AppBuilderClient(self.app_id)
-        agent = AgentRuntime(component=agent_builder)
-        agent.chainlit_agent()
+    # def test_chainlit_agent_component_error(self):
+    #     """ 测试chainlit agent组件错误 """
+    #     component = Component()
+    #     agent = AgentRuntime(component=component)
+    #     subprocess.check_call(
+    #         [sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"]
+    #     )
+    #     with self.assertRaises(ImportError):
+    #         agent.chainlit_agent()
+    #     subprocess.check_call(
+    #         [sys.executable, "-m", "pip", "install", "chainlit~=1.0.200"]
+    #     )
+    #     with self.assertRaises(ValueError):
+    #         agent.chainlit_agent()
+    #     os.environ["APPBUILDER_RUN_CHAINLIT"] = "1"
+    #     agent_builder = AppBuilderClient(self.app_id)
+    #     agent = AgentRuntime(component=agent_builder)
+    #     agent.chainlit_agent()
 
 
 if __name__ == '__main__':

@@ -41,7 +41,7 @@ class TestAgentRuntime(unittest.TestCase):
             msg = client.run(
                 conversation_id=conversation_id,
                 query="latitude:51.5，longtitude:-0.12",
-                tools=mcp_client.appbuilder_tools,
+                tools=mcp_client.tools,
             )
 
             event = msg.content.events[-1]
