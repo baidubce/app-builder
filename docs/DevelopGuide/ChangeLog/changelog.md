@@ -84,3 +84,7 @@
   * 升级KnowledgebaseClient，同步更新OpenAPI的入参
   * 升级KnowledgebaseClient，同步更新知识库创建入参
   * 升级ComponentClient，同步更新OpenAPI的出参
+* **2025.02.28 v1.0.3版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.3)
+  * AppBuilderClient新增点踩点赞功能支持
+  * 知识库支持配置目录、切片模糊搜索、文档状态信息等功能升级
+  * MCP协议支持
