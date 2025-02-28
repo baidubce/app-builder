@@ -268,9 +268,6 @@ type DescribeDocumentResponse struct {
 	DisplayStatus string               `json:"displayStatus"`
 	WordCount     int64                `json:"wordCount"`
 	Enabled       bool                 `json:"enabled"`
-	Extension     string               `json:"extension"`
-	Size          int64                `json:"size,omitempty"`
-	Url           string               `json:"url,omitempty"`
 	Meta          DescribeDocumentMeta `json:"meta"`
 }
 
