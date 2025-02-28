@@ -31,6 +31,14 @@ class TestComponentInit(unittest.TestCase):
         os.environ["APPBUILDER_TOKEN"] = "abc"
         component.set_secret_key_and_gateway()
         component.tool_eval()
+
+    def test_private_llm_component_init(self):
+        os.environ["PRIVATE_AB"] = "true"
+        component = MockComponent()
+        component.set_model_info("test_model_name", "test_model_url")
+        os.environ["APPBUILDER_TOKEN"] = "abc"
+        component.set_secret_key_and_gateway()
+        component.tool_eval()
         
 if __name__ == '__main__':
     unittest.main()

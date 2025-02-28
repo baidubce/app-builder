@@ -18,6 +18,7 @@ from appbuilder.core.component import Component
 from appbuilder.core.component import ComponentOutput
 from appbuilder.core.components.v2 import TreeMind
 
+@unittest.skip("测试API超限，暂时跳过")
 class TestTreeMindComponent(unittest.TestCase):
     def setUp(self):
         """

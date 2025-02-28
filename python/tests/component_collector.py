@@ -20,6 +20,7 @@ SKIP_COMPONENTS = [
 
 V2_SKIP_COMPONENTS = [
     "ASR",
+    "TreeMind"
 ]
 
 # 白名单中的组件因历史原因，检查失败，但可以正常使用，因此加入白名单

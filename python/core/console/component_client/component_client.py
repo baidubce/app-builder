@@ -47,7 +47,7 @@ class ComponentClient(Component):
     ) -> Message:
         """ 组件运行
         Args:
-            component_id (str): 组件ID
+            component_id (str): 工作流组件ID或官方组件名称
             sys_origin_query (str): 用户输入的原始查询语句
             version (str): 组件版本号
             action (str): 组件动作
