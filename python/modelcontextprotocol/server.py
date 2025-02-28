@@ -337,7 +337,7 @@ class MCPComponentServer:
 
 
 if __name__ == "__main__":
-    # from appbuilder.modelcontextprotocol.server import MCPComponentServer
+    from appbuilder.modelcontextprotocol.server import MCPComponentServer
     server = MCPComponentServer("AI Services")
 
     from appbuilder.core.components.v2 import Translation
