@@ -119,15 +119,6 @@ class DescribeDocument(BaseModel):
         description="文档状态。available：可用，queuing：排队中，notConfigured：数据待配置，parsing：解析中，indexing：处理中，parseError：解析失败，error：处理失败, retrainingSegmentUnusable：重建切片中，切片不可用, retrainErrSegmentUsable：重建切片错误，旧切片可用",
     )
     meta: Optional[DescribeDocumentMeata] = Field(..., description="文档元信息，包括source、fileId")
-    extension: str = Field(
-        None, description="文件的扩展名,当通过url上传文档时，该值为url"
-    )
-    size: Optional[int] = Field(
-        None, description="文件大小,当通过url上传文档时，该值为null"
-    )
-    url: Optional[str] = Field(
-        None, description="文件下载地址。当通过url上传文档时，该值为原始下载链接"
-    )
 
 
 class DescribeDocumentsResponse(BaseModel):

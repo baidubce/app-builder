@@ -7,9 +7,6 @@ public class DocumentDescribeResponse {
     private String displayStatus;
     private Integer wordCount;
     private Boolean enabled;
-    private String extension;
-    private Integer size;
-    private String url;
     private Meta meta;
 
     public String getId() {
@@ -58,30 +55,6 @@ public class DocumentDescribeResponse {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public Meta getMeta() {
