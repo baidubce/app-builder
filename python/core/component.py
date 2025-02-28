@@ -92,7 +92,7 @@ class References(BaseModel, extra='allow'):
 class Image(BaseModel, extra='allow'):
     filename: str = Field(default="", description="图片名称")
     url: str = Field(default="", description="图片url")
-    byte: Optional[bytes] = Field(default=b'', description="图片二进制数据")
+    base64: Optional[str] = Field(default="", description="图片base64数据")
 
 
 class Chart(BaseModel, extra='allow'):
@@ -103,7 +103,7 @@ class Chart(BaseModel, extra='allow'):
 class Audio(BaseModel, extra='allow'):
     filename: str = Field(default="", description="音频名称")
     url: str = Field(default="", description="音频url")
-    byte: Optional[bytes] = Field(default=b'', description="音频二进制数据")
+    base64: Optional[str] = Field(default="", description="音频base64数据")
 
 
 class PlanStep(BaseModel, extra='allow'):
