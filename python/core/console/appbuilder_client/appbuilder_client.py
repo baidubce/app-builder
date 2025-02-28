@@ -251,7 +251,7 @@ class AppBuilderClient(Component):
         query: str = "",
         file_ids: list = [],
         stream: bool = False,
-        tools: list[Union[data_class.Tool, Manifest]] = None,
+        tools: list[Union[data_class.Tool, Manifest, data_class.MCPTool]] = None,
         tool_outputs: list[data_class.ToolOutput] = None,
         tool_choice: data_class.ToolChoice = None,
         end_user_id: str = None,
@@ -265,7 +265,7 @@ class AppBuilderClient(Component):
             conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
             file_ids(list[str]): 文件ID列表
             stream (bool): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
-            tools(list[Union[data_class.Tool,Manifest]]): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
+            tools(list[Union[data_class.Tool,Manifest,data_class.MCPTool]]): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
             tool_outputs(list[data_class.ToolOutput]): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
             tool_choice(data_class.ToolChoice): 控制大模型使用组件的方式，默认为None
             end_user_id (str): 用户ID，用于区分不同用户
@@ -285,6 +285,12 @@ class AppBuilderClient(Component):
             raise ValueError(
                 "AppBuilderClient Run API: query and tool_outputs cannot both be empty"
             )
+
+        if tools:
+            formatted_tools = [
+                data_class.ToAppBuilderTool(tool) for tool in tools
+            ]
+            tools = formatted_tools
 
         req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
@@ -368,7 +374,7 @@ class AppBuilderClient(Component):
         conversation_id: str,
         query: str = "",
         file_ids: list = [],
-        tools: list[Union[data_class.Tool, Manifest]] = None,
+        tools: list[Union[data_class.Tool, Manifest, data_class.MCPTool]] = None,
         stream: bool = False,
         event_handler=None,
         action=None,
@@ -380,11 +386,10 @@ class AppBuilderClient(Component):
             conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
             query (str): 查询字符串
             file_ids (list): 文件ID列表
-            tools(list[Union[data_class.Tool,Manifest]], 可选): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
+            tools(list[Union[data_class.Tool,Manifest,data_class.MCPTool]], 可选): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
             stream (bool): 是否流式响应
             event_handler (EventHandler): 事件处理器
             action(data_class.Action) 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
-
             kwargs: 其他参数
 
         Returns:

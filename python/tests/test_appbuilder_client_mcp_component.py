@@ -41,7 +41,7 @@ class TestAgentRuntime(unittest.TestCase):
             msg = client.run(
                 conversation_id=conversation_id,
                 query="将“测试效果”翻译成英文",
-                tools=mcp_client.appbuilder_tools,
+                tools=mcp_client.tools,
             )
 
             event = msg.content.events[-1]

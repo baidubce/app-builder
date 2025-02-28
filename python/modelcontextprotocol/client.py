@@ -1,6 +1,4 @@
 # Based on https://modelcontextprotocol.io/quickstart/client
-# adapted to AppBuilderClient
-# add multi servers support
 import sys
 from typing import Optional
 from contextlib import AsyncExitStack
@@ -9,14 +7,12 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from appbuilder.utils.logger_util import logger
 
-
 class MCPClient:
     def __init__(self):
         # Initialize session and client objects
         self.session: Optional[ClientSession] = None
         self.exit_stack = AsyncExitStack()
         self.tools = None
-        self.appbuilder_tools = []
         self.sessions={}
         self.tool_to_server = {}
 
@@ -62,19 +58,6 @@ class MCPClient:
             if tool.name in self.tool_to_server:
                 raise ValueError(f"Duplicate tool name: {tool.name}")
             self.tool_to_server[tool.name] = cmd_key
-
-        for tool in response.tools:
-            self.appbuilder_tools.append(
-                {
-                    "type": "function",
-                    "function": {
-                        "name": f"{tool.name}",
-                        "description": f"{tool.description}",
-                        "parameters": tool.inputSchema,
-                    },
-                }
-            )
-        logger.debug("AppBuilder tools: %s", self.appbuilder_tools)
 
     async def call_tool(self, tool_name, tool_args):
         server_cmd = self.tool_to_server.get(tool_name)
