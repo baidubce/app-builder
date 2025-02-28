@@ -182,8 +182,8 @@ image_schema["properties"]["text"] = {
     "url": {
       "type": "string"
     },
-    "byte": {
-        "format": "bytes"
+    "base64": {
+      "type": "string"
     }
   },
   "required": ["filename", "url"]
@@ -223,8 +223,8 @@ audio_schema["properties"]["text"] = {
     "url": {
       "type": "string"
     },
-    "byte": {
-        "format": "bytes"
+    "base64": {
+      "type": "string"
     }
   },
   "required": ["filename", "url"]
