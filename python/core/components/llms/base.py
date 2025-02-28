@@ -297,7 +297,7 @@ class CompletionBaseComponent(Component):
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
         super(CompletionBaseComponent, self).set_secret_key_and_gateway(
                 secret_key=secret_key, gateway=gateway)
-        # 私有化不用重新获取列表
+        # 不用重新获取列表
         if os.environ.get("PRIVATE_AB", "OFF") == "OFF":
             self.__class__.model_info = ModelInfo(client=self.http_client)
 
@@ -402,7 +402,7 @@ class CompletionBaseComponent(Component):
     def get_model_config(self, model_config_inputs: ModelArgsConfig, other_params: dict = {}):
         """获取模型配置信息"""
         self.model_config["model"]["name"] = self.model_name
-        # 私有化不需要进行地址替换
+        # 不需要进行地址替换
         if os.environ.get("PRIVATE_AB", "false") == "false":
             model_url = self._check_model_and_get_model_url(self.model_name, self.model_type)
             if model_url:
