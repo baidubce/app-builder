@@ -129,19 +129,19 @@ class MCPComponentServer:
         ) -> ImageContent:
         """convert base64 data, such as image/audio  to ImageContent"""
         try:
-            if text.byte:
+            if text.base64:
                 logging.info("create ImageContent from Image.byte")
-                base64_data = base64.b64encode(text.byte).decode("utf-8")
-                mime_type = self._get_mimetype_from_bytes(text.byte)
+                base64_data = text.base64
+                image_byte = io.BytesIO(base64.b64decode(base64_data))
             else:
                 logging.info("create ImageContent from Image.url")
                 response = requests.get(text.url)
                 response.raise_for_status()
                 image = response.content
                 base64_data = base64.b64encode(image).decode('utf-8')
-
                 image_byte = io.BytesIO(image)
-                mime_type = self._get_mimetype_from_bytes(image_byte)
+            
+            mime_type = self._get_mimetype_from_bytes(image_byte)
                 
             # create ImageContent
             return ImageContent(
@@ -163,11 +163,10 @@ class MCPComponentServer:
     ) -> EmbeddedResource:
         """convert audio to EmebeddedResource"""
         try:
-            if text.byte:
+            if text.base64:
                 logging.info("convert audio to EmbeddedResource from Audio.byte")
-                base64_data = base64.b64encode(text.byte).decode("utf-8")
-                audio_type = self._get_mimetype_from_bytes(text.byte)
-
+                base64_data = text.base64
+                audio_byte = io.BytesIO(base64.b64decode(base64_data))
             else:
                 logging.info("convert audio to EmbeddedResource from Audio.url")
                 # get data
@@ -175,9 +174,10 @@ class MCPComponentServer:
                 response.raise_for_status()
                 # convert to base64
                 base64_data = base64.b64encode(response.content).decode('utf-8')
-                # detect audio type
                 audio_byte = io.BytesIO(response.content)
-                audio_type = self._get_mimetype_from_bytes(audio_byte)
+
+            # detect audio type
+            audio_type = self._get_mimetype_from_bytes(audio_byte)
                 
             # create EmbeddedResource
             return EmbeddedResource(
@@ -268,7 +268,7 @@ class MCPComponentServer:
         return output
 
 
-    def add_component(self, component: Component) -> None:
+    def convert_component_to_tool(self, component: Component) -> None:
         """
         Add an Appbuilder Component and register its tools under the component's URL namespace.
 
@@ -309,7 +309,7 @@ class MCPComponentServer:
             # Register with FastMCP using name and description from manifest
             self.mcp.tool(name=tool_name, description=tool_decription)(tool_fn)
 
-    def add_appbuilder_official_tool(
+    def add_component(
             self,
             component_cls: Component,
             init_args: dict[str, Any] = {},
@@ -320,7 +320,7 @@ class MCPComponentServer:
 
         try:    
             component = component_cls(**init_args)
-            self.add_component(component)
+            self.convert_component_to_tool(component)
             logging.info(f"component: {component_name} has been added")
             
         except Exception as e:
@@ -337,7 +337,7 @@ class MCPComponentServer:
 
 
 if __name__ == "__main__":
-    from appbuilder.modelcontextprotocol.server import MCPComponentServer
+    # from appbuilder.modelcontextprotocol.server import MCPComponentServer
     server = MCPComponentServer("AI Services")
 
     from appbuilder.core.components.v2 import Translation
@@ -346,8 +346,8 @@ if __name__ == "__main__":
         "model": "ERNIE-4.0-8K",
         "secret_key": 'bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd'
     }
-    server.add_appbuilder_official_tool(Translation, init_args)
-    server.add_appbuilder_official_tool(Text2Image, init_args)
+    server.add_component(Translation, init_args)
+    server.add_component(Text2Image, init_args)
 
     # Add custom tool
     @server.tool()
