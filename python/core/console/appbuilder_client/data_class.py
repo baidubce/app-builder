@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from pydantic import BaseModel
-from pydantic import Field
+from pydantic import Field, ValidationError
 from typing import Union
 from typing import Optional
 from appbuilder.core.manifest.models import Manifest
@@ -29,6 +29,18 @@ class Tool(BaseModel):
     type: str = "function"
     function: Function = Field(..., description="工具信息")
 
+class MCPTool(BaseModel):
+    name: str = Field(..., description="工具名称")
+    description: str = Field(..., description="工具描述")
+    inputSchema: dict = Field(..., description="工具参数, json_schema格式")
+
+def ToAppBuilderTool(tool):
+    if "type" in tool and tool["type"]:
+        return Tool(**tool)
+    if hasattr(tool, 'inputSchema') and hasattr(tool, 'inputSchema'):
+        return Tool(type="function", function=Function(name=tool.name, description=tool.description, parameters=tool.inputSchema))
+    else:
+        return tool
 
 class ToolOutput(BaseModel):
     tool_call_id: str = Field(..., description="工具调用ID")
