@@ -75,5 +75,27 @@ class TestQueryRewriteComponent(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.node(message=msg) 
 
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        params = {
+            'name': 'query_rewrite',
+            'query': ['我应该怎么办理护照？', '您可以查询官网或人工咨询']
+        }
+        result = self.node.tool_eval(streaming=True, **params)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+        result = self.node.tool_eval(streaming=False, **params)
+        res = [item for item in result]
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            params = {
+                'name': 'query_rewrite'
+            }
+            result = self.node.tool_eval(streaming=True, **params)
+            next(result)
+
+
 if __name__ == '__main__':
     unittest.main()

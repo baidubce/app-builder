@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from appbuilder.core.components.llms.base import CompletionBaseComponent
+from appbuilder.core.message import Message
+from appbuilder.core.component import ComponentArguments
+from pydantic import BaseModel, Field
 from typing import Optional
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 from .base import TagExtractionArgs
 
@@ -37,6 +40,25 @@ class TagExtraction(CompletionBaseComponent):
     name = "tag_extraction"
     version = "v1"
     meta = TagExtractionArgs
+
+    manifests = [
+        {
+            "name": "tag_extraction",
+            "description": "标签抽取组件，基于生成式大模型进行关键标签的抽取。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "输入消息，用于模型的主要输入内容"
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
 
     def __init__(
         self, 
@@ -80,3 +102,23 @@ class TagExtraction(CompletionBaseComponent):
             obj:`Message`: 模型运行后的输出消息。
         """
         return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p)
+
+    @components_run_stream_trace
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        traceid = kwargs.get("traceid")
+        query = kwargs.get("query", None)
+        if not query:
+            raise ValueError("param `query` is required")
+        msg = Message(query)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, stream=False, temperature=temperature, top_p=top_p, request_id=traceid)
+
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)
