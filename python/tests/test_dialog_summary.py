@@ -65,7 +65,8 @@ class TestDialogSummary(unittest.TestCase):
         res = [item for item in result]
         self.assertNotEqual(len(res), 0)
         result = self.node.tool_eval(streaming=False, **params)
-        self.assertNotEqual(len(result), 0)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
 
 if __name__ == '__main__':
     unittest.main()

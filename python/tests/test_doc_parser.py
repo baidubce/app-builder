@@ -80,14 +80,15 @@ class TestDocParser(unittest.TestCase):
         """测试 tool 方法对有效请求的处理。"""
         parser = appbuilder.DocParser()
         params = {
-            'file_urls': {'test.pdf': self.test_pdf_path},
+            'file_urls': {'test.pdf': 'http://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/test.pdf?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-01-25T12%3A56%3A15Z/-1/host/b54178fea9be115eafa2a8589aeadfcfaeba20d726f434f871741d4a6cb0c70d'},
             'file_names': 'test.pdf'
         }
         result = parser.tool_eval(streaming=True, **params)
         res = [item for item in result]
         self.assertNotEqual(len(res), 0)
         result = parser.tool_eval(streaming=False, **params)
-        self.assertNotEqual(len(result), 0)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
 
 
 if __name__ == '__main__':
