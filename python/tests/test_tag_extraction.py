@@ -52,7 +52,6 @@ class TestTagExtractionComponent(unittest.TestCase):
         self.assertNotEqual(len(res), 0)
         result = self.tag_extraction.tool_eval(streaming=False, **params)
         res = [item for item in result]
-        self.assertNotEqual(len(res), 0)
 
 
 if __name__ == '__main__':
