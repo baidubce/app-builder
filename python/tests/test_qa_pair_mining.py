@@ -60,6 +60,7 @@ class TestQAPairMiningComponent(unittest.TestCase):
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
         params = {
+            'name': 'qa_pair_mining',
             'query': '2017年，工商银行根据外部宏观环境变化...'
         }
         result = self.node.tool_eval(streaming=True, **params)

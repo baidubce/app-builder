@@ -79,6 +79,7 @@ class TestMRC(unittest.TestCase):
         有效的身份证明原件和复印件；2、残疾人证原件和复印件；3、驾驶证原件和复印件；
         4、车辆行驶证原件和复印件；5、有效的机动车交强险凭证。"""]
         params = {
+            'name': 'mrc',
             'query': '残疾人怎么办相关证件',
             'context_list': context_list
         }

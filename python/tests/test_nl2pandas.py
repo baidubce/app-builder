@@ -46,6 +46,7 @@ class TestNl2pandasComponent(unittest.TestCase):
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
         params = {
+            'name': 'nl2pandas',
             'query': '海淀区有哪些学校',
             'table_info': self.table_info
         }

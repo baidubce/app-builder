@@ -78,6 +78,7 @@ class TestQueryRewriteComponent(unittest.TestCase):
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
         params = {
+            'name': 'query_rewrite',
             'query': ['我应该怎么办理护照？', '您可以查询官网或人工咨询']
         }
         result = self.node.tool_eval(streaming=True, **params)

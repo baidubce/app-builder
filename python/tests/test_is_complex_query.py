@@ -57,6 +57,7 @@ class TestIsComplexQueryComponent(unittest.TestCase):
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
         params = {
+            'name': 'is_complex_query',
             'query': '吸塑包装盒在工业化生产和物流运输中分别有什么重要性？'
         }
         result = self.node.tool_eval(streaming=True, **params)
