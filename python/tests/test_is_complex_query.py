@@ -54,6 +54,17 @@ class TestIsComplexQueryComponent(unittest.TestCase):
         with self.assertRaises((ValueError, TypeError)):
             self.node(msg, invalid_param="invalid")
 
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        params = {
+            'query': '吸塑包装盒在工业化生产和物流运输中分别有什么重要性？'
+        }
+        result = self.node.tool_eval(streaming=True, **params)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+        result = self.node.tool_eval(streaming=False, **params)
+        self.assertNotEqual(len(result), 0)
+
 
 if __name__ == '__main__':
     unittest.main()

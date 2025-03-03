@@ -76,6 +76,19 @@ class TestDocParser(unittest.TestCase):
         # 断言解析结果的 para_node_tree 根据配置更改（根据实际情况调整断言）
         self.assertIsNotNone(result.content.pdf_data)
 
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        parser = appbuilder.DocParser()
+        params = {
+            'file_urls': {'test.pdf': self.test_pdf_path},
+            'file_names': 'test.pdf'
+        }
+        result = parser.tool_eval(streaming=True, **params)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+        result = parser.tool_eval(streaming=False, **params)
+        self.assertNotEqual(len(result), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
