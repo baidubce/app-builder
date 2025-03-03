@@ -45,6 +45,7 @@ class TestTagExtractionComponent(unittest.TestCase):
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
         params = {
+            'name': 'tag_extraction'
             'query': '本实用新型公开了一种可利用热能的太阳能光伏光热一体化组件，包括太阳能电池，还包括有吸热板，太阳能电池粘附在吸热板顶面，吸热板内嵌入有热电材料制成的内芯，吸热板底面设置有蛇形管。本实用新型结构紧凑，安装方便，能充分利用太阳能电池散发的热能，具有较高的热能利用率。'
         }
         result = self.tag_extraction.tool_eval(streaming=True, **params)
@@ -52,6 +53,15 @@ class TestTagExtractionComponent(unittest.TestCase):
         self.assertNotEqual(len(res), 0)
         result = self.tag_extraction.tool_eval(streaming=False, **params)
         res = [item for item in result]
+    
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            params = {
+                'name': 'tag_extraction'
+            }
+            result = self.tag_extraction.tool_eval(streaming=True, **params)
+            next(result)
 
 
 if __name__ == '__main__':

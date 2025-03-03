@@ -81,13 +81,30 @@ class TestDocParser(unittest.TestCase):
         parser = appbuilder.DocParser()
         params = {
             'file_urls': {'test.pdf': 'http://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/test.pdf?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-01-25T12%3A56%3A15Z/-1/host/b54178fea9be115eafa2a8589aeadfcfaeba20d726f434f871741d4a6cb0c70d'},
-            'file_names': 'test.pdf'
+            'file_names': ['test.pdf']
         }
         result = parser.tool_eval(streaming=True, **params)
         res = [item for item in result]
         self.assertNotEqual(len(res), 0)
         result = parser.tool_eval(streaming=False, **params)
         res = [item for item in result]
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        parser = appbuilder.DocParser()
+        with self.assertRaises(ValueError):
+            params = {
+                'file_names': ['test.pdf']
+            }
+            result = parser.tool_eval(streaming=True, **params)
+            next(result)
+        
+        with self.assertRaises(ValueError):
+            params = {
+                'file_urls': {'test.pdf': 'http://agi-dev-platform-bos.bj.bcebos.com/ut_appbuilder/test.pdf?authorization=bce-auth-v1/e464e6f951124fdbb2410c590ef9ed2f/2024-01-25T12%3A56%3A15Z/-1/host/b54178fea9be115eafa2a8589aeadfcfaeba20d726f434f871741d4a6cb0c70d'}
+            }
+            result = parser.tool_eval(streaming=True, **params)
+            next(result)
 
 
 if __name__ == '__main__':

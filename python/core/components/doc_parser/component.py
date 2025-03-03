@@ -225,7 +225,7 @@ class DocParser(Component):
         return_raw = kwargs.get("return_raw", False)
         file_names = kwargs.get("file_names", [])
         if not file_names:
-            raise InvalidRequestArgumentError("缺少file_names参数")
+            raise ValueError("缺少file_names参数")
         file_name = file_names[0]
         file_urls = kwargs.get("file_urls", {})
         if len(file_urls) == 0:

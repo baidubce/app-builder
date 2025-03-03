@@ -87,6 +87,15 @@ class TestQueryRewriteComponent(unittest.TestCase):
         result = self.node.tool_eval(streaming=False, **params)
         res = [item for item in result]
 
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            params = {
+                'name': 'query_rewrite'
+            }
+            result = self.node.tool_eval(streaming=True, **params)
+            next(result)
+
 
 if __name__ == '__main__':
     unittest.main()

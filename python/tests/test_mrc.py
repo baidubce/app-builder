@@ -89,5 +89,23 @@ class TestMRC(unittest.TestCase):
         result = self.mrc.tool_eval(streaming=False, **params)
         res = [item for item in result]
 
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            params = {
+                'name': 'mrc',
+                'query': '残疾人怎么办相关证件'
+            }
+            result = self.node.tool_eval(streaming=True, **params)
+            next(result)
+        
+        with self.assertRaises(ValueError):
+            params = {
+                'name': 'mrc',
+                'context_list': context_list
+            }
+            result = self.node.tool_eval(streaming=True, **params)
+            next(result)
+
 if __name__ == '__main__':
     unittest.main()
