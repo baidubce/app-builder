@@ -75,10 +75,15 @@ public class AppBuilderClient extends Component {
      */
     public String uploadLocalFile(String conversationId, String filePath)
             throws IOException, AppBuilderServerException {
-        return innerUploadLocalFile(conversationId, filePath);
+        return innerUploadLocalFile(conversationId, filePath, "");
     }
 
-    private String innerUploadLocalFile(String conversationId, String filePath)
+    public String uploadFile(String conversationId, String filePath, String fileUrl)
+            throws IOException, AppBuilderServerException {
+        return innerUploadLocalFile(conversationId, filePath, fileUrl);
+    }
+
+    private String innerUploadLocalFile(String conversationId, String filePath, String fileUrl)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.UPLOAD_FILE_URL;
         if (this.appID == null || this.appID.isEmpty()) {
@@ -86,7 +91,12 @@ public class AppBuilderClient extends Component {
         }
         MultipartEntityBuilder builder = MultipartEntityBuilder.create()
                 .setMode(HttpMultipartMode.LEGACY).setCharset(StandardCharsets.UTF_8);
-        builder.addBinaryBody("file", new File(filePath));
+
+        if(filePath != null && !filePath.isEmpty()) {
+            builder.addBinaryBody("file", new File(filePath));
+        } else if (fileUrl != null && !fileUrl.isEmpty()) {
+            builder.addTextBody("file_url", fileUrl);
+        }
         builder.addTextBody("app_id", this.appID);
         builder.addTextBody("conversation_id", conversationId);
         builder.addTextBody("scenario", "assistant");

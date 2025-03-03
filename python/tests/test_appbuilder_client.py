@@ -59,6 +59,12 @@ class TestAgentRuntime(unittest.TestCase):
         conversation_id = builder.create_conversation()
         with self.assertRaises(FileNotFoundError):
             builder.upload_local_file(conversation_id=conversation_id, local_file_path='not_exist')
+    
+    def test_upload_file_url(self):
+        file_url = "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad6862cf937c03f8c5260d51c6ae"
+        builder = appbuilder.AppBuilderClient(self.app_id)
+        conversation_id = builder.create_conversation()
+        builder.upload_file(conversation_id=conversation_id, file_url=file_url)
 
 
 if __name__ == '__main__':

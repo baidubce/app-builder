@@ -147,23 +147,49 @@ class AsyncAppBuilderClient(Component):
             response (str): 唯一文件ID
 
         """
+        return await self.upload_local_file(conversation_id, local_file_path)
+
+    async def upload_file(self, conversation_id, local_file_path: str=None, file_url: str=None) -> str:
+        r"""异步运行，上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
+
+        该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
+
+        Args:
+            conversation_id (str) : 会话ID
+            local_file_path (str) : 本地文件路径
+            file_url (str) : 文件URL
+
+        Returns:
+            response (str): 唯一文件ID
+
+        """
         if len(conversation_id) == 0:
             raise ValueError(
                 "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
             )
 
-        filepath = os.path.abspath(local_file_path)
-        if not os.path.exists(filepath):
-            raise FileNotFoundError(f"{filepath} does not exist")
+        if local_file_path is None and file_url is None:
+            raise ValueError(
+                "local_file_path and file_url cannot both be empty"
+            )
+        if local_file_path:
+            filepath = os.path.abspath(local_file_path)
+            if not os.path.exists(filepath):
+                raise FileNotFoundError(f"{filepath} does not exist")
+
         multipart_form_data = FormData()
-        multipart_form_data.add_field(
-            name="file",
-            value=open(local_file_path, "rb"),
-            filename=os.path.basename(local_file_path),
-        )
         multipart_form_data.add_field(name="app_id", value=self.app_id)
         multipart_form_data.add_field(
             name="conversation_id", value=conversation_id)
+
+        if local_file_path:
+            multipart_form_data.add_field(
+                name="file",
+                value=open(local_file_path, "rb"),
+                filename=os.path.basename(local_file_path),
+            )
+        else:
+            multipart_form_data.add_field(name="file_url", value=file_url)
 
         headers = self.http_client.auth_header_v2()
         url = self.http_client.service_url_v2("/app/conversation/file/upload")

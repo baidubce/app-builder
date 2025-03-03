@@ -68,6 +68,13 @@ type AppBuilderClientRunRequest struct {
 	Action         *Action      `json:"action"`
 }
 
+type AppBuilderClientUploadFileRequest struct {
+	AppID          string `json:"app_id"`
+	ConversationID string `json:"conversation_id"`
+	FilePath       string `json:"file_path"`
+	FileURL        string `json:"file_url"`
+}
+
 type AppBuilderClientFeedbackRequest struct {
 	AppID          string   `json:"app_id"`
 	ConversationID string   `json:"conversation_id"`
