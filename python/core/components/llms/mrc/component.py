@@ -14,8 +14,11 @@
 
 from appbuilder.core._exception import AppBuilderServerException
 from appbuilder.core.components.llms.base import CompletionBaseComponent, ModelArgsConfig
+from appbuilder.core.message import Message
+from appbuilder.core.component import ComponentArguments
+from pydantic import Field
 from typing import Optional
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 from .base import MrcArgs
 
 
@@ -56,6 +59,50 @@ class MRC(CompletionBaseComponent):
     name = "mrc"
     version = "v1"
     meta: MrcArgs
+
+    manifests = [
+        {
+            "name": "mrc",
+            "description": "对于输入的问题，基于大模型进行阅读理解问答，支持拒答、澄清、重点强调、友好性提升、溯源等多种功能，可用于回答用户提出的问题",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "输入用户query，例如'千帆平台都有哪些大模型？'"
+                    },
+                    "context_list": {
+                        "type": "list",
+                        "description": "用户输入检索片段list，例如[content1, content2, content3,...]，也可以为空, 即[]"
+                    },
+                    "reject": {
+                        "type": "bool",
+                        "description": "控制大模型拒答能力的开关，为true即为开启拒答功能，为false即为关闭拒答功能"
+                    },
+                    "clarify": {
+                        "type": "bool",
+                        "description": "控制大模型澄清能力的开关，为true即为开启澄清反问功能，为false即为关闭澄清反问功能"
+                    },
+                    "highlight": {
+                        "type": "bool",
+                        "description": "控制大模型重点强调能力的开关，为true即为开启重点强调功能，为false即为关闭重点强调功能"
+                    },
+                    "friendly": {
+                        "type": "bool",
+                        "description": "控制大模型友好对提升难过能力的开关，为true即为开启友好度提升功能，为false即为关闭友好度提升功能"
+                    },
+                    "cite": {
+                        "type": "bool",
+                        "description": "控制大模型溯源能力的开关，为true即为开启溯源功能，为false即为关闭溯源功能。"
+                    }
+                },
+                "required": [
+                    "query",
+                    "context_list"
+                ]
+            }
+        }
+    ]
 
     def __init__(
         self, 
@@ -141,3 +188,31 @@ class MRC(CompletionBaseComponent):
 
         return response.to_message()
 
+    @components_run_stream_trace
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        traceid = kwargs.get("traceid")
+        query = kwargs.get("query", None)
+        context_list = kwargs.get("context_list", None)
+        reject = kwargs.get("reject", False)
+        clarify = kwargs.get("clarify", False)
+        highlight = kwargs.get("highlight", False)
+        friendly = kwargs.get("friendly", False)
+        cite = kwargs.get("cite", False)
+        if not query or not context_list:
+            raise ValueError("param `query` and `context_list` are required")
+        msg = Message(query)
+        context_list_msg = Message(context_list)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, context_list=context_list_msg, reject=reject, clarify=clarify,
+            highlight=highlight, friendly=friendly, cite=cite, stream=False, temperature=temperature,
+            top_p=top_p, request_id=traceid)
+
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)

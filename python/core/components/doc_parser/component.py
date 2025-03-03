@@ -21,13 +21,16 @@ import os
 import json
 import base64
 from typing import Dict, Any
-from appbuilder.core._exception import AppBuilderServerException
+import tempfile
+from urllib.parse import urlparse
+import requests
+from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component, Message
 from appbuilder.utils.logger_util import logger
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.doc_parser.base import ParserConfig, ParseResult
 from appbuilder.utils.trace.tracer_wrapper import (
-    components_run_trace,
+    components_run_trace, components_run_stream_trace
 )
 
 
@@ -53,6 +56,23 @@ class DocParser(Component):
     tool_desc: Dict[str, Any] = {"description": "parse document content"}
     base_url: str = "/v1/bce/xmind/parser"
     config: ParserConfig = ParserConfig()
+
+    manifests = [
+        {
+            "name": "doc_parser",
+            "description": "提供文档解析功能，支持PDF、Word、Excel、PPT等文档的解析",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_names": {
+                        "type": "array",
+                        "description": "用户上传的文档的文件名，包含文件后缀，用于判断文件类型"
+                    }
+                },
+                "required": ["file_names"]
+            }
+        }
+    ]
 
     def set_config(self, config: ParserConfig):
         """
@@ -197,3 +217,36 @@ class DocParser(Component):
 
         parse_result = ParseResult.parse_obj(parse_result)
         return Message(parse_result)
+
+    @components_run_stream_trace
+    def tool_eval(self, streaming: bool = False, **kwargs):
+        """ tool eval
+        """
+        return_raw = kwargs.get("return_raw", False)
+        file_names = kwargs.get("file_names", [])
+        if not file_names:
+            raise InvalidRequestArgumentError("缺少file_names参数")
+        file_name = file_names[0]
+        file_urls = kwargs.get("file_urls", {})
+        if len(file_urls) == 0:
+            raise ValueError("file_urls is empty")
+        file_url = file_name if file_name.startswith("http") else file_urls.get(file_name, "")
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            local_filename = os.path.join(tmp_dir, os.path.basename(urlparse(file_url).path))
+            # 下载文件
+            with requests.get(file_url, stream=True) as r:
+                r.raise_for_status()
+                with open(local_filename, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        if chunk:
+                            f.write(chunk)
+
+            input_message = Message(content=local_filename)
+            parse_result = self.run(input_message, return_raw)
+
+        result = json.dumps(parse_result.content.model_dump(), ensure_ascii=False)
+        if streaming:
+            yield result
+        else:
+            return result
