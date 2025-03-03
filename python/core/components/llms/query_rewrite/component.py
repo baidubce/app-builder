@@ -15,8 +15,11 @@
 多轮改写
 """
 from appbuilder.core.components.llms.base import CompletionBaseComponent
+from appbuilder.core.message import Message
+from appbuilder.core.component import ComponentArguments
+from pydantic import BaseModel, Field
 from typing import Optional
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 from .base import QueryRewriteArgs
 
 
@@ -44,6 +47,33 @@ class QueryRewrite(CompletionBaseComponent):
     name = "query_rewrite"
     version = "v1"
     meta = QueryRewriteArgs
+
+    manifests = [
+        {
+            "name": "query_rewrite",
+            "description": "多轮改写大模型组件， 基于生成式大模型进行多轮对话query改写的组件。它主要用于理解和优化用户与机器人"
+                           "的交互过程，进行指代消解及省略补全。该组件支持不同的改写类型，可根据对话历史生成更准确的用户查询。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "输入消息，用于模型的主要输入内容"
+                    },
+                    "rewrite_type": {
+                        "type": "string",
+                        "enum": [
+                            "带机器人回复",
+                            "仅用户查询"
+                        ]
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
 
     def __init__(
         self, 
@@ -108,3 +138,26 @@ class QueryRewrite(CompletionBaseComponent):
         message.content = converted_input
 
         return super().run(message=message, rewrite_type=rewrite_type, stream=stream, temperature=temperature, top_p=top_p)
+
+    @components_run_stream_trace
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        traceid = kwargs.get("traceid")
+        rewrite_type = kwargs.get("rewrite_type", "带机器人回复")
+        query = kwargs.get("query", None)
+        if not query:
+            raise ValueError("param `query` is required")
+        msg = Message(query)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, rewrite_type=rewrite_type, stream=False, temperature=temperature,
+                              top_p=top_p, trace_id=traceid)
+
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)
+

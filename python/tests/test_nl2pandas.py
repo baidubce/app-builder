@@ -43,6 +43,37 @@ class TestNl2pandasComponent(unittest.TestCase):
         code = self.node(msg, table_info=self.table_info, stream=False, temperature=0.5)
         self.assertIsNotNone(code)
 
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        params = {
+            'name': 'nl2pandas',
+            'query': '海淀区有哪些学校',
+            'table_info': self.table_info
+        }
+        result = self.node.tool_eval(streaming=True, **params)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+        result = self.node.tool_eval(streaming=False, **params)
+        res = [item for item in result]
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            params = {
+                'name': 'nl2pandas',
+                'query': '海淀区有哪些学校'
+            }
+            result = self.node.tool_eval(streaming=True, **params)
+            next(result)
+        
+        with self.assertRaises(ValueError):
+            params = {
+                'name': 'nl2pandas',
+                'table_info': self.table_info
+            }
+            result = self.node.tool_eval(streaming=True, **params)
+            next(result)
+
 
 if __name__ == '__main__':
     unittest.main()

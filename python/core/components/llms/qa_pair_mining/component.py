@@ -48,6 +48,25 @@ class QAPairMining(CompletionBaseComponent):
     version = "v1"
     meta = QAPairMiningMeta
 
+    manifests = [
+        {
+            "name": "qa_pair_mining",
+            "description": "基于输入文本内容，快速生成多个问题及对应答案，极大提高信息提炼的效率和准确性。广泛用于在线客服、智能问答等领域。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "输入消息，用于模型的输入，一般为文档段落。"
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
+
     def __init__(
         self, 
         model=None,
@@ -87,3 +106,22 @@ class QAPairMining(CompletionBaseComponent):
         """
         return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p)
 
+    @components_run_stream_trace
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        traceid = kwargs.get("traceid")
+        query = kwargs.get("query", None)
+        if not query:
+            raise ValueError("param `query` is required")
+        msg = Message(query)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, stream=False, temperature=temperature, top_p=top_p, request_id=traceid)
+
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)

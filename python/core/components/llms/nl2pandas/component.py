@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from appbuilder.core.components.llms.base import CompletionBaseComponent
+from appbuilder.core.message import Message
+from pydantic import BaseModel, Field
 from typing import Optional
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 from .base import Nl2pandasArgs
  
 class Nl2pandasComponent(CompletionBaseComponent):
@@ -44,6 +46,30 @@ class Nl2pandasComponent(CompletionBaseComponent):
     name = "nl2pandas"
     version = "v1"
     meta = Nl2pandasArgs
+
+    manifests = [
+        {
+            "name": "nl2pandas",
+            "description": "输入用户查询query，基于生成式大模型对query进行理解并生成对应语义的可执行python代码（主要使用pandas），可用于基于表格的查询、问答等多种场景",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "text": "string",
+                        "description": "输入问题，一般是针对表格信息的提问，例如'海淀区的小学有哪些'"
+                    },
+                    "table_info": {
+                        "text": "string",
+                        "description": "表格信息，一般是表格列名以及对应列名的举例和释义，例如'表格列信息如下：\n学校名 : 清华附小 , 字符串类型，代表小学学校的名称"
+                    }
+                },
+                "required": [
+                    "query",
+                    "table_info"
+                ]
+            }
+        }
+    ]
 
     def __init__(
         self, 
@@ -84,3 +110,25 @@ class Nl2pandasComponent(CompletionBaseComponent):
             obj:`Message`: 模型运行后的输出消息。
         """
         return super().run(message=message, table_info=table_info, stream=stream, temperature=temperature, top_p=top_p)
+
+    @components_run_stream_trace
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        traceid = kwargs.get("traceid")
+        query = kwargs.get("query", None)
+        table_info = kwargs.get("table_info", None)
+        if not query or not table_info:
+            raise ValueError("param `query` and 'table_info' are required")
+        msg = Message(query)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, table_info=table_info, stream=False, temperature=temperature,
+                              top_p=top_p, request_id=traceid)
+
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)

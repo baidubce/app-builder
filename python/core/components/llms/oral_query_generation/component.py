@@ -185,7 +185,7 @@ class OralQueryGeneration(CompletionBaseComponent):
         return result
 
     @components_run_stream_trace
-    def tool_eval(self, name: str, stream: bool = False, **kwargs):
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
         """
         调用函数进行工具评估。
         
@@ -218,10 +218,10 @@ class OralQueryGeneration(CompletionBaseComponent):
         message = self.run(message=msg,
                            query_type=query_type,
                            output_format=output_format,
-                           stream=stream,
+                           stream=streaming,
                            temperature=temperature,
                            top_p=top_p)
-        if stream:
+        if streaming:
             for data in message.content:
                 yield data
         else:

@@ -57,6 +57,27 @@ class TestQAPairMiningComponent(unittest.TestCase):
         with self.assertRaises((ValueError, TypeError)):
             self.node(msg, invalid_param="invalid")
 
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        params = {
+            'name': 'qa_pair_mining',
+            'query': '2017年，工商银行根据外部宏观环境变化...'
+        }
+        result = self.node.tool_eval(streaming=True, **params)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+        result = self.node.tool_eval(streaming=False, **params)
+        res = [item for item in result]
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            params = {
+                'name': 'qa_pair_mining'
+            }
+            result = self.node.tool_eval(streaming=True, **params)
+            next(result)
+
 
 if __name__ == '__main__':
     unittest.main()
