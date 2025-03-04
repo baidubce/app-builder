@@ -132,6 +132,11 @@ class TestCoreClient(unittest.TestCase):
         with self.assertRaises(InsufficientStorageException):
             HTTPClient.check_response_header(response)
 
+        import requests
+        http_error = requests.exceptions.HTTPError(response=response)
+        with self.assertRaises(InsufficientStorageException):
+            HTTPClient.classify_exception(http_error)
+
     def test_core_client_check_async_response_header(self):
         async def run_test():
             # 测试各种response报错
@@ -194,6 +199,12 @@ class TestCoreClient(unittest.TestCase):
             response.status = 507
             with self.assertRaises(InsufficientStorageException):
                 await AsyncHTTPClient.check_response_header(response)
+
+            import requests
+            http_error = requests.exceptions.HTTPError(response=response)
+            with self.assertRaises(InsufficientStorageException):
+                await AsyncHTTPClient.classify_exception(http_error)
+            
         loop = asyncio.get_event_loop()
         loop.run_until_complete(run_test())
 

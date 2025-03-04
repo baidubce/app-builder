@@ -276,7 +276,7 @@ class HTTPClient:
         """classify exception type and raise"""
         from requests.exceptions import HTTPError
         if isinstance(e, HTTPError):
-            raise __class__.check_response_header(e.response)
+            __class__.check_response_header(e.response)
         elif isinstance(e, AppBuilderServerException):
             raise e
         else:
@@ -348,6 +348,16 @@ class AsyncHTTPClient(HTTPClient):
         r"""response_request_id is a helper method to get the unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
 
+    @staticmethod
+    async def classify_exception(e):
+        """classify exception type and raise"""
+        from requests.exceptions import HTTPError
+        if isinstance(e, HTTPError):
+            await __class__.check_response_header(e.response)
+        elif isinstance(e, AppBuilderServerException):
+            raise e
+        else:
+            raise InternalServerException(str(e))
 
 class AssistantHTTPClient(HTTPClient):
     def service_url(self, sub_path: str, prefix: str = None):
@@ -412,3 +422,14 @@ class AssistantHTTPClient(HTTPClient):
                     else data["error"]["params"]
                 ),
             )
+
+    @staticmethod
+    def classify_exception(e):
+        """classify exception type and raise"""
+        from requests.exceptions import HTTPError
+        if isinstance(e, HTTPError):
+            __class__.check_response_header(e.response)
+        elif isinstance(e, AppBuilderServerException):
+            raise e
+        else:
+            raise InternalServerException(str(e))
