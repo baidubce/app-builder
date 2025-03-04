@@ -422,14 +422,3 @@ class AssistantHTTPClient(HTTPClient):
                     else data["error"]["params"]
                 ),
             )
-
-    @staticmethod
-    def classify_exception(e):
-        """classify exception type and raise"""
-        from requests.exceptions import HTTPError
-        if isinstance(e, HTTPError):
-            __class__.check_response_header(e.response)
-        elif isinstance(e, AppBuilderServerException):
-            raise e
-        else:
-            raise InternalServerException(str(e))
