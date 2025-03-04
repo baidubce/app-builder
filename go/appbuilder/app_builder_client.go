@@ -251,6 +251,77 @@ func (t *AppBuilderClient) UploadLocalFile(conversationID string, filePath strin
 	return val.(string), nil
 }
 
+func (t *AppBuilderClient) UploadFile(req *AppBuilderClientUploadFileRequest) (string, error) {
+	var appID string
+	if req.AppID != "" {
+		appID = req.AppID
+	} else {
+		appID = t.appID
+	}
+	if appID == "" {
+		return "", errors.New("appID is required")
+	}
+	if req.FilePath == "" && req.FileURL == "" {
+		return "", errors.New("either FilePath or FileURL is required")
+	}
+
+	var data bytes.Buffer
+	w := multipart.NewWriter(&data)
+	appIDPart, _ := w.CreateFormField("app_id")
+	appIDPart.Write([]byte(appID))
+	conversationIDPart, _ := w.CreateFormField("conversation_id")
+	conversationIDPart.Write([]byte(req.ConversationID))
+	if req.FilePath != "" {
+		file, err := os.Open(req.FilePath)
+		if err != nil {
+			return "", err
+		}
+		defer file.Close()
+		filePart, _ := w.CreateFormFile("file", filepath.Base(req.FilePath))
+		if _, err := io.Copy(filePart, file); err != nil {
+			return "", err
+		}
+	} else {
+		fileURLPart, _ := w.CreateFormField("file_url")
+		fileURLPart.Write([]byte(req.FileURL))
+	}
+
+	w.Close()
+	request := http.Request{}
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/app/conversation/file/upload")
+	if err != nil {
+		return "", err
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header := t.sdkConfig.AuthHeaderV2()
+	header.Set("Content-Type", w.FormDataContentType())
+	request.Header = header
+	request.Body = NopCloser(bytes.NewReader(data.Bytes()))
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	rsp := make(map[string]any)
+	if err := json.Unmarshal(body, &rsp); err != nil {
+		return "", fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	val, ok := rsp["id"]
+	if !ok {
+		return "", fmt.Errorf("requestID=%s, body=%s", requestID, string(body))
+	}
+	return val.(string), nil
+}
+
 func (t *AppBuilderClient) Run(param ...interface{}) (AppBuilderClientIterator, error) {
 	if len(param) == 0 {
 		return nil, errors.New("no arguments provided")

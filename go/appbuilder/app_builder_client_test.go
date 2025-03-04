@@ -838,3 +838,58 @@ func TestAppbuilderClientFeedback(t *testing.T) {
 		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
 }
+
+func TestAppBuilderClientUploadFile(t *testing.T) {
+	var logBuffer bytes.Buffer
+
+	// 设置环境变量
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	os.Setenv("APPBUILDER_LOGFILE", "")
+
+	// 测试逻辑
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new http client config failed: %v", err)
+	}
+	appID := "fb64d96b-f828-4385-ba1d-835298d635a9"
+	client, err := NewAppBuilderClient(appID, config)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new AppBuilderClient instance failed")
+	}
+
+	conversationID, err := client.CreateConversation()
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("create conversation failed: %v", err)
+	}
+
+	req := AppBuilderClientUploadFileRequest{
+		ConversationID: conversationID,
+		FilePath:       "./files/test.pdf",
+	}
+	_, err = client.UploadFile(&req)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("upload local file failed: %v", err)
+	}
+
+	req = AppBuilderClientUploadFileRequest{
+		ConversationID: conversationID,
+		FileURL:        "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad6862cf937c03f8c5260d51c6ae",
+	}
+	_, err = client.UploadFile(&req)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("upload url file failed: %v", err)
+	}
+
+	// 如果测试失败，则输出缓冲区中的日志
+	if t.Failed() {
+		fmt.Println(logBuffer.String())
+	} else { // else 紧跟在右大括号后面
+		// 测试通过，打印文件名和测试函数名
+		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
+	}
+}

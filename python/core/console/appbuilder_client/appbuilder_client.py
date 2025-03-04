@@ -218,6 +218,22 @@ class AppBuilderClient(Component):
 
         Returns:
             response (str): 唯一文件ID
+        """
+        return self.upload_file(conversation_id, local_file_path=local_file_path)
+
+    @client_tool_trace
+    def upload_file(self, conversation_id, local_file_path: str=None, file_url: str=None) -> str:
+        r"""上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
+
+        该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
+
+        Args:
+            conversation_id (str) : 会话ID
+            local_file_path (str) : 本地文件路径
+            file_url(str): 待上传的文件url
+
+        Returns:
+            response (str): 唯一文件ID
 
         """
         if len(conversation_id) == 0:
@@ -225,20 +241,33 @@ class AppBuilderClient(Component):
                 "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
             )
 
-        filepath = os.path.abspath(local_file_path)
-        if not os.path.exists(filepath):
-            raise FileNotFoundError(f"{filepath} does not exist")
+        if local_file_path is None and file_url is None:
+            raise ValueError(
+                "local_file_path and file_url cannot both be empty"
+            )
+        if local_file_path:
+            filepath = os.path.abspath(local_file_path)
+            if not os.path.exists(filepath):
+                raise FileNotFoundError(f"{filepath} and {file_url} does not exist")
+
+        headers = self.http_client.auth_header_v2()
+        url = self.http_client.service_url_v2("/app/conversation/file/upload")
 
         multipart_form_data = {
-            "file": (os.path.basename(local_file_path), open(local_file_path, "rb")),
             "app_id": (None, self.app_id),
             "conversation_id": (None, conversation_id),
         }
-        headers = self.http_client.auth_header_v2()
-        url = self.http_client.service_url_v2("/app/conversation/file/upload")
+        if local_file_path:
+            multipart_form_data["file"] = (
+                os.path.basename(local_file_path),
+                open(local_file_path, "rb"),
+            )
+        else:
+            multipart_form_data["file_url"] = (None, file_url)
         response = self.http_client.session.post(
             url, files=multipart_form_data, headers=headers
         )
+
         self.http_client.check_response_header(response)
         data = response.json()
         resp = data_class.FileUploadResponse(**data)
