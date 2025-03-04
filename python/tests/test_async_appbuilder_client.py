@@ -63,7 +63,11 @@ class TestAppBuilderClientAsync(unittest.TestCase):
         async def agent_handle():
             client = appbuilder.AsyncAppBuilderClient(self.app_id)
             conversation_id = await client.create_conversation()
-            await client.upload_local_file(conversation_id, "./data/qa_appbuilder_client_demo.pdf")
+            await client.upload_file(conversation_id, "./data/qa_appbuilder_client_demo.pdf")
+            await client.upload_file(
+                conversation_id=conversation_id,
+                file_url="https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad6862cf937c03f8c5260d51c6ae",
+            )
             task1 = asyncio.create_task(
                 agent_run(client, conversation_id, "最早的邮展"))
             task2 = asyncio.create_task(

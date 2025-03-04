@@ -10,5 +10,5 @@
 当前已集成Python版本AppBuilder-SDK 0.9.4及相关依赖，方便开发者融入个人已有的大模型应用程序。此部分仍在不断建设中。
 二次开发可以采用官方提供的开发镜像，便于快速安装各种依赖库。也可在镜像中使用已安装的`appbuilder_trace_server`、`appbuilder_bce_deploy`工具。
 ``` shell
-docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:1.0.2
+docker pull registry.baidubce.com/appbuilder/appbuilder-sdk-devel:1.0.3
 ```

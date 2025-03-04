@@ -60,6 +60,9 @@ public class AppBuilderClientTest {
         AppBuilderClient builder = new AppBuilderClient(followupqueryId);
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
+        builder.uploadFile(conversationId, "src/test/java/com/baidubce/appbuilder/files/test.pdf", "");
+        builder.uploadFile(conversationId, "", 
+                "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad6862cf937c03f8c5260d51c6ae");
         String fileId = builder.uploadLocalFile(conversationId,
                 "src/test/java/com/baidubce/appbuilder/files/test.pdf");
         assertNotNull(fileId);
