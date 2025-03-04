@@ -272,11 +272,15 @@ class HTTPClient:
         return inner
 
     @staticmethod
-    def check_response(response: requests.Response):
-        """对API影响结果做检查"""
-        HTTPClient.check_response_header(response)
-        data = response.json()
-        HTTPClient.check_response_json(data)
+    def classify_exception(e):
+        """classify exception type and raise"""
+        from requests.exceptions import HTTPError
+        if isinstance(e, HTTPError):
+            __class__.check_response_header(e.response)
+        elif isinstance(e, AppBuilderServerException):
+            raise e
+        else:
+            raise InternalServerException(str(e))
         
 
 class AsyncHTTPClient(HTTPClient):
@@ -344,6 +348,16 @@ class AsyncHTTPClient(HTTPClient):
         r"""response_request_id is a helper method to get the unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
 
+    @staticmethod
+    async def classify_exception(e):
+        """classify exception type and raise"""
+        from requests.exceptions import HTTPError
+        if isinstance(e, HTTPError):
+            await __class__.check_response_header(e.response)
+        elif isinstance(e, AppBuilderServerException):
+            raise e
+        else:
+            raise InternalServerException(str(e))
 
 class AssistantHTTPClient(HTTPClient):
     def service_url(self, sub_path: str, prefix: str = None):

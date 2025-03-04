@@ -19,7 +19,7 @@ import appbuilder
 import time 
 
 from appbuilder.core.message import Message
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import NoFileUploadedExecption
 from appbuilder.core.components.v2 import ImageUnderstand
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
@@ -93,7 +93,7 @@ class TestImageUnderstand(unittest.TestCase):
 
     def test_tool_eval_invalid(self):
         """测试 tool 方法对无效请求的处理。"""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(NoFileUploadedExecption):
             result = self.image_understand.tool_eval(name="image_understand", streaming=True,
                                                      origin_query="")
             next(result)

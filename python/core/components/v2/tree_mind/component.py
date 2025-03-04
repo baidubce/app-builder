@@ -110,7 +110,8 @@ class TreeMind(Component):
             type="text",
             text=result,
             visible_scope='llm',
-            name="text"
+            name="text",
+            raw_data={"event_status": "done"}
         )
         yield llm_result
         
@@ -121,7 +122,8 @@ class TreeMind(Component):
                 "url": img_link
             },
             visible_scope='all',
-            name="img_link_url"
+            name="img_link_url",
+            raw_data={"event_status": "done"}
         )
         yield img_link_result
 
