@@ -147,6 +147,7 @@ class ImageUnderstand(Component):
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/image-understanding/request")
         try:
             response = self.http_client.session.post(url, json=data, timeout=timeout, headers=headers)
+            response.raise_for_status()
             data = response.json()
             self.http_client.check_response_json(data)
             request_id = self.http_client.response_request_id(response)
@@ -161,6 +162,7 @@ class ImageUnderstand(Component):
         while True:
             try:
                 response = self.http_client.session.post(url, json={"task_id": task_id}, timeout=timeout, headers=headers)
+                response.raise_for_status()
                 data = response.json()
                 self.http_client.check_response_json(data)
                 request_id = self.http_client.response_request_id(response)
