@@ -272,12 +272,28 @@ class HTTPClient:
         return inner
 
     @staticmethod
-    def check_response(response: requests.Response):
-        """对API影响结果做检查"""
-        HTTPClient.check_response_header(response)
-        data = response.json()
-        HTTPClient.check_response_json(data)
+    def classify_exception(e):
+        """classify exception type and raise"""
+        from requests.exceptions import HTTPError
         
+        # 定义需要直接抛出的异常类型列表
+        custom_exceptions = (
+            AppBuilderServerException,
+            NoFileUploadedExecption,
+            InvalidRequestArgumentError,
+            RetryableExecption,
+            RiskInputException,
+            InternalServerException,
+            AssistantServerException
+        )
+        
+        if isinstance(e, HTTPError):
+            __class__.check_response_header(e.response)
+        elif isinstance(e, custom_exceptions):  # 检查异常是否属于自定义的类型
+            raise e
+        else: #未定义的错误使用InternalServerException兜底
+            raise InternalServerException(str(e))
+
 
 class AsyncHTTPClient(HTTPClient):
     def __init__(self, secret_key=None, gateway="", gateway_v2=""):
@@ -344,6 +360,27 @@ class AsyncHTTPClient(HTTPClient):
         r"""response_request_id is a helper method to get the unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
 
+    @staticmethod
+    async def classify_exception(e):
+        """classify exception type and raise"""
+        from requests.exceptions import HTTPError
+        # 定义需要直接抛出的异常类型列表
+        custom_exceptions = (
+            AppBuilderServerException,
+            NoFileUploadedExecption,
+            InvalidRequestArgumentError,
+            RetryableExecption,
+            RiskInputException,
+            InternalServerException,
+            AssistantServerException
+        )
+        
+        if isinstance(e, HTTPError):
+            await __class__.check_response_header(e.response)
+        elif isinstance(e, custom_exceptions):  # 检查异常是否属于自定义的类型
+            raise e
+        else: #未定义的错误使用InternalServerException兜底
+            raise InternalServerException(str(e))
 
 class AssistantHTTPClient(HTTPClient):
     def service_url(self, sub_path: str, prefix: str = None):
