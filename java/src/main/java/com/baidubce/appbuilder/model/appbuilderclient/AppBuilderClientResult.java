@@ -6,6 +6,7 @@ import java.util.Arrays;
 import com.google.gson.annotations.SerializedName;
 
 public class AppBuilderClientResult {
+    private String requestId;
     private String answer;
     @SerializedName("message_id")
     private String messageId;
@@ -17,6 +18,15 @@ public class AppBuilderClientResult {
 
     public AppBuilderClientResult setAnswer(String answer) {
         this.answer = answer;
+        return this;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public AppBuilderClientResult setRequestId(String requestId) {
+        this.requestId = requestId;
         return this;
     }
 
