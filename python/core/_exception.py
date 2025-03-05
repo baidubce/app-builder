@@ -167,3 +167,17 @@ class AppbuilderTraceException(BaseRPCException):
     r"""AppbuilderTraceException
     """
     pass
+
+class RetryableExecption(Exception):
+    r"""RetryableExecption
+    """
+    pass
+
+class InternalServerException(BaseRPCException):
+    r"""InternalServerException
+    """
+    pass
+
+class NoFileUploadedExecption(Exception):
+    r"""NoFileUploadedExecption"""
+    pass

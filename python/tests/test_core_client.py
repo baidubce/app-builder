@@ -132,6 +132,11 @@ class TestCoreClient(unittest.TestCase):
         with self.assertRaises(InsufficientStorageException):
             HTTPClient.check_response_header(response)
 
+        import requests
+        http_error = requests.exceptions.HTTPError(response=response)
+        with self.assertRaises(InsufficientStorageException):
+            HTTPClient.classify_exception(http_error)
+
     def test_core_client_check_async_response_header(self):
         async def run_test():
             # 测试各种response报错
@@ -194,6 +199,12 @@ class TestCoreClient(unittest.TestCase):
             response.status = 507
             with self.assertRaises(InsufficientStorageException):
                 await AsyncHTTPClient.check_response_header(response)
+
+            import requests
+            http_error = requests.exceptions.HTTPError(response=response)
+            with self.assertRaises(InsufficientStorageException):
+                await AsyncHTTPClient.classify_exception(http_error)
+            
         loop = asyncio.get_event_loop()
         loop.run_until_complete(run_test())
 
@@ -219,6 +230,80 @@ class TestCoreClient(unittest.TestCase):
         with self.assertRaises(AppBuilderServerException):
             HTTPClient.check_console_response(response)
 
+    def test_classify_exception(self):
+        """测试异常分类方法"""
+        import requests
+        client = HTTPClient()
+        
+        # 测试 HTTP 错误
+        response = Response(
+            status_code=requests.codes.internal_server_error,
+            headers=client.auth_header(),
+            text="Internal Server Error"
+        )
+        http_error = requests.exceptions.HTTPError(response=response)
+        
+        with self.assertRaises(InternalServerErrorException):
+            client.classify_exception(http_error)
+        
+        # 测试 AppBuilder 服务器异常
+        app_error = AppBuilderServerException(
+            request_id="test_id",
+            code=500,
+            message="Interal Server Error"
+        )
+        
+        with self.assertRaises(AppBuilderServerException) as context:
+            client.classify_exception(app_error)
+        
+        self.assertEqual(context.exception.code, 500)
+        
+        # 测试其他类型异常
+        other_error = ValueError("Test error")
+        
+        with self.assertRaises(InternalServerException) as context:
+            client.classify_exception(other_error)
+        
+        self.assertEqual(str(context.exception), "Test error")
+
+
+    def test_AsyncHTTPClient_classify_exception(self):
+        """测试异常分类方法"""
+        async def run_test():
+            import requests
+            client = AsyncHTTPClient()
+            # 测试 HTTP 错误
+            response = AsyncResponse(
+                status_code=requests.codes.internal_server_error,
+                headers=client.auth_header(),
+                text=lambda:asyncio.sleep(0) or '{"code": 0, "message": "success"}'
+            )
+            http_error = requests.exceptions.HTTPError(response=response)
+            
+            with self.assertRaises(InternalServerErrorException):
+                await client.classify_exception(http_error)
+            
+            # 测试 AppBuilder 服务器异常
+            app_error = AppBuilderServerException(
+                request_id="test_id",
+                code="500",
+                message="Interal Server Error"
+            )
+            
+            with self.assertRaises(AppBuilderServerException) as context:
+                await client.classify_exception(app_error)
+            
+            self.assertEqual(context.exception.code, "500")
+            
+            # 测试其他类型异常
+            other_error = ValueError("Test error")
+            
+            with self.assertRaises(InternalServerException) as context:
+                await client.classify_exception(other_error)
+            
+            self.assertEqual(str(context.exception), "Test error")
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(run_test())
 
 if __name__ == '__main__':
     unittest.main()
