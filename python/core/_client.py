@@ -376,7 +376,7 @@ class AsyncHTTPClient(HTTPClient):
         )
         
         if isinstance(e, HTTPError):
-            __class__.check_response_header(e.response)
+            await __class__.check_response_header(e.response)
         elif isinstance(e, custom_exceptions):  # 检查异常是否属于自定义的类型
             raise e
         else: #未定义的错误使用InternalServerException兜底
