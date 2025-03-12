@@ -7,6 +7,7 @@ def get_cur_whether(location:str, unit:str):
     return "{} 的当前温度是30 {}".format(location, unit)
 
 
+@unittest.skip("QPS超限")
 class TestFunctionCall(unittest.TestCase):
     def setUp(self):
         os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_V2"]

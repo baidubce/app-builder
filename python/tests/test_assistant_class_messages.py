@@ -4,6 +4,7 @@ import appbuilder
 
 from appbuilder.core._exception import AssistantServerException
 
+@unittest.skip("QPS超限")
 class TestMessageCreate(unittest.TestCase):
     def setUp(self):
         os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_V2"]
