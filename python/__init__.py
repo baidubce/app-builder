@@ -167,7 +167,6 @@ __COMPONENTS__ = [
 ] # NOQA
 
 from appbuilder.core.message import Message
-from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
 
 from appbuilder.utils.logger_util import logger
