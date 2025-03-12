@@ -5,17 +5,19 @@ import java.util.List;
 public class QueryKnowledgeBaseRequest {
     private String query;
     private String type;
+    private Float rank_score_threshold;
     private Integer top;
     private Integer skip;
     private String[] knowledgebase_ids;
     private MetadataFilters metadata_filters;
     private QueryPipelineConfig pipeline_config;
 
-    public QueryKnowledgeBaseRequest(String query, String type, Integer top, Integer skip,
+    public QueryKnowledgeBaseRequest(String query, String type, Float rank_score_threshold, Integer top, Integer skip,
             String[] knowledgebase_ids, MetadataFilters metadata_filters,
             QueryPipelineConfig pipeline_config) {
         this.query = query;
         this.type = type;
+        this.rank_score_threshold = rank_score_threshold;
         this.top = top;
         this.skip = skip;
         this.knowledgebase_ids = knowledgebase_ids;
@@ -37,6 +39,14 @@ public class QueryKnowledgeBaseRequest {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Float getRank_score_threshold() {
+        return rank_score_threshold;
+    }
+
+    public void setRank_score_threshold(Float rank_score_threshold) {
+        this.rank_score_threshold = rank_score_threshold;
     }
 
     public Integer getTop() {
@@ -217,6 +227,46 @@ public class QueryKnowledgeBaseRequest {
         }
     }
 
+    public static class VectorDBRetrieveConfig {
+        private String name;
+        private String type;
+        private Double threshold;
+        private Integer top;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public Double getThreshold() {
+            return threshold;
+        }
+
+        public void setThreshold(Double threshold) {
+            this.threshold = threshold;
+        }
+
+        public Integer getTop() {
+            return top;
+        }
+
+        public void setTop(Integer top) {
+            this.top = top;
+        }
+    }
+
+
     public static class RankingConfig {
         private String name;
         private String type;
@@ -263,6 +313,28 @@ public class QueryKnowledgeBaseRequest {
         public void setTop(Integer top) {
             this.top = top;
         }
+    }
+
+    public static class SmallToBigConfig {
+        private String name;
+        private String type;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
     }
 
     public static class QueryPipelineConfig {

@@ -25,7 +25,6 @@ from appbuilder.core.utils import ttl_lru_cache
 from appbuilder.core._client import HTTPClient, AsyncHTTPClient
 from appbuilder.core.message import Message
 
-
 class ComponentArguments(BaseModel):
     """
     ComponentArguments define Component meta fields
@@ -93,7 +92,7 @@ class References(BaseModel, extra='allow'):
 class Image(BaseModel, extra='allow'):
     filename: str = Field(default="", description="图片名称")
     url: str = Field(default="", description="图片url")
-    byte: Optional[bytes] = Field(default=b'', description="图片二进制数据")
+    base64: Optional[str] = Field(default="", description="图片base64数据")
 
 
 class Chart(BaseModel, extra='allow'):
@@ -104,7 +103,7 @@ class Chart(BaseModel, extra='allow'):
 class Audio(BaseModel, extra='allow'):
     filename: str = Field(default="", description="音频名称")
     url: str = Field(default="", description="音频url")
-    byte: Optional[bytes] = Field(default=b'', description="音频二进制数据")
+    base64: Optional[str] = Field(default="", description="音频base64数据")
 
 
 class PlanStep(BaseModel, extra='allow'):
@@ -242,11 +241,15 @@ class Component:
         except AttributeError:
             # 目前async仅在AppBuilderClient中使用，所以没有async属性的组件都可以设置为False
             self.is_async = False
-            
+
         if self.is_async:
             self._http_client = AsyncHTTPClient(self.secret_key, self.gateway)
         else:
             self._http_client = HTTPClient(self.secret_key, self.gateway)
+
+    def set_model_info(self, model_name: str, model_url: str):
+        """为llm component设置模型，其它component不生效"""
+        pass
 
     @property
     def http_client(self):
@@ -560,6 +563,8 @@ class Component:
                 key_list = ["detail", "steps"]
             elif type == "function_call":
                 key_list = ["thought", "name", "arguments"]
+            elif type == "json":
+                key_list = ["data"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
             assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)

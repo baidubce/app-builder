@@ -16,6 +16,9 @@ public class AppBuilderClientIterator {
 
     public AppBuilderClientResult next() {
         AppBuilderClientResponse response = iterator.next();
+        if(response.getContent() == null) {
+            return new AppBuilderClientResult().setAnswer(response.getAnswer()).setMessageId(response.getMessageId()).setRequestId(response.getRequestId());
+        }
         Event[] events = new Event[response.getContent().length];
         EventContent[] contents = response.getContent();
         IntStream.range(0, contents.length).forEach(i -> {
@@ -27,6 +30,6 @@ public class AppBuilderClientIterator {
                     .setDetail(contents[i].getOutputs()).setUsage(contents[i].getUsage())
                     .setToolCalls(contents[i].getToolCalls());
         });
-        return new AppBuilderClientResult().setAnswer(response.getAnswer()).setEvents(events);
+        return new AppBuilderClientResult().setAnswer(response.getAnswer()).setMessageId(response.getMessageId()).setEvents(events).setRequestId(response.getRequestId());
     }
 }

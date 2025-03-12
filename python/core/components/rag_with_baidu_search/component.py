@@ -39,6 +39,7 @@ class RAGWithBaiduSearch(CompletionBaseComponent):
         highlight: Optional[bool] = False, 
         friendly: Optional[bool] = False, 
         cite: Optional[bool] = False, 
+        **kwargs
     ):
         """初始化RAG with BaiduSearch组件
 

@@ -14,6 +14,14 @@
 
 package appbuilder
 
+type QueryType string
+
+const (
+	Fulltext QueryType = "fulltext"
+	Semantic QueryType = "semantic"
+	Hybrid   QueryType = "hybrid"
+)
+
 const (
 	ContentTypeRawText = "raw_text"
 	ContentTypeQA      = "qa"
@@ -85,14 +93,20 @@ type UploadFileResponse struct {
 }
 
 type KnowlegeBaseConfig struct {
-	Index KnowledgeBaseConfigIndex `json:"index"`
+	Index     KnowledgeBaseConfigIndex      `json:"index"`
+	Catalogue *KnowledgeBaseConfigCatalogue `json:"catalogue,omitempty"`
 }
 
 type KnowledgeBaseConfigIndex struct {
-	Type     string `json:"type"`
-	EsUrl    string `json:"esUrl"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Type      string `json:"type"`
+	ClusterId string `json:"clusterId"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Location  string `json:"location"`
+}
+
+type KnowledgeBaseConfigCatalogue struct {
+	PathPrefix string `json:"pathPrefix,omitempty"`
 }
 
 type KnowledgeBaseDetail struct {
@@ -104,10 +118,11 @@ type KnowledgeBaseDetail struct {
 }
 
 type ModifyKnowlegeBaseRequest struct {
-	ID          string  `json:"id"`
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-	ClientToken string  `json:"client_token,omitempty"`
+	ID          string              `json:"id"`
+	Name        *string             `json:"name,omitempty"`
+	Description *string             `json:"description,omitempty"`
+	Config      *KnowlegeBaseConfig `json:"config,omitempty"`
+	ClientToken string              `json:"client_token,omitempty"`
 }
 
 type DeleteKnowlegeBaseRequest struct {
@@ -130,10 +145,15 @@ type GetKnowledgeBaseListResponse struct {
 	MaxKeys     int                   `json:"maxKeys"`
 }
 
+type DocumentsSourceUrlConfig struct {
+	Frequency int `json:"frequency"`
+}
+
 type DocumentsSource struct {
-	Type     string   `json:"type"`
-	Urls     []string `json:"urls,omitempty"`
-	UrlDepth int      `json:"url_depth,omitempty"`
+	Type       string                      `json:"type"`
+	Urls       []string                    `json:"urls,omitempty"`
+	UrlDepth   int                         `json:"url_depth,omitempty"`
+	UrlConfigs *[]DocumentsSourceUrlConfig `json:"url_configs,omitempty"`
 }
 
 type DocumentsProcessOptionParser struct {
@@ -190,9 +210,10 @@ type UploadDocumentsResponse struct {
 }
 
 type CreateChunkRequest struct {
-	DocumentID  string `json:"documentId"`
-	Content     string `json:"content"`
-	ClientToken string `json:"client_token,omitempty"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	DocumentID      string `json:"documentId"`
+	Content         string `json:"content"`
+	ClientToken     string `json:"client_token,omitempty"`
 }
 
 type CreateChunkResponse struct {
@@ -200,19 +221,22 @@ type CreateChunkResponse struct {
 }
 
 type ModifyChunkRequest struct {
-	ChunkID     string `json:"chunkId"`
-	Content     string `json:"content"`
-	Enable      bool   `json:"enable"`
-	ClientToken string `json:"client_token,omitempty"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	ChunkID         string `json:"chunkId"`
+	Content         string `json:"content"`
+	Enable          bool   `json:"enable"`
+	ClientToken     string `json:"client_token,omitempty"`
 }
 
 type DeleteChunkRequest struct {
-	ChunkID     string `json:"chunkId"`
-	ClientToken string `json:"client_token,omitempty"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	ChunkID         string `json:"chunkId"`
+	ClientToken     string `json:"client_token,omitempty"`
 }
 
 type DescribeChunkRequest struct {
-	ChunkID string `json:"chunkId"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	ChunkID         string `json:"chunkId"`
 }
 
 type DescribeChunkResponse struct {
@@ -231,11 +255,43 @@ type DescribeChunkResponse struct {
 	UpdatedAt       int64    `json:"updateTime"`
 }
 
+type DescribeDocumentsRequest struct {
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	Marker          string `json:"marker,omitempty"`
+	MaxKeys         int    `json:"maxKeys,omitempty"`
+}
+
+type DescribeDocumentResponse struct {
+	ID            string               `json:"id"`
+	Name          string               `json:"name"`
+	CreatedAt     string               `json:"createdAt"`
+	DisplayStatus string               `json:"displayStatus"`
+	WordCount     int64                `json:"wordCount"`
+	Enabled       bool                 `json:"enabled"`
+	Meta          DescribeDocumentMeta `json:"meta"`
+}
+
+type DescribeDocumentMeta struct {
+	Source string `json:"source"`
+	FileID string `json:"fileId"`
+}
+
+type DescribeDocumentsResponse struct {
+	Data        []DescribeDocumentResponse `json:"data"`
+	Marker      string                     `json:"marker"`
+	IsTruncated bool                       `json:"isTruncated"`
+	NextMarker  string                     `json:"nextMarker"`
+	MaxKeys     int                        `json:"maxKeys"`
+	RequestID   string                     `json:"requestId"`
+}
+
 type DescribeChunksRequest struct {
-	DocumnetID string `json:"documentId"`
-	Marker     string `json:"marker,omitempty"`
-	MaxKeys    int    `json:"maxKeys,omitempty"`
-	Type       string `json:"type,omitempty"`
+	KnowledgeBaseID string `json:"knowledgeBaseId"`
+	DocumnetID      string `json:"documentId"`
+	Marker          string `json:"marker,omitempty"`
+	MaxKeys         int    `json:"maxKeys,omitempty"`
+	Type            string `json:"type,omitempty"`
+	Keyword         string `json:"keyword,omitempty"`
 }
 
 type DescribeChunksResponse struct {
@@ -272,6 +328,18 @@ type ElasticSearchRetrieveConfig struct {
 	Top       int     `json:"top"`
 }
 
+type VectorDBRetrieveConfig struct {
+	Name      string  `json:"name"`
+	Type      string  `json:"type"`
+	Threshold float64 `json:"threshold"`
+	Top       int     `json:"top"`
+}
+
+type SmallToBigConfig struct {
+	Name string `json:"name"`
+	Type string `json:"type"`
+}
+
 type RankingConfig struct {
 	Name      string   `json:"name"`
 	Type      string   `json:"type"`
@@ -286,13 +354,14 @@ type QueryPipelineConfig struct {
 }
 
 type QueryKnowledgeBaseRequest struct {
-	Query            string              `json:"query"`
-	KnowledgebaseIDs []string            `json:"knowledgebase_ids"`
-	Type             *string             `json:"type,omitempty"`
-	Top              int                 `json:"top,omitempty"`
-	Skip             int                 `json:"skip,omitempty"`
-	MetadataFileters MetadataFilters     `json:"metadata_fileters,omitempty"`
-	PipelineConfig   QueryPipelineConfig `json:"pipeline_config,omitempty"`
+	Query              string              `json:"query"`
+	KnowledgebaseIDs   []string            `json:"knowledgebase_ids"`
+	Type               *QueryType          `json:"type,omitempty"`
+	Top                int                 `json:"top,omitempty"`
+	Skip               int                 `json:"skip,omitempty"`
+	RankScoreThreshold *float64            `json:"rank_score_threshold,omitempty"`
+	MetadataFileters   MetadataFilters     `json:"metadata_fileters,omitempty"`
+	PipelineConfig     QueryPipelineConfig `json:"pipeline_config,omitempty"`
 }
 
 type RowLine struct {
@@ -309,19 +378,22 @@ type ChunkLocation struct {
 }
 
 type Chunk struct {
-	ChunkID         string         `json:"chunk_id"`
-	KnowledgebaseID string         `json:"knowledgebase_id"`
-	DocumentID      string         `json:"document_id"`
-	DocumentName    string         `json:"document_name"`
-	Meta            map[string]any `json:"meta"`
-	Type            string         `json:"type"`
-	Content         string         `json:"content"`
-	CreateTime      string         `json:"create_time"`
-	UpdateTime      string         `json:"update_time"`
-	RetrievalScore  float64        `json:"retrieval_score"`
-	RankScore       float64        `json:"rank_score"`
-	Locations       ChunkLocation  `json:"locations"`
-	Children        []Chunk        `json:"children"`
+	ChunkID             string         `json:"chunk_id"`
+	KnowledgebaseID     string         `json:"knowledgebase_id"`
+	DocumentID          string         `json:"document_id"`
+	DocumentName        string         `json:"document_name"`
+	Meta                map[string]any `json:"meta"`
+	Type                string         `json:"type"`
+	Content             string         `json:"content"`
+	CreateTime          string         `json:"create_time"`
+	UpdateTime          string         `json:"update_time"`
+	RetrievalScore      float64        `json:"retrieval_score"`
+	RankScore           float64        `json:"rank_score"`
+	Locations           ChunkLocation  `json:"locations"`
+	Children            []Chunk        `json:"children"`
+	NeighbourChunks     []Chunk        `json:"neighbour_chunks"`
+	OriginalChunkId     string         `json:"original_chunk_id"`
+	OriginalChunkOffset int            `json:"original_chunk_offset"`
 }
 
 type QueryKnowledgeBaseResponse struct {

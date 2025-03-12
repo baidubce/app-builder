@@ -16,7 +16,7 @@ MAX_RETRY_COUNT = 3
 
 class FlaskRuntime(object):
     r"""
-    FlaskRuntime 是对应用调用的服务化封装, 开发者不是必须要用 ChainlitRuntime 才能运行自己的组件服务。
+    FlaskRuntime 是对应用调用的服务化封装, 开发者不是必须要用 FlaskRuntime 才能运行自己的组件服务。
     FlaskRuntime提供chat直接对话接口; 也支持使用 Gunicorn 这样的 WSGI 服务器来运行服务, 提供API部署方式。
 
 
@@ -111,7 +111,7 @@ class FlaskRuntime(object):
                 return answer
 
         agent = FlaskRuntime(component=PlaygroundWithHistory())
-        agent.chainlit_component(port=8091)
+        agent.server()
 
     Session 信息查看 : 查看本地user_session.db数据库内部信息，下面是一个例子
 

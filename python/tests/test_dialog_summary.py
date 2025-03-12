@@ -48,12 +48,33 @@ class TestDialogSummary(unittest.TestCase):
         """测试不同的 stream 和 temperature 参数值"""
 
         chats = appbuilder.get_model_list(api_type_filter=["chat"])
-        self.assertTrue("EB-turbo-AppBuilder专用版" in chats)
+        self.assertTrue("ERNIE-3.5-8K" in chats)
 
-        appbuilder.DialogSummary(model="EB-turbo-AppBuilder专用版")
+        appbuilder.DialogSummary(model="ERNIE-3.5-8K")
 
         with self.assertRaises(Exception):
             appbuilder.DialogSummary(model="")
+
+    def test_tool_eval_valid(self):
+        """测试 tool 方法对有效请求的处理。"""
+        params = {
+            'name': 'dialog_summary',
+            'query': '用户:喂我想查一下我的话费\n坐席:好的女士您话费余的话还有87.49元钱\n用户:好的知道了谢谢\n坐席:嗯不客气祝您生活愉快再见'
+        }
+        result = self.node.tool_eval(streaming=True, **params)
+        res = [item for item in result]
+        self.assertNotEqual(len(res), 0)
+        result = self.node.tool_eval(streaming=False, **params)
+        res = [item for item in result]
+
+    def test_tool_eval_invalid(self):
+        """测试 tool 方法对无效请求的处理。"""
+        with self.assertRaises(ValueError):
+            params = {
+                'name': 'dialog_summary'
+            }
+            result = self.node.tool_eval(streaming=True, **params)
+            next(result)
 
 if __name__ == '__main__':
     unittest.main()

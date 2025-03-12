@@ -50,12 +50,32 @@ class IsComplexQuery(CompletionBaseComponent):
     version = "v1"
     meta = IsComplexQueryMeta
 
+    manifests = [
+        {
+            "name": "is_complex_query",
+            "description": "基于输入的问题, 对问题进行初步的分类，方便下游使用不同类型的流程来处理当前的简单问题/复杂问题。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "输入的问题，用于大模型根据该问题进行初步的分类。"
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
+
     def __init__(
         self, 
         model=None,
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化IsComplexQueryMeta任务。
         
@@ -87,3 +107,23 @@ class IsComplexQuery(CompletionBaseComponent):
             obj:`Message`: 模型运行后的输出消息。
         """
         return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p)
+
+    @components_run_stream_trace
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        traceid = kwargs.get("traceid")
+        query = kwargs.get("query", None)
+        if not query:
+            raise ValueError("param `query` is required")
+        msg = Message(query)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, stream=False, temperature=temperature, top_p=top_p, request_id=traceid)
+
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)

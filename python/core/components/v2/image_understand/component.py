@@ -16,10 +16,12 @@ r"""图像内容理解"""
 import base64
 import time
 
+from typing import Optional
+
 from appbuilder.core.component import Component, ComponentOutput
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException
+from appbuilder.core._exception import AppBuilderServerException, NoFileUploadedExecption
 from appbuilder.core.components.image_understand.model import *
 from typing import Generator, Union
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
@@ -143,24 +145,30 @@ class ImageUnderstand(Component):
         headers = self.http_client.auth_header(request_id)
         headers['Content-Type'] = 'application/json'
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/image-understanding/request")
-        response = self.http_client.session.post(url, json=data, timeout=timeout, headers=headers)
-        self.http_client.check_response_header(response)
-        data = response.json()
-        self.http_client.check_response_json(data)
-        request_id = self.http_client.response_request_id(response)
-        self.__class__.__check_create_task_service_error(request_id, data)
+        try:
+            response = self.http_client.session.post(url, json=data, timeout=timeout, headers=headers)
+            response.raise_for_status()
+            data = response.json()
+            self.http_client.check_response_json(data)
+            request_id = self.http_client.response_request_id(response)
+            self.__class__.__check_create_task_service_error(request_id, data)
+        except Exception as e:
+            self.http_client.classify_exception(e)
         task = ImageUnderstandTask(data, request_id=request_id)
         task_id = task.result.get("task_id", "")
         if task_id == "":
             raise AppBuilderServerException(request_id=request_id, service_err_message="empty task_id")
         url = self.http_client.service_url("/v1/bce/aip/image-classify/v1/image-understanding/get-result")
         while True:
-            response = self.http_client.session.post(url, json={"task_id": task_id}, timeout=timeout, headers=headers)
-            self.http_client.check_response_header(response)
-            data = response.json()
-            self.http_client.check_response_json(data)
-            request_id = self.http_client.response_request_id(response)
-            self.__class__.__check_service_error(request_id, data.get("result", {}))
+            try:
+                response = self.http_client.session.post(url, json={"task_id": task_id}, timeout=timeout, headers=headers)
+                response.raise_for_status()
+                data = response.json()
+                self.http_client.check_response_json(data)
+                request_id = self.http_client.response_request_id(response)
+                self.__class__.__check_service_error(request_id, data.get("result", {}))
+            except Exception as e:
+                self.http_client.classify_exception(e)
             # 处理成功
             response = ImageUnderstandResponse(data)
             if response.result.ret_code == 0:
@@ -173,8 +181,8 @@ class ImageUnderstand(Component):
     @components_run_stream_trace
     def tool_eval(
         self,
-        img_name: str,
-        img_url: str,
+        img_name: Optional[str] = '',
+        img_url: Optional[str] = '',
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
         """
@@ -188,8 +196,10 @@ class ImageUnderstand(Component):
         Returns:
             Union[Generator[str, None, None], str]: 图片内容理解结果
         """
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", '')
         file_urls = kwargs.get("_sys_file_urls", {})
+        if not img_url and not file_urls:
+            raise NoFileUploadedExecption("No file uploaded!")
         rec_res, raw_data = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
         llm_result = self.create_output(type="text", text=rec_res, name="text_1", raw_data=raw_data, visible_scope='llm')
         yield llm_result

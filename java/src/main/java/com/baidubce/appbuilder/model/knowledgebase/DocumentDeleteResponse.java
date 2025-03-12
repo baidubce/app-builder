@@ -34,7 +34,7 @@ public class DocumentDeleteResponse {
 
     @Override
     public String toString() {
-        return "FileUploadResponse{" +
+        return "DocumentDeleteResponse{" +
                 "request_id=" + requestId +
                 ", code='" + code + '\'' +
                 ", message='" + message +

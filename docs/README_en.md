@@ -47,7 +47,7 @@ Baidu AI Cloud Qianfan AppBuilder-SDK offers the following essential features fo
 
 ##  How to install？
 
-#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 0.9.8 (2024-12-10)
+#### The latest version of Baidu AI Cloud Qianfan AppBuilder SDK is 1.0. (2025-01-24)
 
 Baidu AI Cloud Qianfan AppBuilder SDK ReleaseNote please refer to our [version description](/docs/DevelopGuide/ChangeLog/changelog.md)
 
@@ -257,7 +257,7 @@ Hook:
     - Basics:
         - Models:
             - [Get model list](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
-        - [Components](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+        - [Components](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components)
         - Monitoring:
             - [TRACE basic functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
             - [TRACE extended functions](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)

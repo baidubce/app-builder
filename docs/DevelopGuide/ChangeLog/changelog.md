@@ -68,8 +68,23 @@
   * 新增TreeMind组件
   * 新增工作流Agent回复“信息收集节点”功能，支持多轮对话事件处理
   * Python的ToolCall功能支持通过函数定义、装饰器的形式等生成ToolCall参数
-* **2024.11.27 v0.9.8版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.8)
+* **2024.12.10 v0.9.8版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/0.9.8)
   * AppBuilderClient新增追问功能支持
   * TTS组件新增更多语音效果
   * 通用文字识别组件新增更多语言支持
   * 实时语音通话功能内测
+* **2025.01.03 v1.0.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.0)
+  * 工作流自定义组件支持SDK调用
+  * 新增RAG检索SDK
+  * Agent Python SDK支持Async调用
+  * 新增滚动日志功能
+* **2025.01.16 v1.0.1版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.1)
+  * 修复1.0.0中的Python SDK流式调用慢问题
+* **2025.01.24 v1.0.2版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.2)
+  * 升级KnowledgebaseClient，同步更新OpenAPI的入参
+  * 升级KnowledgebaseClient，同步更新知识库创建入参
+  * 升级ComponentClient，同步更新OpenAPI的出参
+* **2025.02.28 v1.0.3版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.3)
+  * AppBuilderClient新增点踩点赞功能支持
+  * 知识库支持配置目录、切片模糊搜索、文档状态信息等功能升级
+  * MCP协议支持

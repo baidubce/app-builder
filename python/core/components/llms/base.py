@@ -13,6 +13,7 @@
 # limitations under the License.
 import itertools
 import json
+import os
 import uuid
 from enum import Enum
 import logging
@@ -251,6 +252,7 @@ class CompletionBaseComponent(Component):
     version: str
     base_url: str = "/rpc/2.0/cloud_hub/v1/ai_engine/copilot_engine"
     model_name: str = ""
+    model_url: str = ""
     model_type: str = "chat"
     excluded_models: List[str] = ["Yi-34B-Chat", "ChatLaw"]
     model_info: ModelInfo = None
@@ -272,6 +274,7 @@ class CompletionBaseComponent(Component):
         secret_key: Optional[str] = None,
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """
         Args:
@@ -280,6 +283,7 @@ class CompletionBaseComponent(Component):
             secret_key (Optional[str], optional): 可选的密钥. Defaults to None.
             gateway (str, optional): 网关地址. Defaults to "".
             lazy_certification (bool, optional): 延迟认证，为True时在第一次运行时认证. Defaults to False.
+            **kwargs: 其他关键字参数
         
         """
         super(CompletionBaseComponent, self).__init__(
@@ -293,7 +297,14 @@ class CompletionBaseComponent(Component):
     def set_secret_key_and_gateway(self, secret_key: Optional[str] = None, gateway: str = ""):
         super(CompletionBaseComponent, self).set_secret_key_and_gateway(
                 secret_key=secret_key, gateway=gateway)
-        self.__class__.model_info = ModelInfo(client=self.http_client)
+        # 不用重新获取列表
+        if os.environ.get("PRIVATE_AB", "OFF") == "OFF":
+            self.__class__.model_info = ModelInfo(client=self.http_client)
+
+    def set_model_info(self, model_name: str, model_url: str):
+        """为llm component设置模型信息"""
+        self.model_name = model_name
+        self.model_url = model_url
 
     @ttl_lru_cache(seconds_to_live=1 * 60 * 60) # 1h 
     def _check_model_and_get_model_url(self, model, model_type):
@@ -391,10 +402,14 @@ class CompletionBaseComponent(Component):
     def get_model_config(self, model_config_inputs: ModelArgsConfig, other_params: dict = {}):
         """获取模型配置信息"""
         self.model_config["model"]["name"] = self.model_name
-
-        model_url = self._check_model_and_get_model_url(self.model_name, self.model_type)
-        if model_url:
-            self.model_config["model"]["url"] = model_url
+        # 不需要进行地址替换
+        if os.environ.get("PRIVATE_AB", "false") == "false":
+            model_url = self._check_model_and_get_model_url(self.model_name, self.model_type)
+            if model_url:
+                self.model_config["model"]["url"] = model_url
+        elif os.environ.get("PRIVATE_AB", "false") == "true":
+            if self.model_url:
+                self.model_config["model"]["url"] = self.model_url
 
         self.model_config["model"]["completion_params"]["temperature"] = model_config_inputs.temperature
         self.model_config["model"]["completion_params"]["top_p"] = model_config_inputs.top_p
@@ -430,20 +445,11 @@ class CompletionBaseComponent(Component):
 
         stream = True if request.response_mode == "streaming" else False
         url = self.http_client.service_url(completion_url, self.base_url)
-        logger.debug(
-            "request url: {}, method: {}, json: {}, headers: {}".format(url,
-                                                                        "POST",
-                                                                        request.params,
-                                                                        headers))
         response = self.http_client.session.post(url, json=request.params, headers=headers, timeout=timeout,
                                                  stream=stream)
-
-        logger.debug(
-            "request url: {}, method: {}, json: {}, headers: {}, response: {}".format(url, "POST",
-                                                                                      request.params,
-                                                                                      headers,
-                                                                                      response))
+        
         return self.gene_response(response, stream)
+
 
     @staticmethod
     def check_service_error(data: dict):

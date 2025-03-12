@@ -14,7 +14,6 @@
 from appbuilder.utils.logger_util import logger
 from appbuilder.core.console.appbuilder_client import data_class
 
-
 class AppBuilderClientRunContext(object):
     def __init__(self) -> None:
         """
@@ -81,12 +80,31 @@ class AsyncAppBuilderEventHandler(object):
         self._need_tool_call = False
         self._last_tool_output = None
         self._action = action
+        await self.__format_tools__()
 
         self._iterator = (
             self.__run_process__()
             if not self._stream
             else self.__stream_run_process__()
         )
+
+    async def __format_tools__(self):
+        """
+        完善tools。
+
+        Args:
+            无参数。
+
+        Returns:
+            无参数
+
+        """
+        if not self._tools:
+            return
+        tools = [
+            data_class.ToAppBuilderTool(tool) for tool in self._tools
+        ]
+        self._tools = tools
 
     async def __run_process__(self):
         """

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-__version__ = '0.9.8.3'
+__version__ = '1.0.3'
 
 import os
 import sys
@@ -180,8 +180,9 @@ from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuild
 from appbuilder.core.console.appbuilder_client.async_appbuilder_client import AsyncAppBuilderClient
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
 from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps, describe_apps
+from appbuilder.core.console.component_client.component_client import ComponentClient
 from appbuilder.core.console.knowledge_base.knowledge_base import KnowledgeBase
-from appbuilder.core.console.knowledge_base.data_class import CustomProcessRule, DocumentSource, DocumentChoices, DocumentChunker, DocumentSeparator, DocumentPattern, DocumentProcessOption
+from appbuilder.core.console.knowledge_base.data_class import CustomProcessRule, DocumentSource, DocumentChoices, DocumentChunker, DocumentSeparator, DocumentPattern, DocumentProcessOption, DocumentSourceUrlConfig
 
 from .core._exception import (
     BadRequestException,
@@ -201,8 +202,11 @@ from appbuilder.core.assistant.threads.runs import AssistantStreamManager
 
 from appbuilder.utils.trace.tracer import AppBuilderTracer, AppbuilderInstrumentor
 
+from .utils.logger_file_headler import SizeAndTimeRotatingFileHandler
+
 __all__ = [
     "logger",
+    "SizeAndTimeRotatingFileHandler",
     "BadRequestException",
     "ForbiddenException",
     "NotFoundException",
@@ -217,6 +221,7 @@ __all__ = [
     "AppBuilderClient",
     "AsyncAppBuilderClient",
     "AgentBuilder",
+    "ComponentClient",
     "get_app_list",
     "get_all_apps",
     "describe_apps",
@@ -228,6 +233,7 @@ __all__ = [
     "DocumentSeparator",
     "DocumentPattern",
     "DocumentProcessOption",
+    "DocumentSourceUrlConfig"
     "assistant",
     "StreamRunContext",
     "AssistantEventHandler",

@@ -17,12 +17,19 @@ import com.baidubce.appbuilder.base.utils.json.JsonUtils;
 import com.baidubce.appbuilder.model.knowledgebase.*;
 
 public class Knowledgebase extends Component {
+    private String knowledgeBaseId;
+
     public Knowledgebase() {
         super();
     }
 
     public Knowledgebase(String SecretKey) {
         super(SecretKey);
+    }
+
+    public Knowledgebase(String knowledgeBaseId, String SecretKey) {
+        super(SecretKey);
+        this.knowledgeBaseId = knowledgeBaseId;
     }
 
     /**
@@ -33,6 +40,7 @@ public class Knowledgebase extends Component {
      * @throws IOException               当文件上传失败时抛出IOException
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
+    @Deprecated
     public String uploadFile(String filePath) throws IOException, AppBuilderServerException {
         return innerUploadFile(filePath, java.util.UUID.randomUUID().toString());
     }
@@ -46,6 +54,7 @@ public class Knowledgebase extends Component {
      * @throws IOException 如果发生I/O错误
      * @throws AppBuilderServerException 如果应用构建服务器发生错误
      */
+    @Deprecated
     public String uploadFile(String filePath, String clientToken) throws IOException, AppBuilderServerException {
         return innerUploadFile(filePath, clientToken);
     }
@@ -86,6 +95,7 @@ public class Knowledgebase extends Component {
      * @throws IOException               当文件上传失败时抛出IOException
      * @throws AppBuilderServerException 当服务器返回错误码时抛出AppBuilderServerException
      */
+    @Deprecated
     public String[] addDocument(DocumentAddRequest req)
             throws IOException, AppBuilderServerException {
         return innerAddDocument(req, java.util.UUID.randomUUID().toString());
@@ -100,6 +110,7 @@ public class Knowledgebase extends Component {
      * @throws IOException 如果发生输入/输出异常，抛出此异常
      * @throws AppBuilderServerException 如果应用程序构建服务器发生异常，抛出此异常
      */
+    @Deprecated
     public String[] addDocument(DocumentAddRequest req, String clientToken)
             throws IOException, AppBuilderServerException {
         return innerAddDocument(req, clientToken);
@@ -140,6 +151,7 @@ public class Knowledgebase extends Component {
      * @throws IOException 当发生输入输出异常时抛出
      * @throws AppBuilderServerException 当应用构建服务器发生异常时抛出
      */
+    @Deprecated
     public Document[] getDocumentList(DocumentListRequest request)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.KNOWLEDGEBASE_DOCUMENT_LIST_URL;
@@ -149,6 +161,23 @@ public class Knowledgebase extends Component {
         HttpResponse<DocumentListResponse> response = httpClient.execute(getRequest, DocumentListResponse.class);
         DocumentListResponse respBody = response.getBody();
         return respBody.getData();
+    }
+
+    public DocumentsDescribeResponse describeDocuments(DocumentsDescribeRequest request)
+            throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.DESCRIBE_DOCUMENTS_URL;
+
+        if (request.getKnowledgeBaseId().isEmpty() && !this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<DocumentsDescribeResponse> response = httpClient.execute(postRequest,
+                DocumentsDescribeResponse.class);
+        DocumentsDescribeResponse respBody = response.getBody();
+        return respBody;
     }
 
     /**
@@ -537,8 +566,14 @@ public class Knowledgebase extends Component {
     private String innerCreateChunk(String documentId, String content, String clientToken)
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CHUNK_CREATE_URL;
-
-        ChunkCreateRequest request = new ChunkCreateRequest(documentId, content);
+        
+        ChunkCreateRequest request;
+        if(this.knowledgeBaseId.isEmpty()) {
+            request = new ChunkCreateRequest(documentId, content);
+        } else {
+            request = new ChunkCreateRequest(this.knowledgeBaseId, documentId, content);
+        }
+        
         String jsonBody = JsonUtils.serialize(request);
         url = url + "&clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
@@ -592,7 +627,12 @@ public class Knowledgebase extends Component {
             throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CHUNK_MODIFY_URL;
 
-        ChunkModifyRequest request = new ChunkModifyRequest(chunkId, content, enable);
+        ChunkModifyRequest request;
+        if (this.knowledgeBaseId.isEmpty()) {
+            request = new ChunkModifyRequest(chunkId, content, enable);
+        } else {
+            request = new ChunkModifyRequest(this.knowledgeBaseId, chunkId, content, enable);
+        }
         String jsonBody = JsonUtils.serialize(request);
         url = url + "&clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
@@ -634,8 +674,12 @@ public class Knowledgebase extends Component {
      */
     private void innderDeleteChunk(String chunkId, String clientToken) throws IOException, AppBuilderServerException {
         String url = AppBuilderConfig.CHUNK_DELETE_URL;
+        
         ChunkDeleteRequest request = new ChunkDeleteRequest();
         request.setChunkId(chunkId);
+        if (!this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
         String jsonBody = JsonUtils.serialize(request);
         url = url + "&clientToken=" + clientToken;
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
@@ -658,6 +702,9 @@ public class Knowledgebase extends Component {
 
         ChunkDescribeRequest request = new ChunkDescribeRequest();
         request.setChunkId(chunkId);
+        if (!this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
         String jsonBody = JsonUtils.serialize(request);
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
@@ -683,6 +730,25 @@ public class Knowledgebase extends Component {
         String url = AppBuilderConfig.CHUNKS_DESCRIBE_URL;
 
         ChunksDescribeRequest request = new ChunksDescribeRequest(documentId, marker, maxKeys, type);
+        if (!this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<ChunksDescribeResponse> response = httpClient.execute(postRequest, ChunksDescribeResponse.class);
+        ChunksDescribeResponse respBody = response.getBody();
+        return respBody;
+    }
+
+    public ChunksDescribeResponse describeChunks(ChunksDescribeRequest request)
+            throws IOException, AppBuilderServerException {
+        String url = AppBuilderConfig.CHUNKS_DESCRIBE_URL;
+
+        if (!this.knowledgeBaseId.isEmpty()) {
+            request.setKnowledgeBaseId(this.knowledgeBaseId);
+        }
         String jsonBody = JsonUtils.serialize(request);
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
@@ -694,6 +760,9 @@ public class Knowledgebase extends Component {
 
     public QueryKnowledgeBaseResponse queryKnowledgeBase(QueryKnowledgeBaseRequest request)
             throws IOException, AppBuilderServerException {
+        if (request.getRank_score_threshold() == null) {
+            request.setRank_score_threshold(0.4f);
+        }
         String url = AppBuilderConfig.QUERY_KNOWLEDGEBASE_URL;
 
         String jsonBody = JsonUtils.serialize(request);
@@ -705,13 +774,36 @@ public class Knowledgebase extends Component {
         QueryKnowledgeBaseResponse respBody = response.getBody();
         return respBody;
     }
-    
+
     public QueryKnowledgeBaseResponse queryKnowledgeBase(String query, String type, Integer top, Integer skip,
             String[] knowledgebaseIDs, QueryKnowledgeBaseRequest.MetadataFilters filters,
             QueryKnowledgeBaseRequest.QueryPipelineConfig pipelineConfig) 
             throws IOException, AppBuilderServerException {
+                
+        float rank_score_threshold = 0.4f;
+
         String url = AppBuilderConfig.QUERY_KNOWLEDGEBASE_URL;
-        QueryKnowledgeBaseRequest request = new QueryKnowledgeBaseRequest(query, type, top, skip, knowledgebaseIDs, filters, pipelineConfig);
+        QueryKnowledgeBaseRequest request = new QueryKnowledgeBaseRequest(query, type, rank_score_threshold, top, skip, knowledgebaseIDs, filters, pipelineConfig);
+        String jsonBody = JsonUtils.serialize(request);
+        ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
+                new StringEntity(jsonBody, StandardCharsets.UTF_8));
+        postRequest.setHeader("Content-Type", "application/json");
+        HttpResponse<QueryKnowledgeBaseResponse> response = httpClient.execute(postRequest,
+                QueryKnowledgeBaseResponse.class);
+        QueryKnowledgeBaseResponse respBody = response.getBody();
+        return respBody;
+    }
+    
+    public QueryKnowledgeBaseResponse queryKnowledgeBase(String query, String type, Float rank_score_threshold, Integer top, Integer skip,
+            String[] knowledgebaseIDs, QueryKnowledgeBaseRequest.MetadataFilters filters,
+            QueryKnowledgeBaseRequest.QueryPipelineConfig pipelineConfig) 
+            throws IOException, AppBuilderServerException {
+        if (rank_score_threshold == null) {
+            rank_score_threshold = 0.4f;
+        }
+
+        String url = AppBuilderConfig.QUERY_KNOWLEDGEBASE_URL;
+        QueryKnowledgeBaseRequest request = new QueryKnowledgeBaseRequest(query, type, rank_score_threshold, top, skip, knowledgebaseIDs, filters, pipelineConfig);
         String jsonBody = JsonUtils.serialize(request);
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));

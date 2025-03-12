@@ -62,7 +62,7 @@ class AsyncAppBuilderClient(Component):
         query: str = "",
         file_ids: list = [],
         stream: bool = False,
-        tools: list[Union[data_class.Tool, Manifest]] = None,
+        tools: list[Union[data_class.Tool, Manifest, data_class.MCPTool]] = None,
         tool_outputs: list[data_class.ToolOutput] = None,
         tool_choice: data_class.ToolChoice = None,
         end_user_id: str = None,
@@ -76,7 +76,7 @@ class AsyncAppBuilderClient(Component):
             conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
             file_ids(list[str]): 文件ID列表
             stream (bool): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
-            tools(list[Union[data_class.Tool,Manifest]]): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
+            tools(list[Union[data_class.Tool,Manifest,data_class.MCPTool]]): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
             tool_outputs(list[data_class.ToolOutput]): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
             tool_choice(data_class.ToolChoice): 控制大模型使用组件的方式，默认为None
             end_user_id (str): 用户ID，用于区分不同用户
@@ -96,6 +96,12 @@ class AsyncAppBuilderClient(Component):
             raise ValueError(
                 "AppBuilderClient Run API: query and tool_outputs cannot both be empty"
             )
+
+        if tools:
+            formatted_tools = [
+                data_class.ToAppBuilderTool(tool) for tool in tools
+            ]
+            tools = formatted_tools
 
         req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
@@ -141,23 +147,49 @@ class AsyncAppBuilderClient(Component):
             response (str): 唯一文件ID
 
         """
+        return await self.upload_local_file(conversation_id, local_file_path)
+
+    async def upload_file(self, conversation_id, local_file_path: str=None, file_url: str=None) -> str:
+        r"""异步运行，上传文件并将文件与会话ID进行绑定，后续可使用该文件ID进行对话，目前仅支持上传xlsx、jsonl、pdf、png等文件格式
+
+        该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
+
+        Args:
+            conversation_id (str) : 会话ID
+            local_file_path (str) : 本地文件路径
+            file_url (str) : 文件URL
+
+        Returns:
+            response (str): 唯一文件ID
+
+        """
         if len(conversation_id) == 0:
             raise ValueError(
                 "conversation_id is empty, you can run self.create_conversation to get a conversation_id"
             )
 
-        filepath = os.path.abspath(local_file_path)
-        if not os.path.exists(filepath):
-            raise FileNotFoundError(f"{filepath} does not exist")
+        if local_file_path is None and file_url is None:
+            raise ValueError(
+                "local_file_path and file_url cannot both be empty"
+            )
+        if local_file_path:
+            filepath = os.path.abspath(local_file_path)
+            if not os.path.exists(filepath):
+                raise FileNotFoundError(f"{filepath} does not exist")
+
         multipart_form_data = FormData()
-        multipart_form_data.add_field(
-            name="file",
-            value=open(local_file_path, "rb"),
-            filename=os.path.basename(local_file_path),
-        )
         multipart_form_data.add_field(name="app_id", value=self.app_id)
         multipart_form_data.add_field(
             name="conversation_id", value=conversation_id)
+
+        if local_file_path:
+            multipart_form_data.add_field(
+                name="file",
+                value=open(local_file_path, "rb"),
+                filename=os.path.basename(local_file_path),
+            )
+        else:
+            multipart_form_data.add_field(name="file_url", value=file_url)
 
         headers = self.http_client.auth_header_v2()
         url = self.http_client.service_url_v2("/app/conversation/file/upload")
@@ -174,7 +206,7 @@ class AsyncAppBuilderClient(Component):
         conversation_id: str,
         query: str = "",
         file_ids: list = [],
-        tools: list[Union[data_class.Tool, Manifest]] = None,
+        tools: list[Union[data_class.Tool, Manifest, data_class.MCPTool]] = None,
         stream: bool = False,
         event_handler=None,
         action=None,
@@ -186,11 +218,10 @@ class AsyncAppBuilderClient(Component):
             conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
             query (str): 查询字符串
             file_ids (list): 文件ID列表
-            tools(list[Union[data_class.Tool,Manifest]], 可选): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
+            tools(list[Union[data_class.Tool,Manifest,data_class.MCPTool]], 可选): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
             stream (bool): 是否流式响应
             event_handler (EventHandler): 事件处理器
             action(data_class.Action) 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
-
             kwargs: 其他参数
 
         Returns:

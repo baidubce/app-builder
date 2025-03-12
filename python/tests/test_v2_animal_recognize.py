@@ -146,9 +146,15 @@ class TestAnimalRecognition(unittest.TestCase):
 
     def test_tool_eval_invalid(self):
         """测试 tool 方法对无效请求的处理。"""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             result = self.animal_recognition.tool_eval(name="animal_recognition", streaming=True,
                                                        origin_query="")
+            next(result)
+
+    def test_tool_eval_raise_exception(self):
+        """测试 tool 方法对异常情况的处理。"""
+        with self.assertRaises(ValueError):
+            result = self.animal_recognition.tool_eval()
             next(result)
 
 

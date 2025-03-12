@@ -61,14 +61,13 @@ class TestKnowLedge(unittest.TestCase):
 
     def test_create_knowledge_base(self):
         knowledge = appbuilder.KnowledgeBase()
+        appbuilder.logger.setLoglevel("DEBUG")
         try:
             resp = knowledge.create_knowledge_base(
                 name="test",
                 description="test",
                 type="public",
-                esUrl="http://localhost:9200",
-                esUserName="elastic",
-                esPassword="changeme",
+                pathPrefix="/全部群组",
             )
             knowledge_base_id = resp.id
             knowledge.get_knowledge_base_detail(knowledge_base_id)
@@ -85,6 +84,7 @@ class TestKnowLedge(unittest.TestCase):
                 type="web",
                 urls=["https://baijiahao.baidu.com/s?id=1802527379394162441"],
                 urlDepth=1,
+                urlConfigs=[appbuilder.DocumentSourceUrlConfig(frequency=1)]
             ),
             processOption=appbuilder.DocumentProcessOption(
                 template="custom",
@@ -130,19 +130,22 @@ class TestKnowLedge(unittest.TestCase):
         )
         self.assertIsInstance(upload_documents_response.documentId, str)
 
-        list_res = knowledge.get_documents_list(
+        knowledge.get_documents_list(
             knowledge_base_id=knowledge_base_id)
+        list_res = knowledge.describe_documents(knowledge_base_id=knowledge_base_id)
         document_id = list_res.data[-1].id
-        res = knowledge.describe_chunks(document_id)
-        resp = knowledge.create_chunk(document_id, content="test")
+        knowledge.describe_chunks(document_id, knowledgebase_id=knowledge_base_id, keyword="test")
+        resp = knowledge.create_chunk(document_id, content="test", knowledgebase_id=knowledge_base_id)
         chunk_id = resp.id
-        knowledge.modify_chunk(chunk_id, content="new test", enable=True)
+        knowledge.modify_chunk(chunk_id, content="new test", enable=True, knowledgebase_id=knowledge_base_id)
         # 目前openapi有延迟，后续openapi完善后，删除注释
-        # knowledge.describe_chunk(chunk_id)
-        knowledge.delete_chunk(chunk_id)
+        knowledge.describe_chunk(chunk_id, knowledgebase_id=knowledge_base_id)
+        knowledge.delete_chunk(chunk_id, knowledgebase_id=knowledge_base_id)
 
         knowledge.modify_knowledge_base(
-            knowledge_base_id=knowledge_base_id, name="test"
+            knowledge_base_id=knowledge_base_id,
+            name="test",
+            pathPrefix="/全部群组",
         )
 
         if self.whether_create_knowledge_base:

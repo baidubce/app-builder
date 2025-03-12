@@ -20,6 +20,7 @@ from typing import Dict, List, Optional, Any
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import *
+from appbuilder.core.utils import get_filename_from_url
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 from appbuilder.core.components.v2.tree_mind.model import TreeMindRequest, TreeMindResponse
 
@@ -84,17 +85,6 @@ class TreeMind(Component):
         img_link = treemind_response.info.downloadInfo.fileInfo.pic
         return img_link, jump_link
 
-    @staticmethod
-    def get_filename_from_url(url):
-        """从给定URL中提取文件名"""
-        parsed_url = urlparse(url)
-        # 提取路径部分
-        path = parsed_url.path
-        # 从路径中获取文件名
-        filename = path.split('/')[-1]
-        # 解码URL编码的文件名
-        return unquote(filename)
-
     @components_run_stream_trace
     def tool_eval(
             self,
@@ -120,18 +110,20 @@ class TreeMind(Component):
             type="text",
             text=result,
             visible_scope='llm',
-            name="text"
+            name="text",
+            raw_data={"event_status": "done"}
         )
         yield llm_result
         
         img_link_result = self.create_output(
             type="image",
             text={
-                "filename": self.get_filename_from_url(img_link),
+                "filename": get_filename_from_url(img_link),
                 "url": img_link
             },
             visible_scope='all',
-            name="img_link_url"
+            name="img_link_url",
+            raw_data={"event_status": "done"}
         )
         yield img_link_result
 

@@ -45,16 +45,32 @@ AppBuilderClient组件支持调用在[百度智能云千帆AppBuilder](https://c
  | conversation_id | string   | 会话的ID | "80c5bbee-931d-4ed9-a4ff-63e1971bd071" |
 
 
-### `AppBuilderClient().upload_local_file(file_path: str)-> str`
+### `AppBuilderClient().upload_local_file(conversation_id, local_file_path: str)-> str`
 #### 方法参数
-| 参数名称  | 参数类型 | 描述     | 示例值           |
-| --------- | -------- | -------- | ---------------- |
-| file_path | string   | 文件路径 | "正确的文件路径" |
+| 参数名称        | 参数类型 | 描述     | 示例值           |
+| --------------- | -------- | -------- | ---------------- |
+| conversation_Id | string   | 会话ID   |                  |
+| file_path       | string   | 文件路径 | "正确的文件路径" |
 #### 方法返回值
 | 参数名称 | 参数类型 | 描述   | 示例值                             |
 | -------- | -------- | ------ | ---------------------------------- |
 | file_id  | string   | 文件ID | "80c5bbee-931d-4ed9-a4ff-63e1971bd |
 
+### `AppBuilderClient().upload_file(conversation_id, local_file_path: str=None, file_url: str=None)-> str`
+
+#### 方法参数
+
+| 参数名称        | 参数类型 | 描述     | 示例值           |
+| --------------- | -------- | -------- | ---------------- |
+| conversation_Id | string   | 会话ID   |                  |
+| file_path       | string   | 文件路径 | "正确的文件路径" |
+| file_url        | string   | 文件url  |                  |
+
+#### 方法返回值
+
+| 参数名称 | 参数类型 | 描述   | 示例值                             |
+| -------- | -------- | ------ | ---------------------------------- |
+| file_id  | string   | 文件ID | "80c5bbee-931d-4ed9-a4ff-63e1971bd |
 
 ### `AppBuilderClient().run() -> Message`
 

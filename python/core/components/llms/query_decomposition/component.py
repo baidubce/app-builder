@@ -13,10 +13,13 @@
 # limitations under the License.
 """ query decomposition
 """
+from pydantic import Field
 from typing import Optional
 
+from appbuilder.core.message import Message
+from appbuilder.core.component import ComponentArguments
 from appbuilder.core.components.llms.base import CompletionBaseComponent
-from appbuilder.utils.trace.tracer_wrapper import components_run_trace
+from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 from .base import QueryDecompositionMeta
 
 
@@ -45,12 +48,32 @@ class QueryDecomposition(CompletionBaseComponent):
     version = "v1"
     meta = QueryDecompositionMeta
 
+    manifests = [
+        {
+            "name": "query_decomposition",
+            "description": "尝试对已经判定为复杂问题的原始问题进行拆解，把复杂问题拆解为一个个简单问题。广泛用于知识问答场景。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "输入消息，用于模型的输入，一般为问题。"
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
+
     def __init__(
         self, 
         model=None,
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化QueryDecompositionMeta任务。
         
@@ -82,3 +105,23 @@ class QueryDecomposition(CompletionBaseComponent):
             obj:`Message`: 模型运行后的输出消息。
         """
         return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p)
+
+    @components_run_stream_trace
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        traceid = kwargs.get("traceid")
+        query = kwargs.get("query", None)
+        if not query:
+            raise ValueError("param `query` is required")
+        msg = Message(query)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, stream=False, temperature=temperature, top_p=top_p, request_id=traceid)
+
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)

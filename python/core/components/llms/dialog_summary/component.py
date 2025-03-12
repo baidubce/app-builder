@@ -14,6 +14,7 @@
 
 from typing import Optional
 
+from appbuilder.core.message import Message
 from appbuilder.core.components.llms.base import CompletionBaseComponent
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 from .base import DialogSummaryArgs
@@ -42,12 +43,32 @@ class DialogSummary(CompletionBaseComponent):
     version = "v1"
     meta = DialogSummaryArgs
 
+    manifests = [
+        {
+            "name": "dialog_summary",
+            "description": "基于输入的对话，用大模型对该段对话生成总结, 结果按{\"诉求\": \"\", \"回应\": \"\", \"解决情况\": \"\"}格式输出。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "输入的对话，用于大模型根据该对话生成总结。"
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    ]
+
     def __init__(
         self, 
         model=None,
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化DialogSummary模型。
         
@@ -84,3 +105,23 @@ class DialogSummary(CompletionBaseComponent):
         
         """
         return super().run(message=message, stream=stream, temperature=temperature, top_p=top_p)
+
+    @components_run_stream_trace
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
+        """
+        tool_eval for function call
+        """
+        traceid = kwargs.get("traceid")
+        query = kwargs.get("query", None)
+        if not query:
+            raise ValueError("param `query` is required")
+        msg = Message(query)
+        model_configs = kwargs.get('model_configs', {})
+        temperature = model_configs.get("temperature", 1e-10)
+        top_p = model_configs.get("top_p", 0.0)
+        message = super().run(message=msg, stream=False, temperature=temperature, top_p=top_p, request_id=traceid)
+
+        if streaming:
+            yield str(message.content)
+        else:
+            return str(message.content)

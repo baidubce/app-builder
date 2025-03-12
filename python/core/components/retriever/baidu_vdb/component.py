@@ -431,7 +431,11 @@ class BaiduVDBRetriever(Component):
     tool_desc: Dict[str, Any] = {
         "description": "a retriever based on Baidu VectorDB"}
 
-    def __init__(self, embedding, table):
+    def __init__(self, 
+                 embedding, 
+                 table,
+                 **kwargs
+                 ):
         super().__init__()
 
         self.embedding = embedding

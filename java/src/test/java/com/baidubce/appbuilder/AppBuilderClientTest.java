@@ -1,9 +1,5 @@
 package com.baidubce.appbuilder;
 
-import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
-import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
-import com.baidubce.appbuilder.console.appbuilderclient.AppList;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.nio.file.Files;
@@ -11,16 +7,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientIterator;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
+import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
+import com.baidubce.appbuilder.console.appbuilderclient.AppList;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.AppsDescribeRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.Event;
 import com.baidubce.appbuilder.model.appbuilderclient.EventContent;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
-import org.junit.Before;
-import org.junit.Test;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientFeedbackRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientFeedbackResponse;
+
 
 import static org.junit.Assert.*;
 
@@ -58,6 +60,9 @@ public class AppBuilderClientTest {
         AppBuilderClient builder = new AppBuilderClient(followupqueryId);
         String conversationId = builder.createConversation();
         assertNotNull(conversationId);
+        builder.uploadFile(conversationId, "src/test/java/com/baidubce/appbuilder/files/test.pdf", "");
+        builder.uploadFile(conversationId, "", 
+                "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad6862cf937c03f8c5260d51c6ae");
         String fileId = builder.uploadLocalFile(conversationId,
                 "src/test/java/com/baidubce/appbuilder/files/test.pdf");
         assertNotNull(fileId);
@@ -251,5 +256,30 @@ public class AppBuilderClientTest {
             }
         }
         assertTrue(hasMultipleContentType);
+    }
+
+    @Test
+    public void AppBuilderClientFeedbackTest() throws IOException, AppBuilderServerException {
+        AppBuilderClient builder = new AppBuilderClient(followupqueryId);
+        String conversationId = builder.createConversation();
+        assertNotNull(conversationId);
+        String fileId = builder.uploadLocalFile(conversationId,
+                "src/test/java/com/baidubce/appbuilder/files/test.pdf");
+        assertNotNull(fileId);
+        AppBuilderClientIterator itor = builder.run("北京有多少小学生", conversationId, new String[] { fileId }, true);
+        assertTrue(itor.hasNext());
+        String messageId = "";
+        while (itor.hasNext()) {
+            AppBuilderClientResult result = itor.next();
+            messageId = result.getMessageId();
+            if (messageId != null && !messageId.isEmpty()) {
+                break;
+            }
+        }
+
+        AppBuilderClientFeedbackRequest request = new AppBuilderClientFeedbackRequest(followupqueryId, conversationId,
+                messageId, "downvote", new String[] { "没有帮助" }, "测试");
+        AppBuilderClientFeedbackResponse result = builder.feedback(request);
+        assertNotNull(result.getRequestId());
     }
 }

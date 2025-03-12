@@ -5,9 +5,10 @@ import json
 from typing import Any, Optional, Union
 from click.testing import CliRunner
 import uuid
+import logging
 
 import appbuilder
-from appbuilder.core.component import Component
+from appbuilder.core.component import Component, Content
 from appbuilder.core.message import Message
 from appbuilder.utils.logger_util import logger
 from appbuilder.core.context import init_context
@@ -44,6 +45,7 @@ class ChainlitRuntime(object):
         import sys
         import appbuilder
         from appbuilder.utils.chainlit_deploy import ChainlitRuntime
+        from 
         os.environ["APPBUILDER_TOKEN"] = '...'
 
         component = appbuilder.Playground(
@@ -51,7 +53,24 @@ class ChainlitRuntime(object):
             model="eb-4"
         )
         agent = ChainlitRuntime(component=component)
-        agent.chainlit_component(port=8091)
+        message = appbuilder.Message({"query": "你好"})
+        print(agent.chat(message, stream=False))
+
+    .. code-block:: python
+
+        import os
+        import sys
+        import appbuilder
+        from appbuilder.utils.chainlit_deploy import ChainlitRuntime
+        from appbuilder.core.components.v2 import SimilarQuestion
+        os.environ["APPBUILDER_TOKEN"] = '...'
+        component = SimilarQuestion()
+        agent = ChainlitRuntime(component=component)
+        agent.chainlit_component_debug(
+            port=8092, 
+            tool_eval_args={},
+            query_name = "query"
+        )
 
     Session 数据管理 : 除去上述简单应用外，还支持 Session 数据管理，下面是一个例子
 
@@ -227,7 +246,7 @@ class ChainlitRuntime(object):
             import chainlit.cli
         except ImportError:
             raise ImportError("chainlit module is not installed. Please install it using 'pip install "
-                                "chainlit~=1.0.200'.")
+                                "chainlit'.")
         @cl.on_message  # this function will be called every time a user inputs a message in the UI
         async def main(message: cl.Message):
             session_id = cl.user_session.get("id")
@@ -252,6 +271,314 @@ class ChainlitRuntime(object):
             runner.invoke(
                 chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
         
+    def chainlit_component_debug(
+            self, 
+            host='0.0.0.0', 
+            port=8092, 
+            query_name: str = "query",
+            tool_eval_args: dict = {}):
+        """componnet tool_eval"""
+        """
+        将 appbuilder component 服务化，内部调用组件tool_eval方法，提供 chainlit demo 页面和各类型输出的渲染效果。
+        注意：目前只支持新协议组件
+
+        Args:
+            host (str): 服务 host
+            port (int): 服务 port
+            query_name(str): 组件tool_eval运行时接收自然语言输入的变量名
+            tool_eval_args(dict): 组件tool_eval运行需要的其他参数
+
+        Returns:
+            None
+        """
+        try:
+            import chainlit as cl
+            import chainlit.cli
+        except ImportError:
+            raise ImportError("chainlit module is not installed. Please install it using 'pip install "
+                                "chainlit'.")
+
+        def _chat(message: cl.Message):
+            query = message.content
+            tool_eval_args.update({query_name: query})
+            tool_result = self.component.tool_eval(**tool_eval_args)
+            try:
+                message_result = _convert_componentoutput_to_msg(tool_result)
+                yield from message_result
+            except Exception as e:
+                text = "组件输出报错：" + str(e)
+                elements = [
+                    cl.Text(
+                        name="error",
+                        content=text
+                    )
+                ]
+                message_result = cl.Message(
+                    content="组件输出报错",
+                    elements=elements
+                )
+                yield message_result
+
+        def _echart_to_plotly(echarts_data):
+            """把echart图表数据转换为plotly.graph_objects.Figure图片"""
+            try:
+                import plotly.graph_objects as go
+            except ImportError:
+                raise ImportError("plotly module is not installed. Please install it using 'pip install plotly'")
+
+            fig = go.Figure()
+
+            # 处理不同的图表类型
+            for series in echarts_data.get('series', []):
+                if "dataset" in echarts_data:
+                    data = echarts_data['dataset'][0]["source"]
+                else:
+                    data = series['data']
+
+                if series['type'] == 'bar':
+                    fig.add_trace(go.Bar(
+                        x=echarts_data['xAxis']['data'],
+                        y=data,
+                        name=series.get('name', '')
+                    ))
+                elif series['type'] == 'line':
+                    if 'xAxis' in echarts_data and 'data' in echarts_data['xAxis']:
+                        x = echarts_data['xAxis']['data']
+                        y = data
+                    else:
+                        x = [point[0] for point in data]
+                        y = [point[1] for point in data]
+                    fig.add_trace(go.Scatter(
+                        x=x,
+                        y=y,
+                        mode='lines+markers',
+                        name=series.get('name', '')
+                    ))
+                elif series['type'] == 'scatter':
+                    fig.add_trace(go.Scatter(
+                        x=[point[0] for point in data],
+                        y=[point[1] for point in data],
+                        mode='markers',
+                        name=series.get('name', '')
+                    ))
+                elif series['type'] == 'pie':
+                    fig.add_trace(go.Pie(
+                        labels=[item['name'] for item in data],
+                        values=[item['value'] for item in data],
+                        name=series.get('name', '')
+                    ))
+                elif series['type'] in ['tree', 'treemap']:
+                    data = data[0]['children']
+                    def process_data(data, parent=""):
+                        labels = []
+                        parents = []
+                        for item in data:
+                            labels.append(item['name'])
+                            parents.append(parent)
+                            if item['children']:
+                                child_labels, child_parents = process_data(item['children'], item['name'])
+                                labels.extend(child_labels)
+                                parents.extend(child_parents)
+                        return labels, parents
+
+                    labels, parents = process_data(data)
+
+                    # 创建Treemap图
+                    fig.add_trace(go.Treemap(
+                        labels=labels,
+                        parents=parents
+                    ))
+                elif series['type'] == 'funnel':
+                    fig.add_trace(go.Funnel(
+                        y=[item['name'] for item in data],
+                        x=[item['value'] for item in data]
+                    ))
+                elif series['type'] == 'radar':
+                    indicator_data = echarts_data["radar"]["indicator"]
+                    series_data = data[0]["value"]
+                    for indicator in indicator_data:
+                        fig.add_trace(go.Scatterpolar(
+                            r=series_data,
+                            theta=[indicator["name"]] * len(series_data),
+                            fill="toself",
+                            name=indicator["name"],
+                            subplot="polar"
+                        ))
+
+            # 更新布局
+            layout_update = {
+                'title': echarts_data.get('title', {}).get('text', ''),
+                'legend': dict(orientation='h', yanchor='bottom', y=-0.2),
+                'margin': dict(t=70, r=100, b=50, l=20)
+            }
+
+            if 'radar' in echarts_data:
+                layout_update['polar'] = {
+                    'radialaxis': {'visible': True},
+                    'angularaxis': {'visible': True}
+                }
+            else:
+                layout_update['xaxis_title'] = echarts_data.get('xAxis', {}).get('name', '')
+                if 'yAxis' in echarts_data:
+                    yaxis = echarts_data['yAxis']
+                    if isinstance(yaxis, list):
+                        yaxis = yaxis[0]
+                else:
+                    yaxis = {}
+                layout_update['yaxis_title'] = yaxis.get('name', '')
+
+            fig.update_layout(**layout_update)
+            return fig
+
+        def _convert_code(name: str, code: str):
+            """把组件code输出转换为code格式的Text输出"""
+            from pygments.lexers import guess_lexer
+            try:
+                lexer = guess_lexer(code)
+                language = lexer.name
+            except:
+                language = ""
+            logging.info(f"langauge: {language}")
+            return cl.Text(
+                name=name,
+                content=code,
+                display="inline",
+                language=language
+            )
+
+        def _convert_text(text):
+            """解析组件Text输出，主要提取echart图表数据"""
+            elements = []
+            import re
+            pattern = r'\n\n```echarts-option\n(.*?)\n```'
+            echarts_match = re.search(pattern, text.info, re.DOTALL)
+            if echarts_match:
+                echarts_data = echarts_match.group(1)
+                logging.info(f"chart data: {echarts_data}")
+                echarts_data_list = json.loads(echarts_data)
+                for echarts_data in echarts_data_list:
+                    fig = _echart_to_plotly(echarts_data)
+                    elements.append(cl.Plotly(
+                        name="chart",
+                        figure=fig,
+                        display="inline"
+                    ))
+
+                rest = text.info[echarts_match.end():].strip()
+                if rest:
+                    elements.append(cl.Text(
+                        name="text",
+                        content=rest,
+                        display = "inline"
+                    ))
+            if not echarts_match:
+                elements.append(cl.Text(
+                    name="text",
+                    content=text.info.strip(),
+                    display = "inline"
+                ))
+            return elements
+
+        def _convert_content_to_elements(content: Content) -> list:
+            """把AB ComponentOutput.Content转换为chainlit的elements"""
+            elements = []
+            type = content.type
+            text = content.text
+            if type == "text" or type == "oral_text":
+                elements.extend(_convert_text(text))
+            elif type == "image":
+                elements.append(cl.Image(
+                    name="image",
+                    display="inline",
+                    size="large",
+                    url=text.url,
+                ))
+            elif type == "files":
+                if text.url:
+                    elements.append(cl.File(
+                        name=text.filename,
+                        url=text.url,
+                        display="inline",
+                    ))
+            elif type == "audio":
+                elements.append(cl.Audio(
+                    name="audio",
+                    display="inline",
+                    size="medium",
+                    url=text.url
+                ))
+            elif type == "chart":
+                json_data = json.loads(text.data)
+                fig = _echart_to_plotly(json_data)
+                elements.append(cl.Plotly(
+                    name="chart",
+                    figure=fig,
+                    display="inline"
+                ))
+            elif type == "code":
+                elements.append(_convert_code(
+                    "code", text.code
+                ))
+            elif type == "references":
+                json_data = text.model_dump_json(indent=4)
+                elements.append(cl.Text(
+                    name="reference",
+                    content=json_data,
+                    display="inline",
+                    language="json"
+                ))
+            elif type == "json":
+                data = json.loads(text.data)
+                data_str = json.dumps(
+                    data,
+                    ensure_ascii=False,
+                    indent=4
+                )
+                elements.append(cl.Text(
+                    name="json",
+                    content=data_str,
+                    display="inline",
+                ))
+            elif type == "urls":
+                elements.append(cl.Text(
+                    name="url", 
+                    content="下载链接："+text.url
+                ))
+            else:
+                logging.info(f"invalid type: {type}")
+                raise ValueError("invalid type")
+            
+            return elements
+
+        def _convert_componentoutput_to_msg(result):
+            """把ComponentOutput转换为cl.Message"""
+            elements = []
+            for iter in result:
+                content = iter.content[0]
+                elements = _convert_content_to_elements(content)
+                tool_name = component.manifests[0]["name"]
+                msg = cl.Message(content=tool_name, elements=elements)
+                yield msg
+        
+        @cl.on_message  # this function will be called every time a user inputs a message in the UI
+        async def main(message: cl.Message):
+            logging.info(f"message: {message.content}")
+            stream_message = _chat(message)
+            for msg in stream_message:
+                logging.info(f"msg {msg}")
+                await msg.send()
+
+            await msg.update()
+
+        if os.getenv('APPBUILDER_RUN_CHAINLIT') == '1':
+            pass
+        else:
+            os.environ['APPBUILDER_RUN_CHAINLIT'] = '1'
+            target = sys.argv[0]
+            runner = CliRunner()
+            runner.invoke(
+                chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
+
 
     def chainlit_agent(self, host='0.0.0.0', port=8091):
         """
@@ -269,7 +596,7 @@ class ChainlitRuntime(object):
             import chainlit.cli
         except ImportError:
             raise ImportError("chainlit module is not installed. Please install it using 'pip install "
-                                "chainlit~=1.0.200'.")
+                                "chainlit'.")
         if not isinstance(self.component, appbuilder.AppBuilderClient):
             raise ValueError(
                 "chainlit_agent require component must be an instance of AppBuilderClient")
@@ -355,4 +682,13 @@ class ChainlitRuntime(object):
             runner = CliRunner()
             runner.invoke(
                 chainlit.cli.chainlit_run, [target, '--watch', "--port", port, "--host", host])
+            
 
+if __name__ == "__main__":
+    from appbuilder.core.components.v2 import Text2Image
+    component = Text2Image()
+    agent = ChainlitRuntime(
+        component=component,
+    )
+    agent.chainlit_component_debug(port=8092, tool_eval_args={},
+        query_name = "query")

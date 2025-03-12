@@ -71,7 +71,8 @@ class RagWithBaiduSearchPro(Component):
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = False,
-            instruction: Optional[Message] = None
+            instruction: Optional[Message] = None,
+            **kwargs
     ):
         super().__init__(
             meta=RagWithBaiduSearchProArgs, secret_key=secret_key, gateway=gateway,

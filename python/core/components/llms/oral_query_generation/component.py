@@ -19,7 +19,6 @@ from typing import Optional
 from appbuilder.core.components.llms.base import CompletionBaseComponent, ModelArgsConfig
 from appbuilder.core.message import Message
 from appbuilder.core._exception import AppBuilderServerException
-from appbuilder.utils.logger_util import logger
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 from .base import OralQueryGenerationArgs
 
@@ -84,6 +83,7 @@ class OralQueryGeneration(CompletionBaseComponent):
         secret_key: Optional[str] = None, 
         gateway: str = "",
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化口语化Query生成模型。
         
@@ -139,20 +139,8 @@ class OralQueryGeneration(CompletionBaseComponent):
         stream = True if request.response_mode == "streaming" else False
         
         url = self.http_client.service_url("/app/query_generation", self.base_url)
-
-        logger.debug(
-            "request url: {}, method: {}, json: {}, headers: {}".format(url,
-                                                                        "POST",
-                                                                        request.params,
-                                                                        headers))
         response = self.http_client.session.post(url, json=request.params, headers=headers, timeout=timeout,
                                                  stream=stream)
-
-        logger.debug(
-            "request url: {}, method: {}, json: {}, headers: {}, response: {}".format(url, "POST",
-                                                                                      request.params,
-                                                                                      headers,
-                                                                                      response))
         return self.gene_response(response, stream)
 
     @components_run_trace
@@ -197,7 +185,7 @@ class OralQueryGeneration(CompletionBaseComponent):
         return result
 
     @components_run_stream_trace
-    def tool_eval(self, name: str, stream: bool = False, **kwargs):
+    def tool_eval(self, name: str, streaming: bool = False, **kwargs):
         """
         调用函数进行工具评估。
         
@@ -230,10 +218,10 @@ class OralQueryGeneration(CompletionBaseComponent):
         message = self.run(message=msg,
                            query_type=query_type,
                            output_format=output_format,
-                           stream=stream,
+                           stream=streaming,
                            temperature=temperature,
                            top_p=top_p)
-        if stream:
+        if streaming:
             for data in message.content:
                 yield data
         else:

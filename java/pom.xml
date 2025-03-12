@@ -6,7 +6,7 @@
 
     <groupId>com.baidubce</groupId>
     <artifactId>appbuilder</artifactId>
-    <version>0.9.7</version>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
 
     <name>app-builder</name>

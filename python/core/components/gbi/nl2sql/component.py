@@ -32,8 +32,13 @@ class NL2Sql(Component):
     """
     meta = NL2SqlArgs
 
-    def __init__(self, model_name: str, table_schemas: List[str], knowledge: Dict = None,
-                 prompt_template: str = ""):
+    def __init__(self, 
+                 model_name: str, 
+                 table_schemas: List[str], 
+                 knowledge: Dict = None,
+                 prompt_template: str = "",
+                 **kwargs
+                 ):
         """
         创建 gbi nl2sql 对象
         

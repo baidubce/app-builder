@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 """Base client for interact with backend server"""
 
 import os
@@ -23,6 +22,7 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 from aiohttp import ClientResponse
 
+from appbuilder.utils.logger_util import logger
 from appbuilder import get_default_header
 
 from appbuilder.core._exception import *
@@ -114,21 +114,56 @@ class HTTPClient:
         """
         status_code = response.status_code
         if status_code == requests.codes.ok:
+            response_headers = "\n\t".join([f"{key} : {value}" for key, value in response.headers.items()])
+            message = "\nrequest_id : {} \nhttp status : {}\nresponse headers : \n\t{}".format(
+                __class__.response_request_id(response), status_code, response_headers
+            )
+            logger.debug(message)
             return
         message = "request_id={} , http status code is {}, body is {}".format(
             __class__.response_request_id(response), status_code, response.text
         )
         if status_code == requests.codes.bad_request:
+            logger.error(message)
             raise BadRequestException(message)
+        elif status_code == requests.codes.unauthorized:
+            logger.error(message)
+            raise UnAuthorizedException(message)
         elif status_code == requests.codes.forbidden:
+            logger.error(message)
             raise ForbiddenException(message)
         elif status_code == requests.codes.not_found:
+            logger.error(message)
             raise NotFoundException(message)
+        elif status_code == requests.codes.method_not_allowed:
+            logger.error(message)
+            raise MethodNotAllowedException(message)
+        elif status_code == requests.codes.conflict:
+            logger.error(message)
+            raise ConflictException(message)
+        elif status_code == requests.codes.length_required:
+            logger.error(message)
+            raise MissingContentLengthException(message)
         elif status_code == requests.codes.precondition_required:
+            logger.error(message)
             raise PreconditionFailedException(message)
+        elif status_code == requests.codes.unprocessable_entity:
+            logger.error(message)
+            raise UnprocessableEntityException(message)
+        elif status_code == requests.codes.failed_dependency:
+            logger.error(message)
+            raise DependencyFailedException(message)
+        elif status_code == requests.codes.too_many_requests:
+            logger.error(message)
+            raise TooManyRequestsException(message)
         elif status_code == requests.codes.internal_server_error:
+            logger.error(message)
             raise InternalServerErrorException(message)
+        elif status_code == requests.codes.insufficient_storage:
+            logger.error(message)
+            raise InsufficientStorageException(message)
         else:
+            logger.error(message)
             raise BaseRPCException(message)
 
     def service_url(self, sub_path: str, prefix: str = None):
@@ -236,6 +271,29 @@ class HTTPClient:
 
         return inner
 
+    @staticmethod
+    def classify_exception(e):
+        """classify exception type and raise"""
+        from requests.exceptions import HTTPError
+        
+        # 定义需要直接抛出的异常类型列表
+        custom_exceptions = (
+            AppBuilderServerException,
+            NoFileUploadedExecption,
+            InvalidRequestArgumentError,
+            RetryableExecption,
+            RiskInputException,
+            InternalServerException,
+            AssistantServerException
+        )
+        
+        if isinstance(e, HTTPError):
+            __class__.check_response_header(e.response)
+        elif isinstance(e, custom_exceptions):  # 检查异常是否属于自定义的类型
+            raise e
+        else: #未定义的错误使用InternalServerException兜底
+            raise InternalServerException(str(e))
+
 
 class AsyncHTTPClient(HTTPClient):
     def __init__(self, secret_key=None, gateway="", gateway_v2=""):
@@ -255,16 +313,46 @@ class AsyncHTTPClient(HTTPClient):
             await __class__.response_request_id(response), status_code, await response.text()
         )
         if status_code == requests.codes.bad_request:
+            logger.error(message)
             raise BadRequestException(message)
+        elif status_code == requests.codes.unauthorized:
+            logger.error(message)
+            raise UnAuthorizedException(message)
         elif status_code == requests.codes.forbidden:
+            logger.error(message)
             raise ForbiddenException(message)
         elif status_code == requests.codes.not_found:
+            logger.error(message)
             raise NotFoundException(message)
+        elif status_code == requests.codes.method_not_allowed:
+            logger.error(message)
+            raise MethodNotAllowedException(message)
+        elif status_code == requests.codes.conflict:
+            logger.error(message)
+            raise ConflictException(message)
+        elif status_code == requests.codes.length_required:
+            logger.error(message)
+            raise MissingContentLengthException(message)
         elif status_code == requests.codes.precondition_required:
+            logger.error(message)
             raise PreconditionFailedException(message)
+        elif status_code == requests.codes.unprocessable_entity:
+            logger.error(message)
+            raise UnprocessableEntityException(message)
+        elif status_code == requests.codes.failed_dependency:
+            logger.error(message)
+            raise DependencyFailedException(message)
+        elif status_code == requests.codes.too_many_requests:
+            logger.error(message)
+            raise TooManyRequestsException(message)
         elif status_code == requests.codes.internal_server_error:
+            logger.error(message)
             raise InternalServerErrorException(message)
+        elif status_code == requests.codes.insufficient_storage:
+            logger.error(message)
+            raise InsufficientStorageException(message)
         else:
+            logger.error(message)
             raise BaseRPCException(message)
 
     @staticmethod
@@ -272,6 +360,27 @@ class AsyncHTTPClient(HTTPClient):
         r"""response_request_id is a helper method to get the unique request id"""
         return response.headers.get("X-Appbuilder-Request-Id", "")
 
+    @staticmethod
+    async def classify_exception(e):
+        """classify exception type and raise"""
+        from requests.exceptions import HTTPError
+        # 定义需要直接抛出的异常类型列表
+        custom_exceptions = (
+            AppBuilderServerException,
+            NoFileUploadedExecption,
+            InvalidRequestArgumentError,
+            RetryableExecption,
+            RiskInputException,
+            InternalServerException,
+            AssistantServerException
+        )
+        
+        if isinstance(e, HTTPError):
+            await __class__.check_response_header(e.response)
+        elif isinstance(e, custom_exceptions):  # 检查异常是否属于自定义的类型
+            raise e
+        else: #未定义的错误使用InternalServerException兜底
+            raise InternalServerException(str(e))
 
 class AssistantHTTPClient(HTTPClient):
     def service_url(self, sub_path: str, prefix: str = None):

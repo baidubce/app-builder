@@ -14,7 +14,7 @@
 import time
 import itertools
 from typing import List
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import TypeNotSupportedException, ModelNotSupportedException
 from appbuilder.utils.model_util import GetModelListRequest, Models, RemoteModelCollector
@@ -57,6 +57,15 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
         models.append(model.name)
     return models
 
+def get_filename_from_url(url):
+    """从给定URL中提取文件名"""
+    parsed_url = urlparse(url)
+    # 提取路径部分
+    path = parsed_url.path
+    # 从路径中获取文件名
+    filename = path.split('/')[-1]
+    # 解码URL编码的文件名
+    return unquote(filename)
 
 def convert_cloudhub_url(client: HTTPClient, qianfan_url: str) -> str:
     """将千帆url转换为AppBuilder url"""

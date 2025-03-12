@@ -38,7 +38,7 @@ public class DocumentDeleteResponseTest {
         documentDeleteResponse.setCode("200");
         documentDeleteResponse.setMessage("Success");
 
-        String expectedString = "FileUploadResponse{" +
+        String expectedString = "DocumentDeleteResponse{" +
                 "request_id=req123" +
                 ", code='200'" +
                 ", message='Success" +

@@ -76,7 +76,7 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 
 ##  如何安装AppBuilder-SDK
 
-#### 百度智能云千帆AppBuilder-SDK 最新版本 0.9.8 (2024-12-10)
+#### 百度智能云千帆AppBuilder-SDK 最新版本 1.0.3 (2025-02-28)
 
 百度智能云千帆AppBuilder-SDK 更新记录&最新特性请查阅我们的[版本说明](/docs/DevelopGuide/ChangeLog/changelog.md)
 
@@ -291,7 +291,7 @@ Hook:
     - 基础:
         - 模型:
             - [获取模型列表](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Model/get_model_list.md)
-        - [组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components/Components.md)
+        - [组件](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Components)
         - 监控:
             - [TRACE基础功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/basic.md)
             - [TRACE拓展功能](https://github.com/baidubce/app-builder/blob/master/docs/BasisModule/Trace/phoenix_method.md)

@@ -16,6 +16,8 @@ import base64
 import json
 import os
 
+from typing import Optional
+
 from appbuilder.core._client import HTTPClient
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
@@ -150,8 +152,8 @@ class ObjectRecognition(Component):
 
     @components_run_stream_trace
     def tool_eval(self,
-                  img_url: str = '',
-                  img_name: str = '',
+                  img_url: Optional[str] = '',
+                  img_name: Optional[str] = '',
                   **kwargs):
         """
         对给定的图片进行物体识别，并返回识别结果。
@@ -168,7 +170,7 @@ class ObjectRecognition(Component):
             InvalidRequestArgumentError: 如果请求格式错误，例如文件名未设置或文件URL不存在，则引发此异常。
         
         """
-        traceid = kwargs.get("_sys_traceid")
+        traceid = kwargs.get("_sys_traceid", "")
         if not img_url:
             file_urls = kwargs.get("_sys_file_urls", {})
             img_path = img_name

@@ -31,6 +31,8 @@ public class AppBuilderConfig {
     public static final String UPLOAD_FILE_URL = "/app/conversation/file/upload";
     // 运行appbuilder
     public static final String AGENTBUILDER_RUN_URL = "/app/conversation/runs";
+    // 点踩点赞
+    public static final String FEEDBACK_URL = "/app/conversation/feedback";
 
     // knowledgebase
     // 上传文件
@@ -39,6 +41,7 @@ public class AppBuilderConfig {
     public static final String KNOWLEDGEBASE_ADD_DOCUMENT_URL = "/knowledge_base/document";
     // 获取知识库文档列表
     public static final String KNOWLEDGEBASE_DOCUMENT_LIST_URL = "/knowledge_base/documents";
+    public static final String DESCRIBE_DOCUMENTS_URL = "/knowledgeBase?Action=DescribeDocuments";
     // 删除知识库文档
     public static final String KNOWLEDGEBASE_DELETE_DOCUMENT_URL = "/knowledge_base/document";
     // 创建知识库
@@ -75,6 +78,8 @@ public class AppBuilderConfig {
     // 知识库检索
     public static final String QUERY_KNOWLEDGEBASE_URL = "/knowledgebases/query";
 
+    // 组件调用
+    public static final String COMPONENT_RUN_URL = "/components";
 
     // 运行rag
     public static final String RAG_RUN_URL =

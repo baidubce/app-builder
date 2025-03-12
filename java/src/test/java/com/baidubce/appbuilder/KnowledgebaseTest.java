@@ -29,6 +29,9 @@ public class KnowledgebaseTest {
         String knowledgeBaseId = System.getenv("DATASET_ID_V3");
         Knowledgebase knowledgebase = new Knowledgebase();
 
+        DocumentsDescribeRequest desribeDocumentsRequest = new DocumentsDescribeRequest(knowledgeBaseId, null, 10);
+        knowledgebase.describeDocuments(desribeDocumentsRequest);
+        
         DocumentListRequest listRequest = new DocumentListRequest();
         listRequest.setKonwledgeBaseId(knowledgeBaseId);
         listRequest.setLimit(10);
@@ -73,13 +76,20 @@ public class KnowledgebaseTest {
 
         // 创建知识库
         KnowledgeBaseConfig.Index index = new KnowledgeBaseConfig.Index("public",
-                "http://localhost:9200", "elastic", "changeme");
+                "", "", "", "");
         KnowledgeBaseConfig config = new KnowledgeBaseConfig(index);
         request.setConfig(config);
-        KnowledgeBaseDetail response = knowledgebase.createKnowledgeBase(request);
-        String knowledgeBaseId = response.getId();
-        System.out.println(knowledgeBaseId);
-        assertNotNull(response.getId());
+
+        String knowledgeBaseId = "";
+        boolean needDeleteKnowledgebase = false;
+        try {
+            KnowledgeBaseDetail response = knowledgebase.createKnowledgeBase(request);
+            knowledgeBaseId = response.getId();
+            assertNotNull(response.getId());
+            needDeleteKnowledgebase = true;
+        } catch (Exception e) {
+            knowledgeBaseId = System.getenv("DATASET_ID_V3");
+        }
 
         // 获取知识库详情
         KnowledgeBaseDetail detail = knowledgebase.getKnowledgeBaseDetail(knowledgeBaseId);
@@ -101,8 +111,9 @@ public class KnowledgebaseTest {
         knowledgebase.modifyKnowledgeBase(modifyRequest);
 
         // 导入知识库
+        DocumentsCreateRequest.Source.UrlConfig[] urlConfigs = {new DocumentsCreateRequest.Source.UrlConfig(1)};
         DocumentsCreateRequest.Source source = new DocumentsCreateRequest.Source("web",
-                new String[] {"https://baijiahao.baidu.com/s?id=1802527379394162441"}, 1);
+                new String[] {"https://baijiahao.baidu.com/s?id=1802527379394162441"}, 1, urlConfigs);
         DocumentsCreateRequest.ProcessOption.Parser parser =
                 new DocumentsCreateRequest.ProcessOption.Parser(
                         new String[] {"layoutAnalysis", "ocr"});
@@ -134,13 +145,22 @@ public class KnowledgebaseTest {
         assertNotNull(documentsUploadResponse.getDocumentId());
 
         // 删除知识库
-        knowledgebase.deleteKnowledgeBase(knowledgeBaseId);
+        if(needDeleteKnowledgebase) {
+            knowledgebase.deleteKnowledgeBase(knowledgeBaseId);
+        }
     }
     
     @Test
     public void testCreateChunk() throws IOException, AppBuilderServerException {
-        String documentId = System.getenv("DOCUMENT_ID_V3");
-        Knowledgebase knowledgebase = new Knowledgebase();
+        String knowledgeBaseID = System.getenv("DATASET_ID");
+        String secretKey = System.getenv("APPBUILDER_TOKEN");
+
+        Knowledgebase knowledgebase = new Knowledgebase(knowledgeBaseID, secretKey);
+        DocumentListRequest listRequest = new DocumentListRequest();
+        listRequest.setKonwledgeBaseId(knowledgeBaseID);
+        listRequest.setLimit(10);
+        Document[] documents = knowledgebase.getDocumentList(listRequest);
+        String documentId = documents[0].getId();
         // 创建切片
         String chunkId = knowledgebase.createChunk(documentId, "test");
         // 修改切片
@@ -149,6 +169,9 @@ public class KnowledgebaseTest {
         knowledgebase.describeChunk(chunkId);
         // 获取切片列表
         knowledgebase.describeChunks(documentId, chunkId, 10, null);
+        // 获取切片列表
+        ChunksDescribeRequest request = new ChunksDescribeRequest(knowledgeBaseID, documentId, chunkId, 10, null, "test");
+        knowledgebase.describeChunks(request);
         try {
             // 延时 
             Thread.sleep(10000);
@@ -182,7 +205,7 @@ public class KnowledgebaseTest {
                 Files.readAllBytes(Paths.get("src/test/java/com/baidubce/appbuilder/files/query_knowledgebase.json")));
         QueryKnowledgeBaseRequest request = gson.fromJson(requestJson, QueryKnowledgeBaseRequest.class);
         QueryKnowledgeBaseResponse response = knowledgebase.queryKnowledgeBase(request.getQuery(),
-                request.getType(), request.getTop(), request.getSkip(),
+                request.getType(), request.getRank_score_threshold(), request.getTop(), request.getSkip(),
                 request.getKnowledgebase_ids(), request.getMetadata_filters(), request.getPipeline_config());
         assertNotNull(response.getChunks().get(0).getChunk_id());
     }

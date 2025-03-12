@@ -83,6 +83,7 @@ class PPTGenerationFromInstruction(Component):
         secret_key: Optional[str] = None,
         gateway: str = '',
         lazy_certification: bool = False,
+        **kwargs
     ):
         """初始化PPT生成组件。
         
@@ -119,24 +120,10 @@ class PPTGenerationFromInstruction(Component):
         url = self.http_client.service_url(self.ppt_generation_url, self.uniform_prefix)
         headers = self.http_client.auth_header()
         headers['Content-Type'] = 'application/json'
-
-        logger.debug('[ppt_generation] request url: {}, method: {}, json: {}, headers: {}'.format(
-            url,
-            'POST',
-            post_data,
-            headers
-        ))
         response = self.http_client.session.post(url,
                                                  json=post_data,
                                                  headers=headers,
                                                  timeout=timeout)
-        logger.debug('[ppt_generation] request url: {}, method: {}, json: {}, headers: {}, response: {}'.format(
-            url,
-            'POST',
-            post_data,
-            headers,
-            response
-        ))
         self.http_client.check_response_header(response)
         resp_data = response.json()
         if resp_data.get('code', None) != 200 or resp_data.get('msg', None) != 'success':
@@ -174,22 +161,11 @@ class PPTGenerationFromInstruction(Component):
         headers = self.http_client.auth_header()
         headers['Content-Type'] = 'application/json'
 
-        logger.debug('[get_ppt_generation_status] request url: {}, method: {}, headers: {}'.format(
-            url,
-            'GET',
-            headers
-        ))
         status = -1
         for _ in range(request_times):
             response = self.http_client.session.get(url,
                                                     headers=headers,
                                                     timeout=timeout)
-            logger.debug('[get_ppt_generation_status] request url: {}, method: {}, headers: {}, response: {}'.format(
-                url,
-                'GET',
-                headers,
-                response
-            ))
             try:
                 self.http_client.check_response_header(response)
             except:
@@ -246,20 +222,9 @@ class PPTGenerationFromInstruction(Component):
         url = self.http_client.service_url(self.get_ppt_download_link_url, self.uniform_prefix) + f'?id={job_id}'
         headers = self.http_client.auth_header()
         headers['Content-Type'] = 'application/json'
-        logger.debug('[get_ppt_download_link] request url: {}, method: {}, headers: {}'.format(
-            url,
-            'GET',
-            headers
-        ))
         response = self.http_client.session.get(url,
                                                 headers=headers,
                                                 timeout=timeout)
-        logger.debug('[get_ppt_download_link] request url: {}, method: {}, headers: {}, response: {}'.format(
-            url,
-            'GET',
-            headers,
-            response
-        ))
         self.http_client.check_response_header(response)
         resp_data = response.json()
         if resp_data.get('code', None) != 200 or resp_data.get('msg', None) != 'success':

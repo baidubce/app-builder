@@ -21,6 +21,7 @@ import json
 import requests
 import tempfile
 from urllib.parse import urlparse
+from typing import Optional
 
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
@@ -181,9 +182,9 @@ class ASR(Component):
 
     @components_run_stream_trace
     def tool_eval(self,
-                  file_url: str = '',
-                  file_name: str = '',
-                  file_type: str = '',
+                  file_url: Optional[str] = '',
+                  file_name: Optional[str] = '',
+                  file_type: Optional[str] = '',
                   **kwargs):    
         """
         执行语音识别操作，并返回识别结果
@@ -213,9 +214,8 @@ class ASR(Component):
                     f"request format error, file {file_url} url does not exist"
                 )
             
-        if not file_type or file_type not in ["pcm", "wav", "amr", "m4a"]:
-            _, file_type = os.path.splitext(os.path.basename(urlparse(file_url).path))
-            file_type = file_type.strip('.')
+        _, file_type = os.path.splitext(os.path.basename(urlparse(file_url).path))
+        file_type = file_type.strip('.')
 
         audio_file = tempfile.NamedTemporaryFile("wb", suffix=file_type)
         audio_file.write(requests.get(file_url).content)

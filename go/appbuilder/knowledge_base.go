@@ -42,9 +42,21 @@ func NewKnowledgeBase(config *SDKConfig) (*KnowledgeBase, error) {
 	return &KnowledgeBase{sdkConfig: config, client: client}, nil
 }
 
+func NewKnowledgeBaseWithKnowledgeBaseID(knowledgeBaseID string, config *SDKConfig) (*KnowledgeBase, error) {
+	if config == nil {
+		return nil, errors.New("invalid config")
+	}
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 60 * time.Second}
+	}
+	return &KnowledgeBase{knowledgeBaseID: knowledgeBaseID, sdkConfig: config, client: client}, nil
+}
+
 type KnowledgeBase struct {
-	sdkConfig *SDKConfig
-	client    HTTPClient
+	knowledgeBaseID string
+	sdkConfig       *SDKConfig
+	client          HTTPClient
 }
 
 func (t *KnowledgeBase) CreateDocument(req CreateDocumentRequest) (CreateDocumentResponse, error) {
@@ -133,6 +145,7 @@ func (t *KnowledgeBase) DeleteDocument(req DeleteDocumentRequest) error {
 	return nil
 }
 
+// Deprecated: use DescribeDocuments instead
 func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumentListResponse, error) {
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledge_base/documents")
@@ -188,6 +201,47 @@ func (t *KnowledgeBase) GetDocumentList(req GetDocumentListRequest) (*GetDocumen
 	return &rsp, nil
 }
 
+func (t *KnowledgeBase) DescribeDocuments(req DescribeDocumentsRequest) (DescribeDocumentsResponse, error) {
+	request := http.Request{}
+	header := t.sdkConfig.AuthHeaderV2()
+	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=DescribeDocuments")
+	if err != nil {
+		return DescribeDocumentsResponse{}, err
+	}
+
+	if req.KnowledgeBaseID == "" && t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
+	}
+	request.URL = serviceURL
+	request.Method = "POST"
+	header.Set("Content-Type", "application/json")
+	request.Header = header
+	data, _ := json.Marshal(req)
+	request.Body = NopCloser(bytes.NewReader(data))
+	t.sdkConfig.BuildCurlCommand(&request)
+	resp, err := t.client.Do(&request)
+	if err != nil {
+		return DescribeDocumentsResponse{}, err
+	}
+	defer resp.Body.Close()
+	requestID, err := checkHTTPResponse(resp)
+	if err != nil {
+		return DescribeDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return DescribeDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	rsp := DescribeDocumentsResponse{}
+	if err := json.Unmarshal(data, &rsp); err != nil {
+		return DescribeDocumentsResponse{}, fmt.Errorf("requestID=%s, err=%v", requestID, err)
+	}
+
+	return rsp, nil
+}
+
+// Deprecated: 此功能即将废弃
 func (t *KnowledgeBase) UploadFile(localFilePath string) (string, error) {
 	var data bytes.Buffer
 	w := multipart.NewWriter(&data)
@@ -424,6 +478,7 @@ func (t *KnowledgeBase) deleteKnowledgeBase(knowledgeBaseID string, clientToken 
 	return nil
 }
 
+// Deprecated: 此功能即将废弃
 func (t *KnowledgeBase) CreateDocuments(req CreateDocumentsRequest) error {
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
@@ -618,6 +673,10 @@ func (t *KnowledgeBase) CreateChunk(req CreateChunkRequest) (string, error) {
 	if req.ClientToken == "" {
 		req.ClientToken = uuid.New().String()
 	}
+
+	if req.KnowledgeBaseID == "" && t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
+	}
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=CreateChunk&clientToken=" + req.ClientToken)
 	if err != nil {
 		return "", err
@@ -656,6 +715,10 @@ func (t *KnowledgeBase) ModifyChunk(req ModifyChunkRequest) error {
 	header := t.sdkConfig.AuthHeaderV2()
 	if req.ClientToken == "" {
 		req.ClientToken = uuid.New().String()
+	}
+
+	if req.KnowledgeBaseID == "" && t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
 	}
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgeBase?Action=ModifyChunk&clientToken=" + req.ClientToken)
 	if err != nil {
@@ -715,6 +778,10 @@ func (t *KnowledgeBase) deleteChunk(chunkID string, clientToken string) error {
 	req := DeleteChunkRequest{
 		ChunkID: chunkID,
 	}
+
+	if t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
+	}
 	data, _ := json.Marshal(req)
 	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
@@ -754,6 +821,10 @@ func (t *KnowledgeBase) DescribeChunk(chunkID string) (DescribeChunkResponse, er
 	req := DescribeChunkRequest{
 		ChunkID: chunkID,
 	}
+
+	if t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
+	}
 	data, _ := json.Marshal(req)
 	request.Body = NopCloser(bytes.NewReader(data))
 	t.sdkConfig.BuildCurlCommand(&request)
@@ -786,6 +857,10 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 	if err != nil {
 		return DescribeChunksResponse{}, err
 	}
+
+	if req.KnowledgeBaseID == "" && t.knowledgeBaseID != "" {
+		req.KnowledgeBaseID = t.knowledgeBaseID
+	}
 	request.URL = serviceURL
 	request.Method = "POST"
 	header.Set("Content-Type", "application/json")
@@ -816,6 +891,12 @@ func (t *KnowledgeBase) DescribeChunks(req DescribeChunksRequest) (DescribeChunk
 }
 
 func (t *KnowledgeBase) QueryKnowledgeBase(req QueryKnowledgeBaseRequest) (QueryKnowledgeBaseResponse, error) {
+	// 检查 RankScoreThreshold 是否为 nil，如果是，则设置默认值
+	if req.RankScoreThreshold == nil {
+		defaultThreshold := 0.4
+		req.RankScoreThreshold = &defaultThreshold
+	}
+
 	request := http.Request{}
 	header := t.sdkConfig.AuthHeaderV2()
 	serviceURL, err := t.sdkConfig.ServiceURLV2("/knowledgebases/query")

@@ -268,7 +268,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -285,7 +284,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -303,7 +301,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -321,7 +318,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -339,7 +335,6 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
@@ -349,6 +344,8 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 	}
 
 	client.client = clientT
+	var knowledgeBaseID string
+	needDeleteKnowledgeBase := false
 	// 成功 创建知识库
 	createKnowledgeBaseRes, err := client.CreateKnowledgeBase(KnowledgeBaseDetail{
 		Name:        "test-go",
@@ -356,16 +353,18 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
 		},
 	})
-	if err != nil {
+	if err == nil {
+		needDeleteKnowledgeBase = true
+		knowledgeBaseID = createKnowledgeBaseRes.ID
+	} else {
+		knowledgeBaseID = os.Getenv(SecretKeyV3)
 	}
 
-	knowledgeBaseID := createKnowledgeBaseRes.ID
 	client.client = clientT
 	// GetKnowledgeBaseDetail 测试1 ServiceURLV2 错误
 	client.sdkConfig.GatewayURLV2 = "://invalid-url"
@@ -812,28 +811,39 @@ func TestCreateKnowledgeBaseError(t *testing.T) {
 
 	client.client = clientT
 	// 删除知识库
-	err = client.DeleteKnowledgeBase(knowledgeBaseID)
-	if err != nil {
+	if needDeleteKnowledgeBase {
+		err = client.DeleteKnowledgeBase(knowledgeBaseID)
+		if err != nil {
+		}
 	}
-
 }
 
 func TestChunkError(t *testing.T) {
 	t.Parallel() // 并发运行
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 
-	documentID := os.Getenv(DocumentIDV3)
-	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
+	knowledgeBaseID := os.Getenv(DatasetID)
+	config, err := NewSDKConfig("", os.Getenv(SecretKey))
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
-	client, err := NewKnowledgeBase(config)
+	client, err := NewKnowledgeBaseWithKnowledgeBaseID(knowledgeBaseID, config)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new Knowledge base instance failed")
 	}
+
+	documentsRes, err := client.GetDocumentList(GetDocumentListRequest{
+		KnowledgeBaseID: knowledgeBaseID,
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("get document list failed: %v", err)
+	}
+	documentID := documentsRes.Data[0].ID
+
 	var clientT = client.client
 	var GatewayURL = client.sdkConfig.GatewayURLV2
 
@@ -1186,23 +1196,25 @@ func TestCreateKnowledgeBase(t *testing.T) {
 	}
 
 	// 创建知识库
+	var knowledgeBaseID string
+	needDeleteKnowledgeBase := false
 	createKnowledgeBaseRes, err := client.CreateKnowledgeBase(KnowledgeBaseDetail{
 		Name:        "test-go",
 		Description: "test-go",
 		Config: &KnowlegeBaseConfig{
 			Index: KnowledgeBaseConfigIndex{
 				Type:     "public",
-				EsUrl:    "http://localhost:9200",
 				Password: "elastic",
 				Username: "elastic",
 			},
 		},
 	})
 	if err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("create knowledge base failed: %v", err)
+		knowledgeBaseID = os.Getenv(DatasetIDV3)
+	} else {
+		needDeleteKnowledgeBase = true
+		knowledgeBaseID = createKnowledgeBaseRes.ID
 	}
-	knowledgeBaseID := createKnowledgeBaseRes.ID
 	log("Knowledge base created with ID: %s", knowledgeBaseID)
 
 	// 获取知识库详情
@@ -1233,6 +1245,11 @@ func TestCreateKnowledgeBase(t *testing.T) {
 			Type:     "web",
 			Urls:     []string{"https://baijiahao.baidu.com/s?id=1802527379394162441"},
 			UrlDepth: 1,
+			UrlConfigs: &[]DocumentsSourceUrlConfig{
+				{
+					Frequency: 1,
+				},
+			},
 		},
 		ProcessOption: &DocumentsProcessOption{
 			Template: "custom",
@@ -1379,12 +1396,14 @@ func TestCreateKnowledgeBase(t *testing.T) {
 	log("Knowledge base modified with new name: %s", name)
 
 	// 删除知识库
-	err = client.DeleteKnowledgeBase(knowledgeBaseID)
-	if err != nil {
-		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
-		t.Fatalf("delete knowledge base failed: %v", err)
+	if needDeleteKnowledgeBase {
+		err = client.DeleteKnowledgeBase(knowledgeBaseID)
+		if err != nil {
+			t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+			t.Fatalf("delete knowledge base failed: %v", err)
+		}
+		log("Knowledge base deleted with ID: %s", knowledgeBaseID)
 	}
-	log("Knowledge base deleted with ID: %s", knowledgeBaseID)
 
 	// 测试通过，打印文件名和测试函数名
 	t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
@@ -1405,22 +1424,40 @@ func TestChunk(t *testing.T) {
 		fmt.Fprintf(&logBuffer, format+"\n", args...)
 	}
 
-	documentID := os.Getenv(DocumentIDV3)
-	config, err := NewSDKConfig("", os.Getenv(SecretKeyV3))
+	knowledgeBaseID := os.Getenv(DatasetID)
+	config, err := NewSDKConfig("", os.Getenv(SecretKey))
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new http client config failed: %v", err)
 	}
 
-	client, err := NewKnowledgeBase(config)
+	client, err := NewKnowledgeBaseWithKnowledgeBaseID(knowledgeBaseID, config)
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
 		t.Fatalf("new Knowledge base instance failed")
 	}
+
+	_, err = client.GetDocumentList(GetDocumentListRequest{
+		KnowledgeBaseID: knowledgeBaseID,
+	})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("get document list failed: %v", err)
+	}
+
+	documentsRes, err := client.DescribeDocuments(DescribeDocumentsRequest{KnowledgeBaseID: knowledgeBaseID})
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("describe documents failed: %v", err)
+	}
+
+	log("Documents retrieved: %+v", documentsRes)
+	documentID := documentsRes.Data[0].ID
 	// 创建切片
 	chunkID, err := client.CreateChunk(CreateChunkRequest{
-		DocumentID: documentID,
-		Content:    "test",
+		KnowledgeBaseID: knowledgeBaseID,
+		DocumentID:      documentID,
+		Content:         "test",
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
@@ -1430,9 +1467,10 @@ func TestChunk(t *testing.T) {
 
 	// 修改切片
 	err = client.ModifyChunk(ModifyChunkRequest{
-		ChunkID: chunkID,
-		Content: "new test",
-		Enable:  true,
+		KnowledgeBaseID: knowledgeBaseID,
+		ChunkID:         chunkID,
+		Content:         "new test",
+		Enable:          true,
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
@@ -1450,9 +1488,11 @@ func TestChunk(t *testing.T) {
 
 	// 获取切片列表
 	describeChunksRes, err := client.DescribeChunks(DescribeChunksRequest{
-		DocumnetID: documentID,
-		Marker:     chunkID,
-		MaxKeys:    10,
+		KnowledgeBaseID: knowledgeBaseID,
+		DocumnetID:      documentID,
+		Marker:          chunkID,
+		MaxKeys:         10,
+		Keyword:         "test",
 	})
 	if err != nil {
 		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")

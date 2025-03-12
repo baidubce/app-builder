@@ -73,7 +73,7 @@ class DocumentUnderstanding(Component):
             addition_instruction: Optional[Message] = None,
             file_path: Optional[str] = None,
             app_id: Optional[str] = None,
-
+            **kwargs
     ):
         """初始化DocumentUnderstanding组件。
 

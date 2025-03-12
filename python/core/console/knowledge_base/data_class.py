@@ -14,6 +14,7 @@
 from __future__ import annotations
 from datetime import datetime
 from pydantic import BaseModel, Field
+from enum import Enum
 from typing import Union, Optional, List
 
 
@@ -95,15 +96,59 @@ class KnowledgeBaseGetDocumentsListResponse(BaseModel):
     data: list[Document] = Field([], description="文档信息列表")
 
 
+class DescribeDocumentsRequest(BaseModel):
+    knowledgeBaseId: str = Field(..., description="知识库ID")
+    marker: Optional[str] = Field(None, description="起始位置")
+    maxKeys: int = Field(
+        10, description="返回文档数量大小，默认10，最大值100"
+    )
+
+
+class DescribeDocumentMeata(BaseModel):
+    source: Optional[str] = Field(None, description="文档来源")
+    fileId: Optional[str] = Field(None, description="文档对应的文件ID")
+
+class DescribeDocument(BaseModel):
+    id: str = Field(..., description="文档ID")
+    name: str = Field(..., description="文档名称")
+    createdAt: str = Field(..., description="文档创建时间")
+    wordCount: int = Field(..., description="文档字数")
+    enabled: bool = Field(True, description="文档是否可用")
+    displayStatus: str = Field(
+        ...,
+        description="文档状态。available：可用，queuing：排队中，notConfigured：数据待配置，parsing：解析中，indexing：处理中，parseError：解析失败，error：处理失败, retrainingSegmentUnusable：重建切片中，切片不可用, retrainErrSegmentUsable：重建切片错误，旧切片可用",
+    )
+    meta: Optional[DescribeDocumentMeata] = Field(..., description="文档元信息，包括source、fileId")
+
+
+class DescribeDocumentsResponse(BaseModel):
+    requestId: str = Field(..., description="请求ID")
+    marker: str = Field(..., description="起始位置")
+    isTruncated: bool = Field(
+        ..., description="true表示后面还有数据，false表示已经是最后一页"
+    )
+    nextMarker: str = Field(..., description="下一页起始位置")
+    maxKeys: int = Field(..., description="本次查询包含的最大结果集数量")
+    data: list[DescribeDocument] = Field(..., description="文档信息列表")
+
+
 class KnowledgeBaseConfigIndex(BaseModel):
     type: str = Field(..., description="索引类型", enum=["public", "bes", "vdb"])
-    esUrl: Optional[str] = Field(None, description="bes地址")
+    clusterId: Optional[str] = Field(None, description="集群/实例 ID")
     username: Optional[str] = Field(None, description="bes用户名")
     password: Optional[str] = Field(None, description="bes密码")
+    location: Optional[str] = Field(
+        None, description="托管资源的区域", enum=["bj", "bd", "sz", "gz"])
+
+
+class KnowledgeBaseConfigCatalogue(BaseModel):
+    pathPrefix: Optional[str] = Field(None, description="知识库所属目录绝对路径")
 
 
 class KnowledgeBaseConfig(BaseModel):
     index: Optional[KnowledgeBaseConfigIndex] = Field(..., description="索引配置")
+    catalogue: Optional[KnowledgeBaseConfigCatalogue] = Field(
+        None, description="知识库目录配置")
 
 
 class KnowledgeBaseCreateKnowledgeBaseRequest(BaseModel):
@@ -117,6 +162,7 @@ class KnowledgeBaseGetDetailRequest(BaseModel):
 
 
 class KnowledgeBaseDetailResponse(BaseModel):
+    requestId: str = Field(..., description="请求ID")
     id: str = Field(..., description="知识库ID")
     name: str = Field(..., description="知识库名称")
     description: Optional[str] = Field(None, description="知识库描述")
@@ -127,6 +173,7 @@ class KnowledgeBaseModifyRequest(BaseModel):
     id: str = Field(..., description="知识库ID")
     name: Optional[str] = Field(None, description="知识库名称")
     description: Optional[str] = Field(None, description="知识库描述")
+    config: Optional[KnowledgeBaseConfig] = Field(None, description="知识库配置")
 
 
 class KnowledgeBaseDeleteRequest(BaseModel):
@@ -134,26 +181,54 @@ class KnowledgeBaseDeleteRequest(BaseModel):
 
 
 class KnowledgeBaseGetListRequest(BaseModel):
-    marker: str = Field(None, description="起始位置")
+    marker: Optional[str] = Field(None, description="起始位置")
     keyword: Optional[str] = Field(None, description="搜索关键字")
     maxKeys: int = Field(
         10, description="返回文档数量大小，默认10，最大值100", le=100, ge=1
     )
 
 
+class KnowledgeBaseGetListConfigIndex(BaseModel):
+    type: str = Field(None, description="索引类型")
+    esUrl: Optional[str] = Field('', description="es地址")
+
+
+class KnowledgeBaseGetListConfig(BaseModel):
+    index: Optional[KnowledgeBaseGetListConfigIndex] = Field(
+        ..., description="索引配置")
+
+
+class KnowledgeBaseGetListDetailResponse(BaseModel):
+    id: str = Field(..., description="知识库ID")
+    name: str = Field(..., description="知识库名称")
+    description: Optional[str] = Field(None, description="知识库描述")
+    config: Optional[KnowledgeBaseGetListConfig] = Field(
+        ..., description="知识库配置")
+
+
 class KnowledgeBaseGetListResponse(BaseModel):
     requestId: str = Field(..., description="请求ID")
-    data: list[KnowledgeBaseDetailResponse] = Field([], description="知识库详情列表")
+    data: list[KnowledgeBaseGetListDetailResponse] = Field(
+        [], description="知识库详情列表")
     marker: str = Field(..., description="起始位置")
     nextMarker: str = Field(..., description="下一页起始位置")
     maxKeys: int = Field(10, description="返回文档数量大小，默认10，最大值100")
     isTruncated: bool = Field(..., description="是否有更多结果")
 
 
+class DocumentSourceUrlConfig(BaseModel):
+    frequency: int = Field(
+        ...,
+        description="更新频率，目前支持的更新频率为-1(不自动更新),1（每天）,3（每3天）,7（每7天）,30（每30天）。",
+    )
+
+
 class DocumentSource(BaseModel):
     type: str = Field(..., description="数据来源类型", enum=["bos", "web"])
     urls: list[str] = Field(None, description="文档URL")
     urlDepth: int = Field(None, description="url下钻深度，1时不下钻")
+    urlConfigs: Optional[list[DocumentSourceUrlConfig]] = Field(
+        None, description="该字段的长度需要和source、urls字段长度保持一致。")
 
 
 class DocumentChoices(BaseModel):
@@ -183,10 +258,10 @@ class DocumentChunker(BaseModel):
         description="使用哪些chunker方法 (separator | pattern | onePage)，separator：自定义切片—标识符，pattern：自定义切片—标识符中选择正则表达式，onePage：整文件切片",
     )
     prependInfo: list[str] = Field(
-        ...,
+        None,
         description="chunker关联元数据，可选值为title (增加标题), filename(增加文件名)",
     )
-    separator: Optional[DocumentSeparator] = Field(..., description="分段符号")
+    separator: Optional[DocumentSeparator] = Field(None, description="分段符号")
     pattern: Optional[DocumentPattern] = Field(None, description="正则表达式")
 
 
@@ -198,7 +273,7 @@ class DocumentProcessOption(BaseModel):
     )
     parser: Optional[DocumentChoices] = Field(
         None,
-        description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr按需增加)",
+        description="解析方法(文字提取默认启动，参数不体现，layoutAnalysis版面分析，ocr光学字符识别，pageImageAnalysis文档图片解析，chartAnalysis图表解析，tableAnalysis表格深度解析，按需增加)",
     )
     knowledgeAugmentation: Optional[DocumentChoices] = Field(
         None,
@@ -230,6 +305,7 @@ class KnowledgeBaseUploadDocumentsResponse(BaseModel):
 
 
 class CreateChunkRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     documentId: str = Field(..., description="文档ID")
     content: str = Field(..., description="文档内容")
 
@@ -239,16 +315,19 @@ class CreateChunkResponse(BaseModel):
 
 
 class ModifyChunkRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     chunkId: str = Field(..., description="切片ID")
     content: str = Field(..., description="文档内容")
     enable: bool = Field(..., description="是否启用")
 
 
 class DeleteChunkRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     chunkId: str = Field(..., description="切片ID")
 
 
 class DescribeChunkRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     chunkId: str = Field(..., description="切片ID")
 
 
@@ -269,12 +348,18 @@ class DescribeChunkResponse(BaseModel):
 
 
 class DescribeChunksRequest(BaseModel):
+    knowledgeBaseId: str = Field(None, description="知识库ID")
     documentId: str = Field(..., description="文档ID")
     marker: Optional[str] = Field(None, description="起始位置")
     maxKeys: Optional[int] = Field(
         None, description="返回文档数量大小，默认10，最大值100"
     )
-    type: Optional[str] = Field(None, description="切片类型")
+    type: Optional[str] = Field(
+        None, description="切片类型。RAW：原文切片、NEW：新增切片、COPY：复制切片"
+    )
+    keyword: Optional[str] = Field(
+        None, description="根据关键字模糊匹配切片，最大长度2000字符"
+    )
 
 
 class DescribeChunksResponse(BaseModel):
@@ -319,11 +404,33 @@ class PreRankingConfig(BaseModel):
     )
 
 
-class ElasticSearchRetrieveConfig(BaseModel):
+class QueryType(str, Enum):
+    FULLTEXT = "fulltext"  # 全文检索
+    SEMANTIC = "semantic"  # 语义检索
+    HYBRID = "hybrid"  # 混合检索
+
+
+class ElasticSearchRetrieveConfig(BaseModel):  # 托管资源为共享资源 或 BES资源时使用该配置
     name: str = Field(..., description="配置名称")
     type: str = Field(None, description="elastic_search标志，该节点为es全文检索")
     threshold: float = Field(None, description="得分阈值，默认0.1")
     top: int = Field(None, description="召回数量，默认400")
+
+
+class VectorDBRetrieveConfig(BaseModel):
+    name: str = Field(..., description="该节点的自定义名称。")
+    type: str = Field("vector_db", description="该节点的类型，默认为vector_db。")
+    threshold: Optional[float] = Field(
+        0.1, description="得分阈值。取值范围：[0, 1]", ge=0.0, le=1.0)
+    top: Optional[int] = Field(
+        400, description="召回数量。取值范围：[0, 800]", ge=0, le=800)
+    pre_ranking: Optional[PreRankingConfig] = Field(None, description="粗排配置")
+
+
+class SmallToBigConfig(BaseModel):
+    name: str = Field(..., description="配置名称")
+    type: str = Field(
+        "small_to_big", description="small_to_big标志，该节点为small_to_big节点")
 
 
 class RankingConfig(BaseModel):
@@ -341,18 +448,25 @@ class QueryPipelineConfig(BaseModel):
     id: str = Field(
         None, description="配置唯一标识，如果用这个id，则引用已经配置好的QueryPipeline"
     )
-    pipeline: list[Union[ElasticSearchRetrieveConfig, RankingConfig]] = Field(
+    pipeline: list[Union[ElasticSearchRetrieveConfig, RankingConfig, VectorDBRetrieveConfig, SmallToBigConfig]] = Field(
         None, description="配置的Pipeline，如果没有用id，可以用这个对象指定一个新的配置"
     )
 
 
 class QueryKnowledgeBaseRequest(BaseModel):
     query: str = Field(..., description="检索query")
-    type: str = Field(None, description="检索策略的枚举, fulltext:全文检索")
+    type: Optional[QueryType] = Field(
+        None, description="检索策略的枚举, fulltext:全文检索, semantic:语义检索, hybrid:混合检索")
     top: int = Field(None, description="返回结果数量")
     skip: int = Field(
         None,
         description="跳过多少条记录, 通过top和skip可以实现类似分页的效果，比如top 10 skip 0，取第一页的10个，top 10 skip 10，取第二页的10个",
+    )
+    rank_score_threshold: float = Field(
+        0.4,
+        description="重排序匹配分阈值，只有rank_score大于等于该分值的切片重排序时才会被筛选出来。当且仅当，pipeline_config中配置了ranking节点时，该过滤条件生效。取值范围： [0, 1]。",
+        ge=0.0,
+        le=1.0,
     )
     knowledgebase_ids: list[str] = Field(..., description="知识库ID列表")
     metadata_filters: MetadataFilters = Field(None, description="元数据过滤条件")
