@@ -14,7 +14,6 @@
 
 import os
 import appbuilder
-from appbuilder.utils.flask_deploy import FlaskRuntime
 
 os.environ["APPBUILDER_TOKEN"] = "密钥"
 component = appbuilder.Playground(
@@ -22,5 +21,5 @@ component = appbuilder.Playground(
     model="ERNIE-Bot"
 )
 
-agent = FlaskRuntime(component=component)
+agent = appbuilder.AgentRuntime(component=component)
 agent.serve(port=8091)
