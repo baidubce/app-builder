@@ -122,7 +122,10 @@ class GeneralOCRRequest(proto.Message):
         proto.STRING,
         number=10,
     )
-
+    multidirectional_recognize: str = proto.Field(
+        proto.STRING,
+        number=11,
+    )
 
 class GeneralOCRResponse(proto.Message):
     """通用ocr识别结果
@@ -150,7 +153,7 @@ class GeneralOCRResponse(proto.Message):
             - words_result_idx (List[int]): 包含在段落中的行索引。
         paragraphs_result_num (int):
             可选。段落检测结果的数量。当paragraph=true时返回。
-        pdf_file_size (str):
+        pdf_file_size (int):
             可选。输入PDF文件的总页数。当pdf_file参数有效时返回。
         ofd_file_size (str):
             可选。输入OFD文件的总页数。当ofd_file参数有效时返回。
@@ -186,8 +189,8 @@ class GeneralOCRResponse(proto.Message):
         proto.UINT32,
         number=7,
     )
-    pdf_file_size: str = proto.Field(
-        proto.STRING,
+    pdf_file_size: int = proto.Field(
+        proto.UINT32,
         number=8,
     )
     ofd_file_size: str = proto.Field(
@@ -256,8 +259,13 @@ class GeneralOCRInMsg(BaseModel):
             raw_image(bytes): 图像原始内容
             url(str): 图像下载链接
     """
-    raw_image: bytes = b''  # 原始图片byte数组
-    url: str = ""  # 图片可下载链接
+    image_base64: str = ""  # 原始图片base64数据
+    image_url: str = ""  # 图片可下载链接
+    pdf_base64: str = "" #pdf base64数据
+    pdf_url: str = "" #pdf 可下载链接
+    pdf_file_num: str = "1" #需要识别的PDF文件的对应页码
+    detect_direction: str = "false" #是否检测图像朝向
+    multidirectional_recognize: str = "true" #是否开启行级别的多方向文字识别
 
 
 class Words(BaseModel):

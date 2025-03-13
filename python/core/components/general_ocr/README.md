@@ -32,8 +32,9 @@ image_url = "https://bj.bcebos.com/v1/appbuilder/general_ocr_test.png?"\
     "11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae"\
     "857a27513734d765495f89ffa5f73"
 raw_image = requests.get(image_url).content
+image_base64 = base64.b64encode(raw_image)
 general_ocr = appbuilder.GeneralOCR()
-out = general_ocr.run(appbuilder.Message(content={"raw_image": raw_image}))
+out = general_ocr.run(appbuilder.Message(content={"image_base64": image_base64}))
 print(out.content)
 ```
 
@@ -53,7 +54,14 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 调用参数
 | 参数名称    | 参数类型    | 是否必须 | 描述                          | 示例值                                            |
 |---------|---------|------|-----------------------------|------------------------------------------------|
-| message | String  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"raw_image": b"待识别的图片字节流数据"})，图像数据，base64编码后进行urlencode，要求base64编码和urlencode后大小不超过10M，最短边至少15px，最长边最大8192px，支持jpg/jpeg/png/bmp格式 |
+| message | Message  | 是    | 输入的消息，用于模型的主要输入内容。这是一个必需的参数 | Message(content={"image_base64": "待识别的图片base64数据", "image_url": ...}), 优先级image_base64 > image_url > pdf_base64 > pdf_url |
+| +image_base64 | String | 否 | 待识别的图片base64数据, 要求base64编码和urlencode后大小不超过10M，最短边至少15px，最长边最大8192px，支持jpg/jpeg/png/bmp格式 | 略 |
+| +image_url | String | 否 | 待识别的图片url, 要求base64编码和urlencode后大小不超过10M，最短边至少15px，最长边最大8192px，支持jpg/jpeg/png/bmp格式 | "https://bj.bcebos.com/agi-dev-platform-sdk-test/1.png" |
+| +pdf_base64 | String | 否 | 待识别的pdf文件base64数据，base64编码后进行urlencode，要求base64编码和urlencode后大小不超过10M，最短边至少15px，最长边最大8192px，支持jpg/jpeg/png/bmp格式 | 略 |
+| +pdf_url | String | 否 | 待识别的pdf文件url，base64编码后进行urlencode，要求base64编码和urlencode后大小不超过10M，最短边至少15px，最长边最大8192px，支持jpg/jpeg/png/bmp格式 | "https://bj.bcebos.com/agi-dev-platform-sdk-test/8、质量流量计.pdf" |
+| +pdf_file_num | String | 否 | 需要识别的PDF文件的对应页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页 | "1" |
+| +detect_direction | String | 否 | 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括: true-检测朝向, false：不检测朝向 | "false" |
+| +multidirectional_recognize | String | 否 | 是否开启行级别的多方向文字识别，可选值包括: true-识别, false-不识别.若图内有不同方向的文字时，建议将此参数设置为“true” | "true" |
 |timeout| Float   | 否    | HTTP超时时间,单位：秒               |1||
 | retry   | Integer | 否    | HTTP重试次数                    | 3                                              |
 
@@ -111,3 +119,4 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 ## 更新记录和贡献
 * 通用文字识别能力 (2023-12)
+* 增加Pdf格式输入，增加detect_direction和multidirectional_recognize入参

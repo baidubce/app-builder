@@ -3,6 +3,7 @@ import os
 import appbuilder
 
 
+@unittest.skip("QPS超限")
 @unittest.skip(reason="暂时跳过")
 class TestFunctionCall(unittest.TestCase):
     def setUp(self):

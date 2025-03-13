@@ -30,6 +30,7 @@ check_tool = {
     }
 }
 
+@unittest.skip("QPS超限")
 class TestFunctionCall(unittest.TestCase):
     def setUp(self):
         os.environ["APPBUILDER_TOKEN"] = os.environ["APPBUILDER_TOKEN_V2"]
