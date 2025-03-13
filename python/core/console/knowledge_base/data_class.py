@@ -78,6 +78,12 @@ class KnowledgeBaseGetDocumentsListRequest(BaseModel):
 class DocumentMeta(BaseModel):
     source: Optional[str] = Field(None, description="文档来源")
     file_id: Optional[str] = Field(None, description="文档对应的文件ID")
+    url: Optional[str] = Field(None, description="原文件下载链接")
+    mime_type: Optional[str] = Field(
+        None,
+        description="文件类型，目前支持doc/txt/docx/pdf/ppt/pptx/xlsx/xls/csv/json这几种文件类型。如果是通过url方式导入的文档，该值为url",
+    )
+    file_size: Optional[int] = Field(None, description="文件大小，单位bytes")
 
 
 class Document(BaseModel):

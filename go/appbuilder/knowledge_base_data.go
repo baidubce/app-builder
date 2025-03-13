@@ -272,8 +272,11 @@ type DescribeDocumentResponse struct {
 }
 
 type DescribeDocumentMeta struct {
-	Source string `json:"source"`
-	FileID string `json:"fileId"`
+	Source   string `json:"source"`
+	FileID   string `json:"fileId"`
+	URL      string `json:"url"`
+	MimeType string `json:"mime_type"`
+	FileSize int64  `json:"file_size"`
 }
 
 type DescribeDocumentsResponse struct {
