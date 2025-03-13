@@ -311,15 +311,11 @@ class MCPComponentServer:
 
     def add_component(
             self,
-            component_cls: Component,
-            init_args: dict[str, Any] = {},
+            component: Component,
         ):
         """add AppBuilder official tool as MCP server"""
-        component_name = component_cls.__name__
-        logging.info(f"init {component_name} with args: {init_args}")
-
         try:    
-            component = component_cls(**init_args)
+            component_name = component.__class__.__name__
             self.convert_component_to_tool(component)
             logging.info(f"component: {component_name} has been added")
             
@@ -338,16 +334,17 @@ class MCPComponentServer:
 
 if __name__ == "__main__":
     from appbuilder.modelcontextprotocol.server import MCPComponentServer
-    server = MCPComponentServer("AI Services")
-
     from appbuilder.core.components.v2 import Translation
     from appbuilder.core.components.v2 import Text2Image
-    init_args = {
-        "model": "ERNIE-4.0-8K",
-        "secret_key": 'bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd'
-    }
-    server.add_component(Translation, init_args)
-    server.add_component(Text2Image, init_args)
+    import os
+    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd"
+
+    server = MCPComponentServer("AB Component Server")
+
+    translation = Translation()
+    text2image = Text2Image()
+    server.add_component(translation)
+    server.add_component(text2image)
 
     # Add custom tool
     @server.tool()
