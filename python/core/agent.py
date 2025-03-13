@@ -27,6 +27,8 @@ from appbuilder.core.context import init_context
 from appbuilder.core.component import Component
 from appbuilder.core.message import Message
 from appbuilder.utils.logger_util import logger
+from appbuilder.utils.flask_deploy import FlaskRuntime
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
 from appbuilder.core.console.appbuilder_client.data_class import ToolChoiceFunction, ToolChoice, Action
 
 # 流式场景首包超时时，最大重试次数
@@ -203,6 +205,8 @@ class AgentRuntime(BaseModel):
     user_session_config: Optional[Union[Any, str]] = None
     user_session: Optional[Any] = None
     tool_choice: ToolChoice = None
+    flask_deploy: FlaskRuntime = None
+    chainlit_deploy: ChainlitRuntime = None
 
     class Config:
         """
@@ -232,6 +236,21 @@ class AgentRuntime(BaseModel):
         values.update({
             "user_session": UserSession(values.get("user_session_config"))
         })
+        flask_deploy = appbuilder.FlaskRuntime(
+            component=values.get("component"),
+            user_session_config=values.get("user_session_config"),
+            user_session=values.get("user_session")
+        )
+        chainlit_deploy = appbuilder.ChainlitRuntime(
+            component=values.get("component"),
+            user_session_config=values.get("user_session_config"),
+            user_session=values.get("user_session"),
+            tool_choice=values.get("tool_choice")
+        )
+        values.update({
+            "flask_deploy": flask_deploy,
+            "chainlit_deploy": chainlit_deploy
+        })
         return values
 
     @deprecated(reason="deplecated. Use FlaskRuntime.chat or ChainlitRuntime.chat() instead")
@@ -260,12 +279,7 @@ class AgentRuntime(BaseModel):
         Returns:
             Flask
         """
-        flask_deploy = appbuilder.FlaskRuntime(
-            component=self.component,
-            user_session_config=self.user_session_config,
-            user_session=self.user_session
-        )
-        app = flask_deploy.create_flask_app(url_rule=url_rule)
+        app = self.flask_deploy.create_flask_app(url_rule=url_rule)
         return app
 
     @deprecated(reason="deplecated. Use FlaskRuntime.serve() instead")
@@ -285,39 +299,6 @@ class AgentRuntime(BaseModel):
         app = self.create_flask_app(url_rule=url_rule)
         app.run(host=host, debug=debug, port=port)
 
-    def prepare_chainlit_readme(self):
-        """
-        准备 Chainlit 的 README 文件
-        
-        Args:
-            无
-        
-        Returns:
-            无
-        
-        Raises:
-            无
-        
-        说明:
-            从 utils 文件夹中拷贝 chainlit.md 文件到当前工作目录下，如果当前工作目录下已存在 chainlit.md 文件，则不拷贝。
-        
-        """
-        try:
-            # 获取当前python命令执行的路径，而不是文件的位置
-            cwd_path = os.getcwd()
-            # 获取当前文件的路径所在文件夹
-            current_file_path = os.path.dirname(
-                os.path.dirname(os.path.abspath(__file__)))
-            chainlit_readme_path = os.path.join(
-                current_file_path, "utils", "chainlit.md")
-
-            # 拷贝chainlit_readme到cwd_path
-            # 如果cwd_path下已经存在chainlit_readme，则不拷贝
-            if not os.path.exists(os.path.join(cwd_path, "chainlit.md")):
-                shutil.copy(chainlit_readme_path, cwd_path)
-        except:
-            logger.error("Failed to copy chainlit.md to current directory")
-
     @deprecated(reason="deplecated. Use ChainlitRuntime.chainlit_component() instead")
     def chainlit_demo(self, host='0.0.0.0', port=8091):
         """
@@ -330,14 +311,7 @@ class AgentRuntime(BaseModel):
         Returns:
             None
         """
-        # lazy import chainlit
-        chainlit_deploy = appbuilder.ChainlitRuntime(
-            component=self.component,
-            user_session_config=self.user_session_config,
-            user_session=self.user_session,
-            tool_choice=self.tool_choice
-        )
-        chainlit_deploy.chainlit_component(host=host, port=port)
+        self.chainlit_deploy.chainlit_component(host=host, port=port)
 
     @deprecated(reason="deplecated. Use ChainlitRuntime.chainlit_agent() instead")
     def chainlit_agent(self, host='0.0.0.0', port=8091):
@@ -351,11 +325,4 @@ class AgentRuntime(BaseModel):
         Returns:
             None
         """
-        # lazy import chainlit
-        chainlit_deploy = appbuilder.ChainlitRuntime(
-            component=self.component,
-            user_session_config=self.user_session_config,
-            user_session=self.user_session,
-            tool_choice=self.tool_choice
-        )
-        chainlit_deploy.chainlit_component(host=host, port=port)
+        self.chainlit_deploy.chainlit_component(host=host, port=port)
