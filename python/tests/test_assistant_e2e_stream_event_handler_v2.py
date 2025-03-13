@@ -29,6 +29,7 @@ check_tool = {
     }
 }
 
+@unittest.skip("QPS超限")
 class MyEventHandler(AssistantEventHandler):
     def get_cur_whether(self, location:str, unit:str):
         return "{} 的当前温度是30 {}".format(location, unit)
