@@ -68,6 +68,10 @@ public class DocumentDescribeResponse {
     public static class Meta {
         private String source;
         private String fileId;
+        private String url;
+        private String mime_type;
+        private Integer file_size;
+
 
         public String getSource() {
             return source;
@@ -83,6 +87,30 @@ public class DocumentDescribeResponse {
 
         public void setFileId(String fileId) {
             this.fileId = fileId;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+        
+        public String getMimeType() {
+            return mime_type;
+        }
+
+        public void setMimeType(String mime_type) {
+            this.mime_type = mime_type;
+        }
+
+        public Integer getFileSize() {
+            return file_size;
+        }
+
+        public void setFileSize(Integer file_size) {
+            this.file_size = file_size;
         }
     }
 }
