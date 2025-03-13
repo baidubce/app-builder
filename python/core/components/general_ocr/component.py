@@ -14,6 +14,7 @@ r"""general ocr component."""
 import base64
 import json
 import os.path
+import requests
 
 from appbuilder.core import utils
 from appbuilder.core._client import HTTPClient
@@ -109,11 +110,19 @@ class GeneralOCR(Component):
         """
         inp = GeneralOCRInMsg(**message.content)
         request = GeneralOCRRequest()
-        if inp.raw_image:
-            request.image = base64.b64encode(inp.raw_image)
-        if inp.url:
-            request.url = inp.url
-        request.detect_direction = "true"
+        if inp.image_base64:
+            request.image = (inp.image_base64)
+        elif inp.image_url:
+            request.url = inp.image_url
+        elif inp.pdf_base64:
+            request.pdf_file = inp.pdf_base64
+        elif inp.pdf_url:
+            raw_pdf = requests.get(inp.pdf_url).content
+            pdf_base64 = base64.b64encode(raw_pdf)
+            request.pdf_file = pdf_base64
+        request.pdf_file_num = inp.pdf_file_num
+        request.detect_direction = inp.detect_direction
+        request.multidirectional_recognize = inp.multidirectional_recognize
         request.language_type = language_type
         result = self._recognize(request, timeout, retry)
         result_dict = proto.Message.to_dict(result)

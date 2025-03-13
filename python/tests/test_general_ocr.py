@@ -13,6 +13,7 @@
 # limitations under the License.
 import os
 import unittest
+import base64
 import requests
 import appbuilder
 from appbuilder.core._exception import InvalidRequestArgumentError
@@ -47,9 +48,9 @@ class TestGeneralOCR(unittest.TestCase):
                     "11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae" \
                     "857a27513734d765495f89ffa5f73"
         raw_image = requests.get(image_url).content
-
+        image_base64 = base64.b64encode(raw_image)
         # Create message with raw_image
-        message = appbuilder.Message(content={"raw_image": raw_image})
+        message = appbuilder.Message(content={"image_base64": image_base64})
 
         # Recognize landmark
         output = self.general_ocr.run(message)
@@ -91,9 +92,9 @@ class TestGeneralOCR(unittest.TestCase):
                     "11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae" \
                     "857a27513734d765495f89ffa5f73"
         raw_image = requests.get(image_url).content
-
+        image_base64 = base64.b64encode(raw_image)
         # Create message with raw_image
-        message = appbuilder.Message(content={"raw_image": raw_image})
+        message = appbuilder.Message(content={"image_base64": image_base64})
 
         # Recognize general_ocr with timeout and retry parameters
         output = self.general_ocr.run(message, timeout=5.0, retry=3)
@@ -113,7 +114,7 @@ class TestGeneralOCR(unittest.TestCase):
 
         """
         url = "http://example.com/invalid_url.jpg"
-        message = appbuilder.Message({"url": url})
+        message = appbuilder.Message({"image_url": url})
         with self.assertRaises(appbuilder.AppBuilderServerException):
             self.general_ocr.run(message=message)
 
