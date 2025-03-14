@@ -331,34 +331,4 @@ class MCPComponentServer:
         """
         self.mcp.run()
 
-
-if __name__ == "__main__":
-    from appbuilder.modelcontextprotocol.server import MCPComponentServer
-    from appbuilder.core.components.v2 import Translation
-    from appbuilder.core.components.v2 import Text2Image
-    import os
-    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd"
-
-    server = MCPComponentServer("AB Component Server")
-
-    translation = Translation()
-    text2image = Text2Image()
-    server.add_component(translation)
-    server.add_component(text2image)
-
-    # Add custom tool
-    @server.tool()
-    def add(a: int, b: int) -> int:
-        """Add two numbers"""
-        return a + b
-
-    # Add dynamic resource
-    @server.resource("greeting://{name}")
-    def get_greeting(name: str) -> str:
-        """Get a personalized greeting"""
-        return f"Hello, {name}!"
-    
-    server.run()
-
-
     
