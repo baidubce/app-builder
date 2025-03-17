@@ -425,7 +425,7 @@ print(msg_2.model_dump_json(indent=4)
 
 #### Run方法带MCP Tool使用示例：
 
-**方式1：使用run方法直接调用调用**
+**方式1：使用run方法直接调用**
 
 以[官方server](https://github.com/modelcontextprotocol/quickstart-resources/blob/main/weather-server-python/weather.py)为例。我们将server代码保存为`weather.py`。
 
@@ -476,6 +476,8 @@ if __name__ == "__main__":
 ```
 
 **方式2: 使用eventhandler封装调用**
+
+以[官方server](https://github.com/modelcontextprotocol/quickstart-resources/blob/main/weather-server-python/weather.py)为例。我们将server代码保存为`weather.py`。
 
 ```python
 import os
@@ -565,6 +567,8 @@ if __name__ == "__main__":
 ```
 
 **方式3: MCP Tool跟其他Tool一起作为Tool注册**
+
+以[官方server](https://github.com/modelcontextprotocol/quickstart-resources/blob/main/weather-server-python/weather.py)为例。我们将server代码保存为`weather.py`。
 
 ```python
 import os
