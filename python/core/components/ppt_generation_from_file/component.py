@@ -95,6 +95,7 @@ class PPTGenerationFromFile(Component):
                          secret_key=secret_key,
                          gateway=gateway,
                          lazy_certification=lazy_certification)
+        self.x_alternative_authorization = None
 
     def ppt_generation(self,
                        post_data: dict,
@@ -115,6 +116,8 @@ class PPTGenerationFromFile(Component):
         """
         url = self.http_client.service_url(self.ppt_generation_url, self.uniform_prefix)
         headers = self.http_client.auth_header()
+        if self.x_alternative_authorization:
+            headers["X-Alternative-Authorization"] = self.x_alternative_authorization
         headers['Content-Type'] = 'application/json'
         response = self.http_client.session.post(url,
                                                  json=post_data,
@@ -151,6 +154,8 @@ class PPTGenerationFromFile(Component):
         """
         url = self.http_client.service_url(self.get_ppt_generation_status_url, self.uniform_prefix) + f'?id={job_id}'
         headers = self.http_client.auth_header()
+        if self.x_alternative_authorization:
+            headers["X-Alternative-Authorization"] = self.x_alternative_authorization
         headers['Content-Type'] = 'application/json'
 
         status = -1
@@ -214,6 +219,8 @@ class PPTGenerationFromFile(Component):
         """
         url = self.http_client.service_url(self.get_ppt_download_link_url, self.uniform_prefix) + f'?id={job_id}'
         headers = self.http_client.auth_header()
+        if self.x_alternative_authorization:
+            headers["X-Alternative-Authorization"] = self.x_alternative_authorization
         headers['Content-Type'] = 'application/json'
         response = self.http_client.session.get(url,
                                                 headers=headers,
