@@ -14,6 +14,7 @@
 from appbuilder.utils.logger_util import logger
 from appbuilder.core.console.appbuilder_client import data_class
 
+
 class AppBuilderClientRunContext(object):
     def __init__(self) -> None:
         """
@@ -198,7 +199,8 @@ class AsyncAppBuilderEventHandler(object):
                 else:
                     if not isinstance(func_res[0], data_class.ToolOutput):
                         try:
-                            check_tool_output = data_class.ToolOutput(**func_res[0])
+                            check_tool_output = data_class.ToolOutput(
+                                **func_res[0])
                         except Exception as e:
                             logger.error(
                                 "func interrupt's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]"
@@ -282,7 +284,8 @@ class AsyncAppBuilderEventHandler(object):
                     else:
                         if not isinstance(func_res[0], data_class.ToolOutput):
                             try:
-                                check_tool_output = data_class.ToolOutput(**func_res[0])
+                                check_tool_output = data_class.ToolOutput(
+                                    **func_res[0])
                             except Exception as e:
                                 logger.info(
                                     "func interrupt's output should be list[ToolOutput] or list[dict(can be trans to ToolOutput)]"
@@ -321,7 +324,11 @@ class AsyncAppBuilderEventHandler(object):
                 .get("function_call", {})
                 .get("thought", "")
             )
-        except Exception as e:
+            if run_context.current_thought == "":
+                run_context.current_thought = (
+                    run_response.events[0].detail.get("text", "")
+                )
+        except Exception:
             pass
 
     async def _run(self):
