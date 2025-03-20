@@ -248,8 +248,6 @@ for content in message.content:
 print(answer)
 ```
 
-
-
 #### Run方法带ToolCall调用示例
 
 以下示例展示了三种方式来使用 ToolCall 进行调用，并演示了如何在 AppBuilder 环境中配置和执行会话调用。
@@ -422,10 +420,255 @@ msg_2 = client.run(
         "output": str(raw_result)
     }],
 )
-print(msg_2.model_dump_json(indent=4))
+print(msg_2.model_dump_json(indent=4)
 ```
 
+#### Run方法带MCP Tool使用示例：
 
+**方式1：使用run方法直接调用**
+
+以[官方server](https://github.com/modelcontextprotocol/quickstart-resources/blob/main/weather-server-python/weather.py)为例。我们将server代码保存为`weather.py`。
+
+```python
+import os
+import asyncio
+import appbuilder
+from appbuilder.modelcontextprotocol.client import MCPClient
+
+
+async def main():
+    mcp_client = MCPClient()
+    await mcp_client.connect_to_server("./weather.py")
+    tools = mcp_client.tools
+
+    client = appbuilder.AppBuilderClient(app_id)
+    conversation_id = client.create_conversation()
+    msg = client.run(
+        conversation_id=conversation_id,
+        query="美国马塞诸塞州的天气",
+        tools=tools,
+    )
+    tool_call = msg.content.events[-1].tool_calls[-1]
+    mcp_result = await mcp_client.call_tool(
+        tool_name=tool_call.function.name, tool_args=tool_call.function.arguments
+    )
+
+    msg_2 = client.run(
+        conversation_id=conversation_id,
+        tool_outputs=[{
+            "tool_call_id": tool_call.id,
+            "output": mcp_result.content[0].text
+        }])
+    print("\033[1;34m", "Agent 最终结果:{}".format(
+        msg_2.content.answer), "\033[0m")
+
+
+if __name__ == "__main__":
+    # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
+    # 设置环境变量
+    os.environ["APPBUILDER_TOKEN"] = ("")
+    # 已发布AppBuilder应用的ID
+    app_id = ""
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+
+```
+
+**方式2: 使用eventhandler封装调用**
+
+以[官方server](https://github.com/modelcontextprotocol/quickstart-resources/blob/main/weather-server-python/weather.py)为例。我们将server代码保存为`weather.py`。
+
+```python
+import os
+import asyncio
+import appbuilder
+from appbuilder.core.console.appbuilder_client.async_event_handler import (
+    AsyncAppBuilderEventHandler,
+)
+
+from appbuilder.modelcontextprotocol.client import MCPClient
+
+
+class MyEventHandler(AsyncAppBuilderEventHandler):
+    def __init__(self, mcp_client):
+        super().__init__()
+        self.mcp_client = mcp_client
+        self.functions = []
+
+    async def interrupt(self, run_context, run_response):
+        thought = run_context.current_thought
+        print("\033[1;31m", "-> Agent 中间思考: ", thought, "\033[0m")
+
+        tool_output = []
+        for tool_call in run_context.current_tool_calls:
+            function_name = tool_call.function.name
+            function_arguments = tool_call.function.arguments
+            result = ""
+            function_map = {f.__name__: f for f in self.functions}
+            if function_name in function_map:
+                result = function_map[function_name](
+                    **tool_call.function.arguments)
+                print("\033[1;33m", "本地function结果: {}\n\033[0m".format(result))
+            else:
+                print(
+                    "\033[1;32m",
+                    "MCP工具名称: {}, MCP参数:{}\n".format(
+                        function_name, function_arguments
+                    ),
+                    "\033[0m",
+                )
+                mcp_server_result = await self.mcp_client.call_tool(
+                    function_name, function_arguments
+                )
+                print("\033[1;33m", "MCP结果: {}\n\033[0m".format(
+                    mcp_server_result))
+                index = 0
+                for i, content in enumerate(mcp_server_result.content):
+                    if content.type == "text":
+                        index = i
+                        result = result + mcp_server_result.content[index].text
+            tool_output.append(
+                {
+                    "tool_call_id": tool_call.id,
+                    "output": result,
+                }
+            )
+        return tool_output
+
+    async def success(self, run_context, run_response):
+        print("\n\033[1;34m", "-> Agent 非流式回答: ",
+              run_response.answer, "\033[0m")
+
+
+async def main():
+    appbuilder_client = appbuilder.AsyncAppBuilderClient(app_id)
+    mcp_client = MCPClient()
+    await mcp_client.connect_to_server("./weather.py")
+    tools = mcp_client.tools
+
+    conversation_id = await appbuilder_client.create_conversation()
+    with await appbuilder_client.run_with_handler(
+        conversation_id=conversation_id,
+        query="美国马塞诸塞州天气",
+        tools=tools,
+        event_handler=MyEventHandler(mcp_client),
+    ) as run:
+        await run.until_done()
+    await appbuilder_client.http_client.session.close()
+
+
+if __name__ == "__main__":
+    os.environ["APPBUILDER_TOKEN"] = ""
+    app_id = ""
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+
+```
+
+**方式3: MCP Tool跟其他Tool一起作为Tool注册**
+
+以[官方server](https://github.com/modelcontextprotocol/quickstart-resources/blob/main/weather-server-python/weather.py)为例。我们将server代码保存为`weather.py`。
+
+```python
+import os
+import asyncio
+import appbuilder
+from appbuilder.core.console.appbuilder_client.async_event_handler import (
+    AsyncAppBuilderEventHandler,
+)
+
+from appbuilder.modelcontextprotocol.client import MCPClient
+
+
+@appbuilder.manifest(
+    description="获取指定中国城市的当前天气信息。仅支持中国城市的天气查询。参数 `location` 为中国城市名称，其他国家城市不支持天气查询。"
+)
+@appbuilder.manifest_parameter(name="location", description="城市名，例如：北京。")
+@appbuilder.manifest_parameter(
+    name="unit", description="温度单位，支持 'celsius' 或 'fahrenheit'"
+)
+def get_current_weather(location: str, unit: str) -> str:
+    return "北京今天25度"
+
+
+class MyEventHandler(AsyncAppBuilderEventHandler):
+    def __init__(self, mcp_client):
+        super().__init__()
+        self.mcp_client = mcp_client
+
+    async def interrupt(self, run_context, run_response):
+        thought = run_context.current_thought
+        print("\033[1;31m", "-> Agent 中间思考: ", thought, "\033[0m")
+
+        tool_output = []
+        for tool_call in run_context.current_tool_calls:
+            function_name = tool_call.function.name
+            function_arguments = tool_call.function.arguments
+            result = ""
+            function_map = {f.__name__: f for f in functions}
+            if function_name in function_map:
+                result = function_map[function_name](
+                    **tool_call.function.arguments)
+                print("\033[1;33m", "本地function结果: {}\n\033[0m".format(result))
+            else:
+                print(
+                    "\033[1;32m",
+                    "MCP工具名称: {}, MCP参数:{}\n".format(
+                        function_name, function_arguments
+                    ),
+                    "\033[0m",
+                )
+                mcp_server_result = await self.mcp_client.call_tool(
+                    function_name, function_arguments
+                )
+                print("\033[1;33m", "MCP结果: {}\n\033[0m".format(
+                    mcp_server_result))
+                index = 0
+                for i, content in enumerate(mcp_server_result.content):
+                    if content.type == "text":
+                        index = i
+                        result = result + mcp_server_result.content[index].text
+            tool_output.append(
+                {
+                    "tool_call_id": tool_call.id,
+                    "output": result,
+                }
+            )
+        return tool_output
+
+    async def success(self, run_context, run_response):
+        print("\n\033[1;34m", "-> Agent 非流式回答: ",
+              run_response.answer, "\033[0m")
+
+
+async def main():
+    tools = [appbuilder.Manifest.from_function(f) for f in functions]
+
+    mcp_client = MCPClient()
+    await mcp_client.connect_to_server("./weather.py")
+    tools.extend(mcp_client.tools)
+
+    appbuilder_client = appbuilder.AsyncAppBuilderClient(app_id)
+    conversation_id = await appbuilder_client.create_conversation()
+    with await appbuilder_client.run_with_handler(
+        conversation_id=conversation_id,
+        query="美国马塞诸塞州天气",
+        tools=tools,
+        event_handler=MyEventHandler(mcp_client),
+    ) as run:
+        await run.until_done()
+    await appbuilder_client.http_client.session.close()
+
+
+if __name__ == "__main__":
+    os.environ["APPBUILDER_TOKEN"] = ""
+    app_id = ""
+    functions = [get_current_weather]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+
+```
 
 #### Run方法带ToolChoice使用示例：
 
@@ -461,8 +704,6 @@ answer = app_builder_client.run(
     },
 )
 ```
-
-
 
 #### Run方法回复工作流Agent “信息收集节点”使用示例：
 
