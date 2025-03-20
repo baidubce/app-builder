@@ -294,7 +294,11 @@ class AppBuilderEventHandler(object):
                 "text", {}).get(
                     "function_call", {}).get(
                         "thought", "")
-        except Exception as e:
+            if run_context.current_thought == "":
+                run_context.current_thought = (
+                    run_response.events[0].detail.get("text", "")
+                )
+        except Exception:
             pass
 
     def _run(self):
