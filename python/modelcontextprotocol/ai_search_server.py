@@ -11,7 +11,8 @@ from appbuilder.core.components.rag_with_baidu_search_pro import RagWithBaiduSea
 from types import SimpleNamespace
 
 # You can refer to this webpage https://cloud.baidu.com/doc/AppBuilder/s/klv2eywua to obtain the api_key
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-..."
+# format is "bce-v3/ALTAK-..."
+# os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-..."
 server = FastMCP(name="AB Component Server")
 
 # You can switch to other models supported by AppBuilder

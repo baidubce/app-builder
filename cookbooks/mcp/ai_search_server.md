@@ -42,7 +42,7 @@ Add this to your `claude_desktop_config.json`:
     "AB Component Server": {
       "command": "/path/to/your/python3.12",
       "args": [
-        "/path/to/your/ai_search.py"
+        "/path/to/your/ai_search_server.py"
       ],
       "envs": {
         "APPBUILDER_TOKEN": "your token"
