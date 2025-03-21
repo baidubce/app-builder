@@ -482,3 +482,79 @@ class AsyncAppBuilderEventHandler(object):
     async def success(self, run_context, run_response):
         # 用户可重载该方法，当event_status为success时，会调用该方法
         pass
+
+
+class AsyncToolCallEventHandler(AsyncAppBuilderEventHandler):
+    def __init__(self, mcp_client, functions):
+        super().__init__()
+        self.mcp_client = mcp_client
+        self.functions = functions
+        self.result = ""
+
+    async def init(
+        self,
+        appbuilder_client,
+        conversation_id,
+        query,
+        file_ids=None,
+        tools=None,
+        stream: bool = False,
+        event_handler=None,
+        action=None,
+        **kwargs
+    ):
+        await super().init(appbuilder_client, conversation_id, query, file_ids, tools, stream, event_handler, action, **kwargs)
+        self.result = ""
+
+    async def reset_state(self):
+        await super().reset_state()
+        self.result = ""
+
+    async def new_dialog(self, query=None, file_ids=None, tools=None, action=None, stream=None, event_handler=None, **kwargs):
+        await super().new_dialog(query, file_ids, tools, action, stream, event_handler, **kwargs)
+        self.result = ""
+
+    async def interrupt(self, run_context, run_response):
+        thought = run_context.current_thought
+        logger.debug("Agent 中间思考: {}\n".format(thought))
+
+        tool_output = []
+        for tool_call in run_context.current_tool_calls:
+            function_name = tool_call.function.name
+            function_arguments = tool_call.function.arguments
+            result = ""
+            function_map = {f.__name__: f for f in self.functions}
+            if function_name in function_map:
+                result = function_map[function_name](
+                    **tool_call.function.arguments)
+                logger.debug("ToolCall结果: {}\n".format(result))
+            else:
+                logger.debug(
+                    "MCP工具名称: {}, MCP参数:{}\n".format(
+                        function_name, function_arguments
+                    )
+                )
+                mcp_server_result = await self.mcp_client.call_tool(
+                    function_name, function_arguments
+                )
+                logger.debug("MCP ToolCall: {}\n".format(mcp_server_result))
+                for i, content in enumerate(mcp_server_result.content):
+                    if content.type == "text":
+                        result = result + mcp_server_result.content[i].text
+            tool_output.append(
+                {
+                    "tool_call_id": tool_call.id,
+                    "output": result,
+                }
+            )
+        return tool_output
+
+    async def running(self, run_context, run_response):
+        if self._stream and run_response.answer and run_response.answer != "":
+            logger.debug("Agent 流式回答: {}".format(run_response.answer))
+            self.result += run_response.answer
+
+    async def success(self, run_context, run_response):
+        if not self._stream:
+            logger.debug("Agent 非流式回答: {}".format(run_response.answer))
+            self.result = run_response.answer
