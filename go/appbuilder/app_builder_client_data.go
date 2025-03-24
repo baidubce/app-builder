@@ -34,6 +34,7 @@ const (
 	ChatflowInterruptContentType = "chatflow_interrupt"
 	PublishMessageContentType    = "publish_message"
 	JsonContentType              = "json"
+	ChatReasoningContentType     = "chat_reasoning"
 )
 
 const (
@@ -53,6 +54,7 @@ var TypeToStruct = map[string]reflect.Type{
 	ChatflowInterruptContentType: reflect.TypeOf(ChatflowInterruptDetail{}),
 	PublishMessageContentType:    reflect.TypeOf(PublishMessageDetail{}),
 	JsonContentType:              reflect.TypeOf(JsonDetail{}),
+	ChatReasoningContentType:     reflect.TypeOf(ChatReasoningDetail{}),
 }
 
 type AppBuilderClientRunRequest struct {
@@ -254,6 +256,10 @@ type PublishMessageDetail struct {
 	MessageID string `json:"message_id"`
 }
 
+type ChatReasoningDetail struct {
+	Text string `json:"text"`
+}
+
 type JsonDetail struct {
 	Json FollowUpQueries `json:"json"`
 }
@@ -263,11 +269,12 @@ type FollowUpQueries struct {
 }
 
 type DefaultDetail struct {
-	URLS  []string `json:"urls"`
-	Files []string `json:"files"`
-	Image string   `json:"image"`
-	Video string   `json:"video"`
-	Audio string   `json:"audio"`
+	Text  string   `json:"text,omitempty"`
+	URLS  []string `json:"urls,omitempty"`
+	Files []string `json:"files,omitempty"`
+	Image string   `json:"image,omitempty"`
+	Video string   `json:"video,omitempty"`
+	Audio string   `json:"audio,omitempty"`
 }
 
 type AppBuilderClientRawResponse struct {
