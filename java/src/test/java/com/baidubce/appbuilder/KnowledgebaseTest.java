@@ -170,7 +170,7 @@ public class KnowledgebaseTest {
         // 获取切片列表
         knowledgebase.describeChunks(documentId, chunkId, 10, null);
         // 获取切片列表
-        ChunksDescribeRequest request = new ChunksDescribeRequest(knowledgeBaseID, documentId, chunkId, 10, null, "test");
+        ChunksDescribeRequest request = new ChunksDescribeRequest(knowledgeBaseID, documentId, null, 10, null, "test");
         knowledgebase.describeChunks(request);
         try {
             // 延时 

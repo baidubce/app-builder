@@ -1490,7 +1490,6 @@ func TestChunk(t *testing.T) {
 	describeChunksRes, err := client.DescribeChunks(DescribeChunksRequest{
 		KnowledgeBaseID: knowledgeBaseID,
 		DocumnetID:      documentID,
-		Marker:          chunkID,
 		MaxKeys:         10,
 		Keyword:         "test",
 	})

@@ -17,7 +17,7 @@ public class AppBuilderClientIterator {
     public AppBuilderClientResult next() {
         AppBuilderClientResponse response = iterator.next();
         if(response.getContent() == null) {
-            return new AppBuilderClientResult().setAnswer(response.getAnswer()).setMessageId(response.getMessageId()).setRequestId(response.getRequestId());
+            return new AppBuilderClientResult().setAnswer(response.getAnswer()).setMessageId(response.getMessageId()).setRequestId(response.getRequestId()).setCode(response.getCode()).setMessage(response.getMessage());
         }
         Event[] events = new Event[response.getContent().length];
         EventContent[] contents = response.getContent();
