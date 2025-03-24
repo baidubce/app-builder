@@ -58,7 +58,7 @@ public class AppBuilderClientResponseTest {
     @Test
     public void testToString() {
         response.setRequestId("test_request_id");
-        response.setData("test_data");
+        response.setDate("test_date");
         response.setAnswer("test_answer");
         response.setConversationId("test_conversation_id");
         response.setMessageId("test_message_id");
@@ -67,7 +67,7 @@ public class AppBuilderClientResponseTest {
         response.setContent(contentArray);
 
         String expectedString = "AgentBuilderResponse{" +
-                "requestId='test_request_id', data='test_data', answer='test_answer', " +
+                "requestId='test_request_id', date='test_date', answer='test_answer', " +
                 "conversationId='test_conversation_id', messageId='test_message_id', " +
                 "isCompletion=true, content=[null]}";
         assertEquals(expectedString, response.toString());

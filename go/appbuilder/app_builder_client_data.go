@@ -278,6 +278,8 @@ type AppBuilderClientRawResponse struct {
 	MessageID      string           `json:"message_id"`
 	IsCompletion   bool             `json:"is_completion"`
 	Content        []RawEventDetail `json:"content"`
+	Code           string           `json:"code,omitempty"`
+	Message        string           `json:"message,omitempty"`
 }
 
 type GetAppListRequest struct {
@@ -320,11 +322,15 @@ type AppBuilderClientAnswer struct {
 	MessageID string
 	Answer    string
 	Events    []Event
+	Code      string
+	Message   string
 }
 
 func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 	t.Answer = inp.Answer
 	t.MessageID = inp.MessageID
+	t.Code = inp.Code
+	t.Message = inp.Message
 	for _, c := range inp.Content {
 		ev := Event{Code: c.EventCode,
 			Message:     c.EventMessage,

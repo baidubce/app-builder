@@ -8,6 +8,7 @@ public class AppBuilderClientResponse {
     @SerializedName("request_id")
     private String requestId;
     private String data;
+    private String date;
     private String answer;
     @SerializedName("conversation_id")
     private String conversationId;
@@ -16,6 +17,8 @@ public class AppBuilderClientResponse {
     @SerializedName("is_completion")
     private boolean isCompletion;
     private EventContent[] content;
+    private String code;
+    private String message;
 
     public String getRequestId() {
         return requestId;
@@ -73,11 +76,35 @@ public class AppBuilderClientResponse {
         this.content = content;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
         return "AgentBuilderResponse{" +
                 "requestId='" + requestId + '\'' +
-                ", data='" + data + '\'' +
+                ", date='" + date + '\'' +
                 ", answer='" + answer + '\'' +
                 ", conversationId='" + conversationId + '\'' +
                 ", messageId='" + messageId + '\'' +

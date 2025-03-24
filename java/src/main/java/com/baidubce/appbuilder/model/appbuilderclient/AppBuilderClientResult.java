@@ -11,6 +11,9 @@ public class AppBuilderClientResult {
     @SerializedName("message_id")
     private String messageId;
     private Event[] events;
+    private String code;
+    private String message;
+
 
     public String getAnswer() {
         return answer;
@@ -45,6 +48,25 @@ public class AppBuilderClientResult {
 
     public AppBuilderClientResult setEvents(Event[] events) {
         this.events = events;
+        return this;
+    }
+
+
+    public String getCode() {
+        return code;
+    }
+
+    public AppBuilderClientResult setCode(String code) {
+        this.code = code;
+        return this;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public AppBuilderClientResult setMessage(String message) {
+        this.message = message;
         return this;
     }
 
