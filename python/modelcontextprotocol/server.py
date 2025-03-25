@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import appbuilder
 from appbuilder.core.component import Component, Image, Audio, References, Content
 from appbuilder.core._exception import *
@@ -121,7 +122,6 @@ class MCPComponentServer:
         kind = filetype.guess(data)
         return kind.mime
 
-
     def _convert_image_to_image_content(
             self, 
             text: Image,
@@ -140,9 +140,9 @@ class MCPComponentServer:
                 image = response.content
                 base64_data = base64.b64encode(image).decode('utf-8')
                 image_byte = io.BytesIO(image)
-            
+
             mime_type = self._get_mimetype_from_bytes(image_byte)
-                
+
             # create ImageContent
             return ImageContent(
                 type="image",
@@ -178,7 +178,7 @@ class MCPComponentServer:
 
             # detect audio type
             audio_type = self._get_mimetype_from_bytes(audio_byte)
-                
+
             # create EmbeddedResource
             return EmbeddedResource(
                 type="resource",
@@ -194,7 +194,7 @@ class MCPComponentServer:
         except Exception as e:
             logging.error("failed to convert audio to EmbeddedResource")
             raise e
-        
+
     def _convert_reference_to_embedded_resource(
         self,
         text: References,
@@ -251,7 +251,9 @@ class MCPComponentServer:
             else:
                 match type:
                     case "image":
-                        image_output = self._convert_image_to_image_content(text, audience)
+                        image_output = self._convert_image_to_image_content(
+                            text, audience
+                        )
                         output.append(image_output)
                     case "references":
                         reference_output = self._convert_reference_to_embedded_resource(
@@ -266,7 +268,6 @@ class MCPComponentServer:
                 output.append(iter_output)
         output = _convert_to_content(output)
         return output
-
 
     def convert_component_to_tool(self, component: Component) -> None:
         """
@@ -287,14 +288,15 @@ class MCPComponentServer:
                     try:
                         # call tool_eval
                         bound_values = signature.bind(*args, **kwargs)
+                        os.environ["APPBUILDER_SDK_MCP_CONTEXT"] = "server"
                         result = func(*bound_values.args, **bound_values.kwargs)
                         if result is NotImplementedError:
                             logging.error(f"tool_eval not implemented in {tool_name}")
                             raise NotImplementedError(f"tool_eval not implemented in {tool_name}")
-                        
+
                         list_result = self._convert_generator(result)
                         return list_result
-                    
+
                     except Exception as e:
                         logging.error(f"Error in {tool_name}: {str(e)}")
                         raise
@@ -318,7 +320,7 @@ class MCPComponentServer:
             component_name = component.__class__.__name__
             self.convert_component_to_tool(component)
             logging.info(f"component: {component_name} has been added")
-            
+
         except Exception as e:
             logging.exception(f"Failed to add component {component_name}: {str(e)}")
             raise e
@@ -330,5 +332,3 @@ class MCPComponentServer:
             transport: Transport protocol to use ("stdio" or "sse")
         """
         self.mcp.run()
-
-    

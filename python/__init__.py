@@ -43,16 +43,22 @@ class SDKReportConfig(pydantic.BaseModel):
     appbuilder_sdk_version: str = __version__
     appbuilder_sdk_language: str = "python"
     appbuilder_sdk_platform: str = os.environ.get("APPBUILDER_SDK_PLATFORM", "unknown")
+    appbuilder_sdk_mcp_context: str = None
 
 
-# report information
-default_header = {
-    "X-Appbuilder-Sdk-Config": SDKReportConfig().model_dump_json(),
-    "X-Appbuilder-Origin": 'appbuilder_sdk'
-}
-
-
-def get_default_header():
+def get_default_header(mcp_context: str = None):
+    if not mcp_context:
+        mcp_context = os.environ.get(
+                "APPBUILDER_SDK_MCP_CONTEXT", None
+            )
+    if mcp_context:
+        sdk_report_config = SDKReportConfig(appbuilder_sdk_mcp_context=mcp_context)
+    else:
+        sdk_report_config = SDKReportConfig()
+    default_header = {
+        "X-Appbuilder-Sdk-Config": sdk_report_config.model_dump_json(exclude_none=True),
+        "X-Appbuilder-Origin": "appbuilder_sdk",
+    }
     return copy.deepcopy(default_header)
 
 

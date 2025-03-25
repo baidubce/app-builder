@@ -233,9 +233,9 @@ class HTTPClient:
         logger.debug("Request header: {}\n".format(auth_header))
         return auth_header
 
-    def auth_header_v2(self, request_id: Optional[str] = None):
+    def auth_header_v2(self, request_id: Optional[str] = None, mcp_context = None):
         r"""auth_header_v2 is a helper method return auth info for OpenAPI, only used by AppBuilderClient"""
-        auth_header = get_default_header()
+        auth_header = get_default_header(mcp_context)
         new_request_id = str(uuid.uuid4())
         auth_header["X-Appbuilder-Request-Id"] = (
             request_id if request_id else new_request_id
