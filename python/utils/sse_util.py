@@ -30,7 +30,7 @@ class SSEClient:
         事件源应为二进制流，并具有 close() 方法。
         这通常是实现 io.BinaryIOBase 的东西，比如 httplib 或 urllib3HTTPResponse 对象。
         """
-        logger.info(f"Initialized SSE client from event source {event_source}")
+        logger.debug(f"Initialized SSE client from event source {event_source}")
         self._event_source = event_source
         self._char_enc = char_enc
 
@@ -76,7 +76,7 @@ class SSEClient:
                 # Ignore unknown fields.
                 if field not in event.__dict__:
                     event.raw += line
-                    logger.info(
+                    logger.debug(
                         f"Saw invalid field {field} while parsing Server Side Event"
                     )
                     continue
@@ -119,7 +119,7 @@ class SSEClient:
             if logger.getEffectiveLevel() == logging.DEBUG:
                 logger.debug(f"Dispatching {event.debug_str}...")
             else:
-                logger.info(f"Dispatching {event}...")
+                logger.debug(f"Dispatching {event}...")
             yield event
 
     def close(self):
