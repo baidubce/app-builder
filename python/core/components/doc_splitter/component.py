@@ -169,37 +169,37 @@ class ChunkSplitter(Component):
     def run(self, message: Message):
         """
         对输入的解析文档结果，按照最大段落块大小、结尾分隔符等，处理为多个段落结果
-        
+
         Args:
             message (obj:Message): 上游docparser的文档解析结果
-        
+
         Returns:
             obj:Message: 文档分隔后的段落结果
-        
+
         Raises:
             ValueError: 如果 message.content 的类型不是 ParseResult，则抛出 ValueError 异常
-        
+
         Examples:
-        
+
         .. code-block:: python
-        
+
             import os
-            from appbuilder.core.components.doc_parser.doc_parser import DocParser
-            from appbuilder.core.components.doc_splitter.doc_splitter import DocSplitter, ChunkSplitter
+            from appbuilder import DocParser
+            from appbuilder.core.components.doc_splitter.component import DocSplitter, ChunkSplitter
             from appbuilder.core.message import Message
-        
+
             # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
             os.environ["APPBUILDER_TOKEN"] = "..."
-        
+
             # 先解析
             msg = Message("./test.pdf")
             parser = DocParser()
             parse_result = parser(msg, return_raw=True)
-        
+
             # 基于parser的结果切分段落
             splitter = ChunkSplitter()
             res_paras = splitter(parse_result)
-        
+
             # 打印结果
             print(res_paras.content)
         """
