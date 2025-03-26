@@ -111,8 +111,20 @@ class PlanStep(BaseModel, extra='allow'):
     arguments: dict = Field(default={}, description="step参数")
     thought: str = Field(default="", description="step思考结果")
     
+class Task(BaseModel, extra='allow'):
+    id: str = Field(default="", description="task id")
+    name: str = Field(default="", description="task名")
+    description: str = Field(default="", description="task描述")
+    requires: list[str] = Field(default=[], description="依赖的task列表")
+    tool: str = Field(default="", description="工具名")
+    parameters: dict = Field(default={}, description="参数列表")
+    status: str = Field(default="", description="task状态")
 
 class Plan(BaseModel, extra='allow'):
+    goal: str = Field(default="", description="计划目标")
+    thought: str = Field(default="", description="计划思考结果")
+    tasks: list[Task] = Field(default=[], description="任务列表")
+    # deprecated parameters, delete when dte agent update
     detail: str = Field(default="", description="计划详情")
     steps: list[PlanStep] = Field(default=[], description="步骤列表")
 
@@ -560,7 +572,8 @@ class Component:
             elif type == "audio":
                 key_list = ["filename", "url"]
             elif type == "plan":
-                key_list = ["detail", "steps"]
+                # add follow key_list when dte_agent update
+                key_list = []#["goal", "thought", "tasks", "detail", "steps"]
             elif type == "function_call":
                 key_list = ["thought", "name", "arguments"]
             elif type == "json":
