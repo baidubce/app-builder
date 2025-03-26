@@ -47,7 +47,7 @@ class TestAgentRuntime(unittest.TestCase):
             event = msg.content.events[-1]
             assert event.status == "interrupt"
             assert event.event_type == "Interrupt"
-
+            assert client._mcp_context == "client"
             print(
                 "\033[1;31m",
                 "Agent思考过程：\n{}\n".format(
@@ -72,6 +72,7 @@ class TestAgentRuntime(unittest.TestCase):
                     "output": mcp_server_result.content[0].text
                 }]
             )
+            assert client._mcp_context == "client"
             print(
                 "\033[1;34m",
                 "Agent 最终结果:{}".format(msg_2.content.answer),

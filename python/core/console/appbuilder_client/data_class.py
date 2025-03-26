@@ -36,11 +36,11 @@ class MCPTool(BaseModel):
 
 def ToAppBuilderTool(tool):
     if "type" in tool and tool["type"]:
-        return Tool(**tool)
+        return Tool(**tool), False
     if hasattr(tool, 'inputSchema') and hasattr(tool, 'inputSchema'):
-        return Tool(type="function", function=Function(name=tool.name, description=tool.description, parameters=tool.inputSchema))
+        return Tool(type="function", function=Function(name=tool.name, description=tool.description, parameters=tool.inputSchema)), True
     else:
-        return tool
+        return tool, False
 
 class ToolOutput(BaseModel):
     tool_call_id: str = Field(..., description="工具调用ID")

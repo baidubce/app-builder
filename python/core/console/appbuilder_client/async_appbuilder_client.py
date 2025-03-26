@@ -32,6 +32,7 @@ class AsyncAppBuilderClient(Component):
                 " to get a valid app_id after your application is published."
             )
         self.app_id = app_id
+        self._mcp_context = None
 
     async def create_conversation(self) -> str:
         r"""异步创建会话并返回会话ID
@@ -97,11 +98,17 @@ class AsyncAppBuilderClient(Component):
                 "AppBuilderClient Run API: query and tool_outputs cannot both be empty"
             )
 
+        if not tool_outputs:
+            self._mcp_context = None
+        formatted_tools = []
         if tools:
             formatted_tools = [
-                data_class.ToAppBuilderTool(tool) for tool in tools
+                data_class.ToAppBuilderTool(tool)[0] for tool in tools
             ]
-            tools = formatted_tools
+            for tool in tools:
+                _, is_mcp_tool = data_class.ToAppBuilderTool(tool)
+                if is_mcp_tool and self._mcp_context is None:
+                    self._mcp_context = "client"
 
         req = data_class.AppBuilderClientRequest(
             app_id=self.app_id,
@@ -109,14 +116,14 @@ class AsyncAppBuilderClient(Component):
             query=query,
             stream=True if stream else False,
             file_ids=file_ids,
-            tools=tools,
+            tools=formatted_tools,
             tool_outputs=tool_outputs,
             tool_choice=tool_choice,
             end_user_id=end_user_id,
             action=action,
         )
 
-        headers = self.http_client.auth_header_v2()
+        headers = self.http_client.auth_header_v2(mcp_context=self._mcp_context)
         headers["Content-Type"] = "application/json"
         url = self.http_client.service_url_v2("/app/conversation/runs")
         response = await self.http_client.session.post(
