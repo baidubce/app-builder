@@ -88,3 +88,7 @@
   * AppBuilderClient新增点踩点赞功能支持
   * 知识库支持配置目录、切片模糊搜索、文档状态信息等功能升级
   * MCP协议支持
+* **2025.03.27 v1.0.4版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.4)
+  * MCP Client新增SSE协议支持
+  * 新增百度AI搜索的MCP Server
+  * AppBuilderClient调用支持显示DeepSeek-R1思考过程
