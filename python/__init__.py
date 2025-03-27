@@ -177,6 +177,8 @@ from appbuilder.core.agent import AgentRuntime
 from appbuilder.core.user_session import UserSession
 
 from appbuilder.utils.logger_util import logger
+from appbuilder.utils.flask_deploy import FlaskRuntime
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
 
 from appbuilder.core.manifest.manifest_decorator import manifest, manifest_parameter
 from appbuilder.core.manifest.models import Manifest

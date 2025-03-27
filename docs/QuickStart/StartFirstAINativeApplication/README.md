@@ -111,9 +111,11 @@ AppBuilder-SDK提供对组件的服务化能力。通过定义Agent，开发者�
 pip install chainlit
 ```
 而后，使用AppBuilder的Agent服务化功能，即可快速部署服务
+对于实现了run方法，返回str类的组件，可使用以下方法进行部署：
 
 ```python
 import appbuilder
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
 
 # 空模版组件
 playground = appbuilder.Playground(
@@ -121,22 +123,43 @@ playground = appbuilder.Playground(
     model="Qianfan-Agent-Speed-8K"
 )
 
-# 使用 AgentRuntime 来服务化playground组件
-agent = appbuilder.AgentRuntime(component=playground)
+# 使用 ChainlitRuntime 来服务化playground组件
+agent = ChainlitRuntime(component=playground)
 
 # 启动chainlit demo，会自动在浏览器打开体验对话框页面
-agent.chainlit_demo(port=8091)
+agent.chainlit_component(port=8091)
 ```
+
+对可能输出其他类型的组件，如图片、音频、代码等组件，可使用以下接口查看各种输出格式的渲染效果。
+注意：该接口目前只支持新协议组件，即appbuilder.core.component.v2实现下的组件。
+
+```python
+import os
+import appbuilder
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
+from appbuilder.core.components.v2 import SimilarQuestion
+
+# 使用组件之前，请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1、创建密钥
+os.environ["APPBUILDER_TOKEN"] = '...'
+
+component = SimilarQuestion()
+agent = ChainlitRuntime(component=component)
+agent.chainlit_component_debug(
+    port=8092, 
+    tool_eval_args={},
+    query_name = "query"
+)
+```
+
+
 
 也可以对AppBuilderClient进行服务化，快速部署
 
 ```python
 import os
 from appbuilder.core.component import Component
-from appbuilder import (
-    AgentRuntime,
-    AppBuilderClient,
-)
+from appbuilder.utils.chainlit_deploy import ChainlitRuntime
+from appbuilder import AppBuilderClient
 
 
 if __name__ == "__main__":
@@ -148,6 +171,6 @@ if __name__ == "__main__":
     # 网页已部署的应用链接为「地理小达人」：https://appbuilder.baidu.com/s/x1tSF
     app_id = "42eb211a-14b9-43d2-9fae-193c8760ef26"
     agent_builder = AppBuilderClient(app_id)
-    agent = AgentRuntime(component=agent_builder)
+    agent = ChainlitRuntime(component=agent_builder)
     agent.chainlit_agent(port=8091)
 ```
