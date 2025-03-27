@@ -29,7 +29,7 @@ DocParser支持解析以下几种类型的文档：
 以下是使用DocParser快速开始的一个示例：
 
 ```python
-from appbuilder.core.components.doc_parser.doc_parser import DocParser
+from appbuilder import DocParser
 from appbuilder.core.message import Message
 import os
 import requests
@@ -86,7 +86,7 @@ class ParseResult(BaseModel):
 DocParser支持自定义文档解析的配置和对解析结果进行二次处理，以下是一个示例：
 
 ```python
-from appbuilder.core.components.doc_parser.doc_parser import DocParser
+from appbuilder import DocParser
 from appbuilder.core.message import Message
 import os
 import requests

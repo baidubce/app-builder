@@ -45,7 +45,7 @@ Add this to your `claude_desktop_config.json`:
         "/path/to/your/ai_search_server.py"
       ],
       "envs": {
-        "APPBUILDER_TOKEN": "your token"
+        "APPBUILDER_TOKEN": "{AppBuilder API Key}"
       }
     }
   }
@@ -53,12 +53,12 @@ Add this to your `claude_desktop_config.json`:
 ```
 
 #### Usage with Cursor
-
+* the format of api_key is “Bearer+<AppBuilder API Key>”, note that “+” in the middle should be retained, example: Bearer+bce-v3/ALTAK-xuZRMCVTC9###### 
 ```json
 {
     "mcpServers": {
         "AISearch": {
-            "url": "http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key={your token}"
+            "url": "http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key={Bearer+<AppBuilder API Key>}"
         }
     }
 }
