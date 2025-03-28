@@ -4,7 +4,7 @@ We also support access via SSE protocol. The access address is:
 http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key=<your api_key>
 You can refer to this webpage https://cloud.baidu.com/doc/AppBuilder/s/klv2eywua to obtain the api_key, in the format of "Bearer+bce…".
 """
-
+import os
 import json
 from mcp.server import FastMCP
 from appbuilder.core.components.rag_with_baidu_search_pro import RagWithBaiduSearchPro
@@ -12,7 +12,6 @@ from types import SimpleNamespace
 
 # You can refer to this webpage https://cloud.baidu.com/doc/AppBuilder/s/klv2eywua to obtain the api_key
 # format is "bce-v3/ALTAK-..."
-# os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-..."
 server = FastMCP(name="AB Component Server")
 
 # You can switch to other models supported by AppBuilder
@@ -51,7 +50,8 @@ def search(
     """
     message = SimpleNamespace(role="user", content="{}".format(query))
     component = RagWithBaiduSearchPro(
-        model=init_args["model"]
+        model=init_args["model"],
+        secret_key=os.getenv("APPBUILDER_TOKEN")
     )
     response = component.run(
         message=message,

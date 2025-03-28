@@ -82,13 +82,12 @@ class TestAppBuilderClientMCP(unittest.TestCase):
                 stream=True,
             ) as run:
                 await run.until_done()
-            
 
             await appbuilder_client.http_client.session.close()
             await mcp_client.cleanup()
 
-        from appbuilder.modelcontextprotocol.client import MCPClient
         subprocess.check_call([sys.executable, "-m", "pip", "install", "mcp"])
+        from appbuilder.mcp.client import MCPClient
         loop = asyncio.get_event_loop()
         loop.run_until_complete(process())
 

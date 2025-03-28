@@ -86,11 +86,8 @@ class TestAgentRuntime(unittest.TestCase):
             finally:
                 await mcp_client.cleanup()
 
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"]
-        )
         subprocess.check_call([sys.executable, "-m", "pip", "install", "mcp"])
-        from appbuilder.modelcontextprotocol.client import MCPClient
+        from appbuilder.mcp.client import MCPClient
         asyncio.run(handler())
 
 
