@@ -20,7 +20,9 @@ class MCPClient:
         self._session_context = None
         self._streams_context = None
 
-    async def connect_to_server(self, server_script_path: str = None, service_url: str = None):
+    async def connect_to_server(
+        self, server_script_path: str = None, service_url: str = None, env: dict = None
+    ):
         """Connect to an MCP server
 
         Args:
@@ -28,29 +30,32 @@ class MCPClient:
             service_url: URL of the service
         """
         if server_script_path is not None:
-            await self._connect_to_stdio_server(server_script_path)
+            await self._connect_to_stdio_server(server_script_path, env=env)
         elif service_url is not None:
             await self._connect_to_sse_server(service_url)
         else:
             raise ValueError(
-                "Either server_script_path or service_url must be provided.")
+                "Either server_script_path or service_url must be provided."
+            )
 
-    async def _connect_to_stdio_server(self, server_script_path: str):
-        is_python = server_script_path.endswith('.py')
-        is_js = server_script_path.endswith('.js')
+    async def _connect_to_stdio_server(self, server_script_path: str, env: dict = None):
+        is_python = server_script_path.endswith(".py")
+        is_js = server_script_path.endswith(".js")
         if not (is_python or is_js):
             raise ValueError("Server script must be a .py or .js file")
 
         command = sys.executable if is_python else "node"
         server_params = StdioServerParameters(
-            command=command,
-            args=[server_script_path],
-            env=None
+            command=command, args=[server_script_path], env=env
         )
 
-        stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
+        stdio_transport = await self.exit_stack.enter_async_context(
+            stdio_client(server_params)
+        )
         self.stdio, self.write = stdio_transport
-        self.session = await self.exit_stack.enter_async_context(ClientSession(self.stdio, self.write))
+        self.session = await self.exit_stack.enter_async_context(
+            ClientSession(self.stdio, self.write)
+        )
 
         await self.session.initialize()
         response = await self.session.list_tools()
