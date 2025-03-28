@@ -1,10 +1,10 @@
 """
-Baidu AI Search MCP Server stdio server file.
+Baidu AI Search MCP Server.
 We also support access via SSE protocol. The access address is:
 http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key=<your api_key>
 You can refer to this webpage https://cloud.baidu.com/doc/AppBuilder/s/klv2eywua to obtain the api_key, in the format of "Bearer+bce…".
 """
-import os
+
 import json
 from mcp.server import FastMCP
 from appbuilder.core.components.rag_with_baidu_search_pro import RagWithBaiduSearchPro
@@ -22,7 +22,7 @@ init_args = {
 
 
 @server.tool()
-def AIsearch(
+def search(
     query,
     stream=False,
     instruction=None,
@@ -50,10 +50,10 @@ def AIsearch(
         AppBuilderServerException: 如果输入信息或指令过长，将抛出此异常。
     """
     message = SimpleNamespace(role="user", content="{}".format(query))
-    search_instance = RagWithBaiduSearchPro(
+    component = RagWithBaiduSearchPro(
         model=init_args["model"]
     )
-    response = search_instance.run(
+    response = component.run(
         message=message,
         stream=stream,
         instruction=instruction,
