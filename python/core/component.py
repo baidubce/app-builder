@@ -127,6 +127,7 @@ class Plan(BaseModel, extra='allow'):
     # deprecated parameters, delete when dte agent update
     detail: str = Field(default="", description="计划详情")
     steps: list[PlanStep] = Field(default=[], description="步骤列表")
+    # this is check pr
 
 
 class FunctionCall(BaseModel, extra='allow'):
