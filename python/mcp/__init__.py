@@ -13,5 +13,7 @@
 # limitations under the License.
 
 from .server import MCPComponentServer
+from .client import MCPClient
 
-__all__ = ["MCPComponentServer"]
+
+__all__ = ["MCPComponentServer", "MCPClient"]
