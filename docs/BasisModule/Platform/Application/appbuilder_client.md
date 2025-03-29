@@ -433,7 +433,7 @@ print(msg_2.model_dump_json(indent=4)
 import os
 import asyncio
 import appbuilder
-from appbuilder.modelcontextprotocol.client import MCPClient
+from appbuilder.mcp.client import MCPClient
 
 
 async def main():
@@ -487,7 +487,7 @@ from appbuilder.core.console.appbuilder_client.async_event_handler import (
     AsyncAppBuilderEventHandler,
 )
 
-from appbuilder.modelcontextprotocol.client import MCPClient
+from appbuilder.mcp.client import MCPClient
 
 
 class MyEventHandler(AsyncAppBuilderEventHandler):
@@ -578,7 +578,7 @@ from appbuilder.core.console.appbuilder_client.async_event_handler import (
     AsyncAppBuilderEventHandler,
 )
 
-from appbuilder.modelcontextprotocol.client import MCPClient
+from appbuilder.mcp.client import MCPClient
 
 
 @appbuilder.manifest(
