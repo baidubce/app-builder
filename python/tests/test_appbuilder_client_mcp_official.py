@@ -90,7 +90,7 @@ class TestAgentRuntime(unittest.TestCase):
         subprocess.check_call(
             [sys.executable, "-m", "pip", "install", "mcp"]
         )
-        from appbuilder.modelcontextprotocol.client import MCPClient
+        from appbuilder.mcp_server.client import MCPClient
         asyncio.run(handler())
 
 
