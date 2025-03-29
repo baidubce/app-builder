@@ -37,7 +37,7 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-  Linux-CI-Tests:
+  Python312-CI-Tests:
     runs-on: ubuntu-latest
     env:
       APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9","3.12"]
+        python-version: ["3.12"]
     
     steps:
     - uses: actions/checkout@v4
@@ -149,6 +149,116 @@ jobs:
           sh python/tests/run_python_test.sh
         fi
 
+  Python39-CI-Tests:
+    runs-on: ubuntu-latest
+    env:
+      APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
+      APPBUILDER_TOKEN_V2: ${{ secrets.APPBUILDER_TOKEN_V2 }}
+      BAIDU_VDB_API_KEY: ${{ secrets.BAIDU_VDB_API_KEY }}
+      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      DATASET_ID: ${{ secrets.DATASET_ID }}
+      APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Print ENV
+      run: |
+        env
+        ls
+        pwd
+    - name: Git Clone And Checkout Branch
+      run: |
+        fork_repo="https://github.com/$GITHUB_ACTOR/app-builder.git"
+        mkdir cicd
+        cd cicd
+        git clone $fork_repo
+        cd app-builder
+        git checkout $GITHUB_HEAD_REF
+        git remote add upstream https://github.com/baidubce/app-builder.git 
+        git fetch upstream
+        git remote -v
+        git status
+
+        # 找到当前分支与 upstream/master 的共同祖先提交
+        merge_base=$(git merge-base HEAD upstream/master)
+        echo "merge_base=$merge_base"
+
+        # 比较当前分支与 merge_base 之间的差异
+        changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
+        changed_files_py_sh=$(git diff --name-only --diff-filter=ACMRT $merge_base -- $(find python -type f \( -name '*.py' -o -name '*.sh' \)))
+        
+        echo "发生更改的文件为:"
+        echo "$changed_files"
+
+        echo "发生更改的py/sh文件为:"
+
+        if [ -n "$changed_files_py_sh" ]; then
+          export APPBUILDER_PYTHON_TESTS=True
+          echo "$changed_files_py_sh"
+        else
+          export APPBUILDER_PYTHON_TESTS=False
+          echo "没有检测到Python或Shell文件被更改"
+        fi
+
+        echo "APPBUILDER_PYTHON_TESTS=$APPBUILDER_PYTHON_TESTS" >> $GITHUB_ENV
+        pwd
+    - name: Install dependencies
+      run: |
+        echo $APPBUILDER_PYTHON_TESTS
+        if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_PYTHON_TESTS为False,没有检测到Python或Shell文件被更改,跳过Install dependencies部分。"
+        else
+          echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Install dependencies部分..."
+          cd cicd/app-builder
+          pwd
+          sudo apt-get update
+          sudo apt-get install ffmpeg libavcodec-extra
+          python3 -m ensurepip --upgrade
+          python3 -m pip install --upgrade pip
+          python3 -m pip install "setuptools<=76.1.0"
+          python3 -m pip install wheel
+          python3 -m pip install coverage
+          python3 -m pip install diff-cover
+          python3 -m pip install pydub
+          python3 -m pip install SQLAlchemy==2.0.31
+          python3 -m pip install chainlit~=1.0.200 flask~=2.3.2 flask-restful==0.3.9
+          python3 -m pip install opentelemetry-exporter-otlp==1.23.0 opentelemetry-instrumentation==0.44b0 opentelemetry-sdk==1.23.0 opentelemetry-api==1.23.0
+          python3 -m pip install pandas==2.2.2
+        fi
+    - name: Build whl
+      run: |
+        echo $APPBUILDER_PYTHON_TESTS
+        if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_PYTHON_TESTS为False,没有检测到Python或Shell文件被更改,跳过Build whl部分。"
+        else
+          echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Build whl部分..."
+          cd cicd/app-builder     
+          pwd
+          python3 setup.py bdist_wheel
+          python3 -m pip uninstall -y appbuilder-sdk
+          python3 -m pip install dist/*.whl
+        fi
+    - name: Test with unittest
+      run: |
+        echo $APPBUILDER_PYTHON_TESTS
+        if [ "$APPBUILDER_PYTHON_TESTS" = "False" ]; then
+          echo "环境变量APPBUILDER_PYTHON_TESTS为False,没有检测到Python或Shell文件被更改,跳过Test with unittest部分。"
+        else
+          echo "检测到Python或Shell文件被更改(根据环境变量APPBUILDER_PYTHON_TESTS),准备启动单元测试Test with unittest部分..."
+          cd cicd/app-builder
+          pwd
+          sh python/tests/run_python_test.sh
+        fi
         
   Go-Test-CI:
     runs-on: ubuntu-latest
