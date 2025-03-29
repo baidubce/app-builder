@@ -58,7 +58,7 @@ python3 -m pip install pydantic==2.7.4
 python3 -m pip install langchain==0.3.0
 python3 -m pip install datamodel-code-generator==0.25.8
 python3 -m pip install jsonschema
-python3 -m pip install mcp==1.3.0
+python3 -m pip install mcp; true
 cd python/tests/
 
 
