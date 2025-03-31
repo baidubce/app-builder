@@ -36,10 +36,8 @@ class TestGetAppList(unittest.TestCase):
             print(result)
             assert result.content[0] != ""
 
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "mcp"])
         from appbuilder.mcp_server import MCPClient
         from appbuilder.mcp_server.ai_search import ai_search_server
-
         loop = asyncio.get_event_loop()
         loop.run_until_complete(process())
 

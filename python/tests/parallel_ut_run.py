@@ -204,6 +204,8 @@ def parallel_execute_unittest(test_cases, parallel_num=2):
     total_case_time = 0
 
     for case in test_cases:
+        if not os.path.exists("ut_logs/{}_res".format(case)):
+            continue
         with open("ut_logs/{}_res".format(case), 'r') as f:
             line = f.readlines()[0]
             message = eval(line.split("\n")[0])
