@@ -36,6 +36,7 @@ from .llms.dialog_summary.component import DialogSummary
 from .llms.mrc.component import MRC
 from .llms.is_complex_query.component import IsComplexQuery
 from .llms.qa_pair_mining.component import QAPairMining
+from .llms.query_decomposition.component import QueryDecomposition
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
@@ -61,5 +62,6 @@ __V2_COMPONENTS__ = [
     "DialogSummary",
     "MRC",
     "IsComplexQuery",
-    "QAPairMining"
+    "QAPairMining",
+    "QueryDecomposition"
 ] # NOQA
