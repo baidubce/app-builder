@@ -34,6 +34,7 @@ from .llms.query_rewrite.component import QueryRewrite
 from .llms.nl2pandas.component import Nl2pandasComponent
 from .llms.dialog_summary.component import DialogSummary
 from .llms.mrc.component import MRC
+from .llms.is_complex_query.component import IsComplexQuery
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
@@ -57,5 +58,6 @@ __V2_COMPONENTS__ = [
     "QueryRewrite",
     "Nl2pandasComponent",
     "DialogSummary",
-    "MRC"
+    "MRC",
+    "IsComplexQuery"
 ] # NOQA
