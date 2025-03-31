@@ -30,6 +30,8 @@ from .object_recognize.component import ObjectRecognition
 from .llms.similar_question.component import SimilarQuestion
 from .llms.oral_query_generation.component import OralQueryGeneration
 from .plant_recognize.component import PlantRecognition
+from .llms.query_rewrite.component import QueryRewrite
+from .llms.nl2pandas.component import Nl2pandasComponent
 
 __V2_COMPONENTS__ = [
     "AnimalRecognition",
@@ -49,5 +51,7 @@ __V2_COMPONENTS__ = [
     "ObjectRecognition",
     "SimilarQuestion",
     "OralQueryGeneration",
-    "PlantRecognition"
+    "PlantRecognition",
+    "QueryRewrite",
+    "Nl2pandasComponent"
 ] # NOQA
