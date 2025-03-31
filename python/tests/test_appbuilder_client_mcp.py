@@ -88,7 +88,6 @@ class TestAppBuilderClientMCP(unittest.TestCase):
             await mcp_client.cleanup()
 
         from appbuilder.mcp_server.client import MCPClient
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "mcp"])
         loop = asyncio.get_event_loop()
         loop.run_until_complete(process())
 
