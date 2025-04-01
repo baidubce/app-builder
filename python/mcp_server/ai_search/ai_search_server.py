@@ -49,6 +49,7 @@ def AIsearch(
     Raises:
         AppBuilderServerException: 如果输入信息或指令过长，将抛出此异常。
     """
+    os.environ["APPBUILDER_SDK_MCP_CONTEXT"] = "server"
     message = SimpleNamespace(role="user", content="{}".format(query))
     search_instance = RagWithBaiduSearchPro(
         model=init_args["model"]

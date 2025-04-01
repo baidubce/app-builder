@@ -2,7 +2,6 @@ import unittest
 import appbuilder
 import os
 import sys
-import subprocess
 import asyncio
 
 
@@ -37,7 +36,10 @@ class TestAgentRuntime(unittest.TestCase):
             client = appbuilder.AppBuilderClient(self.app_id)
             conversation_id = client.create_conversation()
 
-            await mcp_client.connect_to_server("./data/mcp_component_server_sample.py")
+            await mcp_client.connect_to_server(
+                "./data/mcp_component_server_sample.py",
+                env={"APPBUILDER_TOKEN": os.getenv("APPBUILDER_TOKEN")},
+            )
             msg = client.run(
                 conversation_id=conversation_id,
                 query="将“测试效果”翻译成英文",
@@ -86,12 +88,9 @@ class TestAgentRuntime(unittest.TestCase):
             finally:
                 await mcp_client.cleanup()
 
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "uninstall", "-y", "chainlit"]
-        )
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "mcp"])
         from appbuilder.mcp_server.client import MCPClient
-        asyncio.run(handler())
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(handler())
 
 
 if __name__ == "__main__":
