@@ -93,5 +93,5 @@ class TestAppBuilderClientMCP(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    appbuilder.logger.setLoglevel("DEBUG")
+    appbuilder.logger.setLoglevel("ERROR")
     unittest.main()

@@ -94,4 +94,5 @@ class TestAgentRuntime(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    appbuilder.logger.setLoglevel("ERROR")
     unittest.main()
