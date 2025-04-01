@@ -18,6 +18,7 @@ import appbuilder
 from appbuilder.core.components.v2 import DialogSummary
 
 
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestDialogSummary(unittest.TestCase):
     def setUp(self):
         """

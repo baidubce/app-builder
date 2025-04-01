@@ -17,7 +17,7 @@ import appbuilder
 import time
 from appbuilder.core.components.v2 import MRC
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestMRC(unittest.TestCase):
     def setUp(self):
         '''

@@ -20,6 +20,7 @@ from typing import List, Tuple
 import appbuilder
 from appbuilder.core.components.v2 import QueryRewrite
 
+
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")  
 class TestQueryRewriteComponent(unittest.TestCase):
     def setUp(self):

@@ -19,7 +19,7 @@ import os
 import appbuilder
 from appbuilder.core.components.v2 import QAPairMining
 
-
+@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestQAPairMiningComponent(unittest.TestCase):
     def setUp(self):
         """
