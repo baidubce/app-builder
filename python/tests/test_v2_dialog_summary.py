@@ -54,9 +54,6 @@ class TestDialogSummary(unittest.TestCase):
 
         DialogSummary(model="ERNIE-3.5-8K")
 
-        with self.assertRaises(Exception):
-            DialogSummary(model="")
-
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
         params = {

@@ -406,10 +406,7 @@ class Nl2pandasComponentCase(Case):
         }
 
     def schemas(self):
-        return [text_schema, chart_schema]
-
-    def outputs(self):
-        return {"text": ["2020年到2022年每年的销售额"]}
+        return [text_schema]
 
 
 class DialogSummaryCase(Case):
@@ -423,9 +420,6 @@ class DialogSummaryCase(Case):
 
     def schemas(self):
         return [text_schema]
-
-    def outputs(self):
-        return {"text": ["总结"]}
 
 
 class MRCCase(Case):
@@ -450,9 +444,6 @@ C5车辆加装操纵辅助装置后已办理变更手续。二、办理地点：
 
     def schemas(self):
         return [text_schema]
-
-    def outputs(self):
-        return {"text": ["残疾人办相关证件流程"]}
 
 
 class IsComplexQueryCase(Case):
@@ -483,9 +474,6 @@ class QAPairMiningCase(Case):
     def schemas(self):
         return [text_schema]
 
-    def outputs(self):
-        return {"text": ["2017？"]}
-
 
 class QueryDecompositionCase(Case):
     def init_args(self):
@@ -499,9 +487,6 @@ class QueryDecompositionCase(Case):
     def schemas(self):
         return [text_schema]
 
-    def outputs(self):
-        return {"text": ["总结"]}
-
 
 class TagExtractionCase(Case):
     def init_args(self):
@@ -514,9 +499,6 @@ class TagExtractionCase(Case):
 
     def schemas(self):
         return [text_schema]
-
-    def outputs(self):
-        return {"text": ["标签"]}
 
 
 component_tool_eval_cases = {

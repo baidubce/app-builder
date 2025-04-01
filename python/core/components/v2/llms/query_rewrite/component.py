@@ -64,7 +64,8 @@ class QueryRewrite(CompletionBaseComponent):
                         "enum": [
                             "带机器人回复",
                             "仅用户查询"
-                        ]
+                        ],
+                        "description": "改写类型选项，可选值为 '带机器人回复'和 '仅用户查询'。"
                     }
                 },
                 "required": [
