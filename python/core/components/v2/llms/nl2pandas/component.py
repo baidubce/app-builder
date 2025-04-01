@@ -56,11 +56,11 @@ class Nl2pandasComponent(CompletionBaseComponent):
                 "type": "object",
                 "properties": {
                     "query": {
-                        "text": "string",
+                        "type": "string",
                         "description": "输入问题，一般是针对表格信息的提问，例如'海淀区的小学有哪些'"
                     },
                     "table_info": {
-                        "text": "string",
+                        "type": "string",
                         "description": "表格信息，一般是表格列名以及对应列名的举例和释义，例如'表格列信息如下：\n学校名 : 清华附小 , 字符串类型，代表小学学校的名称"
                     }
                 },
