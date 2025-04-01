@@ -59,13 +59,15 @@ class TestNl2pandasComponent(unittest.TestCase):
         """测试 tool 方法对无效请求的处理。"""
         with self.assertRaises(ValueError):
             params = {
-                'query': '海淀区有哪些学校'
+                'query': '海淀区有哪些学校',
+                'table_info': None
             }
             result = self.node.tool_eval(**params)
             next(result)
         
         with self.assertRaises(ValueError):
             params = {
+                'query': None,
                 'table_info': self.table_info
             }
             result = self.node.tool_eval(**params)

@@ -103,13 +103,15 @@ class TestMRC(unittest.TestCase):
     4、车辆行驶证原件和复印件；5、有效的机动车交强险凭证。"""]
         with self.assertRaises(ValueError):
             params = {
-                'query': '残疾人怎么办相关证件'
+                'query': '残疾人怎么办相关证件',
+                'context_list': None
             }
             result = self.mrc.tool_eval(**params)
             next(result)
 
         with self.assertRaises(ValueError):
             params = {
+                'query': None,
                 'context_list': context_list
             }
             result = self.mrc.tool_eval(**params)

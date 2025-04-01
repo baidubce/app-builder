@@ -110,7 +110,6 @@ class QueryDecomposition(CompletionBaseComponent):
         """
         tool_eval for function call
         """
-        query = kwargs.get("query", None)
         if not query:
             raise ValueError("param `query` is required")
         msg = Message(query)
