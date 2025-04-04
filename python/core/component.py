@@ -70,6 +70,7 @@ class Code(BaseModel, extra='allow'):
 class Files(BaseModel, extra='allow'):
     filename: str = Field(default="", description="文件名")
     url: str = Field(default="", description="文件url")
+    file_id: str = Field(default="", description="文件ID")
 
 
 class Urls(BaseModel, extra='allow'):
@@ -93,6 +94,7 @@ class Image(BaseModel, extra='allow'):
     filename: str = Field(default="", description="图片名称")
     url: str = Field(default="", description="图片url")
     base64: Optional[str] = Field(default="", description="图片base64数据")
+    mime_type: Optional[str] = Field(default="jpeg", description="图片类型，如image/jpeg, 可选，默认jpeg")
 
 
 class Chart(BaseModel, extra='allow'):
@@ -104,6 +106,7 @@ class Audio(BaseModel, extra='allow'):
     filename: str = Field(default="", description="音频名称")
     url: str = Field(default="", description="音频url")
     base64: Optional[str] = Field(default="", description="音频base64数据")
+    mime_type: Optional[str] = Field(default="", description="音频类型，如mp3/wav, 可选，暂无默认值")
 
 
 class PlanStep(BaseModel, extra='allow'):
@@ -137,7 +140,16 @@ class FunctionCall(BaseModel, extra='allow'):
 
 class Json(BaseModel, extra='allow'):
     data: str = Field(default="", description="json数据")
-
+    
+class ScreenShot(BaseModel, extra='allow'):
+    browser_url: str = Field(default="", description="截图时的浏览器当前URL")
+    url: str = Field(default="", description="图片URL (url, filename与data, mime_type二选一)")
+    filename: str = Field(default="", description="图像文件名")
+    mime_type: str = Field(default="image/jpeg", description="图片类型，如image/jpeg, image/png，可选，默认为image/jpeg")
+    data: str = Field(default="", description="图片base64串 (url, filename与data, mime_type二选一)")
+    file_id: str = Field(default="", description="图片文件ID")
+    
+    
 
 class Content(BaseModel):
     name: str = Field(default="",
@@ -151,8 +163,8 @@ class Content(BaseModel):
     metrics: dict = Field(default={},
                           description="耗时、性能、内存等trace及debug所需信息")
     type: str = Field(default="text",
-                      description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio该字段的取值决定了下面text字段的内容结构")
-    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall] = Field(default=Text,
+                      description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio、screenshot、plan、function_call、json该字段的取值决定了下面text字段的内容结构")
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall, ScreenShot] = Field(default=Text,
                                                                                                                       description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
     @field_validator('text', mode='before')
@@ -181,6 +193,8 @@ class Content(BaseModel):
             return FunctionCall(**v)
         elif values.data['type'] == 'json':
             return Json(**v)
+        elif values.data['type'] == 'screenshot':
+            return ScreenShot(**v)
         else:
             raise ValueError(f"Invalid value for 'type': {values['type']}")
 
@@ -578,6 +592,8 @@ class Component:
                 key_list = ["thought", "name", "arguments"]
             elif type == "json":
                 key_list = ["data"]
+            elif type == "screenshot":
+                key_list = ["browser_url"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
             assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
