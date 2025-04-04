@@ -145,7 +145,7 @@ class ScreenShot(BaseModel, extra='allow'):
     browser_url: str = Field(default="", description="截图时的浏览器当前URL")
     url: str = Field(default="", description="图片URL (url, filename与data, mime_type二选一)")
     filename: str = Field(default="", description="图像文件名")
-    mime_type: str = Field(default="", description="图片类型，如image/jpeg, image/png，可选，默认为image/jpeg")
+    mime_type: str = Field(default="image/jpeg", description="图片类型，如image/jpeg, image/png，可选，默认为image/jpeg")
     data: str = Field(default="", description="图片base64串 (url, filename与data, mime_type二选一)")
     file_id: str = Field(default="", description="图片文件ID")
     
