@@ -92,3 +92,4 @@
   * MCP Client新增SSE协议支持
   * 新增百度AI搜索的MCP Server
   * AppBuilderClient调用支持显示DeepSeek-R1思考过程
+* **2025.04.05 v1.0.5版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.5)
