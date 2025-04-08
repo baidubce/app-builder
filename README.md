@@ -70,7 +70,6 @@ AppBuilder-SDK不仅提供了百度智能云提供的基础能力组件，同时
 | 答案生成 | 幻觉检测（Hallucination Detection）| 高级能力组件 | [链接](./python/core/components/llms/hallucination_detection/README.md) |
 
 
-> 功能预告：在AppBuiler-SDK 1.0.0版本中，AppBuilder-SDK可联动AppBuilder平台，自定义离线与在线处理的能力及Pipeline，构建更加灵活、可沉淀、可复用的产业级`RAG`应用，敬请期待
 
 
 
