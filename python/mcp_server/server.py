@@ -16,8 +16,12 @@ import os
 import appbuilder
 from appbuilder.core.component import Component, Image, Audio, References, Content
 from appbuilder.core._exception import *
+from appbuilder.mcp_server.sse import SseServerTransport
+from starlette.applications import Starlette
+from starlette.routing import Mount, Route
 from typing import Any, Literal
 from collections.abc import Generator
+from starlette.requests import Request
 import logging
 import inspect
 import requests
@@ -325,10 +329,36 @@ class MCPComponentServer:
             logging.exception(f"Failed to add component {component_name}: {str(e)}")
             raise e
 
-    def run(self, transport: Literal["stdio", "sse"] = "stdio") -> None:
+    def run(self, transport: Literal["stdio", "sse"] = "stdio", redis_client=None) -> None:
         """Run the FastMCP server. Note this is a synchronous function.
 
         Args:
             transport: Transport protocol to use ("stdio" or "sse")
         """
+        if transport == "sse":
+            return self.create_sse_app(redis_client)
         self.mcp.run()
+
+    def create_sse_app(self, redis_client = None) -> Starlette:
+        """Return an instance of the SSE server app."""
+        mcp_server = self.mcp._mcp_server
+        sse = SseServerTransport("/mcp/messages/", redis_client=redis_client)
+
+        async def handle_sse(request: Request):
+            async with sse.connect_sse(
+                request.scope,
+                request.receive,
+                request._send, 
+            ) as streams:
+                await mcp_server.run(
+                    streams[0],
+                    streams[1],
+                    mcp_server.create_initialization_options(),
+                )
+
+        return Starlette(
+            routes=[
+                Route("/mcp/sse", endpoint=handle_sse),
+                Mount("/mcp/messages", app=sse.handle_post_message),
+            ],
+        )
