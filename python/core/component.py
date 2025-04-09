@@ -140,16 +140,32 @@ class FunctionCall(BaseModel, extra='allow'):
 
 class Json(BaseModel, extra='allow'):
     data: str = Field(default="", description="json数据")
+
+class Browser(BaseModel, extra='allow'):
+    class Computer(BaseModel, extra='allow'):
+        vnc_url: str = Field(default="", description="vnc url")
+        
+    class Result(BaseModel, extra='allow'):
+        is_error: bool = Field(default=False, description="是否错误")
+        answer: str = Field(default="", description="is_error=False为最终的总结结果, is_error=True为错误信息")
     
-class ScreenShot(BaseModel, extra='allow'):
-    browser_url: str = Field(default="", description="截图时的浏览器当前URL")
-    url: str = Field(default="", description="图片URL (url, filename与data, mime_type二选一)")
-    filename: str = Field(default="", description="图像文件名")
-    mime_type: str = Field(default="image/jpeg", description="图片类型，如image/jpeg, image/png，可选，默认为image/jpeg")
-    data: str = Field(default="", description="图片base64串 (url, filename与data, mime_type二选一)")
-    file_id: str = Field(default="", description="图片文件ID")
+    class Screenshot(BaseModel, extra='allow'):
+        browser_url: str = Field(default="", description="截图时的浏览器当前URL")
+        url: str = Field(default="", description="图片URL (url, filename与data, mime_type二选一)")
+        filename: str = Field(default="", description="图像文件名")
+        mime_type: str = Field(default="image/jpeg", description="图片类型，如image/jpeg, image/png，可选，默认为image/jpeg")
+        data: str = Field(default="", description="图片base64串 (url, filename与data, mime_type二选一)")
+        file_id: str = Field(default="", description="图片文件ID")
     
+    class Thought(BaseModel, extra='allow'):
+        next_goal: str = Field(default="", description="下一个目标")
     
+    query: str = Field(default="", description="浏览器查询内容")
+    computer: Computer = Field(default=Computer(), description="浏览器计算资源")
+    result: Result = Field(default=Result(), description="浏览器执行结果")
+    screenshot: Screenshot = Field(default=Screenshot(), description="浏览器截图结果")
+    thought: Thought = Field(default=Thought(), description="浏览器思考结果")
+    action: Union[list, list[dict], None] = Field(default=None, description="浏览器执行动作")
 
 class Content(BaseModel):
     name: str = Field(default="",
@@ -163,8 +179,8 @@ class Content(BaseModel):
     metrics: dict = Field(default={},
                           description="耗时、性能、内存等trace及debug所需信息")
     type: str = Field(default="text",
-                      description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio、screenshot、plan、function_call、json该字段的取值决定了下面text字段的内容结构")
-    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall, ScreenShot] = Field(default=Text,
+                      description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio、browser、plan、function_call、json该字段的取值决定了下面text字段的内容结构")
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall, Browser] = Field(default=Text,
                                                                                                                       description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
     @field_validator('text', mode='before')
@@ -193,8 +209,8 @@ class Content(BaseModel):
             return FunctionCall(**v)
         elif values.data['type'] == 'json':
             return Json(**v)
-        elif values.data['type'] == 'screenshot':
-            return ScreenShot(**v)
+        elif values.data['type'] == 'browser':
+            return Browser(**v)
         else:
             raise ValueError(f"Invalid value for 'type': {values['type']}")
 
@@ -592,8 +608,8 @@ class Component:
                 key_list = ["thought", "name", "arguments"]
             elif type == "json":
                 key_list = ["data"]
-            elif type == "screenshot":
-                key_list = ["browser_url"]
+            elif type == "browser":
+                key_list = ["query"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
             assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
