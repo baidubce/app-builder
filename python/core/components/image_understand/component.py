@@ -175,7 +175,7 @@ class ImageUnderstand(Component):
         self,
         name: str,
         streaming: bool,
-        origin_query: str,
+        origin_query: str = '图片内容有哪些',
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
         """
@@ -194,7 +194,13 @@ class ImageUnderstand(Component):
         img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
+        rec_res = self._recognize_w_post_process(
+            img_name,
+            img_url,
+            file_urls,
+            question=origin_query,
+            request_id=traceid
+        )
         if streaming:
             yield {
                 "type": "text",
