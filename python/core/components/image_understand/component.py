@@ -175,7 +175,7 @@ class ImageUnderstand(Component):
         self,
         name: str,
         streaming: bool,
-        origin_query: str,
+        origin_query: str = '图片内容有哪些',
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
         """
