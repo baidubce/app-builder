@@ -190,11 +190,19 @@ class ImageUnderstand(Component):
         Returns:
             Union[Generator[str, None, None], str]: 图片内容理解结果
         """
+        if origin_query is None or not origin_query.strip():
+            origin_query = '图片内容有哪些'
         traceid = kwargs.get("traceid")
         img_name = kwargs.get("img_name", "")
         img_url = kwargs.get("img_url", "")
         file_urls = kwargs.get("file_urls", {})
-        rec_res = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
+        rec_res = self._recognize_w_post_process(
+            img_name,
+            img_url,
+            file_urls,
+            question=origin_query,
+            request_id=traceid
+        )
         if streaming:
             yield {
                 "type": "text",
