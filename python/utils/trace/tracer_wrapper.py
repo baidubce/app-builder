@@ -14,7 +14,7 @@
 import os
 import sys
 import traceback
-import _testcapi
+#import _testcapi
 from functools import wraps
 
 def _whether_enable_trace():
@@ -101,7 +101,7 @@ def session_post(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        #_testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -109,7 +109,7 @@ def session_post(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                #_testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
                 
@@ -161,7 +161,7 @@ def client_run_trace(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -169,7 +169,7 @@ def client_run_trace(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
 
@@ -219,7 +219,7 @@ def client_tool_trace(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -227,7 +227,7 @@ def client_tool_trace(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
     return wrapper 
@@ -277,7 +277,7 @@ def assistent_tool_trace(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -285,7 +285,7 @@ def assistent_tool_trace(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
     
@@ -335,7 +335,7 @@ def assistant_run_trace(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -343,7 +343,7 @@ def assistant_run_trace(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
     
@@ -392,7 +392,7 @@ def assistent_stream_run_trace(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -400,7 +400,7 @@ def assistent_stream_run_trace(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
         
@@ -450,7 +450,7 @@ def assistent_stream_run_with_handler_trace(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -458,7 +458,7 @@ def assistent_stream_run_with_handler_trace(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
     
@@ -507,7 +507,7 @@ def components_run_trace(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -515,7 +515,7 @@ def components_run_trace(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
                 
@@ -564,7 +564,7 @@ def components_run_stream_trace(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -572,7 +572,7 @@ def components_run_stream_trace(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
   
@@ -622,7 +622,7 @@ def list_trace(func):
                         raise exception_type('\n'+custom_traceback) from None
                     except:
                         tp, exc, tb = sys.exc_info()
-                        _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                        # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                         del tp, exc, tb
                         raise
         else:
@@ -630,7 +630,7 @@ def list_trace(func):
                 return func(*args, **kwargs)
             except:
                 tp, exc, tb = sys.exc_info()
-                _testcapi.set_exc_info(tp, exc, tb.tb_next)
+                # _testcapi.set_exc_info(tp, exc, tb.tb_next)
                 del tp, exc, tb
                 raise
     
