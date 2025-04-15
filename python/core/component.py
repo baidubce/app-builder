@@ -180,7 +180,7 @@ class Browser(BaseModel, extra='allow'):
 
 
 class Progress(BaseModel, extra='allow'):
-    progress: float = Field(default="", description="进度")
+    progress: float = Field(default=0.0, description="进度, 数值在0-1之间")
     step: str = Field(default="", description="状态枚举值")
     next_step_name: str = Field(default="", description="下一个step名")
     message: str = Field(default="", description="附加说明信息")
