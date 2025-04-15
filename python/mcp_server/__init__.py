@@ -15,6 +15,24 @@
 from .server import MCPComponentServer
 from .client import MCPClient
 from .ai_search.ai_search_server import AIsearch
+from .knowledge_base.knowledge_base_server import (
+    create_knowledge_base,
+    query_knowledge_base,
+    describe_knowledge_base,
+    list_knowledge_bases,
+    upload_document,
+    list_documents,
+)
 
 
-__all__ = ["MCPComponentServer", "MCPClient", "AIsearch"]
+__all__ = [
+    "MCPComponentServer",
+    "MCPClient",
+    "AIsearch",
+    "create_knowledge_base",
+    "query_knowledge_base",
+    "describe_knowledge_base",
+    "list_knowledge_bases",
+    "upload_document",
+    "list_documents",
+]

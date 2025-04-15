@@ -983,11 +983,11 @@ class KnowledgeBase(Component):
         query: str,
         knowledgebase_ids: list[str],
         type: Optional[data_class.QueryType] = None,
-        metadata_filters: data_class.MetadataFilters = None,
-        pipeline_config: data_class.QueryPipelineConfig = None,
+        metadata_filters: Optional[data_class.MetadataFilters] = None,
+        pipeline_config: Optional[data_class.QueryPipelineConfig] = None,
         rank_score_threshold: Optional[float] = 0.4,
         top: int = 6,
-        skip: int = None,
+        skip: int = 0,
     ) -> data_class.QueryKnowledgeBaseResponse:
         """
         检索知识库
