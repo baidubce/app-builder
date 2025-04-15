@@ -331,6 +331,7 @@ type AppBuilderClientAnswer struct {
 	Events    []Event
 	Code      string
 	Message   string
+	RequestID string
 }
 
 func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
@@ -338,6 +339,7 @@ func (t *AppBuilderClientAnswer) transform(inp *AppBuilderClientRawResponse) {
 	t.MessageID = inp.MessageID
 	t.Code = inp.Code
 	t.Message = inp.Message
+	t.RequestID = inp.RequestID
 	for _, c := range inp.Content {
 		ev := Event{Code: c.EventCode,
 			Message:     c.EventMessage,
