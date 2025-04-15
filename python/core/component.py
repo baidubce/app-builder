@@ -25,6 +25,7 @@ from appbuilder.core.utils import ttl_lru_cache
 from appbuilder.core._client import HTTPClient, AsyncHTTPClient
 from appbuilder.core.message import Message
 
+
 class ComponentArguments(BaseModel):
     """
     ComponentArguments define Component meta fields
@@ -94,7 +95,8 @@ class Image(BaseModel, extra='allow'):
     filename: str = Field(default="", description="图片名称")
     url: str = Field(default="", description="图片url")
     base64: Optional[str] = Field(default="", description="图片base64数据")
-    mime_type: Optional[str] = Field(default="jpeg", description="图片类型，如image/jpeg, 可选，默认jpeg")
+    mime_type: Optional[str] = Field(
+        default="jpeg", description="图片类型，如image/jpeg, 可选，默认jpeg")
 
 
 class Chart(BaseModel, extra='allow'):
@@ -106,14 +108,16 @@ class Audio(BaseModel, extra='allow'):
     filename: str = Field(default="", description="音频名称")
     url: str = Field(default="", description="音频url")
     base64: Optional[str] = Field(default="", description="音频base64数据")
-    mime_type: Optional[str] = Field(default="", description="音频类型，如mp3/wav, 可选，暂无默认值")
+    mime_type: Optional[str] = Field(
+        default="", description="音频类型，如mp3/wav, 可选，暂无默认值")
 
 
 class PlanStep(BaseModel, extra='allow'):
     name: str = Field(default="", description="step名")
     arguments: dict = Field(default={}, description="step参数")
     thought: str = Field(default="", description="step思考结果")
-    
+
+
 class Task(BaseModel, extra='allow'):
     id: str = Field(default="", description="task id")
     name: str = Field(default="", description="task名")
@@ -122,6 +126,7 @@ class Task(BaseModel, extra='allow'):
     tool: str = Field(default="", description="工具名")
     parameters: dict = Field(default={}, description="参数列表")
     status: str = Field(default="", description="task状态")
+
 
 class Plan(BaseModel, extra='allow'):
     goal: str = Field(default="", description="计划目标")
@@ -141,31 +146,45 @@ class FunctionCall(BaseModel, extra='allow'):
 class Json(BaseModel, extra='allow'):
     data: str = Field(default="", description="json数据")
 
+
 class Browser(BaseModel, extra='allow'):
     class Computer(BaseModel, extra='allow'):
         vnc_url: str = Field(default="", description="vnc url")
-        
+
     class Result(BaseModel, extra='allow'):
         is_error: bool = Field(default=False, description="是否错误")
-        answer: str = Field(default="", description="is_error=False为最终的总结结果, is_error=True为错误信息")
-    
+        answer: str = Field(
+            default="", description="is_error=False为最终的总结结果, is_error=True为错误信息")
+
     class Screenshot(BaseModel, extra='allow'):
         browser_url: str = Field(default="", description="截图时的浏览器当前URL")
-        url: str = Field(default="", description="图片URL (url, filename与data, mime_type二选一)")
+        url: str = Field(
+            default="", description="图片URL (url, filename与data, mime_type二选一)")
         filename: str = Field(default="", description="图像文件名")
-        mime_type: str = Field(default="image/jpeg", description="图片类型，如image/jpeg, image/png，可选，默认为image/jpeg")
-        data: str = Field(default="", description="图片base64串 (url, filename与data, mime_type二选一)")
+        mime_type: str = Field(
+            default="image/jpeg", description="图片类型，如image/jpeg, image/png，可选，默认为image/jpeg")
+        data: str = Field(
+            default="", description="图片base64串 (url, filename与data, mime_type二选一)")
         file_id: str = Field(default="", description="图片文件ID")
-    
+
     class Thought(BaseModel, extra='allow'):
         next_goal: str = Field(default="", description="下一个目标")
-    
+
     query: str = Field(default="", description="浏览器查询内容")
     computer: Computer = Field(default=Computer(), description="浏览器计算资源")
     result: Result = Field(default=Result(), description="浏览器执行结果")
     screenshot: Screenshot = Field(default=Screenshot(), description="浏览器截图结果")
     thought: Thought = Field(default=Thought(), description="浏览器思考结果")
-    action: Union[list, list[dict], None] = Field(default=None, description="浏览器执行动作")
+    action: Union[list, list[dict], None] = Field(
+        default=None, description="浏览器执行动作")
+
+
+class Progress(BaseModel, extra='allow'):
+    progress: float = Field(default="", description="进度")
+    step: str = Field(default="", description="状态枚举值")
+    next_step_name: str = Field(default="", description="下一个step名")
+    message: str = Field(default="", description="附加说明信息")
+
 
 class Content(BaseModel):
     name: str = Field(default="",
@@ -179,9 +198,9 @@ class Content(BaseModel):
     metrics: dict = Field(default={},
                           description="耗时、性能、内存等trace及debug所需信息")
     type: str = Field(default="text",
-                      description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio、browser、plan、function_call、json该字段的取值决定了下面text字段的内容结构")
-    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall, Browser] = Field(default=Text,
-                                                                                                                      description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
+                      description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio、browser、plan、function_call、json、progress该字段的取值决定了下面text字段的内容结构")
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall, Browser, Progress] = Field(default=Text,
+                                                                                                                                         description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
     @field_validator('text', mode='before')
     def set_text(cls, v, values, **kwargs):
@@ -211,6 +230,8 @@ class Content(BaseModel):
             return Json(**v)
         elif values.data['type'] == 'browser':
             return Browser(**v)
+        elif values.data['type'] == 'progress':
+            return Progress(**v)
         else:
             raise ValueError(f"Invalid value for 'type': {values['type']}")
 
@@ -603,16 +624,19 @@ class Component:
                 key_list = ["filename", "url"]
             elif type == "plan":
                 # add follow key_list when dte_agent update
-                key_list = []#["goal", "thought", "tasks", "detail", "steps"]
+                key_list = []  # ["goal", "thought", "tasks", "detail", "steps"]
             elif type == "function_call":
                 key_list = ["thought", "name", "arguments"]
             elif type == "json":
                 key_list = ["data"]
             elif type == "browser":
                 key_list = ["query"]
+            elif type == "progress":
+                key_list = []
             else:
                 raise ValueError("Unknown type: {}".format(type))
-            assert all(key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
+            assert all(
+                key in text for key in key_list), "all keys:{} must be included in the text field".format(key_list)
         else:
             raise ValueError("text must be str or dict")
 
