@@ -475,8 +475,8 @@ class QueryKnowledgeBaseRequest(BaseModel):
         le=1.0,
     )
     knowledgebase_ids: list[str] = Field(..., description="知识库ID列表")
-    metadata_filters: MetadataFilters = Field(None, description="元数据过滤条件")
-    pipeline_config: QueryPipelineConfig = Field(None, description="检索配置")
+    metadata_filters: Optional[MetadataFilters] = Field(None, description="元数据过滤条件")
+    pipeline_config: Optional[QueryPipelineConfig] = Field(None, description="检索配置")
 
 
 class RowLine(BaseModel):
