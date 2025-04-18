@@ -36,6 +36,7 @@ from appbuilder.core.component import Component
 
 server = FastMCP(name="AppBuilder App MCP Server")
 
+
 @server.tool()
 def get_all_apps() -> List[Dict]:
     """
@@ -60,6 +61,7 @@ def get_all_apps() -> List[Dict]:
         "updateTime": app.updateTime
     } for app in apps]
 
+
 @server.tool()
 def create_conversation(app_id: str) -> str:
     """
@@ -77,6 +79,7 @@ def create_conversation(app_id: str) -> str:
     client = appbuilder.AppBuilderClient(app_id)
     conversation_id = client.create_conversation()
     return conversation_id
+
 
 @server.tool()
 def run(app_id: str, conversation_id: str, query: str) -> str:
@@ -102,38 +105,6 @@ def run(app_id: str, conversation_id: str, query: str) -> str:
     output = client.run(conversation_id, query)
     return output.content.answer
 
+
 if __name__ == "__main__":
     server.run()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
