@@ -14,7 +14,7 @@
 
 from .server import MCPComponentServer
 from .client import MCPClient
-from .openapi_convert import OpenAPIMCPConverter
+from .openapi import OpenAPIMCPConverter
 from .ai_search.ai_search_server import AIsearch
 from .knowledge_base.knowledge_base_server import (
     create_knowledge_base,
