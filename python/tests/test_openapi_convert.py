@@ -18,13 +18,7 @@ import json
 import os
 import sys
 
-# Add the necessary paths to sys.path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-python_dir = os.path.abspath(os.path.join(current_dir, '..'))
-sys.path.insert(0, python_dir)  # Add python directory
-
-# Import directly from the module
-from mcp_server.openapi_convert import OpenAPIMCPConverter
+from mcp_server.openapi import OpenAPIMCPConverter
 
 
 class TestOpenAPIMCPConverter(unittest.TestCase):
