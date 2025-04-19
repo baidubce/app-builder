@@ -35,7 +35,7 @@ class TestGetAppList(unittest.TestCase):
             )
             tools = mcp_client.tools
             assert len(tools) > 0
-            result = await mcp_client.call_tool("get_all_apps", {})
+            result = await mcp_client.call_tool("list_apps", {})
             print(result)
             assert result.content[0] != ""
 
