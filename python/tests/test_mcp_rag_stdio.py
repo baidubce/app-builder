@@ -54,9 +54,10 @@ class TestGetAppList(unittest.TestCase):
                 {"id": knowledge_base_id},
             )
             knowledge_base_info = json.loads(result.content[0].text)
-            assert knowledge_base_info is not None
+            knowledge_base_id = knowledge_base_info.get("id")
+            assert knowledge_base_id is not None
             appbuilder.logger.debug(
-                f"describe knowledge base success: {knowledge_base_info.get("id")}"
+                f"describe knowledge base success: {knowledge_base_id}"
             )
 
             # case list_knowledge_bases
