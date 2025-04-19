@@ -4,15 +4,12 @@ We also support access via SSE protocol. The access address is:
 http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key=<your api_key>
 You can refer to this webpage https://cloud.baidu.com/doc/AppBuilder/s/klv2eywua to obtain the api_key, in the format of "Bearer+bce…".
 """
-import os
-import json
-from types import SimpleNamespace
+
 from enum import Enum
-from typing import Literal, Optional, List
+from typing import Literal
 
 from mcp.server import FastMCP
-from appbuilder import KnowledgeBase, DocumentProcessOption, DocumentChunker, DocumentSeparator, DocumentChoices
-from appbuilder.core.console.knowledge_base import data_class
+from appbuilder import KnowledgeBase, DocumentProcessOption, DocumentChoices
 
 class TemplateType(str, Enum):
     PPT = "ppt"
@@ -120,7 +117,7 @@ def upload_document(
     if template not in TemplateType.__members__.values():
         raise ValueError(f"Invalid template. Must be one of: {list(TemplateType.__members__.values())}")
 
-    content_format: str = "rawText",
+    content_format: str = "rawText"
     option = DocumentProcessOption(template=template)
     option.parser = DocumentChoices(choices=["layoutAnalysis", "ocr", "pageImageAnalysis", "chartAnalysis", "tableAnalysis"])
 

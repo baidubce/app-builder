@@ -65,6 +65,8 @@ class TestGetAppList(unittest.TestCase):
             print(answer)
             assert answer is not None
 
+            await mcp_client.cleanup()
+
         from appbuilder.mcp_server import MCPClient
         from appbuilder.mcp_server.app import app_server
 
