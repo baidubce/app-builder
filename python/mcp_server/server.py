@@ -292,16 +292,24 @@ class MCPComponentServer:
                     try:
                         # call tool_eval
                         bound_values = signature.bind(*args, **kwargs)
+                        logging.info(f"tool_eval args: {bound_values.args}")
+                        logging.info(f"tool_eval kwargs: {bound_values.kwargs}")
                         os.environ["APPBUILDER_SDK_MCP_CONTEXT"] = "server"
                         if "kwargs" in bound_values.kwargs:
                             inner_kwargs = bound_values.kwargs["kwargs"]
+                            if isinstance(inner_kwargs, dict):
+                                outer_kwargs = bound_values.kwargs
+                                outer_kwargs.pop("kwargs")
+                                inner_kwargs.update(outer_kwargs)
+                                new_bound_values = signature.bind(*args, **inner_kwargs)
+                                logging.info(f"new tool_eval args: {new_bound_values.args}")
+                                logging.info(f"new tool_eval kwargs: {new_bound_values.kwargs}")
+                                result = func(*new_bound_values.args, **new_bound_values.kwargs) 
+                            else:
+                                result = func(*bound_values.args, **bound_values.kwargs)     
                         else:
-                            inner_kwargs = {}
-                        inner_kwargs.update(bound_values.kwargs)
-                        new_bound_values = signature.bind(*args, **inner_kwargs)
-                        logging.info(f"tool_eval args: {new_bound_values.args}")
-                        logging.info(f"tool_eval kwargs: {new_bound_values.kwargs}")
-                        result = func(*new_bound_values.args, **new_bound_values.kwargs)
+                            result = func(*bound_values.args, **bound_values.kwargs)                
+                        
                         if result is NotImplementedError:
                             logging.error(f"tool_eval not implemented in {tool_name}")
                             raise NotImplementedError(f"tool_eval not implemented in {tool_name}")
