@@ -14,6 +14,7 @@
 
 from .server import MCPComponentServer
 from .client import MCPClient
+from .openapi import OpenAPIMCPConverter
 from .ai_search.ai_search_server import AIsearch
 from .knowledge_base.knowledge_base_server import (
     create_knowledge_base,
@@ -23,11 +24,17 @@ from .knowledge_base.knowledge_base_server import (
     upload_document,
     list_documents,
 )
+from .app.app_server import (
+    list_apps,
+    create_conversation,
+    run
+)
 
 
 __all__ = [
     "MCPComponentServer",
     "MCPClient",
+    "OpenAPIMCPConverter"
     "AIsearch",
     "create_knowledge_base",
     "query_knowledge_base",
@@ -35,4 +42,7 @@ __all__ = [
     "list_knowledge_bases",
     "upload_document",
     "list_documents",
+    "list_apps",
+    "create_conversation",
+    "run",
 ]

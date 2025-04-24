@@ -17,9 +17,10 @@ import appbuilder
 from appbuilder.core.component import Component, Image, Audio, References, Content
 from appbuilder.core._exception import *
 from appbuilder.mcp_server.sse import SseServerTransport
+from appbuilder.mcp_server.openapi import OpenAPIMCPConverter
 from starlette.applications import Starlette
 from starlette.routing import Mount, Route
-from typing import Any, Literal
+from typing import Any, Literal, Optional, Dict
 from collections.abc import Generator
 from starlette.requests import Request
 import logging
@@ -109,6 +110,60 @@ class MCPComponentServer:
             **kwargs: Keyword arguments for FastMCP resource decorator
         """
         return self.mcp.resource(*args, **kwargs)
+
+
+    async def add_openapi_spec(
+        self,
+        spec_url: str,
+        prefix: str = "",
+        base_url: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Add an OpenAPI specification and register its tools.
+
+        Args:
+            spec_url: OpenAPI specification URL or file path (.json or .yaml)
+            prefix: Optional prefix for all tool names from this spec
+            base_url: Optional base URL for API calls
+            headers: Optional default headers for API calls
+
+        Returns:
+            Dict containing success status and list of added tools
+        """
+        try:
+            # Create and configure converter
+            converter = OpenAPIMCPConverter(
+                base_url=base_url,
+                headers=headers
+            )
+            
+            # Load spec
+            await converter.load_spec(str(spec_url))
+            
+            # Register tools
+            tools_added = []
+            for tool_name, handler in converter.create_tools(prefix).items():
+                self.mcp.add_tool(
+                    handler,
+                    name=tool_name,
+                    description=handler.__doc__
+                )
+                tools_added.append(tool_name)
+            
+            # Store converter for cleanup
+            self._converters[prefix or "default"] = converter
+            
+            return {
+                'success': True,
+                'tools_added': tools_added
+            }
+            
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
 
     def _convert_visible_scope_to_audience(
         self,

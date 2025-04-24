@@ -38,7 +38,7 @@ server = FastMCP(name="AppBuilder App MCP Server")
 
 
 @server.tool()
-def get_all_apps() -> List[Dict]:
+def list_apps() -> List[Dict]:
     """
     Retrieve a list of all available AppBuilder applications.
 
