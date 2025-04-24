@@ -18,7 +18,7 @@ Knowledge Base MCP Server provides a set of tools for managing knowledge bases a
 {
   "mcpServers": {
     "knowledge_base": {
-      "url": "http://appbuilder.baidu.com/v2/knowledge_base/mcp/sse?api_key=Bearer+bce-v3/ALTAK..."
+      "url": "http://appbuilder.baidu.com/v2/knowledgeBase/mcp/sse?api_key=Bearer+bce-v3/ALTAK..."
     }
   }
 }
@@ -92,50 +92,81 @@ Get all documents in a KnowledgeBase.
 
 ## Usage Examples
 
-### Creating a Knowledge Base
-
 ```python
-response = create_knowledge_base(
-    name="my_knowledge",
-    description="my_knowledge"
-)
-print(response)
-```
+import asyncio
+import json
+import os
+import io
+import appbuilder
+from appbuilder.mcp_server.client import MCPClient
 
-### Querying a Knowledge Base
 
-```python
-response = query_knowledge_base(
-    query="民法典第三条",
-    id_list=["70c6375a-1595-41f2-9a3b-e81bc9060b7f"]
-)
-print(response)
-```
+async def main():
+    mcp_client = MCPClient()
+    await mcp_client.connect_to_server(service_url=service_url)
 
-### Managing Knowledge Base Operations
+    # case create_knowledge_base
+    result = await mcp_client.call_tool(
+        "create_knowledge_base",
+        {"name": "mcp测试可删", "description": "mcp测试，可删"},
+    )
+    knowledge_base_info = json.loads(result.content[0].text)
+    knowledge_base_id = knowledge_base_info.get("id")
+    assert knowledge_base_id is not None
 
-```python
-# Get knowledge base details
-response = describe_knowledge_base(
-    id="your_knowledge_base_id"
-)
-print(response)
+    # case describe_knowledge_base
+    appbuilder.logger.debug(f"create knowledge base success: {knowledge_base_id}")
+    result = await mcp_client.call_tool(
+        "describe_knowledge_base",
+        {"id": knowledge_base_id},
+    )
+    knowledge_base_info = json.loads(result.content[0].text)
+    knowledge_base_id = knowledge_base_info.get("id")
+    assert knowledge_base_id is not None
+    appbuilder.logger.debug(f"describe knowledge base success: {knowledge_base_id}")
 
-# List all knowledge bases
-response = list_knowledge_bases(max_keys=5)
-print(response)
+    # case list_knowledge_bases
+    result = await mcp_client.call_tool(
+        "list_knowledge_bases",
+        {"max_keys": 10},
+    )
+    assert len(result.content) == 10
+    appbuilder.logger.debug(f"list knowledge bases success: {len(result.content)}")
 
-# Upload a document
-response = upload_document(
-    id="your_knowledge_base_id",
-    file_path="path/to/your/document.pdf",
-    template="default"
-)
-print(response)
+    # case upload_document
+    file_content = "这里是你的文件内容字符串"
+    with io.BytesIO(file_content.encode("utf-8")) as f:
+        result = await mcp_client.call_tool(
+            "upload_document",
+            {"id": knowledge_base_id, "file_data": f, "file_name": "test.txt"},
+        )
+    document_info = json.loads(result.content[0].text)
 
-# List documents in a knowledge base
-response = list_documents(
-    id="your_knowledge_base_id"
-)
-print(response)
+    document_id = document_info.get("documentId")
+    assert document_id is not None
+    appbuilder.logger.debug(f"upload document success: {document_id}")
+
+    # case list_documents
+    result = await mcp_client.call_tool(
+        "list_documents",
+        {"id": knowledge_base_id},
+    )
+    print(result)
+    appbuilder.logger.debug(f"list documents base success: {knowledge_base_id}")
+
+    # case query_knowledge_base
+    result = await mcp_client.call_tool(
+        "query_knowledge_base",
+        {"query": "分子", "id_list": ["56e82915-9642-4a03-bb02-74744c17863e"]},
+    )
+    assert result.content[0].text is not None
+    appbuilder.logger.debug("query knowledge base success")
+
+
+if __name__ == "__main__":
+    service_url = "http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key=Bearer+bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd"
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+
 ```
