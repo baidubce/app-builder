@@ -95,11 +95,12 @@ Get all documents in a KnowledgeBase.
 ```python
 import asyncio
 import json
-import os
 import io
+import os
 import appbuilder
 from appbuilder.mcp_server.client import MCPClient
 
+os.environ["APPBUILDER_TOKEN"] = "YOUR_APPBUILDER_TOKEN"
 
 async def main():
     mcp_client = MCPClient()
@@ -157,14 +158,17 @@ async def main():
     # case query_knowledge_base
     result = await mcp_client.call_tool(
         "query_knowledge_base",
-        {"query": "分子", "id_list": ["56e82915-9642-4a03-bb02-74744c17863e"]},
+        {"query": "分子", "id_list": [knowledge_base_id]},
     )
     assert result.content[0].text is not None
     appbuilder.logger.debug("query knowledge base success")
 
 
 if __name__ == "__main__":
-    service_url = "http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key=Bearer+bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd"
+    service_url = (
+        "http://appbuilder.baidu.com/v2/ai_search/mcp/sse?api_key="
+        + os.environ.get("APPBUILDER_TOKEN")
+    )
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
