@@ -18,10 +18,10 @@ import json
 import os
 import sys
 
-from mcp_server.openapi import OpenAPIMCPConverter
-
 
 class TestOpenAPIMCPConverter(unittest.TestCase):
+
+    @unittest.skipIf(sys.version_info < (3, 10), "Only for Python >= 3.10")
     def setUp(self):
         """
         设置测试环境。
@@ -32,6 +32,8 @@ class TestOpenAPIMCPConverter(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
+
+        from mcp_server.openapi import OpenAPIMCPConverter
         self.converter = OpenAPIMCPConverter(
             base_url="https://api.github.com",
             headers={
@@ -42,6 +44,7 @@ class TestOpenAPIMCPConverter(unittest.TestCase):
             max_retries=3
         )
 
+    @unittest.skipIf(sys.version_info < (3, 10), "Only for Python >= 3.10")
     async def asyncSetUp(self):
         """异步设置，加载本地GitHub API规范"""
         import os
@@ -50,6 +53,7 @@ class TestOpenAPIMCPConverter(unittest.TestCase):
         json_spec_path = os.path.join(current_dir, 'data', 'ghes-3.0.json')
         await self.converter.load_spec(json_spec_path)
 
+    @unittest.skipIf(sys.version_info < (3, 10), "Only for Python >= 3.10")
     def test_list_tools(self):
         """测试 list_tools 方法"""
         async def run_test():
@@ -66,6 +70,7 @@ class TestOpenAPIMCPConverter(unittest.TestCase):
 
         asyncio.run(run_test())
 
+    @unittest.skipIf(sys.version_info < (3, 10), "Only for Python >= 3.10")
     def test_call_tool_list_repos(self):
         """测试调用 list_repos_for_user 工具"""
         async def run_test():
@@ -93,6 +98,7 @@ class TestOpenAPIMCPConverter(unittest.TestCase):
 
         asyncio.run(run_test())
 
+    @unittest.skipIf(sys.version_info < (3, 10), "Only for Python >= 3.10")
     def test_call_tool_get_repo(self):
         """测试调用 get_repo 工具"""
         async def run_test():
@@ -119,6 +125,7 @@ class TestOpenAPIMCPConverter(unittest.TestCase):
 
         asyncio.run(run_test())
 
+    @unittest.skipIf(sys.version_info < (3, 10), "Only for Python >= 3.10")
     def test_load_yaml_spec(self):
         """测试加载YAML格式的API规范"""
         async def run_test():
@@ -128,6 +135,7 @@ class TestOpenAPIMCPConverter(unittest.TestCase):
             yaml_spec_path = os.path.join(current_dir, 'data', 'ghes-3.0.yaml')
 
             # Create a new converter for YAML test
+            from mcp_server.openapi import OpenAPIMCPConverter
             yaml_converter = OpenAPIMCPConverter(
                 base_url="https://api.github.com",
                 headers={
