@@ -1,12 +1,12 @@
 package com.baidubce.appbuilder.model.appbuilderclient;
 
-import java.util.Iterator;
+import com.baidubce.appbuilder.base.utils.iterator.StreamIterator;
 import java.util.stream.IntStream;
 
 public class AppBuilderClientIterator {
-    private final Iterator<AppBuilderClientResponse> iterator;
+    private final StreamIterator<AppBuilderClientResponse> iterator;
 
-    public AppBuilderClientIterator(Iterator<AppBuilderClientResponse> iterator) {
+    public AppBuilderClientIterator(StreamIterator<AppBuilderClientResponse> iterator) {
         this.iterator = iterator;
     }
 
@@ -31,5 +31,9 @@ public class AppBuilderClientIterator {
                     .setToolCalls(contents[i].getToolCalls());
         });
         return new AppBuilderClientResult().setAnswer(response.getAnswer()).setMessageId(response.getMessageId()).setEvents(events).setRequestId(response.getRequestId());
+    }
+
+    public void close() {
+        iterator.close();
     }
 }

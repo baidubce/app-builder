@@ -1,12 +1,12 @@
 package com.baidubce.appbuilder.model.componentclient;
 
-import java.util.Iterator;
+import com.baidubce.appbuilder.base.utils.iterator.StreamIterator;
 
 
 public class ComponentClientIterator {
-    private final Iterator<ComponentClientRunResponse> iterator;
+    private final StreamIterator<ComponentClientRunResponse> iterator;
 
-    public ComponentClientIterator(Iterator<ComponentClientRunResponse> iterator) {
+    public ComponentClientIterator(StreamIterator<ComponentClientRunResponse> iterator) {
         this.iterator = iterator;
     }
 
@@ -16,5 +16,9 @@ public class ComponentClientIterator {
 
     public ComponentClientRunResponse next() {
         return iterator.next();
+    }
+
+    public void close(){
+        iterator.close();
     }
 }

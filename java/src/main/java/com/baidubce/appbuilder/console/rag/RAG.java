@@ -3,12 +3,12 @@ package com.baidubce.appbuilder.console.rag;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.baidubce.appbuilder.base.component.Component;
 import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
+import com.baidubce.appbuilder.base.utils.iterator.StreamIterator;
 import com.baidubce.appbuilder.model.rag.RAGIterator;
 import com.baidubce.appbuilder.model.rag.RAGResponse;
 import com.baidubce.appbuilder.base.utils.http.HttpResponse;
@@ -57,7 +57,7 @@ public class RAG extends Component {
         String jsonBody = JsonUtils.serialize(requestBody);
         ClassicHttpRequest postRequest = httpClient.createPostRequest(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<Iterator<RAGResponse>> response = httpClient.executeSSE(postRequest, RAGResponse.class);
+        HttpResponse<StreamIterator<RAGResponse>> response = httpClient.executeSSE(postRequest, RAGResponse.class);
         return new RAGIterator(response);
     }
 }

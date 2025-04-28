@@ -234,7 +234,7 @@ public class HttpClient {
         return httpResponse;
     }
 
-    public <T> HttpResponse<Iterator<T>> executeSSE(ClassicHttpRequest request, Type bodyType)
+    public <T> HttpResponse<StreamIterator<T>> executeSSE(ClassicHttpRequest request, Type bodyType)
             throws IOException, AppBuilderServerException {
         if (LOGGER.getLevel() == Level.FINE) {
             buildCurlCommand(request);
@@ -254,7 +254,7 @@ public class HttpClient {
             throw new AppBuilderServerException(requestId, resp.getCode(), resp.getReasonPhrase(),
                     stringBody);
         }
-        return new HttpResponse<Iterator<T>>().setCode(resp.getCode())
+        return new HttpResponse<StreamIterator<T>>().setCode(resp.getCode())
                 .setMessage(resp.getReasonPhrase()).setRequestId(requestId).setHeaders(headers)
                 .setBody(new StreamIterator<>(resp, bodyType));
     }
