@@ -113,7 +113,7 @@ Javaは、シリアルコレクタ、パラレルコレクタ、CMSコレクタ�
 ```
 
 ### 2. コンポーネントの呼び出し
-- SDKは、Baiduのエコシステムから提供される40以上の高品質なコンポーネントを提供しています。リストは[コンポーネントリスト](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)で確認できます。呼び出す前に[無料試用クォータ](https://console.bce.baidu.com/ai/#/ai/apaas/overview/resource/getFree)を申請してください。
+- SDKは、Baiduのエコシステムから提供される40以上の高品質なコンポーネントを提供しています。リストは[コンポーネントリスト](https://cloud.baidu.com/doc/AppBuilder/s/Glqb6dfiz#3%E3%80%81%E5%BC%80%E9%80%9A%E7%BB%84%E4%BB%B6%E6%9C%8D%E5%8A%A1)で確認できます。呼び出す前に[無料試用クォータ](https://console.bce.baidu.com/ai-engine/old/#/ai/ocr/overview/resource/list)を申請してください。
 - 例のコンポーネントは`RAG with Baidu Search Pro`で、Baidu Searchの検索エンジン技術とERNIEモデルのセマンティック理解能力を組み合わせて、ユーザーの検索意図をより正確に理解し、検索クエリに関連性の高い検索結果を提供します。
 
 #### コード例
