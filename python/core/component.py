@@ -82,6 +82,9 @@ class OralText(BaseModel, extra='allow'):
     info: str = Field(default="", description="口语化文本内容")
 
 
+class ReasoningContent(BaseModel, extra="allow"):
+    info: str = Field(default="", description="思考过程")
+    
 class References(BaseModel, extra='allow'):
     type: str = Field(default="", description="类型")
     source: str = Field(default="", description="来源")
@@ -200,7 +203,7 @@ class Content(BaseModel):
                           description="耗时、性能、内存等trace及debug所需信息")
     type: str = Field(default="text",
                       description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio、browser、plan、function_call、json、progress该字段的取值决定了下面text字段的内容结构")
-    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall, Browser, Progress] = Field(default=Text,
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall, Browser, Progress, ReasoningContent] = Field(default=Text,
                                                                                                                                          description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
     @field_validator('text', mode='before')
@@ -233,6 +236,8 @@ class Content(BaseModel):
             return Browser(**v)
         elif values.data['type'] == 'progress':
             return Progress(**v)
+        elif values.data['type'] == "reasoning_content":
+            return ReasoningContent(**v)
         else:
             raise ValueError(f"Invalid value for 'type': {values['type']}")
 
@@ -601,9 +606,11 @@ class Component:
                 text = {"info": text}
             elif type == "json":
                 text = {"data": text}
+            elif type == "reasoning_content":
+                text = {"info": text}
             else:
                 raise ValueError(
-                    "Only when type=text/code/urls/oral_text, string text is allowed! Please give dict text")
+                    "Only when type=text/code/urls/oral_text/reasoning_content, string text is allowed! Please give dict text")
         elif isinstance(text, dict):
             if type == "text":
                 key_list = ["info"]
@@ -634,6 +641,8 @@ class Component:
                 key_list = ["query"]
             elif type == "progress":
                 key_list = []
+            elif type == "reasoning_content":
+                key_list = ["info"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
             assert all(

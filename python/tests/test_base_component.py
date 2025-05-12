@@ -15,12 +15,13 @@ class TestBaseComponent(unittest.TestCase):
         out3 = self.component.create_output(type="urls", text="http://www.baidu.com")
         out4 = self.component.create_output(type="oral_text", text="你是哪个")
         out5 = self.component.create_output(type="json", text="{'key':'value'}")
+        out6 = self.component.create_output(type="reasoning_content", text="思考过程")
         self.assertIsInstance(out1, ComponentOutput)
         self.assertIsInstance(out2, ComponentOutput)
         self.assertIsInstance(out3, ComponentOutput)
         self.assertIsInstance(out4, ComponentOutput)
         self.assertIsInstance(out5, ComponentOutput)
-
+        self.assertIsInstance(out6, ComponentOutput)
     def test_valid_output_with_dict(self):
         output1 = self.component.create_output(type="text", text={"info": "1"})
         output2 = self.component.create_output(type="code", text={"code": "1"})
@@ -36,6 +37,7 @@ class TestBaseComponent(unittest.TestCase):
         output12 = self.component.create_output(type="json", text={"data": "value"})
         output13 = self.component.create_output(type="browser", text={"query": "go to http://www.baidu.com"})
         output14 = self.component.create_output(type="progress", text={"progress": 0.5, "step": "end", "next_step_name": "step2", "message": "message"})
+        output15 = self.component.create_output(type="reasoning_content", text={"info": "思考过程"})
         self.assertIsInstance(output1, ComponentOutput)
         self.assertIsInstance(output2, ComponentOutput)
         self.assertIsInstance(output3, ComponentOutput)
@@ -50,6 +52,7 @@ class TestBaseComponent(unittest.TestCase):
         self.assertIsInstance(output12, ComponentOutput)
         self.assertIsInstance(output13, ComponentOutput)
         self.assertIsInstance(output14, ComponentOutput)
+        self.assertIsInstance(output15, ComponentOutput)
         self.assertEqual(output11.content[0].text.extra["key"], "value")
 
     def test_valid_output_type_with_same_key(self):
