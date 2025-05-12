@@ -150,6 +150,7 @@ class Json(BaseModel, extra='allow'):
 class Browser(BaseModel, extra='allow'):
     class Computer(BaseModel, extra='allow'):
         vnc_url: str = Field(default="", description="vnc url")
+        computer_id: str = Field(default="", description="该vnc容器的computer_id")
 
     class Result(BaseModel, extra='allow'):
         is_error: bool = Field(default=False, description="是否错误")
