@@ -1,12 +1,12 @@
 package com.baidubce.appbuilder.model.agentbuilder;
 
-import java.util.Iterator;
+import com.baidubce.appbuilder.base.utils.iterator.StreamIterator;
 import java.util.stream.IntStream;
 
 public class AgentBuilderIterator {
-    private final Iterator<AgentBuilderResponse> iterator;
+    private final StreamIterator<AgentBuilderResponse> iterator;
 
-    public AgentBuilderIterator(Iterator<AgentBuilderResponse> iterator) {
+    public AgentBuilderIterator(StreamIterator<AgentBuilderResponse> iterator) {
         this.iterator = iterator;
     }
 
@@ -30,5 +30,9 @@ public class AgentBuilderIterator {
         return new AgentBuilderResult()
                 .setAnswer(response.getAnswer())
                 .setEvents(events);
+    }
+
+    public void close(){
+        iterator.close();
     }
 }

@@ -2,14 +2,13 @@ package com.baidubce.appbuilder.model.rag;
 
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.base.utils.http.HttpResponse;
-
-import java.util.Iterator;
+import com.baidubce.appbuilder.base.utils.iterator.StreamIterator;
 
 public class RAGIterator {
-    private final HttpResponse<Iterator<RAGResponse>> resp;
-    private final Iterator<RAGResponse> iterator;
+    private final HttpResponse<StreamIterator<RAGResponse>> resp;
+    private final StreamIterator<RAGResponse> iterator;
 
-    public RAGIterator(HttpResponse<Iterator<RAGResponse>> resp) {
+    public RAGIterator(HttpResponse<StreamIterator<RAGResponse>> resp) {
         this.resp = resp;
         this.iterator = resp.getBody();
     }
@@ -25,5 +24,9 @@ public class RAGIterator {
                     ragResponse.getCode(), ragResponse.getMessage());
         }
         return ragResponse;
+    }
+
+    public void close(){
+        iterator.close();
     }
 }

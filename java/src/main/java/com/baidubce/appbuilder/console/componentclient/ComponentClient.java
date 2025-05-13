@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.nio.charset.StandardCharsets;
 
+import com.baidubce.appbuilder.base.utils.iterator.StreamIterator;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
@@ -66,7 +67,7 @@ public class ComponentClient extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(urlSuffix,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<Iterator<ComponentClientRunResponse>> response =
+        HttpResponse<StreamIterator<ComponentClientRunResponse>> response =
                 httpClient.executeSSE(postRequest, ComponentClientRunResponse.class);
         return new ComponentClientIterator(response.getBody());
     }
