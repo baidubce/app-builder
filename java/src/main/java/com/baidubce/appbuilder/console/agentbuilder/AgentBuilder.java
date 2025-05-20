@@ -5,6 +5,7 @@ import com.baidubce.appbuilder.base.component.Component;
 import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.base.utils.http.HttpResponse;
+import com.baidubce.appbuilder.base.utils.iterator.StreamIterator;
 import com.baidubce.appbuilder.base.utils.json.JsonUtils;
 import com.baidubce.appbuilder.model.agentbuilder.*;
 
@@ -117,7 +118,7 @@ public class AgentBuilder extends Component {
         String jsonBody = JsonUtils.serialize(requestBody);
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url, new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<Iterator<AgentBuilderResponse>> response = httpClient.executeSSE(postRequest, AgentBuilderResponse.class);
+        HttpResponse<StreamIterator<AgentBuilderResponse>> response = httpClient.executeSSE(postRequest, AgentBuilderResponse.class);
         return new AgentBuilderIterator(response.getBody());
     }
 }

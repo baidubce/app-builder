@@ -4,6 +4,7 @@ import com.baidubce.appbuilder.base.component.Component;
 import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.base.utils.http.HttpResponse;
+import com.baidubce.appbuilder.base.utils.iterator.StreamIterator;
 import com.baidubce.appbuilder.base.utils.json.JsonUtils;
 import com.baidubce.appbuilder.model.appbuilderclient.*;
 
@@ -136,7 +137,7 @@ public class AppBuilderClient extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<Iterator<AppBuilderClientResponse>> response =
+        HttpResponse<StreamIterator<AppBuilderClientResponse>> response =
                 httpClient.executeSSE(postRequest, AppBuilderClientResponse.class);
         return new AppBuilderClientIterator(response.getBody());
     }
@@ -160,7 +161,7 @@ public class AppBuilderClient extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(url,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
-        HttpResponse<Iterator<AppBuilderClientResponse>> response = httpClient.executeSSE(postRequest,
+        HttpResponse<StreamIterator<AppBuilderClientResponse>> response = httpClient.executeSSE(postRequest,
                 AppBuilderClientResponse.class);
         return new AppBuilderClientIterator(response.getBody());
     }
