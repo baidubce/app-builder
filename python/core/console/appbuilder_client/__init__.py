@@ -13,4 +13,4 @@
 # limitations under the License.
 
 from .appbuilder_client import AppBuilderClient
-from .appbuilder_client import get_app_list, describe_apps
+from .appbuilder_client import get_app_list, describe_apps, describe_app
