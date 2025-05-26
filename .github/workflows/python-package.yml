@@ -11,7 +11,6 @@ on:
     branches: [ "master" ]
 
 jobs:
-  # permissions: read-all
   Pylint:
     runs-on: ubuntu-latest
     strategy:
@@ -37,6 +36,7 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
   Python312-CI-Tests:
     runs-on: ubuntu-latest
     env:
@@ -50,7 +50,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.12"]
-
+    
     steps:
     - uses: actions/checkout@v4
       with:
@@ -76,16 +76,20 @@ jobs:
         git fetch upstream
         git remote -v
         git status
+
         # 找到当前分支与 upstream/master 的共同祖先提交
         merge_base=$(git merge-base HEAD upstream/master)
         echo "merge_base=$merge_base"
+
         # 比较当前分支与 merge_base 之间的差异
         changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
         changed_files_py_sh=$(git diff --name-only --diff-filter=ACMRT $merge_base -- $(find python -type f \( -name '*.py' -o -name '*.sh' \)))
         
         echo "发生更改的文件为:"
         echo "$changed_files"
+
         echo "发生更改的py/sh文件为:"
+
         if [ -n "$changed_files_py_sh" ]; then
           export APPBUILDER_PYTHON_TESTS=True
           echo "$changed_files_py_sh"
@@ -93,6 +97,7 @@ jobs:
           export APPBUILDER_PYTHON_TESTS=False
           echo "没有检测到Python或Shell文件被更改"
         fi
+
         echo "APPBUILDER_PYTHON_TESTS=$APPBUILDER_PYTHON_TESTS" >> $GITHUB_ENV
         pwd
     - name: Install dependencies
@@ -143,6 +148,7 @@ jobs:
           pwd
           sh python/tests/run_python_test.sh
         fi
+
   Python39-CI-Tests:
     runs-on: ubuntu-latest
     env:
@@ -156,7 +162,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9"]
-
+    
     steps:
     - uses: actions/checkout@v4
       with:
@@ -182,16 +188,20 @@ jobs:
         git fetch upstream
         git remote -v
         git status
+
         # 找到当前分支与 upstream/master 的共同祖先提交
         merge_base=$(git merge-base HEAD upstream/master)
         echo "merge_base=$merge_base"
+
         # 比较当前分支与 merge_base 之间的差异
         changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
         changed_files_py_sh=$(git diff --name-only --diff-filter=ACMRT $merge_base -- $(find python -type f \( -name '*.py' -o -name '*.sh' \)))
         
         echo "发生更改的文件为:"
         echo "$changed_files"
+
         echo "发生更改的py/sh文件为:"
+
         if [ -n "$changed_files_py_sh" ]; then
           export APPBUILDER_PYTHON_TESTS=True
           echo "$changed_files_py_sh"
@@ -199,6 +209,7 @@ jobs:
           export APPBUILDER_PYTHON_TESTS=False
           echo "没有检测到Python或Shell文件被更改"
         fi
+
         echo "APPBUILDER_PYTHON_TESTS=$APPBUILDER_PYTHON_TESTS" >> $GITHUB_ENV
         pwd
     - name: Install dependencies
@@ -258,7 +269,7 @@ jobs:
       INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
       DATASET_ID: ${{ secrets.DATASET_ID }}
       APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
-
+ 
       APPBUILDER_TOKEN_V3: ${{ secrets.APPBUILDER_TOKEN_V3 }}
       DATASET_ID_V3: ${{ secrets.DATASET_ID_V3 }}
       DOCUMENT_ID_V3: ${{ secrets.DOCUMENT_ID_V3 }}
@@ -291,15 +302,19 @@ jobs:
         git fetch upstream
         git remote -v
         git status
+
         # 找到当前分支与 upstream/master 的共同祖先提交
         merge_base=$(git merge-base HEAD upstream/master)
         echo "merge_base=$merge_base"
+
         # 比较当前分支与 merge_base 之间的差异
         changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
         changed_files_go=$(git diff --name-only --diff-filter=ACMRT $merge_base -- 'go/**')
+
         echo "发生更改的文件为:"
         echo "$changed_files"
         echo "发生更改的Go相关文件为:"
+
         if [ -n "$changed_files_go" ]; then
           export APPBUILDER_GO_TESTS=True
           echo "$changed_files_go"
@@ -307,6 +322,7 @@ jobs:
           export APPBUILDER_GO_TESTS=False
           echo "没有检测到Go或Shell文件被更改"
         fi
+
         echo "APPBUILDER_GO_TESTS=$APPBUILDER_GO_TESTS" >> $GITHUB_ENV
     - name: Install dependencies and tools
       run: |
@@ -317,11 +333,15 @@ jobs:
           echo "检测到Go文件被更改，准备启动Install dependencies and tools部分..."
           cd cicd/app-builder/go/appbuilder
           go mod tidy
+
           go get github.com/axw/gocov/gocov  # 安装增量覆盖率工具
+
           # 安装 golangci-lint
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.53.3
           echo "$GOPATH/bin" >> $GITHUB_PATH
+
         fi
+
     - name: Run tests and calculate incremental coverage
       run: |
         echo $APPBUILDER_GO_TESTS
@@ -344,7 +364,7 @@ jobs:
       INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
       DATASET_ID: ${{ secrets.DATASET_ID }}
       APPBUILDER_TOKEN_DOC_FORMAT: ${{ secrets.APPBUILDER_TOKEN_DOC_FORMAT }}
-
+ 
       APPBUILDER_TOKEN_V3: ${{ secrets.APPBUILDER_TOKEN_V3 }}
       DATASET_ID_V3: ${{ secrets.DATASET_ID_V3 }}
       DOCUMENT_ID_V3: ${{ secrets.DOCUMENT_ID_V3 }}
@@ -358,7 +378,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: ${{ github.event.pull_request.head.sha }}
-
+    
     - name: Set up JDK ${{ matrix.java-version }}
       uses: actions/setup-java@v3
       with:
@@ -370,6 +390,7 @@ jobs:
         env
         ls
         pwd
+
     - name: Git Clone And Checkout Branch
       run: |
         fork_repo="https://github.com/$GITHUB_ACTOR/app-builder.git"
@@ -382,16 +403,20 @@ jobs:
         git fetch upstream
         git remote -v
         git status
+
         # 找到当前分支与 upstream/master 的共同祖先提交
         merge_base=$(git merge-base HEAD upstream/master)
         echo "merge_base=$merge_base"
+
         # 比较当前分支与 merge_base 之间的差异
         changed_files=$(git diff --name-only --diff-filter=ACMRT $merge_base)
         changed_files_java=$(git diff --name-only --diff-filter=ACMRT $merge_base -- 'java/**')
         
         echo "发生更改的文件为:"
         echo "$changed_files"
+
         echo "发生更改的Java相关文件为:"
+
         if [ -n "$changed_files_java" ]; then
           export APPBUILDER_JAVA_TESTS=True
           echo "$changed_files_java"
@@ -399,8 +424,10 @@ jobs:
           export APPBUILDER_JAVA_TESTS=False
           echo "没有检测到Java文件被更改"
         fi
+
         echo "APPBUILDER_JAVA_TESTS=$APPBUILDER_JAVA_TESTS" >> $GITHUB_ENV
         pwd
+
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
@@ -422,4 +449,4 @@ jobs:
         echo "检测到Java文件被更改(根据环境变量APPBUILDER_JAVA_TESTS),准备启动Run Java tests with Jacoco部分..."
         cd cicd/app-builder/java
         bash print_coverage.sh
-	
+
