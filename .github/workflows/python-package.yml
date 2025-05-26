@@ -7,11 +7,11 @@ on:
   workflow_dispatch:
   push:
     branches: [ "master" ]
-  pull_request:
+  pull_request_target:
     branches: [ "master" ]
 
 jobs:
-  permissions: read-all
+  # permissions: read-all
   Pylint:
     runs-on: ubuntu-latest
     strategy:
