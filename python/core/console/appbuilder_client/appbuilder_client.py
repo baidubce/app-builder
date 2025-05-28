@@ -15,8 +15,6 @@
 """AppBuilderClient组件"""
 import os
 import json
-import uuid
-import queue
 from typing import Optional, Union
 from appbuilder.core.component import Message, Component
 from appbuilder.core.manifest.models import Manifest
@@ -111,6 +109,39 @@ def describe_apps(
     resp = data_class.DescribeAppsResponse(**data)
     out = resp.data
     return out
+
+
+@client_tool_trace
+def describe_app(
+    app_id: str,
+    secret_key: Optional[str] = None,
+    gateway: Optional[str] = None,
+) -> data_class.DescribeAppResponse:
+    """
+    查询用户的应用详情。
+
+    Args:
+        app_id (str): 应用ID。
+
+    Returns:
+        DescribeAppResponse: 应用详情。
+
+    """
+    client = HTTPClient(secret_key=secret_key, gateway_v2=gateway)
+    headers = client.auth_header_v2()
+    headers["Content-Type"] = "application/json"
+    url = client.service_url_v2("/app?Action=DescribeApp")
+    request = data_class.DescribeAppRequest(id=app_id)
+    response = client.session.post(
+        url=url,
+        json=request.model_dump(),
+        headers=headers,
+    )
+
+    client.check_response_header(response)
+    data = response.json()
+    resp = data_class.DescribeAppResponse(**data)
+    return resp
 
 
 @client_tool_trace

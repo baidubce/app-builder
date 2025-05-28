@@ -186,7 +186,7 @@ from appbuilder.core.utils import get_model_list
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient
 from appbuilder.core.console.appbuilder_client.async_appbuilder_client import AsyncAppBuilderClient
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
-from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps, describe_apps
+from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps, describe_apps, describe_app
 from appbuilder.core.console.component_client.component_client import ComponentClient
 from appbuilder.core.console.knowledge_base.knowledge_base import KnowledgeBase
 from appbuilder.core.console.knowledge_base.data_class import CustomProcessRule, DocumentSource, DocumentChoices, DocumentChunker, DocumentSeparator, DocumentPattern, DocumentProcessOption, DocumentSourceUrlConfig
@@ -232,6 +232,7 @@ __all__ = [
     "get_app_list",
     "get_all_apps",
     "describe_apps",
+    "describe_app",
     "KnowledgeBase",
     "CustomProcessRule",
     "DocumentSource",
@@ -240,8 +241,7 @@ __all__ = [
     "DocumentSeparator",
     "DocumentPattern",
     "DocumentProcessOption",
-    "DocumentSourceUrlConfig"
-    "assistant",
+    "DocumentSourceUrlConfig" "assistant",
     "StreamRunContext",
     "AssistantEventHandler",
     "AssistantStreamManager",

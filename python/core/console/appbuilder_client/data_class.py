@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from pydantic import BaseModel
-from pydantic import Field, ValidationError
+from pydantic import Field
 from typing import Union
 from typing import Optional
 from appbuilder.core.manifest.models import Manifest
@@ -29,10 +29,12 @@ class Tool(BaseModel):
     type: str = "function"
     function: Function = Field(..., description="工具信息")
 
+
 class MCPTool(BaseModel):
     name: str = Field(..., description="工具名称")
     description: str = Field(..., description="工具描述")
     inputSchema: dict = Field(..., description="工具参数, json_schema格式")
+
 
 def ToAppBuilderTool(tool):
     if "type" in tool and tool["type"]:
@@ -41,6 +43,7 @@ def ToAppBuilderTool(tool):
         return Tool(type="function", function=Function(name=tool.name, description=tool.description, parameters=tool.inputSchema)), True
     else:
         return tool, False
+
 
 class ToolOutput(BaseModel):
     tool_call_id: str = Field(..., description="工具调用ID")
@@ -386,6 +389,25 @@ class DescribeAppsResponse(BaseModel):
     nextMarker: str = Field("", description="下一次起始位置")
     maxKeys: int = Field(0, description="最大返回数量")
     data: list[AppOverview] = Field([], description="应用概览列表")
+
+
+class DescribeAppRequest(BaseModel):
+    id: str = Field(..., description="应用ID")
+
+
+class DescribeAppResponse(BaseModel):
+    requestId: str = Field("", description="请求ID")
+    id: str = Field("", description="应用ID")
+    name: str = Field("", description="应用名称")
+    description: str = Field("", description="应用描述")
+    instruction: str = Field("", description="用户指令")
+    prologue: str = Field("", description="开场白")
+    exampleQueries: list[str] = Field("", description="推荐问题")
+    followupQueries: dict = Field("", description="追问")
+    components: Optional[list[dict]] = Field(None, description="引用组件列表")
+    knowledgeBaseConfig: Optional[dict] = Field(None, description="知识库配置")
+    modelConfig: Optional[dict] = Field(None, description="模型配置")
+    background: Optional[dict] = Field(None, description="背景图配置")
 
 
 class FeedbackRequest(BaseModel):
