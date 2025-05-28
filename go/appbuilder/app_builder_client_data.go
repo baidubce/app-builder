@@ -316,6 +316,89 @@ type DescribeAppsResponse struct {
 	Data        []App  `json:"data"`
 }
 
+type DescribeAppRequest struct {
+	ID string `json:"id"`
+}
+
+type DescribeAppResponse struct {
+	RequestID           string              `json:"requestId"`
+	ID                  string              `json:"id"`
+	Name                string              `json:"name"`
+	Description         string              `json:"description"`
+	Instruction         string              `json:"instruction"`
+	Prologue            string              `json:"prologue"`
+	ExampleQueries      []string            `json:"exampleQueries"`
+	FollowUpQueries     AppFollowUpQueries  `json:"followUpQueries"`
+	Components          []Component         `json:"components"`
+	KnowledgeBaseConfig KnowledgeBaseConfig `json:"knowledgeBaseConfig"`
+	ModelConfig         ModelConfig         `json:"modelConfig"`
+	Background          *Background         `json:"background,omitempty"`
+}
+type AppFollowUpQueries struct {
+	Type   string `json:"type"`
+	Prompt string `json:"prompt"`
+	Round  string `json:"round"`
+}
+type Component struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	CustomDesc  string `json:"customDesc,omitempty"`
+}
+type KnowledgeBaseConfig struct {
+	KnowledgeBases []AppKnowledgeBase `json:"knowledgeBases"`
+	Retrieval      RetrievalConfig    `json:"retrieval"`
+}
+type AppKnowledgeBase struct {
+	ID          string `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+type RetrievalConfig struct {
+	EnableWebSearch bool    `json:"enableWebSearch,omitempty"`
+	Order           string  `json:"order,omitempty"`
+	Strategy        string  `json:"strategy,omitempty"`
+	TopK            int     `json:"topK,omitempty"`
+	Threshold       float64 `json:"threshold,omitempty"`
+}
+type ModelConfig struct {
+	Plan PlanConfig `json:"plan"`
+	Chat ChatConfig `json:"chat"`
+}
+type PlanConfig struct {
+	ModelID   string      `json:"modelId"`
+	Model     string      `json:"model"`
+	MaxRounds int         `json:"maxRounds"`
+	Config    ModelParams `json:"config"`
+}
+type ChatConfig struct {
+	ModelID           string      `json:"modelId"`
+	Model             string      `json:"model"`
+	HistoryChatRounds int         `json:"historyChatRounds"`
+	Config            ModelParams `json:"config"`
+}
+type ModelParams struct {
+	Temperature float64 `json:"temperature"`
+	TopP        float64 `json:"topP"`
+}
+type Background struct {
+	ID           string        `json:"id,omitempty"`
+	Path         string        `json:"path,omitempty"`
+	MobileConfig *MobileConfig `json:"mobile_config,omitempty"`
+	PCConfig     *PCConfig     `json:"pc_config,omitempty"`
+}
+type MobileConfig struct {
+	Left   string `json:"left,omitempty"`
+	Top    string `json:"top,omitempty"`
+	Height string `json:"height,omitempty"`
+	Color  string `json:"color,omitempty"`
+}
+type PCConfig struct {
+	Left   string `json:"left,omitempty"`
+	Top    string `json:"top,omitempty"`
+	Height string `json:"height,omitempty"`
+	Color  string `json:"color,omitempty"`
+}
+
 type App struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
