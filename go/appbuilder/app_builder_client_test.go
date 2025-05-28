@@ -346,6 +346,36 @@ func TestClientRunWithToolCallError(t *testing.T) {
 	})
 }
 
+func TestDescribeApp(t *testing.T) {
+	var logBuffer bytes.Buffer
+
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	os.Setenv("APPBUILDER_LOGFILE", "")
+
+	log := func(format string, args ...any) {
+		fmt.Fprintf(&logBuffer, format+"\n", args...)
+	}
+
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	app, err := DescribeApp("b2a972c5-e082-46e5-b313-acbf51792422", config)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("describe app failed: %v", err)
+	}
+	log("Get App Name: %s", app.Name)
+	chatflowApp, err := DescribeApp("4403205e-fb83-4fac-96d8-943bdb63796f", config)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("describe app failed: %v", err)
+	}
+	log("Get App Name: %s", chatflowApp.Name)
+}
+
 func TestNewAppBuilderClient(t *testing.T) {
 	var logBuffer bytes.Buffer
 

@@ -15,11 +15,13 @@ import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientResult;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.console.appbuilderclient.AppBuilderClient;
 import com.baidubce.appbuilder.console.appbuilderclient.AppList;
+import com.baidubce.appbuilder.console.appbuilderclient.App;
 import com.baidubce.appbuilder.model.appbuilderclient.AppListRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.AppsDescribeRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.Event;
 import com.baidubce.appbuilder.model.appbuilderclient.EventContent;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientRunRequest;
+import com.baidubce.appbuilder.model.appbuilderclient.AppDescribeResponse;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientFeedbackRequest;
 import com.baidubce.appbuilder.model.appbuilderclient.AppBuilderClientFeedbackResponse;
 
@@ -30,12 +32,14 @@ public class AppBuilderClientTest {
     String appId;
     String chatflowAppId;
     String followupqueryId;
+    String describeAppId;
 
     @Before
     public void setUp() {
         System.setProperty("APPBUILDER_TOKEN", System.getenv("APPBUILDER_TOKEN"));
         System.setProperty("APPBUILDER_LOGLEVEL", "DEBUG");
         appId = "aa8af334-df27-4855-b3d1-0d249c61fc08";
+        describeAppId = "b2a972c5-e082-46e5-b313-acbf51792422";
         chatflowAppId = "4403205e-fb83-4fac-96d8-943bdb63796f";
         followupqueryId = "fb64d96b-f828-4385-ba1d-835298d635a9";
     }
@@ -46,6 +50,17 @@ public class AppBuilderClientTest {
         AppListRequest request = new AppListRequest();
         request.setLimit(10);
         assertNotNull(builder.getAppList(request)[0].getId());
+    }
+
+    @Test
+    public void DescribeAppTest() throws IOException, AppBuilderServerException {
+        App app = new App();
+        AppDescribeResponse appInfo = app.describeApp(describeAppId);
+        System.out.println(appInfo);
+        assertNotNull(appInfo);
+        AppDescribeResponse chatflowAppInfo = app.describeApp(chatflowAppId);
+        System.out.println(chatflowAppInfo);
+        assertNotNull(chatflowAppInfo);
     }
 
     @Test

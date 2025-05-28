@@ -25,6 +25,8 @@ public class AppBuilderConfig {
     // 应用列表
     public static final String APP_LIST_URL = "/apps";
     public static final String APPS_DESCRIBE_URL = "/app?Action=DescribeApps";
+    // 应用详情
+    public static final String APP_DESCRIBE_URL = "/app?Action=DescribeApp";
     // 创建会话
     public static final String CREATE_CONVERSATION_URL = "/app/conversation";
     // 上传文件
