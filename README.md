@@ -339,12 +339,7 @@ Hook:
 
 - [Github Issue](https://github.com/baidubce/app-builder/issues):  提交安装/使用问题、报告bug、建议新特性、沟通开发计划等
 
-- [百度智能云千帆社区](https://cloud.baidu.com/qianfandev)：
-    - [千帆杯新手训练营 - 多类型主题练习赛](https://cloud.baidu.com/qianfandev/aimatch)
-    - [千帆杯AI原生应用创意挑战赛 - 教育生态行业赛](https://cloud.baidu.com/qianfandev/topic/269711)
-    - [千帆杯AI原生应用创意挑战赛 - 效率工具常规赛](https://cloud.baidu.com/qianfandev/topic/269599)
-
-
+- [百度智能云千帆社区](https://cloud.baidu.com/qianfandev)
 
 ## License
 
