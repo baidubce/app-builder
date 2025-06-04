@@ -290,7 +290,21 @@ class Text2Image(Component):
 
             return img_urls, data
         else:
-            return [], None
+            error_msg = resp.error_msg
+            if error_msg is not None:
+                error_detail = resp.error_detail
+                if error_detail is not None:
+                    error_msg = ""
+                    for error_item in error_detail:
+                        msg = error_item.msg
+                        words = error_item.words
+                        if msg:
+                            error_msg += msg
+                        if words:
+                            error_msg += ":" + ",".join(words) + ";"
+            else:
+                error_msg = "文生图组件执行失败"
+            raise RiskInputException(error_msg)
 
     def queryText2ImageData(
         self,
