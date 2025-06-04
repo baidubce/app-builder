@@ -289,6 +289,8 @@ class Text2Image(Component):
             img_urls = self.extract_img_urls(text2ImageQueryResponse)
 
             return img_urls, data
+        else:
+            return [], None
 
     def queryText2ImageData(
         self,
