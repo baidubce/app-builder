@@ -39,7 +39,7 @@ class Text2ImageSubmitRequest(BaseModel):
 
 class Text2ImageSubmitErrorDetail(BaseModel):
     msg: Optional[str]
-    word: Optional[object]
+    words: Optional[list]
 
 
 class Text2ImageSubmitResponseData(BaseModel):
@@ -51,7 +51,7 @@ class Text2ImageSubmitResponse(BaseModel):
     log_id: Optional[int] = None
     data: Optional[Text2ImageSubmitResponseData] = Text2ImageSubmitResponseData()
     error_msg: Optional[str] = None
-    error_detail: Optional[Text2ImageSubmitErrorDetail] = None
+    error_detail: Optional[list[Text2ImageSubmitErrorDetail]] = None
     error_code: Optional[int] = None
 
 
