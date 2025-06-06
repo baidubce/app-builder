@@ -263,7 +263,9 @@ class Text2Image(Component):
         )
         response = self.http_client.session.post(api_url, json=req.model_dump(), headers=headers, timeout=None)
         self._http_client.check_response_header(response)
+        request_id = self._http_client.response_request_id(response)
         data = response.json()
+        self.check_service_error(request_id, data)
         resp= Text2ImageSubmitResponse(**data)
 
         taskId = resp.data.task_id
@@ -289,6 +291,7 @@ class Text2Image(Component):
             img_urls = self.extract_img_urls(text2ImageQueryResponse)
 
             return img_urls, data
+
         else:
             error_msg = resp.error_msg
             if error_msg is not None:
@@ -379,8 +382,21 @@ class Text2Image(Component):
             None
         """
         if "error_code" in data or "error_msg" in data:
+            service_err_message = data.get("error_msg")
+            service_err_code=data.get("error_code")
+            if "error_detail" in data:
+                error_detail = data.get("error_detail", [])
+                if error_detail:
+                    service_err_message += ": "
+                for error_item in error_detail:
+                    msg = error_item.msg
+                    words = error_item.words
+                    if msg:
+                        service_err_message += msg
+                    if words:
+                        service_err_message += ":" + ",".join(words) + ";"
             raise AppBuilderServerException(
                 request_id=request_id,
-                service_err_code=data.get("error_code"),
-                service_err_message=data.get("error_msg")
+                service_err_code=service_err_code,
+                service_err_message=service_err_message
             )
