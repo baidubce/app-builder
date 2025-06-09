@@ -185,6 +185,7 @@ from appbuilder.core.utils import get_model_list
 
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AppBuilderClient
 from appbuilder.core.console.appbuilder_client.async_appbuilder_client import AsyncAppBuilderClient
+from appbuilder.core.console.ai_search import AISearch
 from appbuilder.core.console.appbuilder_client.appbuilder_client import AgentBuilder
 from appbuilder.core.console.appbuilder_client.appbuilder_client import get_app_list, get_all_apps, describe_apps, describe_app
 from appbuilder.core.console.component_client.component_client import ComponentClient
@@ -227,6 +228,7 @@ __all__ = [
     "get_model_list",
     "AppBuilderClient",
     "AsyncAppBuilderClient",
+    "AISearch", 
     "AgentBuilder",
     "ComponentClient",
     "get_app_list",
