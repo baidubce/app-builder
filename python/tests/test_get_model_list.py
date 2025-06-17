@@ -14,9 +14,17 @@
 import os
 import unittest
 import appbuilder
-from appbuilder.utils.model_util import GetModelListRequest, Models, GetModelListResponse
+from appbuilder.utils.model_util import (
+    GetModelListRequest, 
+    Models, 
+    GetModelListResponse,
+    GetModelListRequestV2,
+    GetModelListResponseV2,
+    CommonModelV2
+)
+token = "Bearer bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd"
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestModels(unittest.TestCase):
     def setUp(self):
         """
@@ -30,7 +38,7 @@ class TestModels(unittest.TestCase):
         """
         self.model = Models()
 
-    def get_model_list(self):
+    def test_get_model_list(self):
         """
         get_model_list方法单测
 
@@ -41,10 +49,10 @@ class TestModels(unittest.TestCase):
             None
 
         """
-        response = appbuilder.get_model_list(api_type_filter=["chat"])
+        response = appbuilder.get_model_list(secret_key=token, api_type_filter=["text2image"])
+        print(response)
         self.assertIsNotNone(response)
-        self.assertIsInstance(response, GetModelListResponse)
-        self.assertTrue(response.success)
+        self.assertIsInstance(response, list)
 
     def test_list(self):
         """
@@ -80,7 +88,6 @@ class TestModels(unittest.TestCase):
             self.model._check_service_error(request_id, data)
         data = {'error_msg': 'No Error', 'error_code': 0}
         self.assertIsNone(self.model._check_service_error(request_id, data))
-
 
 if __name__ == '__main__':
     unittest.main()
