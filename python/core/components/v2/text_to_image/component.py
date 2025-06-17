@@ -389,8 +389,8 @@ class Text2Image(Component):
                 if error_detail:
                     service_err_message += ": "
                 for error_item in error_detail:
-                    msg = error_item.get(msg, "")
-                    words = error_item.get(words, [])
+                    msg = error_item.get("msg", "")
+                    words = error_item.get("words", [])
                     if msg:
                         service_err_message += msg
                     if words:
