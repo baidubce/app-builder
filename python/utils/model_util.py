@@ -15,7 +15,8 @@
 import json
 import proto
 from typing import Optional, MutableSequence
-
+from pydantic import BaseModel, Field
+from appbuilder.utils.func_utils import deprecated
 import appbuilder
 from appbuilder.core._client import HTTPClient
 from appbuilder.utils.trace.tracer_wrapper import list_trace
@@ -277,6 +278,79 @@ class Version(proto.Message):
     )
 
 
+class GetModelListRequestV2(BaseModel):
+    """
+    获取模型列表v2请求体
+    参数：
+        refresh_type(str):
+            获取模型列表的方式：["tolerant", "original"]
+        force_refresh(bool):
+            是否强制刷新缓存
+    """
+    refresh_type: str = Field(default="tolerant")
+    force_refresh: bool = Field(default=False)
+
+
+class BaseModelInfo(BaseModel):
+    serviceId: str = Field()
+    name: str = Field()
+    url: str = Field()
+    serviceType: str = Field()
+    chargeStatus: str = Field()
+    protocolVersion: int = Field()
+    supportedProtocolVersions: Optional[list] = Field(default=[2])
+    marker: Optional[str] = None
+    maxContextTokens: Optional[int] = None
+    maxInputTokens: Optional[int] = None
+    maxOutputTokens: Optional[int] = None
+    reasoningModel: bool = Field()
+    supportsSearch: bool = Field()
+
+
+class CommonModelV2(BaseModelInfo, extra='allow'):
+    """
+    预置模型信息
+    """
+    isPublic: bool = Field()
+    chargeType: str = Field()
+    modelCallName: Optional[str] = None
+
+
+class CustomModelV2(BaseModelInfo, extra='allow'):
+    """
+    定制模型信息
+    """
+
+    runStatus: str = Field()
+    baseModel: str = Field()
+    modelId: str = Field()
+    modelCallName: Optional[str] = None
+
+
+class GetModelListResponseResult(BaseModel):
+    """
+    获取模型列表v2返回的result字段
+    参数：
+        common(list): 预置模型
+        custom(list): 定制模型
+    """
+    common: list[CommonModelV2] = Field(default=[])
+    custom: list[CustomModelV2] = Field(default=[])
+
+
+class GetModelListResponseV2(BaseModel):
+    """
+    获取模型列表的响应
+    参数：
+        code: int
+        message: str
+        result: dict, 响应结果，包含预置模型和定制模型
+    """
+    code: int = Field(default=0)
+    message: str = Field(default="")
+    result: GetModelListResponseResult = Field(default={})
+
+
 class Models:
     r"""
     模型工具类，提供模型列表接口。
@@ -299,6 +373,7 @@ class Models:
         self.http_client = client or HTTPClient(secret_key, gateway)
 
     @list_trace
+    @deprecated(version="1.0.8")
     def list(self, request: GetModelListRequest = None, timeout: float = None,
              retry: int = 0) -> GetModelListResponse:
         """
@@ -328,6 +403,38 @@ class Models:
         self.__class__._check_service_error(request_id, data)
         response = GetModelListResponse.from_json(payload=json.dumps(data),  ignore_unknown_fields=True)
         response.request_id = request_id
+        return response
+
+    def list_v2(self, request: GetModelListRequestV2 = None, timeout: float = None,
+             retry: int = 0) -> GetModelListResponseV2:
+        """
+        返回用户的模型列表信息。
+        参数:
+            request (obj:`GetModelListRequest`):模型列表查询请求体。
+            timeout (float, 可选): 请求的超时时间。
+            retry (int, 可选): 请求的重试次数。
+
+        返回:
+            obj:`GetModelListResponseV2`: 模型列表返回体。
+        """
+        url = self.http_client.service_url(
+            prefix = "/api/v1/ai_engine/copilot_engine", 
+            sub_path= "/v1/api/workspace/qianfan_models_v2/user"
+        )
+        if request is None:
+            request = GetModelListRequestV2()
+        data = GetModelListRequestV2.model_validate(request)
+        headers = self.http_client.auth_header()
+        headers['content-type'] = 'application/json'
+        if retry != self.http_client.retry.total:
+            self.http_client.retry.total = retry
+        response = self.http_client.session.post(url, data=data.model_dump_json(), headers=headers, timeout=timeout)
+        self.http_client.check_response_header(response)
+        data = response.json()
+        self.http_client.check_response_json(data)
+        request_id = self.http_client.response_request_id(response)
+        self.__class__._check_service_error(request_id, data)
+        response = GetModelListResponseV2.model_validate(data)
         return response
 
     @staticmethod

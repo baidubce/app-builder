@@ -17,7 +17,7 @@ from typing import List
 from urllib.parse import urlparse, unquote
 from appbuilder.core._client import HTTPClient
 from appbuilder.core._exception import TypeNotSupportedException, ModelNotSupportedException
-from appbuilder.utils.model_util import GetModelListRequest, Models, RemoteModelCollector
+from appbuilder.utils.model_util import GetModelListRequestV2, Models, RemoteModelCollector
 from functools import lru_cache
 
 
@@ -27,7 +27,13 @@ def utils_get_user_agent():
 # Todo(chengmo): 此处返回的模型名称为原始名称，并非推荐使用的short name
 # 应当返回一个详细的列表，告知用户原始名 + 对应的short名
 # 同时考虑是否返回每个模型可用的余额
-def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_available: bool = False) -> list:
+def get_model_list(
+        secret_key: str = "", 
+        api_type_filter: List[str] = [], 
+        is_available: bool = False,
+        refresh_type: str = "tolerant",
+        force_refresh: bool = False
+    ) -> list:
     """
     返回用户的模型列表。
 
@@ -39,23 +45,24 @@ def get_model_list(secret_key: str = "", api_type_filter: List[str] = [], is_ava
     返回:
         list: 模型列表。
     """
-    api_type_set = {"chat", "completions", "embeddings", "text2image"}
+    api_type_set = {"chat", "completions", "embeddings", "text2image", "image2text", "rerankers", "multimodal"}
     if api_type_filter and not set(api_type_filter).issubset(api_type_set):
         raise TypeNotSupportedException(
             f"mismatched argument api_type_filter, expected in {api_type_set}"
         )
-    request = GetModelListRequest()
-    request.apiTypefilter = api_type_filter
+    request = GetModelListRequestV2(refresh_type=refresh_type, force_refresh=force_refresh)
     model = Models(secret_key=secret_key)
-    response = model.list(request)
+    response = model.list_v2(request)
     models = []
 
     for model in itertools.chain(response.result.common, response.result.custom):
-        if is_available and (model.chargeStatus not in ["OPENED", "FREE"] or
-                             not any(version.serviceStatus == "Done" for version in model.versionList)):
+        if (
+            (is_available and model.chargeStatus not in ["OPENED", "FREE"])
+            or model.serviceType not in api_type_filter
+        ):
             continue
         models.append(model.name)
-    return models
+    return models 
 
 def get_filename_from_url(url):
     """从给定URL中提取文件名"""
