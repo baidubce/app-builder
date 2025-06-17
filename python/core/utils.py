@@ -57,7 +57,7 @@ def get_model_list(
 
     for model in itertools.chain(response.result.common, response.result.custom):
         if (
-            (is_available and model.chargeStatus not in ["OPENED", "FREE"])
+            (is_available and model.chargeStatus not in ["Opened", "Free"])
             or model.serviceType not in api_type_filter
         ):
             continue

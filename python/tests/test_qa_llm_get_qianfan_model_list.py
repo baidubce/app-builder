@@ -16,7 +16,7 @@ import os
 import unittest
 import appbuilder
 
-@unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
+# @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestGetQianfanModelList(unittest.TestCase):
 
     def test_run(self):
@@ -32,7 +32,6 @@ class TestGetQianfanModelList(unittest.TestCase):
             api_type_filter=api_type_filter,
             is_available=is_available
         )
-
         self.assertIn("ERNIE", str(models))
         self.assertGreater(len(models), 0, "Model list should not be empty")
 

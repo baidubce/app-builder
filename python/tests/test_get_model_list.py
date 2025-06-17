@@ -54,7 +54,7 @@ class TestModels(unittest.TestCase):
         self.assertIsNotNone(response)
         self.assertIsInstance(response, list)
 
-    def _test_list(self):
+    def test_list(self):
         """
         list方法单测
 
@@ -71,7 +71,7 @@ class TestModels(unittest.TestCase):
         self.assertIsNotNone(response)
         self.assertIsInstance(response, GetModelListResponse)
 
-    def _test_check_service_error(self):
+    def test_check_service_error(self):
         """
         check_service_error方法单测
 
@@ -88,10 +88,6 @@ class TestModels(unittest.TestCase):
             self.model._check_service_error(request_id, data)
         data = {'error_msg': 'No Error', 'error_code': 0}
         self.assertIsNone(self.model._check_service_error(request_id, data))
-
-    # def test_model(self):
-    #     model = {'serviceId': 'svcp-0bf727e92474', 'name': 'Qianfan-PublicOpinion-Classification', 'url': 'http://qianfan.baidubce.com/v2/chat/completions', 'serviceType': 'image2text', 'chargeStatus': 'Opened', 'protocolVersion': 2, 'isPublic': True, 'chargeType': 'Calls', 'modelCallName': 'qianfan-publicopinion-classification', 'supportedProtocolVersions': [2], 'maxContextTokens': None, 'maxInputTokens': None, 'maxOutputTokens': None, 'reasoningModel': False, 'supportsSearch': False}
-    #     a = CommonModelV2.model_validate(model)
 
 if __name__ == '__main__':
     unittest.main()
