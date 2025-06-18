@@ -83,6 +83,9 @@ public class AppBuilderConfig {
     // 组件调用
     public static final String COMPONENT_RUN_URL = "/components";
 
+    // AI搜索、基础搜索
+    public static final String AI_SEARCH_URL = "/ai_search/chat/completions";
+
     // 运行rag
     public static final String RAG_RUN_URL =
             "/api/v1/ai_engine/agi_platform/v1/instance/integrated";
