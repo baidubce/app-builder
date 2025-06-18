@@ -233,10 +233,11 @@ class AISearchRequest(BaseModel):
     max_refer_search_items: Optional[int] = Field(
         100, description="调节用于模型问答总结的最大搜索条数，默认是全部搜索结果。"
     )
-    qa_strategy_config_id: Optional[str] = Field(
-        "", description="品牌保护问答策略配置id, 默认不匹配问答策略。"
+    config_id: Optional[str] = Field(
+        None,
+        description="指定使用该配置id下的领域知识注入、网页黑名单、问答干预策略等配置",
     )
-    model_appid: Optional[str] = Field("", description="模型调用appid")
+    model_appid: Optional[str] = Field(None, description="模型调用appid")
 
 
 class Usage(BaseModel):

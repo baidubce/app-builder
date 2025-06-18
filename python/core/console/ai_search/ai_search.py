@@ -47,7 +47,7 @@ class AISearch(Component):
             stream=False,
             safety_level=None,
             max_refer_search_items=None,
-            qa_strategy_config_id=None,
+            config_id=None,
             model_appid=None):
         req = data_class.AISearchRequest(
             messages=messages,
@@ -72,7 +72,7 @@ class AISearch(Component):
             stream=stream,
             safety_level=safety_level,
             max_refer_search_items=max_refer_search_items,
-            qa_strategy_config_id=qa_strategy_config_id,
+            config_id=config_id,
             model_appid=model_appid
         )
         headers = self.http_client.auth_header_v2()
