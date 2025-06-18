@@ -325,7 +325,7 @@ class AISearchResponse(BaseModel):
         description="请求request_id",
     )
     is_safe: Optional[bool] = Field(
-        None, alias="isSafe", description="query是否安全")
+        None,  description="query是否安全")
     choices: Optional[List[Choice]] = Field(
         None, min_items=1, description="	模型生成的 completion 的选择列表"
     )
