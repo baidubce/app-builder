@@ -373,7 +373,7 @@ class Models:
         self.http_client = client or HTTPClient(secret_key, gateway)
 
     @list_trace
-    @deprecated(version="1.0.8")
+    @deprecated(version="1.1.0")
     def list(self, request: GetModelListRequest = None, timeout: float = None,
              retry: int = 0) -> GetModelListResponse:
         """
