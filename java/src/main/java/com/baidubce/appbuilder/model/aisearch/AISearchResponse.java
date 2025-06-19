@@ -86,6 +86,15 @@ public class AISearchResponse {
         return this;
     }
 
+    public List<String> getFollowupQueries() {
+        return followupQueries;
+    }
+
+    public AISearchResponse setFollowupQueries(List<String> followupQueries) {
+        this.followupQueries = followupQueries;
+        return this;
+    }
+
     // region 内部类
     public static class Usage {
         @SerializedName("completion_tokens")
