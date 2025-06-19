@@ -41,6 +41,8 @@ def get_model_list(
         secret_key(str,可选): 用户鉴权token, 默认从环境变量中获取: os.getenv("APPBUILDER_TOKEN", "")。
         api_type_filter(List[str], 可选): 根据apiType过滤，["chat", "completions", "embeddings", "text2image"]，不填包括所有的。
         is_available(bool, 可选): 是否返回可用模型列表, 默认返回所有模型。
+        refresh_type(str, 可选): 获取模型列表的方式，默认在出错时使用兜底策略。
+        force_refresh(bool, 可选): 是否强制刷新缓存，默认不强制刷新。
 
     返回:
         list: 模型列表。

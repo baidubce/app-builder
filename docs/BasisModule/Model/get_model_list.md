@@ -13,7 +13,13 @@ import appbuilder
 # 设置环境变量和初始化
 # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
 os.environ["APPBUILDER_TOKEN"] = "..."
-models = appbuilder.get_model_list(api_type_filter=["chat"], is_available=True)
+models = appbuilder.get_model_list(
+    secret_key=os.environ["APPBUILDER_TOKEN"],
+    api_type_filter=["chat"], 
+    is_available=True,
+    refresh_type="tolerant",
+    force_refresh=True
+)
 print(models)
 ```
 ## 参数说明
@@ -32,9 +38,11 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 ### 调用参数
 |参数名称 | 参数类型         | 是否必须 |描述 | 示例值  |
 |--------|--------------|------|----|------|
-|secret_key | String       | 否    |用户鉴权token, 默认从环境变量中获取| bce-YOURTOKEN |
+|secret_key | String       | 是    |用户鉴权token, 默认从环境变量中获取| bce-YOURTOKEN |
 |api_type_filter| List[String] | 否    |根据apiType过滤，["chat", "completions", "embeddings", "text2image"]，不填包括所有的。| chat |
 |is_available| Boolean      | 否    |是否返回可用模型列表, 默认返回所有模型。| True |
+|refresh_type | String | 否 ｜ 获取模型列表的方式，默认在出错时使用兜底策略。["tolerant", "original"] | "tolerant" |
+|force_refersh | Boolean | 否 | 是否强制刷新缓存，默认不强制刷新。| False |
 
 
 ### 返回示例
@@ -47,4 +55,5 @@ os.environ["APPBUILDER_TOKEN"] = "bce-YOURTOKEN"
 
 
 ## 更新记录和贡献
+* 切换模型获取列表接口为v2 (2025-06)
 * 千帆模型列表获取能力 (2024-1)
