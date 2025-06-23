@@ -22,7 +22,6 @@ from appbuilder.utils.model_util import (
     GetModelListResponseV2,
     CommonModelV2
 )
-token = "Bearer bce-v3/ALTAK-RPJR9XSOVFl6mb5GxHbfU/072be74731e368d8bbb628a8941ec50aaeba01cd"
 
 # @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestModels(unittest.TestCase):
@@ -49,6 +48,7 @@ class TestModels(unittest.TestCase):
             None
 
         """
+        token = os.getenv("APPBUILDER_TOKEN")
         response = appbuilder.get_model_list(secret_key=token, api_type_filter=["text2image"])
         print(response)
         self.assertIsNotNone(response)
