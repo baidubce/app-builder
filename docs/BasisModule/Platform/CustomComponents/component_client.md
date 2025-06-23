@@ -287,7 +287,7 @@ public class ComponentClientDemo {
             // Run without streaming
             ComponentClientIterator iter = client.run(componentId, "latest", "", false, parameters);
             while (iter.hasNext()) {
-                ComponentClientRunResponse.ComponentRunResponseData response = iter.next();
+                ComponentClientRunResponse response = iter.next();
                 if(response.getContent().length > 0) {
                     Map<String, Object> textMap = (Map<String, Object>) response.getContent()[0].getText();
                     System.out.println("Without streaming: " + textMap.toString());
@@ -298,7 +298,7 @@ public class ComponentClientDemo {
             iter = client.run(componentId, "latest", "", true, parameters);
             Map<String, Object> textMap = null;
             while (iter.hasNext()) {
-                ComponentClientRunResponse.ComponentRunResponseData response = iter.next();
+                ComponentClientRunResponse response = iter.next();
                 if (response.getContent().length > 0) {
                     textMap = (Map<String, Object>) response.getContent()[0].getText();
                 }
