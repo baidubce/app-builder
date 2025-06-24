@@ -108,9 +108,9 @@ class References(BaseModel, extra='allow'):
     content: str = Field(default="", description="内容")
     extra: Optional[dict] = Field(default={}, description="其他信息")
 
-    title: Optional[str] = Field(..., description="网页标题")
-    url: Optional[str] = Field(..., description="网页地址")
-    web_anchor: Optional[str] = Field(..., description="网站锚文本或网站标题")
+    title: Optional[str] = Field("", description="网页标题")
+    url: Optional[str] = Field("", description="网页地址")
+    web_anchor: Optional[str] = Field("", description="网站锚文本或网站标题")
     icon: Optional[str] = Field(None, description="站点图标")
     date: Optional[str] = Field(None, description="网页日期")
     type: Optional[str] = Field(
