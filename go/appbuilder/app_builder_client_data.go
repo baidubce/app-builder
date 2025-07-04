@@ -58,16 +58,17 @@ var TypeToStruct = map[string]reflect.Type{
 }
 
 type AppBuilderClientRunRequest struct {
-	AppID          string       `json:"app_id"`
-	Query          string       `json:"query"`
-	Stream         bool         `json:"stream"`
-	EndUserID      *string      `json:"end_user_id"`
-	ConversationID string       `json:"conversation_id"`
-	FileIDs        []string     `json:"file_ids"`
-	Tools          []Tool       `json:"tools"`
-	ToolOutputs    []ToolOutput `json:"tool_outputs"`
-	ToolChoice     *ToolChoice  `json:"tool_choice"`
-	Action         *Action      `json:"action"`
+	AppID            string                    `json:"app_id"`
+	Query            string                    `json:"query"`
+	Stream           bool                      `json:"stream"`
+	EndUserID        *string                   `json:"end_user_id"`
+	ConversationID   string                    `json:"conversation_id"`
+	FileIDs          []string                  `json:"file_ids"`
+	Tools            []Tool                    `json:"tools"`
+	ToolOutputs      []ToolOutput              `json:"tool_outputs"`
+	ToolChoice       *ToolChoice               `json:"tool_choice"`
+	Action           *Action                   `json:"action"`
+	McpAuthorization *[]map[string]interface{} `json:"mcp_authorization,omitempty"`
 }
 
 type AppBuilderClientUploadFileRequest struct {

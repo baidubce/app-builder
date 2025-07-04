@@ -68,6 +68,7 @@ class AsyncAppBuilderClient(Component):
         tool_choice: data_class.ToolChoice = None,
         end_user_id: str = None,
         action: data_class.Action = None,
+        mcp_authorization: list[dict] = None,
         **kwargs,
     ) -> Message:
         r"""异步运行智能体应用
@@ -75,13 +76,14 @@ class AsyncAppBuilderClient(Component):
         Args:
             query (str): query内容
             conversation_id (str): 唯一会话ID，如需开始新的会话，请使用self.create_conversation创建新的会话
-            file_ids(list[str]): 文件ID列表
+            file_ids (list[str]): 文件ID列表
             stream (bool): 为True时，流式返回，需要将message.content.answer拼接起来才是完整的回答；为False时，对应非流式返回
-            tools(list[Union[data_class.Tool,Manifest,data_class.MCPTool]]): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
-            tool_outputs(list[data_class.ToolOutput]): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
-            tool_choice(data_class.ToolChoice): 控制大模型使用组件的方式，默认为None
+            tools (list[Union[data_class.Tool,Manifest,data_class.MCPTool]]): 一个Tool或Manifest组成的列表，其中每个Tool(Manifest)对应一个工具的配置, 默认为None
+            tool_outputs (list[data_class.ToolOutput]): 工具输出列表，格式为list[ToolOutput], ToolOutputd内容为本地的工具执行结果，以自然语言/json dump str描述，默认为None
+            tool_choice (data_class.ToolChoice): 控制大模型使用组件的方式，默认为None
             end_user_id (str): 用户ID，用于区分不同用户
-            action(data_class.Action): 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
+            action (data_class.Action): 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
+            mcp_authorization (list[dict]): mcp鉴权配置:目前仅适配百度网盘
             kwargs: 其他参数
 
         Returns:
@@ -121,6 +123,7 @@ class AsyncAppBuilderClient(Component):
             tool_choice=tool_choice,
             end_user_id=end_user_id,
             action=action,
+            mcp_authorization=mcp_authorization,
         )
 
         headers = self.http_client.auth_header_v2(mcp_context=self._mcp_context)
