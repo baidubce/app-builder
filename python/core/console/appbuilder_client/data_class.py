@@ -133,6 +133,7 @@ class AppBuilderClientRequest(BaseModel):
     tool_choice: Optional[ToolChoice] = None
     end_user_id: Optional[str] = None
     action: Optional[Action] = None
+    mcp_authorization: Optional[list[dict]] = None
 
 
 class Usage(BaseModel):

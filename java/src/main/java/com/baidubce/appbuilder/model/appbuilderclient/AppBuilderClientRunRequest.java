@@ -1,5 +1,6 @@
 package com.baidubce.appbuilder.model.appbuilderclient;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -20,6 +21,8 @@ public class AppBuilderClientRunRequest {
     @SerializedName("tool_choice")
     private ToolChoice ToolChoice;
     private Action action;
+    @SerializedName("mcp_authorization")
+    private List<Map<String, Object>> mcpAuthorization = null;
 
     public AppBuilderClientRunRequest() {
     }
@@ -130,6 +133,15 @@ public class AppBuilderClientRunRequest {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public AppBuilderClientRunRequest setMcpAuthorization(List<Map<String, Object>> mcpAuthorization) {
+        this.mcpAuthorization = mcpAuthorization;
+        return this;
+    }
+
+    public List<Map<String, Object>> getMcpAuthorization() {
+        return mcpAuthorization;
     }
 
     public static class Tool {

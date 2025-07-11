@@ -84,15 +84,41 @@ class OralText(BaseModel, extra='allow'):
 
 class ReasoningContent(BaseModel, extra="allow"):
     info: str = Field(default="", description="思考过程")
-    
+
+
+class VideoDetail(BaseModel):
+    url: Optional[str] = Field(None, description="视频链接")
+    height: Optional[str] = Field(None, description="视频高度")
+    width: Optional[str] = Field(None, description="视频宽度")
+    size: Optional[str] = Field(None, description="视频大小，单位Bytes")
+    duration: Optional[str] = Field(None, description="视频长度，单位秒")
+    hover_pic: Optional[str] = Field(None, description="视频封面图")
+
+
+class ImageDetail(BaseModel):
+    url: Optional[str] = Field(None, description="图片链接")
+    height: Optional[str] = Field(None, description="图片高度")
+    width: Optional[str] = Field(None, description="图片宽度")
+
+
 class References(BaseModel, extra='allow'):
     type: str = Field(default="", description="类型")
     source: str = Field(default="", description="来源")
-    doc_id: str = Field(default="", description="文档id")
-    title: str = Field(default="", description="标题")
+    doc_id: Optional[str] = Field(default=None, description="文档id")
     content: str = Field(default="", description="内容")
     extra: Optional[dict] = Field(default={}, description="其他信息")
 
+    title: Optional[str] = Field("", description="网页标题")
+    url: Optional[str] = Field("", description="网页地址")
+    web_anchor: Optional[str] = Field("", description="网站锚文本或网站标题")
+    icon: Optional[str] = Field(None, description="站点图标")
+    date: Optional[str] = Field(None, description="网页日期")
+    type: Optional[str] = Field(
+        None, description="检索资源类型"
+    )
+    id: Optional[int] = Field(None, description="引用编号1、2、3")
+    image: Optional[ImageDetail] = Field(None, description="图片详情")
+    video: Optional[VideoDetail] = Field(None, description="视频详情")
 
 class Image(BaseModel, extra='allow'):
     filename: str = Field(default="", description="图片名称")

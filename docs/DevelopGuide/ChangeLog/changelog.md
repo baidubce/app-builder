@@ -93,8 +93,13 @@
   * 新增百度AI搜索的MCP Server
   * AppBuilderClient调用支持显示DeepSeek-R1思考过程
 * **2025.04.05 v1.0.5版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.5)
-* **2025.04.05 v1.0.6版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.6)
+* **2025.04.24 v1.0.6版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.0.6)
   * 组件MCP SSE Server支持多副本
   * 新增 AppBuilder RAG MCP服务
   * 新增 AppBuilder Agent MCP服务
   * MCP Server支持添加OpenAPI tools
+* **2025.06.20 v1.1.0版本发布** [ReleaseNote](https://github.com/baidubce/app-builder/releases/tag/1.1.0)
+  * Python/Java 支持AI搜索V2，支持百度搜索
+  * Python模型列表SDK切换v2接口，新增
+  * Python/Go/Java 增加应用详情SDK，支持自主规划Agent、工作流Agent
+  * Java SDK 流式响应支持手动中断
