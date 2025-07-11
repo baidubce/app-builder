@@ -151,9 +151,9 @@ class InvalidRequestArgumentError(BaseRPCException):
     description: str = "Invalid Request Params Error"
     code: int = 400
 
-    def __init__(self, request_id= "", code="", message="", type="", params=""):
-        self.description = "request_id={}, code={}, message={}, type={}, params={} ".format(
-            request_id, code, message, type, params)
+    def __init__(self, message="", request_id= "", code=""):
+        self.description = "request_id={}, code={}, message={}".format(
+            request_id, code, message)
         self.code = code if code else self.code
 
     def __str__(self):
