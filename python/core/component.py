@@ -116,7 +116,9 @@ class References(BaseModel, extra='allow'):
     type: Optional[str] = Field(
         None, description="检索资源类型"
     )
-    id: Optional[int|str] = Field(None, description="引用编号1、2、3")
+    id: Optional[Union[int, str]] = Field(
+        None, description="引用编号1、2、3"
+    )
     image: Optional[ImageDetail] = Field(None, description="图片详情")
     video: Optional[VideoDetail] = Field(None, description="视频详情")
 
