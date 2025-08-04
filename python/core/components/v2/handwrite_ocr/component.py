@@ -59,9 +59,27 @@ class HandwriteOCR(Component):
                             "type": "string"
                         },
                         "description": "待识别文件的文件名"
+                    },
+                    "file_urls": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "待识别文件的url"
                     }
                 },
-                "required": ["file_names"]
+                "anyOf": [
+                    {
+                        "required": [
+                            "file_names"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "file_urls"
+                        ]
+                    }
+                ]
             }
         }
     ]
@@ -107,6 +125,7 @@ class HandwriteOCR(Component):
     @components_run_stream_trace
     def tool_eval(self,
                   file_names: Optional[list] = [],
+                  file_urls: Optional[list] = [],
                   **kwargs):
         """
         工具评估函数
@@ -120,22 +139,25 @@ class HandwriteOCR(Component):
         Yields:
             Generator[Output]: 生成器，每次迭代产生一个输出对象
         """
+        supported_file_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
         traceid = kwargs.get("_sys_traceid", "")
         result = ""
-        
-        sys_file_names = file_names
-        if not sys_file_names:
-            sys_file_names = kwargs.get('_sys_file_names', [])
 
         sys_file_urls = kwargs.get('_sys_file_urls', {})
+        available_img_urls = {}
+        for file_name, file_url in sys_file_urls.items():
+            file_type = file_name.split(".")[-1].lower()
+            if file_type in supported_file_type:
+                available_img_urls[file_name] = file_url
+        for img_url in file_urls:
+            file_name = img_url.split("/")[-1].split("?")[0]
+            file_type = file_name.split(".")[-1].lower()
+            if file_type in supported_file_type and file_name not in available_img_urls :
+                available_img_urls[file_name] = img_url
+        
 
-        for file_name in sys_file_names:
-            if utils.is_url(file_name):
-                file_url = file_name
-            else:
-                file_url = sys_file_urls.get(file_name, None)
-            if file_url is None:
-                raise InvalidRequestArgumentError(f"request format error, file {file_name} url does not exist")
+
+        for file_name, file_url in available_img_urls.items():
             req = HandwriteOCRRequest()
             req.url = file_url
             req.recognize_granularity = "big"
@@ -144,23 +166,23 @@ class HandwriteOCR(Component):
             req.detect_alteration = "true"
             response = self._recognize(req, request_id=traceid)
             text = "".join([w.words for w in response.words_result])
-            result += f"{file_name}的手写识别结果是：{text} "
+            result = f"{file_name}的手写识别结果是：{text} "
 
-        llm_result = self.create_output(
-            type = "text",
-            visible_scope= "llm",
-            text=result,
-            name="llm_text"
-        )
-        yield llm_result
+            llm_result = self.create_output(
+                type = "text",
+                visible_scope= "llm",
+                text=result,
+                name="llm_text"
+            )
+            yield llm_result
 
-        user_result = self.create_output(
-            type = "text",
-            visible_scope= "user",
-            text="",
-            name="user_text"
-        )
-        yield user_result
+            user_result = self.create_output(
+                type = "text",
+                visible_scope= "user",
+                text="",
+                name="user_text"
+            )
+            yield user_result
 
 
     def _recognize(

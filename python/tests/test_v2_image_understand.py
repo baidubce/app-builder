@@ -79,15 +79,19 @@ class TestImageUnderstand(unittest.TestCase):
 
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""
-        img_url = "https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
+        img_urls = ["https://bj.bcebos.com/v1/appbuilder/animal_recognize_test.png?" \
                   "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T" \
                   "12%3A19%3A16Z%2F-1%2Fhost%2F411bad53034fa8f9c6edbe5c4909d76ecf6fad68" \
-                  "62cf937c03f8c5260d51c6ae"
+                  "62cf937c03f8c5260d51c6ae",
+                  "https://agi-dev-platform-file.bj.bcebos.com/files_qa/10b495b5ceea44e5a1e7d194f3a59ed7/uploads/file-6cxezmhc_1.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2025-08-04T03%3A27%3A03Z%2F259200%2Fhost%2Ff420874be9fe2511a73eab458339aad110d97c55742b14fb4fabf78cc0e1d4cc"]
         img_name = "test_img.jpg"
+        _sys_file_urls = {"开户许可证.jpeg": "https://agi-dev-platform-file.bj.bcebos.com/files_qa/10b495b5ceea44e5a1e7d194f3a59ed7/uploads/file-wjka6g3h_%E5%BC%80%E6%88%B7%E8%AE%B8%E5%8F%AF%E8%AF%81.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2025-08-04T03%3A28%3A23Z%2F259200%2Fhost%2F2e3355869d9f62143051a12c2b19bc39b33d439e18839fe6dd15d0f37ab3a999"}
 
-        file_urls = {img_name: img_url}
-        result = self.image_understand.tool_eval(img_name=img_name, img_url=img_url)
+        result = self.image_understand.tool_eval(img_names=[img_name], img_urls=img_urls, _sys_file_urls=_sys_file_urls)
+        # for item in result:
+        #     print(item)
         res = [item for item in result]
+        print(res)
         self.assertNotEqual(len(res), 0)
         time.sleep(1)
 

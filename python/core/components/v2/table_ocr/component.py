@@ -63,9 +63,27 @@ class TableOCR(Component):
                             "type": "string"
                         },
                         "description": "待识别图片的文件名"
+                    },
+                    "file_urls": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "待识别图片的文件url"
                     }
                 },
-                "required": ["file_names"]
+                "anyOf": [
+                    {
+                        "required": [
+                            "file_names"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "file_urls"
+                        ]
+                    }
+                ]
             }
         }
     ]
@@ -192,12 +210,14 @@ class TableOCR(Component):
     @components_run_stream_trace
     def tool_eval(self, 
                   file_names: Optional[List[str]] = [],
+                  file_urls: Optional[List[str]] = [],
                   **kwargs):
         """
         处理并评估传入的文件列表，并返回表格数据的Markdown格式表示。
         
         Args:
             file_names (List[str]): 待处理的文件列表。
+            file_urls(List[str]): 待处理的文件url。
             **kwargs: 其他可选参数。
         
         Returns:
@@ -207,20 +227,23 @@ class TableOCR(Component):
             InvalidRequestArgumentError: 如果请求格式错误，文件URL不存在。
         
         """
+        supported_file_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
         result = {}
         traceid = kwargs.get("_sys_traceid", "")
-        file_urls = kwargs.get("_sys_file_urls", {})
-        if not file_names:
-            file_names = kwargs.get("_sys_file_names", [])
-        for file_name in file_names:
-            if utils.is_url(file_name):
-                file_url = file_name
-            else:
-                file_url = file_urls.get(file_name, None)
-            if file_url is None:
-                raise InvalidRequestArgumentError(
-                    f"request format error, file {file_name} url does not exist"
-                )
+        sys_file_urls = kwargs.get("_sys_file_urls", {})
+        available_file_urls = {}
+        for file_name, file_url in sys_file_urls.items():
+            file_type = file_name.split(".")[-1].lower()
+            if file_type in supported_file_type:
+                available_file_urls[file_name] = file_url
+
+        for file_url in file_urls:
+            file_name = file_url.split("/")[-1].split("?")[0]
+            file_type = file_name.split(".")[-1].lower()
+            if  file_type in supported_file_type and file_name not in available_file_urls:
+                available_file_urls[file_name] = file_url
+            
+        for file_name, file_url in available_file_urls.items():
             req = TableOCRRequest()
             req.url = file_url
             req.cell_contents = "false"
@@ -229,6 +252,6 @@ class TableOCR(Component):
             markdowns = self.get_table_markdown(tables_result)
             result[file_name] = markdowns
 
-        result = json.dumps(result, ensure_ascii=False)
-        yield self.create_output(type="text", text=result, raw_data=raw_data, visible_scope="llm")
-        yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
+            result = json.dumps(result, ensure_ascii=False)
+            yield self.create_output(type="text", text=result, raw_data=raw_data, visible_scope="llm")
+            yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
