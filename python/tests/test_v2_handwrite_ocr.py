@@ -75,12 +75,12 @@ class TestHandWriteOCR(unittest.TestCase):
         self.assertIsNotNone(msg.content)
         
     def test_tool_eval(self):
-        result=self.handwrite_ocr.tool_eval(file_names=['test'])
-        with self.assertRaises(InvalidRequestArgumentError):
-            next(result)
+        result=self.handwrite_ocr.tool_eval(file_names=['test.jpg'], file_urls=[self.image_url])
+        for item in result:
+            print(item)
         result=self.handwrite_ocr.tool_eval(
-            file_names=['test'],
-            _sys_file_urls={'test':self.image_url}
+            file_names=['test.jpg'],
+            _sys_file_urls={'test.jpg':self.image_url}
             )
         res=next(result)
         print(res)

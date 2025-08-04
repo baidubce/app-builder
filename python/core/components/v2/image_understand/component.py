@@ -58,24 +58,24 @@ class ImageUnderstand(Component):
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "img_name": {
-                        "type": "string",
+                    "img_names": {
+                        "type": "array",
                         "description": "待识别图片的文件名"
                     },
-                    "img_url": {
-                        "type": "string",
+                    "img_urls": {
+                        "type": "array",
                         "description": "待识别图片的url"
                     }
                 },
                 "anyOf": [
                     {
                         "required": [
-                            "img_name"
+                            "img_names"
                         ]
                     },
                     {
                         "required": [
-                            "img_url"
+                            "img_urls"
                         ]
                     }
                 ]
@@ -181,30 +181,45 @@ class ImageUnderstand(Component):
     @components_run_stream_trace
     def tool_eval(
         self,
-        img_name: Optional[str] = '',
-        img_url: Optional[str] = '',
+        img_names: Optional[list] = [],
+        img_urls: Optional[list] = [],
         **kwargs,
     ) -> Union[Generator[str, None, None], str]:
         """
         用于工具的执行，调用底层接口进行图像内容理解
         
         Args:
-            img_name (str): 图片文件名
-            img_url (str): 图片url
+            img_names (list): 图片文件名
+            img_urls (list): 图片url
             **kwargs: 工具调用的额外关键字参数
         
         Returns:
             Union[Generator[str, None, None], str]: 图片内容理解结果
         """
+        supported_file_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
         traceid = kwargs.get("_sys_traceid", '')
-        file_urls = kwargs.get("_sys_file_urls", {})
-        if not img_url and not file_urls:
+        sys_file_urls = kwargs.get("_sys_file_urls", {})
+        if not img_urls and not sys_file_urls:
             raise NoFileUploadedExecption("No file uploaded!")
-        rec_res, raw_data = self._recognize_w_post_process(img_name, img_url, file_urls, request_id=traceid)
-        llm_result = self.create_output(type="text", text=rec_res, name="text_1", raw_data=raw_data, visible_scope='llm')
-        yield llm_result
-        user_result = self.create_output(type="text", text="", name="text_2", raw_data=raw_data, visible_scope='user')
-        yield user_result
+    
+        available_img_urls = {}
+        for file_name, file_url in sys_file_urls.items():
+            file_type = file_name.split(".")[-1].lower()
+            if file_type in supported_file_type:
+                available_img_urls[file_name] = file_url
+        for img_url in img_urls:
+            file_name = img_url.split("/")[-1].split("?")[0]
+            file_type = file_name.split(".")[-1].lower()
+            if file_type in supported_file_type and file_name not in available_img_urls :
+                available_img_urls[file_name] = img_url
+        
+        for img_name, img_url in available_img_urls.items():
+            rec_res, raw_data = self._recognize_w_post_process(img_name, img_url, available_img_urls, request_id=traceid)
+            rec_res = f"{img_name}内容: " + rec_res
+            llm_result = self.create_output(type="text", text=rec_res, name="text_1", raw_data=raw_data, visible_scope='llm')
+            yield llm_result
+            user_result = self.create_output(type="text", text="", name="text_2", raw_data=raw_data, visible_scope='user')
+            yield user_result
 
     def _recognize_w_post_process(
         self,

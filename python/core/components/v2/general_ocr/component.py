@@ -57,12 +57,12 @@ class GeneralOCR(Component):
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "img_url": {
-                        "type": "string",
+                    "img_urls": {
+                        "type": "array",
                         "description": "待识别图片的url,根据该url能够获取图片"
                     },
-                    "img_name": {
-                        "type": "string",
+                    "img_names": {
+                        "type": "array",
                         "description": "待识别图片的文件名,用于生成图片url"
                     },
                     "language_type": {
@@ -74,18 +74,21 @@ class GeneralOCR(Component):
                                  'RUS', 'DAN', 'DUT', 'MAL', 'SWE', 'IND', 'POL', 'ROM', 'TUR', 
                                  'GRE', 'HUN', 'THA', 'VIE', 'ARA', 'HIN'],
                     },
-                    "pdf_url": {
-                        "type": "string",
+                    "pdf_urls": {
+                        "type": "array",
                         "description": "待识别pdf的url,根据该url能够获取pdf文件"
                     },
-                    "pdf_name": {
-                        "type": "string",
+                    "pdf_names": {
+                        "type": "array",
                         "description": "待识别pdf的文件名,用于生成pdf url"
                     },
                     "pdf_file_num": {
-                        "type": "string",
-                        "description": "需要识别的PDF文件的对应页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页",
-                        "default": "1"
+                        "type": "object",
+                        "description": "需要识别的PDF文件的对应页码，key为pdf_names中的文件名，value为对应的页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页",
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "default": {}
                     },
                     "detect_direction": {
                         "type": "string",
@@ -103,22 +106,22 @@ class GeneralOCR(Component):
                 "anyOf": [
                     {
                         "required": [
-                            "img_url",
+                            "img_urls",
                         ]
                     },
                     {
                         "required": [
-                            "img_name"
+                            "img_names"
                         ]
                     },
                     {
                         "required": [
-                            "pdf_url",
+                            "pdf_urls",
                         ]
                     },
                     {
                         "required": [
-                            "pdf_name",
+                            "pdf_names",
                         ]
                     }
                 ]
@@ -215,65 +218,123 @@ class GeneralOCR(Component):
     @components_run_stream_trace
     def tool_eval(
         self, 
-        img_name: Optional[str] = '',
-        img_url: Optional[str] = '',
-        pdf_name: Optional[str] = '',
-        pdf_url: Optional[str] = '',
-        pdf_file_num: Optional[str] = "1",
+        img_names: Optional[list] = [],
+        img_urls: Optional[list] = [],
+        pdf_names: Optional[list] = [],
+        pdf_urls: Optional[list] = [],
+        pdf_file_num: Optional[dict] = {},
         language_type: Optional[str] = 'CHN_ENG',
         detect_direction: Optional[str] = "false",
         multidirectional_recognize: Optional[str] = "true",
         **kwargs
         ):
         """
-        对图片中的文字进行识别并返回结果。
+        对图片或PDF文件中的文字进行识别并返回结果。
         
         Args:
-            img_name (str): 图片的文件名。
-            img_url (str): 图片的URL地址。
+            img_names (list): 图片文件名列表，用于指定要识别的图片文件。
+            img_urls (list): 图片URL地址列表，用于指定要识别的图片URL。
+            pdf_names (list): PDF文件名列表，用于指定要识别的PDF文件。
+            pdf_urls (list): PDF URL地址列表，用于指定要识别的PDF URL。
+            pdf_file_num (dict): PDF文件页码字典，key为pdf_names中的文件名，value为对应的页码。
+                                例如：{"document1.pdf": 1, "document2.pdf": 3} 表示识别document1.pdf的第1页，
+                                document2.pdf的第3页。如果未指定页码，默认为第1页。
+            language_type (str): 识别语言类型，可选值为'CHN_ENG'（中英文混合）、'ENG'（英文）、
+                                'JAP'（日语）、'KOR'（韩语）等，默认为'CHN_ENG'。
+            detect_direction (str): 是否检测图像朝向，可选值为'true'（检测）或'false'（不检测），
+                                  朝向是指输入图像是正常方向、逆时针旋转90/180/270度，默认为'false'。
+            multidirectional_recognize (str): 是否开启行级别的多方向文字识别，可选值为'true'（识别）
+                                            或'false'（不识别），若图内有不同方向的文字时，建议将此参数
+                                            设置为'true'，默认为'true'。
+            
             **kwargs: 其他参数，目前支持以下参数：
                 _sys_traceid (str): 系统追踪ID，用于跟踪请求。
-                language_type (str): 语言类型，默认为'CHN_ENG'（中英文混合）。
                 _sys_file_urls (dict): 文件URL字典，key为文件名，value为文件URL。
                 
         Returns:
             Generator: 生成器，每次生成一个包含识别结果的Output对象。
+                      对于图片文件，返回格式为：{"图片文件名识别结果": "识别的文字内容"}
+                      对于PDF文件，返回格式为：{"PDF文件名识别结果": "识别的文字内容"}
         
         Raises:
             InvalidRequestArgumentError: 如果请求格式错误或文件URL不存在，将抛出此异常。
         
+        Examples:
+            # 识别单个图片
+            img_names = ["test.jpg"]
+            img_urls = ["http://example.com/test.jpg"]
+            
+            # 识别多个PDF文件的不同页码
+            pdf_names = ["doc1.pdf", "doc2.pdf"]
+            pdf_urls = ["http://example.com/doc1.pdf", "http://example.com/doc2.pdf"]
+            pdf_file_num = {"doc1.pdf": 1, "doc2.pdf": 3}
+            
         """
         traceid = kwargs.get("_sys_traceid", "")
-        file_urls = kwargs.get("_sys_file_urls", {})
-        if not img_url:
-            if img_name:
-                img_path = img_name
-                img_name = os.path.basename(img_path)
-                img_url = file_urls.get(img_name, None)
-        if not pdf_url:
-            if pdf_name: 
-                pdf_path = pdf_name
-                pdf_name = os.path.basename(pdf_path)
-                pdf_url = file_urls.get(pdf_name, None)
+        sys_file_urls = kwargs.get("_sys_file_urls", {})
+        support_pdf_type = ["pdf"]
+        support_img_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
+        img_map = {}
+        pdf_map = {}
+        img_names = [os.path.basename(name) for name in img_names]
+        pdf_names = [os.path.basename(name) for name in pdf_names]
+        for file_name, file_url in sys_file_urls:
+            if file_url in img_urls or file_name in img_names:
+                img_map[file_name] = file_url
+            elif file_name in pdf_names or file_url in pdf_urls:
+                pdf_map[file_name] = {"url": file_url, "page_num": pdf_file_num.get(file_name, "1")}
+            else:
+                file_type = file_name.split(".")[-1].lower()
+                if file_type in support_pdf_type:
+                    pdf_map[file_name] = {"url": file_url, "page_num": pdf_file_num.get(file_name, "1")}
+                elif file_type in support_img_type:
+                    img_map[file_name] = file_url
 
-        if img_url:
-            req = GeneralOCRRequest(url=img_url)
-        elif pdf_url:
-            raw_pdf = requests.get(pdf_url).content
-            pdf_base64 = base64.b64encode(raw_pdf)
-            req = GeneralOCRRequest(pdf_file=pdf_base64, pdf_file_num=pdf_file_num)
-        else:
+        for img_url in img_urls:
+            file_name = img_url.split("/")[-1].split("?")[0]
+            file_type = file_name.split(".")[-1].lower()
+            if file_type in support_img_type and file_name not in img_map:
+                img_map[file_name] = img_url 
+
+        for pdf_url in pdf_urls: 
+            file_name = pdf_url.split("/")[-1].split("?")[0]
+            file_type = file_name.split(".")[-1].lower()
+            if file_type in support_pdf_type and file_name not in pdf_map:
+                pdf_map[file_name] = {"url": pdf_url, "page_num": pdf_file_num.get(file_name, "1")}
+    
+        if img_map:
+            for img_name, img_url in img_map.items():
+                req = GeneralOCRRequest(url=img_url)
+                req.detect_direction = detect_direction
+                req.language_type = language_type
+                req.multidirectional_recognize = multidirectional_recognize
+                result_response, raw_data = self._recognize(req, request_id=traceid)
+                result = proto.Message.to_dict(result_response)
+                results = {
+                    f"{img_name}识别结果": " \n".join(item["words"] for item in result["words_result"])
+                }
+                res = json.dumps(results, ensure_ascii=False, indent=4)
+                yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
+                yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
+
+        if pdf_map:
+            for pdf_name, pdf_info in pdf_map.items():
+                pdf_url = pdf_info.get("url", None)
+                pdf_file_num = pdf_info.get("page_num", "1")
+                raw_pdf = requests.get(pdf_url).content
+                pdf_base64 = base64.b64encode(raw_pdf)
+                req = GeneralOCRRequest(pdf_file=pdf_base64, pdf_file_num=pdf_file_num)
+                req.detect_direction = detect_direction
+                req.language_type = language_type
+                req.multidirectional_recognize = multidirectional_recognize
+                result_response, raw_data = self._recognize(req, request_id=traceid)
+                result = proto.Message.to_dict(result_response)
+                results = {
+                    f"{pdf_name}识别结果": " \n".join(item["words"] for item in result["words_result"])
+                }
+                res = json.dumps(results, ensure_ascii=False, indent=4)
+                yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
+                yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
+        if not img_map and not pdf_map:
             raise InvalidRequestArgumentError(
                 f"request format error, file url does not exist")
-        
-        req.detect_direction = detect_direction
-        req.language_type = language_type
-        req.multidirectional_recognize = multidirectional_recognize
-        result_response, raw_data = self._recognize(req, request_id=traceid)
-        result = proto.Message.to_dict(result_response)
-        results = {
-            "识别结果": " \n".join(item["words"] for item in result["words_result"])
-        }
-        res = json.dumps(results, ensure_ascii=False, indent=4)
-        yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
-        yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
