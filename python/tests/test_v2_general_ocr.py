@@ -75,7 +75,7 @@ class TestGeneralOCR(unittest.TestCase):
 
     def test_tool_eval_pdf_url(self):
         pdf_url = "https://bj.bcebos.com/agi-dev-platform-sdk-test/8、质量流量计.pdf"
-        result = self.com.tool_eval(pdf_url=pdf_url)
+        result = self.com.tool_eval(pdf_urls=[pdf_url])
         for iter in result:
             self.assertIsInstance(iter, ComponentOutput)
 
