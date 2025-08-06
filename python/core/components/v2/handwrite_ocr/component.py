@@ -12,6 +12,7 @@
 
 r"""手写文字识别组件"""
 import base64
+import logging
 from typing import Optional
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.core.component import Component
@@ -149,6 +150,12 @@ class HandwriteOCR(Component):
             file_type = file_name.split(".")[-1].lower()
             if file_type in supported_file_type:
                 available_img_urls[file_name] = file_url
+        
+        if file_names:
+            for file_name in file_names:
+                if file_name in sys_file_urls:
+                    available_img_urls[file_name] = sys_file_urls.get(file_name, "")
+                    
         for img_url in file_urls:
             file_name = img_url.split("/")[-1].split("?")[0]
             file_type = file_name.split(".")[-1].lower()
@@ -158,31 +165,35 @@ class HandwriteOCR(Component):
 
 
         for file_name, file_url in available_img_urls.items():
-            req = HandwriteOCRRequest()
-            req.url = file_url
-            req.recognize_granularity = "big"
-            req.probability = "false"
-            req.detect_direction = "true"
-            req.detect_alteration = "true"
-            response = self._recognize(req, request_id=traceid)
-            text = "".join([w.words for w in response.words_result])
-            result = f"{file_name}的手写识别结果是：{text} "
+            try:
+                req = HandwriteOCRRequest()
+                req.url = file_url
+                req.recognize_granularity = "big"
+                req.probability = "false"
+                req.detect_direction = "true"
+                req.detect_alteration = "true"
+                response = self._recognize(req, request_id=traceid)
+                text = "".join([w.words for w in response.words_result])
+                result = f"{file_name}的手写识别结果是：{text} "
 
-            llm_result = self.create_output(
-                type = "text",
-                visible_scope= "llm",
-                text=result,
-                name="llm_text"
-            )
-            yield llm_result
+                llm_result = self.create_output(
+                    type = "text",
+                    visible_scope= "llm",
+                    text=result,
+                    name="llm_text"
+                )
+                yield llm_result
 
-            user_result = self.create_output(
-                type = "text",
-                visible_scope= "user",
-                text="",
-                name="user_text"
-            )
-            yield user_result
+                user_result = self.create_output(
+                    type = "text",
+                    visible_scope= "user",
+                    text="",
+                    name="user_text"
+                )
+                yield user_result
+            except Exception as e:
+                logging.warning(f"{file_name} ocr failed with exception: {e}")
+                continue
 
 
     def _recognize(
