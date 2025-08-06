@@ -16,6 +16,7 @@
 
 import base64
 import json
+import logging
 
 from typing import Optional
 
@@ -237,6 +238,11 @@ class TableOCR(Component):
             if file_type in supported_file_type:
                 available_file_urls[file_name] = file_url
 
+        if file_names:
+            for img_name in file_names:
+                if img_name in sys_file_urls:
+                    available_file_urls[img_name] = sys_file_urls.get(img_name, "")
+
         for file_url in file_urls:
             file_name = file_url.split("/")[-1].split("?")[0]
             file_type = file_name.split(".")[-1].lower()
@@ -244,14 +250,18 @@ class TableOCR(Component):
                 available_file_urls[file_name] = file_url
             
         for file_name, file_url in available_file_urls.items():
-            req = TableOCRRequest()
-            req.url = file_url
-            req.cell_contents = "false"
-            resp, raw_data = self._recognize(req, request_id=traceid)
-            tables_result = proto.Message.to_dict(resp)["tables_result"]
-            markdowns = self.get_table_markdown(tables_result)
-            result[file_name] = markdowns
+            try:
+                req = TableOCRRequest()
+                req.url = file_url
+                req.cell_contents = "false"
+                resp, raw_data = self._recognize(req, request_id=traceid)
+                tables_result = proto.Message.to_dict(resp)["tables_result"]
+                markdowns = self.get_table_markdown(tables_result)
+                result[file_name] = markdowns
 
-            result = json.dumps(result, ensure_ascii=False)
-            yield self.create_output(type="text", text=result, raw_data=raw_data, visible_scope="llm")
-            yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
+                result = json.dumps(result, ensure_ascii=False)
+                yield self.create_output(type="text", text=result, raw_data=raw_data, visible_scope="llm")
+                yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
+            except Exception as e:
+                logging.warning(f"{file_name} ocr failed with exception: {e}")
+                continue

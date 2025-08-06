@@ -15,7 +15,7 @@
 r"""图像内容理解"""
 import base64
 import time
-
+import logging
 from typing import Optional
 
 from appbuilder.core.component import Component, ComponentOutput
@@ -207,6 +207,12 @@ class ImageUnderstand(Component):
             file_type = file_name.split(".")[-1].lower()
             if file_type in supported_file_type:
                 available_img_urls[file_name] = file_url
+
+        if img_names:
+            for img_name in img_names:
+                if img_name in sys_file_urls:
+                    available_img_urls[img_name] = sys_file_urls.get(img_name, "")
+
         for img_url in img_urls:
             file_name = img_url.split("/")[-1].split("?")[0]
             file_type = file_name.split(".")[-1].lower()
@@ -214,12 +220,16 @@ class ImageUnderstand(Component):
                 available_img_urls[file_name] = img_url
         
         for img_name, img_url in available_img_urls.items():
-            rec_res, raw_data = self._recognize_w_post_process(img_name, img_url, available_img_urls, request_id=traceid)
-            rec_res = f"{img_name}内容: " + rec_res
-            llm_result = self.create_output(type="text", text=rec_res, name="text_1", raw_data=raw_data, visible_scope='llm')
-            yield llm_result
-            user_result = self.create_output(type="text", text="", name="text_2", raw_data=raw_data, visible_scope='user')
-            yield user_result
+            try:
+                rec_res, raw_data = self._recognize_w_post_process(img_name, img_url, available_img_urls, request_id=traceid)
+                rec_res = f"{img_name}内容: " + rec_res
+                llm_result = self.create_output(type="text", text=rec_res, name="text_1", raw_data=raw_data, visible_scope='llm')
+                yield llm_result
+                user_result = self.create_output(type="text", text="", name="text_2", raw_data=raw_data, visible_scope='user')
+                yield user_result
+            except Exception as e:
+                logging.warning(f"{img_name} ocr failed with exception: {e}")
+                continue
 
     def _recognize_w_post_process(
         self,

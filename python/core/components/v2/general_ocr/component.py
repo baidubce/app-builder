@@ -13,6 +13,7 @@
 r"""general ocr component."""
 import base64
 import json
+import logging
 import requests
 import os.path
 
@@ -278,7 +279,7 @@ class GeneralOCR(Component):
         pdf_map = {}
         img_names = [os.path.basename(name) for name in img_names]
         pdf_names = [os.path.basename(name) for name in pdf_names]
-        for file_name, file_url in sys_file_urls:
+        for file_name, file_url in sys_file_urls.items():
             if file_url in img_urls or file_name in img_names:
                 img_map[file_name] = file_url
             elif file_name in pdf_names or file_url in pdf_urls:
@@ -304,37 +305,46 @@ class GeneralOCR(Component):
     
         if img_map:
             for img_name, img_url in img_map.items():
-                req = GeneralOCRRequest(url=img_url)
-                req.detect_direction = detect_direction
-                req.language_type = language_type
-                req.multidirectional_recognize = multidirectional_recognize
-                result_response, raw_data = self._recognize(req, request_id=traceid)
-                result = proto.Message.to_dict(result_response)
-                results = {
-                    f"{img_name}识别结果": " \n".join(item["words"] for item in result["words_result"])
-                }
-                res = json.dumps(results, ensure_ascii=False, indent=4)
-                yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
-                yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
+                try:
+                    req = GeneralOCRRequest(url=img_url)
+                    req.detect_direction = detect_direction
+                    req.language_type = language_type
+                    req.multidirectional_recognize = multidirectional_recognize
+                    result_response, raw_data = self._recognize(req, request_id=traceid)
+                    result = proto.Message.to_dict(result_response)
+                    results = {
+                        f"{img_name}识别结果": " \n".join(item["words"] for item in result["words_result"])
+                    }
+                    res = json.dumps(results, ensure_ascii=False, indent=4)
+                    yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
+                    yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
+                except Exception as e:
+                    logging.warning(f"{img_name} ocr failed with exception: {e}")
+                    continue
 
         if pdf_map:
             for pdf_name, pdf_info in pdf_map.items():
-                pdf_url = pdf_info.get("url", None)
-                pdf_file_num = pdf_info.get("page_num", "1")
-                raw_pdf = requests.get(pdf_url).content
-                pdf_base64 = base64.b64encode(raw_pdf)
-                req = GeneralOCRRequest(pdf_file=pdf_base64, pdf_file_num=pdf_file_num)
-                req.detect_direction = detect_direction
-                req.language_type = language_type
-                req.multidirectional_recognize = multidirectional_recognize
-                result_response, raw_data = self._recognize(req, request_id=traceid)
-                result = proto.Message.to_dict(result_response)
-                results = {
-                    f"{pdf_name}识别结果": " \n".join(item["words"] for item in result["words_result"])
-                }
-                res = json.dumps(results, ensure_ascii=False, indent=4)
-                yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
-                yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
+                try:
+                    pdf_url = pdf_info.get("url", None)
+                    pdf_file_num = pdf_info.get("page_num", "1")
+                    raw_pdf = requests.get(pdf_url).content
+                    pdf_base64 = base64.b64encode(raw_pdf)
+                    req = GeneralOCRRequest(pdf_file=pdf_base64, pdf_file_num=pdf_file_num)
+                    req.detect_direction = detect_direction
+                    req.language_type = language_type
+                    req.multidirectional_recognize = multidirectional_recognize
+                    result_response, raw_data = self._recognize(req, request_id=traceid)
+                    result = proto.Message.to_dict(result_response)
+                    results = {
+                        f"{pdf_name}识别结果": " \n".join(item["words"] for item in result["words_result"])
+                    }
+                    res = json.dumps(results, ensure_ascii=False, indent=4)
+                    yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
+                    yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
+                except Exception as e:
+                    logging.warning(f"{pdf_name} ocr failed with exception: {e}")
+                    continue
+
         if not img_map and not pdf_map:
             raise InvalidRequestArgumentError(
                 f"request format error, file url does not exist")
