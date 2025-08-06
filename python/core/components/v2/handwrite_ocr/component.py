@@ -161,8 +161,6 @@ class HandwriteOCR(Component):
             file_type = file_name.split(".")[-1].lower()
             if file_type in supported_file_type and file_name not in available_img_urls :
                 available_img_urls[file_name] = img_url
-        
-
 
         for file_name, file_url in available_img_urls.items():
             try:
@@ -194,7 +192,6 @@ class HandwriteOCR(Component):
             except Exception as e:
                 logging.warning(f"{file_name} ocr failed with exception: {e}")
                 continue
-
 
     def _recognize(
         self, 

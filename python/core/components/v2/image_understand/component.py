@@ -212,7 +212,7 @@ class ImageUnderstand(Component):
             for img_name in img_names:
                 if img_name in sys_file_urls:
                     available_img_urls[img_name] = sys_file_urls.get(img_name, "")
-            
+
         for img_url in img_urls:
             file_name = img_url.split("/")[-1].split("?")[0]
             file_type = file_name.split(".")[-1].lower()

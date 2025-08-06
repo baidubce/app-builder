@@ -344,6 +344,7 @@ class GeneralOCR(Component):
                 except Exception as e:
                     logging.warning(f"{pdf_name} ocr failed with exception: {e}")
                     continue
+
         if not img_map and not pdf_map:
             raise InvalidRequestArgumentError(
                 f"request format error, file url does not exist")
