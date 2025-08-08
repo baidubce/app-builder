@@ -253,6 +253,11 @@ class TableOCR(Component):
                 else:
                     unknown_files.append(file_name)
 
+        if file_names:
+            for img_name in file_names:
+                if img_name in sys_file_urls:
+                    available_file_urls[img_name] = sys_file_urls.get(img_name, "")
+
         for file_url in file_urls:
             if len(available_file_urls) >= 10:
                 break

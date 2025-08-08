@@ -350,7 +350,7 @@ class GeneralOCR(Component):
                     results = {
                         f"{img_name}": " \n".join(item["words"] for item in result["words_result"])
                     }
-                    res = json.dumps(results, ensure_ascii=False, indent=4)
+                    res = json.dumps(results, ensure_ascii=False)
                     yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
                     yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
                 except Exception as e:
