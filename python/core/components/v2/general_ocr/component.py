@@ -25,6 +25,7 @@ from appbuilder.core._exception import AppBuilderServerException, InvalidRequest
 from appbuilder.core.component import Component
 from appbuilder.core.components.general_ocr.model import *
 from appbuilder.core.message import Message
+from appbuilder.core.constants import COMPONENT_SUPPORT_FILE_NUMBER
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 
@@ -87,7 +88,7 @@ class GeneralOCR(Component):
                         "type": "object",
                         "description": "需要识别的PDF文件的对应页码，key为pdf_names中的文件名，value为对应的页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页",
                         "additionalProperties": {
-                            "type": "integer"
+                            "type": "string"
                         },
                         "default": {}
                     },
@@ -272,37 +273,71 @@ class GeneralOCR(Component):
             
         """
         traceid = kwargs.get("_sys_traceid", "")
+        if not img_names and not img_urls and not pdf_names and not pdf_urls:
+            raise InvalidRequestArgumentError(request_id=traceid,
+                                                message="img_names\img_urls\pdf_names\pdf_urls can not both be empty")
         sys_file_urls = kwargs.get("_sys_file_urls", {})
         support_pdf_type = ["pdf"]
         support_img_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
         img_map = {}
         pdf_map = {}
+        unsupported_files = []
+        unknown_files = []
         img_names = [os.path.basename(name) for name in img_names]
         pdf_names = [os.path.basename(name) for name in pdf_names]
-        for file_name, file_url in sys_file_urls.items():
-            if file_url in img_urls or file_name in img_names:
-                img_map[file_name] = file_url
-            elif file_name in pdf_names or file_url in pdf_urls:
-                pdf_map[file_name] = {"url": file_url, "page_num": pdf_file_num.get(file_name, "1")}
+
+        for img_name in img_names:
+            if len(img_map) >= COMPONENT_SUPPORT_FILE_NUMBER:
+                break
+            file_type = img_name.split(".")[-1].lower()
+            if img_name in sys_file_urls:
+                if file_type in support_img_type:
+                    img_map[img_name] = sys_file_urls.get(img_name, "")
+                else:
+                    unsupported_files.append(img_name)
             else:
-                file_type = file_name.split(".")[-1].lower()
+                unknown_files.append(img_name)
+
+        for pdf_name in pdf_names:
+            if len(img_map) + len(pdf_map) >= 10:
+                break
+            file_type = pdf_name.split(".")[-1].lower()
+            if pdf_name in sys_file_urls:
                 if file_type in support_pdf_type:
-                    pdf_map[file_name] = {"url": file_url, "page_num": pdf_file_num.get(file_name, "1")}
-                elif file_type in support_img_type:
-                    img_map[file_name] = file_url
+                    pdf_map[pdf_name] = {"url": sys_file_urls.get(pdf_name, ""), "page_num": pdf_file_num.get(pdf_name, "1")}
+                else:
+                    unsupported_files.append(pdf_name)
+            else:
+                unknown_files.append(pdf_name)
 
         for img_url in img_urls:
+            if len(img_map) + len(pdf_map) >= 10:
+                break
+            if img_url in list(sys_file_urls.values()):
+                continue
             file_name = img_url.split("/")[-1].split("?")[0]
             file_type = file_name.split(".")[-1].lower()
-            if file_type in support_img_type and file_name not in img_map:
-                img_map[file_name] = img_url 
+            if file_type in support_img_type:
+                img_map[img_url] = img_url 
+            else:
+                unsupported_files.append(img_url)
 
-        for pdf_url in pdf_urls: 
+        for pdf_url in pdf_urls:
+            if len(img_map) + len(pdf_map) >= 10:
+                break
+            if pdf_url in list(sys_file_urls.values()):
+                continue
             file_name = pdf_url.split("/")[-1].split("?")[0]
             file_type = file_name.split(".")[-1].lower()
-            if file_type in support_pdf_type and file_name not in pdf_map:
-                pdf_map[file_name] = {"url": pdf_url, "page_num": pdf_file_num.get(file_name, "1")}
-    
+            if file_type in support_pdf_type:
+                pdf_map[pdf_url] = {"url": pdf_url, "page_num": pdf_file_num.get(file_name, "1")}
+            else:
+                unsupported_files.append(pdf_url)
+
+        if not img_map and not pdf_map:
+            raise InvalidRequestArgumentError(
+                f"request format error, file url does not exist")
+
         if img_map:
             for img_name, img_url in img_map.items():
                 try:
@@ -313,7 +348,7 @@ class GeneralOCR(Component):
                     result_response, raw_data = self._recognize(req, request_id=traceid)
                     result = proto.Message.to_dict(result_response)
                     results = {
-                        f"{img_name}识别结果": " \n".join(item["words"] for item in result["words_result"])
+                        f"{img_name}": " \n".join(item["words"] for item in result["words_result"])
                     }
                     res = json.dumps(results, ensure_ascii=False, indent=4)
                     yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
@@ -336,15 +371,51 @@ class GeneralOCR(Component):
                     result_response, raw_data = self._recognize(req, request_id=traceid)
                     result = proto.Message.to_dict(result_response)
                     results = {
-                        f"{pdf_name}识别结果": " \n".join(item["words"] for item in result["words_result"])
+                        f"{pdf_name}": " \n".join(item["words"] for item in result["words_result"])
                     }
-                    res = json.dumps(results, ensure_ascii=False, indent=4)
+                    res = json.dumps(results, ensure_ascii=False)
                     yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
                     yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
                 except Exception as e:
                     logging.warning(f"{pdf_name} ocr failed with exception: {e}")
                     continue
-
-        if not img_map and not pdf_map:
-            raise InvalidRequestArgumentError(
-                f"request format error, file url does not exist")
+        
+        for file_name in unknown_files:
+            results = {
+                f"{file_name}": "无法获取url，请确认是否上传成功"
+            }
+            res = json.dumps(results, ensure_ascii=False)
+            llm_result = self.create_output(
+                type = "text",
+                visible_scope= "llm",
+                text=res,
+                name="llm_text"
+            )
+            yield llm_result
+            user_result = self.create_output(
+                type = "text",
+                visible_scope= "user",
+                text="",
+                name="user_text"
+            )
+            yield user_result
+        
+        for file_name in unsupported_files:
+            results = {
+                f"{file_name}": "不支持的文件类型，请确认是否为图片或者pdf文件"
+            }
+            res = json.dumps(results, ensure_ascii=False)
+            llm_result = self.create_output(
+                type = "text",
+                visible_scope= "llm",
+                text=res,
+                name="llm_text"
+            )
+            yield llm_result
+            user_result = self.create_output(
+                type = "text",
+                visible_scope= "user",
+                text="",
+                name="user_text"
+            )
+            yield user_result

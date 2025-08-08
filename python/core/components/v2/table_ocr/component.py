@@ -25,6 +25,7 @@ from appbuilder.core.component import Component
 from appbuilder.core.components.table_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
+from appbuilder.core.constants import COMPONENT_SUPPORT_FILE_NUMBER
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
@@ -228,26 +229,41 @@ class TableOCR(Component):
             InvalidRequestArgumentError: 如果请求格式错误，文件URL不存在。
         
         """
+        if not file_names and not file_urls:
+            raise InvalidRequestArgumentError(
+                request_id=kwargs.get("_sys_traceid", ""),
+                message="file_names and file_urls cannot both be empty"
+            )
         supported_file_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
-        result = {}
         traceid = kwargs.get("_sys_traceid", "")
         sys_file_urls = kwargs.get("_sys_file_urls", {})
         available_file_urls = {}
-        for file_name, file_url in sys_file_urls.items():
-            file_type = file_name.split(".")[-1].lower()
-            if file_type in supported_file_type:
-                available_file_urls[file_name] = file_url
-
+        unsupported_files = []
+        unknown_files = []
         if file_names:
-            for img_name in file_names:
-                if img_name in sys_file_urls:
-                    available_file_urls[img_name] = sys_file_urls.get(img_name, "")
+            for file_name in file_names:
+                if len(available_file_urls) >= 10:
+                    break
+                file_type = file_name.split(".")[-1].lower()
+                if file_name in sys_file_urls:
+                    if file_type in supported_file_type:
+                        available_file_urls[file_name] = sys_file_urls.get(file_name, "")
+                    else:
+                        unsupported_files.append(file_name)
+                else:
+                    unknown_files.append(file_name)
 
         for file_url in file_urls:
+            if len(available_file_urls) >= 10:
+                break
+            if file_url in list(sys_file_urls.values()):
+                continue
             file_name = file_url.split("/")[-1].split("?")[0]
             file_type = file_name.split(".")[-1].lower()
-            if  file_type in supported_file_type and file_name not in available_file_urls:
-                available_file_urls[file_name] = file_url
+            if file_type in supported_file_type:
+                available_file_urls[file_url] = file_url
+            else:
+                unsupported_files.append(file_url)
             
         for file_name, file_url in available_file_urls.items():
             try:
@@ -257,11 +273,28 @@ class TableOCR(Component):
                 resp, raw_data = self._recognize(req, request_id=traceid)
                 tables_result = proto.Message.to_dict(resp)["tables_result"]
                 markdowns = self.get_table_markdown(tables_result)
-                result[file_name] = markdowns
-
-                result = json.dumps(result, ensure_ascii=False)
-                yield self.create_output(type="text", text=result, raw_data=raw_data, visible_scope="llm")
+                rec_res = {
+                    file_name: markdowns
+                }
+                res = json.dumps(rec_res, ensure_ascii=False)
+                yield self.create_output(type="text", text=res, raw_data=raw_data, visible_scope="llm")
                 yield self.create_output(type="text", text="", raw_data=raw_data, visible_scope="user")
             except Exception as e:
                 logging.warning(f"{file_name} ocr failed with exception: {e}")
                 continue
+
+        for file in unsupported_files:
+            rec_res = {
+                file: "不支持的文件类型，请确认是否为图片文件"
+            }
+            res = json.dumps(rec_res, ensure_ascii=False)
+            yield self.create_output(type="text", text=res, name="text_1", visible_scope='llm')
+            yield self.create_output(type="text", text=f"", name="text_2", visible_scope='user')
+        
+        for file in unknown_files:
+            rec_res = {
+                file: "无法获取url，请确认是否上传成功"
+            }
+            res = json.dumps(rec_res, ensure_ascii=False)
+            yield self.create_output(type="text", text=res, name="text_1", visible_scope='llm')
+            yield self.create_output(type="text", text=f"", name="text_2", visible_scope='user')
