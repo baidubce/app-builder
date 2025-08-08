@@ -75,11 +75,9 @@ class TestHandWriteOCR(unittest.TestCase):
         self.assertIsNotNone(msg.content)
         
     def test_tool_eval(self):
-        result=self.handwrite_ocr.tool_eval(file_names=['test.jpg'], file_urls=[self.image_url])
-        for item in result:
-            print(item)
         result=self.handwrite_ocr.tool_eval(
-            file_names=['test.jpg'],
+            file_names=['test.jpg', "test_2"],
+            file_urls = ["https://bj.bcebos.com/v1/appbuilder/test_image_understand.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T09%3A41%3A01Z%2F-1%2Fhost%2Fe8665506e30e0edaec4f1cc84a2507c4cb3fdb9b769de3a5bfe25c372b7e56e6"],
             _sys_file_urls={'test.jpg':self.image_url}
             )
         res=next(result)

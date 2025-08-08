@@ -19,7 +19,7 @@ import appbuilder
 import time 
 
 from appbuilder.core.message import Message
-from appbuilder.core._exception import NoFileUploadedExecption
+from appbuilder.core._exception import NoFileUploadedExecption, InvalidRequestArgumentError
 from appbuilder.core.components.v2 import ImageUnderstand
 
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
@@ -87,7 +87,7 @@ class TestImageUnderstand(unittest.TestCase):
         img_name = "test_img.jpg"
         _sys_file_urls = {"开户许可证.jpeg": "https://agi-dev-platform-file.bj.bcebos.com/files_qa/10b495b5ceea44e5a1e7d194f3a59ed7/uploads/file-wjka6g3h_%E5%BC%80%E6%88%B7%E8%AE%B8%E5%8F%AF%E8%AF%81.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2025-08-04T03%3A28%3A23Z%2F259200%2Fhost%2F2e3355869d9f62143051a12c2b19bc39b33d439e18839fe6dd15d0f37ab3a999"}
 
-        result = self.image_understand.tool_eval(img_names=[img_name], img_urls=img_urls, _sys_file_urls=_sys_file_urls)
+        result = self.image_understand.tool_eval(img_names=[img_name, "hh"], img_urls=img_urls, _sys_file_urls=_sys_file_urls)
         # for item in result:
         #     print(item)
         res = [item for item in result]
@@ -97,7 +97,7 @@ class TestImageUnderstand(unittest.TestCase):
 
     def test_tool_eval_invalid(self):
         """测试 tool 方法对无效请求的处理。"""
-        with self.assertRaises(NoFileUploadedExecption):
+        with self.assertRaises(InvalidRequestArgumentError):
             result = self.image_understand.tool_eval(name="image_understand", streaming=True,
                                                      origin_query="")
             next(result)

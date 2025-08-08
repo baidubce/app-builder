@@ -15,14 +15,16 @@
 r"""图像内容理解"""
 import base64
 import time
+import json
 import logging
 from typing import Optional
 
 from appbuilder.core.component import Component, ComponentOutput
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
-from appbuilder.core._exception import AppBuilderServerException, NoFileUploadedExecption
+from appbuilder.core._exception import AppBuilderServerException, NoFileUploadedExecption, InvalidRequestArgumentError
 from appbuilder.core.components.image_understand.model import *
+from appbuilder.core.constants import COMPONENT_SUPPORT_FILE_NUMBER
 from typing import Generator, Union
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
@@ -196,40 +198,73 @@ class ImageUnderstand(Component):
         Returns:
             Union[Generator[str, None, None], str]: 图片内容理解结果
         """
-        supported_file_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
         traceid = kwargs.get("_sys_traceid", '')
+        if not img_names and not img_urls:
+            raise InvalidRequestArgumentError(message="img_names and img_urls cannot both be empty",
+                                              request_id=traceid)
+        supported_file_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
         sys_file_urls = kwargs.get("_sys_file_urls", {})
         if not img_urls and not sys_file_urls:
             raise NoFileUploadedExecption("No file uploaded!")
     
         available_img_urls = {}
-        for file_name, file_url in sys_file_urls.items():
-            file_type = file_name.split(".")[-1].lower()
-            if file_type in supported_file_type:
-                available_img_urls[file_name] = file_url
-
+        unsupported_files = []
+        unknown_files = []
         if img_names:
             for img_name in img_names:
+                if len(available_img_urls) >= COMPONENT_SUPPORT_FILE_NUMBER:
+                    break
+                file_type = img_name.split(".")[-1].lower()
                 if img_name in sys_file_urls:
-                    available_img_urls[img_name] = sys_file_urls.get(img_name, "")
-
+                    if file_type in supported_file_type:
+                        available_img_urls[img_name] = sys_file_urls.get(img_name, "")
+                    else:
+                        unsupported_files.append(img_name)
+                else:
+                    unknown_files.append(img_name)
+            
         for img_url in img_urls:
+            if len(available_img_urls) >= COMPONENT_SUPPORT_FILE_NUMBER:
+                break
+            if img_url in list(sys_file_urls.values()):
+                continue
             file_name = img_url.split("/")[-1].split("?")[0]
             file_type = file_name.split(".")[-1].lower()
-            if file_type in supported_file_type and file_name not in available_img_urls :
-                available_img_urls[file_name] = img_url
+            if file_type in supported_file_type:
+                available_img_urls[img_url] = img_url
+            else:
+                unsupported_files.append(img_url)
         
         for img_name, img_url in available_img_urls.items():
             try:
                 rec_res, raw_data = self._recognize_w_post_process(img_name, img_url, available_img_urls, request_id=traceid)
-                rec_res = f"{img_name}内容: " + rec_res
-                llm_result = self.create_output(type="text", text=rec_res, name="text_1", raw_data=raw_data, visible_scope='llm')
+                rec_res = {
+                    img_name: rec_res
+                }
+                res = json.dumps(rec_res, ensure_ascii=False)
+                llm_result = self.create_output(type="text", text=res, name="text_1", raw_data=raw_data, visible_scope='llm')
                 yield llm_result
                 user_result = self.create_output(type="text", text="", name="text_2", raw_data=raw_data, visible_scope='user')
                 yield user_result
             except Exception as e:
                 logging.warning(f"{img_name} ocr failed with exception: {e}")
                 continue
+
+        for file in unsupported_files:
+            rec_res = {
+                file: "不支持的文件类型，请确认是否为图片文件"
+            }
+            res = json.dumps(rec_res, ensure_ascii=False)
+            yield self.create_output(type="text", text=res, name="text_1", visible_scope='llm')
+            yield self.create_output(type="text", text=f"", name="text_2", visible_scope='user')
+        
+        for file in unknown_files:
+            rec_res = {
+                file: "无法获取url，请确认是否上传成功"
+            }
+            res = json.dumps(rec_res, ensure_ascii=False)
+            yield self.create_output(type="text", text=res, name="text_1", visible_scope='llm')
+            yield self.create_output(type="text", text=f"", name="text_2", visible_scope='user')
 
     def _recognize_w_post_process(
         self,

@@ -12,6 +12,7 @@
 
 r"""手写文字识别组件"""
 import base64
+import json
 import logging
 from typing import Optional
 from appbuilder.core._exception import AppBuilderServerException, InvalidRequestArgumentError
@@ -20,6 +21,7 @@ from appbuilder.core.components.v2.handwrite_ocr.model import *
 from appbuilder.core.message import Message
 from appbuilder.core._client import HTTPClient
 from appbuilder.core import utils
+from appbuilder.core.constants import COMPONENT_SUPPORT_FILE_NUMBER
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
 
 class HandwriteOCR(Component):
@@ -140,27 +142,41 @@ class HandwriteOCR(Component):
         Yields:
             Generator[Output]: 生成器，每次迭代产生一个输出对象
         """
+        if not file_names and not file_urls:
+            raise InvalidRequestArgumentError(request_id=traceid,
+                                                message="file_names and file_urls cannot both be empty")
         supported_file_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
         traceid = kwargs.get("_sys_traceid", "")
-        result = ""
 
         sys_file_urls = kwargs.get('_sys_file_urls', {})
         available_img_urls = {}
-        for file_name, file_url in sys_file_urls.items():
-            file_type = file_name.split(".")[-1].lower()
-            if file_type in supported_file_type:
-                available_img_urls[file_name] = file_url
-        
+        unsupported_files  = []
+        unknown_file_name = []
+
         if file_names:
             for file_name in file_names:
+                if len(available_img_urls) >= COMPONENT_SUPPORT_FILE_NUMBER:
+                    break
+                file_type = file_name.split(".")[-1].lower()
                 if file_name in sys_file_urls:
-                    available_img_urls[file_name] = sys_file_urls.get(file_name, "")
-                    
+                    if file_type in supported_file_type:
+                        available_img_urls[file_name] = sys_file_urls.get(file_name, "")
+                    else: #不支持的文件类型
+                        unsupported_files.append(file_name)
+                else: #url未知
+                    unknown_file_name.append(file_name)
+
         for img_url in file_urls:
+            if len(available_img_urls) >= COMPONENT_SUPPORT_FILE_NUMBER:
+                break
+            if img_url in list(sys_file_urls.values()):  #只考虑用户手动传的file_url
+                continue
             file_name = img_url.split("/")[-1].split("?")[0]
             file_type = file_name.split(".")[-1].lower()
-            if file_type in supported_file_type and file_name not in available_img_urls :
-                available_img_urls[file_name] = img_url
+            if file_type in supported_file_type:
+                available_img_urls[img_url] = img_url
+            else:   #不支持的文件类型
+                unsupported_files.append(img_url)
 
         for file_name, file_url in available_img_urls.items():
             try:
@@ -172,12 +188,14 @@ class HandwriteOCR(Component):
                 req.detect_alteration = "true"
                 response = self._recognize(req, request_id=traceid)
                 text = "".join([w.words for w in response.words_result])
-                result = f"{file_name}的手写识别结果是：{text} "
-
+                results = {
+                    file_name: text
+                }
+                res = json.dumps(results, ensure_ascii=False)
                 llm_result = self.create_output(
                     type = "text",
                     visible_scope= "llm",
-                    text=result,
+                    text=res,
                     name="llm_text"
                 )
                 yield llm_result
@@ -192,6 +210,46 @@ class HandwriteOCR(Component):
             except Exception as e:
                 logging.warning(f"{file_name} ocr failed with exception: {e}")
                 continue
+        
+        for file_name in unknown_file_name:
+            results = {
+                file_name: "无法获取url，请确认是否上传成功"
+            }
+            res = json.dumps(results, ensure_ascii=False)
+            llm_result = self.create_output(
+                type = "text",
+                visible_scope= "llm",
+                text=res,
+                name="llm_text"
+            )
+            yield llm_result
+            user_result = self.create_output(
+                type = "text",
+                visible_scope= "user",
+                text="",
+                name="user_text"
+            )
+            yield user_result
+        
+        for file_name in unsupported_files:
+            results = {
+                file_name: "不支持的文件类型，请确认是否为图片"
+            }
+            res = json.dumps(results, ensure_ascii=False)
+            llm_result = self.create_output(
+                type = "text",
+                visible_scope= "llm",
+                text=res,
+                name="llm_text"
+            )
+            yield llm_result
+            user_result = self.create_output(
+                type = "text",
+                visible_scope= "user",
+                text="",
+                name="user_text"
+            )
+            yield user_result
 
     def _recognize(
         self, 

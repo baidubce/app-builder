@@ -41,11 +41,12 @@ class TestGeneralOCR(unittest.TestCase):
                     "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-" \
                     "11T10%3A59%3A17Z%2F-1%2Fhost%2F081bf7bcccbda5207c82a4de074628b04ae" \
                     "857a27513734d765495f89ffa5f73"
+        img_names = ["general_ocr_test.png", "test"]
         img_urls = [
                    "https://agi-dev-platform-file.bj.bcebos.com/files_qa/10b495b5ceea44e5a1e7d194f3a59ed7/uploads/file-6cxezmhc_1.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2025-08-04T03%3A27%3A03Z%2F259200%2Fhost%2Ff420874be9fe2511a73eab458339aad110d97c55742b14fb4fabf78cc0e1d4cc",
                    "https://agi-dev-platform-file.bj.bcebos.com/files_qa/10b495b5ceea44e5a1e7d194f3a59ed7/uploads/file-wjka6g3h_%E5%BC%80%E6%88%B7%E8%AE%B8%E5%8F%AF%E8%AF%81.jpeg?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2025-08-04T03%3A28%3A23Z%2F259200%2Fhost%2F2e3355869d9f62143051a12c2b19bc39b33d439e18839fe6dd15d0f37ab3a999"]
         pdf_urls = ["https://agi-dev-platform-file.bj.bcebos.com/files_qa/10b495b5ceea44e5a1e7d194f3a59ed7/uploads/file-hf7nhtdw_8_%E8%B4%A8%E9%87%8F%E6%B5%81%E9%87%8F%E8%AE%A1-1.pdf?authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2025-08-04T03%3A22%3A29Z%2F259200%2Fhost%2Fd1e301ba51cbe39fbbe10a334c5e4f75d71b40522916e25205e83404b6cea791"]
-        result = self.com.tool_eval(img_urls=img_urls, pdf_urls=pdf_urls)
+        result = self.com.tool_eval(img_names=img_names, img_urls=img_urls, pdf_urls=pdf_urls, _sys_file_urls={'general_ocr_test.png': img_url})
         for res in result:
             assert isinstance(res, ComponentOutput)
             print(res.content)
