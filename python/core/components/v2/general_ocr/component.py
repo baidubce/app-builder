@@ -226,8 +226,8 @@ class GeneralOCR(Component):
         pdf_urls: Optional[list] = [],
         pdf_file_num: Optional[dict] = {},
         language_type: Optional[str] = 'CHN_ENG',
-        detect_direction: Optional[bool] = False,
-        multidirectional_recognize: Optional[bool] = True,
+        detect_direction: Optional[str] = "false",
+        multidirectional_recognize: Optional[str] = "true",
         **kwargs
         ):
         """
@@ -276,8 +276,6 @@ class GeneralOCR(Component):
         if not img_names and not img_urls and not pdf_names and not pdf_urls:
             raise InvalidRequestArgumentError(request_id=traceid,
                                                 message="img_names\img_urls\pdf_names\pdf_urls can not both be empty")
-        detect_direction = "true" if detect_direction else "false"
-        multidirectional_recognize = "true" if multidirectional_recognize else "false"
         sys_file_urls = kwargs.get("_sys_file_urls", {})
         support_pdf_type = ["pdf"]
         support_img_type = ["png", "jpg", "jpeg", "webp", "heic", "tif", "tiff", "dcm", "mha", "nii.gz"]
