@@ -19,7 +19,7 @@ class TestManifest(unittest.TestCase):
             无返回值，方法中执行了环境变量的赋值操作。
         """
         os.environ["APPBUILDER_TOKEN"] = (
-            "bce-v3/ALTAK-DKaql4wY9ojwp2uMe8IEj/7ae1190aff0684153de365381d9b06beab3064c5"
+            "your api key"
         )
         self.app_id = "7cc4c21f-0e25-4a76-baf7-01a2b923a1a7"
 

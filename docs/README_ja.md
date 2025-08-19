@@ -71,7 +71,7 @@ import appbuilder
 import os
 
 # 環境変数にTOKENを設定します。以下のTOKENはアクセスとQPSが制限された試用TOKENです。正式な使用には個人のTOKENに置き換えてください。
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # プロンプトテンプレートを定義します。
 template_str = "あなたは{role}の役割を果たします。私の質問に答えてください。\n\n質問：{question}。\n\n回答："
@@ -122,7 +122,7 @@ import appbuilder
 import os
 
 # 環境変数にTOKENを設定します。以下のTOKENはアクセスとQPSが制限された試用TOKENです。正式な使用には個人のTOKENに置き換えてください。
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE-Lite-AppBuilder-8K")
 
@@ -182,7 +182,7 @@ import appbuilder
 import os
 
 # 環境変数にTOKENを設定します。以下のTOKENはアクセスとQPSが制限された試用TOKENです。正式な使用には個人のTOKENに置き換えてください。
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # AppBuilderのウェブページからアプリケーションIDを取得し、以下にラップメンターのアプリケーションIDを入力します。
 app_id = "4678492a-5864-472e-810a-654538d3503c"
