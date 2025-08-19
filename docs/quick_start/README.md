@@ -24,8 +24,8 @@ AppBuilder提供获取千帆模型列表的函数，在运行具体组件之前�
 import appbuilder
 import os
 
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+# 设置环境中的TOKEN，请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 models = appbuilder.get_model_list(api_type_filter=["chat"], is_available=True)
 print(", ".join(models))
 ```
@@ -51,8 +51,8 @@ ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-3.5-4K-0205, ERNIE-3.5-8K-0205, ERNIE-3.5-8K-122
 import appbuilder
 import os
 
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+# 设置环境中的TOKEN，请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # 空模版组件
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
@@ -69,8 +69,8 @@ print(playground(input, stream=False, temperature=1e-10))
 import appbuilder
 import os
 
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+# 设置环境中的TOKEN，请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # 相似问生成组件
 similar_q = appbuilder.SimilarQuestion(model="ERNIE Speed-AppBuilder")
@@ -86,8 +86,8 @@ print(similar_q(input))
 import appbuilder
 import os
 
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+# 设置环境中的TOKEN，请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # 此处填写线上Agent应用ID，可在【AppBuilder网页端-我的应用界面】查看
 # 本示例提供的Agent应用为：地理小达人
@@ -140,8 +140,8 @@ from appbuilder import (
 
 
 if __name__ == "__main__":
-    # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-    os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+    # 设置环境中的TOKEN，请替换为您的个人TOKEN
+    os.environ["APPBUILDER_TOKEN"] = "your api key"
 
     # 此处填写线上Agent应用ID，可在【AppBuilder网页端-我的应用界面】查看
     # 本示例提供的Agent应用为：地理小达人

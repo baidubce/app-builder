@@ -70,7 +70,7 @@ func TestAppBuilderClientRunWithToolCall(t *testing.T) {
 	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
 	os.Setenv("APPBUILDER_LOGFILE", "")
 	os.Setenv("GATEWAY_URL_V2", "https://apaas-api-sandbox.baidu-int.com/")
-	config, err := NewSDKConfig("", "bce-v3/ALTAK-vGrDN4BvjP15rDrXBI9OC/6d435ece62ed09b396e1b051bd87869c11861332")
+	config, err := NewSDKConfig("", "your api key")
 	if err != nil {
 		t.Fatalf("new http client config failed: %v", err)
 	}

@@ -73,8 +73,8 @@ python3 -m pip install --upgrade appbuilder-sdk
 import appbuilder
 import os
 
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+# 设置环境中的TOKEN，请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # 定义prompt模板
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
@@ -125,8 +125,8 @@ Java提供了多种垃圾回收器，如串行回收器、并行回收器、CMS�
 import appbuilder
 import os
 
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+# 设置环境中的TOKEN，请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE Speed-AppBuilder")
 
@@ -185,8 +185,8 @@ print(result.model_dump_json(indent=4))
 import appbuilder
 import os
 
-# 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
-os.environ["APPBUILDER_TOKEN"] = "bce-v3/ALTAK-n5AYUIUJMarF7F7iFXVeK/1bf65eed7c8c7efef9b11388524fa1087f90ea58"
+# 设置环境中的TOKEN，请替换为您的个人TOKEN
+os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # 从AppBuilder网页获取并传入应用ID，以下为说唱导师应用ID
 app_id = "4678492a-5864-472e-810a-654538d3503c"
