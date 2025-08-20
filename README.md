@@ -90,7 +90,7 @@ python3 -m pip install --upgrade appbuilder-sdk
 
 ## 快速开始你的AI原生应用开发之旅
 > - 请在`>=3.9`的Python环境安装`appbuilder-sdk`后使用该端到端应用示例
-> - 示例中提供了试用Token，访问和QPS受限，正式使用请替换为您的个人Token
+> - 示例中请替换为您的个人Token
 
 
 ### 1. 调用大模型

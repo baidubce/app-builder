@@ -140,7 +140,7 @@ from appbuilder import (
 
 
 if __name__ == "__main__":
-    # 设置环境中的TOKEN，以下TOKEN为访问和QPS受限的试用TOKEN，正式使用请替换为您的个人TOKEN
+    # 设置环境中的TOKEN，请替换为您的个人TOKEN
     os.environ["APPBUILDER_TOKEN"] = "your api key"
 
     # 此处填写线上Agent应用ID，可在【AppBuilder网页端-我的应用界面】查看
