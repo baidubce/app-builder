@@ -70,7 +70,7 @@ python3 -m pip install --upgrade appbuilder-sdk
 import appbuilder
 import os
 
-# 環境変数にTOKENを設定します。以下のTOKENはアクセスとQPSが制限された試用TOKENです。正式な使用には個人のTOKENに置き換えてください。
+# 環境変数にTOKENを設定します。正式な使用には個人のTOKENに置き換えてください。
 os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # プロンプトテンプレートを定義します。
@@ -121,7 +121,7 @@ Javaは、シリアルコレクタ、パラレルコレクタ、CMSコレクタ�
 import appbuilder
 import os
 
-# 環境変数にTOKENを設定します。以下のTOKENはアクセスとQPSが制限された試用TOKENです。正式な使用には個人のTOKENに置き換えてください。
+# 環境変数にTOKENを設定します。正式な使用には個人のTOKENに置き換えてください。
 os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE-Lite-AppBuilder-8K")
@@ -181,7 +181,7 @@ print(result.model_dump_json(indent=4))
 import appbuilder
 import os
 
-# 環境変数にTOKENを設定します。以下のTOKENはアクセスとQPSが制限された試用TOKENです。正式な使用には個人のTOKENに置き換えてください。
+# 環境変数にTOKENを設定します。正式な使用には個人のTOKENに置き換えてください。
 os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # AppBuilderのウェブページからアプリケーションIDを取得し、以下にラップメンターのアプリケーションIDを入力します。
