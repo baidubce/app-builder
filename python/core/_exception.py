@@ -190,3 +190,24 @@ class InternalServerException(BaseRPCException):
 class NoFileUploadedExecption(Exception):
     r"""NoFileUploadedExecption"""
     pass
+
+
+class CustomError(Exception):
+    """自定义错误类，包含错误码"""
+    
+    def __init__(self, code, message=""):
+        """
+        初始化自定义错误
+        
+        Args:
+            message (str): 错误消息
+            code (int/str): 错误码
+        """
+        super().__init__(message)
+        self.code = code
+        self.message = message
+    
+    def __str__(self):
+        if self.code:
+            return f"[{self.code}] {self.message}"
+        return self.message
