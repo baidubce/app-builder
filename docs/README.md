@@ -1,4 +1,4 @@
-# AppBuilder-SDK Documentataion
+# AppBuilder-SDK Documentation
 
 ## Github 文档
 - [首页](https://github.com/baidubce/app-builder/blob/master/docs/README.md)
