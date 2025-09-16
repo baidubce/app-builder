@@ -176,6 +176,26 @@ public class AppBuilderClientTest {
             System.out.println(result);
         }
     }
+    @Test
+    public void AppBuilderClientRunParametersTest() throws IOException, AppBuilderServerException {
+        appId = "2313e282-baa6-4db6-92dd-a21e99cfd59e";
+        AppBuilderClient builder = new AppBuilderClient(appId);
+        String conversationId = builder.createConversation();
+        assertNotNull(conversationId);
+
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(appId, conversationId, "国庆假期我要回老家", false);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("city", "信阳");
+        request.setParameters(parameters);
+
+        AppBuilderClientIterator itor = builder.run(request);
+        assertTrue(itor.hasNext());
+        while (itor.hasNext()) {
+            AppBuilderClientResult result = itor.next();
+            System.out.println(result);
+        }
+    }
 
     @Test
     public void AppBuilderClientRunChatflowTest() throws IOException, AppBuilderServerException {

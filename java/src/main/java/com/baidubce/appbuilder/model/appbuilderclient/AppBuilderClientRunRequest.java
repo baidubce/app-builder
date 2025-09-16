@@ -24,6 +24,8 @@ public class AppBuilderClientRunRequest {
     @SerializedName("mcp_authorization")
     private List<Map<String, Object>> mcpAuthorization = null;
 
+    private Map<String,Object> parameters;
+
     public AppBuilderClientRunRequest() {
     }
 
@@ -142,6 +144,14 @@ public class AppBuilderClientRunRequest {
 
     public List<Map<String, Object>> getMcpAuthorization() {
         return mcpAuthorization;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
     }
 
     public static class Tool {
