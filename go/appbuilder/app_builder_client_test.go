@@ -923,3 +923,44 @@ func TestAppBuilderClientUploadFile(t *testing.T) {
 		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
 }
+
+func TestAppBuilderClientRunParameters(t *testing.T) {
+	t.Parallel() // 并发运行
+	// 测试逻辑
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	appID := "2313e282-baa6-4db6-92dd-a21e99cfd59e"
+	client, err := NewAppBuilderClient(appID, config)
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new AppBuilderClient instance failed")
+	}
+
+	conversationID, err := client.CreateConversation()
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("create conversation failed: %v", err)
+	}
+
+	res, err := client.Run(AppBuilderClientRunRequest{
+		AppID:          appID,
+		Query:          "国庆长假",
+		Stream:         false,
+		ConversationID: conversationID,
+		Parameters: map[string]any{
+			"city": "上海",
+		},
+	})
+	if err != nil {
+		t.Errorf("run err: %v", err)
+	}
+
+	for answer, err := res.Next(); err == nil; answer, err = res.Next() {
+		t.Log(answer.Answer)
+	}
+
+}

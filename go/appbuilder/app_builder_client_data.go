@@ -69,6 +69,7 @@ type AppBuilderClientRunRequest struct {
 	ToolChoice       *ToolChoice               `json:"tool_choice"`
 	Action           *Action                   `json:"action"`
 	McpAuthorization *[]map[string]interface{} `json:"mcp_authorization,omitempty"`
+	Parameters       map[string]any            `json:"parameters,omitempty"`
 }
 
 type AppBuilderClientUploadFileRequest struct {
