@@ -69,6 +69,8 @@ type AppBuilderClientRunRequest struct {
 	ToolChoice       *ToolChoice               `json:"tool_choice"`
 	Action           *Action                   `json:"action"`
 	McpAuthorization *[]map[string]interface{} `json:"mcp_authorization,omitempty"`
+	Parameters       map[string]any            `json:"parameters,omitempty"`
+	CustomMetadata   *CustomMetadata           `json:"custom_metadata,omitempty"`
 }
 
 type AppBuilderClientUploadFileRequest struct {
@@ -125,6 +127,10 @@ type ActionParamters struct {
 type ActionInterruptEvent struct {
 	ID   string `json:"id"`
 	Type string `json:"type"`
+}
+
+type CustomMetadata struct {
+	OverrideRoleInstruction string `json:"override_role_instruction"`
 }
 
 func NewResumeAction(eventId string) *Action {
