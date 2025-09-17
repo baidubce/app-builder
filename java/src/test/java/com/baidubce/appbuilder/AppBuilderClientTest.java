@@ -317,4 +317,34 @@ public class AppBuilderClientTest {
         AppBuilderClientFeedbackResponse result = builder.feedback(request);
         assertNotNull(result.getRequestId());
     }
+
+    @Test
+    public void AppBuilderClientRunCustomMetadataTest() throws IOException, AppBuilderServerException {
+        appId = "a3654cd9-378a-4b46-a33b-2259ca3b304e";
+        AppBuilderClient builder = new AppBuilderClient(appId);
+        String conversationId = builder.createConversation();
+        assertNotNull(conversationId);
+
+        AppBuilderClientRunRequest request = new AppBuilderClientRunRequest(appId, conversationId, "我要回老家相亲", false);
+
+        AppBuilderClientRunRequest.CustomMetadata customMetadata = new AppBuilderClientRunRequest.CustomMetadata("这是自定义的role instruction");
+        customMetadata.setOverrideRoleInstruction("# 角色任务\n" +
+                "作为高情商大师，你的主要任务是根据提问，做出最佳的建议。\n" +
+                "\n" +
+                "# 工具能力\n" +
+                "\n" +
+                "无工具集提供\n" +
+                "\n" +
+                "# 要求与限制\n" +
+                "\n" +
+                "1. 输出内容的风格为幽默\n" +
+                "2.输出的字数限制为100字以内");
+        request.setCustomMetadata(customMetadata);
+        AppBuilderClientIterator itor = builder.run(request);
+        assertTrue(itor.hasNext());
+        while (itor.hasNext()) {
+            AppBuilderClientResult result = itor.next();
+            System.out.println(result.getAnswer());
+        }
+    }
 }
