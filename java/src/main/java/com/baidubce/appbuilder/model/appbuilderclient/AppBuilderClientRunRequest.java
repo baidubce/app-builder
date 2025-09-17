@@ -24,6 +24,11 @@ public class AppBuilderClientRunRequest {
     @SerializedName("mcp_authorization")
     private List<Map<String, Object>> mcpAuthorization = null;
 
+    private Map<String,Object> parameters;
+
+    @SerializedName("custom_metadata")
+    private CustomMetadata customMetadata;
+
     public AppBuilderClientRunRequest() {
     }
 
@@ -142,6 +147,18 @@ public class AppBuilderClientRunRequest {
 
     public List<Map<String, Object>> getMcpAuthorization() {
         return mcpAuthorization;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    public void setCustomMetadata(CustomMetadata customMetadata) {
+        this.customMetadata = customMetadata;
     }
 
     public static class Tool {
@@ -300,6 +317,23 @@ public class AppBuilderClientRunRequest {
                     return type;
                 }
             }
+        }
+    }
+
+    public static class CustomMetadata{
+        @SerializedName("override_role_instruction")
+        private String overrideRoleInstruction;
+
+        public CustomMetadata(String overrideRoleInstruction) {
+            this.overrideRoleInstruction = overrideRoleInstruction;
+        }
+
+        public void setOverrideRoleInstruction(String overrideRoleInstruction) {
+            this.overrideRoleInstruction = overrideRoleInstruction;
+        }
+
+        public String getOverrideRoleInstruction() {
+            return overrideRoleInstruction;
         }
     }
 }
