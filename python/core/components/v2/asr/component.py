@@ -154,6 +154,7 @@ class ASR(Component):
             self.http_client.retry.total = retry
         response = self.http_client.session.post(self.http_client.service_url("/v1/bce/aip_speech/asrpro"),
                                                  params=params, headers=headers, data=request.speech, timeout=timeout)
+        logging.info('Sending POST request with params: %s, headers: %s, data: %s', params, headers, request.speech)
         self.http_client.check_response_header(response)
         data = response.json()
         self.http_client.check_response_json(data)
