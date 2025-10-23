@@ -30,6 +30,7 @@ from appbuilder.core._client import HTTPClient
 from appbuilder.core.components.asr.model import ShortSpeechRecognitionRequest, ShortSpeechRecognitionResponse, \
     ASRInMsg, ASROutMsg
 from appbuilder.utils.trace.tracer_wrapper import components_run_trace, components_run_stream_trace
+import logging
 
 DEFAULT_AUDIO_MAX_DURATION = 55 * 1000  # 55s
 # 参考短语音极速版API(https://ai.baidu.com/ai-doc/SPEECH/Jlbxdezuf)
