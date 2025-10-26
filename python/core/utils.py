@@ -87,6 +87,17 @@ def convert_cloudhub_url(client: HTTPClient, qianfan_url: str) -> str:
     return "{}/{}{}".format(client.gateway, cloudhub_url_prefix, url_suffix)
 
 
+def convert_cloudhub_url_v2(client: HTTPClient, qianfan_url: str) -> str:
+    """将千帆url转换为AppBuilder url"""
+    qianfan_url_prefix = "rpc/2.0/ai_custom/v1/wenxinworkshop"
+    cloudhub_url_prefix = "rpc/2.0/cloud_hub/v1/bce/wenxinworkshop/ai_custom/v1"
+    index = str.find(qianfan_url, qianfan_url_prefix)
+    if index == -1:
+        raise ValueError(f"url format error, {qianfan_url} is not a valid qianfan url")
+    url_suffix = qianfan_url[index + len(qianfan_url_prefix):]
+    return "{}/{}{}".format(client.gateway, cloudhub_url_prefix, url_suffix)
+
+
 def is_url(string):
     """
     判断字符串是否是URL
@@ -129,7 +140,8 @@ class ModelInfo:
             origin_name = short_name
         for model in self.model_list:
             if model.name == origin_name:
-                return convert_cloudhub_url(self.client, model.url)
+                return model.url
+                # return convert_cloudhub_url(self.client, model.url)
         raise ModelNotSupportedException(f"Model[{model_name}] not available! "
                                          f"You can query available models through: appbuilder.get_model_list()")
 
