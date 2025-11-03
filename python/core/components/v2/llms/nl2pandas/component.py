@@ -126,5 +126,6 @@ class Nl2pandasComponent(CompletionBaseComponent):
         message = super().run(message=msg, table_info=table_info, stream=True, temperature=temperature,
                               top_p=top_p)
 
-        yield self.create_output(type="text", text=str(message.content), name="text", usage=message.token_usage)
+        for data in message.content:
+            yield self.create_output(type="text", text=data, name="text", usage=message.token_usage)
 
