@@ -14,7 +14,7 @@
 
 from pydantic import BaseModel
 from pydantic import Field
-from typing import Union
+from typing import Union, Any
 from typing import Optional
 from appbuilder.core.manifest.models import Manifest
 
@@ -40,7 +40,8 @@ def ToAppBuilderTool(tool):
     if "type" in tool and tool["type"]:
         return Tool(**tool), False
     if hasattr(tool, 'inputSchema') and hasattr(tool, 'inputSchema'):
-        return Tool(type="function", function=Function(name=tool.name, description=tool.description, parameters=tool.inputSchema)), True
+        return Tool(type="function",
+                    function=Function(name=tool.name, description=tool.description, parameters=tool.inputSchema)), True
     else:
         return tool, False
 
@@ -93,6 +94,10 @@ class ActionParameters(BaseModel):
         ..., description="要回复的'信息收集节点'中断事件")
 
 
+class CustomMetadata(BaseModel):
+    override_role_instruction: str = Field(..., description="自定义角色指令，适用于自主规划agent")
+
+
 class Action(BaseModel):
     action_type: str = Field(...,
                              description="action类型,目前可用值'resume', 用于回复信息收集节点的消息")
@@ -134,6 +139,8 @@ class AppBuilderClientRequest(BaseModel):
     end_user_id: Optional[str] = None
     action: Optional[Action] = None
     mcp_authorization: Optional[list[dict]] = None
+    parameters: Optional[dict[str, Any]] = None
+    custom_metadata: Optional[CustomMetadata] = None
 
 
 class Usage(BaseModel):
@@ -354,7 +361,8 @@ class AppBuilderClientAppListRequest(BaseModel):
     limit: int = Field(
         default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
     after: str = Field(
-        default="", description="用于分页的游标。after 是一个应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 结束，那么你后续的调用可以包含 after=app_id_123 以获取列表的下一页数据。")
+        default="",
+        description="用于分页的游标。after 是一个应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 结束，那么你后续的调用可以包含 after=app_id_123 以获取列表的下一页数据。")
     before: str = Field(default="", description="用于分页的游标。与after相反，填写它将获取前一页数据")
 
 
@@ -380,7 +388,8 @@ class DescribeAppsRequest(BaseModel):
     maxKeys: int = Field(
         default=10, description="当次查询的数据大小，默认10，最大值100", le=100, ge=1)
     marker: str = Field(
-        default=None, description="用于分页的游标。marker 是应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 开始，那么可以使用 marker=app_id_123 来获取列表的下一页数据")
+        default=None,
+        description="用于分页的游标。marker 是应用的id，它定义了在列表中的位置。例如，如果你发出一个列表请求并收到 10个对象，以 app_id_123 开始，那么可以使用 marker=app_id_123 来获取列表的下一页数据")
 
 
 class DescribeAppsResponse(BaseModel):
