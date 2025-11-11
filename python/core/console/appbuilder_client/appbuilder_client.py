@@ -15,7 +15,7 @@
 """AppBuilderClient组件"""
 import os
 import json
-from typing import Optional, Union
+from typing import Optional, Union, Any
 from appbuilder.core.component import Message, Component
 from appbuilder.core.manifest.models import Manifest
 from appbuilder.core.console.appbuilder_client import data_class
@@ -318,6 +318,8 @@ class AppBuilderClient(Component):
         end_user_id: str = None,
         action: data_class.Action = None,
         mcp_authorization: list[dict] = None,
+        parameters: dict[str, Any] = None,
+        custom_metadata: data_class.CustomMetadata = None,
         **kwargs,
     ) -> Message:
         r"""运行智能体应用
@@ -333,6 +335,12 @@ class AppBuilderClient(Component):
             end_user_id (str): 用户ID，用于区分不同用户
             action (data_class.Action): 对话时要进行的特殊操作。如回复工作流agent中“信息收集节点“的消息。
             mcp_authorization (list[dict]): mcp鉴权配置:目前仅适配百度网盘
+            parameters: 用户在工作流Agent中自定义添加的参数，对应画布中开始节点用户新增的参数。例如：
+                            "parameters":
+                            {"custom_variable1": "abc",
+                            "custom_variable2": 1.23
+                            }
+            custom_metadata: 自定义角色指令，适用于自主规划agent
             kwargs: 其他参数
 
         Returns:
@@ -373,6 +381,8 @@ class AppBuilderClient(Component):
             end_user_id=end_user_id,
             action=action,
             mcp_authorization=mcp_authorization,
+            parameters=parameters,
+            custom_metadata=custom_metadata,
         )
 
         headers = self.http_client.auth_header_v2(mcp_context=self._mcp_context)
