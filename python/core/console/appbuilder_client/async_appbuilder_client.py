@@ -133,7 +133,7 @@ class AsyncAppBuilderClient(Component):
             action=action,
             mcp_authorization=mcp_authorization,
             parameters=parameters,
-            conversation=custom_metadata,
+            custom_metadata=custom_metadata,
         )
 
         headers = self.http_client.auth_header_v2(mcp_context=self._mcp_context)
