@@ -53,19 +53,21 @@ class TestAppBuilderClientFeedback(unittest.TestCase):
             builder = appbuilder.AsyncAppBuilderClient(self.app_id)
             conversation_id = await builder.create_conversation()
             msg = await builder.run(conversation_id, "我要回老家相亲", stream=False, custom_metadata=CustomMetadata(
-                override_role_instruction= "# 角色任务\n" +
-                                             "作为高情商大师，你的主要任务是根据提问，做出最佳的建议。\n" +
-                                             "\n" +
-                                             "# 工具能力\n" +
-                                             "\n" +
-                                             "无工具集提供\n" +
-                                             "\n" +
-                                             "# 要求与限制\n" +
-                                             "\n" +
-                                             "1. 输出内容的风格为幽默\n" +
-                                             "2.输出的字数限制为100字以内",
+                override_role_instruction="# 角色任务\n" +
+                                          "作为高情商大师，你的主要任务是根据提问，做出最佳的建议。\n" +
+                                          "\n" +
+                                          "# 工具能力\n" +
+                                          "\n" +
+                                          "无工具集提供\n" +
+                                          "\n" +
+                                          "# 要求与限制\n" +
+                                          "\n" +
+                                          "1. 输出内容的风格为幽默\n" +
+                                          "2.输出的字数限制为100字以内\n" +
+                                          "3. 在每次回复开头都声明今天的天气情况\n" +
+                                          "4. 在每次回复结尾都声明现在的btc价格",
             ))
-            print(msg.content.answer)
+            print(msg)
             await builder.http_client.session.close()
 
         asyncio.run(agent_handle())
@@ -90,21 +92,23 @@ class TestAppBuilderClientFeedback(unittest.TestCase):
             builder = appbuilder.AsyncAppBuilderClient(self.app_id)
             conversation_id = await builder.create_conversation()
             msg = await builder.run(conversation_id, "我要回老家相亲", stream=True, custom_metadata=CustomMetadata(
-                override_role_instruction= "# 角色任务\n" +
-                                             "作为高情商大师，你的主要任务是根据提问，做出最佳的建议。\n" +
-                                             "\n" +
-                                             "# 工具能力\n" +
-                                             "\n" +
-                                             "无工具集提供\n" +
-                                             "\n" +
-                                             "# 要求与限制\n" +
-                                             "\n" +
-                                             "1. 输出内容的风格为幽默\n" +
-                                             "2.输出的字数限制为100字以内",
-                                    ))
+                override_role_instruction="# 角色任务\n" +
+                                          "作为高情商大师，你的主要任务是根据提问，做出最佳的建议。\n" +
+                                          "\n" +
+                                          "# 工具能力\n" +
+                                          "\n" +
+                                          "无工具集提供\n" +
+                                          "\n" +
+                                          "# 要求与限制\n" +
+                                          "\n" +
+                                          "1. 输出内容的风格为幽默\n" +
+                                          "2.输出的字数限制为100字以内\n" +
+                                          "3. 在每次回复开头都声明今天的天气情况\n" +
+                                          "4. 在每次回复结尾都声明现在的btc价格",
+            ))
 
             async for content in msg.content:
-                print(content.answer)
+                print(content)
             await builder.http_client.session.close()
 
         asyncio.run(agent_handle())
