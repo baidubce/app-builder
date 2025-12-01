@@ -62,6 +62,7 @@ class ComponentClient(Component):
         """
         headers = self.http_client.auth_header_v2()
         headers["Content-Type"] = "application/json"
+        headers["X-Appbuilder-From"] = "sdk"
 
         url_suffix = f"/components/{component_id}"
         if version is not None:

@@ -35,6 +35,23 @@ class TestComponentCLient(unittest.TestCase):
         for data in res.content:
             print(data)
 
+    def test_component_header_client(self):
+        appbuilder.logger.setLoglevel("DEBUG")
+        client = appbuilder.ComponentClient()
+
+        res = client.run(component_id="c-wf-a39ee06c-808f-4a19-9f5f-544044283749",
+                         version="latest", sys_origin_query="梦到巨人")
+        print(res.content)
+
+    def test_component_header_client_stream(self):
+        appbuilder.logger.setLoglevel("DEBUG")
+        client = appbuilder.ComponentClient()
+
+        res = client.run(component_id="c-wf-a39ee06c-808f-4a19-9f5f-544044283749",
+                         version="latest", sys_origin_query="梦到巨人", stream=True)
+        for data in res.content:
+            print(data)
+
 
 if __name__ == "__main__":
     unittest.main()

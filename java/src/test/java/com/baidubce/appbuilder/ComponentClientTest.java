@@ -51,4 +51,34 @@ public class ComponentClientTest {
         }
         assertNotNull(text);
     }
+
+    @Test
+    public void TestComponentClientHeaderRun() throws IOException, AppBuilderServerException {
+        this.componentId = "c-wf-a39ee06c-808f-4a19-9f5f-544044283749";
+        ComponentClient client = new ComponentClient();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put(ComponentClientRunRequest.SysOriginQuery, "梦到巨人");
+        ComponentClientIterator iter = client.run(componentId, "latest", "", false, parameters);
+        while (iter.hasNext()) {
+            ComponentClientRunResponse response = iter.next();
+            System.out.println((response.getContent()[0].getText().get("info")));
+        }
+    }
+
+    @Test
+    public void TestComponentClientHeaderRunStream() throws IOException, AppBuilderServerException {
+        this.componentId = "c-wf-a39ee06c-808f-4a19-9f5f-544044283749";
+        ComponentClient client = new ComponentClient();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put(ComponentClientRunRequest.SysOriginQuery, "梦到巨人");
+        ComponentClientIterator iter = client.run(componentId, "latest", "", true, parameters);
+
+        while (iter.hasNext()) {
+            ComponentClientRunResponse response = iter.next();
+            if (response.getContent().length > 0) {
+                System.out.println((response.getContent()[0].getText().get("info")));
+            }
+        }
+
+    }
 }
