@@ -33,6 +33,7 @@ logging.basicConfig(level=logging.INFO)
 
 try:
     from mcp.server.fastmcp import FastMCP
+    from mcp.server.fastmcp.server import _convert_to_content
     from mcp.types import (
         ImageContent,
         TextContent,
