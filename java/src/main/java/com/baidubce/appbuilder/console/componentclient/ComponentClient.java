@@ -67,6 +67,7 @@ public class ComponentClient extends Component {
         ClassicHttpRequest postRequest = httpClient.createPostRequestV2(urlSuffix,
                 new StringEntity(jsonBody, StandardCharsets.UTF_8));
         postRequest.setHeader("Content-Type", "application/json");
+        postRequest.setHeader("X-Appbuilder-From", "sdk");
         HttpResponse<StreamIterator<ComponentClientRunResponse>> response =
                 httpClient.executeSSE(postRequest, ComponentClientRunResponse.class);
         return new ComponentClientIterator(response.getBody());

@@ -65,6 +65,7 @@ func (t *ComponentClient) Run(component, version, action string, stream bool, pa
 	request.URL = serviceURL
 	request.Method = "POST"
 	header.Set("Content-Type", "application/json")
+	header.Set("X-Appbuilder-From", "sdk")
 	request.Header = header
 
 	req := ComponentRunRequest{

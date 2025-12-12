@@ -87,3 +87,46 @@ func TestComponentClient(t *testing.T) {
 		t.Logf("%s========== OK:  %s ==========%s", "\033[32m", t.Name(), "\033[0m")
 	}
 }
+
+func TestComponentClientHeader(t *testing.T) {
+	os.Setenv("APPBUILDER_LOGLEVEL", "DEBUG")
+	config, err := NewSDKConfig("", "")
+	if err != nil {
+		t.Logf("%s========== FAIL:  %s ==========%s", "\033[31m", t.Name(), "\033[0m")
+		t.Fatalf("new http client config failed: %v", err)
+	}
+
+	componentID := "c-wf-a39ee06c-808f-4a19-9f5f-544044283749"
+	parameters := map[string]any{
+		SysOriginQuery: "梦到巨人，是怎么回事",
+	}
+	componentClient, err := NewComponentClient(config)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	ret, err := componentClient.Run(componentID, "latest", "", false, parameters)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	for answer, err := ret.Next(); err == nil; answer, err = ret.Next() {
+		t.Log(answer.Content[0].Text["info"])
+	}
+
+	ret2, err := componentClient.Run(componentID, "latest", "", true, parameters)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	for answer, err := ret2.Next(); err == nil; answer, err = ret2.Next() {
+		if len(answer.Content) == 0 {
+			continue
+		}
+		t.Log(answer.Content[0].Text["info"])
+	}
+
+}
