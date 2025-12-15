@@ -37,7 +37,7 @@ func NewKnowledgeBase(config *SDKConfig) (*KnowledgeBase, error) {
 	}
 	client := config.HTTPClient
 	if client == nil {
-		client = &http.Client{Timeout: 60 * time.Second}
+		client = &http.Client{Timeout: 1800 * time.Second}
 	}
 	return &KnowledgeBase{sdkConfig: config, client: client}, nil
 }
@@ -48,7 +48,7 @@ func NewKnowledgeBaseWithKnowledgeBaseID(knowledgeBaseID string, config *SDKConf
 	}
 	client := config.HTTPClient
 	if client == nil {
-		client = &http.Client{Timeout: 60 * time.Second}
+		client = &http.Client{Timeout: 1800 * time.Second}
 	}
 	return &KnowledgeBase{knowledgeBaseID: knowledgeBaseID, sdkConfig: config, client: client}, nil
 }
