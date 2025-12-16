@@ -38,7 +38,7 @@ func NewAgentBuilder(appID string, config *SDKConfig) (*AgentBuilder, error) {
 	}
 	client := config.HTTPClient
 	if client == nil {
-		client = &http.Client{Timeout: 300 * time.Second}
+		client = &http.Client{Timeout: 1800 * time.Second}
 	}
 	return &AgentBuilder{appID: appID, sdkConfig: config, client: client}, nil
 }
