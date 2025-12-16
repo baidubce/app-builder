@@ -33,7 +33,7 @@ func NewRAG(appID string, config *SDKConfig) (*RAG, error) {
 	}
 	client := config.HTTPClient
 	if client == nil {
-		client = &http.Client{Timeout: 1800 * time.Second}
+		client = &http.Client{Timeout: 500 * time.Second}
 	}
 	return &RAG{appID: appID, sdkConfig: config, client: client}, nil
 }
