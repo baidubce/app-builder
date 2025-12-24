@@ -102,10 +102,10 @@ class ImageDetail(BaseModel):
 
 
 class References(BaseModel, extra='allow'):
-    type: str = Field(default="", description="类型")
-    source: str = Field(default="", description="来源")
+    type: Optional[str] = Field(default="", description="类型")
+    source: Optional[str] = Field(default="", description="来源")
     doc_id: Optional[str] = Field(default=None, description="文档id")
-    content: str = Field(default="", description="内容")
+    content: Optional[str] = Field(default="", description="内容")
     extra: Optional[dict] = Field(default={}, description="其他信息")
 
     title: Optional[str] = Field("", description="网页标题")
