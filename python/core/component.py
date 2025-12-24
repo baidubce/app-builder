@@ -651,7 +651,7 @@ class Component:
             elif type == "files":
                 key_list = ["filename", "url"]
             elif type == "references":
-                key_list = ["type", "source", "doc_id", "title", "content"]
+                key_list = []
             elif type == "image":
                 key_list = ["filename", "url"]
             elif type == "chart":
