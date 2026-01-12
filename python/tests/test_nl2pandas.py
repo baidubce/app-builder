@@ -24,7 +24,7 @@ class TestNl2pandasComponent(unittest.TestCase):
         """
         设置环境变量及必要数据。
         """
-        self.model_name = "ERNIE-3.5-8K"
+        self.model_name = "DeepSeek-V3.1"
         self.node = appbuilder.Nl2pandasComponent(model=self.model_name)
         self.table_info = '''表格列信息如下：
         学校名 : 清华附小 , 字符串类型，代表小学学校的名称

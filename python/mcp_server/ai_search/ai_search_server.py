@@ -17,7 +17,7 @@ server = FastMCP(name="AB Component Server")
 
 # You can switch to other models supported by AppBuilder
 init_args = {
-    "model": "Qianfan-Agent-Speed-8K",
+    "model": "DeepSeek-V3.1",
 }
 
 

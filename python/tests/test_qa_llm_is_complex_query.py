@@ -19,7 +19,7 @@ import appbuilder
 class TestIsComplexQuery(unittest.TestCase):
 
     def test_run(self):
-        model_name = "ERNIE-3.5-8K"
+        model_name = "DeepSeek-V3.1"
         message = "吸塑包装盒在工业化生产和物流运输中分别有什么重要性？"
         is_complex_query = appbuilder.IsComplexQuery(model=model_name)
         out = is_complex_query(appbuilder.Message(content=message))

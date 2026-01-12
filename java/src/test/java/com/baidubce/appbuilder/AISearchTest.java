@@ -42,7 +42,7 @@ public class AISearchTest {
         AISearch client = new AISearch();
         AISearchRequest request = new AISearchRequest();
         AISearchRequest.Message[] messages = { new AISearchRequest.Message("user", "查询今天天气") };
-        request.setMessages(messages).setModel("ernie-3.5-8k");
+        request.setMessages(messages).setModel("deepseek-v3.1-250821");
         AISearchIterator iter = client.run(request);
         while (iter.hasNext()) {
             AISearchResponse response = iter.next();
@@ -58,7 +58,7 @@ public class AISearchTest {
         AISearch client = new AISearch();
         AISearchRequest request = new AISearchRequest();
         AISearchRequest.Message[] messages = { new AISearchRequest.Message("user", "查询今天天气") };
-        request.setMessages(messages).setModel("ernie-3.5-8k").setStream(true);
+        request.setMessages(messages).setModel("deepseek-v3.1-250821").setStream(true);
         AISearchIterator iter = client.run(request);
         while (iter.hasNext()) {
             AISearchResponse response = iter.next();

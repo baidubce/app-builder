@@ -108,7 +108,7 @@ class AgentRuntime(BaseModel):
             class PlaygroundWithHistory(Component):
                 def __init__(self):
                     super().__init__()
-                    self.query_rewrite = QueryRewrite(model="Qianfan-Agent-Speed-8K")
+                    self.query_rewrite = QueryRewrite(model="DeepSeek-V3.1")
                     self.play = Playground(
                         prompt_template="{query}",
                         model="eb-4"

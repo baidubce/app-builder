@@ -28,7 +28,7 @@ print(", ".join(models))
 
 填写自己的Token，获取模型列表输出示例如下：
 ``` shell
-ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-3.5-4K-0205, ERNIE-3.5-8K-0205, ERNIE-3.5-8K-1222, ERNIE-Speed, ERNIE-Speed-128K（预览版）, ERNIE-Lite-8K, ERNIE-Tiny-8K, ERNIE-Character-8K, EB-turbo-AppBuilder专用版, Qianfan-Chinese-Llama-2-7B, Qianfan-Chinese-Llama-2-13B, Gemma-7B-It, Yi-34B-Chat, Mixtral-8x7B-Instruct, Llama-2-7B-Chat, Llama-2-13B-Chat, Llama-2-70B-Chat, XuanYuan-70B-Chat-4bit, ChatGLM2-6B-32K, ChatLaw, BLOOMZ-7B, Qianfan-BLOOMZ-7B-compressed, AquilaChat-7B, ERNIE-Bot-8K, ERNIE-Lite-8K-0922（原ERNIE-Bot-turbo-0922）
+ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-3.5-8K-0205, ERNIE-Speed, DeepSeek-V3.1, ERNIE-Character-8K, EB-turbo-AppBuilder专用版, ChatLaw, ERNIE-Bot-8K
 ```
 
 为方便用户更容易使用模型，以下是一些模型的短名称
@@ -37,8 +37,8 @@ ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-3.5-4K-0205, ERNIE-3.5-8K-0205, ERNIE-3.5-8K-122
 | ERNIE-Bot 4.0              |       eb-4       |
 | ERNIE-Bot                  |       eb         |
 | ERNIE-Bot-turbo            |       eb-turbo   |
-| EB-turbo-AppBuilder专用版   |       ernie_speed_appbuilder           |
-| Qianfan-Agent-Speed-8K   |       ernie_speed_appbuilder           |
+| EB-turbo-AppBuilder专用版   |       ernie_speed_appbuilder        |
+| DeepSeek-V3.1              |       deepseek-v3.1-250821          |
 
 
 
@@ -52,7 +52,7 @@ os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # 空模版组件
 template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}。\n\n回答："
-playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8K")
+playground = appbuilder.Playground(prompt_template=template_str, model="DeepSeek-V3.1")
 
 # 定义输入，调用空模版组件
 input = appbuilder.Message({"role": "java工程师", "question": "java语言的内存回收机制是什么"})
@@ -69,7 +69,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = "your api key"
 
 # 相似问生成组件
-similar_q = appbuilder.SimilarQuestion(model="Qianfan-Agent-Speed-8K")
+similar_q = appbuilder.SimilarQuestion(model="DeepSeek-V3.1")
 
 # 定义输入，调用相似问生成
 input = appbuilder.Message("我想吃冰淇淋，哪里的冰淇淋比较好吃？")
@@ -114,7 +114,7 @@ import appbuilder
 # 空模版组件
 playground = appbuilder.Playground(
     prompt_template="{query}",
-    model="Qianfan-Agent-Speed-8K"
+    model="DeepSeek-V3.1"
 )
 
 # 使用 AgentRuntime 来服务化playground组件

@@ -21,7 +21,7 @@ from appbuilder import AppBuilderTracer
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestStyleRewrite(unittest.TestCase):
     def setUp(self) -> None:
-        self.com = StyleRewrite(model="ERNIE-3.5-8K")
+        self.com = StyleRewrite(model="DeepSeek-V3.1")
         self.tracer = AppBuilderTracer(
             enable_phoenix = False,
             enable_console = True

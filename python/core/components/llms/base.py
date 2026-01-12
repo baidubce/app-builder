@@ -254,7 +254,7 @@ class CompletionBaseComponent(Component):
     model_name: str = ""
     model_url: str = ""
     model_type: str = "chat"
-    excluded_models: List[str] = ["Yi-34B-Chat", "ChatLaw"]
+    excluded_models: List[str] = ["DeepSeek-V3.1", "ChatLaw"]
     model_info: ModelInfo = None
     model_config: Dict[str, Any] = {
         "model": {

@@ -31,7 +31,7 @@ class TestStyleWritingComponent(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.model_name = "ERNIE-3.5-8K"
+        self.model_name = "DeepSeek-V3.1"
         self.node = appbuilder.StyleWriting(model=self.model_name)
         self.sqc=StyleQueryChoices.BILIBILI
         self.lc=LengthChoices.SHORT

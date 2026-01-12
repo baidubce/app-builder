@@ -20,7 +20,7 @@ from appbuilder.core.component import ComponentOutput
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestStyleWriting(unittest.TestCase):
     def setUp(self):
-        self.com = StyleWriting(model = "ERNIE-3.5-8K")
+        self.com = StyleWriting(model = "DeepSeek-V3.1")
 
     def test_run(self):
         query = "帮我写一篇关于足球的文案"

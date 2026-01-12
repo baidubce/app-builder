@@ -35,7 +35,7 @@ class TestLlmBase(unittest.TestCase):
 
     def test_err_request(self):
         """ 测试在消息有效时运行 """
-        cmpt = ErrorComponent(prompt_template="{query}", model="ERNIE-3.5-8K")
+        cmpt = ErrorComponent(prompt_template="{query}", model="DeepSeek-V3.1")
         msg = appbuilder.Message({
             "query": "小明",
         })

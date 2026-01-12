@@ -53,8 +53,8 @@ class TestAppBuilderComponentsTrace(unittest.TestCase):
             "authorization=bce-auth-v1%2FALTAKGa8m4qCUasgoljdEDAzLm%2F2024-01-24T12%3A37%3A09Z%2F-1%2Fhost%2Fab528a5a9120d328dc6d18c6"\
             "064079145ff4698856f477b820147768fc2187d3"
         self.table_ocr = appbuilder.TableOCR()
-        self.play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model="ERNIE-3.5-8K")
-        model_name = "ERNIE-3.5-8K"
+        self.play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model="DeepSeek-V3.1")
+        model_name = "DeepSeek-V3.1"
         secret_key = os.getenv('SECRET_KEY', None)
         self.hallucination_detection = appbuilder.HallucinationDetection(model=model_name, secret_key=secret_key)
         

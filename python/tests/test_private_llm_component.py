@@ -17,7 +17,7 @@ class TestComponentInit(unittest.TestCase):
         return mrc class
         '''
         # 设置环境变量和初始化TestMRCComponent实例
-        self.model_name = "ERNIE-3.5-8K"
+        self.model_name = "DeepSeek-V3.1"
         self.component = MockLLMComponent(model=self.model_name)
 
     def test_private_llm_component_init(self):

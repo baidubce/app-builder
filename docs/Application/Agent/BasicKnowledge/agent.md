@@ -121,7 +121,7 @@ Run非流式方法返回一个`Message`对象，该对象包含以下属性：
 | ++event_type   | String                 | 事件类型             |                                                                                         |
 | ++content_type | String                 | 内容类型             | 可选值包括：code text, image, status,image, function_call, rag, audio、video等          |
 | ++detail       | Dict                   | 事件输出详情         | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                       |
-| ++usage        | Usage                  | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K') |
+| ++usage        | Usage                  | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='DeepSeek-V3.1') |
 
 `AppBuilderClientAnswer`类型定义如下：
 ```python
@@ -322,7 +322,7 @@ print(answer)
 | ++eventType   | string              | 事件类型             |                                                                                         |
 | ++contentType | string              | 内容类型             | 可选值包括：code text, image, status,image, function_call, rag, audio、video等          |
 | ++detail      | Map<String, Object> | 事件输出详情         | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                       |
-| ++usage       | Usage               | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K') |
+| ++usage       | Usage               | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='DeepSeek-V3.1') |
 
 
 #### 示例代码
@@ -587,7 +587,7 @@ type ToolChoiceFunction struct {
 | ++EventType   | string      | 事件类型             |                                                                                         |
 | ++ContentType | string      | 内容类型             | 可选值包括：code text, image, status,image, function_call, rag, audio、video等          |
 | ++Detail      | interface{} | 事件输出详情         | 代码解释器、文生图、工具组件、RAG等的详细输出内容                                       |
-| ++Usage       | Usage       | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='ERNIE-4.0-8K') |
+| ++Usage       | Usage       | 模型调用的token用量  | Usage(prompt_tokens=1322, completion_tokens=80, total_tokens=1402, name='DeepSeek-V3.1') |
 
 
 #### Run示例代码

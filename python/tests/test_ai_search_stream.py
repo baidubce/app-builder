@@ -26,7 +26,7 @@ class TestAgentRuntime(unittest.TestCase):
                 "content": "请帮我写一个Python程序，实现斐波那契数列的输出。",
             }
         ]
-        msg = client.run(messages=messages, model="ernie-3.5-8k", stream=True)
+        msg = client.run(messages=messages, model="deepseek-v3.1-250821", stream=True)
         for data in msg.content:
             print(data)
 

@@ -30,7 +30,7 @@ class TestDialogSummary(unittest.TestCase):
         Returns:
             无返回值，方法中执行了环境变量的赋值操作。
         """
-        self.model_name = "ERNIE-3.5-8K"
+        self.model_name = "DeepSeek-V3.1"
         self.node = DialogSummary(model=self.model_name)
 
     def test_run_with_default_params(self):
@@ -51,9 +51,9 @@ class TestDialogSummary(unittest.TestCase):
         """测试不同的 stream 和 temperature 参数值"""
 
         chats = appbuilder.get_model_list(api_type_filter=["chat"])
-        self.assertTrue("ERNIE-3.5-8K" in chats)
+        self.assertTrue("DeepSeek-V3.1" in chats)
 
-        DialogSummary(model="ERNIE-3.5-8K")
+        DialogSummary(model="DeepSeek-V3.1")
 
     def test_tool_eval_valid(self):
         """测试 tool 方法对有效请求的处理。"""

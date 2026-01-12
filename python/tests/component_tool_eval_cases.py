@@ -100,7 +100,7 @@ class Text2ImageCase(Case):
 
 class StyleRewriteCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {"query": "文心大模型发布新版"}
@@ -129,7 +129,7 @@ class QRcodeOCRCase(Case):
 
 class HallucinationDetectionCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -254,7 +254,7 @@ class Text2ImageCase(Case):
 
 class StyleWritingCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -335,7 +335,7 @@ class ObjectRecognitionCase(Case):
 
 class SimilarQuestionCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -351,7 +351,7 @@ class SimilarQuestionCase(Case):
 
 class OralQueryGenerationCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
@@ -372,7 +372,7 @@ class OralQueryGenerationCase(Case):
 
 class QueryRewriteCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -389,7 +389,7 @@ class QueryRewriteCase(Case):
 
 class Nl2pandasComponentCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -411,7 +411,7 @@ class Nl2pandasComponentCase(Case):
 
 class DialogSummaryCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -424,7 +424,7 @@ class DialogSummaryCase(Case):
 
 class MRCCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -448,7 +448,7 @@ C5车辆加装操纵辅助装置后已办理变更手续。二、办理地点：
 
 class IsComplexQueryCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -464,7 +464,7 @@ class IsComplexQueryCase(Case):
 
 class QAPairMiningCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -477,7 +477,7 @@ class QAPairMiningCase(Case):
 
 class QueryDecompositionCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {
@@ -490,7 +490,7 @@ class QueryDecompositionCase(Case):
 
 class TagExtractionCase(Case):
     def init_args(self):
-        return {"model": "ERNIE-3.5-8K"}
+        return {"model": "DeepSeek-V3.1"}
 
     def inputs(self):
         return {

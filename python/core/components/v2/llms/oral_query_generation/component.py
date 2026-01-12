@@ -26,7 +26,7 @@ from appbuilder.core.components.llms.oral_query_generation.base import OralQuery
 class OralQueryGeneration(CompletionBaseComponent):
     r"""
     口语化Query生成，可用于问答场景下对文档增强索引。
-    *注：该组件推荐使用Qianfan-Agent-Speed-8K模型。*
+    *注：该组件推荐使用DeepSeek-V3.1模型。*
 
     Examples:
 
@@ -42,7 +42,7 @@ class OralQueryGeneration(CompletionBaseComponent):
                 '防抖 开启路径：打开「相机 > 视频 > 点击屏幕上方的“超级防抖”标识」 后置视频同时支持超级防抖和超级防抖Pro功能，开启超级'
                 '防抖后手机屏幕将出现超级防抖Pro开关，点击即可开启或关闭。 除此之外，前置视频同样加持防抖算法，边走边拍也能稳定聚焦脸部'
                 '，实时视频分享您的生活。')
-        oral_query_generation = appbuilder.OralQueryGeneration(model='Qianfan-Agent-Speed-8K')
+        oral_query_generation = appbuilder.OralQueryGeneration(model='DeepSeek-V3.1')
         answer = oral_query_generation(appbuilder.Message(text), query_type='全部', output_format='str')
         print(answer.content)
     """
@@ -79,7 +79,7 @@ class OralQueryGeneration(CompletionBaseComponent):
 
     def __init__(
             self,
-            model: str="Qianfan-Agent-Speed-8K",
+            model: str="DeepSeek-V3.1",
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = True,
