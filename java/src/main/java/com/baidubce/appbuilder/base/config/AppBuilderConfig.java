@@ -19,7 +19,7 @@ public class AppBuilderConfig {
     public static final String APPBUILDER_LOGFILE = "APPBUILDER_LOGFILE";
 
     // http client请求超时时间，秒
-    public static final int HTTP_CLIENT_CONNECTION_TIMEOUT = 300;
+    public static final int HTTP_CLIENT_CONNECTION_TIMEOUT = 1800;
 
     // appbuilderclient
     // 应用列表

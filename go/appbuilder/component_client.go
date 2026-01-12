@@ -36,7 +36,7 @@ func NewComponentClient(config *SDKConfig) (*ComponentClient, error) {
 	}
 	client := config.HTTPClient
 	if client == nil {
-		client = &http.Client{Timeout: 300 * time.Second}
+		client = &http.Client{Timeout: 1800 * time.Second}
 	}
 	return &ComponentClient{sdkConfig: config, client: client}, nil
 }

@@ -65,7 +65,7 @@ func GetAppList(req GetAppListRequest, config *SDKConfig) ([]App, error) {
 	config.BuildCurlCommand(&request)
 	client := config.HTTPClient
 	if client == nil {
-		client = &http.Client{Timeout: 300 * time.Second}
+		client = &http.Client{Timeout: 1800 * time.Second}
 	}
 	resp, err := client.Do(&request)
 	if err != nil {
@@ -104,7 +104,7 @@ func DescribeApps(req DescribeAppsRequest, config *SDKConfig) (DescribeAppsRespo
 	config.BuildCurlCommand(&request)
 	client := config.HTTPClient
 	if client == nil {
-		client = &http.Client{Timeout: 300 * time.Second}
+		client = &http.Client{Timeout: 1800 * time.Second}
 	}
 	resp, err := client.Do(&request)
 	if err != nil {
@@ -143,7 +143,7 @@ func DescribeApp(appID string, config *SDKConfig) (DescribeAppResponse, error) {
 	config.BuildCurlCommand(&request)
 	client := config.HTTPClient
 	if client == nil {
-		client = &http.Client{Timeout: 300 * time.Second}
+		client = &http.Client{Timeout: 1800 * time.Second}
 	}
 	resp, err := client.Do(&request)
 	if err != nil {
@@ -175,7 +175,7 @@ func NewAppBuilderClient(appID string, config *SDKConfig) (*AppBuilderClient, er
 	}
 	client := config.HTTPClient
 	if client == nil {
-		client = &http.Client{Timeout: 300 * time.Second}
+		client = &http.Client{Timeout: 1800 * time.Second}
 	}
 	return &AppBuilderClient{appID: appID, sdkConfig: config, client: client}, nil
 }
