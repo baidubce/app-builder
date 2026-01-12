@@ -347,4 +347,47 @@ public class AppBuilderClientTest {
             System.out.println(result.getAnswer());
         }
     }
+
+    @Test
+    public void AppBuilderClientClose()throws IOException, AppBuilderServerException{
+
+            String appId = "8badfd05-5e95-4115-9b21-4c86137f1fb9";
+
+            String text = "你是一位顶尖的跨学科专家，任务是解决一个高度复杂、信息不完整且具有现实模糊性的问题。请遵循以下原则进行深度、严谨、分阶段的思考：\n" +
+                    "不要急于给出结论。首先识别问题中的关键变量、隐含假设、潜在矛盾与信息缺口。\n" +
+                    "分阶段推理：\n" +
+                    "阶段一：解构问题，列出所有可能的解释框架（如经济学、系统论、博弈论、伦理学等）；\n" +
+                    "阶段二：为每个框架构建逻辑链条，评估其适用性与局限性；\n" +
+                    "阶段三：整合多视角，识别交叉点与冲突点；\n" +
+                    "阶段四：提出一个稳健的综合方案，并明确其前提条件与风险边界。\n" +
+                    "主动质疑自身推理：在每一步，问自己：“这个假设是否可靠？是否有反例？是否有更底层的机制？”\n" +
+                    "量化不确定性：对关键判断标注置信度（如高/中/低），并说明依据。\n" +
+                    "最终输出必须包含：\n" +
+                    "核心洞见（1–2 句）\n" +
+                    "完整推理路径（分步骤，带编号）\n" +
+                    "未解决问题与进一步研究建议\n" +
+                    "对初始问题的重新定义（如果发现原问题表述有缺陷）\n" +
+                    "现在，请针对以下问题展开深度思考：在全球供应链高度脆弱的背景下，一家中国新能源车企应如何重构其电池原材料采购策略，以同时满足成本控制、地缘政治风险规避、ESG 合规与技术迭代加速四大目标？";
+            AppBuilderClient builder = new AppBuilderClient(appId);
+            String conversationId = builder.createConversation();
+            AppBuilderClientIterator itor = builder.run(text, conversationId, new String[] {}, true);
+            StringBuilder answer = new StringBuilder();
+            int a=1;
+            while (itor.hasNext()) {
+                if (a==50) {
+                    long start = System.currentTimeMillis();
+                    itor.close();
+                    long duration = System.currentTimeMillis() - start;
+                    System.out.println("duration: " + duration + "ms");
+                    break;
+                }
+                AppBuilderClientResult response = itor.next();
+                answer.append(response.getAnswer());
+
+                a++;
+            }
+            System.out.println(answer);
+        }
+
+
 }
