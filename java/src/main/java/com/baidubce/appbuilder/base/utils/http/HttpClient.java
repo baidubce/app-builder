@@ -5,22 +5,10 @@ import com.baidubce.appbuilder.base.config.AppBuilderConfig;
 import com.baidubce.appbuilder.base.exception.AppBuilderServerException;
 import com.baidubce.appbuilder.base.utils.iterator.StreamIterator;
 import com.baidubce.appbuilder.base.utils.json.JsonUtils;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.URLEncoder;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -30,6 +18,17 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.URLEncoder;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HttpClient {
     public String SecretKey;
@@ -169,11 +168,11 @@ public class HttpClient {
         return httpGet;
     }
 
-    public ClassicHttpRequest createDeleteRequestV2(String url, Map<String, Object> map) {       
+    public ClassicHttpRequest createDeleteRequestV2(String url, Map<String, Object> map) {
         // 处理查询参数
         String urlParams = toQueryString(map);
         // 如果 URL 已经包含 '?', 不需要再添加
-        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url 
+        String requestURL = GatewayV2 + ConsoleOpenAPIPrefix + ConsoleOpenAPIVersion + url
                     + (url.contains("?") ? "&" : "?") + urlParams;
 
         LOGGER.log(Level.FINE, "requestURL: " + requestURL);
@@ -222,10 +221,10 @@ public class HttpClient {
         });
         if (httpResponse.getCode() != 200) {
             String errorMessage = String.format(
-            "Error after processing response with code %d for request ID: %s, message: %s",
-            httpResponse.getCode(),
-            httpResponse.getRequestId(),
-            httpResponse.getMessage()
+                    "Error after processing response with code %d for request ID: %s, message: %s",
+                    httpResponse.getCode(),
+                    httpResponse.getRequestId(),
+                    httpResponse.getMessage()
             );
             LOGGER.log(Level.SEVERE, errorMessage);
             throw new AppBuilderServerException(httpResponse.getRequestId(), httpResponse.getCode(),
@@ -256,7 +255,7 @@ public class HttpClient {
         }
         return new HttpResponse<StreamIterator<T>>().setCode(resp.getCode())
                 .setMessage(resp.getReasonPhrase()).setRequestId(requestId).setHeaders(headers)
-                .setBody(new StreamIterator<>(resp, bodyType));
+                .setBody(new StreamIterator<>(resp, bodyType, (HttpUriRequestBase) request));
     }
 
     private String toQueryString(Map<String, Object> map) {

@@ -1,6 +1,7 @@
 package com.baidubce.appbuilder.base.utils.iterator;
 
 import com.baidubce.appbuilder.base.utils.json.JsonUtils;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 
 import java.io.BufferedReader;
@@ -14,12 +15,14 @@ public class StreamIterator<T> implements Iterator<T>, AutoCloseable {
     private final CloseableHttpResponse resp;
     private final BufferedReader reader;
     private final Type bodyType;
+    private final HttpUriRequestBase cancellable;
     private String nextLine;
 
-    public StreamIterator(CloseableHttpResponse resp, Type type) throws IOException {
+    public StreamIterator(CloseableHttpResponse resp, Type type, HttpUriRequestBase cancellable) throws IOException {
         this.resp = resp;
         this.reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
         this.bodyType = type;
+        this.cancellable = cancellable;
     }
 
     @Override
@@ -57,6 +60,9 @@ public class StreamIterator<T> implements Iterator<T>, AutoCloseable {
 
     @Override
     public void close() {
+        if (cancellable != null) {
+            cancellable.abort();
+        }
         try {
             if (reader != null) {
                 reader.close();
