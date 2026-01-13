@@ -70,19 +70,19 @@ class TestAppbuilderForSentryOff(unittest.TestCase):
         # 启动事务
         with sentry_sdk.start_transaction(op="task", name="UT-Components-trace-test"):
             # test Components run
-            sr = StyleRewrite(model="ERNIE-3.5-8K")
+            sr = StyleRewrite(model="DeepSeek-V3.1")
             text = "成都是个包容的城市"
             style = "直播话术"
             msg = appbuilder.Message(content=text)
             run_out = sr.run(message=msg, style=style)
             print(run_out)
-            sr = StyleRewrite(model="ERNIE-3.5-8K")
+            sr = StyleRewrite(model="DeepSeek-V3.1")
             tool_eval_out = sr.tool_eval(name="name", query=text, style=style, streaming=True)
             for res in tool_eval_out:
                 print(res)
 
             # test Components v2 tool_eval
-            sr_v2 = StyleRewriteV2(model="ERNIE-3.5-8K")
+            sr_v2 = StyleRewriteV2(model="DeepSeek-V3.1")
             text = "成都是个包容的城市"
             style = "直播话术"
             tool_eval_out = sr_v2.tool_eval(query=text, style=style)

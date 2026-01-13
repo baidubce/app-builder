@@ -34,7 +34,7 @@ class DialogSummary(CompletionBaseComponent):
         # 请前往千帆AppBuilder官网创建密钥，流程详见：https://cloud.baidu.com/doc/AppBuilder/s/Olq6grrt6#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5
         os.environ["APPBUILDER_TOKEN"] = '...'
 
-        dialog_summary = appbuilder.DialogSummary("Qianfan-Agent-Speed-8K")
+        dialog_summary = appbuilder.DialogSummary("DeepSeek-V3.1")
         text = "用户:喂我想查一下我的话费\n坐席:好的女士您话费余的话还有87.49元钱\n用户:好的知道了谢谢\n坐席:嗯不客气祝您生活愉快再见"
         answer = dialog_summary(appbuilder.Message(text))
         print(answer)
@@ -65,7 +65,7 @@ class DialogSummary(CompletionBaseComponent):
 
     def __init__(
             self,
-            model: str = "Qianfan-Agent-Speed-8K",
+            model: str = "DeepSeek-V3.1",
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = True,

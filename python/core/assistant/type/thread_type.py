@@ -330,7 +330,7 @@ class ToolOutput(BaseModel):
 
 class AssistantRunModel(str,Enum):
     ERNIE_4_0_8K = "ERNIE-4.0T-8K"
-    ERNIE_3_5_8K = "ERNIE-3.5-8K"
+    ERNIE_3_5_8K = "DeepSeek-V3.1"
 
 class AssistantRunRequest(BaseModel):
     thread_id: Optional[str] = Field(default="")

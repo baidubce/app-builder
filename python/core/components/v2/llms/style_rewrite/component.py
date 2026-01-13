@@ -31,7 +31,7 @@ class StyleRewrite(CompletionBaseComponent):
         import appbuilder
         os.environ["APPBUILDER_TOKEN"] = '...'
 
-        style_rewrite = appbuilder.StyleRewrite(model="Qianfan-Agent-Speed-8K")
+        style_rewrite = appbuilder.StyleRewrite(model="DeepSeek-V3.1")
         answer = style_rewrite(appbuilder.Message("文心大模型发布新版本"), style="激励话术")
 
     """
@@ -65,7 +65,7 @@ class StyleRewrite(CompletionBaseComponent):
 
     def __init__(
             self,
-            model: str="Qianfan-Agent-Speed-8K",
+            model: str="DeepSeek-V3.1",
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = True,

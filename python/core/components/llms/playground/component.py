@@ -31,7 +31,7 @@ class Playground(CompletionBaseComponent):
         import appbuilder
         os.environ["APPBUILDER_TOKEN"] = "..."
 
-        play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model="Qianfan-Agent-Speed-8K")
+        play = appbuilder.Playground(prompt_template="你好，{name}，我是{bot_name}，{bot_name}是一个{bot_type}，我可以{bot_function}，你可以问我{bot_question}。", model="DeepSeek-V3.1")
         play(appbuilder.Message({"name": "小明", "bot_name": "小红", "bot_type": "聊天机器人", "bot_function": "聊天", "bot_question": "你好吗？"}), stream=False)
 
     """

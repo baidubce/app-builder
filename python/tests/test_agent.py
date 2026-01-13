@@ -31,7 +31,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试http """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ERNIE-3.5-8K",
+            model="DeepSeek-V3.1",
             lazy_certification=True,
         )
         agent = appbuilder.AgentRuntime(component=component)
@@ -51,7 +51,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试http """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ERNIE-3.5-8K",
+            model="DeepSeek-V3.1",
             lazy_certification=True,
         )
         agent = appbuilder.AgentRuntime(component=component)
@@ -74,7 +74,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试http """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ERNIE-3.5-8K",
+            model="DeepSeek-V3.1",
             lazy_certification=True,
         )
         agent = appbuilder.AgentRuntime(component=component)
@@ -102,7 +102,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试http """
         component = appbuilder.Playground(
             prompt_template="{query}",
-            model="ERNIE-3.5-8K",
+            model="DeepSeek-V3.1",
             lazy_certification=True,
         )
         agent = appbuilder.AgentRuntime(component=component)
@@ -126,7 +126,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试在component有效时运行 """
         component = Playground(
             prompt_template="{query}",
-            model="ERNIE-3.5-8K"
+            model="DeepSeek-V3.1"
         )
         agent = AgentRuntime(component=component)
 
@@ -140,7 +140,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试在消息有效时处理 """
         component = Playground(
             prompt_template="{query}",
-            model="ERNIE-3.5-8K"
+            model="DeepSeek-V3.1"
         )
         agent = appbuilder.AgentRuntime(component=component)
         message = appbuilder.Message({"query": "你好"})
@@ -151,7 +151,7 @@ class TestAgentRuntime(unittest.TestCase):
         """ 测试在消息有效时处理 """
         component = Playground(
             prompt_template="{query}",
-            model="ERNIE-3.5-8K"
+            model="DeepSeek-V3.1"
         )
         agent = AgentRuntime(component=component)
         message = Message({"query": "你好"})

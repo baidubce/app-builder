@@ -33,7 +33,7 @@ class QueryRewrite(CompletionBaseComponent):
         import appbuilder
         os.environ["APPBUILDER_TOKEN"] = '...'
 
-        query_rewrite = appbuilder.QueryRewrite(model="Qianfan-Agent-Speed-8K")
+        query_rewrite = appbuilder.QueryRewrite(model="DeepSeek-V3.1")
         answer = query_rewrite(appbuilder.Message(['我应该怎么办理护照？', 
                                                     '您可以查询官网或人工咨询', 
                                                     '我需要准备哪些材料？', 
@@ -77,7 +77,7 @@ class QueryRewrite(CompletionBaseComponent):
 
     def __init__(
             self,
-            model: str = "Qianfan-Agent-Speed-8K",
+            model: str = "DeepSeek-V3.1",
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = True,

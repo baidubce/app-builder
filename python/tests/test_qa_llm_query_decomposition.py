@@ -18,7 +18,7 @@ import appbuilder
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestQueryDecomposition(unittest.TestCase):
     def test_normal_case(self):
-        model_name = "ERNIE-3.5-8K"
+        model_name = "DeepSeek-V3.1"
         query = "吸塑包装盒在工业化生产和物流运输中分别有什么重要性"
         query_decomposition = appbuilder.QueryDecomposition(model=model_name)
         msg = appbuilder.Message(content=query)

@@ -19,7 +19,7 @@ class TestRagBaiduSearch(unittest.TestCase):
         """
         return rag_with_baidu_search class
         """
-        self.model_name = "ERNIE-3.5-8K"
+        self.model_name = "DeepSeek-V3.1"
         self.rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model=self.model_name)
 
     def test_rag_with_baidu_search_pro_block(self):

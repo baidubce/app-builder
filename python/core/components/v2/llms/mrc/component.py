@@ -105,7 +105,7 @@ class MRC(CompletionBaseComponent):
 
     def __init__(
             self,
-            model: str = "Qianfan-Agent-Speed-8K",
+            model: str = "DeepSeek-V3.1",
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = True,

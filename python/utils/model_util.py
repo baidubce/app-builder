@@ -62,7 +62,7 @@ class RemoteModel(object):
          """
         # TODO(chengmo): 使用logging 替换 print，解决print多次的问题
         if short_name == "eb-turbo-appbuilder":
-            print("Deprecate warning: model [eb-turbo-appbuilder] is deprecated, please use [Qianfan-Agent-Speed-8K]")
+            print("Deprecate warning: model [eb-turbo-appbuilder] is deprecated, please use [DeepSeek-V3.1]")
 
         if short_name in self.short_names:
             return self.remote_name

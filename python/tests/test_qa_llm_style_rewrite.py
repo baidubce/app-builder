@@ -19,7 +19,7 @@ import appbuilder
 class TestStyleRewrite(unittest.TestCase):
     def test_normal_case(self):
         text = "文心大模型发布新版"
-        model_name = "ERNIE-3.5-8K"
+        model_name = "DeepSeek-V3.1"
         style = "激励话术"
 
         builder = appbuilder.StyleRewrite(model=model_name)

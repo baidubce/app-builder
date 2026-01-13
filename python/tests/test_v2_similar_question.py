@@ -24,7 +24,7 @@ from appbuilder.core.components.v2 import SimilarQuestion
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestSimilarQuestion(unittest.TestCase):
     def setUp(self):
-        self.com = SimilarQuestion(model="ERNIE-3.5-8K")
+        self.com = SimilarQuestion(model="DeepSeek-V3.1")
 
     def test_run(self):
         query = "我想吃冰淇淋，哪里的冰淇淋比较好吃？"

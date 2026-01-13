@@ -40,7 +40,7 @@ class SelectTable(Component):
         创建 GBI 选表对象
         
         Args:
-            model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, Qianfan-Agent-Speed-8K
+            model_name: 支持的模型名字 ERNIE-Bot 4.0, ERNIE-Bot, ERNIE-Bot-turbo, DeepSeek-V3.1
             table_descriptions: 表的描述是个字典，key: 是表的名字, value: 是表的描述，例如:
                                 {
                                     "超市营收明细表": "超市营收明细表，包含超市各种信息等",

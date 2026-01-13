@@ -24,7 +24,7 @@ class TestMRC(unittest.TestCase):
         return mrc class
         '''
         # 设置环境变量和初始化TestMRCComponent实例
-        self.model_name = "ERNIE-3.5-8K"
+        self.model_name = "DeepSeek-V3.1"
         self.mrc = MRC(model=self.model_name)
 
     def test_mrc_with_custom_context_list(self):

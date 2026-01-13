@@ -41,7 +41,7 @@ class Nl2pandasComponent(CompletionBaseComponent):
         query = "海淀区有哪些学校"
         query = appbuilder.Message(query)
         
-        nl2pandas = appbuilder.Nl2pandasComponent(model="Qianfan-Agent-Speed-8K")
+        nl2pandas = appbuilder.Nl2pandasComponent(model="DeepSeek-V3.1")
         answer = nl2pandas(query, table_info = table_info)
     """
     name = "nl2pandas"
@@ -74,7 +74,7 @@ class Nl2pandasComponent(CompletionBaseComponent):
 
     def __init__(
             self,
-            model: str = "Qianfan-Agent-Speed-8K",
+            model: str = "DeepSeek-V3.1",
             secret_key: Optional[str] = None,
             gateway: str = "",
             lazy_certification: bool = True,

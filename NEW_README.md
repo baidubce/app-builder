@@ -101,7 +101,7 @@ template_str = "你扮演{role}, 请回答我的问题。\n\n问题：{question}
 # 定义输入，调用playground组件
 input = appbuilder.Message({"role": "java工程师", "question": "请简要回答java语言的内存回收机制是什么，要求100字以内"})
 
-playground = appbuilder.Playground(prompt_template=template_str, model="Qianfan-Agent-Speed-8K")
+playground = appbuilder.Playground(prompt_template=template_str, model="DeepSeek-V3.1")
 
 # 以打字机的方式，流式展示大模型回答内容
 output = playground(input, stream=True, temperature=1e-10)
@@ -118,7 +118,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = "your-token-here"
 
 # 创建组件实例
-rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="ERNIE-3.5-8K")
+rag_with_baidu_search_pro = appbuilder.RagWithBaiduSearchPro(model="DeepSeek-V3.1")
 
 # 执行组件
 input = appbuilder.Message("9.11和9.8哪个大")

@@ -9,7 +9,7 @@ MRC（阅读理解问答模块）是一项先进的自然语言处理功能，�
 ### 特色优势
 我们的MRC模块，基于百度自研的先进语言模型文新一言，提供了一系列强大的阅读理解问答功能。在保持文本理解和问题回答的高精度的同时，
 我们特别强调了答案的质量和交互体验。以下是我们MRC模块的几个主要功能特色：
- - 1.多版本模型支持：我们的MRC模块包括不同版本的文新一言大模型，Erniebot 4.0、Qianfan-Agent-Speed-8K等，每个版本都针对特定的应用场景进行了优化。 用户可以根据自己的需求选择最适合的模型版本，以获得最佳的性能。
+ - 1.多版本模型支持：我们的MRC模块包括不同版本的文新一言大模型，Erniebot 4.0、DeepSeek-V3.1等，每个版本都针对特定的应用场景进行了优化。 用户可以根据自己的需求选择最适合的模型版本，以获得最佳的性能。
  - 2.答案格式的多样性：
    - 拒答功能：当问题超出模型知识范围或不具体时，模型可以选择不回答，避免提供误导性信息。
    - 澄清功能：对于模棱两可或含糊的问题，模型可以请求更多信息或对问题进行澄清，以确保答案的准确性。
@@ -41,7 +41,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = "..."
 
 # 创建MRC对象
-mrc_component = appbuilder.MRC(model="Qianfan-Agent-Speed-8K")
+mrc_component = appbuilder.MRC(model="DeepSeek-V3.1")
 
 # 初始化参数
 msg = "残疾人怎么办相关证件"
@@ -119,7 +119,7 @@ import os
 os.environ["APPBUILDER_TOKEN"] = '...'
 
 # 创建MRC对象
-mrc_component = appbuilder.MRC(model="Qianfan-Agent-Speed-8K")
+mrc_component = appbuilder.MRC(model="DeepSeek-V3.1")
 
 # 初始化参数
 msg = "残疾人怎么办相关证件"

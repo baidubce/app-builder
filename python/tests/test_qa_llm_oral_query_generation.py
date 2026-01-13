@@ -18,7 +18,7 @@ import appbuilder
 @unittest.skipUnless(os.getenv("TEST_CASE", "UNKNOWN") == "CPU_PARALLEL", "")
 class TestOralQueryGeneration(unittest.TestCase):
     def test_normal_case(self):
-        model_name = "ERNIE-3.5-8K"
+        model_name = "DeepSeek-V3.1"
         text = ('文档标题：在OPPO Reno5上使用视频超级防抖\n'
                 '文档摘要：OPPO Reno5上的视频超级防抖，视频超级防抖3.0，多代视频防抖算法积累，这一代依旧超级防抖超级稳。 开启视频超级'
                 '防抖 开启路径：打开「相机 > 视频 > 点击屏幕上方的“超级防抖”标识」 后置视频同时支持超级防抖和超级防抖Pro功能，开启超级'

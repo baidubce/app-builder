@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     server = MCPComponentServer(name="AB Component Server")
 
-    model = "ERNIE-4.0-8K"
+    model = "DeepSeek-V3.1"
     server.add_component(Translation())  
     server.add_component(StyleWriting(model=model))  
     server.add_component(
