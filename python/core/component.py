@@ -143,6 +143,13 @@ class Audio(BaseModel, extra='allow'):
         default="", description="音频类型，如mp3/wav, 可选，暂无默认值")
 
 
+class Video(BaseModel, extra='allow'):
+    filename: str = Field(default="", description="视频名称")
+    url: str = Field(default="", description="视频url")
+    mime_type: str = Field(default="", description="视频类型，如video/mp4")
+    cover_url: str = Field(default="", description="视频封面url")
+
+
 class PlanStep(BaseModel, extra='allow'):
     name: str = Field(default="", description="step名")
     arguments: dict = Field(default={}, description="step参数")
@@ -230,8 +237,8 @@ class Content(BaseModel):
     metrics: dict = Field(default={},
                           description="耗时、性能、内存等trace及debug所需信息")
     type: str = Field(default="text",
-                      description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio、browser、plan、function_call、json、progress该字段的取值决定了下面text字段的内容结构")
-    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall, Browser, Progress, ReasoningContent] = Field(default=Text,
+                      description="代表event 类型，包括 text、code、files、urls、oral_text、references、image、chart、audio、browser、plan、function_call、json、progress、reasoning_content、video，该字段的取值决定了下面text字段的内容结构")
+    text: Union[Text, Code, Files, Urls, OralText, References, Image, Chart, Audio, Plan, Json, FunctionCall, Browser, Progress, ReasoningContent, Video] = Field(default=Text,
                                                                                                                                          description="代表当前 event 元素的内容，每一种 event 对应的 text 结构固定")
 
     @field_validator('text', mode='before')
@@ -266,6 +273,8 @@ class Content(BaseModel):
             return Progress(**v)
         elif values.data['type'] == "reasoning_content":
             return ReasoningContent(**v)
+        elif values.data['type'] == 'video':
+            return Video(**v)
         else:
             raise ValueError(f"Invalid value for 'type': {values['type']}")
 
@@ -611,7 +620,7 @@ class Component:
         """create_text_output
 
         Args:
-            type (str): 类型，包括"text", "code", "files", "urls", "oral_text", "references", "image", "chart", "audio", "plan", "function_call"
+            type (str): 类型，包括"text", "code", "files", "urls", "oral_text", "references", "image", "chart", "audio", "video", "plan", "function_call"
             text (str|dict): text字段，可输入str或dict
             role (str, optional): 当前消息来源. Defaults to "tool".
             name (str, optional): 当前yield内容的step name. Defaults to "".
@@ -671,6 +680,8 @@ class Component:
                 key_list = []
             elif type == "reasoning_content":
                 key_list = ["info"]
+            elif type == "video":
+                key_list = ["filename", "url"]
             else:
                 raise ValueError("Unknown type: {}".format(type))
             assert all(
