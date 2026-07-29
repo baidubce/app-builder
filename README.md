@@ -1,3 +1,5 @@
+[![MCP Toplist](https://mcptoplist.com/badge/glama%2Fbaidubce%2Fapp-builder.svg)](https://mcptoplist.com/server/glama%2Fbaidubce%2Fapp-builder)
+
 <div align="center">
 <img src='docs/image/logo.png' alt='logo' width='700' >
 <br>
